@@ -563,6 +563,8 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 
 			if tc.updateInput.AddOrgMembers != nil {
+				// checks for adding orgs to ensure not a personal org
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 			}
 

@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/hooks"
 )
 
 func TestQuery_OrgMembers(t *testing.T) {
@@ -80,6 +82,8 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
+	personalOrg := (&OrganizationBuilder{PersonalOrg: true}).MustNew(reqCtx)
+	listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", personalOrg.ID)}
 
 	orgMember, err := org1.Members(reqCtx)
 	require.NoError(t, err)
@@ -89,51 +93,66 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 	testUser2 := (&UserBuilder{}).MustNew(reqCtx)
 
 	testCases := []struct {
-		name   string
-		orgID  string
-		userID string
-		role   enums.Role
-		errMsg string
+		name     string
+		orgID    string
+		userID   string
+		role     enums.Role
+		checkOrg bool
+		errMsg   string
 	}{
 		{
-			name:   "happy path, add admin",
-			orgID:  org1.ID,
-			userID: testUser1.ID,
-			role:   enums.RoleAdmin,
+			name:     "happy path, add admin",
+			orgID:    org1.ID,
+			userID:   testUser1.ID,
+			role:     enums.RoleAdmin,
+			checkOrg: true,
 		},
 		{
-			name:   "happy path, add member",
-			orgID:  org1.ID,
-			userID: testUser2.ID,
-			role:   enums.RoleMember,
+			name:     "happy path, add member",
+			orgID:    org1.ID,
+			userID:   testUser2.ID,
+			role:     enums.RoleMember,
+			checkOrg: true,
 		},
 		{
-			name:   "duplicate user, different role",
-			orgID:  org1.ID,
-			userID: testUser1.ID,
-			role:   enums.RoleMember,
-			errMsg: "constraint failed",
+			name:     "duplicate user, different role",
+			orgID:    org1.ID,
+			userID:   testUser1.ID,
+			role:     enums.RoleMember,
+			checkOrg: true,
+			errMsg:   "constraint failed",
 		},
 		{
-			name:   "invalid user",
-			orgID:  org1.ID,
-			userID: "not-a-valid-user-id",
-			role:   enums.RoleMember,
-			errMsg: "constraint failed", // TODO: better error messaging: https://github.com/datumforge/datum/issues/415
+			name:     "add user to personal org not allowed",
+			orgID:    personalOrg.ID,
+			userID:   testUser1.ID,
+			role:     enums.RoleMember,
+			checkOrg: true,
+			errMsg:   hooks.ErrPersonalOrgsNoMembers.Error(),
 		},
 		{
-			name:   "invalid org",
-			orgID:  "not-a-valid-org-id",
-			userID: testUser1.ID,
-			role:   enums.RoleMember,
-			errMsg: "constraint failed", // TODO: better error messaging: https://github.com/datumforge/datum/issues/415
+			name:     "invalid user",
+			orgID:    org1.ID,
+			userID:   "not-a-valid-user-id",
+			role:     enums.RoleMember,
+			checkOrg: true,
+			errMsg:   "constraint failed", // TODO: better error messaging: https://github.com/datumforge/datum/issues/415
 		},
 		{
-			name:   "invalid role",
-			orgID:  org1.ID,
-			userID: testUser1.ID,
-			role:   enums.Invalid,
-			errMsg: "not a valid OrgMembershipRole",
+			name:     "invalid org",
+			orgID:    "not-a-valid-org-id",
+			userID:   testUser1.ID,
+			role:     enums.RoleMember,
+			checkOrg: true,
+			errMsg:   "organization not found",
+		},
+		{
+			name:     "invalid role",
+			orgID:    org1.ID,
+			userID:   testUser1.ID,
+			role:     enums.Invalid,
+			checkOrg: false,
+			errMsg:   "not a valid OrgMembershipRole",
 		},
 	}
 
@@ -141,6 +160,11 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			if tc.errMsg == "" {
 				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+			}
+
+			if tc.checkOrg {
+				// checks for adding orgs to ensure not a personal org
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
 			role := tc.role

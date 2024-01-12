@@ -447,6 +447,9 @@ func TestMutation_CreateGroup(t *testing.T) {
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
+				// write for group admin
+				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				// write for parent org relation
 				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}

@@ -72,18 +72,21 @@ func HookGroupAuthz() ent.Hook {
 }
 
 func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
+	objID, exists := m.ID()
+	if exists {
+		// create the admin group member
+		err := createGroupMemberOwner(ctx, objID, m)
+		if err != nil {
+			return err
+		}
+	}
+
 	if m.Authz.Ofga != nil {
-		objID, exists := m.ID()
 		objType := strings.ToLower(m.Type())
 		object := fmt.Sprintf("%s:%s", objType, objID)
 		org, orgexists := m.OwnerID()
 
 		if exists && orgexists {
-			// create the admin group member
-			err := createGroupMemberOwner(ctx, objID, m)
-			if err != nil {
-				return err
-			}
 			m.Logger.Infow("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
 
 			orgTuples, err := createOrgTuple(ctx, &m.Authz, org, fga.ParentRelation, object)
@@ -106,7 +109,7 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupMutation) error {
 	// get userID from context
 	// if this is nil that means we are running without authentication
-	// and no user will get added to the organization
+	// and no user will get added to the group
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		m.Logger.Infow("unable to get user id from echo context, not adding user to organization")
@@ -114,7 +117,7 @@ func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupM
 		return nil
 	}
 
-	// Add User as admin of group
+	// Add user as admin of group
 	input := generated.CreateGroupMembershipInput{
 		UserID:  userID,
 		GroupID: gID,

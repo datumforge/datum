@@ -54,6 +54,16 @@ type OrgMemberCleanup struct {
 	ID string
 }
 
+type GroupMemberBuilder struct {
+	UserID  string
+	GroupID string
+	Role    string
+}
+
+type GroupMemberCleanup struct {
+	ID string
+}
+
 type PersonalAccessTokenBuilder struct {
 	Name        string
 	Token       string
@@ -128,14 +138,14 @@ func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
 		SaveX(ctx)
 }
 
-// MustDelete is used to cleanup, without authz checks, orgs in the database
+// MustDelete is used to cleanup, without authz checks, users in the database
 func (u *UserCleanup) MustDelete(ctx context.Context) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	EntClient.User.DeleteOneID(u.UserID).ExecX(ctx)
 }
 
-// MustNew user builder is used to create, without authz checks, users in the database
+// MustNew user builder is used to create, without authz checks, org members in the database
 func (om *OrgMemberBuilder) MustNew(ctx context.Context) *generated.OrgMembership {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -161,7 +171,7 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context) *generated.OrgMembershi
 		SaveX(ctx)
 }
 
-// MustDelete is used to cleanup, without authz checks, orgs in the database
+// MustDelete is used to cleanup, without authz checks, org members in the database
 func (om *OrgMemberCleanup) MustDelete(ctx context.Context) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -194,6 +204,7 @@ func (g *GroupCleanup) MustDelete(ctx context.Context) {
 	EntClient.Group.DeleteOneID(g.GroupID).ExecX(ctx)
 }
 
+// MustNew group builder is used to create, without authz checks, personal access tokens in the database
 func (t *PersonalAccessTokenBuilder) MustNew(ctx context.Context) *generated.PersonalAccessToken {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -217,4 +228,37 @@ func (t *PersonalAccessTokenBuilder) MustNew(ctx context.Context) *generated.Per
 		SetDescription(t.Description).
 		SetExpiresAt(t.ExpiresAt).
 		SaveX(ctx)
+}
+
+// MustNew user builder is used to create, without authz checks, group members in the database
+func (gm *GroupMemberBuilder) MustNew(ctx context.Context) *generated.GroupMembership {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if gm.GroupID == "" {
+		group := (&GroupBuilder{}).MustNew(ctx)
+		gm.GroupID = group.ID
+	}
+
+	if gm.UserID == "" {
+		user := (&UserBuilder{}).MustNew(ctx)
+		gm.UserID = user.ID
+	}
+
+	role := enums.Enum(gm.Role)
+	if role == enums.Invalid {
+		role = enums.RoleMember
+	}
+
+	return EntClient.GroupMembership.Create().
+		SetUserID(gm.UserID).
+		SetGroupID(gm.GroupID).
+		SetRole(role).
+		SaveX(ctx)
+}
+
+// MustDelete is used to cleanup, without authz checks, group members in the database
+func (gm *GroupMemberCleanup) MustDelete(ctx context.Context) {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	EntClient.GroupMembership.DeleteOneID(gm.ID).ExecX(ctx)
 }

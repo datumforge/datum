@@ -197,7 +197,25 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 		return err
 	}
 
-	return err
+	// set default org
+	return setDefaultOrg(ctx, dbClient, user, org.ID)
+}
+
+func setDefaultOrg(ctx context.Context, dbClient *generated.Client, user *generated.User, orgID string) error {
+	setting, err := user.Setting(ctx)
+	if err != nil {
+		user.Logger.Errorw("unable to get user settings", "error", err)
+
+		return err
+	}
+
+	if _, err := dbClient.UserSetting.UpdateOneID(setting.ID).SetDefaultOrg(orgID).Save(ctx); err != nil {
+		user.Logger.Errorw("unable to set default org", "error", err)
+
+		return err
+	}
+
+	return nil
 }
 
 // defaultUserSettings creates the default user settings for a new user

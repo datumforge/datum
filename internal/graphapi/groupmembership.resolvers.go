@@ -6,27 +6,143 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateGroupMembership is the resolver for the createGroupMembership field.
 func (r *mutationResolver) CreateGroupMembership(ctx context.Context, input generated.CreateGroupMembershipInput) (*GroupMembershipCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateGroupMembership - createGroupMembership"))
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	om, err := withTransactionalMutation(ctx).GroupMembership.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "group member")
+		}
+
+		r.logger.Errorw("failed to create group member", "error", err)
+
+		return nil, err
+	}
+
+	return &GroupMembershipCreatePayload{GroupMembership: om}, nil
 }
 
 // UpdateGroupMembership is the resolver for the updateGroupMembership field.
 func (r *mutationResolver) UpdateGroupMembership(ctx context.Context, id string, input generated.UpdateGroupMembershipInput) (*GroupMembershipUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateGroupMembership - updateGroupMembership"))
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	groupMember, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to get group member on update", "error", err)
+
+			return nil, newPermissionDeniedError(ActionGet, "group member")
+		}
+
+		r.logger.Errorw("failed to get group member", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	groupMember, err = groupMember.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to update group member", "error", err)
+
+			return nil, newPermissionDeniedError(ActionUpdate, "group member")
+		}
+
+		r.logger.Errorw("failed to update group member role", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &GroupMembershipUpdatePayload{GroupMembership: groupMember}, nil
 }
 
 // DeleteGroupMembership is the resolver for the deleteGroupMembership field.
 func (r *mutationResolver) DeleteGroupMembership(ctx context.Context, id string) (*GroupMembershipDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteGroupMembership - deleteGroupMembership"))
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	if err := withTransactionalMutation(ctx).GroupMembership.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "group member")
+		}
+
+		r.logger.Errorw("failed to delete group member", "error", err)
+		return nil, err
+	}
+
+	if err := generated.GroupMembershipEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &GroupMembershipDeletePayload{DeletedID: id}, nil
 }
 
 // GroupMembership is the resolver for the groupMembership field.
 func (r *queryResolver) GroupMembership(ctx context.Context, id string) (*generated.GroupMembership, error) {
-	panic(fmt.Errorf("not implemented: GroupMembership - groupMembership"))
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	gm, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get members of group", "error", err)
+
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "group members")
+		}
+
+		return nil, ErrInternalServerError
+	}
+
+	return gm, nil
 }

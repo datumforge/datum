@@ -44,6 +44,7 @@ input CreateGroupInput {
 	ownerID: ID!
 	settingID: ID!
 	userIDs: [ID!]
+	createGroupSettings: CreateGroupSettingInput
 }
 """
 CreateGroupMembershipInput is used for create GroupMembership object.
@@ -612,7 +613,6 @@ type GroupMembershipEdge {
 }
 """GroupMembershipRole is enum for the field role"""
 enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
-	OWNER
 	ADMIN
 	MEMBER
 }
@@ -722,6 +722,8 @@ input GroupMembershipWhereInput {
 	roleNEQ: GroupMembershipRole
 	roleIn: [GroupMembershipRole!]
 	roleNotIn: [GroupMembershipRole!]
+	groupID: String
+	userID: String
 }
 """Ordering options for Group connections"""
 input GroupOrder {
@@ -2026,9 +2028,9 @@ type OrgMembershipEdge {
 }
 """OrgMembershipRole is enum for the field role"""
 enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
-	OWNER
 	ADMIN
 	MEMBER
+	OWNER
 }
 """Return response for updateOrgMembership mutation"""
 type OrgMembershipUpdatePayload {
@@ -3398,6 +3400,8 @@ input UpdateGroupInput {
 	addUserIDs: [ID!]
 	removeUserIDs: [ID!]
 	clearUsers: Boolean
+	addGroupMembers: [CreateGroupMembershipInput!]
+	updateGroupSettings: UpdateGroupSettingInput
 }
 """
 UpdateGroupMembershipInput is used for update GroupMembership object.

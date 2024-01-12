@@ -21,6 +21,10 @@ type DatumClient interface {
 	CreateGroup(ctx context.Context, input CreateGroupInput, interceptors ...clientv2.RequestInterceptor) (*CreateGroup, error)
 	UpdateGroup(ctx context.Context, updateGroupID string, input UpdateGroupInput, interceptors ...clientv2.RequestInterceptor) (*UpdateGroup, error)
 	DeleteGroup(ctx context.Context, deleteGroupID string, interceptors ...clientv2.RequestInterceptor) (*DeleteGroup, error)
+	GetGroupMembersByGroupID(ctx context.Context, where *GroupMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetGroupMembersByGroupID, error)
+	AddUserToGroupWithRole(ctx context.Context, input CreateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToGroupWithRole, error)
+	UpdateUserRoleInGroup(ctx context.Context, updateGroupMemberID string, input UpdateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInGroup, error)
+	RemoveUserFromGroup(ctx context.Context, deleteGroupMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromGroup, error)
 	GetGroupSetting(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSetting, error)
 	GetOrganizationByID(ctx context.Context, organizationID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationByID, error)
 	GetAllOrganizations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllOrganizations, error)
@@ -912,6 +916,203 @@ type DeleteGroup_DeleteGroup struct {
 func (t *DeleteGroup_DeleteGroup) GetDeletedID() string {
 	if t == nil {
 		t = &DeleteGroup_DeleteGroup{}
+	}
+	return t.DeletedID
+}
+
+type GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User struct {
+	FirstName   string "json:\"firstName\" graphql:\"firstName\""
+	LastName    string "json:\"lastName\" graphql:\"lastName\""
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+	Email       string "json:\"email\" graphql:\"email\""
+}
+
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetFirstName() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User{}
+	}
+	return t.FirstName
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetLastName() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User{}
+	}
+	return t.LastName
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetID() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User{}
+	}
+	return t.ID
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetDisplayName() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User{}
+	}
+	return t.DisplayName
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User) GetEmail() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User{}
+	}
+	return t.Email
+}
+
+type GetGroupMembersByGroupID_GroupMemberships_Edges_Node struct {
+	ID      string                                                    "json:\"id\" graphql:\"id\""
+	GroupID string                                                    "json:\"groupID\" graphql:\"groupID\""
+	UserID  string                                                    "json:\"userID\" graphql:\"userID\""
+	Role    enums.Role                                                "json:\"role\" graphql:\"role\""
+	User    GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetGroupID() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
+	}
+	return t.GroupID
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetUserID() string {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
+	}
+	return t.UserID
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
+	}
+	return &t.Role
+}
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges_Node) GetUser() *GetGroupMembersByGroupID_GroupMemberships_Edges_Node_User {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges_Node{}
+	}
+	return &t.User
+}
+
+type GetGroupMembersByGroupID_GroupMemberships_Edges struct {
+	Node *GetGroupMembersByGroupID_GroupMemberships_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetGroupMembersByGroupID_GroupMemberships_Edges) GetNode() *GetGroupMembersByGroupID_GroupMemberships_Edges_Node {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships_Edges{}
+	}
+	return t.Node
+}
+
+type GetGroupMembersByGroupID_GroupMemberships struct {
+	Edges []*GetGroupMembersByGroupID_GroupMemberships_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetGroupMembersByGroupID_GroupMemberships) GetEdges() []*GetGroupMembersByGroupID_GroupMemberships_Edges {
+	if t == nil {
+		t = &GetGroupMembersByGroupID_GroupMemberships{}
+	}
+	return t.Edges
+}
+
+type AddUserToGroupWithRole_CreateGroupMembership_GroupMembership struct {
+	ID      string     "json:\"id\" graphql:\"id\""
+	Role    enums.Role "json:\"role\" graphql:\"role\""
+	UserID  string     "json:\"userID\" graphql:\"userID\""
+	GroupID string     "json:\"groupID\" graphql:\"groupID\""
+}
+
+func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetID() string {
+	if t == nil {
+		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
+	}
+	return t.ID
+}
+func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetRole() *enums.Role {
+	if t == nil {
+		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
+	}
+	return &t.Role
+}
+func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetUserID() string {
+	if t == nil {
+		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
+	}
+	return t.UserID
+}
+func (t *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership) GetGroupID() string {
+	if t == nil {
+		t = &AddUserToGroupWithRole_CreateGroupMembership_GroupMembership{}
+	}
+	return t.GroupID
+}
+
+type AddUserToGroupWithRole_CreateGroupMembership struct {
+	GroupMembership AddUserToGroupWithRole_CreateGroupMembership_GroupMembership "json:\"groupMembership\" graphql:\"groupMembership\""
+}
+
+func (t *AddUserToGroupWithRole_CreateGroupMembership) GetGroupMembership() *AddUserToGroupWithRole_CreateGroupMembership_GroupMembership {
+	if t == nil {
+		t = &AddUserToGroupWithRole_CreateGroupMembership{}
+	}
+	return &t.GroupMembership
+}
+
+type UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership struct {
+	ID      string     "json:\"id\" graphql:\"id\""
+	Role    enums.Role "json:\"role\" graphql:\"role\""
+	UserID  string     "json:\"userID\" graphql:\"userID\""
+	GroupID string     "json:\"groupID\" graphql:\"groupID\""
+}
+
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetID() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
+	}
+	return t.ID
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetRole() *enums.Role {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
+	}
+	return &t.Role
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetUserID() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
+	}
+	return t.UserID
+}
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership) GetGroupID() string {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership{}
+	}
+	return t.GroupID
+}
+
+type UpdateUserRoleInGroup_UpdateGroupMembership struct {
+	GroupMembership UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership "json:\"groupMembership\" graphql:\"groupMembership\""
+}
+
+func (t *UpdateUserRoleInGroup_UpdateGroupMembership) GetGroupMembership() *UpdateUserRoleInGroup_UpdateGroupMembership_GroupMembership {
+	if t == nil {
+		t = &UpdateUserRoleInGroup_UpdateGroupMembership{}
+	}
+	return &t.GroupMembership
+}
+
+type RemoveUserFromGroup_DeleteGroupMembership struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *RemoveUserFromGroup_DeleteGroupMembership) GetDeletedID() string {
+	if t == nil {
+		t = &RemoveUserFromGroup_DeleteGroupMembership{}
 	}
 	return t.DeletedID
 }
@@ -4328,6 +4529,50 @@ func (t *DeleteGroup) GetDeleteGroup() *DeleteGroup_DeleteGroup {
 	return &t.DeleteGroup
 }
 
+type GetGroupMembersByGroupID struct {
+	GroupMemberships GetGroupMembersByGroupID_GroupMemberships "json:\"groupMemberships\" graphql:\"groupMemberships\""
+}
+
+func (t *GetGroupMembersByGroupID) GetGroupMemberships() *GetGroupMembersByGroupID_GroupMemberships {
+	if t == nil {
+		t = &GetGroupMembersByGroupID{}
+	}
+	return &t.GroupMemberships
+}
+
+type AddUserToGroupWithRole struct {
+	CreateGroupMembership AddUserToGroupWithRole_CreateGroupMembership "json:\"createGroupMembership\" graphql:\"createGroupMembership\""
+}
+
+func (t *AddUserToGroupWithRole) GetCreateGroupMembership() *AddUserToGroupWithRole_CreateGroupMembership {
+	if t == nil {
+		t = &AddUserToGroupWithRole{}
+	}
+	return &t.CreateGroupMembership
+}
+
+type UpdateUserRoleInGroup struct {
+	UpdateGroupMembership UpdateUserRoleInGroup_UpdateGroupMembership "json:\"updateGroupMembership\" graphql:\"updateGroupMembership\""
+}
+
+func (t *UpdateUserRoleInGroup) GetUpdateGroupMembership() *UpdateUserRoleInGroup_UpdateGroupMembership {
+	if t == nil {
+		t = &UpdateUserRoleInGroup{}
+	}
+	return &t.UpdateGroupMembership
+}
+
+type RemoveUserFromGroup struct {
+	DeleteGroupMembership RemoveUserFromGroup_DeleteGroupMembership "json:\"deleteGroupMembership\" graphql:\"deleteGroupMembership\""
+}
+
+func (t *RemoveUserFromGroup) GetDeleteGroupMembership() *RemoveUserFromGroup_DeleteGroupMembership {
+	if t == nil {
+		t = &RemoveUserFromGroup{}
+	}
+	return &t.DeleteGroupMembership
+}
+
 type GetGroupSetting struct {
 	GroupSetting GetGroupSetting_GroupSetting "json:\"groupSetting\" graphql:\"groupSetting\""
 }
@@ -4812,6 +5057,127 @@ func (c *Client) DeleteGroup(ctx context.Context, deleteGroupID string, intercep
 
 	var res DeleteGroup
 	if err := c.Client.Post(ctx, "DeleteGroup", DeleteGroupDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetGroupMembersByGroupIDDocument = `query GetGroupMembersByGroupID ($where: GroupMembershipWhereInput) {
+	groupMemberships(where: $where) {
+		edges {
+			node {
+				id
+				groupID
+				userID
+				role
+				user {
+					firstName
+					lastName
+					id
+					displayName
+					email
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetGroupMembersByGroupID(ctx context.Context, where *GroupMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetGroupMembersByGroupID, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res GetGroupMembersByGroupID
+	if err := c.Client.Post(ctx, "GetGroupMembersByGroupID", GetGroupMembersByGroupIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const AddUserToGroupWithRoleDocument = `mutation AddUserToGroupWithRole ($input: CreateGroupMembershipInput!) {
+	createGroupMembership(input: $input) {
+		groupMembership {
+			id
+			role
+			userID
+			groupID
+		}
+	}
+}
+`
+
+func (c *Client) AddUserToGroupWithRole(ctx context.Context, input CreateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToGroupWithRole, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res AddUserToGroupWithRole
+	if err := c.Client.Post(ctx, "AddUserToGroupWithRole", AddUserToGroupWithRoleDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateUserRoleInGroupDocument = `mutation UpdateUserRoleInGroup ($updateGroupMemberId: ID!, $input: UpdateGroupMembershipInput!) {
+	updateGroupMembership(id: $updateGroupMemberId, input: $input) {
+		groupMembership {
+			id
+			role
+			userID
+			groupID
+		}
+	}
+}
+`
+
+func (c *Client) UpdateUserRoleInGroup(ctx context.Context, updateGroupMemberID string, input UpdateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInGroup, error) {
+	vars := map[string]interface{}{
+		"updateGroupMemberId": updateGroupMemberID,
+		"input":               input,
+	}
+
+	var res UpdateUserRoleInGroup
+	if err := c.Client.Post(ctx, "UpdateUserRoleInGroup", UpdateUserRoleInGroupDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const RemoveUserFromGroupDocument = `mutation RemoveUserFromGroup ($deleteGroupMembershipId: ID!) {
+	deleteGroupMembership(id: $deleteGroupMembershipId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) RemoveUserFromGroup(ctx context.Context, deleteGroupMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromGroup, error) {
+	vars := map[string]interface{}{
+		"deleteGroupMembershipId": deleteGroupMembershipID,
+	}
+
+	var res RemoveUserFromGroup
+	if err := c.Client.Post(ctx, "RemoveUserFromGroup", RemoveUserFromGroupDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -5826,6 +6192,10 @@ var DocumentOperationNames = map[string]string{
 	CreateGroupDocument:                "CreateGroup",
 	UpdateGroupDocument:                "UpdateGroup",
 	DeleteGroupDocument:                "DeleteGroup",
+	GetGroupMembersByGroupIDDocument:   "GetGroupMembersByGroupID",
+	AddUserToGroupWithRoleDocument:     "AddUserToGroupWithRole",
+	UpdateUserRoleInGroupDocument:      "UpdateUserRoleInGroup",
+	RemoveUserFromGroupDocument:        "RemoveUserFromGroup",
 	GetGroupSettingDocument:            "GetGroupSetting",
 	GetOrganizationByIDDocument:        "GetOrganizationByID",
 	GetAllOrganizationsDocument:        "GetAllOrganizations",

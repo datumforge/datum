@@ -576,7 +576,6 @@ type GroupMembershipEdge {
 }
 """GroupMembershipRole is enum for the field role"""
 enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
-  OWNER
   ADMIN
   MEMBER
 }
@@ -1656,9 +1655,9 @@ type OrgMembershipEdge {
 }
 """OrgMembershipRole is enum for the field role"""
 enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
-  OWNER
   ADMIN
   MEMBER
+  OWNER
 }
 """
 OrgMembershipWhereInput is used for filtering OrgMembership objects.

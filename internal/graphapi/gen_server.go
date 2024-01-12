@@ -47,9 +47,11 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	OauthProvider() OauthProviderResolver
 	Query() QueryResolver
+	CreateGroupInput() CreateGroupInputResolver
 	CreateOauthProviderInput() CreateOauthProviderInputResolver
 	CreateOrganizationInput() CreateOrganizationInputResolver
 	OauthProviderWhereInput() OauthProviderWhereInputResolver
+	UpdateGroupInput() UpdateGroupInputResolver
 	UpdateOauthProviderInput() UpdateOauthProviderInputResolver
 	UpdateOrganizationInput() UpdateOrganizationInputResolver
 }
@@ -797,6 +799,9 @@ type QueryResolver interface {
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
 }
 
+type CreateGroupInputResolver interface {
+	CreateGroupSettings(ctx context.Context, obj *generated.CreateGroupInput, data *generated.CreateGroupSettingInput) error
+}
 type CreateOauthProviderInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error
 }
@@ -812,6 +817,10 @@ type OauthProviderWhereInputResolver interface {
 	AuthStyleGte(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error
 	AuthStyleLt(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error
 	AuthStyleLte(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error
+}
+type UpdateGroupInputResolver interface {
+	AddGroupMembers(ctx context.Context, obj *generated.UpdateGroupInput, data []*generated.CreateGroupMembershipInput) error
+	UpdateGroupSettings(ctx context.Context, obj *generated.UpdateGroupInput, data *generated.UpdateGroupSettingInput) error
 }
 type UpdateOauthProviderInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.UpdateOauthProviderInput, data *int) error
@@ -4713,7 +4722,6 @@ type GroupMembershipEdge {
 }
 """GroupMembershipRole is enum for the field role"""
 enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
-  OWNER
   ADMIN
   MEMBER
 }
@@ -5793,9 +5801,9 @@ type OrgMembershipEdge {
 }
 """OrgMembershipRole is enum for the field role"""
 enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
-  OWNER
   ADMIN
   MEMBER
+  OWNER
 }
 """
 OrgMembershipWhereInput is used for filtering OrgMembership objects.
@@ -7983,6 +7991,19 @@ type GroupDeletePayload {
     Deleted group ID
     """
     deletedID: ID!
+}`, BuiltIn: false},
+	{Name: "../../schema/groupextended.graphql", Input: `extend input CreateGroupInput {
+  createGroupSettings: CreateGroupSettingInput
+}
+
+extend input UpdateGroupInput {
+  addGroupMembers: [CreateGroupMembershipInput!]
+  updateGroupSettings: UpdateGroupSettingInput
+}
+
+extend input GroupMembershipWhereInput {
+  groupID: String
+  userID: String
 }`, BuiltIn: false},
 	{Name: "../../schema/groupmembership.graphql", Input: `extend type Query {
     """
@@ -34097,7 +34118,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "gravatarLogoURL", "logoURL", "displayName", "ownerID", "settingID", "userIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "gravatarLogoURL", "logoURL", "displayName", "ownerID", "settingID", "userIDs", "createGroupSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34188,6 +34209,15 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.UserIDs = data
+		case "createGroupSettings":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createGroupSettings"))
+			data, err := ec.unmarshalOCreateGroupSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupSettingInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateGroupInput().CreateGroupSettings(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -36418,7 +36448,7 @@ func (ec *executionContext) unmarshalInputGroupMembershipWhereInput(ctx context.
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "groupID", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37041,6 +37071,20 @@ func (ec *executionContext) unmarshalInputGroupMembershipWhereInput(ctx context.
 				return it, err
 			}
 			it.RoleNotIn = data
+		case "groupID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupID = data
+		case "userID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
 		}
 	}
 
@@ -46616,7 +46660,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "gravatarLogoURL", "clearGravatarLogoURL", "logoURL", "clearLogoURL", "displayName", "ownerID", "settingID", "addUserIDs", "removeUserIDs", "clearUsers"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "gravatarLogoURL", "clearGravatarLogoURL", "logoURL", "clearLogoURL", "displayName", "ownerID", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupMembers", "updateGroupSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46735,6 +46779,24 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.ClearUsers = data
+		case "addGroupMembers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addGroupMembers"))
+			data, err := ec.unmarshalOCreateGroupMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupMembershipInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.UpdateGroupInput().AddGroupMembers(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "updateGroupSettings":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateGroupSettings"))
+			data, err := ec.unmarshalOUpdateGroupSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateGroupSettingInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.UpdateGroupInput().UpdateGroupSettings(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -57446,6 +57508,11 @@ func (ec *executionContext) unmarshalNCreateGroupMembershipInput2githubᚗcomᚋ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateGroupMembershipInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupMembershipInput(ctx context.Context, v interface{}) (*generated.CreateGroupMembershipInput, error) {
+	res, err := ec.unmarshalInputCreateGroupMembershipInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateGroupSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupSettingInput(ctx context.Context, v interface{}) (generated.CreateGroupSettingInput, error) {
 	res, err := ec.unmarshalInputCreateGroupSettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -59234,6 +59301,34 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOCreateGroupMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupMembershipInputᚄ(ctx context.Context, v interface{}) ([]*generated.CreateGroupMembershipInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.CreateGroupMembershipInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCreateGroupMembershipInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupMembershipInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOCreateGroupSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupSettingInput(ctx context.Context, v interface{}) (*generated.CreateGroupSettingInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCreateGroupSettingInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInputᚄ(ctx context.Context, v interface{}) ([]*generated.CreateOrgMembershipInput, error) {
@@ -61379,6 +61474,14 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 	}
 	res := graphql.MarshalTime(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOUpdateGroupSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateGroupSettingInput(ctx context.Context, v interface{}) (*generated.UpdateGroupSettingInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUpdateGroupSettingInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOUpdateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateOrganizationSettingInput(ctx context.Context, v interface{}) (*generated.UpdateOrganizationSettingInput, error) {

@@ -70,8 +70,62 @@ func main() {
 					AddResponse("503", ogen.NewResponse().SetDescription("Server is not reachable")),
 				),
 			)
-
+			spec.AddPathItem("/register", ogen.NewPathItem().
+				SetDescription("Register a new user").
+				SetPost(ogen.NewOperation().
+					SetOperationID("register").
+					SetSummary("Registration form submission for creating and validating a new user").
+					AddParameters(ogen.NewParameter().
+						InPath().
+						SetName("email").
+						SetRequired(true).
+						SetSchema(ogen.String()),
+						(ogen.NewParameter().
+							InPath().
+							SetName("first_name").
+							SetRequired(true).
+							SetSchema(ogen.String())),
+						(ogen.NewParameter().
+							InPath().
+							SetName("last_name").
+							SetRequired(true).
+							SetSchema(ogen.String())),
+						(ogen.NewParameter().
+							InPath().
+							SetName("password").
+							SetRequired(true).
+							SetSchema(ogen.String()))).
+					AddResponse(
+						"200",
+						ogen.
+							NewResponse().
+							SetDescription("Registration submission successful").
+							SetJSONContent(
+								ogen.NewSchema().
+									SetType("object").
+									AddRequiredProperties(
+										ogen.String().ToProperty("message"),
+										ogen.String().ToProperty("user_id"),
+									),
+							),
+					).
+					AddResponse(
+						"400",
+						ogen.
+							NewResponse().
+							SetDescription("bad request").
+							SetJSONContent(
+								ogen.NewSchema().
+									SetType("object").
+									AddOptionalProperties(
+										ogen.String().ToProperty("message"),
+									),
+							),
+					),
+				),
+			)
 			return nil
+
 		}),
 	)
 

@@ -99,6 +99,18 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
+	if err := registerSecurityTxtHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerRobotsHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerOpenAPISpecHandler(router); err != nil {
+		return err
+	}
+
 	return nil
 }
 

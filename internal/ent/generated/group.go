@@ -57,16 +57,16 @@ type GroupEdges struct {
 	Setting *GroupSetting `json:"setting,omitempty"`
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
-	// GroupMemberships holds the value of the group_memberships edge.
-	GroupMemberships []*GroupMembership `json:"group_memberships,omitempty"`
+	// Members holds the value of the members edge.
+	Members []*GroupMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
 	totalCount [4]map[string]int
 
-	namedUsers            map[string][]*User
-	namedGroupMemberships map[string][]*GroupMembership
+	namedUsers   map[string][]*User
+	namedMembers map[string][]*GroupMembership
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -104,13 +104,13 @@ func (e GroupEdges) UsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "users"}
 }
 
-// GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
+// MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
-func (e GroupEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
+func (e GroupEdges) MembersOrErr() ([]*GroupMembership, error) {
 	if e.loadedTypes[3] {
-		return e.GroupMemberships, nil
+		return e.Members, nil
 	}
-	return nil, &NotLoadedError{edge: "group_memberships"}
+	return nil, &NotLoadedError{edge: "members"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -243,9 +243,9 @@ func (gr *Group) QueryUsers() *UserQuery {
 	return NewGroupClient(gr.config).QueryUsers(gr)
 }
 
-// QueryGroupMemberships queries the "group_memberships" edge of the Group entity.
-func (gr *Group) QueryGroupMemberships() *GroupMembershipQuery {
-	return NewGroupClient(gr.config).QueryGroupMemberships(gr)
+// QueryMembers queries the "members" edge of the Group entity.
+func (gr *Group) QueryMembers() *GroupMembershipQuery {
+	return NewGroupClient(gr.config).QueryMembers(gr)
 }
 
 // Update returns a builder for updating this Group.
@@ -334,27 +334,27 @@ func (gr *Group) appendNamedUsers(name string, edges ...*User) {
 	}
 }
 
-// NamedGroupMemberships returns the GroupMemberships named value or an error if the edge was not
+// NamedMembers returns the Members named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (gr *Group) NamedGroupMemberships(name string) ([]*GroupMembership, error) {
-	if gr.Edges.namedGroupMemberships == nil {
+func (gr *Group) NamedMembers(name string) ([]*GroupMembership, error) {
+	if gr.Edges.namedMembers == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := gr.Edges.namedGroupMemberships[name]
+	nodes, ok := gr.Edges.namedMembers[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (gr *Group) appendNamedGroupMemberships(name string, edges ...*GroupMembership) {
-	if gr.Edges.namedGroupMemberships == nil {
-		gr.Edges.namedGroupMemberships = make(map[string][]*GroupMembership)
+func (gr *Group) appendNamedMembers(name string, edges ...*GroupMembership) {
+	if gr.Edges.namedMembers == nil {
+		gr.Edges.namedMembers = make(map[string][]*GroupMembership)
 	}
 	if len(edges) == 0 {
-		gr.Edges.namedGroupMemberships[name] = []*GroupMembership{}
+		gr.Edges.namedMembers[name] = []*GroupMembership{}
 	} else {
-		gr.Edges.namedGroupMemberships[name] = append(gr.Edges.namedGroupMemberships[name], edges...)
+		gr.Edges.namedMembers[name] = append(gr.Edges.namedMembers[name], edges...)
 	}
 }
 

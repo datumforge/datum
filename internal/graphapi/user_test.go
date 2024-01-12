@@ -16,23 +16,15 @@ import (
 	"github.com/datumforge/datum/internal/graphapi"
 	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func TestQuery_UserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClientNoAuth(t, EntClient)
 
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	user1 := (&UserBuilder{}).MustNew(reqCtx)
 
@@ -147,16 +139,9 @@ func TestQuery_Users(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(t, EntClient)
 
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	user1 := (&UserBuilder{}).MustNew(reqCtx)
 	user2 := (&UserBuilder{}).MustNew(reqCtx)
@@ -168,10 +153,10 @@ func TestQuery_Users(t *testing.T) {
 		require.NotNil(t, resp)
 		require.NotNil(t, resp.Users.Edges)
 
-		// make sure no users are returned because neither user is self
-		assert.Equal(t, len(resp.Users.Edges), 0)
+		// make sure only the current user is returned
+		assert.Equal(t, len(resp.Users.Edges), 1)
 
-		// set new context with existing user id
+		// set new context with another user id
 		ec, err := auth.NewTestContextWithValidUser(user1.ID)
 		if err != nil {
 			t.Fatal()
@@ -232,11 +217,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(ctx))
+	ctx := echoContext()
 
 	displayName := gofakeit.LetterN(50)
 
@@ -349,9 +330,9 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 
 			assert.True(t, personalOrg.Organization.PersonalOrg)
 			// make sure there is only one user
-			require.Len(t, personalOrg.Organization.OrgMemberships, 1)
+			require.Len(t, personalOrg.Organization.Members, 1)
 			// make sure user was added as owner
-			assert.Equal(t, personalOrg.Organization.OrgMemberships[0].Role.String(), "OWNER")
+			assert.Equal(t, personalOrg.Organization.Members[0].Role.String(), "OWNER")
 
 			(&UserCleanup{UserID: resp.CreateUser.User.ID}).MustDelete(ctx)
 		})
@@ -362,17 +343,9 @@ func TestMutation_CreateUser(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(t, EntClient)
 
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	displayName := gofakeit.LetterN(50)
 
@@ -518,17 +491,9 @@ func TestMutation_UpdateUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClientNoAuth(t, EntClient)
 
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	firstNameUpdate := gofakeit.FirstName()
 	lastNameUpdate := gofakeit.LastName()
@@ -777,11 +742,7 @@ func TestMutation_DeleteUserNoAuth(t *testing.T) {
 	client := graphTestClientNoAuth(t, EntClient)
 
 	// Setup echo context
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	user := (&UserBuilder{}).MustNew(reqCtx)
 
@@ -806,6 +767,17 @@ func TestMutation_DeleteUserNoAuth(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
+			var orgID string
+
+			if tc.errorMsg == "" {
+				// get personal org first
+				u, err := client.GetUserByID(context.Background(), user.ID)
+				require.NoError(t, err)
+				require.Len(t, u.User.Organizations, 1)
+
+				orgID = u.User.Organizations[0].ID
+			}
+
 			// delete user
 			resp, err := client.DeleteUser(reqCtx, tc.userID)
 
@@ -821,7 +793,11 @@ func TestMutation_DeleteUserNoAuth(t *testing.T) {
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.DeleteUser.DeletedID)
 
-			// TODO: make sure the personal org is deleted
+			// make sure the personal org is deleted
+			org, err := client.GetOrganizationByID(reqCtx, orgID)
+			require.Nil(t, org)
+			require.Error(t, err)
+			assert.ErrorContains(t, err, "not found")
 
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
@@ -836,8 +812,9 @@ func TestMutation_DeleteUserNoAuth(t *testing.T) {
 }
 
 func TestMutation_DeleteUser(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClient(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
 	// Setup echo context
 	ec := echocontext.NewTestEchoContext()
@@ -846,10 +823,21 @@ func TestMutation_DeleteUser(t *testing.T) {
 
 	ec.SetRequest(ec.Request().WithContext(ctx))
 
+	// bypass auth on object creation
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
 	user := (&UserBuilder{}).MustNew(ctx)
 
 	userSetting, err := user.Setting(ctx)
 	require.NoError(t, err)
+
+	orgs, err := user.Organizations(ctx)
+	require.NoError(t, err)
+	require.Len(t, orgs, 1)
+
+	personalOrgID := orgs[0].ID
+
+	listObjects := []string{fmt.Sprintf("organization:%s", personalOrgID)}
 
 	// setup valid user context
 	userCtx, err := auth.NewTestContextWithValidUser(user.ID)
@@ -879,8 +867,21 @@ func TestMutation_DeleteUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
+			// mock check calls
+			if tc.errorMsg == "" {
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+
+				mockDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+			}
+
 			// delete user
-			resp, err := client.DeleteUser(reqCtx, tc.userID)
+			resp, err := authClient.gc.DeleteUser(reqCtx, tc.userID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -894,13 +895,17 @@ func TestMutation_DeleteUser(t *testing.T) {
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.DeleteUser.DeletedID)
 
-			// TODO: ensure personal org is also deleted when user is deleted
+			// make sure the personal org is deleted
+			org, err := authClient.gc.GetOrganizationByID(reqCtx, personalOrgID)
+			require.Nil(t, org)
+			require.Error(t, err)
+			assert.ErrorContains(t, err, "not found")
 
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
 
 			// make sure the user setting is deleted
-			out, err := client.GetUserSettingByID(reqCtx, userSetting.ID)
+			out, err := authClient.gc.GetUserSettingByID(reqCtx, userSetting.ID)
 			require.Nil(t, out)
 			require.Error(t, err)
 			assert.ErrorContains(t, err, "not found")
@@ -911,11 +916,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	usr := (&UserBuilder{}).MustNew(reqCtx)
 
@@ -963,11 +964,7 @@ func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
 func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	input := datumclient.CreateUserInput{
 		FirstName: "Abraxos",

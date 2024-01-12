@@ -6,6 +6,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v6"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
@@ -41,6 +42,16 @@ type UserBuilder struct {
 
 type UserCleanup struct {
 	UserID string
+}
+
+type OrgMemberBuilder struct {
+	UserID string
+	OrgID  string
+	Role   string
+}
+
+type OrgMemberCleanup struct {
+	ID string
 }
 
 type PersonalAccessTokenBuilder struct {
@@ -122,6 +133,39 @@ func (u *UserCleanup) MustDelete(ctx context.Context) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	EntClient.User.DeleteOneID(u.UserID).ExecX(ctx)
+}
+
+// MustNew user builder is used to create, without authz checks, users in the database
+func (om *OrgMemberBuilder) MustNew(ctx context.Context) *generated.OrgMembership {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if om.OrgID == "" {
+		org := (&OrganizationBuilder{}).MustNew(ctx)
+		om.OrgID = org.ID
+	}
+
+	if om.UserID == "" {
+		user := (&UserBuilder{}).MustNew(ctx)
+		om.UserID = user.ID
+	}
+
+	role := enums.Enum(om.Role)
+	if role == enums.Invalid {
+		role = enums.RoleMember
+	}
+
+	return EntClient.OrgMembership.Create().
+		SetUserID(om.UserID).
+		SetOrgID(om.OrgID).
+		SetRole(role).
+		SaveX(ctx)
+}
+
+// MustDelete is used to cleanup, without authz checks, orgs in the database
+func (om *OrgMemberCleanup) MustDelete(ctx context.Context) {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	EntClient.OrgMembership.DeleteOneID(om.ID).ExecX(ctx)
 }
 
 // MustNew group builder is used to create, without authz checks, groups in the database

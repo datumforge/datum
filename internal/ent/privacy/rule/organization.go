@@ -94,9 +94,14 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 
 		oID := view.GetOrganizationID()
 		if oID == "" {
-			m.Logger.Debugw("missing expected organization id")
+			var exists bool
+			oID, exists = m.ID()
+			// if its still empty fail
+			if !exists {
+				m.Logger.Debugw("missing expected organization id")
 
-			return privacy.Denyf("missing organization ID information in viewer")
+				return privacy.Denyf("missing organization ID information in viewer")
+			}
 		}
 
 		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)

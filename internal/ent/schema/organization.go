@@ -89,7 +89,7 @@ func (Organization) Edges() []ent.Edge {
 		edge.To("oauthprovider", OauthProvider.Type),
 		edge.From("users", User.Type).
 			Ref("organizations").
-			Through("org_memberships", OrgMembership.Type),
+			Through("members", OrgMembership.Type),
 	}
 }
 
@@ -152,7 +152,6 @@ func (Organization) Interceptors() []ent.Interceptor {
 // Hooks of the Organization
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hooks.HookOrganizationAuthz(),
 		hooks.HookOrganization(),
 	}
 }

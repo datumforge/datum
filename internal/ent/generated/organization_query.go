@@ -28,28 +28,28 @@ import (
 // OrganizationQuery is the builder for querying Organization entities.
 type OrganizationQuery struct {
 	config
-	ctx                     *QueryContext
-	order                   []organization.OrderOption
-	inters                  []Interceptor
-	predicates              []predicate.Organization
-	withParent              *OrganizationQuery
-	withChildren            *OrganizationQuery
-	withGroups              *GroupQuery
-	withIntegrations        *IntegrationQuery
-	withSetting             *OrganizationSettingQuery
-	withEntitlements        *EntitlementQuery
-	withOauthprovider       *OauthProviderQuery
-	withUsers               *UserQuery
-	withOrgMemberships      *OrgMembershipQuery
-	modifiers               []func(*sql.Selector)
-	loadTotal               []func(context.Context, []*Organization) error
-	withNamedChildren       map[string]*OrganizationQuery
-	withNamedGroups         map[string]*GroupQuery
-	withNamedIntegrations   map[string]*IntegrationQuery
-	withNamedEntitlements   map[string]*EntitlementQuery
-	withNamedOauthprovider  map[string]*OauthProviderQuery
-	withNamedUsers          map[string]*UserQuery
-	withNamedOrgMemberships map[string]*OrgMembershipQuery
+	ctx                    *QueryContext
+	order                  []organization.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.Organization
+	withParent             *OrganizationQuery
+	withChildren           *OrganizationQuery
+	withGroups             *GroupQuery
+	withIntegrations       *IntegrationQuery
+	withSetting            *OrganizationSettingQuery
+	withEntitlements       *EntitlementQuery
+	withOauthprovider      *OauthProviderQuery
+	withUsers              *UserQuery
+	withMembers            *OrgMembershipQuery
+	modifiers              []func(*sql.Selector)
+	loadTotal              []func(context.Context, []*Organization) error
+	withNamedChildren      map[string]*OrganizationQuery
+	withNamedGroups        map[string]*GroupQuery
+	withNamedIntegrations  map[string]*IntegrationQuery
+	withNamedEntitlements  map[string]*EntitlementQuery
+	withNamedOauthprovider map[string]*OauthProviderQuery
+	withNamedUsers         map[string]*UserQuery
+	withNamedMembers       map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -286,8 +286,8 @@ func (oq *OrganizationQuery) QueryUsers() *UserQuery {
 	return query
 }
 
-// QueryOrgMemberships chains the current query on the "org_memberships" edge.
-func (oq *OrganizationQuery) QueryOrgMemberships() *OrgMembershipQuery {
+// QueryMembers chains the current query on the "members" edge.
+func (oq *OrganizationQuery) QueryMembers() *OrgMembershipQuery {
 	query := (&OrgMembershipClient{config: oq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := oq.prepareQuery(ctx); err != nil {
@@ -300,7 +300,7 @@ func (oq *OrganizationQuery) QueryOrgMemberships() *OrgMembershipQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
 			sqlgraph.To(orgmembership.Table, orgmembership.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, organization.OrgMembershipsTable, organization.OrgMembershipsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, organization.MembersTable, organization.MembersColumn),
 		)
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.OrgMembership
@@ -498,20 +498,20 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		return nil
 	}
 	return &OrganizationQuery{
-		config:             oq.config,
-		ctx:                oq.ctx.Clone(),
-		order:              append([]organization.OrderOption{}, oq.order...),
-		inters:             append([]Interceptor{}, oq.inters...),
-		predicates:         append([]predicate.Organization{}, oq.predicates...),
-		withParent:         oq.withParent.Clone(),
-		withChildren:       oq.withChildren.Clone(),
-		withGroups:         oq.withGroups.Clone(),
-		withIntegrations:   oq.withIntegrations.Clone(),
-		withSetting:        oq.withSetting.Clone(),
-		withEntitlements:   oq.withEntitlements.Clone(),
-		withOauthprovider:  oq.withOauthprovider.Clone(),
-		withUsers:          oq.withUsers.Clone(),
-		withOrgMemberships: oq.withOrgMemberships.Clone(),
+		config:            oq.config,
+		ctx:               oq.ctx.Clone(),
+		order:             append([]organization.OrderOption{}, oq.order...),
+		inters:            append([]Interceptor{}, oq.inters...),
+		predicates:        append([]predicate.Organization{}, oq.predicates...),
+		withParent:        oq.withParent.Clone(),
+		withChildren:      oq.withChildren.Clone(),
+		withGroups:        oq.withGroups.Clone(),
+		withIntegrations:  oq.withIntegrations.Clone(),
+		withSetting:       oq.withSetting.Clone(),
+		withEntitlements:  oq.withEntitlements.Clone(),
+		withOauthprovider: oq.withOauthprovider.Clone(),
+		withUsers:         oq.withUsers.Clone(),
+		withMembers:       oq.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -606,14 +606,14 @@ func (oq *OrganizationQuery) WithUsers(opts ...func(*UserQuery)) *OrganizationQu
 	return oq
 }
 
-// WithOrgMemberships tells the query-builder to eager-load the nodes that are connected to
-// the "org_memberships" edge. The optional arguments are used to configure the query builder of the edge.
-func (oq *OrganizationQuery) WithOrgMemberships(opts ...func(*OrgMembershipQuery)) *OrganizationQuery {
+// WithMembers tells the query-builder to eager-load the nodes that are connected to
+// the "members" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithMembers(opts ...func(*OrgMembershipQuery)) *OrganizationQuery {
 	query := (&OrgMembershipClient{config: oq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	oq.withOrgMemberships = query
+	oq.withMembers = query
 	return oq
 }
 
@@ -710,7 +710,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withEntitlements != nil,
 			oq.withOauthprovider != nil,
 			oq.withUsers != nil,
-			oq.withOrgMemberships != nil,
+			oq.withMembers != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -790,10 +790,10 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
-	if query := oq.withOrgMemberships; query != nil {
-		if err := oq.loadOrgMemberships(ctx, query, nodes,
-			func(n *Organization) { n.Edges.OrgMemberships = []*OrgMembership{} },
-			func(n *Organization, e *OrgMembership) { n.Edges.OrgMemberships = append(n.Edges.OrgMemberships, e) }); err != nil {
+	if query := oq.withMembers; query != nil {
+		if err := oq.loadMembers(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Members = []*OrgMembership{} },
+			func(n *Organization, e *OrgMembership) { n.Edges.Members = append(n.Edges.Members, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -839,10 +839,10 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
-	for name, query := range oq.withNamedOrgMemberships {
-		if err := oq.loadOrgMemberships(ctx, query, nodes,
-			func(n *Organization) { n.appendNamedOrgMemberships(name) },
-			func(n *Organization, e *OrgMembership) { n.appendNamedOrgMemberships(name, e) }); err != nil {
+	for name, query := range oq.withNamedMembers {
+		if err := oq.loadMembers(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedMembers(name) },
+			func(n *Organization, e *OrgMembership) { n.appendNamedMembers(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1125,7 +1125,7 @@ func (oq *OrganizationQuery) loadUsers(ctx context.Context, query *UserQuery, no
 	}
 	return nil
 }
-func (oq *OrganizationQuery) loadOrgMemberships(ctx context.Context, query *OrgMembershipQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrgMembership)) error {
+func (oq *OrganizationQuery) loadMembers(ctx context.Context, query *OrgMembershipQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrgMembership)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Organization)
 	for i := range nodes {
@@ -1139,7 +1139,7 @@ func (oq *OrganizationQuery) loadOrgMemberships(ctx context.Context, query *OrgM
 		query.ctx.AppendFieldOnce(orgmembership.FieldOrgID)
 	}
 	query.Where(predicate.OrgMembership(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(organization.OrgMembershipsColumn), fks...))
+		s.Where(sql.InValues(s.C(organization.MembersColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -1332,17 +1332,17 @@ func (oq *OrganizationQuery) WithNamedUsers(name string, opts ...func(*UserQuery
 	return oq
 }
 
-// WithNamedOrgMemberships tells the query-builder to eager-load the nodes that are connected to the "org_memberships"
+// WithNamedMembers tells the query-builder to eager-load the nodes that are connected to the "members"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (oq *OrganizationQuery) WithNamedOrgMemberships(name string, opts ...func(*OrgMembershipQuery)) *OrganizationQuery {
+func (oq *OrganizationQuery) WithNamedMembers(name string, opts ...func(*OrgMembershipQuery)) *OrganizationQuery {
 	query := (&OrgMembershipClient{config: oq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if oq.withNamedOrgMemberships == nil {
-		oq.withNamedOrgMemberships = make(map[string]*OrgMembershipQuery)
+	if oq.withNamedMembers == nil {
+		oq.withNamedMembers = make(map[string]*OrgMembershipQuery)
 	}
-	oq.withNamedOrgMemberships[name] = query
+	oq.withNamedMembers[name] = query
 	return oq
 }
 

@@ -53,8 +53,8 @@ const (
 	EdgeOauthprovider = "oauthprovider"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
-	// EdgeOrgMemberships holds the string denoting the org_memberships edge name in mutations.
-	EdgeOrgMemberships = "org_memberships"
+	// EdgeMembers holds the string denoting the members edge name in mutations.
+	EdgeMembers = "members"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
 	// ParentTable is the table that holds the parent relation/edge.
@@ -105,13 +105,13 @@ const (
 	// UsersInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UsersInverseTable = "users"
-	// OrgMembershipsTable is the table that holds the org_memberships relation/edge.
-	OrgMembershipsTable = "org_memberships"
-	// OrgMembershipsInverseTable is the table name for the OrgMembership entity.
+	// MembersTable is the table that holds the members relation/edge.
+	MembersTable = "org_memberships"
+	// MembersInverseTable is the table name for the OrgMembership entity.
 	// It exists in this package in order to avoid circular dependency with the "orgmembership" package.
-	OrgMembershipsInverseTable = "org_memberships"
-	// OrgMembershipsColumn is the table column denoting the org_memberships relation/edge.
-	OrgMembershipsColumn = "org_id"
+	MembersInverseTable = "org_memberships"
+	// MembersColumn is the table column denoting the members relation/edge.
+	MembersColumn = "org_id"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -152,7 +152,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [5]ent.Hook
+	Hooks        [4]ent.Hook
 	Interceptors [2]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -334,17 +334,17 @@ func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByOrgMembershipsCount orders the results by org_memberships count.
-func ByOrgMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByMembersCount orders the results by members count.
+func ByMembersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newOrgMembershipsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newMembersStep(), opts...)
 	}
 }
 
-// ByOrgMemberships orders the results by org_memberships terms.
-func ByOrgMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByMembers orders the results by members terms.
+func ByMembers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOrgMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newMembersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newParentStep() *sqlgraph.Step {
@@ -403,10 +403,10 @@ func newUsersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
 	)
 }
-func newOrgMembershipsStep() *sqlgraph.Step {
+func newMembersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OrgMembershipsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, OrgMembershipsTable, OrgMembershipsColumn),
+		sqlgraph.To(MembersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, MembersTable, MembersColumn),
 	)
 }

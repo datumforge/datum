@@ -174,14 +174,16 @@ type CreateOrganizationInput struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg      *bool    `json:"personalOrg,omitempty"`
-	ParentID         *string  `json:"parentID,omitempty"`
-	GroupIDs         []string `json:"groupIDs,omitempty"`
-	IntegrationIDs   []string `json:"integrationIDs,omitempty"`
-	SettingID        *string  `json:"settingID,omitempty"`
-	EntitlementIDs   []string `json:"entitlementIDs,omitempty"`
-	OauthproviderIDs []string `json:"oauthproviderIDs,omitempty"`
-	UserIDs          []string `json:"userIDs,omitempty"`
+	PersonalOrg       *bool                           `json:"personalOrg,omitempty"`
+	ParentID          *string                         `json:"parentID,omitempty"`
+	GroupIDs          []string                        `json:"groupIDs,omitempty"`
+	IntegrationIDs    []string                        `json:"integrationIDs,omitempty"`
+	SettingID         *string                         `json:"settingID,omitempty"`
+	EntitlementIDs    []string                        `json:"entitlementIDs,omitempty"`
+	OauthproviderIDs  []string                        `json:"oauthproviderIDs,omitempty"`
+	UserIDs           []string                        `json:"userIDs,omitempty"`
+	CreateOrgMembers  []*CreateOrgMembershipInput     `json:"createOrgMembers,omitempty"`
+	CreateOrgSettings *CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
 }
 
 // CreateOrganizationSettingInput is used for create OrganizationSetting object.
@@ -533,11 +535,11 @@ type Group struct {
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
-	DisplayName      string             `json:"displayName"`
-	Owner            Organization       `json:"owner"`
-	Setting          GroupSetting       `json:"setting"`
-	Users            []*User            `json:"users,omitempty"`
-	GroupMemberships []*GroupMembership `json:"groupMemberships,omitempty"`
+	DisplayName string             `json:"displayName"`
+	Owner       Organization       `json:"owner"`
+	Setting     GroupSetting       `json:"setting"`
+	Users       []*User            `json:"users,omitempty"`
+	Members     []*GroupMembership `json:"members,omitempty"`
 }
 
 func (Group) IsNode() {}
@@ -1043,9 +1045,9 @@ type GroupWhereInput struct {
 	// users edge predicates
 	HasUsers     *bool             `json:"hasUsers,omitempty"`
 	HasUsersWith []*UserWhereInput `json:"hasUsersWith,omitempty"`
-	// group_memberships edge predicates
-	HasGroupMemberships     *bool                        `json:"hasGroupMemberships,omitempty"`
-	HasGroupMembershipsWith []*GroupMembershipWhereInput `json:"hasGroupMembershipsWith,omitempty"`
+	// members edge predicates
+	HasMembers     *bool                        `json:"hasMembers,omitempty"`
+	HasMembersWith []*GroupMembershipWhereInput `json:"hasMembersWith,omitempty"`
 }
 
 type Integration struct {
@@ -1876,6 +1878,8 @@ type OrgMembershipWhereInput struct {
 	RoleNeq   *enums.Role  `json:"roleNEQ,omitempty"`
 	RoleIn    []enums.Role `json:"roleIn,omitempty"`
 	RoleNotIn []enums.Role `json:"roleNotIn,omitempty"`
+	OrgID     *string      `json:"orgID,omitempty"`
+	UserID    *string      `json:"userID,omitempty"`
 }
 
 type Organization struct {
@@ -1893,16 +1897,16 @@ type Organization struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg    bool                   `json:"personalOrg"`
-	Parent         *Organization          `json:"parent,omitempty"`
-	Children       OrganizationConnection `json:"children"`
-	Groups         []*Group               `json:"groups,omitempty"`
-	Integrations   []*Integration         `json:"integrations,omitempty"`
-	Setting        *OrganizationSetting   `json:"setting,omitempty"`
-	Entitlements   []*Entitlement         `json:"entitlements,omitempty"`
-	Oauthprovider  []*OauthProvider       `json:"oauthprovider,omitempty"`
-	Users          []*User                `json:"users,omitempty"`
-	OrgMemberships []*OrgMembership       `json:"orgMemberships,omitempty"`
+	PersonalOrg   bool                   `json:"personalOrg"`
+	Parent        *Organization          `json:"parent,omitempty"`
+	Children      OrganizationConnection `json:"children"`
+	Groups        []*Group               `json:"groups,omitempty"`
+	Integrations  []*Integration         `json:"integrations,omitempty"`
+	Setting       *OrganizationSetting   `json:"setting,omitempty"`
+	Entitlements  []*Entitlement         `json:"entitlements,omitempty"`
+	Oauthprovider []*OauthProvider       `json:"oauthprovider,omitempty"`
+	Users         []*User                `json:"users,omitempty"`
+	Members       []*OrgMembership       `json:"members,omitempty"`
 }
 
 func (Organization) IsNode() {}
@@ -2392,9 +2396,9 @@ type OrganizationWhereInput struct {
 	// users edge predicates
 	HasUsers     *bool             `json:"hasUsers,omitempty"`
 	HasUsersWith []*UserWhereInput `json:"hasUsersWith,omitempty"`
-	// org_memberships edge predicates
-	HasOrgMemberships     *bool                      `json:"hasOrgMemberships,omitempty"`
-	HasOrgMembershipsWith []*OrgMembershipWhereInput `json:"hasOrgMembershipsWith,omitempty"`
+	// members edge predicates
+	HasMembers     *bool                      `json:"hasMembers,omitempty"`
+	HasMembersWith []*OrgMembershipWhereInput `json:"hasMembersWith,omitempty"`
 }
 
 // Information about pagination in a connection.

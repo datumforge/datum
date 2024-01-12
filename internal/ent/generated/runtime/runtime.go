@@ -353,8 +353,10 @@ func init() {
 	orgmembershipMixin := schema.OrgMembership{}.Mixin()
 	orgmembershipMixinHooks0 := orgmembershipMixin[0].Hooks()
 	orgmembershipMixinHooks2 := orgmembershipMixin[2].Hooks()
+	orgmembershipHooks := schema.OrgMembership{}.Hooks()
 	orgmembership.Hooks[0] = orgmembershipMixinHooks0[0]
 	orgmembership.Hooks[1] = orgmembershipMixinHooks2[0]
+	orgmembership.Hooks[2] = orgmembershipHooks[0]
 	orgmembershipMixinInters2 := orgmembershipMixin[2].Interceptors()
 	orgmembership.Interceptors[0] = orgmembershipMixinInters2[0]
 	orgmembershipMixinFields0 := orgmembershipMixin[0].Fields()
@@ -396,8 +398,6 @@ func init() {
 	organization.Hooks[2] = organizationMixinHooks2[0]
 
 	organization.Hooks[3] = organizationHooks[0]
-
-	organization.Hooks[4] = organizationHooks[1]
 	organizationMixinInters2 := organizationMixin[2].Interceptors()
 	organizationInters := schema.Organization{}.Interceptors()
 	organization.Interceptors[0] = organizationMixinInters2[0]
@@ -637,6 +637,8 @@ func init() {
 	user.Hooks[2] = userMixinHooks1[0]
 
 	user.Hooks[3] = userHooks[0]
+
+	user.Hooks[4] = userHooks[1]
 	userMixinInters1 := userMixin[1].Interceptors()
 	userInters := schema.User{}.Interceptors()
 	user.Interceptors[0] = userMixinInters1[0]

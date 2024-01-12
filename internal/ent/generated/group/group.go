@@ -45,8 +45,8 @@ const (
 	EdgeSetting = "setting"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
-	// EdgeGroupMemberships holds the string denoting the group_memberships edge name in mutations.
-	EdgeGroupMemberships = "group_memberships"
+	// EdgeMembers holds the string denoting the members edge name in mutations.
+	EdgeMembers = "members"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -68,13 +68,13 @@ const (
 	// UsersInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UsersInverseTable = "users"
-	// GroupMembershipsTable is the table that holds the group_memberships relation/edge.
-	GroupMembershipsTable = "group_memberships"
-	// GroupMembershipsInverseTable is the table name for the GroupMembership entity.
+	// MembersTable is the table that holds the members relation/edge.
+	MembersTable = "group_memberships"
+	// MembersInverseTable is the table name for the GroupMembership entity.
 	// It exists in this package in order to avoid circular dependency with the "groupmembership" package.
-	GroupMembershipsInverseTable = "group_memberships"
-	// GroupMembershipsColumn is the table column denoting the group_memberships relation/edge.
-	GroupMembershipsColumn = "group_id"
+	MembersInverseTable = "group_memberships"
+	// MembersColumn is the table column denoting the members relation/edge.
+	MembersColumn = "group_id"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -231,17 +231,17 @@ func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByGroupMembershipsCount orders the results by group_memberships count.
-func ByGroupMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByMembersCount orders the results by members count.
+func ByMembersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newGroupMembershipsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newMembersStep(), opts...)
 	}
 }
 
-// ByGroupMemberships orders the results by group_memberships terms.
-func ByGroupMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByMembers orders the results by members terms.
+func ByMembers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newGroupMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newMembersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newOwnerStep() *sqlgraph.Step {
@@ -265,10 +265,10 @@ func newUsersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
 	)
 }
-func newGroupMembershipsStep() *sqlgraph.Step {
+func newMembersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(GroupMembershipsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, GroupMembershipsTable, GroupMembershipsColumn),
+		sqlgraph.To(MembersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, MembersTable, MembersColumn),
 	)
 }

@@ -845,15 +845,15 @@ func (c *GroupClient) QueryUsers(gr *Group) *UserQuery {
 	return query
 }
 
-// QueryGroupMemberships queries the group_memberships edge of a Group.
-func (c *GroupClient) QueryGroupMemberships(gr *Group) *GroupMembershipQuery {
+// QueryMembers queries the members edge of a Group.
+func (c *GroupClient) QueryMembers(gr *Group) *GroupMembershipQuery {
 	query := (&GroupMembershipClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := gr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(groupmembership.Table, groupmembership.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, group.GroupMembershipsTable, group.GroupMembershipsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, group.MembersTable, group.MembersColumn),
 		)
 		schemaConfig := gr.schemaConfig
 		step.To.Schema = schemaConfig.GroupMembership
@@ -2092,15 +2092,15 @@ func (c *OrganizationClient) QueryUsers(o *Organization) *UserQuery {
 	return query
 }
 
-// QueryOrgMemberships queries the org_memberships edge of a Organization.
-func (c *OrganizationClient) QueryOrgMemberships(o *Organization) *OrgMembershipQuery {
+// QueryMembers queries the members edge of a Organization.
+func (c *OrganizationClient) QueryMembers(o *Organization) *OrgMembershipQuery {
 	query := (&OrgMembershipClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, id),
 			sqlgraph.To(orgmembership.Table, orgmembership.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, organization.OrgMembershipsTable, organization.OrgMembershipsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, organization.MembersTable, organization.MembersColumn),
 		)
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.OrgMembership

@@ -1,47 +1,26 @@
 package graphapi_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
-	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func TestQuery_Group(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	group1 := (&GroupBuilder{Owner: org1.ID}).MustNew(reqCtx)
@@ -72,17 +51,17 @@ func TestQuery_Group(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			mockCheckAny(mockCtrl, mc, reqCtx, tc.allowed)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
 
 			// second check won't happen if org does not exist
 			if tc.errorMsg == "" {
-				mockListAny(mockCtrl, mc, reqCtx, listGroups)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listGroups)
 				// we need to check list objects even on a get to check the user
 				// has access to the owner (organization of the group)
-				mockListAny(mockCtrl, mc, reqCtx, listOrgs)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
 			}
 
-			resp, err := client.GetGroupByID(reqCtx, tc.queryID)
+			resp, err := authClient.gc.GetGroupByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -107,11 +86,7 @@ func TestQuery_GroupsNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 
@@ -151,28 +126,13 @@ func TestQuery_GroupsNoAuth(t *testing.T) {
 }
 
 func TestQuery_GroupsByOwner(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -185,8 +145,8 @@ func TestQuery_GroupsByOwner(t *testing.T) {
 		listOrgs := []string{fmt.Sprintf("organization:%s", org1.ID)}
 		listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
 
-		mockListAny(mockCtrl, mc, reqCtx, listOrgs)
-		mockListAny(mockCtrl, mc, reqCtx, listGroups)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listGroups)
 
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -196,7 +156,7 @@ func TestQuery_GroupsByOwner(t *testing.T) {
 			},
 		}
 
-		resp, err := client.GroupsWhere(reqCtx, whereInput)
+		resp, err := authClient.gc.GroupsWhere(reqCtx, whereInput)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -221,8 +181,8 @@ func TestQuery_GroupsByOwner(t *testing.T) {
 		}
 
 		// Try to get groups for org not authorized to access
-		mockListAny(mockCtrl, mc, reqCtx, listOrgs)
-		mockListAny(mockCtrl, mc, reqCtx, listGroups)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listGroups)
 
 		whereInput = &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -232,7 +192,7 @@ func TestQuery_GroupsByOwner(t *testing.T) {
 			},
 		}
 
-		resp, err = client.GroupsWhere(reqCtx, whereInput)
+		resp, err = authClient.gc.GroupsWhere(reqCtx, whereInput)
 
 		require.NoError(t, err)
 		require.Empty(t, resp.Groups.Edges)
@@ -249,11 +209,7 @@ func TestQuery_GroupsByOwnerNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -303,28 +259,13 @@ func TestQuery_GroupsByOwnerNoAuth(t *testing.T) {
 }
 
 func TestQuery_Groups(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -338,10 +279,10 @@ func TestQuery_Groups(t *testing.T) {
 		listOrgs := []string{fmt.Sprintf("organization:%s", org2.ID)}
 		listGroups := []string{fmt.Sprintf("group:%s", group2.ID), fmt.Sprintf("group:%s", group3.ID)}
 
-		mockListAny(mockCtrl, mc, reqCtx, listOrgs) // org check comes before group check
-		mockListAny(mockCtrl, mc, reqCtx, listGroups)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs) // org check comes before group check
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listGroups)
 
-		resp, err := client.GetAllGroups(reqCtx)
+		resp, err := authClient.gc.GetAllGroups(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -376,10 +317,10 @@ func TestQuery_Groups(t *testing.T) {
 		}
 
 		// Check user with no relations, gets no groups back
-		mockListAny(mockCtrl, mc, reqCtx, []string{}) // list orgs
-		mockListAny(mockCtrl, mc, reqCtx, []string{}) // list group
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, []string{}) // list orgs
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, []string{}) // list group
 
-		resp, err = client.GetAllGroups(reqCtx)
+		resp, err = authClient.gc.GetAllGroups(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -400,11 +341,7 @@ func TestQuery_GroupNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	group1 := (&GroupBuilder{Owner: org1.ID}).MustNew(reqCtx)
@@ -451,30 +388,13 @@ func TestQuery_GroupNoAuth(t *testing.T) {
 }
 
 func TestMutation_CreateGroup(t *testing.T) {
-	// Add Authz Client Mock
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	owner1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	owner2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -523,15 +443,15 @@ func TestMutation_CreateGroup(t *testing.T) {
 				input.DisplayName = &tc.displayName
 			}
 
-			mockCheckAny(mockCtrl, mc, reqCtx, tc.allowed)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
-				mockWriteTuplesAny(mockCtrl, mc, reqCtx, nil)
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
-			resp, err := client.CreateGroup(reqCtx, input)
+			resp, err := authClient.gc.CreateGroup(reqCtx, input)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -569,11 +489,7 @@ func TestMutation_CreateGroupNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
 
@@ -658,30 +574,13 @@ func TestMutation_CreateGroupNoAuth(t *testing.T) {
 }
 
 func TestMutation_UpdateGroup(t *testing.T) {
-	// Add Authz Client Mock
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	nameUpdate := gofakeit.Name()
 	displayNameUpdate := gofakeit.LetterN(40)
@@ -729,17 +628,17 @@ func TestMutation_UpdateGroup(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			// get group
-			mockCheckAny(mockCtrl, mc, reqCtx, tc.allowed)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
 
 			if tc.errorMsg == "" {
 				// update group
-				mockCheckAny(mockCtrl, mc, reqCtx, tc.allowed)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
 				// check access
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
 			// update group
-			resp, err := client.UpdateGroup(reqCtx, group.ID, tc.updateInput)
+			resp, err := authClient.gc.UpdateGroup(reqCtx, group.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -769,13 +668,9 @@ func TestMutation_UpdateGroupNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+	reqCtx := echoContext()
 
 	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	group := (&GroupBuilder{}).MustNew(reqCtx)
 
@@ -875,30 +770,13 @@ func TestMutation_UpdateGroupNoAuth(t *testing.T) {
 }
 
 func TestMutation_DeleteGroup(t *testing.T) {
-	// Add Authz Client Mock
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	group := (&GroupBuilder{}).MustNew(reqCtx)
 
@@ -926,18 +804,18 @@ func TestMutation_DeleteGroup(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
 			// mock read of tuple
-			mockCheckAny(mockCtrl, mc, reqCtx, tc.allowed)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
 
 			if tc.allowed {
-				mockCheckAny(mockCtrl, mc, reqCtx, tc.allowed)
-				mockCheckAny(mockCtrl, mc, reqCtx, tc.allowed)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
 
-				mockReadAny(mockCtrl, mc, reqCtx)
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockReadAny(authClient.mockCtrl, authClient.mc, reqCtx)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
 			// delete group
-			resp, err := client.DeleteGroup(reqCtx, tc.groupID)
+			resp, err := authClient.gc.DeleteGroup(reqCtx, tc.groupID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -954,7 +832,7 @@ func TestMutation_DeleteGroup(t *testing.T) {
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.groupID, resp.DeleteGroup.DeletedID)
 
-			o, err := client.GetGroupByID(reqCtx, tc.groupID)
+			o, err := authClient.gc.GetGroupByID(reqCtx, tc.groupID)
 
 			require.Nil(t, o)
 			require.Error(t, err)
@@ -967,11 +845,7 @@ func TestMutation_DeleteGroupNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	group := (&GroupBuilder{}).MustNew(reqCtx)
 

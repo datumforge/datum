@@ -19,7 +19,7 @@ query GetOrganizationByID($organizationId: ID!) {
         }
       }
     }
-    orgMemberships {
+    members {
       id
       role
       user {
@@ -75,7 +75,7 @@ query GetAllOrganizations {
             }
           }
         }
-        orgMemberships {
+        members {
           id
           role
           user {
@@ -131,7 +131,7 @@ query OrganizationsWhere($where: OrganizationWhereInput) {
             }
           }
         }
-        orgMemberships {
+        members {
           id
           role
           user {

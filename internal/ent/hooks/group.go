@@ -112,7 +112,7 @@ func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupM
 	// and no user will get added to the group
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
-		m.Logger.Infow("unable to get user id from echo context, not adding user to organization")
+		m.Logger.Infow("unable to get user id from echo context, not adding user to group")
 
 		return nil
 	}

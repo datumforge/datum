@@ -21,6 +21,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/datumclient"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -337,4 +338,14 @@ func StoreToken(token *oauth2.Token) error {
 	}
 
 	return nil
+}
+
+func GetRoleEnum(role string) (enums.Role, error) {
+	r := enums.Enum(role)
+
+	if r == enums.Invalid {
+		return r, ErrInvalidRole
+	}
+
+	return r, nil
 }

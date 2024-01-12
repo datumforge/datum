@@ -55,7 +55,7 @@ func updateOrgMember(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("role")
 	}
 
-	r, err := getRoleEnum(role)
+	r, err := datum.GetRoleEnum(role)
 	if err != nil {
 		return err
 	}

@@ -108,8 +108,19 @@ func main() {
 										ogen.String().ToProperty("user_id"),
 									),
 							),
+					).
+					AddResponse(
 						"400",
-						ogen.NewResponse().AddContent()
+						ogen.
+							NewResponse().
+							SetDescription("bad request").
+							SetJSONContent(
+								ogen.NewSchema().
+									SetType("object").
+									AddOptionalProperties(
+										ogen.String().ToProperty("message"),
+									),
+							),
 					),
 				),
 			)

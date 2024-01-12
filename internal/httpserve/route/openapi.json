@@ -1040,12 +1040,6 @@
                     ],
                     "default": "MEMBER"
                   },
-                  "group_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
-                  },
                   "group": {
                     "type": "string"
                   },
@@ -3532,12 +3526,6 @@
                     ],
                     "default": "MEMBER"
                   },
-                  "org_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
-                  },
                   "org": {
                     "type": "string"
                   },
@@ -5746,6 +5734,86 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/register": {
+      "description": "Register a new user",
+      "post": {
+        "summary": "Registration form submission for creating and validating a new user",
+        "operationId": "register",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "first_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "last_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registration submission successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "user_id"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

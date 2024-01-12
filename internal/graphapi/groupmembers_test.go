@@ -108,6 +108,13 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 			role:    enums.RoleMember,
 		},
 		{
+			name:    "owner relation not valid for groups",
+			groupID: group1.ID,
+			userID:  testUser2.ID,
+			role:    enums.RoleOwner,
+			errMsg:  "OWNER is not a valid GroupMembershipRole",
+		},
+		{
 			name:    "duplicate user, different role",
 			groupID: group1.ID,
 			userID:  testUser1.ID,

@@ -201,8 +201,6 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	orgToDelete := (&OrganizationBuilder{}).MustNew(reqCtx)
 	// delete said org
 	(&OrganizationCleanup{OrgID: orgToDelete.ID}).MustDelete(reqCtx)
-	// setup user for membership
-	testUser = (&UserBuilder{}).MustNew(reqCtx)
 
 	testCases := []struct {
 		name           string

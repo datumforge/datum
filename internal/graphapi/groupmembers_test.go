@@ -239,7 +239,7 @@ func TestQuery_UpdateGroupMembers(t *testing.T) {
 		})
 	}
 
-	// delete created group and users
+	// delete created group
 	(&GroupMemberCleanup{ID: om.ID}).MustDelete(reqCtx)
 }
 

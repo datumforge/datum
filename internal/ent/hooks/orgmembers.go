@@ -267,6 +267,8 @@ func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 			Object:   object,
 		})
 
+		m.Logger.Infow("creating relationship tuples", "relation", newRelation, "object", object)
+
 		tuples.Writes = append(tuples.Writes, ofgaclient.ClientTupleKey{
 			User:     fmt.Sprintf("user:%s", om.UserID),
 			Relation: newRelation,

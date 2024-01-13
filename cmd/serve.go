@@ -86,7 +86,14 @@ func serve(ctx context.Context) error {
 		entOpts = append(entOpts, ent.Authz(*fgaClient))
 
 		// add auth middleware
-		authMiddleware := authmw.Authenticate()
+		conf := authmw.NewAuthOptions(
+			authmw.WithAudience(so.Config.Server.Token.Audience),
+			authmw.WithIssuer(so.Config.Server.Token.Issuer),
+			authmw.WithCookieDomain(so.Config.Server.Token.CookieDomain),
+			authmw.WithJWKSEndpoint(so.Config.Server.Token.JWKSEndpoint),
+		)
+
+		authMiddleware := authmw.Authenticate(conf)
 
 		mw = append(mw, authMiddleware)
 	}

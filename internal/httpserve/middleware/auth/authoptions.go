@@ -158,6 +158,13 @@ func WithIssuer(issuer string) AuthOption {
 	}
 }
 
+// WithCookieDomain allows the user to specify an alternative cookie domain.
+func WithCookieDomain(domain string) AuthOption {
+	return func(opts *AuthOptions) {
+		opts.CookieDomain = domain
+	}
+}
+
 // WithMinRefreshInterval allows the user to specify an alternative minimum duration
 // between cache refreshes to control refresh behavior for the JWKS public keys.
 func WithMinRefreshInterval(interval time.Duration) AuthOption {

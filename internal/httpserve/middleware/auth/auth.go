@@ -25,11 +25,9 @@ type ContextKey struct {
 	name string
 }
 
-func Authenticate() echo.MiddlewareFunc {
+func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			conf := NewAuthOptions()
-
 			validator, err := conf.Validator()
 			if err != nil {
 				return err

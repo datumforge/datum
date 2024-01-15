@@ -1,0 +1,47 @@
+query GetGroupMembersByGroupID($where: GroupMembershipWhereInput) {
+  groupMemberships(where: $where) {
+    edges {
+      node {
+        id
+        groupID
+        userID
+        role
+        user {
+          firstName
+          lastName
+          id
+          displayName
+          email
+        }
+      }
+    }
+  }
+}
+
+mutation AddUserToGroupWithRole($input: CreateGroupMembershipInput!) {
+  createGroupMembership(input: $input) {
+    groupMembership {
+      id
+      role
+      userID
+      groupID
+    }
+  }
+}
+
+mutation UpdateUserRoleInGroup($updateGroupMemberId: ID!, $input: UpdateGroupMembershipInput!) {
+  updateGroupMembership(id: $updateGroupMemberId, input: $input) {
+    groupMembership {
+      id
+      role
+      userID
+      groupID
+    }
+  }
+}
+
+mutation RemoveUserFromGroup($deleteGroupMembershipId: ID!) {
+  deleteGroupMembership(id: $deleteGroupMembershipId) {
+    deletedID
+  }
+}

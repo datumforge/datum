@@ -51,10 +51,11 @@ type CreateGroupInput struct {
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
-	DisplayName *string  `json:"displayName,omitempty"`
-	OwnerID     string   `json:"ownerID"`
-	SettingID   string   `json:"settingID"`
-	UserIDs     []string `json:"userIDs,omitempty"`
+	DisplayName         *string                  `json:"displayName,omitempty"`
+	OwnerID             string                   `json:"ownerID"`
+	SettingID           string                   `json:"settingID"`
+	UserIDs             []string                 `json:"userIDs,omitempty"`
+	CreateGroupSettings *CreateGroupSettingInput `json:"createGroupSettings,omitempty"`
 }
 
 // CreateGroupMembershipInput is used for create GroupMembership object.
@@ -725,6 +726,8 @@ type GroupMembershipWhereInput struct {
 	RoleNeq   *enums.Role  `json:"roleNEQ,omitempty"`
 	RoleIn    []enums.Role `json:"roleIn,omitempty"`
 	RoleNotIn []enums.Role `json:"roleNotIn,omitempty"`
+	GroupID   *string      `json:"groupID,omitempty"`
+	UserID    *string      `json:"userID,omitempty"`
 }
 
 // Ordering options for Group connections
@@ -2816,12 +2819,14 @@ type UpdateGroupInput struct {
 	LogoURL      *string `json:"logoURL,omitempty"`
 	ClearLogoURL *bool   `json:"clearLogoURL,omitempty"`
 	// The group's displayed 'friendly' name
-	DisplayName   *string  `json:"displayName,omitempty"`
-	OwnerID       *string  `json:"ownerID,omitempty"`
-	SettingID     *string  `json:"settingID,omitempty"`
-	AddUserIDs    []string `json:"addUserIDs,omitempty"`
-	RemoveUserIDs []string `json:"removeUserIDs,omitempty"`
-	ClearUsers    *bool    `json:"clearUsers,omitempty"`
+	DisplayName         *string                       `json:"displayName,omitempty"`
+	OwnerID             *string                       `json:"ownerID,omitempty"`
+	SettingID           *string                       `json:"settingID,omitempty"`
+	AddUserIDs          []string                      `json:"addUserIDs,omitempty"`
+	RemoveUserIDs       []string                      `json:"removeUserIDs,omitempty"`
+	ClearUsers          *bool                         `json:"clearUsers,omitempty"`
+	AddGroupMembers     []*CreateGroupMembershipInput `json:"addGroupMembers,omitempty"`
+	UpdateGroupSettings *UpdateGroupSettingInput      `json:"updateGroupSettings,omitempty"`
 }
 
 // UpdateGroupMembershipInput is used for update GroupMembership object.

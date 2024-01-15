@@ -46,7 +46,12 @@ func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string]
 
 // GroupMemberships is the resolver for the groupMemberships field.
 func (r *queryResolver) GroupMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) (*generated.GroupMembershipConnection, error) {
-	panic(fmt.Errorf("not implemented: GroupMemberships - groupMemberships"))
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	return r.client.GroupMembership.Query().Paginate(ctx, after, first, before, last, generated.WithGroupMembershipFilter(where.Filter))
 }
 
 // GroupSettings is the resolver for the groupSettings field.
@@ -187,6 +192,9 @@ func (r *Resolver) OauthProvider() OauthProviderResolver { return &oauthProvider
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// CreateGroupInput returns CreateGroupInputResolver implementation.
+func (r *Resolver) CreateGroupInput() CreateGroupInputResolver { return &createGroupInputResolver{r} }
+
 // CreateOauthProviderInput returns CreateOauthProviderInputResolver implementation.
 func (r *Resolver) CreateOauthProviderInput() CreateOauthProviderInputResolver {
 	return &createOauthProviderInputResolver{r}
@@ -202,6 +210,9 @@ func (r *Resolver) OauthProviderWhereInput() OauthProviderWhereInputResolver {
 	return &oauthProviderWhereInputResolver{r}
 }
 
+// UpdateGroupInput returns UpdateGroupInputResolver implementation.
+func (r *Resolver) UpdateGroupInput() UpdateGroupInputResolver { return &updateGroupInputResolver{r} }
+
 // UpdateOauthProviderInput returns UpdateOauthProviderInputResolver implementation.
 func (r *Resolver) UpdateOauthProviderInput() UpdateOauthProviderInputResolver {
 	return &updateOauthProviderInputResolver{r}
@@ -214,8 +225,10 @@ func (r *Resolver) UpdateOrganizationInput() UpdateOrganizationInputResolver {
 
 type oauthProviderResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type createGroupInputResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
+type updateGroupInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }

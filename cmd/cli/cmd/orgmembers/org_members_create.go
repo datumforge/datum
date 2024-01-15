@@ -9,7 +9,6 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
-	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 var orgMembersCreateCmd = &cobra.Command{
@@ -53,7 +52,7 @@ func addOrgMember(ctx context.Context) error {
 	// role defaults to `member` so it is not required
 	role := viper.GetString("orgmember.create.role")
 
-	r, err := getRoleEnum(role)
+	r, err := datum.GetRoleEnum(role)
 	if err != nil {
 		return err
 	}
@@ -77,14 +76,4 @@ func addOrgMember(ctx context.Context) error {
 	}
 
 	return datum.JSONPrint(s)
-}
-
-func getRoleEnum(role string) (enums.Role, error) {
-	r := enums.Enum(role)
-
-	if r == enums.Invalid {
-		return r, datum.ErrInvalidRole
-	}
-
-	return r, nil
 }

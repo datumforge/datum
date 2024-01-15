@@ -856,7 +856,6 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
                       "MEMBER"
                     ],
@@ -1034,7 +1033,6 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
                       "MEMBER"
                     ],
@@ -3342,9 +3340,9 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   },
@@ -3520,9 +3518,9 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   },
@@ -8531,7 +8529,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8591,7 +8588,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8643,7 +8639,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8695,7 +8690,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8747,7 +8741,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -9438,7 +9431,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -10727,9 +10719,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10787,9 +10779,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10839,9 +10831,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10891,9 +10883,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10943,9 +10935,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -12052,9 +12044,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -14305,7 +14297,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -14412,9 +14403,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },

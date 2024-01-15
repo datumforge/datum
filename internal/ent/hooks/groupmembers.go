@@ -3,53 +3,21 @@ package hooks
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"entgo.io/ent"
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/fga"
 )
 
-func HookOrgMembers() ent.Hook {
-	return hook.On(func(next ent.Mutator) ent.Mutator {
-		return hook.OrgMembershipFunc(func(ctx context.Context, mutation *generated.OrgMembershipMutation) (generated.Value, error) {
-			// check role, if its not set the default is member
-			role, _ := mutation.Role()
-			if role == enums.RoleOwner {
-				return next.Mutate(ctx, mutation)
-			}
-
-			// get the organization based on input
-			orgID, exists := mutation.OrgID()
-			if exists {
-				org, err := mutation.Client().Organization.Get(ctx, orgID)
-				if err != nil {
-					mutation.Logger.Errorw("error getting organization", "error", err)
-
-					return nil, err
-				}
-
-				// do not allow members to be added to personal orgs
-				if org.PersonalOrg {
-					return nil, ErrPersonalOrgsNoMembers
-				}
-			}
-
-			return next.Mutate(ctx, mutation)
-		})
-	}, ent.OpCreate)
-}
-
-// HookOrgMembersAuthz runs on organization member mutations to setup or remove relationship tuples
-func HookOrgMembersAuthz() ent.Hook {
+// HookGroupMembersAuthz runs on group member mutations to setup or remove relationship tuples
+func HookGroupMembersAuthz() ent.Hook {
 	return func(next ent.Mutator) ent.Mutator {
-		return hook.OrgMembershipFunc(func(ctx context.Context, m *generated.OrgMembershipMutation) (ent.Value, error) {
+		return hook.GroupMembershipFunc(func(ctx context.Context, m *generated.GroupMembershipMutation) (ent.Value, error) {
 			var (
 				ids []string
 				err error
@@ -74,15 +42,15 @@ func HookOrgMembersAuthz() ent.Hook {
 			switch op := m.Op(); op {
 			case ent.OpCreate:
 				// create the relationship tuple for the owner
-				err = orgMemberCreateHook(ctx, m)
+				err = groupMemberCreateHook(ctx, m)
 			case ent.OpDelete, ent.OpDeleteOne:
 				// delete all relationship tuples on delete, or soft delete (Update Op)
-				err = orgMemberDeleteHook(ctx, m, ids)
+				err = groupMemberDeleteHook(ctx, m, ids)
 			case ent.OpUpdate, ent.OpUpdateOne:
 				if mixin.CheckIsSoftDelete(ctx) {
-					err = orgMemberDeleteHook(ctx, m, ids)
+					err = groupMemberDeleteHook(ctx, m, ids)
 				} else {
-					err = orgMemberUpdateHook(ctx, m, ids)
+					err = groupMemberUpdateHook(ctx, m, ids)
 				}
 			default:
 				// we should never get here
@@ -94,10 +62,10 @@ func HookOrgMembersAuthz() ent.Hook {
 	}
 }
 
-func orgMemberCreateHook(ctx context.Context, m *generated.OrgMembershipMutation) error {
+func groupMemberCreateHook(ctx context.Context, m *generated.GroupMembershipMutation) error {
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {
-		tuples, err := getOrgMemberTuples(ctx, m)
+		tuples, err := getGroupMemberTuples(ctx, m)
 		if err != nil {
 			return err
 		}
@@ -109,16 +77,16 @@ func orgMemberCreateHook(ctx context.Context, m *generated.OrgMembershipMutation
 				return err
 			}
 
-			m.Logger.Debugw("created organization relationship tuples")
+			m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
 		}
 	}
 
 	return nil
 }
 
-func orgMemberDeleteHook(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) error {
+func groupMemberDeleteHook(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) error {
 	if m.Authz.Ofga != nil {
-		tuples, err := getDeleteOrgMemberTuples(ctx, m, ids)
+		tuples, err := getDeleteGroupMemberTuples(ctx, m, ids)
 		if err != nil {
 			return err
 		}
@@ -130,16 +98,16 @@ func orgMemberDeleteHook(ctx context.Context, m *generated.OrgMembershipMutation
 				return err
 			}
 
-			m.Logger.Infow("deleted relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
+			m.Logger.Debugw("deleted group relationship tuples")
 		}
 	}
 
 	return nil
 }
 
-func orgMemberUpdateHook(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) error {
+func groupMemberUpdateHook(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) error {
 	if m.Authz.Ofga != nil {
-		tuples, err := getUpdateOrgMemberTuples(ctx, m, ids)
+		tuples, err := getUpdateGroupMemberTuples(ctx, m, ids)
 		if err != nil {
 			return err
 		}
@@ -160,9 +128,9 @@ func orgMemberUpdateHook(ctx context.Context, m *generated.OrgMembershipMutation
 	return nil
 }
 
-func getOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation) (tuples []ofgaclient.ClientTupleKey, err error) {
+func getGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation) (tuples []ofgaclient.ClientTupleKey, err error) {
 	userID, _ := m.UserID()
-	orgID, _ := m.OrgID()
+	groupID, _ := m.GroupID()
 	role, _ := m.Role()
 
 	fgaRelation, err := roleToRelation(role)
@@ -170,7 +138,7 @@ func getOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation)
 		return nil, err
 	}
 
-	object := fmt.Sprintf("%s:%s", "organization", orgID)
+	object := fmt.Sprintf("%s:%s", "group", groupID)
 
 	m.Logger.Infow("creating relationship tuples", "relation", fgaRelation, "object", object)
 
@@ -183,16 +151,16 @@ func getOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation)
 	return
 }
 
-// getDeleteOrgMemberTuples gets all tuples related to the orgMembership IDs that were deleted
-func getDeleteOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) (tuples []openfga.TupleKeyWithoutCondition, err error) {
+// getDeleteGroupMemberTuples gets all tuples related to the groupMembership IDs that were deleted
+func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (tuples []openfga.TupleKeyWithoutCondition, err error) {
 	tuples = []openfga.TupleKeyWithoutCondition{}
 
-	// User the IDs of the org memberships and delete all related tuples
+	// User the IDs of the group memberships and delete all related tuples
 	for _, id := range ids {
 		// this happens after soft-delete, allow the request to pull the record
 		ctx := mixin.SkipSoftDelete(ctx)
 
-		om, err := m.Client().OrgMembership.Get(ctx, id)
+		om, err := m.Client().GroupMembership.Get(ctx, id)
 		if err != nil {
 			return nil, err
 		}
@@ -202,7 +170,7 @@ func getDeleteOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 			return nil, err
 		}
 
-		object := fmt.Sprintf("%s:%s", "organization", om.OrgID)
+		object := fmt.Sprintf("%s:%s", "group", om.GroupID)
 
 		m.Logger.Infow("deleting relationship tuples", "relation", fgaRelation, "object", object)
 
@@ -216,8 +184,8 @@ func getDeleteOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 	return tuples, nil
 }
 
-// getUpdateOrgMemberTuples gets all tuples related to the orgMembership IDs that were updated
-func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) (tuples ofgaclient.ClientWriteRequest, err error) {
+// getUpdateGroupMemberTuples gets all tuples related to the groupMembership IDs that were updated
+func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (tuples ofgaclient.ClientWriteRequest, err error) {
 	tuples = ofgaclient.ClientWriteRequest{
 		Writes:  []ofgaclient.ClientTupleKey{},
 		Deletes: []openfga.TupleKeyWithoutCondition{},
@@ -239,10 +207,10 @@ func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 		return tuples, nil
 	}
 
-	// User the IDs of the org memberships and delete all related tuples
+	// User the IDs of the group memberships and delete all related tuples
 	for _, id := range ids {
 		// this happens after soft-delete, allow the request to pull the record
-		om, err := m.Client().OrgMembership.Get(ctx, id)
+		om, err := m.Client().GroupMembership.Get(ctx, id)
 		if err != nil {
 			return tuples, err
 		}
@@ -257,7 +225,7 @@ func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 			return tuples, err
 		}
 
-		object := fmt.Sprintf("%s:%s", "organization", om.OrgID)
+		object := fmt.Sprintf("%s:%s", "group", om.GroupID)
 
 		m.Logger.Infow("deleting relationship tuples", "relation", oldRelation, "object", object)
 
@@ -277,13 +245,4 @@ func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 	}
 
 	return tuples, nil
-}
-
-func roleToRelation(r enums.Role) (string, error) {
-	switch r {
-	case enums.RoleOwner, enums.RoleAdmin, enums.RoleMember:
-		return strings.ToLower(r.String()), nil
-	default:
-		return "", ErrUnsupportedFGARole
-	}
 }

@@ -15,7 +15,7 @@ func getTupleKey(subjectID, subjectType, objectID, objectType string, role enums
 	}
 
 	sub := fga.Entity{
-		Kind:       fga.Kind(subjectID),
+		Kind:       fga.Kind(subjectType),
 		Identifier: subjectID,
 	}
 

@@ -99,6 +99,8 @@ func orgMemberCreateHook(ctx context.Context, m *generated.OrgMembershipMutation
 			return err
 		}
 
+		m.Logger.Infow("details for fga", "object", tuple.Object, "relation", tuple.Relation, "subject", tuple.Subject)
+
 		if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
 			m.Logger.Errorw("failed to create relationship tuple", "error", err)
 

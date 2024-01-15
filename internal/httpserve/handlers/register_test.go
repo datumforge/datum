@@ -115,7 +115,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			// setup mock authz writes
 			if tc.expectedErrMessage == "" {
-				mockWriteTuplesAny(mockCtrl, mc, context.Background(), nil)
+				mockWriteAny(mockCtrl, mc, context.Background(), nil)
 			}
 
 			e.POST("register", h.RegisterHandler)

@@ -129,7 +129,7 @@ func getGroupMemberTuple(ctx context.Context, m *generated.GroupMembershipMutati
 	groupID, _ := m.GroupID()
 	role, _ := m.Role()
 
-	return getTupleKey(userID, groupID, "group", role)
+	return getUserTupleKey(userID, groupID, "group", role)
 }
 
 // getDeleteGroupMemberTuples gets all tuples related to the groupMembership IDs that were deleted
@@ -144,7 +144,7 @@ func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershi
 			return nil, err
 		}
 
-		t, err := getTupleKey(om.UserID, om.GroupID, "group", om.Role)
+		t, err := getUserTupleKey(om.UserID, om.GroupID, "group", om.Role)
 		if err != nil {
 			return nil, err
 		}
@@ -181,14 +181,14 @@ func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershi
 			return writes, deletes, err
 		}
 
-		d, err := getTupleKey(om.UserID, om.GroupID, "group", oldRole)
+		d, err := getUserTupleKey(om.UserID, om.GroupID, "group", oldRole)
 		if err != nil {
 			return writes, deletes, err
 		}
 
 		deletes = append(deletes, d)
 
-		w, err := getTupleKey(om.UserID, om.GroupID, "group", newRole)
+		w, err := getUserTupleKey(om.UserID, om.GroupID, "group", newRole)
 		if err != nil {
 			return writes, deletes, err
 		}

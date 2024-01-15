@@ -312,7 +312,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
@@ -563,7 +563,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			if tc.updateInput.AddOrgMembers != nil {
 				// checks for adding orgs to ensure not a personal org
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 			}
 
 			if tc.updateInput.UpdateOrgSettings != nil {
@@ -660,7 +660,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 				if tc.errorMsg == "" {
 					mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 					mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.accessAllowed)
-					mockDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+					mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				}
 			}
 
@@ -768,7 +768,7 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 		}
 
 		fgaErr := errors.New("unable to create relationship") //nolint:goerr113
-		mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, fgaErr)
+		mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, fgaErr)
 
 		resp, err := authClient.gc.CreateOrganization(reqCtx, input)
 

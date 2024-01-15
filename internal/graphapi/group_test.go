@@ -470,7 +470,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 				// write for group admin
 				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				// write for parent org relation
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
@@ -614,7 +614,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 
 	// write tuples for org and group
-	mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 	group := (&GroupBuilder{}).MustNewWithRelations(reqCtx, authClient.entDB)
 

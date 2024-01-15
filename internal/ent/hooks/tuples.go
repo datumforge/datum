@@ -1,36 +1,22 @@
 package hooks
 
 import (
-	"context"
-	"fmt"
-
-	ofgaclient "github.com/openfga/go-sdk/client"
+	"strings"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/fga"
 )
 
-// TODO: https://github.com/datumforge/datum/issues/262
-// Not ideal to hard code `organization` in the function but will revisit as a part of another issue
-func createOrgTuple(ctx context.Context, c *fga.Client, org, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
-	tuples := []ofgaclient.ClientTupleKey{{
-		User:     fmt.Sprintf("organization:%s", org),
-		Relation: relation,
-		Object:   object,
-	}}
-
-	return tuples, nil
-}
-
-func getTupleKey(userID, objectID, objectType string, role enums.Role) (fga.TupleKey, error) {
+// getTupleKey creates a Tuple key with the provided subject, object, and role
+func getTupleKey(subjectID, subjectType, objectID, objectType string, role enums.Role) (fga.TupleKey, error) {
 	fgaRelation, err := roleToRelation(role)
 	if err != nil {
 		return fga.NewTupleKey(), err
 	}
 
 	sub := fga.Entity{
-		Kind:       "user",
-		Identifier: userID,
+		Kind:       fga.Kind(subjectID),
+		Identifier: subjectID,
 	}
 
 	object := fga.Entity{
@@ -43,4 +29,20 @@ func getTupleKey(userID, objectID, objectType string, role enums.Role) (fga.Tupl
 		Object:   object,
 		Relation: fga.Relation(fgaRelation),
 	}, nil
+}
+
+// getTupleKey creates a user Tuple key with the provided user ID, object, and role
+func getUserTupleKey(userID, objectID, objectType string, role enums.Role) (fga.TupleKey, error) {
+	return getTupleKey(userID, "user", objectID, objectType, role)
+}
+
+func roleToRelation(r enums.Role) (string, error) {
+	switch r {
+	case enums.RoleOwner, enums.RoleAdmin, enums.RoleMember:
+		return strings.ToLower(r.String()), nil
+	case fga.ParentRelation:
+		return r.String(), nil
+	default:
+		return "", ErrUnsupportedFGARole
+	}
 }

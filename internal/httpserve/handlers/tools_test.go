@@ -216,13 +216,18 @@ func createTokenManager(refreshOverlap time.Duration) (*tokens.TokenManager, err
 	return tokens.NewWithKey(key, conf)
 }
 
-// mockWriteTuples creates mock responses based on the mock FGA client
-func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
-	mockExecute := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+// mockWriteAny creates mock responses based on the mock FGA client
+func mockWriteAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
+	mockExecute := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
 
 	if errMsg == nil {
 		expectedResponse := ofgaclient.ClientWriteResponse{
 			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
+				{
+					Status: ofgaclient.SUCCESS,
+				},
+			},
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
 				{
 					Status: ofgaclient.SUCCESS,
 				},
@@ -237,18 +242,23 @@ func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClien
 					Status: ofgaclient.FAILURE,
 				},
 			},
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
 		}
 
 		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
 	}
 
-	mockRequest := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+	mockRequest := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
 
 	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
 
-	mockBody := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+	mockBody := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
 
 	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
 
-	c.EXPECT().WriteTuples(gomock.Any()).Return(mockBody)
+	c.EXPECT().Write(gomock.Any()).Return(mockBody)
 }

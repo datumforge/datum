@@ -159,7 +159,7 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			if tc.errMsg == "" {
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 			}
 
 			if tc.checkOrg {
@@ -280,7 +280,7 @@ func TestQuery_DeleteOrgMembers(t *testing.T) {
 
 	om := (&OrgMemberBuilder{}).MustNew(reqCtx)
 
-	mockDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 
 	resp, err := authClient.gc.RemoveUserFromOrg(reqCtx, om.ID)
 

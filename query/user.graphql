@@ -12,10 +12,9 @@ query GetUserByID($userId: ID!) {
     oauth
     setting {
       emailConfirmed
+      defaultOrg
       locked
       status
-      role
-      permissions
       tags
       suspendedAt
       createdAt
@@ -54,10 +53,9 @@ query GetUserByIDWithOrgs($userId: ID!) {
     oauth
     setting {
       emailConfirmed
+      defaultOrg
       locked
       status
-      role
-      permissions
       tags
       suspendedAt
       createdAt
@@ -97,10 +95,9 @@ query GetAllUsers {
         oauth
         setting {
           emailConfirmed
+          defaultOrg 
           locked
           status
-          role
-          permissions
           tags
           suspendedAt
           createdAt
@@ -140,10 +137,9 @@ mutation CreateUser($input: CreateUserInput!) {
       }
       setting {
         emailConfirmed
+        defaultOrg
         locked
         status
-        role
-        permissions
         tags
         suspendedAt
         createdAt
@@ -179,10 +175,9 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
       }
       setting {
         emailConfirmed
+        defaultOrg
         locked
         status
-        role
-        permissions
         tags
         suspendedAt
         createdAt

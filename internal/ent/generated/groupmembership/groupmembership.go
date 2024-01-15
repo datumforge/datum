@@ -88,7 +88,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [2]ent.Hook
+	Hooks        [3]ent.Hook
 	Interceptors [1]ent.Interceptor
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
@@ -105,7 +105,7 @@ const DefaultRole enums.Role = "MEMBER"
 // RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
 func RoleValidator(r enums.Role) error {
 	switch r.String() {
-	case "OWNER", "ADMIN", "MEMBER":
+	case "ADMIN", "MEMBER":
 		return nil
 	default:
 		return fmt.Errorf("groupmembership: invalid enum value for role field: %q", r)

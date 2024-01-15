@@ -856,7 +856,6 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
                       "MEMBER"
                     ],
@@ -1034,7 +1033,6 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
                       "MEMBER"
                     ],
@@ -3342,9 +3340,9 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   },
@@ -3520,9 +3518,9 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "OWNER",
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   },
@@ -6284,20 +6282,8 @@
                     ],
                     "default": "ACTIVE"
                   },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "USER",
-                      "ADMIN",
-                      "OWNER"
-                    ],
-                    "default": "USER"
-                  },
-                  "permissions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
+                  "default_org": {
+                    "type": "string"
                   },
                   "email_confirmed": {
                     "type": "boolean"
@@ -6317,8 +6303,6 @@
                   "updated_at",
                   "locked",
                   "status",
-                  "role",
-                  "permissions",
                   "email_confirmed",
                   "tags"
                 ]
@@ -6493,20 +6477,8 @@
                     ],
                     "default": "ACTIVE"
                   },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "USER",
-                      "ADMIN",
-                      "OWNER"
-                    ],
-                    "default": "USER"
-                  },
-                  "permissions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
+                  "default_org": {
+                    "type": "string"
                   },
                   "email_confirmed": {
                     "type": "boolean"
@@ -8557,7 +8529,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8617,7 +8588,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8669,7 +8639,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8721,7 +8690,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -8773,7 +8741,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -9464,7 +9431,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -10753,9 +10719,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10813,9 +10779,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10865,9 +10831,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10917,9 +10883,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -10969,9 +10935,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -12078,9 +12044,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -13795,20 +13761,8 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_org": {
+            "type": "string"
           },
           "email_confirmed": {
             "type": "boolean"
@@ -13829,8 +13783,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -13883,20 +13835,8 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_org": {
+            "type": "string"
           },
           "email_confirmed": {
             "type": "boolean"
@@ -13914,8 +13854,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -13968,20 +13906,8 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_org": {
+            "type": "string"
           },
           "email_confirmed": {
             "type": "boolean"
@@ -13999,8 +13925,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -14053,20 +13977,8 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_org": {
+            "type": "string"
           },
           "email_confirmed": {
             "type": "boolean"
@@ -14084,8 +13996,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -14138,20 +14048,8 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_org": {
+            "type": "string"
           },
           "email_confirmed": {
             "type": "boolean"
@@ -14169,8 +14067,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -14401,7 +14297,6 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
               "MEMBER"
             ],
@@ -14508,9 +14403,9 @@
           "role": {
             "type": "string",
             "enum": [
-              "OWNER",
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -14792,20 +14687,8 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_org": {
+            "type": "string"
           },
           "email_confirmed": {
             "type": "boolean"
@@ -14823,8 +14706,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]

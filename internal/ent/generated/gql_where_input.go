@@ -9242,11 +9242,22 @@ type UserSettingWhereInput struct {
 	StatusIn    []usersetting.Status `json:"statusIn,omitempty"`
 	StatusNotIn []usersetting.Status `json:"statusNotIn,omitempty"`
 
-	// "role" field predicates.
-	Role      *usersetting.Role  `json:"role,omitempty"`
-	RoleNEQ   *usersetting.Role  `json:"roleNEQ,omitempty"`
-	RoleIn    []usersetting.Role `json:"roleIn,omitempty"`
-	RoleNotIn []usersetting.Role `json:"roleNotIn,omitempty"`
+	// "default_org" field predicates.
+	DefaultOrg             *string  `json:"defaultOrg,omitempty"`
+	DefaultOrgNEQ          *string  `json:"defaultOrgNEQ,omitempty"`
+	DefaultOrgIn           []string `json:"defaultOrgIn,omitempty"`
+	DefaultOrgNotIn        []string `json:"defaultOrgNotIn,omitempty"`
+	DefaultOrgGT           *string  `json:"defaultOrgGT,omitempty"`
+	DefaultOrgGTE          *string  `json:"defaultOrgGTE,omitempty"`
+	DefaultOrgLT           *string  `json:"defaultOrgLT,omitempty"`
+	DefaultOrgLTE          *string  `json:"defaultOrgLTE,omitempty"`
+	DefaultOrgContains     *string  `json:"defaultOrgContains,omitempty"`
+	DefaultOrgHasPrefix    *string  `json:"defaultOrgHasPrefix,omitempty"`
+	DefaultOrgHasSuffix    *string  `json:"defaultOrgHasSuffix,omitempty"`
+	DefaultOrgIsNil        bool     `json:"defaultOrgIsNil,omitempty"`
+	DefaultOrgNotNil       bool     `json:"defaultOrgNotNil,omitempty"`
+	DefaultOrgEqualFold    *string  `json:"defaultOrgEqualFold,omitempty"`
+	DefaultOrgContainsFold *string  `json:"defaultOrgContainsFold,omitempty"`
 
 	// "email_confirmed" field predicates.
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
@@ -9694,17 +9705,50 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 	if len(i.StatusNotIn) > 0 {
 		predicates = append(predicates, usersetting.StatusNotIn(i.StatusNotIn...))
 	}
-	if i.Role != nil {
-		predicates = append(predicates, usersetting.RoleEQ(*i.Role))
+	if i.DefaultOrg != nil {
+		predicates = append(predicates, usersetting.DefaultOrgEQ(*i.DefaultOrg))
 	}
-	if i.RoleNEQ != nil {
-		predicates = append(predicates, usersetting.RoleNEQ(*i.RoleNEQ))
+	if i.DefaultOrgNEQ != nil {
+		predicates = append(predicates, usersetting.DefaultOrgNEQ(*i.DefaultOrgNEQ))
 	}
-	if len(i.RoleIn) > 0 {
-		predicates = append(predicates, usersetting.RoleIn(i.RoleIn...))
+	if len(i.DefaultOrgIn) > 0 {
+		predicates = append(predicates, usersetting.DefaultOrgIn(i.DefaultOrgIn...))
 	}
-	if len(i.RoleNotIn) > 0 {
-		predicates = append(predicates, usersetting.RoleNotIn(i.RoleNotIn...))
+	if len(i.DefaultOrgNotIn) > 0 {
+		predicates = append(predicates, usersetting.DefaultOrgNotIn(i.DefaultOrgNotIn...))
+	}
+	if i.DefaultOrgGT != nil {
+		predicates = append(predicates, usersetting.DefaultOrgGT(*i.DefaultOrgGT))
+	}
+	if i.DefaultOrgGTE != nil {
+		predicates = append(predicates, usersetting.DefaultOrgGTE(*i.DefaultOrgGTE))
+	}
+	if i.DefaultOrgLT != nil {
+		predicates = append(predicates, usersetting.DefaultOrgLT(*i.DefaultOrgLT))
+	}
+	if i.DefaultOrgLTE != nil {
+		predicates = append(predicates, usersetting.DefaultOrgLTE(*i.DefaultOrgLTE))
+	}
+	if i.DefaultOrgContains != nil {
+		predicates = append(predicates, usersetting.DefaultOrgContains(*i.DefaultOrgContains))
+	}
+	if i.DefaultOrgHasPrefix != nil {
+		predicates = append(predicates, usersetting.DefaultOrgHasPrefix(*i.DefaultOrgHasPrefix))
+	}
+	if i.DefaultOrgHasSuffix != nil {
+		predicates = append(predicates, usersetting.DefaultOrgHasSuffix(*i.DefaultOrgHasSuffix))
+	}
+	if i.DefaultOrgIsNil {
+		predicates = append(predicates, usersetting.DefaultOrgIsNil())
+	}
+	if i.DefaultOrgNotNil {
+		predicates = append(predicates, usersetting.DefaultOrgNotNil())
+	}
+	if i.DefaultOrgEqualFold != nil {
+		predicates = append(predicates, usersetting.DefaultOrgEqualFold(*i.DefaultOrgEqualFold))
+	}
+	if i.DefaultOrgContainsFold != nil {
+		predicates = append(predicates, usersetting.DefaultOrgContainsFold(*i.DefaultOrgContainsFold))
 	}
 	if i.EmailConfirmed != nil {
 		predicates = append(predicates, usersetting.EmailConfirmedEQ(*i.EmailConfirmed))

@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -68,5 +69,12 @@ func (GroupMembership) Mixin() []ent.Mixin {
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
+	}
+}
+
+// Hooks of the GroupMembership
+func (GroupMembership) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookGroupMembersAuthz(),
 	}
 }

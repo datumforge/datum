@@ -192,8 +192,10 @@ func init() {
 	groupmembershipMixin := schema.GroupMembership{}.Mixin()
 	groupmembershipMixinHooks0 := groupmembershipMixin[0].Hooks()
 	groupmembershipMixinHooks2 := groupmembershipMixin[2].Hooks()
+	groupmembershipHooks := schema.GroupMembership{}.Hooks()
 	groupmembership.Hooks[0] = groupmembershipMixinHooks0[0]
 	groupmembership.Hooks[1] = groupmembershipMixinHooks2[0]
+	groupmembership.Hooks[2] = groupmembershipHooks[0]
 	groupmembershipMixinInters2 := groupmembershipMixin[2].Interceptors()
 	groupmembership.Interceptors[0] = groupmembershipMixinInters2[0]
 	groupmembershipMixinFields0 := groupmembershipMixin[0].Fields()
@@ -786,16 +788,12 @@ func init() {
 	usersettingDescLocked := usersettingFields[0].Descriptor()
 	// usersetting.DefaultLocked holds the default value on creation for the locked field.
 	usersetting.DefaultLocked = usersettingDescLocked.Default.(bool)
-	// usersettingDescPermissions is the schema descriptor for permissions field.
-	usersettingDescPermissions := usersettingFields[6].Descriptor()
-	// usersetting.DefaultPermissions holds the default value on creation for the permissions field.
-	usersetting.DefaultPermissions = usersettingDescPermissions.Default.([]string)
 	// usersettingDescEmailConfirmed is the schema descriptor for email_confirmed field.
-	usersettingDescEmailConfirmed := usersettingFields[7].Descriptor()
+	usersettingDescEmailConfirmed := usersettingFields[6].Descriptor()
 	// usersetting.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
 	usersetting.DefaultEmailConfirmed = usersettingDescEmailConfirmed.Default.(bool)
 	// usersettingDescTags is the schema descriptor for tags field.
-	usersettingDescTags := usersettingFields[8].Descriptor()
+	usersettingDescTags := usersettingFields[7].Descriptor()
 	// usersetting.DefaultTags holds the default value on creation for the tags field.
 	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
 	// usersettingDescID is the schema descriptor for id field.

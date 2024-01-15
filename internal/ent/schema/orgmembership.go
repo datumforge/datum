@@ -24,7 +24,8 @@ func (OrgMembership) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("role").
 			GoType(enums.RoleMember).
-			Default(string(enums.RoleMember)),
+			Default(string(enums.RoleMember)).
+			Values(string(enums.RoleOwner)), // adds owner to possible values
 		field.String("org_id").Immutable(),
 		field.String("user_id").Immutable(),
 	}

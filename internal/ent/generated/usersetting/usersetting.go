@@ -40,10 +40,8 @@ const (
 	FieldRecoveryCode = "recovery_code"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldRole holds the string denoting the role field in the database.
-	FieldRole = "role"
-	// FieldPermissions holds the string denoting the permissions field in the database.
-	FieldPermissions = "permissions"
+	// FieldDefaultOrg holds the string denoting the default_org field in the database.
+	FieldDefaultOrg = "default_org"
 	// FieldEmailConfirmed holds the string denoting the email_confirmed field in the database.
 	FieldEmailConfirmed = "email_confirmed"
 	// FieldTags holds the string denoting the tags field in the database.
@@ -75,8 +73,7 @@ var Columns = []string{
 	FieldSuspendedAt,
 	FieldRecoveryCode,
 	FieldStatus,
-	FieldRole,
-	FieldPermissions,
+	FieldDefaultOrg,
 	FieldEmailConfirmed,
 	FieldTags,
 }
@@ -118,8 +115,6 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultLocked holds the default value on creation for the "locked" field.
 	DefaultLocked bool
-	// DefaultPermissions holds the default value on creation for the "permissions" field.
-	DefaultPermissions []string
 	// DefaultEmailConfirmed holds the default value on creation for the "email_confirmed" field.
 	DefaultEmailConfirmed bool
 	// DefaultTags holds the default value on creation for the "tags" field.
@@ -153,33 +148,6 @@ func StatusValidator(s Status) error {
 		return nil
 	default:
 		return fmt.Errorf("usersetting: invalid enum value for status field: %q", s)
-	}
-}
-
-// Role defines the type for the "role" enum field.
-type Role string
-
-// RoleUser is the default value of the Role enum.
-const DefaultRole = RoleUser
-
-// Role values.
-const (
-	RoleUser  Role = "USER"
-	RoleAdmin Role = "ADMIN"
-	RoleOwner Role = "OWNER"
-)
-
-func (r Role) String() string {
-	return string(r)
-}
-
-// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
-func RoleValidator(r Role) error {
-	switch r {
-	case RoleUser, RoleAdmin, RoleOwner:
-		return nil
-	default:
-		return fmt.Errorf("usersetting: invalid enum value for role field: %q", r)
 	}
 }
 
@@ -246,9 +214,9 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
-// ByRole orders the results by the role field.
-func ByRole(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRole, opts...).ToFunc()
+// ByDefaultOrg orders the results by the default_org field.
+func ByDefaultOrg(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDefaultOrg, opts...).ToFunc()
 }
 
 // ByEmailConfirmed orders the results by the email_confirmed field.
@@ -284,24 +252,6 @@ func (e *Status) UnmarshalGQL(val interface{}) error {
 	*e = Status(str)
 	if err := StatusValidator(*e); err != nil {
 		return fmt.Errorf("%s is not a valid Status", str)
-	}
-	return nil
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (e Role) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(e.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *Role) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*e = Role(str)
-	if err := RoleValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid Role", str)
 	}
 	return nil
 }

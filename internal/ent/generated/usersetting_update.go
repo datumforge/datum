@@ -186,29 +186,23 @@ func (usu *UserSettingUpdate) SetNillableStatus(u *usersetting.Status) *UserSett
 	return usu
 }
 
-// SetRole sets the "role" field.
-func (usu *UserSettingUpdate) SetRole(u usersetting.Role) *UserSettingUpdate {
-	usu.mutation.SetRole(u)
+// SetDefaultOrg sets the "default_org" field.
+func (usu *UserSettingUpdate) SetDefaultOrg(s string) *UserSettingUpdate {
+	usu.mutation.SetDefaultOrg(s)
 	return usu
 }
 
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (usu *UserSettingUpdate) SetNillableRole(u *usersetting.Role) *UserSettingUpdate {
-	if u != nil {
-		usu.SetRole(*u)
+// SetNillableDefaultOrg sets the "default_org" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableDefaultOrg(s *string) *UserSettingUpdate {
+	if s != nil {
+		usu.SetDefaultOrg(*s)
 	}
 	return usu
 }
 
-// SetPermissions sets the "permissions" field.
-func (usu *UserSettingUpdate) SetPermissions(s []string) *UserSettingUpdate {
-	usu.mutation.SetPermissions(s)
-	return usu
-}
-
-// AppendPermissions appends s to the "permissions" field.
-func (usu *UserSettingUpdate) AppendPermissions(s []string) *UserSettingUpdate {
-	usu.mutation.AppendPermissions(s)
+// ClearDefaultOrg clears the value of the "default_org" field.
+func (usu *UserSettingUpdate) ClearDefaultOrg() *UserSettingUpdate {
+	usu.mutation.ClearDefaultOrg()
 	return usu
 }
 
@@ -317,11 +311,6 @@ func (usu *UserSettingUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "UserSetting.status": %w`, err)}
 		}
 	}
-	if v, ok := usu.mutation.Role(); ok {
-		if err := usersetting.RoleValidator(v); err != nil {
-			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "UserSetting.role": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -385,16 +374,11 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := usu.mutation.Status(); ok {
 		_spec.SetField(usersetting.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := usu.mutation.Role(); ok {
-		_spec.SetField(usersetting.FieldRole, field.TypeEnum, value)
+	if value, ok := usu.mutation.DefaultOrg(); ok {
+		_spec.SetField(usersetting.FieldDefaultOrg, field.TypeString, value)
 	}
-	if value, ok := usu.mutation.Permissions(); ok {
-		_spec.SetField(usersetting.FieldPermissions, field.TypeJSON, value)
-	}
-	if value, ok := usu.mutation.AppendedPermissions(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, usersetting.FieldPermissions, value)
-		})
+	if usu.mutation.DefaultOrgCleared() {
+		_spec.ClearField(usersetting.FieldDefaultOrg, field.TypeString)
 	}
 	if value, ok := usu.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)
@@ -614,29 +598,23 @@ func (usuo *UserSettingUpdateOne) SetNillableStatus(u *usersetting.Status) *User
 	return usuo
 }
 
-// SetRole sets the "role" field.
-func (usuo *UserSettingUpdateOne) SetRole(u usersetting.Role) *UserSettingUpdateOne {
-	usuo.mutation.SetRole(u)
+// SetDefaultOrg sets the "default_org" field.
+func (usuo *UserSettingUpdateOne) SetDefaultOrg(s string) *UserSettingUpdateOne {
+	usuo.mutation.SetDefaultOrg(s)
 	return usuo
 }
 
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (usuo *UserSettingUpdateOne) SetNillableRole(u *usersetting.Role) *UserSettingUpdateOne {
-	if u != nil {
-		usuo.SetRole(*u)
+// SetNillableDefaultOrg sets the "default_org" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableDefaultOrg(s *string) *UserSettingUpdateOne {
+	if s != nil {
+		usuo.SetDefaultOrg(*s)
 	}
 	return usuo
 }
 
-// SetPermissions sets the "permissions" field.
-func (usuo *UserSettingUpdateOne) SetPermissions(s []string) *UserSettingUpdateOne {
-	usuo.mutation.SetPermissions(s)
-	return usuo
-}
-
-// AppendPermissions appends s to the "permissions" field.
-func (usuo *UserSettingUpdateOne) AppendPermissions(s []string) *UserSettingUpdateOne {
-	usuo.mutation.AppendPermissions(s)
+// ClearDefaultOrg clears the value of the "default_org" field.
+func (usuo *UserSettingUpdateOne) ClearDefaultOrg() *UserSettingUpdateOne {
+	usuo.mutation.ClearDefaultOrg()
 	return usuo
 }
 
@@ -758,11 +736,6 @@ func (usuo *UserSettingUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "UserSetting.status": %w`, err)}
 		}
 	}
-	if v, ok := usuo.mutation.Role(); ok {
-		if err := usersetting.RoleValidator(v); err != nil {
-			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "UserSetting.role": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -843,16 +816,11 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	if value, ok := usuo.mutation.Status(); ok {
 		_spec.SetField(usersetting.FieldStatus, field.TypeEnum, value)
 	}
-	if value, ok := usuo.mutation.Role(); ok {
-		_spec.SetField(usersetting.FieldRole, field.TypeEnum, value)
+	if value, ok := usuo.mutation.DefaultOrg(); ok {
+		_spec.SetField(usersetting.FieldDefaultOrg, field.TypeString, value)
 	}
-	if value, ok := usuo.mutation.Permissions(); ok {
-		_spec.SetField(usersetting.FieldPermissions, field.TypeJSON, value)
-	}
-	if value, ok := usuo.mutation.AppendedPermissions(); ok {
-		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, usersetting.FieldPermissions, value)
-		})
+	if usuo.mutation.DefaultOrgCleared() {
+		_spec.ClearField(usersetting.FieldDefaultOrg, field.TypeString)
 	}
 	if value, ok := usuo.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)

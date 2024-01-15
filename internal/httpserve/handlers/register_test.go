@@ -177,6 +177,11 @@ func TestRegisterHandler(t *testing.T) {
 				require.Len(t, orgs, 1)
 				assert.Equal(t, orgMemberships[0].Role, enums.RoleOwner)
 
+				// make sure the personal org was set as the user's default org
+				userSettings, err := user.Setting(ctx)
+				require.NoError(t, err)
+				assert.Equal(t, userSettings.DefaultOrg, orgs[0].ID)
+
 				// delete user
 				EntClient.User.DeleteOneID(out.ID).ExecX(ctx)
 			} else {

@@ -24,6 +24,7 @@ var DefaultConfig = Config{
 
 // New creates a new middleware function with the default config
 func New() echo.MiddlewareFunc {
+	fmt.Println("HERE?MAYBE")
 	mw, _ := NewWithConfig(DefaultConfig)
 
 	return mw
@@ -43,9 +44,9 @@ func NewWithConfig(config Config) (echo.MiddlewareFunc, error) {
 		}
 
 		conf := middleware.CORSConfig{
-			AllowOrigins:     origins,
-			AllowMethods:     []string{"GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"},
-			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+			AllowOrigins:     []string{"http://localhost:3001"},
+			AllowMethods:     []string{"GET", "HEAD", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"},
+			AllowHeaders:     []string{"content-type", "authorization"},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,
 			MaxAge:           int((24 * time.Hour).Seconds()), //nolint:gomnd
@@ -56,6 +57,8 @@ func NewWithConfig(config Config) (echo.MiddlewareFunc, error) {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			fmt.Println("HERE------>1")
+
 			if config.Skipper(c) {
 				return next(c)
 			}
@@ -79,6 +82,11 @@ func NewWithConfig(config Config) (echo.MiddlewareFunc, error) {
 					}
 				}
 			}
+
+			c.Response().Header().Set("Access-Control-Allow-Origin", "http://localhost:3001")
+			c.Response().Header().Set("Access-Control-Allow-Methods", "*")
+			c.Response().Header().Set("Access-Control-Allow-Headers", "content-type, authorization")
+			c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
 
 			if middlewareFunc != nil {
 				handler := middlewareFunc(next)

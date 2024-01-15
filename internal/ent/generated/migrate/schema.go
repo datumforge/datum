@@ -561,8 +561,7 @@ var (
 		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
 		{Name: "recovery_code", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
-		{Name: "permissions", Type: field.TypeJSON},
+		{Name: "default_org", Type: field.TypeString, Nullable: true},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON},
 		{Name: "user_setting", Type: field.TypeString, Unique: true, Nullable: true},
@@ -575,7 +574,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_settings_users_setting",
-				Columns:    []*schema.Column{UserSettingsColumns[16]},
+				Columns:    []*schema.Column{UserSettingsColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

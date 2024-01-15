@@ -175,23 +175,17 @@ func (usc *UserSettingCreate) SetNillableStatus(u *usersetting.Status) *UserSett
 	return usc
 }
 
-// SetRole sets the "role" field.
-func (usc *UserSettingCreate) SetRole(u usersetting.Role) *UserSettingCreate {
-	usc.mutation.SetRole(u)
+// SetDefaultOrg sets the "default_org" field.
+func (usc *UserSettingCreate) SetDefaultOrg(s string) *UserSettingCreate {
+	usc.mutation.SetDefaultOrg(s)
 	return usc
 }
 
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableRole(u *usersetting.Role) *UserSettingCreate {
-	if u != nil {
-		usc.SetRole(*u)
+// SetNillableDefaultOrg sets the "default_org" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillableDefaultOrg(s *string) *UserSettingCreate {
+	if s != nil {
+		usc.SetDefaultOrg(*s)
 	}
-	return usc
-}
-
-// SetPermissions sets the "permissions" field.
-func (usc *UserSettingCreate) SetPermissions(s []string) *UserSettingCreate {
-	usc.mutation.SetPermissions(s)
 	return usc
 }
 
@@ -307,14 +301,6 @@ func (usc *UserSettingCreate) defaults() error {
 		v := usersetting.DefaultStatus
 		usc.mutation.SetStatus(v)
 	}
-	if _, ok := usc.mutation.Role(); !ok {
-		v := usersetting.DefaultRole
-		usc.mutation.SetRole(v)
-	}
-	if _, ok := usc.mutation.Permissions(); !ok {
-		v := usersetting.DefaultPermissions
-		usc.mutation.SetPermissions(v)
-	}
 	if _, ok := usc.mutation.EmailConfirmed(); !ok {
 		v := usersetting.DefaultEmailConfirmed
 		usc.mutation.SetEmailConfirmed(v)
@@ -351,17 +337,6 @@ func (usc *UserSettingCreate) check() error {
 		if err := usersetting.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "UserSetting.status": %w`, err)}
 		}
-	}
-	if _, ok := usc.mutation.Role(); !ok {
-		return &ValidationError{Name: "role", err: errors.New(`generated: missing required field "UserSetting.role"`)}
-	}
-	if v, ok := usc.mutation.Role(); ok {
-		if err := usersetting.RoleValidator(v); err != nil {
-			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "UserSetting.role": %w`, err)}
-		}
-	}
-	if _, ok := usc.mutation.Permissions(); !ok {
-		return &ValidationError{Name: "permissions", err: errors.New(`generated: missing required field "UserSetting.permissions"`)}
 	}
 	if _, ok := usc.mutation.EmailConfirmed(); !ok {
 		return &ValidationError{Name: "email_confirmed", err: errors.New(`generated: missing required field "UserSetting.email_confirmed"`)}
@@ -449,13 +424,9 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 		_spec.SetField(usersetting.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
-	if value, ok := usc.mutation.Role(); ok {
-		_spec.SetField(usersetting.FieldRole, field.TypeEnum, value)
-		_node.Role = value
-	}
-	if value, ok := usc.mutation.Permissions(); ok {
-		_spec.SetField(usersetting.FieldPermissions, field.TypeJSON, value)
-		_node.Permissions = value
+	if value, ok := usc.mutation.DefaultOrg(); ok {
+		_spec.SetField(usersetting.FieldDefaultOrg, field.TypeString, value)
+		_node.DefaultOrg = value
 	}
 	if value, ok := usc.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)

@@ -178,7 +178,6 @@ input CreateOrganizationInput {
 	entitlementIDs: [ID!]
 	oauthproviderIDs: [ID!]
 	userIDs: [ID!]
-	createOrgMembers: [CreateOrgMembershipInput!]
 	createOrgSettings: CreateOrganizationSettingInput
 }
 """
@@ -3543,6 +3542,8 @@ input UpdateOrganizationInput {
 	addUserIDs: [ID!]
 	removeUserIDs: [ID!]
 	clearUsers: Boolean
+	addOrgMembers: [CreateOrgMembershipInput!]
+	updateOrgSettings: UpdateOrganizationSettingInput
 }
 """
 UpdateOrganizationSettingInput is used for update OrganizationSetting object.

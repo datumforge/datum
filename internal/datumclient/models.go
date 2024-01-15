@@ -182,7 +182,6 @@ type CreateOrganizationInput struct {
 	EntitlementIDs    []string                        `json:"entitlementIDs,omitempty"`
 	OauthproviderIDs  []string                        `json:"oauthproviderIDs,omitempty"`
 	UserIDs           []string                        `json:"userIDs,omitempty"`
-	CreateOrgMembers  []*CreateOrgMembershipInput     `json:"createOrgMembers,omitempty"`
 	CreateOrgSettings *CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
 }
 
@@ -2941,25 +2940,27 @@ type UpdateOrganizationInput struct {
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
-	Description            *string  `json:"description,omitempty"`
-	ClearDescription       *bool    `json:"clearDescription,omitempty"`
-	AddGroupIDs            []string `json:"addGroupIDs,omitempty"`
-	RemoveGroupIDs         []string `json:"removeGroupIDs,omitempty"`
-	ClearGroups            *bool    `json:"clearGroups,omitempty"`
-	AddIntegrationIDs      []string `json:"addIntegrationIDs,omitempty"`
-	RemoveIntegrationIDs   []string `json:"removeIntegrationIDs,omitempty"`
-	ClearIntegrations      *bool    `json:"clearIntegrations,omitempty"`
-	SettingID              *string  `json:"settingID,omitempty"`
-	ClearSetting           *bool    `json:"clearSetting,omitempty"`
-	AddEntitlementIDs      []string `json:"addEntitlementIDs,omitempty"`
-	RemoveEntitlementIDs   []string `json:"removeEntitlementIDs,omitempty"`
-	ClearEntitlements      *bool    `json:"clearEntitlements,omitempty"`
-	AddOauthproviderIDs    []string `json:"addOauthproviderIDs,omitempty"`
-	RemoveOauthproviderIDs []string `json:"removeOauthproviderIDs,omitempty"`
-	ClearOauthprovider     *bool    `json:"clearOauthprovider,omitempty"`
-	AddUserIDs             []string `json:"addUserIDs,omitempty"`
-	RemoveUserIDs          []string `json:"removeUserIDs,omitempty"`
-	ClearUsers             *bool    `json:"clearUsers,omitempty"`
+	Description            *string                         `json:"description,omitempty"`
+	ClearDescription       *bool                           `json:"clearDescription,omitempty"`
+	AddGroupIDs            []string                        `json:"addGroupIDs,omitempty"`
+	RemoveGroupIDs         []string                        `json:"removeGroupIDs,omitempty"`
+	ClearGroups            *bool                           `json:"clearGroups,omitempty"`
+	AddIntegrationIDs      []string                        `json:"addIntegrationIDs,omitempty"`
+	RemoveIntegrationIDs   []string                        `json:"removeIntegrationIDs,omitempty"`
+	ClearIntegrations      *bool                           `json:"clearIntegrations,omitempty"`
+	SettingID              *string                         `json:"settingID,omitempty"`
+	ClearSetting           *bool                           `json:"clearSetting,omitempty"`
+	AddEntitlementIDs      []string                        `json:"addEntitlementIDs,omitempty"`
+	RemoveEntitlementIDs   []string                        `json:"removeEntitlementIDs,omitempty"`
+	ClearEntitlements      *bool                           `json:"clearEntitlements,omitempty"`
+	AddOauthproviderIDs    []string                        `json:"addOauthproviderIDs,omitempty"`
+	RemoveOauthproviderIDs []string                        `json:"removeOauthproviderIDs,omitempty"`
+	ClearOauthprovider     *bool                           `json:"clearOauthprovider,omitempty"`
+	AddUserIDs             []string                        `json:"addUserIDs,omitempty"`
+	RemoveUserIDs          []string                        `json:"removeUserIDs,omitempty"`
+	ClearUsers             *bool                           `json:"clearUsers,omitempty"`
+	AddOrgMembers          []*CreateOrgMembershipInput     `json:"addOrgMembers,omitempty"`
+	UpdateOrgSettings      *UpdateOrganizationSettingInput `json:"updateOrgSettings,omitempty"`
 }
 
 // UpdateOrganizationSettingInput is used for update OrganizationSetting object.

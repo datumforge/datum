@@ -16,6 +16,36 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 )
 
+func HookOrgMembers() ent.Hook {
+	return hook.On(func(next ent.Mutator) ent.Mutator {
+		return hook.OrgMembershipFunc(func(ctx context.Context, mutation *generated.OrgMembershipMutation) (generated.Value, error) {
+			// check role, if its not set the default is member
+			role, _ := mutation.Role()
+			if role == enums.RoleOwner {
+				return next.Mutate(ctx, mutation)
+			}
+
+			// get the organization based on input
+			orgID, exists := mutation.OrgID()
+			if exists {
+				org, err := mutation.Client().Organization.Get(ctx, orgID)
+				if err != nil {
+					mutation.Logger.Errorw("error getting organization", "error", err)
+
+					return nil, err
+				}
+
+				// do not allow members to be added to personal orgs
+				if org.PersonalOrg {
+					return nil, ErrPersonalOrgsNoMembers
+				}
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}, ent.OpCreate)
+}
+
 // HookOrgMembersAuthz runs on organization member mutations to setup or remove relationship tuples
 func HookOrgMembersAuthz() ent.Hook {
 	return func(next ent.Mutator) ent.Mutator {
@@ -114,6 +144,12 @@ func orgMemberUpdateHook(ctx context.Context, m *generated.OrgMembershipMutation
 			return err
 		}
 
+		if len(tuples.Writes) == 0 && len(tuples.Deletes) == 0 {
+			m.Logger.Debugw("no relationships to create or delete")
+
+			return nil
+		}
+
 		if _, err := m.Authz.WriteTuples(ctx, tuples); err != nil {
 			m.Logger.Errorw("failed to update relationship tuple", "error", err)
 
@@ -195,6 +231,12 @@ func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 	newRole, exists := m.Role()
 	if !exists {
 		return tuples, ErrMissingRole
+	}
+
+	if oldRole == newRole {
+		m.Logger.Debugw("nothing to update, roles are the same", "old_role", oldRole, "new_role", newRole)
+
+		return tuples, nil
 	}
 
 	// User the IDs of the org memberships and delete all related tuples

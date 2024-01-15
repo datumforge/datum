@@ -74,6 +74,7 @@ func (OrgMembership) Mixin() []ent.Mixin {
 // Hooks of the OrgMembership
 func (OrgMembership) Hooks() []ent.Hook {
 	return []ent.Hook{
+		hooks.HookOrgMembers(),
 		hooks.HookOrgMembersAuthz(),
 	}
 }

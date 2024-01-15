@@ -207,9 +207,15 @@ func (r *Resolver) UpdateOauthProviderInput() UpdateOauthProviderInputResolver {
 	return &updateOauthProviderInputResolver{r}
 }
 
+// UpdateOrganizationInput returns UpdateOrganizationInputResolver implementation.
+func (r *Resolver) UpdateOrganizationInput() UpdateOrganizationInputResolver {
+	return &updateOrganizationInputResolver{r}
+}
+
 type oauthProviderResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }
+type updateOrganizationInputResolver struct{ *Resolver }

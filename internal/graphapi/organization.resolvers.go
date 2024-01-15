@@ -47,22 +47,29 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 		return nil, err
 	}
 
+	// setup view context
+	v := viewer.UserViewer{
+		OrgID: org.ID,
+	}
+
+	ctx = viewer.NewContext(ctx, v)
+
 	return &OrganizationCreatePayload{Organization: org}, nil
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
+	// setup view context
+	v := viewer.UserViewer{
+		OrgID: id,
+	}
+
+	ctx = viewer.NewContext(ctx, v)
+
 	// check permissions if authz is enabled
 	// if auth is disabled, policy decisions will be skipped
 	if r.authDisabled {
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			OrgID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
 	}
 
 	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)

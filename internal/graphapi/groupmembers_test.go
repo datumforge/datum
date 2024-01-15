@@ -147,7 +147,7 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			if tc.errMsg == "" {
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 			}
 
 			role := tc.role
@@ -254,7 +254,7 @@ func TestQuery_DeleteGroupMembers(t *testing.T) {
 
 	om := (&GroupMemberBuilder{}).MustNew(reqCtx)
 
-	mockDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 
 	resp, err := authClient.gc.RemoveUserFromGroup(reqCtx, om.ID)
 

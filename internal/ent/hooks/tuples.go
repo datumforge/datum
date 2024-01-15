@@ -6,6 +6,7 @@ import (
 
 	ofgaclient "github.com/openfga/go-sdk/client"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/fga"
 )
 
@@ -19,4 +20,27 @@ func createOrgTuple(ctx context.Context, c *fga.Client, org, relation, object st
 	}}
 
 	return tuples, nil
+}
+
+func getTupleKey(userID, objectID, objectType string, role enums.Role) (fga.TupleKey, error) {
+	fgaRelation, err := roleToRelation(role)
+	if err != nil {
+		return fga.NewTupleKey(), err
+	}
+
+	sub := fga.Entity{
+		Kind:       "user",
+		Identifier: userID,
+	}
+
+	object := fga.Entity{
+		Kind:       fga.Kind(objectType),
+		Identifier: objectID,
+	}
+
+	return fga.TupleKey{
+		Subject:  sub,
+		Object:   object,
+		Relation: fga.Relation(fgaRelation),
+	}, nil
 }

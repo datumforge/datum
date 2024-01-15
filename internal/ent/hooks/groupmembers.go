@@ -5,8 +5,6 @@ import (
 	"fmt"
 
 	"entgo.io/ent"
-	openfga "github.com/openfga/go-sdk"
-	ofgaclient "github.com/openfga/go-sdk/client"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -65,20 +63,18 @@ func HookGroupMembersAuthz() ent.Hook {
 func groupMemberCreateHook(ctx context.Context, m *generated.GroupMembershipMutation) error {
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {
-		tuples, err := getGroupMemberTuples(ctx, m)
+		tuple, err := getGroupMemberTuple(ctx, m)
 		if err != nil {
 			return err
 		}
 
-		if len(tuples) > 0 {
-			if _, err := m.Authz.CreateRelationshipTuple(ctx, tuples); err != nil {
-				m.Logger.Errorw("failed to create relationship tuple", "error", err)
+		if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
+			m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
-				return err
-			}
-
-			m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
+			return err
 		}
+
+		m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", tuple.Object)
 	}
 
 	return nil
@@ -92,7 +88,7 @@ func groupMemberDeleteHook(ctx context.Context, m *generated.GroupMembershipMuta
 		}
 
 		if len(tuples) > 0 {
-			if _, err := m.Authz.DeleteRelationshipTuple(ctx, tuples); err != nil {
+			if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
 				m.Logger.Errorw("failed to delete relationship tuple", "error", err)
 
 				return err
@@ -107,18 +103,18 @@ func groupMemberDeleteHook(ctx context.Context, m *generated.GroupMembershipMuta
 
 func groupMemberUpdateHook(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) error {
 	if m.Authz.Ofga != nil {
-		tuples, err := getUpdateGroupMemberTuples(ctx, m, ids)
+		writes, deletes, err := getUpdateGroupMemberTuples(ctx, m, ids)
 		if err != nil {
 			return err
 		}
 
-		if len(tuples.Writes) == 0 && len(tuples.Deletes) == 0 {
+		if len(writes) == 0 && len(deletes) == 0 {
 			m.Logger.Debugw("no relationships to create or delete")
 
 			return nil
 		}
 
-		if _, err := m.Authz.WriteTuples(ctx, tuples); err != nil {
+		if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
 			m.Logger.Errorw("failed to update relationship tuple", "error", err)
 
 			return err
@@ -128,33 +124,16 @@ func groupMemberUpdateHook(ctx context.Context, m *generated.GroupMembershipMuta
 	return nil
 }
 
-func getGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation) (tuples []ofgaclient.ClientTupleKey, err error) {
+func getGroupMemberTuple(ctx context.Context, m *generated.GroupMembershipMutation) (tuple fga.TupleKey, err error) {
 	userID, _ := m.UserID()
 	groupID, _ := m.GroupID()
 	role, _ := m.Role()
 
-	fgaRelation, err := roleToRelation(role)
-	if err != nil {
-		return nil, err
-	}
-
-	object := fmt.Sprintf("%s:%s", "group", groupID)
-
-	m.Logger.Infow("creating relationship tuples", "relation", fgaRelation, "object", object)
-
-	tuples = []ofgaclient.ClientTupleKey{{
-		User:     fmt.Sprintf("user:%s", userID),
-		Relation: fgaRelation,
-		Object:   object,
-	}}
-
-	return
+	return getTupleKey(userID, groupID, "group", role)
 }
 
 // getDeleteGroupMemberTuples gets all tuples related to the groupMembership IDs that were deleted
-func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (tuples []openfga.TupleKeyWithoutCondition, err error) {
-	tuples = []openfga.TupleKeyWithoutCondition{}
-
+func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (tuples []fga.TupleKey, err error) {
 	// User the IDs of the group memberships and delete all related tuples
 	for _, id := range ids {
 		// this happens after soft-delete, allow the request to pull the record
@@ -165,46 +144,33 @@ func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershi
 			return nil, err
 		}
 
-		fgaRelation, err := roleToRelation(om.Role)
+		t, err := getTupleKey(om.UserID, om.GroupID, "group", om.Role)
 		if err != nil {
 			return nil, err
 		}
 
-		object := fmt.Sprintf("%s:%s", "group", om.GroupID)
-
-		m.Logger.Infow("deleting relationship tuples", "relation", fgaRelation, "object", object)
-
-		tuples = append(tuples, openfga.TupleKeyWithoutCondition{
-			User:     fmt.Sprintf("user:%s", om.UserID),
-			Relation: fgaRelation,
-			Object:   object,
-		})
+		tuples = append(tuples, t)
 	}
 
-	return tuples, nil
+	return
 }
 
 // getUpdateGroupMemberTuples gets all tuples related to the groupMembership IDs that were updated
-func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (tuples ofgaclient.ClientWriteRequest, err error) {
-	tuples = ofgaclient.ClientWriteRequest{
-		Writes:  []ofgaclient.ClientTupleKey{},
-		Deletes: []openfga.TupleKeyWithoutCondition{},
-	}
-
+func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (writes []fga.TupleKey, deletes []fga.TupleKey, err error) {
 	oldRole, err := m.OldRole(ctx)
 	if err != nil {
-		return tuples, err
+		return writes, deletes, err
 	}
 
 	newRole, exists := m.Role()
 	if !exists {
-		return tuples, ErrMissingRole
+		return writes, deletes, ErrMissingRole
 	}
 
 	if oldRole == newRole {
 		m.Logger.Debugw("nothing to update, roles are the same", "old_role", oldRole, "new_role", newRole)
 
-		return tuples, nil
+		return writes, deletes, nil
 	}
 
 	// User the IDs of the group memberships and delete all related tuples
@@ -212,37 +178,23 @@ func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershi
 		// this happens after soft-delete, allow the request to pull the record
 		om, err := m.Client().GroupMembership.Get(ctx, id)
 		if err != nil {
-			return tuples, err
+			return writes, deletes, err
 		}
 
-		oldRelation, err := roleToRelation(oldRole)
+		d, err := getTupleKey(om.UserID, om.GroupID, "group", oldRole)
 		if err != nil {
-			return tuples, err
+			return writes, deletes, err
 		}
 
-		newRelation, err := roleToRelation(newRole)
+		deletes = append(deletes, d)
+
+		w, err := getTupleKey(om.UserID, om.GroupID, "group", newRole)
 		if err != nil {
-			return tuples, err
+			return writes, deletes, err
 		}
 
-		object := fmt.Sprintf("%s:%s", "group", om.GroupID)
-
-		m.Logger.Infow("deleting relationship tuples", "relation", oldRelation, "object", object)
-
-		tuples.Deletes = append(tuples.Deletes, openfga.TupleKeyWithoutCondition{
-			User:     fmt.Sprintf("user:%s", om.UserID),
-			Relation: oldRelation,
-			Object:   object,
-		})
-
-		m.Logger.Infow("creating relationship tuples", "relation", newRelation, "object", object)
-
-		tuples.Writes = append(tuples.Writes, ofgaclient.ClientTupleKey{
-			User:     fmt.Sprintf("user:%s", om.UserID),
-			Relation: newRelation,
-			Object:   object,
-		})
+		writes = append(writes, w)
 	}
 
-	return tuples, nil
+	return writes, deletes, nil
 }

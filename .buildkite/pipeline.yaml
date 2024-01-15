@@ -85,7 +85,7 @@ steps:
           download: "coverage.out"
           step: "go_test_sqlite"    
       - docker#v5.9.0:
-            image: "sonarsource/sonar-scanner-cli:4"
+            image: "sonarsource/sonar-scanner-cli:5"
             environment:
               - "SONAR_TOKEN"
               - "SONAR_HOST_URL=$SONAR_HOST"

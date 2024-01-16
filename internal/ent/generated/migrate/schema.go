@@ -481,7 +481,7 @@ var (
 		{Name: "session_token", Type: field.TypeString, Unique: true},
 		{Name: "issued_at", Type: field.TypeTime},
 		{Name: "expires_at", Type: field.TypeTime},
-		{Name: "organization_id", Type: field.TypeString},
+		{Name: "organization_id", Type: field.TypeString, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString},
 	}
 	// SessionsTable holds the schema information for the "sessions" table.

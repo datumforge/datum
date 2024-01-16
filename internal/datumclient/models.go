@@ -242,8 +242,8 @@ type CreateSessionInput struct {
 	IssuedAt     time.Time `json:"issuedAt"`
 	ExpiresAt    time.Time `json:"expiresAt"`
 	// organization ID of the organization the user is accessing
-	OrganizationID string `json:"organizationID"`
-	OwnerID        string `json:"ownerID"`
+	OrganizationID *string `json:"organizationID,omitempty"`
+	OwnerID        string  `json:"ownerID"`
 }
 
 // CreateUserInput is used for create User object.
@@ -2618,8 +2618,8 @@ type Session struct {
 	IssuedAt     time.Time `json:"issuedAt"`
 	ExpiresAt    time.Time `json:"expiresAt"`
 	// organization ID of the organization the user is accessing
-	OrganizationID string `json:"organizationID"`
-	Owner          User   `json:"owner"`
+	OrganizationID *string `json:"organizationID,omitempty"`
+	Owner          User    `json:"owner"`
 }
 
 func (Session) IsNode() {}
@@ -2771,6 +2771,8 @@ type SessionWhereInput struct {
 	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
 	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
 	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDIsNil        *bool    `json:"organizationIDIsNil,omitempty"`
+	OrganizationIDNotNil       *bool    `json:"organizationIDNotNil,omitempty"`
 	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
 	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 	// owner edge predicates
@@ -3035,8 +3037,9 @@ type UpdateSessionInput struct {
 	IssuedAt       *time.Time `json:"issuedAt,omitempty"`
 	ExpiresAt      *time.Time `json:"expiresAt,omitempty"`
 	// organization ID of the organization the user is accessing
-	OrganizationID *string `json:"organizationID,omitempty"`
-	OwnerID        *string `json:"ownerID,omitempty"`
+	OrganizationID      *string `json:"organizationID,omitempty"`
+	ClearOrganizationID *bool   `json:"clearOrganizationID,omitempty"`
+	OwnerID             *string `json:"ownerID,omitempty"`
 }
 
 // UpdateUserInput is used for update User object.

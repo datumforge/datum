@@ -7547,6 +7547,8 @@ type SessionWhereInput struct {
 	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
 	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
 	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDIsNil        bool     `json:"organizationIDIsNil,omitempty"`
+	OrganizationIDNotNil       bool     `json:"organizationIDNotNil,omitempty"`
 	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
 	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 
@@ -7913,6 +7915,12 @@ func (i *SessionWhereInput) P() (predicate.Session, error) {
 	}
 	if i.OrganizationIDHasSuffix != nil {
 		predicates = append(predicates, session.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
+	}
+	if i.OrganizationIDIsNil {
+		predicates = append(predicates, session.OrganizationIDIsNil())
+	}
+	if i.OrganizationIDNotNil {
+		predicates = append(predicates, session.OrganizationIDNotNil())
 	}
 	if i.OrganizationIDEqualFold != nil {
 		predicates = append(predicates, session.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))

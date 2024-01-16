@@ -239,7 +239,7 @@ input CreateSessionInput {
   issuedAt: Time!
   expiresAt: Time!
   """organization ID of the organization the user is accessing"""
-  organizationID: String!
+  organizationID: String
   ownerID: ID!
 }
 """
@@ -2700,7 +2700,7 @@ type Session implements Node {
   issuedAt: Time!
   expiresAt: Time!
   """organization ID of the organization the user is accessing"""
-  organizationID: String!
+  organizationID: String
   owner: User!
 }
 """A connection to a list of items."""
@@ -2832,6 +2832,8 @@ input SessionWhereInput {
   organizationIDContains: String
   organizationIDHasPrefix: String
   organizationIDHasSuffix: String
+  organizationIDIsNil: Boolean
+  organizationIDNotNil: Boolean
   organizationIDEqualFold: String
   organizationIDContainsFold: String
   """owner edge predicates"""
@@ -3107,6 +3109,7 @@ input UpdateSessionInput {
   expiresAt: Time
   """organization ID of the organization the user is accessing"""
   organizationID: String
+  clearOrganizationID: Boolean
   ownerID: ID
 }
 """

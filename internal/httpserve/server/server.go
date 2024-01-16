@@ -16,7 +16,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
-	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -74,12 +73,11 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 		echozap.ZapLogger(s.logger.Desugar()),        // add zap logger, middleware requires the "regular" zap logger
 		echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
-		cors.New(),                               // add cors middleware
-		mime.New(),                               // add mime middleware
-		cachecontrol.New(),                       // add cache control middleware
-		ratelimit.DefaultRateLimiter(),           // add ratelimit middleware
-		middleware.Secure(),                      // add XSS middleware
-		session.LoadAndSave(s.config.Handler.SM), // add session middleware
+		cors.New(),                     // add cors middleware
+		mime.New(),                     // add mime middleware
+		cachecontrol.New(),             // add cache control middleware
+		ratelimit.DefaultRateLimiter(), // add ratelimit middleware
+		middleware.Secure(),            // add XSS middleware
 	)
 
 	if srv.Debug {

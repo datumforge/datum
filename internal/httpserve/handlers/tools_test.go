@@ -24,7 +24,6 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/testutils"
 	"github.com/datumforge/datum/internal/tokens"
@@ -64,7 +63,6 @@ func setupEcho(sm *scs.SessionManager) *echo.Echo {
 	}
 
 	e.Use(transactionConfig.Middleware)
-	e.Use(session.LoadAndSave(sm))
 
 	return e
 }
@@ -78,7 +76,6 @@ func setupEchoAuth(sm *scs.SessionManager, entClient *ent.Client) *echo.Echo {
 	}
 
 	e.Use(transactionConfig.Middleware)
-	e.Use(session.LoadAndSave(sm))
 
 	return e
 }

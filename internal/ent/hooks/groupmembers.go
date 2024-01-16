@@ -63,7 +63,7 @@ func HookGroupMembersAuthz() ent.Hook {
 func groupMemberCreateHook(ctx context.Context, m *generated.GroupMembershipMutation) error {
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {
-		tuple, err := getGroupMemberTuple(ctx, m)
+		tuple, err := getGroupMemberTuple(m)
 		if err != nil {
 			return err
 		}
@@ -124,7 +124,7 @@ func groupMemberUpdateHook(ctx context.Context, m *generated.GroupMembershipMuta
 	return nil
 }
 
-func getGroupMemberTuple(ctx context.Context, m *generated.GroupMembershipMutation) (tuple fga.TupleKey, err error) {
+func getGroupMemberTuple(m *generated.GroupMembershipMutation) (tuple fga.TupleKey, err error) {
 	userID, _ := m.UserID()
 	groupID, _ := m.GroupID()
 	role, _ := m.Role()

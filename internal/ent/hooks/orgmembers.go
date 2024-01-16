@@ -94,7 +94,7 @@ func HookOrgMembersAuthz() ent.Hook {
 func orgMemberCreateHook(ctx context.Context, m *generated.OrgMembershipMutation) error {
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {
-		tuple, err := getOrgMemberTuple(ctx, m)
+		tuple, err := getOrgMemberTuple(m)
 		if err != nil {
 			return err
 		}
@@ -157,7 +157,7 @@ func orgMemberUpdateHook(ctx context.Context, m *generated.OrgMembershipMutation
 	return nil
 }
 
-func getOrgMemberTuple(ctx context.Context, m *generated.OrgMembershipMutation) (tuple fga.TupleKey, err error) {
+func getOrgMemberTuple(m *generated.OrgMembershipMutation) (tuple fga.TupleKey, err error) {
 	userID, _ := m.UserID()
 	orgID, _ := m.OrgID()
 	role, _ := m.Role()

@@ -141,8 +141,6 @@ func (User) Edges() []ent.Edge {
 			Required().
 			Unique().
 			Annotations(entx.CascadeAnnotationField("User")),
-		edge.To("sessions", Session.Type).
-			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("password_reset_tokens", PasswordResetToken.Type).

@@ -142,7 +142,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.16.0 // indirect
+	ariga.io/atlas v0.18.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/alexedwards/scs/v2 v2.7.0

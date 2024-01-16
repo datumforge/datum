@@ -204,24 +204,6 @@ type PersonalAccessTokenUpdatePayload struct {
 	PersonalAccessToken *generated.PersonalAccessToken `json:"personalAccessToken"`
 }
 
-// Return response for createSession mutation
-type SessionCreatePayload struct {
-	// Created session
-	Session *generated.Session `json:"session"`
-}
-
-// Return response for deleteSession mutation
-type SessionDeletePayload struct {
-	// Deleted session ID
-	DeletedID string `json:"deletedID"`
-}
-
-// Return response for updateSession mutation
-type SessionUpdatePayload struct {
-	// Updated session
-	Session *generated.Session `json:"session"`
-}
-
 // Return response for createUser mutation
 type UserCreatePayload struct {
 	// Created user

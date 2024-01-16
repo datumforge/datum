@@ -19,7 +19,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/schema"
@@ -592,35 +591,6 @@ func init() {
 	personalaccesstokenDescID := personalaccesstokenMixinFields2[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
-	sessionMixin := schema.Session{}.Mixin()
-	sessionMixinHooks0 := sessionMixin[0].Hooks()
-	sessionHooks := schema.Session{}.Hooks()
-	session.Hooks[0] = sessionMixinHooks0[0]
-	session.Hooks[1] = sessionHooks[0]
-	sessionMixinFields0 := sessionMixin[0].Fields()
-	_ = sessionMixinFields0
-	sessionMixinFields1 := sessionMixin[1].Fields()
-	_ = sessionMixinFields1
-	sessionFields := schema.Session{}.Fields()
-	_ = sessionFields
-	// sessionDescCreatedAt is the schema descriptor for created_at field.
-	sessionDescCreatedAt := sessionMixinFields0[0].Descriptor()
-	// session.DefaultCreatedAt holds the default value on creation for the created_at field.
-	session.DefaultCreatedAt = sessionDescCreatedAt.Default.(func() time.Time)
-	// sessionDescUpdatedAt is the schema descriptor for updated_at field.
-	sessionDescUpdatedAt := sessionMixinFields0[1].Descriptor()
-	// session.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	session.DefaultUpdatedAt = sessionDescUpdatedAt.Default.(func() time.Time)
-	// session.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	session.UpdateDefaultUpdatedAt = sessionDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// sessionDescIssuedAt is the schema descriptor for issued_at field.
-	sessionDescIssuedAt := sessionFields[1].Descriptor()
-	// session.UpdateDefaultIssuedAt holds the default value on update for the issued_at field.
-	session.UpdateDefaultIssuedAt = sessionDescIssuedAt.UpdateDefault.(func() time.Time)
-	// sessionDescID is the schema descriptor for id field.
-	sessionDescID := sessionMixinFields1[0].Descriptor()
-	// session.DefaultID holds the default value on creation for the id field.
-	session.DefaultID = sessionDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -13,6 +13,5 @@ type Config struct {
 	AccessDuration  time.Duration     `split_words:"true" default:"1h"`                                          // $DATUM_TOKEN_ACCESS_DURATION
 	RefreshDuration time.Duration     `split_words:"true" default:"2h"`                                          // $DATUM_TOKEN_REFRESH_DURATION
 	RefreshOverlap  time.Duration     `split_words:"true" default:"-15m"`                                        // $DATUM_TOKEN_REFRESH_OVERLAP
-	CookieDomain    string            `default:"datum.net"`                                                      // $DATUM_TOKEN_COOKIE_DOMAIN
 	JWKSEndpoint    string            `split_words:"true" default:"https://api.datum.net/.well-known/jwks.json"` // $DATUM_TOKEN_JWKS_ENDPOINT
 }

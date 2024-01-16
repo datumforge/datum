@@ -108,7 +108,6 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	// pass to the REST handlers
 	s.config.Handler.JWTKeys = keys
 	s.config.Handler.TM = tm
-	s.config.Handler.CookieDomain = s.config.Token.CookieDomain
 
 	// Add base routes to the server
 	if err := route.RegisterRoutes(srv, &s.config.Handler); err != nil {

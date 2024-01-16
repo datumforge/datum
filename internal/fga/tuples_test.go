@@ -116,6 +116,241 @@ func Test_ParseEntity(t *testing.T) {
 	}
 }
 
+func Test_tupleKeyToWriteRequest(t *testing.T) {
+	testCases := []struct {
+		name             string
+		writes           []TupleKey
+		expectedUser     string
+		expectedRelation string
+		expectedObject   string
+		expectedCount    int
+	}{
+		{
+			name: "happy path, user",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "user",
+						Identifier: "THEBESTUSER",
+					},
+					Relation: "member",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+			},
+			expectedUser:     "user:THEBESTUSER",
+			expectedRelation: "member",
+			expectedObject:   "organization:IDOFTHEORG",
+			expectedCount:    1,
+		},
+		{
+			name: "happy path, group",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "group",
+						Identifier: "ADATUMGROUP",
+					},
+					Relation: "parent",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+						Relation:   "member",
+					},
+				},
+			},
+			expectedUser:     "group:ADATUMGROUP",
+			expectedRelation: "parent",
+			expectedObject:   "organization:IDOFTHEORG#member",
+			expectedCount:    1,
+		},
+		{
+			name: "happy path, multiple",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "user",
+						Identifier: "SITB",
+					},
+					Relation: "member",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+				{
+					Subject: Entity{
+						Kind:       "user",
+						Identifier: "MITB",
+					},
+					Relation: "admin",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+			},
+			expectedCount: 2,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			ctk := tupleKeyToWriteRequest(tc.writes)
+			assert.NotEmpty(t, ctk)
+			if tc.expectedCount == 1 {
+				assert.Equal(t, tc.expectedUser, ctk[0].User)
+				assert.Equal(t, tc.expectedRelation, ctk[0].Relation)
+				assert.Equal(t, tc.expectedObject, ctk[0].Object)
+			} else {
+				assert.Len(t, ctk, tc.expectedCount)
+			}
+		})
+	}
+}
+
+func Test_tupleKeyToDeleteRequest(t *testing.T) {
+	testCases := []struct {
+		name             string
+		writes           []TupleKey
+		expectedUser     string
+		expectedRelation string
+		expectedObject   string
+		expectedCount    int
+	}{
+		{
+			name: "happy path, user",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "user",
+						Identifier: "THEBESTUSER",
+					},
+					Relation: "member",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+			},
+			expectedUser:     "user:THEBESTUSER",
+			expectedRelation: "member",
+			expectedObject:   "organization:IDOFTHEORG",
+			expectedCount:    1,
+		},
+		{
+			name: "happy path, group",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "group",
+						Identifier: "ADATUMGROUP",
+					},
+					Relation: "parent",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+						Relation:   "member",
+					},
+				},
+			},
+			expectedUser:     "group:ADATUMGROUP",
+			expectedRelation: "parent",
+			expectedObject:   "organization:IDOFTHEORG#member",
+			expectedCount:    1,
+		},
+		{
+			name: "happy path, multiple",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "user",
+						Identifier: "SITB",
+					},
+					Relation: "member",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+				{
+					Subject: Entity{
+						Kind:       "user",
+						Identifier: "MITB",
+					},
+					Relation: "admin",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+			},
+			expectedCount: 2,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			ctk := tupleKeyToDeleteRequest(tc.writes)
+			assert.NotEmpty(t, ctk)
+			if tc.expectedCount == 1 {
+				assert.Equal(t, tc.expectedUser, ctk[0].User)
+				assert.Equal(t, tc.expectedRelation, ctk[0].Relation)
+				assert.Equal(t, tc.expectedObject, ctk[0].Object)
+			} else {
+				assert.Len(t, ctk, tc.expectedCount)
+			}
+		})
+	}
+}
+
+func Test_WriteTupleKeys(t *testing.T) {
+	// setup mock controller
+	mockCtrl := gomock.NewController(t)
+	c := mock_client.NewMockSdkClient(mockCtrl)
+
+	fc, err := NewTestFGAClient(t, mockCtrl, c)
+	if err != nil {
+		t.Fatal()
+	}
+
+	testCases := []struct {
+		name    string
+		writes  []TupleKey
+		deletes []TupleKey
+		errRes  error
+	}{
+		{
+			name: "happy path with relation",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "user",
+						Identifier: "THEBESTUSER",
+					},
+					Relation: "member",
+					Object: Entity{
+						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+			},
+			errRes: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mockWriteAny(mockCtrl, c, context.Background(), tc.errRes)
+
+			_, err := fc.WriteTupleKeys(context.Background(), tc.writes, tc.deletes)
+			assert.NoError(t, err)
+		})
+	}
+}
+
 func Test_DeleteRelationshipTuple(t *testing.T) {
 	// setup mock controller
 	mockCtrl := gomock.NewController(t)
@@ -227,4 +462,51 @@ func mockDeleteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient,
 	mockBody.EXPECT().Body(tuples).Return(mockRequest)
 
 	c.EXPECT().DeleteTuples(ctx).Return(mockBody)
+}
+
+// mockWriteAny creates mock responses based on the mock FGA client
+func mockWriteAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
+	mockExecute := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
+
+	if errMsg == nil {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
+				{
+					Status: ofgaclient.SUCCESS,
+				},
+			},
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
+				{
+					Status: ofgaclient.SUCCESS,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
+	} else {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
+	}
+
+	mockRequest := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
+
+	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
+
+	mockBody := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
+
+	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
+
+	c.EXPECT().Write(gomock.Any()).Return(mockBody)
 }

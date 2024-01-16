@@ -3,10 +3,11 @@ package hooks
 import (
 	"testing"
 
-	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/fga"
 )
 
 func Test_getTupleKey(t *testing.T) {

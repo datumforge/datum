@@ -111,7 +111,7 @@ func TestRegisterHandler(t *testing.T) {
 			mock.ResetEmailMock()
 
 			// create echo context with middleware
-			e := setupEchoAuth(h.SM, entClient)
+			e := setupEchoAuth(entClient)
 
 			// setup mock authz writes
 			if tc.expectedErrMessage == "" {

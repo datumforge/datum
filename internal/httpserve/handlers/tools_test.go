@@ -12,7 +12,6 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/alexedwards/scs/v2"
 	echo "github.com/datumforge/echox"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"go.uber.org/mock/gomock"
@@ -54,7 +53,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func setupEcho(sm *scs.SessionManager) *echo.Echo {
+func setupEcho() *echo.Echo {
 	// create echo context with middleware
 	e := echo.New()
 	transactionConfig := transaction.Client{
@@ -67,7 +66,7 @@ func setupEcho(sm *scs.SessionManager) *echo.Echo {
 	return e
 }
 
-func setupEchoAuth(sm *scs.SessionManager, entClient *ent.Client) *echo.Echo {
+func setupEchoAuth(entClient *ent.Client) *echo.Echo {
 	// create echo context with middleware
 	e := echo.New()
 	transactionConfig := transaction.Client{
@@ -87,14 +86,11 @@ func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
 		t.Fatal("error creating token manager")
 	}
 
-	sm := scs.New()
-
 	h := &handlers.Handler{
 		TM:           tm,
 		DBClient:     ent,
 		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
 		CookieDomain: "datum.net",
-		SM:           sm,
 	}
 
 	if err := h.NewTestEmailManager(); err != nil {

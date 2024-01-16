@@ -111,7 +111,7 @@ func TestLoginHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := setupEcho(h.SM)
+			e := setupEcho()
 			e.POST("login", h.LoginHandler)
 
 			loginJSON := handlers.LoginRequest{

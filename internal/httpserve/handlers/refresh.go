@@ -29,10 +29,6 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(newMissingRequiredFieldError("refresh_token")))
 	}
 
-	if err := h.SM.RenewToken(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
-
 	// verify the refresh token
 	claims, err := h.TM.Verify(r.RefreshToken)
 	if err != nil {
@@ -73,8 +69,6 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
-
-	h.SM.Put(ctx.Request().Context(), "userID", user.ID)
 
 	return ctx.JSON(http.StatusOK, Response{Message: "success"})
 }

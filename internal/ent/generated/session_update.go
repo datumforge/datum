@@ -105,6 +105,12 @@ func (su *SessionUpdate) SetNillableOrganizationID(s *string) *SessionUpdate {
 	return su
 }
 
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (su *SessionUpdate) ClearOrganizationID() *SessionUpdate {
+	su.mutation.ClearOrganizationID()
+	return su
+}
+
 // SetOwner sets the "owner" edge to the User entity.
 func (su *SessionUpdate) SetOwner(u *User) *SessionUpdate {
 	return su.SetOwnerID(u.ID)
@@ -210,6 +216,9 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.OrganizationID(); ok {
 		_spec.SetField(session.FieldOrganizationID, field.TypeString, value)
+	}
+	if su.mutation.OrganizationIDCleared() {
+		_spec.ClearField(session.FieldOrganizationID, field.TypeString)
 	}
 	if su.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -335,6 +344,12 @@ func (suo *SessionUpdateOne) SetNillableOrganizationID(s *string) *SessionUpdate
 	if s != nil {
 		suo.SetOrganizationID(*s)
 	}
+	return suo
+}
+
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (suo *SessionUpdateOne) ClearOrganizationID() *SessionUpdateOne {
+	suo.mutation.ClearOrganizationID()
 	return suo
 }
 
@@ -473,6 +488,9 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 	}
 	if value, ok := suo.mutation.OrganizationID(); ok {
 		_spec.SetField(session.FieldOrganizationID, field.TypeString, value)
+	}
+	if suo.mutation.OrganizationIDCleared() {
+		_spec.ClearField(session.FieldOrganizationID, field.TypeString)
 	}
 	if suo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

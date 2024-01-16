@@ -4385,7 +4385,7 @@ input CreateSessionInput {
   issuedAt: Time!
   expiresAt: Time!
   """organization ID of the organization the user is accessing"""
-  organizationID: String!
+  organizationID: String
   ownerID: ID!
 }
 """
@@ -6846,7 +6846,7 @@ type Session implements Node {
   issuedAt: Time!
   expiresAt: Time!
   """organization ID of the organization the user is accessing"""
-  organizationID: String!
+  organizationID: String
   owner: User!
 }
 """A connection to a list of items."""
@@ -6978,6 +6978,8 @@ input SessionWhereInput {
   organizationIDContains: String
   organizationIDHasPrefix: String
   organizationIDHasSuffix: String
+  organizationIDIsNil: Boolean
+  organizationIDNotNil: Boolean
   organizationIDEqualFold: String
   organizationIDContainsFold: String
   """owner edge predicates"""
@@ -7253,6 +7255,7 @@ input UpdateSessionInput {
   expiresAt: Time
   """organization ID of the organization the user is accessing"""
   organizationID: String
+  clearOrganizationID: Boolean
   ownerID: ID
 }
 """
@@ -28819,14 +28822,11 @@ func (ec *executionContext) _Session_organizationID(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Session_organizationID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -35180,7 +35180,7 @@ func (ec *executionContext) unmarshalInputCreateSessionInput(ctx context.Context
 			it.ExpiresAt = data
 		case "organizationID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -45808,7 +45808,7 @@ func (ec *executionContext) unmarshalInputSessionWhereInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "sessionToken", "sessionTokenNEQ", "sessionTokenIn", "sessionTokenNotIn", "sessionTokenGT", "sessionTokenGTE", "sessionTokenLT", "sessionTokenLTE", "sessionTokenContains", "sessionTokenHasPrefix", "sessionTokenHasSuffix", "sessionTokenEqualFold", "sessionTokenContainsFold", "issuedAt", "issuedAtNEQ", "issuedAtIn", "issuedAtNotIn", "issuedAtGT", "issuedAtGTE", "issuedAtLT", "issuedAtLTE", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "organizationID", "organizationIDNEQ", "organizationIDIn", "organizationIDNotIn", "organizationIDGT", "organizationIDGTE", "organizationIDLT", "organizationIDLTE", "organizationIDContains", "organizationIDHasPrefix", "organizationIDHasSuffix", "organizationIDEqualFold", "organizationIDContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "sessionToken", "sessionTokenNEQ", "sessionTokenIn", "sessionTokenNotIn", "sessionTokenGT", "sessionTokenGTE", "sessionTokenLT", "sessionTokenLTE", "sessionTokenContains", "sessionTokenHasPrefix", "sessionTokenHasSuffix", "sessionTokenEqualFold", "sessionTokenContainsFold", "issuedAt", "issuedAtNEQ", "issuedAtIn", "issuedAtNotIn", "issuedAtGT", "issuedAtGTE", "issuedAtLT", "issuedAtLTE", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "organizationID", "organizationIDNEQ", "organizationIDIn", "organizationIDNotIn", "organizationIDGT", "organizationIDGTE", "organizationIDLT", "organizationIDLTE", "organizationIDContains", "organizationIDHasPrefix", "organizationIDHasSuffix", "organizationIDIsNil", "organizationIDNotNil", "organizationIDEqualFold", "organizationIDContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46508,6 +46508,20 @@ func (ec *executionContext) unmarshalInputSessionWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.OrganizationIDHasSuffix = data
+		case "organizationIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDIsNil = data
+		case "organizationIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNotNil = data
 		case "organizationIDEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -47885,7 +47899,7 @@ func (ec *executionContext) unmarshalInputUpdateSessionInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "issuedAt", "expiresAt", "organizationID", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "issuedAt", "expiresAt", "organizationID", "clearOrganizationID", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47934,6 +47948,13 @@ func (ec *executionContext) unmarshalInputUpdateSessionInput(ctx context.Context
 				return it, err
 			}
 			it.OrganizationID = data
+		case "clearOrganizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOrganizationID"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearOrganizationID = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -56036,9 +56057,6 @@ func (ec *executionContext) _Session(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "organizationID":
 			out.Values[i] = ec._Session_organizationID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "owner":
 			field := field
 

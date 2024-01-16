@@ -5929,7 +5929,6 @@
                   "session_token",
                   "issued_at",
                   "expires_at",
-                  "organization_id",
                   "owner"
                 ]
               }
@@ -13100,7 +13099,6 @@
           "session_token",
           "issued_at",
           "expires_at",
-          "organization_id",
           "owner"
         ]
       },
@@ -13149,8 +13147,7 @@
           "owner_id",
           "session_token",
           "issued_at",
-          "expires_at",
-          "organization_id"
+          "expires_at"
         ]
       },
       "SessionList": {
@@ -13198,8 +13195,7 @@
           "owner_id",
           "session_token",
           "issued_at",
-          "expires_at",
-          "organization_id"
+          "expires_at"
         ]
       },
       "SessionRead": {
@@ -13247,8 +13243,7 @@
           "owner_id",
           "session_token",
           "issued_at",
-          "expires_at",
-          "organization_id"
+          "expires_at"
         ]
       },
       "SessionUpdate": {
@@ -13296,8 +13291,7 @@
           "owner_id",
           "session_token",
           "issued_at",
-          "expires_at",
-          "organization_id"
+          "expires_at"
         ]
       },
       "Session_OwnerRead": {
@@ -14635,8 +14629,7 @@
           "owner_id",
           "session_token",
           "issued_at",
-          "expires_at",
-          "organization_id"
+          "expires_at"
         ]
       },
       "User_SettingRead": {

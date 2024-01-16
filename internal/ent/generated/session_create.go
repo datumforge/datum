@@ -107,6 +107,14 @@ func (sc *SessionCreate) SetOrganizationID(s string) *SessionCreate {
 	return sc
 }
 
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (sc *SessionCreate) SetNillableOrganizationID(s *string) *SessionCreate {
+	if s != nil {
+		sc.SetOrganizationID(*s)
+	}
+	return sc
+}
+
 // SetID sets the "id" field.
 func (sc *SessionCreate) SetID(s string) *SessionCreate {
 	sc.mutation.SetID(s)
@@ -206,9 +214,6 @@ func (sc *SessionCreate) check() error {
 	}
 	if _, ok := sc.mutation.ExpiresAt(); !ok {
 		return &ValidationError{Name: "expires_at", err: errors.New(`generated: missing required field "Session.expires_at"`)}
-	}
-	if _, ok := sc.mutation.OrganizationID(); !ok {
-		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "Session.organization_id"`)}
 	}
 	if _, ok := sc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Session.owner"`)}

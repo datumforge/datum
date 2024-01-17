@@ -89,13 +89,12 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 		if exists && orgexists {
 			m.Logger.Infow("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
 
-			orgTuples, err := createOrgTuple(ctx, &m.Authz, org, fga.ParentRelation, object)
-
+			orgTuple, err := getTupleKey(org, "organization", objID, objType, fga.ParentRelation)
 			if err != nil {
 				return err
 			}
 
-			if _, err := m.Authz.CreateRelationshipTuple(ctx, orgTuples); err != nil {
+			if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{orgTuple}, nil); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 				return ErrInternalServerError

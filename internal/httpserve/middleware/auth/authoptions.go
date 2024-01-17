@@ -16,7 +16,6 @@ const (
 	DefaultAudience           = "http://localhost:17608"
 	DefaultIssuer             = "http://localhost:17608"
 	DefaultMinRefreshInterval = 5 * time.Minute
-	DefaultCookieDomain       = "localhost:17608"
 	AccessTokenCookie         = "access_token"
 	RefreshTokenCookie        = "refresh_token"
 )
@@ -39,8 +38,6 @@ type AuthOptions struct {
 	Issuer string
 	// MinRefreshInterval to cache the JWKS public keys
 	MinRefreshInterval time.Duration
-	// CookieDomain to use for auth cookies
-	CookieDomain string
 	// Context to control the lifecycle of the background fetch routine
 	Context context.Context
 
@@ -155,13 +152,6 @@ func WithAudience(audience string) AuthOption {
 func WithIssuer(issuer string) AuthOption {
 	return func(opts *AuthOptions) {
 		opts.Issuer = issuer
-	}
-}
-
-// WithCookieDomain allows the user to specify an alternative cookie domain.
-func WithCookieDomain(domain string) AuthOption {
-	return func(opts *AuthOptions) {
-		opts.CookieDomain = domain
 	}
 }
 

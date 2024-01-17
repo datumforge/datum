@@ -40,7 +40,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 
 	// set cookies on request with the access and refresh token
 	// when cookie domain is localhost, this is dropped but expected
-	if err := auth.SetAuthCookies(ctx, access, refresh, h.CookieDomain); err != nil {
+	if err := auth.SetAuthCookies(ctx, access, refresh); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 

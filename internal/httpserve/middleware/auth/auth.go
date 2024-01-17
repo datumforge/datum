@@ -97,7 +97,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 		}
 
 		// Set the new access and refresh cookies
-		if err = SetAuthCookies(c, reply.AccessToken, reply.RefreshToken, conf.CookieDomain); err != nil {
+		if err = SetAuthCookies(c, reply.AccessToken, reply.RefreshToken); err != nil {
 			return "", err
 		}
 
@@ -193,7 +193,7 @@ func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
 // access token expires. The refresh token cookie is not an http only cookie (it can be
 // accessed by client-side scripts) and it expires when the refresh token expires. Both
 // cookies require https and will not be set (silently) over http connections.
-func SetAuthCookies(c echo.Context, accessToken, refreshToken, domain string) error {
+func SetAuthCookies(c echo.Context, accessToken, refreshToken string) error {
 	// Parse access token to get expiration time
 	accessExpires, err := tokens.ExpiresAt(accessToken)
 	if err != nil {
@@ -206,7 +206,7 @@ func SetAuthCookies(c echo.Context, accessToken, refreshToken, domain string) er
 		Name:     AccessTokenCookie,
 		Value:    accessToken,
 		MaxAge:   accessMaxAge,
-		Domain:   domain,
+		Domain:   "",
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
@@ -225,7 +225,7 @@ func SetAuthCookies(c echo.Context, accessToken, refreshToken, domain string) er
 		Name:     RefreshTokenCookie,
 		Value:    refreshToken,
 		MaxAge:   refreshMaxAge,
-		Domain:   domain,
+		Domain:   "",
 		Path:     "/",
 		HttpOnly: false,
 		Secure:   true,
@@ -238,12 +238,12 @@ func SetAuthCookies(c echo.Context, accessToken, refreshToken, domain string) er
 
 // ClearAuthCookies is a helper function to clear authentication cookies on a echo
 // request to effectively logger out a user.
-func ClearAuthCookies(c echo.Context, domain string) {
+func ClearAuthCookies(c echo.Context) {
 	cookie := &http.Cookie{
 		Name:     AccessTokenCookie,
 		Value:    "",
 		MaxAge:   -1,
-		Domain:   domain,
+		Domain:   "",
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
@@ -254,7 +254,7 @@ func ClearAuthCookies(c echo.Context, domain string) {
 		Name:     RefreshTokenCookie,
 		Value:    "",
 		MaxAge:   -1,
-		Domain:   domain,
+		Domain:   "",
 		Path:     "/",
 		HttpOnly: false,
 		Secure:   true,

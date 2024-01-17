@@ -208,8 +208,6 @@ func TestGetRefreshToken(t *testing.T) {
 }
 
 func TestSetAuthCookies(t *testing.T) {
-	domain := "foobar.example.net"
-
 	validCtx, err := auth.NewTestContextWithValidUser("funks")
 	if err != nil {
 		t.Fatal()
@@ -254,7 +252,7 @@ func TestSetAuthCookies(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			err := auth.SetAuthCookies(tc.ctx, tc.accessToken, tc.refreshToken, domain)
+			err := auth.SetAuthCookies(tc.ctx, tc.accessToken, tc.refreshToken)
 			if tc.wantErr {
 				assert.Error(t, err)
 				assert.ErrorContains(t, err, tc.err.Error())
@@ -262,15 +260,12 @@ func TestSetAuthCookies(t *testing.T) {
 				return
 			}
 
-			// TODO: verify cookie is actually set somehow?
 			require.NoError(t, err)
 		})
 	}
 }
 
 func TestClearAuthCookies(t *testing.T) {
-	domain := "foobar.example.net"
-
 	validCtx, err := auth.NewTestContextWithValidUser("funks")
 	if err != nil {
 		t.Fatal()
@@ -292,8 +287,7 @@ func TestClearAuthCookies(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			// TODO: verify cookie is actually unset somehow?
-			auth.ClearAuthCookies(tc.ctx, domain)
+			auth.ClearAuthCookies(tc.ctx)
 		})
 	}
 }

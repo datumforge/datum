@@ -1,10 +1,16 @@
 package keygen
 
 import (
+	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -81,4 +87,51 @@ func CryptoRandInt() uint64 {
 	}
 
 	return binary.BigEndian.Uint64(buf)
+}
+
+// HashFromBytes returns a SHA-256 checksum of the input
+func HashFromBytes(value []byte) string {
+	sum := sha256.Sum256(value)
+	return fmt.Sprintf("%x", sum)
+}
+
+// Hash returns a SHA-256 checksum of a string
+func Hash(value string) string {
+	return HashFromBytes([]byte(value))
+}
+
+// GenerateRandomBytes returns random bytes
+func GenerateRandomBytes(size int) []byte {
+	b := make([]byte, size)
+	if _, err := rand.Read(b); err != nil {
+		panic(err)
+	}
+
+	return b
+}
+
+// GenerateRandomString returns a random string
+func GenerateRandomString(size int) string {
+	return base64.URLEncoding.EncodeToString(GenerateRandomBytes(size))
+}
+
+// GenerateRandomStringHex returns a random hexadecimal string
+func GenerateRandomStringHex(size int) string {
+	return hex.EncodeToString(GenerateRandomBytes(size))
+}
+
+// HashInput function takes an input and generates a bcrypt hash
+func HashInput(input string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(input), bcrypt.DefaultCost)
+
+	return string(bytes), err
+}
+
+// GenerateSHA256Hmac generates a SHA-256 HMAC by using the secret as the key and
+// the data as the message
+func GenerateSHA256Hmac(secret string, data []byte) string {
+	h := hmac.New(sha256.New, []byte(secret))
+	h.Write(data)
+
+	return hex.EncodeToString(h.Sum(nil))
 }

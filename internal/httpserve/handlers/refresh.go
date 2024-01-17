@@ -68,7 +68,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 
 	// set cookies on request with the access and refresh token
 	// when cookie domain is localhost, this is dropped but expected
-	if err := auth.SetAuthCookies(ctx, accessToken, refreshToken, h.CookieDomain); err != nil {
+	if err := auth.SetAuthCookies(ctx, accessToken, refreshToken); err != nil {
 		h.Logger.Errorw("error setting cookies", "error", err)
 
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))

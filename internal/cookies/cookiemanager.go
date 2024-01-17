@@ -79,7 +79,6 @@ func NewCookie(config CookieConfig, value string) *http.Cookie {
 
 // expiresTime converts a maxAge time in seconds to a time.Time in the future
 // ref http://golang.org/src/net/http/cookie.go?s=618:801#L23
-
 func expiresTime(maxAge int) (time.Time, bool) {
 	if maxAge > 0 {
 		d := time.Duration(maxAge) * time.Second

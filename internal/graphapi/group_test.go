@@ -468,9 +468,9 @@ func TestMutation_CreateGroup(t *testing.T) {
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
 				// write for group admin
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				// write for parent org relation
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
@@ -614,8 +614,8 @@ func TestMutation_UpdateGroup(t *testing.T) {
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 
 	// write tuples for org and group
-	mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
-	mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 	group := (&GroupBuilder{}).MustNewWithRelations(reqCtx, authClient.entDB)
 
 	testUser1 := (&UserBuilder{}).MustNew(reqCtx)
@@ -715,7 +715,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 			}
 
 			if tc.updateInput.AddGroupMembers != nil {
-				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 			}
 
 			if tc.updateInput.UpdateGroupSettings != nil {

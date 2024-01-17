@@ -877,7 +877,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 
-				mockDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 			}
 
 			// delete user

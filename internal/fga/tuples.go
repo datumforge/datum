@@ -91,11 +91,45 @@ func ParseEntity(s string) (Entity, error) {
 	}, nil
 }
 
-// WriteTuples takes a ClientWriteRequest, which can contain up to 10 writes and deletes, and executes in a single transaction
-func (c *Client) WriteTuples(ctx context.Context, tuples ofgaclient.ClientWriteRequest) (*ofgaclient.ClientWriteResponse, error) {
+// tupleKeyToWriteRequest converts a TupleKey to a ClientTupleKey to send to FGA
+func tupleKeyToWriteRequest(writes []TupleKey) (w []ofgaclient.ClientTupleKey) {
+	for _, k := range writes {
+		ctk := ofgaclient.ClientTupleKey{}
+		ctk.SetObject(k.Object.String())
+		ctk.SetUser(k.Subject.String())
+		ctk.SetRelation(string(k.Relation))
+
+		w = append(w, ctk)
+	}
+
+	return
+}
+
+// tupleKeyToDeleteRequest converts a TupleKey to a TupleKeyWithoutCondition to send to FGA
+func tupleKeyToDeleteRequest(deletes []TupleKey) (d []openfga.TupleKeyWithoutCondition) {
+	for _, k := range deletes {
+		ctk := openfga.TupleKeyWithoutCondition{}
+		ctk.SetObject(k.Object.String())
+		ctk.SetUser(k.Subject.String())
+		ctk.SetRelation(string(k.Relation))
+
+		d = append(d, ctk)
+	}
+
+	return
+}
+
+// WriteTupleKeys takes a tuples keys, converts them to a client write request, which can contain up to 10 writes and deletes,
+// and executes in a single transaction
+func (c *Client) WriteTupleKeys(ctx context.Context, writes []TupleKey, deletes []TupleKey) (*ofgaclient.ClientWriteResponse, error) {
 	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(c.Config.AuthorizationModelId)}
 
-	resp, err := c.Ofga.Write(ctx).Body(tuples).Options(opts).Execute()
+	body := ofgaclient.ClientWriteRequest{
+		Writes:  tupleKeyToWriteRequest(writes),
+		Deletes: tupleKeyToDeleteRequest(deletes),
+	}
+
+	resp, err := c.Ofga.Write(ctx).Body(body).Options(opts).Execute()
 	if err != nil {
 		c.Logger.Infow("error writing relationship tuples", "error", err.Error(), "user", resp.Writes)
 
@@ -115,32 +149,6 @@ func (c *Client) WriteTuples(ctx context.Context, tuples ofgaclient.ClientWriteR
 			c.Logger.Errorw("error deleting relationship tuples", "user", deletes.TupleKey.User, "relation", deletes.TupleKey.Relation, "object", deletes.TupleKey.Object)
 
 			return resp, newWritingTuplesError(deletes.TupleKey.User, deletes.TupleKey.Relation, deletes.TupleKey.Object, "writing", err)
-		}
-	}
-
-	return resp, nil
-}
-
-// CreateRelationshipTuple creates a relationship tuple in the openFGA store
-func (c *Client) CreateRelationshipTuple(ctx context.Context, tuples []ofgaclient.ClientTupleKey) (*ofgaclient.ClientWriteResponse, error) {
-	if len(tuples) == 0 {
-		return nil, nil
-	}
-
-	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(c.Config.AuthorizationModelId)}
-
-	resp, err := c.Ofga.WriteTuples(ctx).Body(tuples).Options(opts).Execute()
-	if err != nil {
-		c.Logger.Infow("error creating relationship tuples", "error", err.Error(), "user", resp.Writes)
-
-		return resp, err
-	}
-
-	for _, writes := range resp.Writes {
-		if writes.Error != nil {
-			c.Logger.Errorw("error deleting relationship tuples", "user", writes.TupleKey.User, "relation", writes.TupleKey.Relation, "object", writes.TupleKey.Object)
-
-			return resp, newWritingTuplesError(writes.TupleKey.User, writes.TupleKey.Relation, writes.TupleKey.Object, "writing", err)
 		}
 	}
 

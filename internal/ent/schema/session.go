@@ -29,6 +29,7 @@ func (Session) Fields() []ent.Field {
 			UpdateDefault(time.Now),
 		field.Time("expires_at"),
 		field.String("organization_id").
+			Optional().
 			Comment("organization ID of the organization the user is accessing"),
 	}
 }

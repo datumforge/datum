@@ -15678,9 +15678,22 @@ func (m *SessionMutation) OldOrganizationID(ctx context.Context) (v string, err 
 	return oldValue.OrganizationID, nil
 }
 
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (m *SessionMutation) ClearOrganizationID() {
+	m.organization_id = nil
+	m.clearedFields[session.FieldOrganizationID] = struct{}{}
+}
+
+// OrganizationIDCleared returns if the "organization_id" field was cleared in this mutation.
+func (m *SessionMutation) OrganizationIDCleared() bool {
+	_, ok := m.clearedFields[session.FieldOrganizationID]
+	return ok
+}
+
 // ResetOrganizationID resets all changes to the "organization_id" field.
 func (m *SessionMutation) ResetOrganizationID() {
 	m.organization_id = nil
+	delete(m.clearedFields, session.FieldOrganizationID)
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
@@ -15933,6 +15946,9 @@ func (m *SessionMutation) ClearedFields() []string {
 	if m.FieldCleared(session.FieldUpdatedBy) {
 		fields = append(fields, session.FieldUpdatedBy)
 	}
+	if m.FieldCleared(session.FieldOrganizationID) {
+		fields = append(fields, session.FieldOrganizationID)
+	}
 	return fields
 }
 
@@ -15952,6 +15968,9 @@ func (m *SessionMutation) ClearField(name string) error {
 		return nil
 	case session.FieldUpdatedBy:
 		m.ClearUpdatedBy()
+		return nil
+	case session.FieldOrganizationID:
+		m.ClearOrganizationID()
 		return nil
 	}
 	return fmt.Errorf("unknown Session nullable field %s", name)

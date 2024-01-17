@@ -19,6 +19,11 @@ func HookSession() ent.Hook {
 				mutation.SetExpiresAt(time.Now().Add(time.Hour * 24 * 7)) // nolint: gomnd
 			}
 
+			issued, _ := mutation.IssuedAt()
+			if issued.IsZero() {
+				mutation.SetIssuedAt(time.Now())
+			}
+
 			return next.Mutate(ctx, mutation)
 		})
 	}, ent.OpCreate)

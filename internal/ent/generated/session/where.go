@@ -607,6 +607,16 @@ func OrganizationIDHasSuffix(v string) predicate.Session {
 	return predicate.Session(sql.FieldHasSuffix(FieldOrganizationID, v))
 }
 
+// OrganizationIDIsNil applies the IsNil predicate on the "organization_id" field.
+func OrganizationIDIsNil() predicate.Session {
+	return predicate.Session(sql.FieldIsNull(FieldOrganizationID))
+}
+
+// OrganizationIDNotNil applies the NotNil predicate on the "organization_id" field.
+func OrganizationIDNotNil() predicate.Session {
+	return predicate.Session(sql.FieldNotNull(FieldOrganizationID))
+}
+
 // OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
 func OrganizationIDEqualFold(v string) predicate.Session {
 	return predicate.Session(sql.FieldEqualFold(FieldOrganizationID, v))

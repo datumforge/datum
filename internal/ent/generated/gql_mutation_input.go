@@ -1440,7 +1440,7 @@ type CreateSessionInput struct {
 	SessionToken   string
 	IssuedAt       time.Time
 	ExpiresAt      time.Time
-	OrganizationID string
+	OrganizationID *string
 	OwnerID        string
 }
 
@@ -1461,7 +1461,9 @@ func (i *CreateSessionInput) Mutate(m *SessionMutation) {
 	m.SetSessionToken(i.SessionToken)
 	m.SetIssuedAt(i.IssuedAt)
 	m.SetExpiresAt(i.ExpiresAt)
-	m.SetOrganizationID(i.OrganizationID)
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
+	}
 	m.SetOwnerID(i.OwnerID)
 }
 
@@ -1473,13 +1475,14 @@ func (c *SessionCreate) SetInput(i CreateSessionInput) *SessionCreate {
 
 // UpdateSessionInput represents a mutation input for updating sessions.
 type UpdateSessionInput struct {
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	IssuedAt       *time.Time
-	ExpiresAt      *time.Time
-	OrganizationID *string
-	OwnerID        *string
+	UpdatedAt           *time.Time
+	ClearUpdatedBy      bool
+	UpdatedBy           *string
+	IssuedAt            *time.Time
+	ExpiresAt           *time.Time
+	ClearOrganizationID bool
+	OrganizationID      *string
+	OwnerID             *string
 }
 
 // Mutate applies the UpdateSessionInput on the SessionMutation builder.
@@ -1498,6 +1501,9 @@ func (i *UpdateSessionInput) Mutate(m *SessionMutation) {
 	}
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
+	}
+	if i.ClearOrganizationID {
+		m.ClearOrganizationID()
 	}
 	if v := i.OrganizationID; v != nil {
 		m.SetOrganizationID(*v)

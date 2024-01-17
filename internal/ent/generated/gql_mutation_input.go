@@ -1431,100 +1431,6 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 	return c
 }
 
-// CreateSessionInput represents a mutation input for creating sessions.
-type CreateSessionInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	SessionToken   string
-	IssuedAt       time.Time
-	ExpiresAt      time.Time
-	OrganizationID *string
-	OwnerID        string
-}
-
-// Mutate applies the CreateSessionInput on the SessionMutation builder.
-func (i *CreateSessionInput) Mutate(m *SessionMutation) {
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	m.SetSessionToken(i.SessionToken)
-	m.SetIssuedAt(i.IssuedAt)
-	m.SetExpiresAt(i.ExpiresAt)
-	if v := i.OrganizationID; v != nil {
-		m.SetOrganizationID(*v)
-	}
-	m.SetOwnerID(i.OwnerID)
-}
-
-// SetInput applies the change-set in the CreateSessionInput on the SessionCreate builder.
-func (c *SessionCreate) SetInput(i CreateSessionInput) *SessionCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateSessionInput represents a mutation input for updating sessions.
-type UpdateSessionInput struct {
-	UpdatedAt           *time.Time
-	ClearUpdatedBy      bool
-	UpdatedBy           *string
-	IssuedAt            *time.Time
-	ExpiresAt           *time.Time
-	ClearOrganizationID bool
-	OrganizationID      *string
-	OwnerID             *string
-}
-
-// Mutate applies the UpdateSessionInput on the SessionMutation builder.
-func (i *UpdateSessionInput) Mutate(m *SessionMutation) {
-	if v := i.UpdatedAt; v != nil {
-		m.SetUpdatedAt(*v)
-	}
-	if i.ClearUpdatedBy {
-		m.ClearUpdatedBy()
-	}
-	if v := i.UpdatedBy; v != nil {
-		m.SetUpdatedBy(*v)
-	}
-	if v := i.IssuedAt; v != nil {
-		m.SetIssuedAt(*v)
-	}
-	if v := i.ExpiresAt; v != nil {
-		m.SetExpiresAt(*v)
-	}
-	if i.ClearOrganizationID {
-		m.ClearOrganizationID()
-	}
-	if v := i.OrganizationID; v != nil {
-		m.SetOrganizationID(*v)
-	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
-}
-
-// SetInput applies the change-set in the UpdateSessionInput on the SessionUpdate builder.
-func (c *SessionUpdate) SetInput(i UpdateSessionInput) *SessionUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateSessionInput on the SessionUpdateOne builder.
-func (c *SessionUpdateOne) SetInput(i UpdateSessionInput) *SessionUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
 	CreatedAt                 *time.Time
@@ -1544,7 +1450,6 @@ type CreateUserInput struct {
 	Oauth                     *bool
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
-	SessionIDs                []string
 	EmailVerificationTokenIDs []string
 	PasswordResetTokenIDs     []string
 	GroupIDs                  []string
@@ -1596,9 +1501,6 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
-	if v := i.SessionIDs; len(v) > 0 {
-		m.AddSessionIDs(v...)
-	}
 	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
 		m.AddEmailVerificationTokenIDs(v...)
 	}
@@ -1645,9 +1547,6 @@ type UpdateUserInput struct {
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
 	SettingID                       *string
-	ClearSessions                   bool
-	AddSessionIDs                   []string
-	RemoveSessionIDs                []string
 	ClearEmailVerificationTokens    bool
 	AddEmailVerificationTokenIDs    []string
 	RemoveEmailVerificationTokenIDs []string
@@ -1735,15 +1634,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
-	}
-	if i.ClearSessions {
-		m.ClearSessions()
-	}
-	if v := i.AddSessionIDs; len(v) > 0 {
-		m.AddSessionIDs(v...)
-	}
-	if v := i.RemoveSessionIDs; len(v) > 0 {
-		m.RemoveSessionIDs(v...)
 	}
 	if i.ClearEmailVerificationTokens {
 		m.ClearEmailVerificationTokens()

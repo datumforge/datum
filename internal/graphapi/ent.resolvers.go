@@ -114,11 +114,6 @@ func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.
 	panic(fmt.Errorf("not implemented: PersonalAccessTokens - personalAccessTokens"))
 }
 
-// Sessions is the resolver for the sessions field.
-func (r *queryResolver) Sessions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) (*generated.SessionConnection, error) {
-	return r.client.Session.Query().Paginate(ctx, after, first, before, last, generated.WithSessionFilter(where.Filter))
-}
-
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	if r.authDisabled {

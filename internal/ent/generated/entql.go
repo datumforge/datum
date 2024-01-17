@@ -17,7 +17,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 
@@ -29,7 +28,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 16)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 15)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -354,28 +353,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[13] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   session.Table,
-			Columns: session.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
-				Column: session.FieldID,
-			},
-		},
-		Type: "Session",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			session.FieldCreatedAt:      {Type: field.TypeTime, Column: session.FieldCreatedAt},
-			session.FieldUpdatedAt:      {Type: field.TypeTime, Column: session.FieldUpdatedAt},
-			session.FieldCreatedBy:      {Type: field.TypeString, Column: session.FieldCreatedBy},
-			session.FieldUpdatedBy:      {Type: field.TypeString, Column: session.FieldUpdatedBy},
-			session.FieldOwnerID:        {Type: field.TypeString, Column: session.FieldOwnerID},
-			session.FieldSessionToken:   {Type: field.TypeString, Column: session.FieldSessionToken},
-			session.FieldIssuedAt:       {Type: field.TypeTime, Column: session.FieldIssuedAt},
-			session.FieldExpiresAt:      {Type: field.TypeTime, Column: session.FieldExpiresAt},
-			session.FieldOrganizationID: {Type: field.TypeString, Column: session.FieldOrganizationID},
-		},
-	}
-	graph.Nodes[14] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -404,7 +381,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
 		},
 	}
-	graph.Nodes[15] = &sqlgraph.Node{
+	graph.Nodes[14] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -732,18 +709,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"User",
 	)
 	graph.MustAddE(
-		"owner",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   session.OwnerTable,
-			Columns: []string{session.OwnerColumn},
-			Bidi:    false,
-		},
-		"Session",
-		"User",
-	)
-	graph.MustAddE(
 		"personal_access_tokens",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -766,18 +731,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"UserSetting",
-	)
-	graph.MustAddE(
-		"sessions",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-		},
-		"User",
-		"Session",
 	)
 	graph.MustAddE(
 		"email_verification_tokens",
@@ -2508,105 +2461,6 @@ func (f *PersonalAccessTokenFilter) WhereHasOwnerWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (sq *SessionQuery) addPredicate(pred func(s *sql.Selector)) {
-	sq.predicates = append(sq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the SessionQuery builder.
-func (sq *SessionQuery) Filter() *SessionFilter {
-	return &SessionFilter{config: sq.config, predicateAdder: sq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *SessionMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the SessionMutation builder.
-func (m *SessionMutation) Filter() *SessionFilter {
-	return &SessionFilter{config: m.config, predicateAdder: m}
-}
-
-// SessionFilter provides a generic filtering capability at runtime for SessionQuery.
-type SessionFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *SessionFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql string predicate on the id field.
-func (f *SessionFilter) WhereID(p entql.StringP) {
-	f.Where(p.Field(session.FieldID))
-}
-
-// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *SessionFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(session.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *SessionFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(session.FieldUpdatedAt))
-}
-
-// WhereCreatedBy applies the entql string predicate on the created_by field.
-func (f *SessionFilter) WhereCreatedBy(p entql.StringP) {
-	f.Where(p.Field(session.FieldCreatedBy))
-}
-
-// WhereUpdatedBy applies the entql string predicate on the updated_by field.
-func (f *SessionFilter) WhereUpdatedBy(p entql.StringP) {
-	f.Where(p.Field(session.FieldUpdatedBy))
-}
-
-// WhereOwnerID applies the entql string predicate on the owner_id field.
-func (f *SessionFilter) WhereOwnerID(p entql.StringP) {
-	f.Where(p.Field(session.FieldOwnerID))
-}
-
-// WhereSessionToken applies the entql string predicate on the session_token field.
-func (f *SessionFilter) WhereSessionToken(p entql.StringP) {
-	f.Where(p.Field(session.FieldSessionToken))
-}
-
-// WhereIssuedAt applies the entql time.Time predicate on the issued_at field.
-func (f *SessionFilter) WhereIssuedAt(p entql.TimeP) {
-	f.Where(p.Field(session.FieldIssuedAt))
-}
-
-// WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
-func (f *SessionFilter) WhereExpiresAt(p entql.TimeP) {
-	f.Where(p.Field(session.FieldExpiresAt))
-}
-
-// WhereOrganizationID applies the entql string predicate on the organization_id field.
-func (f *SessionFilter) WhereOrganizationID(p entql.StringP) {
-	f.Where(p.Field(session.FieldOrganizationID))
-}
-
-// WhereHasOwner applies a predicate to check if query has an edge owner.
-func (f *SessionFilter) WhereHasOwner() {
-	f.Where(entql.HasEdge("owner"))
-}
-
-// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
-func (f *SessionFilter) WhereHasOwnerWith(preds ...predicate.User) {
-	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (uq *UserQuery) addPredicate(pred func(s *sql.Selector)) {
 	uq.predicates = append(uq.predicates, pred)
 }
@@ -2635,7 +2489,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2759,20 +2613,6 @@ func (f *UserFilter) WhereHasSettingWith(preds ...predicate.UserSetting) {
 	})))
 }
 
-// WhereHasSessions applies a predicate to check if query has an edge sessions.
-func (f *UserFilter) WhereHasSessions() {
-	f.Where(entql.HasEdge("sessions"))
-}
-
-// WhereHasSessionsWith applies a predicate to check if query has an edge sessions with a given conditions (other predicates).
-func (f *UserFilter) WhereHasSessionsWith(preds ...predicate.Session) {
-	f.Where(entql.HasEdgeWith("sessions", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
 // WhereHasEmailVerificationTokens applies a predicate to check if query has an edge email_verification_tokens.
 func (f *UserFilter) WhereHasEmailVerificationTokens() {
 	f.Where(entql.HasEdge("email_verification_tokens"))
@@ -2886,7 +2726,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

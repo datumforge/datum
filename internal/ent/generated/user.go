@@ -64,8 +64,6 @@ type UserEdges struct {
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
-	// Sessions holds the value of the sessions edge.
-	Sessions []*Session `json:"sessions,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
 	EmailVerificationTokens []*EmailVerificationToken `json:"email_verification_tokens,omitempty"`
 	// PasswordResetTokens holds the value of the password_reset_tokens edge.
@@ -80,12 +78,11 @@ type UserEdges struct {
 	OrgMemberships []*OrgMembership `json:"org_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [8]bool
 	// totalCount holds the count of the edges above.
-	totalCount [7]map[string]int
+	totalCount [6]map[string]int
 
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
-	namedSessions                map[string][]*Session
 	namedEmailVerificationTokens map[string][]*EmailVerificationToken
 	namedPasswordResetTokens     map[string][]*PasswordResetToken
 	namedGroups                  map[string][]*Group
@@ -116,19 +113,10 @@ func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 	return nil, &NotLoadedError{edge: "setting"}
 }
 
-// SessionsOrErr returns the Sessions value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) SessionsOrErr() ([]*Session, error) {
-	if e.loadedTypes[2] {
-		return e.Sessions, nil
-	}
-	return nil, &NotLoadedError{edge: "sessions"}
-}
-
 // EmailVerificationTokensOrErr returns the EmailVerificationTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.EmailVerificationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "email_verification_tokens"}
@@ -137,7 +125,7 @@ func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, er
 // PasswordResetTokensOrErr returns the PasswordResetTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetToken, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.PasswordResetTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "password_reset_tokens"}
@@ -146,7 +134,7 @@ func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetToken, error) {
 // GroupsOrErr returns the Groups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupsOrErr() ([]*Group, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
@@ -155,7 +143,7 @@ func (e UserEdges) GroupsOrErr() ([]*Group, error) {
 // OrganizationsOrErr returns the Organizations value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[5] {
 		return e.Organizations, nil
 	}
 	return nil, &NotLoadedError{edge: "organizations"}
@@ -164,7 +152,7 @@ func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
 // GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[6] {
 		return e.GroupMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "group_memberships"}
@@ -173,7 +161,7 @@ func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
 // OrgMembershipsOrErr returns the OrgMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OrgMembershipsOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[7] {
 		return e.OrgMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "org_memberships"}
@@ -341,11 +329,6 @@ func (u *User) QuerySetting() *UserSettingQuery {
 	return NewUserClient(u.config).QuerySetting(u)
 }
 
-// QuerySessions queries the "sessions" edge of the User entity.
-func (u *User) QuerySessions() *SessionQuery {
-	return NewUserClient(u.config).QuerySessions(u)
-}
-
 // QueryEmailVerificationTokens queries the "email_verification_tokens" edge of the User entity.
 func (u *User) QueryEmailVerificationTokens() *EmailVerificationTokenQuery {
 	return NewUserClient(u.config).QueryEmailVerificationTokens(u)
@@ -481,30 +464,6 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
 	} else {
 		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
-	}
-}
-
-// NamedSessions returns the Sessions named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (u *User) NamedSessions(name string) ([]*Session, error) {
-	if u.Edges.namedSessions == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := u.Edges.namedSessions[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (u *User) appendNamedSessions(name string, edges ...*Session) {
-	if u.Edges.namedSessions == nil {
-		u.Edges.namedSessions = make(map[string][]*Session)
-	}
-	if len(edges) == 0 {
-		u.Edges.namedSessions[name] = []*Session{}
-	} else {
-		u.Edges.namedSessions[name] = append(u.Edges.namedSessions[name], edges...)
 	}
 }
 

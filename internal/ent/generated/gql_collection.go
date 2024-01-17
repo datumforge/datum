@@ -21,7 +21,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -1757,122 +1756,6 @@ func newPersonalAccessTokenPaginateArgs(rv map[string]any) *personalaccesstokenP
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (s *SessionQuery) CollectFields(ctx context.Context, satisfies ...string) (*SessionQuery, error) {
-	fc := graphql.GetFieldContext(ctx)
-	if fc == nil {
-		return s, nil
-	}
-	if err := s.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
-		return nil, err
-	}
-	return s, nil
-}
-
-func (s *SessionQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
-	path = append([]string(nil), path...)
-	var (
-		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(session.Columns))
-		selectedFields = []string{session.FieldID}
-	)
-	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
-		switch field.Name {
-		case "owner":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&UserClient{config: s.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
-			}
-			s.withOwner = query
-			if _, ok := fieldSeen[session.FieldOwnerID]; !ok {
-				selectedFields = append(selectedFields, session.FieldOwnerID)
-				fieldSeen[session.FieldOwnerID] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[session.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, session.FieldCreatedAt)
-				fieldSeen[session.FieldCreatedAt] = struct{}{}
-			}
-		case "updatedAt":
-			if _, ok := fieldSeen[session.FieldUpdatedAt]; !ok {
-				selectedFields = append(selectedFields, session.FieldUpdatedAt)
-				fieldSeen[session.FieldUpdatedAt] = struct{}{}
-			}
-		case "createdBy":
-			if _, ok := fieldSeen[session.FieldCreatedBy]; !ok {
-				selectedFields = append(selectedFields, session.FieldCreatedBy)
-				fieldSeen[session.FieldCreatedBy] = struct{}{}
-			}
-		case "updatedBy":
-			if _, ok := fieldSeen[session.FieldUpdatedBy]; !ok {
-				selectedFields = append(selectedFields, session.FieldUpdatedBy)
-				fieldSeen[session.FieldUpdatedBy] = struct{}{}
-			}
-		case "sessionToken":
-			if _, ok := fieldSeen[session.FieldSessionToken]; !ok {
-				selectedFields = append(selectedFields, session.FieldSessionToken)
-				fieldSeen[session.FieldSessionToken] = struct{}{}
-			}
-		case "issuedAt":
-			if _, ok := fieldSeen[session.FieldIssuedAt]; !ok {
-				selectedFields = append(selectedFields, session.FieldIssuedAt)
-				fieldSeen[session.FieldIssuedAt] = struct{}{}
-			}
-		case "expiresAt":
-			if _, ok := fieldSeen[session.FieldExpiresAt]; !ok {
-				selectedFields = append(selectedFields, session.FieldExpiresAt)
-				fieldSeen[session.FieldExpiresAt] = struct{}{}
-			}
-		case "organizationID":
-			if _, ok := fieldSeen[session.FieldOrganizationID]; !ok {
-				selectedFields = append(selectedFields, session.FieldOrganizationID)
-				fieldSeen[session.FieldOrganizationID] = struct{}{}
-			}
-		case "id":
-		case "__typename":
-		default:
-			unknownSeen = true
-		}
-	}
-	if !unknownSeen {
-		s.Select(selectedFields...)
-	}
-	return nil
-}
-
-type sessionPaginateArgs struct {
-	first, last   *int
-	after, before *Cursor
-	opts          []SessionPaginateOption
-}
-
-func newSessionPaginateArgs(rv map[string]any) *sessionPaginateArgs {
-	args := &sessionPaginateArgs{}
-	if rv == nil {
-		return args
-	}
-	if v := rv[firstField]; v != nil {
-		args.first = v.(*int)
-	}
-	if v := rv[lastField]; v != nil {
-		args.last = v.(*int)
-	}
-	if v := rv[afterField]; v != nil {
-		args.after = v.(*Cursor)
-	}
-	if v := rv[beforeField]; v != nil {
-		args.before = v.(*Cursor)
-	}
-	if v, ok := rv[whereField].(*SessionWhereInput); ok {
-		args.opts = append(args.opts, WithSessionFilter(v.Filter))
-	}
-	return args
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1915,18 +1798,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.withSetting = query
-		case "sessions":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&SessionClient{config: u.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
-			}
-			u.WithNamedSessions(alias, func(wq *SessionQuery) {
-				*wq = *query
-			})
 		case "groups":
 			var (
 				alias = field.Alias

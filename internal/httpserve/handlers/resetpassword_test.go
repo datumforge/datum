@@ -107,7 +107,7 @@ func TestResetPassword(t *testing.T) {
 			mock.ResetEmailMock()
 
 			// create echo context with middleware
-			e := setupEcho(h.SM)
+			e := setupEcho()
 
 			// create user in the database
 			rt, userID, err := createUserWithResetToken(ec, tc.email, tc.ttl)

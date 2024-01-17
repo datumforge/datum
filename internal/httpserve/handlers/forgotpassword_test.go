@@ -73,7 +73,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 			sent := time.Now()
 			mock.ResetEmailMock()
 
-			e := setupEcho(h.SM)
+			e := setupEcho()
 			e.POST("forgot-password", h.ForgotPassword)
 
 			resendJSON := handlers.ForgotPasswordRequest{

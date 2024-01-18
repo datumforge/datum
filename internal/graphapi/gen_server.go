@@ -3913,15 +3913,25 @@ input CreateEntitlementInput {
   createdBy: String
   updatedBy: String
   tier: EntitlementTier
-  """used to store references to external systems, e.g. Stripe"""
+  """
+  used to store references to external systems, e.g. Stripe
+  """
   externalCustomerID: String
-  """used to store references to external systems, e.g. Stripe"""
+  """
+  used to store references to external systems, e.g. Stripe
+  """
   externalSubscriptionID: String
-  """whether or not the customers entitlement expires - expires_at will show the time"""
+  """
+  whether or not the customers entitlement expires - expires_at will show the time
+  """
   expires: Boolean
-  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
+  """
+  the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month
+  """
   expiresAt: Time
-  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
+  """
+  whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
+  """
   cancelled: Boolean
   ownerID: ID!
 }
@@ -3934,15 +3944,25 @@ input CreateGroupInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """the name of the group - must be unique within the organization"""
+  """
+  the name of the group - must be unique within the organization
+  """
   name: String!
-  """the groups description"""
+  """
+  the groups description
+  """
   description: String
-  """the URL to an auto generated gravatar image for the group"""
+  """
+  the URL to an auto generated gravatar image for the group
+  """
   gravatarLogoURL: String
-  """the URL to an image uploaded by the customer for the groups avatar image"""
+  """
+  the URL to an image uploaded by the customer for the groups avatar image
+  """
   logoURL: String
-  """The group's displayed 'friendly' name"""
+  """
+  The group's displayed 'friendly' name
+  """
   displayName: String
   ownerID: ID!
   settingID: ID!
@@ -3970,11 +3990,17 @@ input CreateGroupSettingInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
+  """
+  whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization
+  """
   visibility: GroupSettingVisibility
-  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
+  """
+  the policy governing ability to freely join a group, whether it requires an invitation, application, or either
+  """
   joinPolicy: GroupSettingJoinPolicy
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]
   syncToSlack: Boolean
   syncToGithub: Boolean
@@ -3989,9 +4015,13 @@ input CreateIntegrationInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """the name of the integration - must be unique within the organization"""
+  """
+  the name of the integration - must be unique within the organization
+  """
   name: String!
-  """a description of the integration"""
+  """
+  a description of the integration
+  """
   description: String
   kind: String
   secretName: String!
@@ -4006,23 +4036,41 @@ input CreateOauthProviderInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """the oauth provider's name"""
+  """
+  the oauth provider's name
+  """
   name: String!
-  """the client id for the oauth provider"""
+  """
+  the client id for the oauth provider
+  """
   clientID: String!
-  """the client secret"""
+  """
+  the client secret
+  """
   clientSecret: String!
-  """the redirect url"""
+  """
+  the redirect url
+  """
   redirectURL: String!
-  """the scopes"""
+  """
+  the scopes
+  """
   scopes: String!
-  """the auth url of the provider"""
+  """
+  the auth url of the provider
+  """
   authURL: String!
-  """the token url of the provider"""
+  """
+  the token url of the provider
+  """
   tokenURL: String!
-  """the auth style, 0: auto detect 1: third party log in 2: log in with username and password"""
+  """
+  the auth style, 0: auto detect 1: third party log in 2: log in with username and password
+  """
   authStyle: Int!
-  """the URL to request user information by token"""
+  """
+  the URL to request user information by token
+  """
   infoURL: String!
   ownerID: ID
 }
@@ -4066,13 +4114,21 @@ input CreateOrganizationInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """the name of the organization"""
+  """
+  the name of the organization
+  """
   name: String!
-  """The organization's displayed 'friendly' name"""
+  """
+  The organization's displayed 'friendly' name
+  """
   displayName: String
-  """An optional description of the organization"""
+  """
+  An optional description of the organization
+  """
   description: String
-  """orgs directly associated with a user"""
+  """
+  orgs directly associated with a user
+  """
   personalOrg: Boolean
   parentID: ID
   groupIDs: [ID!]
@@ -4091,19 +4147,27 @@ input CreateOrganizationSettingInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """domains associated with the organization"""
+  """
+  domains associated with the organization
+  """
   domains: [String!]
   ssoCert: String
   ssoEntrypoint: String
   ssoIssuer: String
-  """Name of the person to contact for billing"""
+  """
+  Name of the person to contact for billing
+  """
   billingContact: String
   billingEmail: String
   billingPhone: String
   billingAddress: String
-  """Usually government-issued tax ID or business ID such as ABN in Australia"""
+  """
+  Usually government-issued tax ID or business ID such as ABN in Australia
+  """
   taxIdentifier: String
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]
   organizationID: ID
 }
@@ -4116,14 +4180,22 @@ input CreatePersonalAccessTokenInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """the name associated with the token"""
+  """
+  the name associated with the token
+  """
   name: String!
   token: String
-  """what abilites the token should have"""
+  """
+  what abilites the token should have
+  """
   abilities: [String!]
-  """when the token expires"""
+  """
+  when the token expires
+  """
   expiresAt: Time!
-  """a description of the token's purpose"""
+  """
+  a description of the token's purpose
+  """
   description: String
   lastUsedAt: Time
   ownerID: ID!
@@ -4140,21 +4212,37 @@ input CreateUserInput {
   email: String!
   firstName: String!
   lastName: String!
-  """The user's displayed 'friendly' name"""
+  """
+  The user's displayed 'friendly' name
+  """
   displayName: String
-  """URL of the user's remote avatar"""
+  """
+  URL of the user's remote avatar
+  """
   avatarRemoteURL: String
-  """The user's local avatar file"""
+  """
+  The user's local avatar file
+  """
   avatarLocalFile: String
-  """The time the user's (local) avatar was last updated"""
+  """
+  The time the user's (local) avatar was last updated
+  """
   avatarUpdatedAt: Time
-  """the time the user was last seen"""
+  """
+  the time the user was last seen
+  """
   lastSeen: Time
-  """user password hash"""
+  """
+  user password hash
+  """
   password: String
-  """the Subject of the user JWT"""
+  """
+  the Subject of the user JWT
+  """
   sub: String
-  """whether the user uses oauth for login or not"""
+  """
+  whether the user uses oauth for login or not
+  """
   oauth: Boolean
   personalAccessTokenIDs: [ID!]
   settingID: ID!
@@ -4172,19 +4260,31 @@ input CreateUserSettingInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """user account is locked if unconfirmed or explicitly locked"""
+  """
+  user account is locked if unconfirmed or explicitly locked
+  """
   locked: Boolean
-  """The time notifications regarding the user were silenced"""
+  """
+  The time notifications regarding the user were silenced
+  """
   silencedAt: Time
-  """The time the user was suspended"""
+  """
+  The time the user was suspended
+  """
   suspendedAt: Time
-  """local user password recovery code generated during account creation - does not exist for oauth'd users"""
+  """
+  local user password recovery code generated during account creation - does not exist for oauth'd users
+  """
   recoveryCode: String
   status: UserSettingStatus
-  """organization to load on user login"""
+  """
+  organization to load on user login
+  """
   defaultOrg: String
   emailConfirmed: Boolean
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]
   userID: ID
 }
@@ -4202,35 +4302,61 @@ type Entitlement implements Node {
   deletedAt: Time
   deletedBy: String
   tier: EntitlementTier!
-  """used to store references to external systems, e.g. Stripe"""
+  """
+  used to store references to external systems, e.g. Stripe
+  """
   externalCustomerID: String
-  """used to store references to external systems, e.g. Stripe"""
+  """
+  used to store references to external systems, e.g. Stripe
+  """
   externalSubscriptionID: String
-  """whether or not the customers entitlement expires - expires_at will show the time"""
+  """
+  whether or not the customers entitlement expires - expires_at will show the time
+  """
   expires: Boolean!
-  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
+  """
+  the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month
+  """
   expiresAt: Time
-  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
+  """
+  whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
+  """
   cancelled: Boolean!
   owner: Organization!
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type EntitlementConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [EntitlementEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type EntitlementEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: Entitlement
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""EntitlementTier is enum for the field tier"""
+"""
+EntitlementTier is enum for the field tier
+"""
 enum EntitlementTier @goModel(model: "github.com/datumforge/datum/internal/ent/generated/entitlement.Tier") {
   free
   pro
@@ -4244,7 +4370,9 @@ input EntitlementWhereInput {
   not: EntitlementWhereInput
   and: [EntitlementWhereInput!]
   or: [EntitlementWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -4255,7 +4383,9 @@ input EntitlementWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -4264,7 +4394,9 @@ input EntitlementWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -4273,7 +4405,9 @@ input EntitlementWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -4289,7 +4423,9 @@ input EntitlementWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -4305,7 +4441,9 @@ input EntitlementWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -4316,7 +4454,9 @@ input EntitlementWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -4332,12 +4472,16 @@ input EntitlementWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """tier field predicates"""
+  """
+  tier field predicates
+  """
   tier: EntitlementTier
   tierNEQ: EntitlementTier
   tierIn: [EntitlementTier!]
   tierNotIn: [EntitlementTier!]
-  """external_customer_id field predicates"""
+  """
+  external_customer_id field predicates
+  """
   externalCustomerID: String
   externalCustomerIDNEQ: String
   externalCustomerIDIn: [String!]
@@ -4353,7 +4497,9 @@ input EntitlementWhereInput {
   externalCustomerIDNotNil: Boolean
   externalCustomerIDEqualFold: String
   externalCustomerIDContainsFold: String
-  """external_subscription_id field predicates"""
+  """
+  external_subscription_id field predicates
+  """
   externalSubscriptionID: String
   externalSubscriptionIDNEQ: String
   externalSubscriptionIDIn: [String!]
@@ -4369,10 +4515,14 @@ input EntitlementWhereInput {
   externalSubscriptionIDNotNil: Boolean
   externalSubscriptionIDEqualFold: String
   externalSubscriptionIDContainsFold: String
-  """expires field predicates"""
+  """
+  expires field predicates
+  """
   expires: Boolean
   expiresNEQ: Boolean
-  """expires_at field predicates"""
+  """
+  expires_at field predicates
+  """
   expiresAt: Time
   expiresAtNEQ: Time
   expiresAtIn: [Time!]
@@ -4383,10 +4533,14 @@ input EntitlementWhereInput {
   expiresAtLTE: Time
   expiresAtIsNil: Boolean
   expiresAtNotNil: Boolean
-  """cancelled field predicates"""
+  """
+  cancelled field predicates
+  """
   cancelled: Boolean
   cancelledNEQ: Boolean
-  """owner edge predicates"""
+  """
+  owner edge predicates
+  """
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
 }
@@ -4398,35 +4552,59 @@ type Group implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """the name of the group - must be unique within the organization"""
+  """
+  the name of the group - must be unique within the organization
+  """
   name: String!
-  """the groups description"""
+  """
+  the groups description
+  """
   description: String
-  """the URL to an auto generated gravatar image for the group"""
+  """
+  the URL to an auto generated gravatar image for the group
+  """
   gravatarLogoURL: String
-  """the URL to an image uploaded by the customer for the groups avatar image"""
+  """
+  the URL to an image uploaded by the customer for the groups avatar image
+  """
   logoURL: String
-  """The group's displayed 'friendly' name"""
+  """
+  The group's displayed 'friendly' name
+  """
   displayName: String!
   owner: Organization!
   setting: GroupSetting!
   users: [User!]
   members: [GroupMembership!]
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type GroupConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [GroupEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type GroupEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: Group
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
 type GroupMembership implements Node {
@@ -4443,23 +4621,39 @@ type GroupMembership implements Node {
   group: Group!
   user: User!
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type GroupMembershipConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [GroupMembershipEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type GroupMembershipEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: GroupMembership
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""GroupMembershipRole is enum for the field role"""
+"""
+GroupMembershipRole is enum for the field role
+"""
 enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
   ADMIN
   MEMBER
@@ -4472,7 +4666,9 @@ input GroupMembershipWhereInput {
   not: GroupMembershipWhereInput
   and: [GroupMembershipWhereInput!]
   or: [GroupMembershipWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -4483,7 +4679,9 @@ input GroupMembershipWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -4492,7 +4690,9 @@ input GroupMembershipWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -4501,7 +4701,9 @@ input GroupMembershipWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -4517,7 +4719,9 @@ input GroupMembershipWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -4533,7 +4737,9 @@ input GroupMembershipWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -4544,7 +4750,9 @@ input GroupMembershipWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -4560,20 +4768,30 @@ input GroupMembershipWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """role field predicates"""
+  """
+  role field predicates
+  """
   role: GroupMembershipRole
   roleNEQ: GroupMembershipRole
   roleIn: [GroupMembershipRole!]
   roleNotIn: [GroupMembershipRole!]
 }
-"""Ordering options for Group connections"""
+"""
+Ordering options for Group connections
+"""
 input GroupOrder {
-  """The ordering direction."""
+  """
+  The ordering direction.
+  """
   direction: OrderDirection! = ASC
-  """The field by which to order Groups."""
+  """
+  The field by which to order Groups.
+  """
   field: GroupOrderField!
 }
-"""Properties by which Group connections can be ordered."""
+"""
+Properties by which Group connections can be ordered.
+"""
 enum GroupOrderField {
   name
   display_name
@@ -4586,40 +4804,64 @@ type GroupSetting implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
+  """
+  whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization
+  """
   visibility: GroupSettingVisibility!
-  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
+  """
+  the policy governing ability to freely join a group, whether it requires an invitation, application, or either
+  """
   joinPolicy: GroupSettingJoinPolicy!
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]!
   syncToSlack: Boolean!
   syncToGithub: Boolean!
   group: Group
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type GroupSettingConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [GroupSettingEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type GroupSettingEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: GroupSetting
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""GroupSettingJoinPolicy is enum for the field join_policy"""
+"""
+GroupSettingJoinPolicy is enum for the field join_policy
+"""
 enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.JoinPolicy") {
   OPEN
   INVITE_ONLY
   APPLICATION_ONLY
   INVITE_OR_APPLICATION
 }
-"""GroupSettingVisibility is enum for the field visibility"""
+"""
+GroupSettingVisibility is enum for the field visibility
+"""
 enum GroupSettingVisibility @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.Visibility") {
   PUBLIC
   PRIVATE
@@ -4632,7 +4874,9 @@ input GroupSettingWhereInput {
   not: GroupSettingWhereInput
   and: [GroupSettingWhereInput!]
   or: [GroupSettingWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -4643,7 +4887,9 @@ input GroupSettingWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -4652,7 +4898,9 @@ input GroupSettingWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -4661,7 +4909,9 @@ input GroupSettingWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -4677,7 +4927,9 @@ input GroupSettingWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -4693,7 +4945,9 @@ input GroupSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -4704,7 +4958,9 @@ input GroupSettingWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -4720,23 +4976,33 @@ input GroupSettingWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """visibility field predicates"""
+  """
+  visibility field predicates
+  """
   visibility: GroupSettingVisibility
   visibilityNEQ: GroupSettingVisibility
   visibilityIn: [GroupSettingVisibility!]
   visibilityNotIn: [GroupSettingVisibility!]
-  """join_policy field predicates"""
+  """
+  join_policy field predicates
+  """
   joinPolicy: GroupSettingJoinPolicy
   joinPolicyNEQ: GroupSettingJoinPolicy
   joinPolicyIn: [GroupSettingJoinPolicy!]
   joinPolicyNotIn: [GroupSettingJoinPolicy!]
-  """sync_to_slack field predicates"""
+  """
+  sync_to_slack field predicates
+  """
   syncToSlack: Boolean
   syncToSlackNEQ: Boolean
-  """sync_to_github field predicates"""
+  """
+  sync_to_github field predicates
+  """
   syncToGithub: Boolean
   syncToGithubNEQ: Boolean
-  """group edge predicates"""
+  """
+  group edge predicates
+  """
   hasGroup: Boolean
   hasGroupWith: [GroupWhereInput!]
 }
@@ -4748,7 +5014,9 @@ input GroupWhereInput {
   not: GroupWhereInput
   and: [GroupWhereInput!]
   or: [GroupWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -4759,7 +5027,9 @@ input GroupWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -4768,7 +5038,9 @@ input GroupWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -4777,7 +5049,9 @@ input GroupWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -4793,7 +5067,9 @@ input GroupWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -4809,7 +5085,9 @@ input GroupWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -4820,7 +5098,9 @@ input GroupWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -4836,7 +5116,9 @@ input GroupWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """name field predicates"""
+  """
+  name field predicates
+  """
   name: String
   nameNEQ: String
   nameIn: [String!]
@@ -4850,7 +5132,9 @@ input GroupWhereInput {
   nameHasSuffix: String
   nameEqualFold: String
   nameContainsFold: String
-  """display_name field predicates"""
+  """
+  display_name field predicates
+  """
   displayName: String
   displayNameNEQ: String
   displayNameIn: [String!]
@@ -4864,16 +5148,24 @@ input GroupWhereInput {
   displayNameHasSuffix: String
   displayNameEqualFold: String
   displayNameContainsFold: String
-  """owner edge predicates"""
+  """
+  owner edge predicates
+  """
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
-  """setting edge predicates"""
+  """
+  setting edge predicates
+  """
   hasSetting: Boolean
   hasSettingWith: [GroupSettingWhereInput!]
-  """users edge predicates"""
+  """
+  users edge predicates
+  """
   hasUsers: Boolean
   hasUsersWith: [UserWhereInput!]
-  """members edge predicates"""
+  """
+  members edge predicates
+  """
   hasMembers: Boolean
   hasMembersWith: [GroupMembershipWhereInput!]
 }
@@ -4885,38 +5177,64 @@ type Integration implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """the name of the integration - must be unique within the organization"""
+  """
+  the name of the integration - must be unique within the organization
+  """
   name: String!
-  """a description of the integration"""
+  """
+  a description of the integration
+  """
   description: String
   kind: String
   secretName: String!
   owner: Organization
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type IntegrationConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [IntegrationEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type IntegrationEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: Integration
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""Ordering options for Integration connections"""
+"""
+Ordering options for Integration connections
+"""
 input IntegrationOrder {
-  """The ordering direction."""
+  """
+  The ordering direction.
+  """
   direction: OrderDirection! = ASC
-  """The field by which to order Integrations."""
+  """
+  The field by which to order Integrations.
+  """
   field: IntegrationOrderField!
 }
-"""Properties by which Integration connections can be ordered."""
+"""
+Properties by which Integration connections can be ordered.
+"""
 enum IntegrationOrderField {
   name
   kind
@@ -4929,7 +5247,9 @@ input IntegrationWhereInput {
   not: IntegrationWhereInput
   and: [IntegrationWhereInput!]
   or: [IntegrationWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -4940,7 +5260,9 @@ input IntegrationWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -4949,7 +5271,9 @@ input IntegrationWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -4958,7 +5282,9 @@ input IntegrationWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -4974,7 +5300,9 @@ input IntegrationWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -4990,7 +5318,9 @@ input IntegrationWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -5001,7 +5331,9 @@ input IntegrationWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -5017,7 +5349,9 @@ input IntegrationWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """name field predicates"""
+  """
+  name field predicates
+  """
   name: String
   nameNEQ: String
   nameIn: [String!]
@@ -5031,7 +5365,9 @@ input IntegrationWhereInput {
   nameHasSuffix: String
   nameEqualFold: String
   nameContainsFold: String
-  """kind field predicates"""
+  """
+  kind field predicates
+  """
   kind: String
   kindNEQ: String
   kindIn: [String!]
@@ -5047,7 +5383,9 @@ input IntegrationWhereInput {
   kindNotNil: Boolean
   kindEqualFold: String
   kindContainsFold: String
-  """secret_name field predicates"""
+  """
+  secret_name field predicates
+  """
   secretName: String
   secretNameNEQ: String
   secretNameIn: [String!]
@@ -5061,18 +5399,24 @@ input IntegrationWhereInput {
   secretNameHasSuffix: String
   secretNameEqualFold: String
   secretNameContainsFold: String
-  """owner edge predicates"""
+  """
+  owner edge predicates
+  """
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
 }
-"""A valid JSON string."""
+"""
+A valid JSON string.
+"""
 scalar JSON
 """
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
 """
 interface Node @goModel(model: "github.com/datumforge/datum/internal/ent/generated.Noder") {
-  """The id of the object."""
+  """
+  The id of the object.
+  """
   id: ID!
 }
 type OauthProvider implements Node {
@@ -5083,40 +5427,72 @@ type OauthProvider implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """the oauth provider's name"""
+  """
+  the oauth provider's name
+  """
   name: String!
-  """the client id for the oauth provider"""
+  """
+  the client id for the oauth provider
+  """
   clientID: String!
-  """the client secret"""
+  """
+  the client secret
+  """
   clientSecret: String!
-  """the redirect url"""
+  """
+  the redirect url
+  """
   redirectURL: String!
-  """the scopes"""
+  """
+  the scopes
+  """
   scopes: String!
-  """the auth url of the provider"""
+  """
+  the auth url of the provider
+  """
   authURL: String!
-  """the token url of the provider"""
+  """
+  the token url of the provider
+  """
   tokenURL: String!
-  """the auth style, 0: auto detect 1: third party log in 2: log in with username and password"""
+  """
+  the auth style, 0: auto detect 1: third party log in 2: log in with username and password
+  """
   authStyle: Int!
-  """the URL to request user information by token"""
+  """
+  the URL to request user information by token
+  """
   infoURL: String!
   owner: Organization
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type OauthProviderConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [OauthProviderEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type OauthProviderEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: OauthProvider
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
 """
@@ -5127,7 +5503,9 @@ input OauthProviderWhereInput {
   not: OauthProviderWhereInput
   and: [OauthProviderWhereInput!]
   or: [OauthProviderWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -5138,7 +5516,9 @@ input OauthProviderWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -5147,7 +5527,9 @@ input OauthProviderWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -5156,7 +5538,9 @@ input OauthProviderWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -5172,7 +5556,9 @@ input OauthProviderWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -5188,7 +5574,9 @@ input OauthProviderWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -5199,7 +5587,9 @@ input OauthProviderWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -5215,7 +5605,9 @@ input OauthProviderWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """name field predicates"""
+  """
+  name field predicates
+  """
   name: String
   nameNEQ: String
   nameIn: [String!]
@@ -5229,7 +5621,9 @@ input OauthProviderWhereInput {
   nameHasSuffix: String
   nameEqualFold: String
   nameContainsFold: String
-  """client_id field predicates"""
+  """
+  client_id field predicates
+  """
   clientID: String
   clientIDNEQ: String
   clientIDIn: [String!]
@@ -5243,7 +5637,9 @@ input OauthProviderWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
-  """client_secret field predicates"""
+  """
+  client_secret field predicates
+  """
   clientSecret: String
   clientSecretNEQ: String
   clientSecretIn: [String!]
@@ -5257,7 +5653,9 @@ input OauthProviderWhereInput {
   clientSecretHasSuffix: String
   clientSecretEqualFold: String
   clientSecretContainsFold: String
-  """redirect_url field predicates"""
+  """
+  redirect_url field predicates
+  """
   redirectURL: String
   redirectURLNEQ: String
   redirectURLIn: [String!]
@@ -5271,7 +5669,9 @@ input OauthProviderWhereInput {
   redirectURLHasSuffix: String
   redirectURLEqualFold: String
   redirectURLContainsFold: String
-  """scopes field predicates"""
+  """
+  scopes field predicates
+  """
   scopes: String
   scopesNEQ: String
   scopesIn: [String!]
@@ -5285,7 +5685,9 @@ input OauthProviderWhereInput {
   scopesHasSuffix: String
   scopesEqualFold: String
   scopesContainsFold: String
-  """auth_url field predicates"""
+  """
+  auth_url field predicates
+  """
   authURL: String
   authURLNEQ: String
   authURLIn: [String!]
@@ -5299,7 +5701,9 @@ input OauthProviderWhereInput {
   authURLHasSuffix: String
   authURLEqualFold: String
   authURLContainsFold: String
-  """token_url field predicates"""
+  """
+  token_url field predicates
+  """
   tokenURL: String
   tokenURLNEQ: String
   tokenURLIn: [String!]
@@ -5313,7 +5717,9 @@ input OauthProviderWhereInput {
   tokenURLHasSuffix: String
   tokenURLEqualFold: String
   tokenURLContainsFold: String
-  """auth_style field predicates"""
+  """
+  auth_style field predicates
+  """
   authStyle: Int
   authStyleNEQ: Int
   authStyleIn: [Int!]
@@ -5322,7 +5728,9 @@ input OauthProviderWhereInput {
   authStyleGTE: Int
   authStyleLT: Int
   authStyleLTE: Int
-  """info_url field predicates"""
+  """
+  info_url field predicates
+  """
   infoURL: String
   infoURLNEQ: String
   infoURLIn: [String!]
@@ -5336,7 +5744,9 @@ input OauthProviderWhereInput {
   infoURLHasSuffix: String
   infoURLEqualFold: String
   infoURLContainsFold: String
-  """owner edge predicates"""
+  """
+  owner edge predicates
+  """
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
 }
@@ -5355,20 +5765,34 @@ type OhAuthTooToken implements Node {
   connectorData: [String!]
   lastUsed: Time!
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type OhAuthTooTokenConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [OhAuthTooTokenEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type OhAuthTooTokenEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: OhAuthTooToken
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
 """
@@ -5379,7 +5803,9 @@ input OhAuthTooTokenWhereInput {
   not: OhAuthTooTokenWhereInput
   and: [OhAuthTooTokenWhereInput!]
   or: [OhAuthTooTokenWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -5390,7 +5816,9 @@ input OhAuthTooTokenWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """client_id field predicates"""
+  """
+  client_id field predicates
+  """
   clientID: String
   clientIDNEQ: String
   clientIDIn: [String!]
@@ -5404,7 +5832,9 @@ input OhAuthTooTokenWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
-  """nonce field predicates"""
+  """
+  nonce field predicates
+  """
   nonce: String
   nonceNEQ: String
   nonceIn: [String!]
@@ -5418,7 +5848,9 @@ input OhAuthTooTokenWhereInput {
   nonceHasSuffix: String
   nonceEqualFold: String
   nonceContainsFold: String
-  """claims_user_id field predicates"""
+  """
+  claims_user_id field predicates
+  """
   claimsUserID: String
   claimsUserIDNEQ: String
   claimsUserIDIn: [String!]
@@ -5432,7 +5864,9 @@ input OhAuthTooTokenWhereInput {
   claimsUserIDHasSuffix: String
   claimsUserIDEqualFold: String
   claimsUserIDContainsFold: String
-  """claims_username field predicates"""
+  """
+  claims_username field predicates
+  """
   claimsUsername: String
   claimsUsernameNEQ: String
   claimsUsernameIn: [String!]
@@ -5446,7 +5880,9 @@ input OhAuthTooTokenWhereInput {
   claimsUsernameHasSuffix: String
   claimsUsernameEqualFold: String
   claimsUsernameContainsFold: String
-  """claims_email field predicates"""
+  """
+  claims_email field predicates
+  """
   claimsEmail: String
   claimsEmailNEQ: String
   claimsEmailIn: [String!]
@@ -5460,10 +5896,14 @@ input OhAuthTooTokenWhereInput {
   claimsEmailHasSuffix: String
   claimsEmailEqualFold: String
   claimsEmailContainsFold: String
-  """claims_email_verified field predicates"""
+  """
+  claims_email_verified field predicates
+  """
   claimsEmailVerified: Boolean
   claimsEmailVerifiedNEQ: Boolean
-  """claims_preferred_username field predicates"""
+  """
+  claims_preferred_username field predicates
+  """
   claimsPreferredUsername: String
   claimsPreferredUsernameNEQ: String
   claimsPreferredUsernameIn: [String!]
@@ -5477,7 +5917,9 @@ input OhAuthTooTokenWhereInput {
   claimsPreferredUsernameHasSuffix: String
   claimsPreferredUsernameEqualFold: String
   claimsPreferredUsernameContainsFold: String
-  """connector_id field predicates"""
+  """
+  connector_id field predicates
+  """
   connectorID: String
   connectorIDNEQ: String
   connectorIDIn: [String!]
@@ -5491,7 +5933,9 @@ input OhAuthTooTokenWhereInput {
   connectorIDHasSuffix: String
   connectorIDEqualFold: String
   connectorIDContainsFold: String
-  """last_used field predicates"""
+  """
+  last_used field predicates
+  """
   lastUsed: Time
   lastUsedNEQ: Time
   lastUsedIn: [Time!]
@@ -5501,11 +5945,17 @@ input OhAuthTooTokenWhereInput {
   lastUsedLT: Time
   lastUsedLTE: Time
 }
-"""Possible directions in which to order a list of items when provided an ` + "`" + `orderBy` + "`" + ` argument."""
+"""
+Possible directions in which to order a list of items when provided an ` + "`" + `orderBy` + "`" + ` argument.
+"""
 enum OrderDirection {
-  """Specifies an ascending order for a given ` + "`" + `orderBy` + "`" + ` argument."""
+  """
+  Specifies an ascending order for a given ` + "`" + `orderBy` + "`" + ` argument.
+  """
   ASC
-  """Specifies a descending order for a given ` + "`" + `orderBy` + "`" + ` argument."""
+  """
+  Specifies a descending order for a given ` + "`" + `orderBy` + "`" + ` argument.
+  """
   DESC
 }
 type OrgMembership implements Node {
@@ -5522,23 +5972,39 @@ type OrgMembership implements Node {
   org: Organization!
   user: User!
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type OrgMembershipConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [OrgMembershipEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type OrgMembershipEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: OrgMembership
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""OrgMembershipRole is enum for the field role"""
+"""
+OrgMembershipRole is enum for the field role
+"""
 enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
   ADMIN
   MEMBER
@@ -5552,7 +6018,9 @@ input OrgMembershipWhereInput {
   not: OrgMembershipWhereInput
   and: [OrgMembershipWhereInput!]
   or: [OrgMembershipWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -5563,7 +6031,9 @@ input OrgMembershipWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -5572,7 +6042,9 @@ input OrgMembershipWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -5581,7 +6053,9 @@ input OrgMembershipWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -5597,7 +6071,9 @@ input OrgMembershipWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -5613,7 +6089,9 @@ input OrgMembershipWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -5624,7 +6102,9 @@ input OrgMembershipWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -5640,7 +6120,9 @@ input OrgMembershipWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """role field predicates"""
+  """
+  role field predicates
+  """
   role: OrgMembershipRole
   roleNEQ: OrgMembershipRole
   roleIn: [OrgMembershipRole!]
@@ -5654,32 +6136,52 @@ type Organization implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """the name of the organization"""
+  """
+  the name of the organization
+  """
   name: String!
-  """The organization's displayed 'friendly' name"""
+  """
+  The organization's displayed 'friendly' name
+  """
   displayName: String!
-  """An optional description of the organization"""
+  """
+  An optional description of the organization
+  """
   description: String
-  """orgs directly associated with a user"""
+  """
+  orgs directly associated with a user
+  """
   personalOrg: Boolean!
   parent: Organization
   children(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Ordering options for Organizations returned from the connection."""
+    """
+    Ordering options for Organizations returned from the connection.
+    """
     orderBy: OrganizationOrder
 
-    """Filtering options for Organizations returned from the connection."""
+    """
+    Filtering options for Organizations returned from the connection.
+    """
     where: OrganizationWhereInput
   ): OrganizationConnection!
   groups: [Group!]
@@ -5690,30 +6192,52 @@ type Organization implements Node {
   users: [User!]
   members: [OrgMembership!]
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type OrganizationConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [OrganizationEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type OrganizationEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: Organization
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""Ordering options for Organization connections"""
+"""
+Ordering options for Organization connections
+"""
 input OrganizationOrder {
-  """The ordering direction."""
+  """
+  The ordering direction.
+  """
   direction: OrderDirection! = ASC
-  """The field by which to order Organizations."""
+  """
+  The field by which to order Organizations.
+  """
   field: OrganizationOrderField!
 }
-"""Properties by which Organization connections can be ordered."""
+"""
+Properties by which Organization connections can be ordered.
+"""
 enum OrganizationOrderField {
   name
   display_name
@@ -5726,36 +6250,58 @@ type OrganizationSetting implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """domains associated with the organization"""
+  """
+  domains associated with the organization
+  """
   domains: [String!]
   ssoCert: String
   ssoEntrypoint: String
   ssoIssuer: String
-  """Name of the person to contact for billing"""
+  """
+  Name of the person to contact for billing
+  """
   billingContact: String
   billingEmail: String
   billingPhone: String
   billingAddress: String
-  """Usually government-issued tax ID or business ID such as ABN in Australia"""
+  """
+  Usually government-issued tax ID or business ID such as ABN in Australia
+  """
   taxIdentifier: String
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]
   organization: Organization
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type OrganizationSettingConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [OrganizationSettingEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type OrganizationSettingEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: OrganizationSetting
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
 """
@@ -5766,7 +6312,9 @@ input OrganizationSettingWhereInput {
   not: OrganizationSettingWhereInput
   and: [OrganizationSettingWhereInput!]
   or: [OrganizationSettingWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -5777,7 +6325,9 @@ input OrganizationSettingWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -5786,7 +6336,9 @@ input OrganizationSettingWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -5795,7 +6347,9 @@ input OrganizationSettingWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -5811,7 +6365,9 @@ input OrganizationSettingWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -5827,7 +6383,9 @@ input OrganizationSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -5838,7 +6396,9 @@ input OrganizationSettingWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -5854,7 +6414,9 @@ input OrganizationSettingWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """sso_cert field predicates"""
+  """
+  sso_cert field predicates
+  """
   ssoCert: String
   ssoCertNEQ: String
   ssoCertIn: [String!]
@@ -5870,7 +6432,9 @@ input OrganizationSettingWhereInput {
   ssoCertNotNil: Boolean
   ssoCertEqualFold: String
   ssoCertContainsFold: String
-  """sso_entrypoint field predicates"""
+  """
+  sso_entrypoint field predicates
+  """
   ssoEntrypoint: String
   ssoEntrypointNEQ: String
   ssoEntrypointIn: [String!]
@@ -5886,7 +6450,9 @@ input OrganizationSettingWhereInput {
   ssoEntrypointNotNil: Boolean
   ssoEntrypointEqualFold: String
   ssoEntrypointContainsFold: String
-  """sso_issuer field predicates"""
+  """
+  sso_issuer field predicates
+  """
   ssoIssuer: String
   ssoIssuerNEQ: String
   ssoIssuerIn: [String!]
@@ -5902,7 +6468,9 @@ input OrganizationSettingWhereInput {
   ssoIssuerNotNil: Boolean
   ssoIssuerEqualFold: String
   ssoIssuerContainsFold: String
-  """billing_contact field predicates"""
+  """
+  billing_contact field predicates
+  """
   billingContact: String
   billingContactNEQ: String
   billingContactIn: [String!]
@@ -5918,7 +6486,9 @@ input OrganizationSettingWhereInput {
   billingContactNotNil: Boolean
   billingContactEqualFold: String
   billingContactContainsFold: String
-  """billing_email field predicates"""
+  """
+  billing_email field predicates
+  """
   billingEmail: String
   billingEmailNEQ: String
   billingEmailIn: [String!]
@@ -5934,7 +6504,9 @@ input OrganizationSettingWhereInput {
   billingEmailNotNil: Boolean
   billingEmailEqualFold: String
   billingEmailContainsFold: String
-  """billing_phone field predicates"""
+  """
+  billing_phone field predicates
+  """
   billingPhone: String
   billingPhoneNEQ: String
   billingPhoneIn: [String!]
@@ -5950,7 +6522,9 @@ input OrganizationSettingWhereInput {
   billingPhoneNotNil: Boolean
   billingPhoneEqualFold: String
   billingPhoneContainsFold: String
-  """billing_address field predicates"""
+  """
+  billing_address field predicates
+  """
   billingAddress: String
   billingAddressNEQ: String
   billingAddressIn: [String!]
@@ -5966,7 +6540,9 @@ input OrganizationSettingWhereInput {
   billingAddressNotNil: Boolean
   billingAddressEqualFold: String
   billingAddressContainsFold: String
-  """tax_identifier field predicates"""
+  """
+  tax_identifier field predicates
+  """
   taxIdentifier: String
   taxIdentifierNEQ: String
   taxIdentifierIn: [String!]
@@ -5982,7 +6558,9 @@ input OrganizationSettingWhereInput {
   taxIdentifierNotNil: Boolean
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
-  """organization edge predicates"""
+  """
+  organization edge predicates
+  """
   hasOrganization: Boolean
   hasOrganizationWith: [OrganizationWhereInput!]
 }
@@ -5994,7 +6572,9 @@ input OrganizationWhereInput {
   not: OrganizationWhereInput
   and: [OrganizationWhereInput!]
   or: [OrganizationWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -6005,7 +6585,9 @@ input OrganizationWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -6014,7 +6596,9 @@ input OrganizationWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -6023,7 +6607,9 @@ input OrganizationWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -6039,7 +6625,9 @@ input OrganizationWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -6055,7 +6643,9 @@ input OrganizationWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -6066,7 +6656,9 @@ input OrganizationWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -6082,7 +6674,9 @@ input OrganizationWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """display_name field predicates"""
+  """
+  display_name field predicates
+  """
   displayName: String
   displayNameNEQ: String
   displayNameIn: [String!]
@@ -6096,7 +6690,9 @@ input OrganizationWhereInput {
   displayNameHasSuffix: String
   displayNameEqualFold: String
   displayNameContainsFold: String
-  """parent_organization_id field predicates"""
+  """
+  parent_organization_id field predicates
+  """
   parentOrganizationID: ID
   parentOrganizationIDNEQ: ID
   parentOrganizationIDIn: [ID!]
@@ -6112,34 +6708,54 @@ input OrganizationWhereInput {
   parentOrganizationIDNotNil: Boolean
   parentOrganizationIDEqualFold: ID
   parentOrganizationIDContainsFold: ID
-  """personal_org field predicates"""
+  """
+  personal_org field predicates
+  """
   personalOrg: Boolean
   personalOrgNEQ: Boolean
-  """parent edge predicates"""
+  """
+  parent edge predicates
+  """
   hasParent: Boolean
   hasParentWith: [OrganizationWhereInput!]
-  """children edge predicates"""
+  """
+  children edge predicates
+  """
   hasChildren: Boolean
   hasChildrenWith: [OrganizationWhereInput!]
-  """groups edge predicates"""
+  """
+  groups edge predicates
+  """
   hasGroups: Boolean
   hasGroupsWith: [GroupWhereInput!]
-  """integrations edge predicates"""
+  """
+  integrations edge predicates
+  """
   hasIntegrations: Boolean
   hasIntegrationsWith: [IntegrationWhereInput!]
-  """setting edge predicates"""
+  """
+  setting edge predicates
+  """
   hasSetting: Boolean
   hasSettingWith: [OrganizationSettingWhereInput!]
-  """entitlements edge predicates"""
+  """
+  entitlements edge predicates
+  """
   hasEntitlements: Boolean
   hasEntitlementsWith: [EntitlementWhereInput!]
-  """oauthprovider edge predicates"""
+  """
+  oauthprovider edge predicates
+  """
   hasOauthprovider: Boolean
   hasOauthproviderWith: [OauthProviderWhereInput!]
-  """users edge predicates"""
+  """
+  users edge predicates
+  """
   hasUsers: Boolean
   hasUsersWith: [UserWhereInput!]
-  """members edge predicates"""
+  """
+  members edge predicates
+  """
   hasMembers: Boolean
   hasMembersWith: [OrgMembershipWhereInput!]
 }
@@ -6148,13 +6764,21 @@ Information about pagination in a connection.
 https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo
 """
 type PageInfo {
-  """When paginating forwards, are there more items?"""
+  """
+  When paginating forwards, are there more items?
+  """
   hasNextPage: Boolean!
-  """When paginating backwards, are there more items?"""
+  """
+  When paginating backwards, are there more items?
+  """
   hasPreviousPage: Boolean!
-  """When paginating backwards, the cursor to continue."""
+  """
+  When paginating backwards, the cursor to continue.
+  """
   startCursor: Cursor
-  """When paginating forwards, the cursor to continue."""
+  """
+  When paginating forwards, the cursor to continue.
+  """
   endCursor: Cursor
 }
 type PersonalAccessToken implements Node {
@@ -6165,31 +6789,53 @@ type PersonalAccessToken implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """the name associated with the token"""
+  """
+  the name associated with the token
+  """
   name: String!
-  """what abilites the token should have"""
+  """
+  what abilites the token should have
+  """
   abilities: [String!]
-  """when the token expires"""
+  """
+  when the token expires
+  """
   expiresAt: Time!
-  """a description of the token's purpose"""
+  """
+  a description of the token's purpose
+  """
   description: String
   lastUsedAt: Time
   owner: User!
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type PersonalAccessTokenConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [PersonalAccessTokenEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type PersonalAccessTokenEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: PersonalAccessToken
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
 """
@@ -6200,7 +6846,9 @@ input PersonalAccessTokenWhereInput {
   not: PersonalAccessTokenWhereInput
   and: [PersonalAccessTokenWhereInput!]
   or: [PersonalAccessTokenWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -6211,7 +6859,9 @@ input PersonalAccessTokenWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -6220,7 +6870,9 @@ input PersonalAccessTokenWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -6229,7 +6881,9 @@ input PersonalAccessTokenWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -6245,7 +6899,9 @@ input PersonalAccessTokenWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -6261,7 +6917,9 @@ input PersonalAccessTokenWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -6272,7 +6930,9 @@ input PersonalAccessTokenWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -6288,7 +6948,9 @@ input PersonalAccessTokenWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """name field predicates"""
+  """
+  name field predicates
+  """
   name: String
   nameNEQ: String
   nameIn: [String!]
@@ -6302,7 +6964,9 @@ input PersonalAccessTokenWhereInput {
   nameHasSuffix: String
   nameEqualFold: String
   nameContainsFold: String
-  """expires_at field predicates"""
+  """
+  expires_at field predicates
+  """
   expiresAt: Time
   expiresAtNEQ: Time
   expiresAtIn: [Time!]
@@ -6311,7 +6975,9 @@ input PersonalAccessTokenWhereInput {
   expiresAtGTE: Time
   expiresAtLT: Time
   expiresAtLTE: Time
-  """last_used_at field predicates"""
+  """
+  last_used_at field predicates
+  """
   lastUsedAt: Time
   lastUsedAtNEQ: Time
   lastUsedAtIn: [Time!]
@@ -6322,243 +6988,393 @@ input PersonalAccessTokenWhereInput {
   lastUsedAtLTE: Time
   lastUsedAtIsNil: Boolean
   lastUsedAtNotNil: Boolean
-  """owner edge predicates"""
+  """
+  owner edge predicates
+  """
   hasOwner: Boolean
   hasOwnerWith: [UserWhereInput!]
 }
 type Query {
-  """Fetches an object given its ID."""
+  """
+  Fetches an object given its ID.
+  """
   node(
-    """ID of the object."""
+    """
+    ID of the object.
+    """
     id: ID!
   ): Node
-  """Lookup nodes by a list of IDs."""
+  """
+  Lookup nodes by a list of IDs.
+  """
   nodes(
-    """The list of node IDs."""
+    """
+    The list of node IDs.
+    """
     ids: [ID!]!
   ): [Node]!
   entitlements(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for Entitlements returned from the connection."""
+    """
+    Filtering options for Entitlements returned from the connection.
+    """
     where: EntitlementWhereInput
   ): EntitlementConnection!
   groups(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Ordering options for Groups returned from the connection."""
+    """
+    Ordering options for Groups returned from the connection.
+    """
     orderBy: GroupOrder
 
-    """Filtering options for Groups returned from the connection."""
+    """
+    Filtering options for Groups returned from the connection.
+    """
     where: GroupWhereInput
   ): GroupConnection!
   groupMemberships(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for GroupMemberships returned from the connection."""
+    """
+    Filtering options for GroupMemberships returned from the connection.
+    """
     where: GroupMembershipWhereInput
   ): GroupMembershipConnection!
   groupSettings(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for GroupSettings returned from the connection."""
+    """
+    Filtering options for GroupSettings returned from the connection.
+    """
     where: GroupSettingWhereInput
   ): GroupSettingConnection!
   integrations(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Ordering options for Integrations returned from the connection."""
+    """
+    Ordering options for Integrations returned from the connection.
+    """
     orderBy: IntegrationOrder
 
-    """Filtering options for Integrations returned from the connection."""
+    """
+    Filtering options for Integrations returned from the connection.
+    """
     where: IntegrationWhereInput
   ): IntegrationConnection!
   oauthProviders(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for OauthProviders returned from the connection."""
+    """
+    Filtering options for OauthProviders returned from the connection.
+    """
     where: OauthProviderWhereInput
   ): OauthProviderConnection!
   ohAuthTooTokens(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for OhAuthTooTokens returned from the connection."""
+    """
+    Filtering options for OhAuthTooTokens returned from the connection.
+    """
     where: OhAuthTooTokenWhereInput
   ): OhAuthTooTokenConnection!
   orgMemberships(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for OrgMemberships returned from the connection."""
+    """
+    Filtering options for OrgMemberships returned from the connection.
+    """
     where: OrgMembershipWhereInput
   ): OrgMembershipConnection!
   organizations(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Ordering options for Organizations returned from the connection."""
+    """
+    Ordering options for Organizations returned from the connection.
+    """
     orderBy: OrganizationOrder
 
-    """Filtering options for Organizations returned from the connection."""
+    """
+    Filtering options for Organizations returned from the connection.
+    """
     where: OrganizationWhereInput
   ): OrganizationConnection!
   organizationSettings(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for OrganizationSettings returned from the connection."""
+    """
+    Filtering options for OrganizationSettings returned from the connection.
+    """
     where: OrganizationSettingWhereInput
   ): OrganizationSettingConnection!
   personalAccessTokens(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for PersonalAccessTokens returned from the connection."""
+    """
+    Filtering options for PersonalAccessTokens returned from the connection.
+    """
     where: PersonalAccessTokenWhereInput
   ): PersonalAccessTokenConnection!
   users(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Ordering options for Users returned from the connection."""
+    """
+    Ordering options for Users returned from the connection.
+    """
     orderBy: UserOrder
 
-    """Filtering options for Users returned from the connection."""
+    """
+    Filtering options for Users returned from the connection.
+    """
     where: UserWhereInput
   ): UserConnection!
   userSettings(
-    """Returns the elements in the list that come after the specified cursor."""
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: Cursor
 
-    """Returns the first _n_ elements from the list."""
+    """
+    Returns the first _n_ elements from the list.
+    """
     first: Int
 
-    """Returns the elements in the list that come before the specified cursor."""
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
     before: Cursor
 
-    """Returns the last _n_ elements from the list."""
+    """
+    Returns the last _n_ elements from the list.
+    """
     last: Int
 
-    """Filtering options for UserSettings returned from the connection."""
+    """
+    Filtering options for UserSettings returned from the connection.
+    """
     where: UserSettingWhereInput
   ): UserSettingConnection!
 }
-"""The builtin Time type"""
+"""
+The builtin Time type
+"""
 scalar Time
 """
 UpdateEntitlementInput is used for update Entitlement object.
@@ -6569,18 +7385,28 @@ input UpdateEntitlementInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   tier: EntitlementTier
-  """used to store references to external systems, e.g. Stripe"""
+  """
+  used to store references to external systems, e.g. Stripe
+  """
   externalCustomerID: String
   clearExternalCustomerID: Boolean
-  """used to store references to external systems, e.g. Stripe"""
+  """
+  used to store references to external systems, e.g. Stripe
+  """
   externalSubscriptionID: String
   clearExternalSubscriptionID: Boolean
-  """whether or not the customers entitlement expires - expires_at will show the time"""
+  """
+  whether or not the customers entitlement expires - expires_at will show the time
+  """
   expires: Boolean
-  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
+  """
+  the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month
+  """
   expiresAt: Time
   clearExpiresAt: Boolean
-  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
+  """
+  whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
+  """
   cancelled: Boolean
   ownerID: ID
 }
@@ -6592,18 +7418,28 @@ input UpdateGroupInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """the name of the group - must be unique within the organization"""
+  """
+  the name of the group - must be unique within the organization
+  """
   name: String
-  """the groups description"""
+  """
+  the groups description
+  """
   description: String
   clearDescription: Boolean
-  """the URL to an auto generated gravatar image for the group"""
+  """
+  the URL to an auto generated gravatar image for the group
+  """
   gravatarLogoURL: String
   clearGravatarLogoURL: Boolean
-  """the URL to an image uploaded by the customer for the groups avatar image"""
+  """
+  the URL to an image uploaded by the customer for the groups avatar image
+  """
   logoURL: String
   clearLogoURL: Boolean
-  """The group's displayed 'friendly' name"""
+  """
+  The group's displayed 'friendly' name
+  """
   displayName: String
   ownerID: ID
   settingID: ID
@@ -6629,11 +7465,17 @@ input UpdateGroupSettingInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
+  """
+  whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization
+  """
   visibility: GroupSettingVisibility
-  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
+  """
+  the policy governing ability to freely join a group, whether it requires an invitation, application, or either
+  """
   joinPolicy: GroupSettingJoinPolicy
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]
   appendTags: [String!]
   syncToSlack: Boolean
@@ -6649,9 +7491,13 @@ input UpdateIntegrationInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """the name of the integration - must be unique within the organization"""
+  """
+  the name of the integration - must be unique within the organization
+  """
   name: String
-  """a description of the integration"""
+  """
+  a description of the integration
+  """
   description: String
   clearDescription: Boolean
   kind: String
@@ -6667,23 +7513,41 @@ input UpdateOauthProviderInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """the oauth provider's name"""
+  """
+  the oauth provider's name
+  """
   name: String
-  """the client id for the oauth provider"""
+  """
+  the client id for the oauth provider
+  """
   clientID: String
-  """the client secret"""
+  """
+  the client secret
+  """
   clientSecret: String
-  """the redirect url"""
+  """
+  the redirect url
+  """
   redirectURL: String
-  """the scopes"""
+  """
+  the scopes
+  """
   scopes: String
-  """the auth url of the provider"""
+  """
+  the auth url of the provider
+  """
   authURL: String
-  """the token url of the provider"""
+  """
+  the token url of the provider
+  """
   tokenURL: String
-  """the auth style, 0: auto detect 1: third party log in 2: log in with username and password"""
+  """
+  the auth style, 0: auto detect 1: third party log in 2: log in with username and password
+  """
   authStyle: Int
-  """the URL to request user information by token"""
+  """
+  the URL to request user information by token
+  """
   infoURL: String
   ownerID: ID
   clearOwner: Boolean
@@ -6730,11 +7594,17 @@ input UpdateOrganizationInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """the name of the organization"""
+  """
+  the name of the organization
+  """
   name: String
-  """The organization's displayed 'friendly' name"""
+  """
+  The organization's displayed 'friendly' name
+  """
   displayName: String
-  """An optional description of the organization"""
+  """
+  An optional description of the organization
+  """
   description: String
   clearDescription: Boolean
   addGroupIDs: [ID!]
@@ -6763,7 +7633,9 @@ input UpdateOrganizationSettingInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """domains associated with the organization"""
+  """
+  domains associated with the organization
+  """
   domains: [String!]
   appendDomains: [String!]
   clearDomains: Boolean
@@ -6773,7 +7645,9 @@ input UpdateOrganizationSettingInput {
   clearSSOEntrypoint: Boolean
   ssoIssuer: String
   clearSSOIssuer: Boolean
-  """Name of the person to contact for billing"""
+  """
+  Name of the person to contact for billing
+  """
   billingContact: String
   clearBillingContact: Boolean
   billingEmail: String
@@ -6782,10 +7656,14 @@ input UpdateOrganizationSettingInput {
   clearBillingPhone: Boolean
   billingAddress: String
   clearBillingAddress: Boolean
-  """Usually government-issued tax ID or business ID such as ABN in Australia"""
+  """
+  Usually government-issued tax ID or business ID such as ABN in Australia
+  """
   taxIdentifier: String
   clearTaxIdentifier: Boolean
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
@@ -6800,15 +7678,23 @@ input UpdatePersonalAccessTokenInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """the name associated with the token"""
+  """
+  the name associated with the token
+  """
   name: String
-  """what abilites the token should have"""
+  """
+  what abilites the token should have
+  """
   abilities: [String!]
   appendAbilities: [String!]
   clearAbilities: Boolean
-  """when the token expires"""
+  """
+  when the token expires
+  """
   expiresAt: Time
-  """a description of the token's purpose"""
+  """
+  a description of the token's purpose
+  """
   description: String
   clearDescription: Boolean
   lastUsedAt: Time
@@ -6826,27 +7712,43 @@ input UpdateUserInput {
   email: String
   firstName: String
   lastName: String
-  """The user's displayed 'friendly' name"""
+  """
+  The user's displayed 'friendly' name
+  """
   displayName: String
-  """URL of the user's remote avatar"""
+  """
+  URL of the user's remote avatar
+  """
   avatarRemoteURL: String
   clearAvatarRemoteURL: Boolean
-  """The user's local avatar file"""
+  """
+  The user's local avatar file
+  """
   avatarLocalFile: String
   clearAvatarLocalFile: Boolean
-  """The time the user's (local) avatar was last updated"""
+  """
+  The time the user's (local) avatar was last updated
+  """
   avatarUpdatedAt: Time
   clearAvatarUpdatedAt: Boolean
-  """the time the user was last seen"""
+  """
+  the time the user was last seen
+  """
   lastSeen: Time
   clearLastSeen: Boolean
-  """user password hash"""
+  """
+  user password hash
+  """
   password: String
   clearPassword: Boolean
-  """the Subject of the user JWT"""
+  """
+  the Subject of the user JWT
+  """
   sub: String
   clearSub: Boolean
-  """whether the user uses oauth for login or not"""
+  """
+  whether the user uses oauth for login or not
+  """
   oauth: Boolean
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
@@ -6873,23 +7775,35 @@ input UpdateUserSettingInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """user account is locked if unconfirmed or explicitly locked"""
+  """
+  user account is locked if unconfirmed or explicitly locked
+  """
   locked: Boolean
-  """The time notifications regarding the user were silenced"""
+  """
+  The time notifications regarding the user were silenced
+  """
   silencedAt: Time
   clearSilencedAt: Boolean
-  """The time the user was suspended"""
+  """
+  The time the user was suspended
+  """
   suspendedAt: Time
   clearSuspendedAt: Boolean
-  """local user password recovery code generated during account creation - does not exist for oauth'd users"""
+  """
+  local user password recovery code generated during account creation - does not exist for oauth'd users
+  """
   recoveryCode: String
   clearRecoveryCode: Boolean
   status: UserSettingStatus
-  """organization to load on user login"""
+  """
+  organization to load on user login
+  """
   defaultOrg: String
   clearDefaultOrg: Boolean
   emailConfirmed: Boolean
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]
   appendTags: [String!]
   userID: ID
@@ -6906,19 +7820,33 @@ type User implements Node {
   email: String!
   firstName: String!
   lastName: String!
-  """The user's displayed 'friendly' name"""
+  """
+  The user's displayed 'friendly' name
+  """
   displayName: String!
-  """URL of the user's remote avatar"""
+  """
+  URL of the user's remote avatar
+  """
   avatarRemoteURL: String
-  """The user's local avatar file"""
+  """
+  The user's local avatar file
+  """
   avatarLocalFile: String
-  """The time the user's (local) avatar was last updated"""
+  """
+  The time the user's (local) avatar was last updated
+  """
   avatarUpdatedAt: Time
-  """the time the user was last seen"""
+  """
+  the time the user was last seen
+  """
   lastSeen: Time
-  """the Subject of the user JWT"""
+  """
+  the Subject of the user JWT
+  """
   sub: String
-  """whether the user uses oauth for login or not"""
+  """
+  whether the user uses oauth for login or not
+  """
   oauth: Boolean!
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSetting!
@@ -6927,30 +7855,52 @@ type User implements Node {
   groupMemberships: [GroupMembership!]
   orgMemberships: [OrgMembership!]
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type UserConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [UserEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type UserEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: User
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""Ordering options for User connections"""
+"""
+Ordering options for User connections
+"""
 input UserOrder {
-  """The ordering direction."""
+  """
+  The ordering direction.
+  """
   direction: OrderDirection! = ASC
-  """The field by which to order Users."""
+  """
+  The field by which to order Users.
+  """
   field: UserOrderField!
 }
-"""Properties by which User connections can be ordered."""
+"""
+Properties by which User connections can be ordered.
+"""
 enum UserOrderField {
   first_name
   last_name
@@ -6964,37 +7914,63 @@ type UserSetting implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  """user account is locked if unconfirmed or explicitly locked"""
+  """
+  user account is locked if unconfirmed or explicitly locked
+  """
   locked: Boolean!
-  """The time notifications regarding the user were silenced"""
+  """
+  The time notifications regarding the user were silenced
+  """
   silencedAt: Time
-  """The time the user was suspended"""
+  """
+  The time the user was suspended
+  """
   suspendedAt: Time
   status: UserSettingStatus!
-  """organization to load on user login"""
+  """
+  organization to load on user login
+  """
   defaultOrg: String
   emailConfirmed: Boolean!
-  """tags associated with the object"""
+  """
+  tags associated with the object
+  """
   tags: [String!]!
   user: User
 }
-"""A connection to a list of items."""
+"""
+A connection to a list of items.
+"""
 type UserSettingConnection {
-  """A list of edges."""
+  """
+  A list of edges.
+  """
   edges: [UserSettingEdge]
-  """Information to aid in pagination."""
+  """
+  Information to aid in pagination.
+  """
   pageInfo: PageInfo!
-  """Identifies the total count of items in the connection."""
+  """
+  Identifies the total count of items in the connection.
+  """
   totalCount: Int!
 }
-"""An edge in a connection."""
+"""
+An edge in a connection.
+"""
 type UserSettingEdge {
-  """The item at the end of the edge."""
+  """
+  The item at the end of the edge.
+  """
   node: UserSetting
-  """A cursor for use in pagination."""
+  """
+  A cursor for use in pagination.
+  """
   cursor: Cursor!
 }
-"""UserSettingStatus is enum for the field status"""
+"""
+UserSettingStatus is enum for the field status
+"""
 enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Status") {
   ACTIVE
   INACTIVE
@@ -7009,7 +7985,9 @@ input UserSettingWhereInput {
   not: UserSettingWhereInput
   and: [UserSettingWhereInput!]
   or: [UserSettingWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -7020,7 +7998,9 @@ input UserSettingWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -7029,7 +8009,9 @@ input UserSettingWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -7038,7 +8020,9 @@ input UserSettingWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -7054,7 +8038,9 @@ input UserSettingWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -7070,7 +8056,9 @@ input UserSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -7081,7 +8069,9 @@ input UserSettingWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -7097,10 +8087,14 @@ input UserSettingWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """locked field predicates"""
+  """
+  locked field predicates
+  """
   locked: Boolean
   lockedNEQ: Boolean
-  """silenced_at field predicates"""
+  """
+  silenced_at field predicates
+  """
   silencedAt: Time
   silencedAtNEQ: Time
   silencedAtIn: [Time!]
@@ -7111,7 +8105,9 @@ input UserSettingWhereInput {
   silencedAtLTE: Time
   silencedAtIsNil: Boolean
   silencedAtNotNil: Boolean
-  """suspended_at field predicates"""
+  """
+  suspended_at field predicates
+  """
   suspendedAt: Time
   suspendedAtNEQ: Time
   suspendedAtIn: [Time!]
@@ -7122,12 +8118,16 @@ input UserSettingWhereInput {
   suspendedAtLTE: Time
   suspendedAtIsNil: Boolean
   suspendedAtNotNil: Boolean
-  """status field predicates"""
+  """
+  status field predicates
+  """
   status: UserSettingStatus
   statusNEQ: UserSettingStatus
   statusIn: [UserSettingStatus!]
   statusNotIn: [UserSettingStatus!]
-  """default_org field predicates"""
+  """
+  default_org field predicates
+  """
   defaultOrg: String
   defaultOrgNEQ: String
   defaultOrgIn: [String!]
@@ -7143,10 +8143,14 @@ input UserSettingWhereInput {
   defaultOrgNotNil: Boolean
   defaultOrgEqualFold: String
   defaultOrgContainsFold: String
-  """email_confirmed field predicates"""
+  """
+  email_confirmed field predicates
+  """
   emailConfirmed: Boolean
   emailConfirmedNEQ: Boolean
-  """user edge predicates"""
+  """
+  user edge predicates
+  """
   hasUser: Boolean
   hasUserWith: [UserWhereInput!]
 }
@@ -7158,7 +8162,9 @@ input UserWhereInput {
   not: UserWhereInput
   and: [UserWhereInput!]
   or: [UserWhereInput!]
-  """id field predicates"""
+  """
+  id field predicates
+  """
   id: ID
   idNEQ: ID
   idIn: [ID!]
@@ -7169,7 +8175,9 @@ input UserWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
-  """created_at field predicates"""
+  """
+  created_at field predicates
+  """
   createdAt: Time
   createdAtNEQ: Time
   createdAtIn: [Time!]
@@ -7178,7 +8186,9 @@ input UserWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
-  """updated_at field predicates"""
+  """
+  updated_at field predicates
+  """
   updatedAt: Time
   updatedAtNEQ: Time
   updatedAtIn: [Time!]
@@ -7187,7 +8197,9 @@ input UserWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
-  """created_by field predicates"""
+  """
+  created_by field predicates
+  """
   createdBy: String
   createdByNEQ: String
   createdByIn: [String!]
@@ -7203,7 +8215,9 @@ input UserWhereInput {
   createdByNotNil: Boolean
   createdByEqualFold: String
   createdByContainsFold: String
-  """updated_by field predicates"""
+  """
+  updated_by field predicates
+  """
   updatedBy: String
   updatedByNEQ: String
   updatedByIn: [String!]
@@ -7219,7 +8233,9 @@ input UserWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
-  """deleted_at field predicates"""
+  """
+  deleted_at field predicates
+  """
   deletedAt: Time
   deletedAtNEQ: Time
   deletedAtIn: [Time!]
@@ -7230,7 +8246,9 @@ input UserWhereInput {
   deletedAtLTE: Time
   deletedAtIsNil: Boolean
   deletedAtNotNil: Boolean
-  """deleted_by field predicates"""
+  """
+  deleted_by field predicates
+  """
   deletedBy: String
   deletedByNEQ: String
   deletedByIn: [String!]
@@ -7246,7 +8264,9 @@ input UserWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
-  """email field predicates"""
+  """
+  email field predicates
+  """
   email: String
   emailNEQ: String
   emailIn: [String!]
@@ -7260,7 +8280,9 @@ input UserWhereInput {
   emailHasSuffix: String
   emailEqualFold: String
   emailContainsFold: String
-  """first_name field predicates"""
+  """
+  first_name field predicates
+  """
   firstName: String
   firstNameNEQ: String
   firstNameIn: [String!]
@@ -7274,7 +8296,9 @@ input UserWhereInput {
   firstNameHasSuffix: String
   firstNameEqualFold: String
   firstNameContainsFold: String
-  """last_name field predicates"""
+  """
+  last_name field predicates
+  """
   lastName: String
   lastNameNEQ: String
   lastNameIn: [String!]
@@ -7288,7 +8312,9 @@ input UserWhereInput {
   lastNameHasSuffix: String
   lastNameEqualFold: String
   lastNameContainsFold: String
-  """display_name field predicates"""
+  """
+  display_name field predicates
+  """
   displayName: String
   displayNameNEQ: String
   displayNameIn: [String!]
@@ -7302,7 +8328,9 @@ input UserWhereInput {
   displayNameHasSuffix: String
   displayNameEqualFold: String
   displayNameContainsFold: String
-  """avatar_remote_url field predicates"""
+  """
+  avatar_remote_url field predicates
+  """
   avatarRemoteURL: String
   avatarRemoteURLNEQ: String
   avatarRemoteURLIn: [String!]
@@ -7318,7 +8346,9 @@ input UserWhereInput {
   avatarRemoteURLNotNil: Boolean
   avatarRemoteURLEqualFold: String
   avatarRemoteURLContainsFold: String
-  """avatar_local_file field predicates"""
+  """
+  avatar_local_file field predicates
+  """
   avatarLocalFile: String
   avatarLocalFileNEQ: String
   avatarLocalFileIn: [String!]
@@ -7334,7 +8364,9 @@ input UserWhereInput {
   avatarLocalFileNotNil: Boolean
   avatarLocalFileEqualFold: String
   avatarLocalFileContainsFold: String
-  """avatar_updated_at field predicates"""
+  """
+  avatar_updated_at field predicates
+  """
   avatarUpdatedAt: Time
   avatarUpdatedAtNEQ: Time
   avatarUpdatedAtIn: [Time!]
@@ -7345,7 +8377,9 @@ input UserWhereInput {
   avatarUpdatedAtLTE: Time
   avatarUpdatedAtIsNil: Boolean
   avatarUpdatedAtNotNil: Boolean
-  """last_seen field predicates"""
+  """
+  last_seen field predicates
+  """
   lastSeen: Time
   lastSeenNEQ: Time
   lastSeenIn: [Time!]
@@ -7356,7 +8390,9 @@ input UserWhereInput {
   lastSeenLTE: Time
   lastSeenIsNil: Boolean
   lastSeenNotNil: Boolean
-  """sub field predicates"""
+  """
+  sub field predicates
+  """
   sub: String
   subNEQ: String
   subIn: [String!]
@@ -7372,25 +8408,39 @@ input UserWhereInput {
   subNotNil: Boolean
   subEqualFold: String
   subContainsFold: String
-  """oauth field predicates"""
+  """
+  oauth field predicates
+  """
   oauth: Boolean
   oauthNEQ: Boolean
-  """personal_access_tokens edge predicates"""
+  """
+  personal_access_tokens edge predicates
+  """
   hasPersonalAccessTokens: Boolean
   hasPersonalAccessTokensWith: [PersonalAccessTokenWhereInput!]
-  """setting edge predicates"""
+  """
+  setting edge predicates
+  """
   hasSetting: Boolean
   hasSettingWith: [UserSettingWhereInput!]
-  """groups edge predicates"""
+  """
+  groups edge predicates
+  """
   hasGroups: Boolean
   hasGroupsWith: [GroupWhereInput!]
-  """organizations edge predicates"""
+  """
+  organizations edge predicates
+  """
   hasOrganizations: Boolean
   hasOrganizationsWith: [OrganizationWhereInput!]
-  """group_memberships edge predicates"""
+  """
+  group_memberships edge predicates
+  """
   hasGroupMemberships: Boolean
   hasGroupMembershipsWith: [GroupMembershipWhereInput!]
-  """org_memberships edge predicates"""
+  """
+  org_memberships edge predicates
+  """
   hasOrgMemberships: Boolean
   hasOrgMembershipsWith: [OrgMembershipWhereInput!]
 }

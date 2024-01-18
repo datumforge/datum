@@ -6,7 +6,7 @@ require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.12.5
-	github.com/99designs/gqlgen v0.17.41
+	github.com/99designs/gqlgen v0.17.43
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/Yamashou/gqlgenc v0.16.2
@@ -31,7 +31,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
-	github.com/vektah/gqlparser/v2 v2.5.10
+	github.com/vektah/gqlparser/v2 v2.5.11
 	github.com/wundergraph/graphql-go-tools v1.67.0
 	go.opentelemetry.io/otel v1.22.0
 	go.opentelemetry.io/otel/sdk v1.22.0

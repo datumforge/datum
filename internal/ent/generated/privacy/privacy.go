@@ -255,6 +255,30 @@ func (f IntegrationMutationRuleFunc) EvalMutation(ctx context.Context, m generat
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.IntegrationMutation", m)
 }
 
+// The InviteQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type InviteQueryRuleFunc func(context.Context, *generated.InviteQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f InviteQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.InviteQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.InviteQuery", q)
+}
+
+// The InviteMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type InviteMutationRuleFunc func(context.Context, *generated.InviteMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f InviteMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.InviteMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.InviteMutation", m)
+}
+
 // The OauthProviderQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OauthProviderQueryRuleFunc func(context.Context, *generated.OauthProviderQuery) error
@@ -518,6 +542,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.IntegrationQuery:
 		return q.Filter(), nil
+	case *generated.InviteQuery:
+		return q.Filter(), nil
 	case *generated.OauthProviderQuery:
 		return q.Filter(), nil
 	case *generated.OhAuthTooTokenQuery:
@@ -554,6 +580,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.GroupSettingMutation:
 		return m.Filter(), nil
 	case *generated.IntegrationMutation:
+		return m.Filter(), nil
+	case *generated.InviteMutation:
 		return m.Filter(), nil
 	case *generated.OauthProviderMutation:
 		return m.Filter(), nil

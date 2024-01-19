@@ -88,6 +88,14 @@ func (i *Integration) Owner(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
+func (i *Invite) Owner(ctx context.Context) (*Organization, error) {
+	result, err := i.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = i.QueryOwner().Only(ctx)
+	}
+	return result, err
+}
+
 func (op *OauthProvider) Owner(ctx context.Context) (*Organization, error) {
 	result, err := op.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
@@ -205,6 +213,18 @@ func (o *Organization) Users(ctx context.Context) (result []*User, err error) {
 	}
 	if IsNotLoaded(err) {
 		result, err = o.QueryUsers().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Invites(ctx context.Context) (result []*Invite, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedInvites(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.InvitesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryInvites().All(ctx)
 	}
 	return result, err
 }

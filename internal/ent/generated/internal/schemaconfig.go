@@ -13,6 +13,7 @@ type SchemaConfig struct {
 	GroupMembership        string // GroupMembership table.
 	GroupSetting           string // GroupSetting table.
 	Integration            string // Integration table.
+	Invite                 string // Invite table.
 	OauthProvider          string // OauthProvider table.
 	OhAuthTooToken         string // OhAuthTooToken table.
 	OrgMembership          string // OrgMembership table.

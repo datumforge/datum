@@ -2479,6 +2479,395 @@
         }
       }
     },
+    "/invites": {
+      "get": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "List Invites",
+        "description": "List Invites.",
+        "operationId": "listInvite",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Invite list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InviteList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Create a new Invite",
+        "description": "Creates a new Invite and persists it to storage.",
+        "operationId": "createInvite",
+        "requestBody": {
+          "description": "Invite to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "invited_email": {
+                    "type": "string"
+                  },
+                  "invitestatus": {
+                    "type": "string",
+                    "enum": [
+                      "INVITATION_SENT"
+                    ],
+                    "default": "INVITATION_SENT"
+                  },
+                  "requestor_id": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "owner_id",
+                  "token",
+                  "ttl",
+                  "invited_email",
+                  "invitestatus",
+                  "requestor_id",
+                  "secret",
+                  "owner"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Invite created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/invites/{id}": {
+      "get": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Find a Invite by ID",
+        "description": "Finds the Invite with the requested ID and returns it.",
+        "operationId": "readInvite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Invite",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invite with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Deletes a Invite by ID",
+        "description": "Deletes the Invite with the requested ID.",
+        "operationId": "deleteInvite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Invite",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Invite with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Updates a Invite",
+        "description": "Updates a Invite and persists changes to storage.",
+        "operationId": "updateInvite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Invite",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Invite properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "invited_email": {
+                    "type": "string"
+                  },
+                  "invitestatus": {
+                    "type": "string",
+                    "enum": [
+                      "INVITATION_SENT"
+                    ],
+                    "default": "INVITATION_SENT"
+                  },
+                  "requestor_id": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Invite updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/invites/{id}/owner": {
+      "get": {
+        "tags": [
+          "Invite"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the Invite with the given ID",
+        "operationId": "readInviteOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Invite",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to Invite with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Invite_OwnerRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/livez": {
       "description": "Check if the server is up",
       "get": {
@@ -4200,6 +4589,12 @@
                       "type": "string"
                     }
                   },
+                  "invites": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "members": {
                     "type": "array",
                     "items": {
@@ -4407,6 +4802,12 @@
                     }
                   },
                   "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "invites": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -4686,6 +5087,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Organization_IntegrationsList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/invites": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Invites",
+        "description": "List attached Invites.",
+        "operationId": "listOrganizationInvites",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_InvitesList"
                   }
                 }
               }
@@ -9513,6 +9978,392 @@
           "personal_org"
         ]
       },
+      "Invite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "invited_email": {
+            "type": "string"
+          },
+          "invitestatus": {
+            "type": "string",
+            "enum": [
+              "INVITATION_SENT"
+            ],
+            "default": "INVITATION_SENT"
+          },
+          "requestor_id": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Organization"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "token",
+          "invited_email",
+          "invitestatus",
+          "requestor_id",
+          "owner"
+        ]
+      },
+      "InviteCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "invited_email": {
+            "type": "string"
+          },
+          "invitestatus": {
+            "type": "string",
+            "enum": [
+              "INVITATION_SENT"
+            ],
+            "default": "INVITATION_SENT"
+          },
+          "requestor_id": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "token",
+          "invited_email",
+          "invitestatus",
+          "requestor_id"
+        ]
+      },
+      "InviteList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "invited_email": {
+            "type": "string"
+          },
+          "invitestatus": {
+            "type": "string",
+            "enum": [
+              "INVITATION_SENT"
+            ],
+            "default": "INVITATION_SENT"
+          },
+          "requestor_id": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "token",
+          "invited_email",
+          "invitestatus",
+          "requestor_id"
+        ]
+      },
+      "InviteRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "invited_email": {
+            "type": "string"
+          },
+          "invitestatus": {
+            "type": "string",
+            "enum": [
+              "INVITATION_SENT"
+            ],
+            "default": "INVITATION_SENT"
+          },
+          "requestor_id": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "token",
+          "invited_email",
+          "invitestatus",
+          "requestor_id"
+        ]
+      },
+      "InviteUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "invited_email": {
+            "type": "string"
+          },
+          "invitestatus": {
+            "type": "string",
+            "enum": [
+              "INVITATION_SENT"
+            ],
+            "default": "INVITATION_SENT"
+          },
+          "requestor_id": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "token",
+          "invited_email",
+          "invitestatus",
+          "requestor_id"
+        ]
+      },
+      "Invite_OwnerRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string"
+          },
+          "personal_org": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "display_name",
+          "personal_org"
+        ]
+      },
       "OauthProvider": {
         "type": "object",
         "properties": {
@@ -10738,6 +11589,12 @@
               "$ref": "#/components/schemas/User"
             }
           },
+          "invites": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Invite"
+            }
+          },
           "members": {
             "type": "array",
             "items": {
@@ -11586,6 +12443,72 @@
           "updated_at",
           "name",
           "secret_name"
+        ]
+      },
+      "Organization_InvitesList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "invited_email": {
+            "type": "string"
+          },
+          "invitestatus": {
+            "type": "string",
+            "enum": [
+              "INVITATION_SENT"
+            ],
+            "default": "INVITATION_SENT"
+          },
+          "requestor_id": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "token",
+          "invited_email",
+          "invitestatus",
+          "requestor_id"
         ]
       },
       "Organization_MembersList": {

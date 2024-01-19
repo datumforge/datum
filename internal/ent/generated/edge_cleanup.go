@@ -55,6 +55,11 @@ func IntegrationEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func InviteEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func OauthProviderEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil

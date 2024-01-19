@@ -24,6 +24,8 @@ type Tx struct {
 	GroupSetting *GroupSettingClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
+	// Invite is the client for interacting with the Invite builders.
+	Invite *InviteClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
 	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
@@ -179,6 +181,7 @@ func (tx *Tx) init() {
 	tx.GroupMembership = NewGroupMembershipClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
+	tx.Invite = NewInviteClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
 	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
 	tx.OrgMembership = NewOrgMembershipClient(tx.config)

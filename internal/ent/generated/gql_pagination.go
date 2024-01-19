@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -1465,6 +1466,252 @@ func (i *Integration) ToEdge(order *IntegrationOrder) *IntegrationEdge {
 		order = DefaultIntegrationOrder
 	}
 	return &IntegrationEdge{
+		Node:   i,
+		Cursor: order.Field.toCursor(i),
+	}
+}
+
+// InviteEdge is the edge representation of Invite.
+type InviteEdge struct {
+	Node   *Invite `json:"node"`
+	Cursor Cursor  `json:"cursor"`
+}
+
+// InviteConnection is the connection containing edges to Invite.
+type InviteConnection struct {
+	Edges      []*InviteEdge `json:"edges"`
+	PageInfo   PageInfo      `json:"pageInfo"`
+	TotalCount int           `json:"totalCount"`
+}
+
+func (c *InviteConnection) build(nodes []*Invite, pager *invitePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Invite
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Invite {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Invite {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*InviteEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &InviteEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// InvitePaginateOption enables pagination customization.
+type InvitePaginateOption func(*invitePager) error
+
+// WithInviteOrder configures pagination ordering.
+func WithInviteOrder(order *InviteOrder) InvitePaginateOption {
+	if order == nil {
+		order = DefaultInviteOrder
+	}
+	o := *order
+	return func(pager *invitePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultInviteOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithInviteFilter configures pagination filter.
+func WithInviteFilter(filter func(*InviteQuery) (*InviteQuery, error)) InvitePaginateOption {
+	return func(pager *invitePager) error {
+		if filter == nil {
+			return errors.New("InviteQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type invitePager struct {
+	reverse bool
+	order   *InviteOrder
+	filter  func(*InviteQuery) (*InviteQuery, error)
+}
+
+func newInvitePager(opts []InvitePaginateOption, reverse bool) (*invitePager, error) {
+	pager := &invitePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultInviteOrder
+	}
+	return pager, nil
+}
+
+func (p *invitePager) applyFilter(query *InviteQuery) (*InviteQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *invitePager) toCursor(i *Invite) Cursor {
+	return p.order.Field.toCursor(i)
+}
+
+func (p *invitePager) applyCursors(query *InviteQuery, after, before *Cursor) (*InviteQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultInviteOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *invitePager) applyOrder(query *InviteQuery) *InviteQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultInviteOrder.Field {
+		query = query.Order(DefaultInviteOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *invitePager) orderExpr(query *InviteQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultInviteOrder.Field {
+			b.Comma().Ident(DefaultInviteOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Invite.
+func (i *InviteQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...InvitePaginateOption,
+) (*InviteConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newInvitePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if i, err = pager.applyFilter(i); err != nil {
+		return nil, err
+	}
+	conn := &InviteConnection{Edges: []*InviteEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = i.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if i, err = pager.applyCursors(i, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		i.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := i.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	i = pager.applyOrder(i)
+	nodes, err := i.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// InviteOrderField defines the ordering field of Invite.
+type InviteOrderField struct {
+	// Value extracts the ordering value from the given Invite.
+	Value    func(*Invite) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) invite.OrderOption
+	toCursor func(*Invite) Cursor
+}
+
+// InviteOrder defines the ordering of Invite.
+type InviteOrder struct {
+	Direction OrderDirection    `json:"direction"`
+	Field     *InviteOrderField `json:"field"`
+}
+
+// DefaultInviteOrder is the default ordering of Invite.
+var DefaultInviteOrder = &InviteOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &InviteOrderField{
+		Value: func(i *Invite) (ent.Value, error) {
+			return i.ID, nil
+		},
+		column: invite.FieldID,
+		toTerm: invite.ByID,
+		toCursor: func(i *Invite) Cursor {
+			return Cursor{ID: i.ID}
+		},
+	},
+}
+
+// ToEdge converts Invite into InviteEdge.
+func (i *Invite) ToEdge(order *InviteOrder) *InviteEdge {
+	if order == nil {
+		order = DefaultInviteOrder
+	}
+	return &InviteEdge{
 		Node:   i,
 		Cursor: order.Field.toCursor(i),
 	}

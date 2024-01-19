@@ -221,6 +221,37 @@ var (
 			},
 		},
 	}
+	// InvitesColumns holds the columns for the "invites" table.
+	InvitesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "ttl", Type: field.TypeTime},
+		{Name: "invited_email", Type: field.TypeString},
+		{Name: "invitestatus", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT"}, Default: "INVITATION_SENT"},
+		{Name: "requestor_id", Type: field.TypeString},
+		{Name: "secret", Type: field.TypeBytes},
+		{Name: "owner_id", Type: field.TypeString},
+	}
+	// InvitesTable holds the schema information for the "invites" table.
+	InvitesTable = &schema.Table{
+		Name:       "invites",
+		Columns:    InvitesColumns,
+		PrimaryKey: []*schema.Column{InvitesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "invites_organizations_invites",
+				Columns:    []*schema.Column{InvitesColumns[13]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// OauthProvidersColumns holds the columns for the "oauth_providers" table.
 	OauthProvidersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -554,6 +585,7 @@ var (
 		GroupMembershipsTable,
 		GroupSettingsTable,
 		IntegrationsTable,
+		InvitesTable,
 		OauthProvidersTable,
 		OhAuthTooTokensTable,
 		OrgMembershipsTable,
@@ -574,6 +606,7 @@ func init() {
 	GroupMembershipsTable.ForeignKeys[1].RefTable = UsersTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	InvitesTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrgMembershipsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrgMembershipsTable.ForeignKeys[1].RefTable = UsersTable

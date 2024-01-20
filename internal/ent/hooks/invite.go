@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"entgo.io/ent"
@@ -11,25 +12,37 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
-// HookInvite runs on accesstoken mutations and sets expires
+// HookInvite runs on invite mutations
 func HookInvite() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.InviteFunc(func(ctx context.Context, mutation *generated.InviteMutation) (generated.Value, error) {
-			if mutation.Op().Is(ent.OpCreate) {
-				create, err := doesUserHaveMembership(ctx, mutation)
-				if false {
-					if err := createAndSetToken(ctx, mutation); err != nil {
-						mutation.Logger.Errorw("failed to create invitation", "error", err)
-						return nil, err
-					}
-				}
-				if err != nil {
-					return create, err
-				}
+			isMember, err := doesUserHaveMembership(ctx, mutation)
+			if err != nil {
+				mutation.Logger.Errorw("error checking membership", "error", err)
+
+				return nil, err
 			}
+
+			// already a member, nothing to do here
+			if isMember {
+				mutation.Logger.Infow("user is already a member of the organization")
+
+				// TODO: make a actual error
+				return nil, errors.New("user is already a member of the organization")
+			}
+
+			// set token and secret for email
+			mutation, err = createAndSetToken(ctx, mutation)
+			if err != nil {
+				mutation.Logger.Errorw("error creating verification token", "error", err)
+
+				return nil, err
+			}
+
 			return next.Mutate(ctx, mutation)
 		})
 	}, ent.OpCreate)
@@ -53,9 +66,15 @@ func confirmUserExists(ctx context.Context, m *generated.InviteMutation) (*gener
 // doesUserHaveMembership checks if the user already has membership to the requested organization; if false user exists, but without requested organization membership
 func doesUserHaveMembership(ctx context.Context, m *generated.InviteMutation) (bool, error) {
 	orgID, _ := m.OwnerID()
-	entUser, err := confirmUserExists(ctx, m)
 
+	entUser, err := confirmUserExists(ctx, m)
 	if err != nil {
+		// if we did not find the user, return now
+		if generated.IsNotFound(err) {
+			return false, nil
+		}
+
+		// any other error, we should error
 		return false, err
 	}
 
@@ -64,34 +83,33 @@ func doesUserHaveMembership(ctx context.Context, m *generated.InviteMutation) (b
 		Where((orgmembership.HasOrgWith((organization.ID(orgID))))).Exist(ctx)
 }
 
-func createAndSetToken(ctx context.Context, m *generated.InviteMutation) error {
-
-	userID, _ := m.ID()
+func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	email, _ := m.Recipient()
-	owner, _ := m.OwnerID()
-
-	user, err := m.Client().User.Get(ctx, userID)
-	if err != nil {
-		return err
-	}
 
 	verify, err := tokens.NewVerificationToken(email)
-
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	token, secret, err := verify.Sign()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	m.SetOwnerID(owner)
+	// set values on mutation
 	m.SetToken(token)
 	m.SetExpires(time.Now().Add(time.Hour * 24 * 14))
-	m.SetRecipient(email)
 	m.SetSecret(secret)
-	m.SetRequestorID(user.ID)
 
-	return err
+	// requestor is the authenticated user
+	userID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		m.Logger.Errorw("unable to get requestor", "error", err)
+
+		return nil, err
+	}
+
+	m.SetRequestorID(userID)
+
+	return m, nil
 }

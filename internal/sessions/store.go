@@ -12,7 +12,7 @@ type PersistentStore interface {
 	Exists(ctx context.Context, userID string) (int64, error)
 	GetSession(ctx context.Context, userID string) (string, error)
 	StoreSession(ctx context.Context, sessionID string, userID string) error
-	DeleteSession(ctx context.Context, sessionID string) error
+	DeleteSession(ctx context.Context, userID string) error
 }
 
 var _ PersistentStore = &persistentStore{}

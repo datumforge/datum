@@ -11,15 +11,14 @@ import (
 
 // SessionConfig is used to configure session management
 type SessionConfig struct {
-	// Skipper is a function that determines whether a particular request should be
-	// skipped or not
+	// Skipper is a function that determines whether a particular request should be skipped or not
 	Skipper middleware.Skipper
 	// SessionManager is responsible for managing the session cookies. It handles the creation, retrieval, and deletion of
-	// session cookies for each user session.
+	// session cookies for each user session
 	SessionManager CookieStore
 	// Store is used to store and retrieve session data in a persistent manner such as to a redis backend
 	Store PersistentStore
-	// RedisClient establishes a connection to a Redis server and perform operations such as storing and retrieving data.
+	// RedisClient establishes a connection to a Redis server and perform operations such as storing and retrieving data
 	RedisClient *redis.Client
 	// Logger is used to log errors in the middleware
 	Logger *zap.SugaredLogger
@@ -85,6 +84,7 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return next(c)
 			}
 
+			// get session from request cookies
 			session, err := config.SessionManager.Get(c.Request(), DefaultSessionName)
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)
@@ -92,6 +92,7 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return err
 			}
 
+			// get the user id from the session
 			userID, err := config.SessionManager.GetUserFromSession(c.Request(), DefaultSessionName)
 			if err != nil {
 				config.Logger.Errorw("unable to get user from session", "error", err)
@@ -99,6 +100,7 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return err
 			}
 
+			// lookup session in cache to ensure tokens match
 			token, err := config.Store.GetSession(c.Request().Context(), userID)
 			if err != nil {
 				config.Logger.Errorw("unable to get session from store", "error", err)
@@ -106,6 +108,7 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return err
 			}
 
+			// check session token on request matches cache
 			storedSession := session.Get(userID)
 			if token != storedSession {
 				config.Logger.Errorw("sessions do not match", "cookie", token, "store", storedSession)
@@ -113,12 +116,12 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return ErrInvalidSession
 			}
 
-			// Add session to context
+			// Add session to context to be used in request paths
 			ctx := session.addSessionDataToContext(c.Request().Context())
 			c.SetRequest(c.Request().WithContext(ctx))
 
 			c.Response().Before(func() {
-				// save session to cookie
+				// refresh and save session cookie
 				if err := config.SaveAndStoreSession(c, userID); err != nil {
 					config.Logger.Errorw("unable to create and store new session", "error", err)
 

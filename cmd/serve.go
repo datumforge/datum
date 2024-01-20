@@ -128,8 +128,8 @@ func serve(ctx context.Context) error {
 	// when we get to the session. this is also added here so its only added to the graph routes
 	// REST routes are expected to add the session middleware, as required
 	mw = append(mw, sessions.LoadAndSave(
-		so.Config.Server.Handler.SM,
-		so.Config.Server.Handler.RedisClient,
+		so.Config.Server.SM,
+		redisClient,
 		so.Config.Logger,
 	))
 

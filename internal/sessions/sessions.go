@@ -29,9 +29,9 @@ type Config struct {
 type Session struct {
 	name   string
 	values map[string]string
+	mu     sync.Mutex
 	// convenience methods Save and Destroy use store
 	store CookieStore
-	mu    sync.Mutex
 }
 
 // New returns a new Session.

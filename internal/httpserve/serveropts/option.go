@@ -309,7 +309,7 @@ func WithRedisCache() ServerOption {
 	})
 }
 
-// WithSessionManager sets up the default session manager with a 15 minute timeout and stale sessions are cleaned every 5 minutes
+// WithSessionManager sets up the default session manager with a 5 minute ttl
 func WithSessionManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		config := &sessions.Config{}
@@ -332,6 +332,9 @@ func WithSessionManager() ServerOption {
 			[]byte(config.EncryptionKey),
 		)
 
+		// Make the cookie session store available
+		// to graph and REST endpoints
 		s.Config.Server.Handler.SM = sm
+		s.Config.Server.SM = sm
 	})
 }

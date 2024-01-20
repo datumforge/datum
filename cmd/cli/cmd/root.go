@@ -148,7 +148,7 @@ func ViperBindFlag(name string, flag *pflag.Flag) {
 }
 
 // StoreSessionCookies gets the session cookie from the cookie jar
-// ad stores it in the keychain for future requests
+// and stores it in the keychain for future requests
 func StoreSessionCookies(client *datumclient.Client) {
 	session, err := datumclient.GetSessionFromCookieJar(client)
 	if err != nil {

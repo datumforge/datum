@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/otelx"
+	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -92,6 +93,8 @@ type (
 		Handler handlers.Handler `yaml:"checks"`
 		// Token contains the token config settings
 		Token tokens.Config `yaml:"token"`
+		// SM manages sessions for users
+		SM sessions.CookieStore
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together

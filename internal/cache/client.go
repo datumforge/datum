@@ -9,7 +9,7 @@ import (
 
 // Config for the redis client
 type Config struct {
-	// Enabled to enabled redis caching
+	// Enabled to enable redis client in the server
 	Enabled bool `split_words:"true" default:"true"` // $DATUM_REDIS_ENABLED
 	// Address is the host:port to connect to redis
 	Address string `split_words:"true" default:"localhost:6379"` // $DATUM_REDIS_ADDRESS

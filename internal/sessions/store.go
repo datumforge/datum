@@ -3,8 +3,13 @@ package sessions
 import (
 	"context"
 	"sync"
+	"time"
 
 	"github.com/redis/go-redis/v9"
+)
+
+const (
+	defaultExpiration = 10 * time.Minute
 )
 
 // PersistentStore is defining an interface for session store
@@ -51,7 +56,7 @@ func (s *persistentStore) StoreSession(ctx context.Context, sessionID string, us
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	return s.client.Set(ctx, userID, sessionID, 0).Err()
+	return s.client.Set(ctx, userID, sessionID, defaultExpiration).Err()
 }
 
 // DeleteSession is used to delete a session from the store

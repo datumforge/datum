@@ -2,7 +2,6 @@ package hooks
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"entgo.io/ent"
@@ -31,8 +30,7 @@ func HookInvite() ent.Hook {
 			if isMember {
 				mutation.Logger.Infow("user is already a member of the organization")
 
-				// TODO: make a actual error
-				return nil, errors.New("user is already a member of the organization")
+				return nil, ErrUserAlreadyOrgMember
 			}
 
 			// set token and secret for email
@@ -53,7 +51,6 @@ func confirmUserExists(ctx context.Context, m *generated.InviteMutation) (*gener
 	email, _ := m.Recipient()
 
 	user, err := m.Client().User.Query().Where(user.Email(email)).Only(ctx)
-
 	if err != nil {
 		m.Logger.Errorw("could not find user by email", "error", err)
 
@@ -98,7 +95,7 @@ func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*gener
 
 	// set values on mutation
 	m.SetToken(token)
-	m.SetExpires(time.Now().Add(time.Hour * 24 * 14))
+	m.SetExpires(time.Now().Add(time.Hour * 24 * 14)) //nolint:gomnd
 	m.SetSecret(secret)
 
 	// requestor is the authenticated user

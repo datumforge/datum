@@ -89,6 +89,7 @@ func (s *Session) Destroy(w http.ResponseWriter) {
 	s.store.Destroy(w, s.name)
 }
 
+// GenerateSessionID returns a random UUID
 func GenerateSessionID() string {
 	id, _ := uuid.NewRandom()
 

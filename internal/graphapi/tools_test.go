@@ -165,18 +165,6 @@ func userContext() (context.Context, error) {
 	return reqCtx, nil
 }
 
-// echoContext creates a generic context with a echo context to be
-// used for no-auth tests
-func echoContext() context.Context {
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
-
-	return reqCtx
-}
-
 func teardownDB() {
 	if EntClient != nil {
 		errPanic("teardown failed to close database connection", EntClient.Close())
@@ -199,7 +187,7 @@ func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {
 
 	srv := handler.NewDefaultServer(
 		graphapi.NewExecutableSchema(
-			graphapi.Config{Resolvers: graphapi.NewResolver(c, true).WithLogger(logger)},
+			graphapi.Config{Resolvers: graphapi.NewResolver(c).WithLogger(logger)},
 		))
 
 	graphapi.WithTransactions(srv, c)
@@ -216,32 +204,6 @@ func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {
 
 	// setup interceptors
 	i := datumclient.WithAuthorization(rawToken, session)
-
-	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
-}
-
-func graphTestClientNoAuth(t *testing.T, c *ent.Client) datumclient.DatumClient {
-	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
-
-	srv := handler.NewDefaultServer(
-		graphapi.NewExecutableSchema(
-			graphapi.Config{Resolvers: graphapi.NewResolver(c, false).WithLogger(logger)},
-		))
-
-	graphapi.WithTransactions(srv, c)
-
-	g := &graphClient{
-		srvURL:     "query",
-		httpClient: &http.Client{Transport: localRoundTripper{handler: srv}},
-	}
-
-	// set options
-	opt := &clientv2.Options{
-		ParseDataAlongWithErrors: false,
-	}
-
-	// setup interceptors
-	i := datumclient.WithEmptyInterceptor()
 
 	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
 }

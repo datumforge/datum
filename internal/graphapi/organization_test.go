@@ -689,11 +689,14 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 		require.Empty(t, resp)
 
 		// Make sure the org was not added to the database (check without auth)
-		clientNoAuth := graphTestClientNoAuth(t, EntClient)
+		listObjects := []string{fmt.Sprintf("%s:%s", organization, "test")}
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 
-		reqCtx := echoContext()
+		ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
-		orgs, err := clientNoAuth.GetAllOrganizations(reqCtx)
+		orgs, err := authClient.gc.GetAllOrganizations(ctx)
 		require.NoError(t, err)
 
 		for _, o := range orgs.Organizations.Edges {

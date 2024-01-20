@@ -19,8 +19,9 @@ import (
 )
 
 func TestQuery_User(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClient(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -66,7 +67,14 @@ func TestQuery_User(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			resp, err := client.GetUserByID(reqCtx, tc.queryID)
+			if tc.errorMsg == "" {
+				// placeholder until authz is enforced on org members
+				// at which point this needs to be the correct organization id
+				listObjects := []string{fmt.Sprintf("organization:%s", "test")}
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+			}
+
+			resp, err := authClient.gc.GetUserByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -87,8 +95,9 @@ func TestQuery_User(t *testing.T) {
 }
 
 func TestQuery_Users(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClient(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -98,7 +107,7 @@ func TestQuery_Users(t *testing.T) {
 	user2 := (&UserBuilder{}).MustNew(reqCtx)
 
 	t.Run("Get Users", func(t *testing.T) {
-		resp, err := client.GetAllUsers(reqCtx)
+		resp, err := authClient.gc.GetAllUsers(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -117,7 +126,7 @@ func TestQuery_Users(t *testing.T) {
 
 		ec.SetRequest(ec.Request().WithContext(reqCtx))
 
-		resp, err = client.GetAllUsers(reqCtx)
+		resp, err = authClient.gc.GetAllUsers(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -165,10 +174,16 @@ func TestQuery_Users(t *testing.T) {
 }
 
 func TestMutation_CreateUserNoAuth(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClientNoAuth(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	ctx := echoContext()
+	// setup user context
+	ec := echocontext.NewTestEchoContext()
+
+	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(ctx))
 
 	// Bypass auth checks to ensure input checks for now
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
@@ -247,7 +262,12 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
-			resp, err := client.CreateUser(ctx, tc.userInput)
+			if tc.errorMsg == "" {
+				// mock writes to create personal org membership
+				mockWriteAny(authClient.mockCtrl, authClient.mc, ctx, nil)
+			}
+
+			resp, err := authClient.gc.CreateUser(ctx, tc.userInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -279,7 +299,26 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			orgs := resp.CreateUser.User.OrgMemberships
 			require.Len(t, orgs, 1)
 
-			personalOrg, err := client.GetOrganizationByID(ctx, orgs[0].OrgID)
+			// setup valid user context
+			ec, err := auth.NewTestContextWithValidUser(resp.CreateUser.User.ID)
+			if err != nil {
+				t.Fatal()
+			}
+
+			reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+			ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+			// mocks to check for org access
+			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrgID)}
+			mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+			mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+			mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+
+			// Bypass auth checks to ensure input checks for now
+			reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
+
+			personalOrg, err := authClient.gc.GetOrganizationByID(reqCtx, orgs[0].OrgID)
 			require.NoError(t, err)
 
 			assert.True(t, personalOrg.Organization.PersonalOrg)
@@ -294,8 +333,9 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 }
 
 func TestMutation_CreateUser(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClient(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -390,7 +430,11 @@ func TestMutation_CreateUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
-			resp, err := client.CreateUser(reqCtx, tc.userInput)
+			if tc.errorMsg == "" {
+				// mock writes to create personal org membership
+				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+			}
+			resp, err := authClient.gc.CreateUser(reqCtx, tc.userInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -426,7 +470,7 @@ func TestMutation_CreateUser(t *testing.T) {
 			}
 
 			// TODO: update to pull by user once https://github.com/datumforge/datum/issues/293 is complete
-			orgs, err := client.OrganizationsWhere(reqCtx, whereInput)
+			orgs, err := authClient.gc.OrganizationsWhere(reqCtx, whereInput)
 			require.NoError(t, err)
 
 			orgCreated := false
@@ -442,8 +486,9 @@ func TestMutation_CreateUser(t *testing.T) {
 }
 
 func TestMutation_UpdateUser(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClient(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -548,7 +593,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			// update user
-			resp, err := client.UpdateUser(reqCtx, user.ID, tc.updateInput)
+			resp, err := authClient.gc.UpdateUser(reqCtx, user.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)

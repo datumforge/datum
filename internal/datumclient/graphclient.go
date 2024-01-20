@@ -26,6 +26,10 @@ type DatumClient interface {
 	UpdateUserRoleInGroup(ctx context.Context, updateGroupMemberID string, input UpdateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInGroup, error)
 	RemoveUserFromGroup(ctx context.Context, deleteGroupMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromGroup, error)
 	GetGroupSetting(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSetting, error)
+	CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error)
+	DeleteInvite(ctx context.Context, deleteInviteID string, interceptors ...clientv2.RequestInterceptor) (*DeleteInvite, error)
+	GetInvite(ctx context.Context, inviteID string, interceptors ...clientv2.RequestInterceptor) (*GetInvite, error)
+	InvitesByOrgID(ctx context.Context, where *InviteWhereInput, interceptors ...clientv2.RequestInterceptor) (*InvitesByOrgID, error)
 	GetOrganizationByID(ctx context.Context, organizationID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationByID, error)
 	GetAllOrganizations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllOrganizations, error)
 	OrganizationsWhere(ctx context.Context, where *OrganizationWhereInput, interceptors ...clientv2.RequestInterceptor) (*OrganizationsWhere, error)
@@ -65,6 +69,7 @@ type Query struct {
 	GroupMemberships     GroupMembershipConnection     "json:\"groupMemberships\" graphql:\"groupMemberships\""
 	GroupSettings        GroupSettingConnection        "json:\"groupSettings\" graphql:\"groupSettings\""
 	Integrations         IntegrationConnection         "json:\"integrations\" graphql:\"integrations\""
+	Invites              InviteConnection              "json:\"invites\" graphql:\"invites\""
 	OauthProviders       OauthProviderConnection       "json:\"oauthProviders\" graphql:\"oauthProviders\""
 	OhAuthTooTokens      OhAuthTooTokenConnection      "json:\"ohAuthTooTokens\" graphql:\"ohAuthTooTokens\""
 	OrgMemberships       OrgMembershipConnection       "json:\"orgMemberships\" graphql:\"orgMemberships\""
@@ -78,6 +83,7 @@ type Query struct {
 	GroupMembership      GroupMembership               "json:\"groupMembership\" graphql:\"groupMembership\""
 	GroupSetting         GroupSetting                  "json:\"groupSetting\" graphql:\"groupSetting\""
 	Integration          Integration                   "json:\"integration\" graphql:\"integration\""
+	Invite               Invite                        "json:\"invite\" graphql:\"invite\""
 	OauthProvider        OauthProvider                 "json:\"oauthProvider\" graphql:\"oauthProvider\""
 	OhAuthTooToken       OhAuthTooToken                "json:\"ohAuthTooToken\" graphql:\"ohAuthTooToken\""
 	Organization         Organization                  "json:\"organization\" graphql:\"organization\""
@@ -103,6 +109,9 @@ type Mutation struct {
 	CreateIntegration         IntegrationCreatePayload         "json:\"createIntegration\" graphql:\"createIntegration\""
 	UpdateIntegration         IntegrationUpdatePayload         "json:\"updateIntegration\" graphql:\"updateIntegration\""
 	DeleteIntegration         IntegrationDeletePayload         "json:\"deleteIntegration\" graphql:\"deleteIntegration\""
+	CreateInvite              InviteCreatePayload              "json:\"createInvite\" graphql:\"createInvite\""
+	UpdateInvite              InviteUpdatePayload              "json:\"updateInvite\" graphql:\"updateInvite\""
+	DeleteInvite              InviteDeletePayload              "json:\"deleteInvite\" graphql:\"deleteInvite\""
 	CreateOauthProvider       OauthProviderCreatePayload       "json:\"createOauthProvider\" graphql:\"createOauthProvider\""
 	UpdateOauthProvider       OauthProviderUpdatePayload       "json:\"updateOauthProvider\" graphql:\"updateOauthProvider\""
 	DeleteOauthProvider       OauthProviderDeletePayload       "json:\"deleteOauthProvider\" graphql:\"deleteOauthProvider\""
@@ -1568,6 +1577,246 @@ func (t *GetGroupSetting_GroupSetting) GetGroup() *GetGroupSetting_GroupSetting_
 		t = &GetGroupSetting_GroupSetting{}
 	}
 	return t.Group
+}
+
+type CreateInvite_CreateInvite_Invite_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateInvite_CreateInvite_Invite_Owner) GetID() string {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite_Owner{}
+	}
+	return t.ID
+}
+
+type CreateInvite_CreateInvite_Invite struct {
+	Recipient string                                 "json:\"recipient\" graphql:\"recipient\""
+	Owner     CreateInvite_CreateInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *CreateInvite_CreateInvite_Invite) GetRecipient() string {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return t.Recipient
+}
+func (t *CreateInvite_CreateInvite_Invite) GetOwner() *CreateInvite_CreateInvite_Invite_Owner {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return &t.Owner
+}
+
+type CreateInvite_CreateInvite struct {
+	Invite CreateInvite_CreateInvite_Invite "json:\"invite\" graphql:\"invite\""
+}
+
+func (t *CreateInvite_CreateInvite) GetInvite() *CreateInvite_CreateInvite_Invite {
+	if t == nil {
+		t = &CreateInvite_CreateInvite{}
+	}
+	return &t.Invite
+}
+
+type DeleteInvite_DeleteInvite struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteInvite_DeleteInvite) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteInvite_DeleteInvite{}
+	}
+	return t.DeletedID
+}
+
+type GetInvite_Invite_Owner struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+	Name        string "json:\"name\" graphql:\"name\""
+}
+
+func (t *GetInvite_Invite_Owner) GetID() string {
+	if t == nil {
+		t = &GetInvite_Invite_Owner{}
+	}
+	return t.ID
+}
+func (t *GetInvite_Invite_Owner) GetDisplayName() string {
+	if t == nil {
+		t = &GetInvite_Invite_Owner{}
+	}
+	return t.DisplayName
+}
+func (t *GetInvite_Invite_Owner) GetName() string {
+	if t == nil {
+		t = &GetInvite_Invite_Owner{}
+	}
+	return t.Name
+}
+
+type GetInvite_Invite struct {
+	ID          string                 "json:\"id\" graphql:\"id\""
+	CreatedAt   time.Time              "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt   time.Time              "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy   *string                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time             "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Expires     time.Time              "json:\"expires\" graphql:\"expires\""
+	Recipient   string                 "json:\"recipient\" graphql:\"recipient\""
+	Status      enums.InviteStatus     "json:\"status\" graphql:\"status\""
+	RequestorID string                 "json:\"requestorID\" graphql:\"requestorID\""
+	Owner       GetInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *GetInvite_Invite) GetID() string {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.ID
+}
+func (t *GetInvite_Invite) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetInvite_Invite) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetInvite_Invite) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.CreatedBy
+}
+func (t *GetInvite_Invite) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetInvite_Invite) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.DeletedAt
+}
+func (t *GetInvite_Invite) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.DeletedBy
+}
+func (t *GetInvite_Invite) GetExpires() *time.Time {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return &t.Expires
+}
+func (t *GetInvite_Invite) GetRecipient() string {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.Recipient
+}
+func (t *GetInvite_Invite) GetStatus() *enums.InviteStatus {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return &t.Status
+}
+func (t *GetInvite_Invite) GetRequestorID() string {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.RequestorID
+}
+func (t *GetInvite_Invite) GetOwner() *GetInvite_Invite_Owner {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return &t.Owner
+}
+
+type InvitesByOrgID_Invites_Edges_Node_Owner_Invites struct {
+	Recipient   string             "json:\"recipient\" graphql:\"recipient\""
+	Status      enums.InviteStatus "json:\"status\" graphql:\"status\""
+	RequestorID string             "json:\"requestorID\" graphql:\"requestorID\""
+}
+
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRecipient() string {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
+	}
+	return t.Recipient
+}
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetStatus() *enums.InviteStatus {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
+	}
+	return &t.Status
+}
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRequestorID() string {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
+	}
+	return t.RequestorID
+}
+
+type InvitesByOrgID_Invites_Edges_Node_Owner struct {
+	ID      string                                             "json:\"id\" graphql:\"id\""
+	Invites []*InvitesByOrgID_Invites_Edges_Node_Owner_Invites "json:\"invites,omitempty\" graphql:\"invites\""
+}
+
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner) GetID() string {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node_Owner{}
+	}
+	return t.ID
+}
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner) GetInvites() []*InvitesByOrgID_Invites_Edges_Node_Owner_Invites {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node_Owner{}
+	}
+	return t.Invites
+}
+
+type InvitesByOrgID_Invites_Edges_Node struct {
+	Owner InvitesByOrgID_Invites_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *InvitesByOrgID_Invites_Edges_Node) GetOwner() *InvitesByOrgID_Invites_Edges_Node_Owner {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node{}
+	}
+	return &t.Owner
+}
+
+type InvitesByOrgID_Invites_Edges struct {
+	Node *InvitesByOrgID_Invites_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *InvitesByOrgID_Invites_Edges) GetNode() *InvitesByOrgID_Invites_Edges_Node {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges{}
+	}
+	return t.Node
+}
+
+type InvitesByOrgID_Invites struct {
+	Edges []*InvitesByOrgID_Invites_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *InvitesByOrgID_Invites) GetEdges() []*InvitesByOrgID_Invites_Edges {
+	if t == nil {
+		t = &InvitesByOrgID_Invites{}
+	}
+	return t.Edges
 }
 
 type GetOrganizationByID_Organization_Parent struct {
@@ -4945,6 +5194,50 @@ func (t *GetGroupSetting) GetGroupSetting() *GetGroupSetting_GroupSetting {
 	return &t.GroupSetting
 }
 
+type CreateInvite struct {
+	CreateInvite CreateInvite_CreateInvite "json:\"createInvite\" graphql:\"createInvite\""
+}
+
+func (t *CreateInvite) GetCreateInvite() *CreateInvite_CreateInvite {
+	if t == nil {
+		t = &CreateInvite{}
+	}
+	return &t.CreateInvite
+}
+
+type DeleteInvite struct {
+	DeleteInvite DeleteInvite_DeleteInvite "json:\"deleteInvite\" graphql:\"deleteInvite\""
+}
+
+func (t *DeleteInvite) GetDeleteInvite() *DeleteInvite_DeleteInvite {
+	if t == nil {
+		t = &DeleteInvite{}
+	}
+	return &t.DeleteInvite
+}
+
+type GetInvite struct {
+	Invite GetInvite_Invite "json:\"invite\" graphql:\"invite\""
+}
+
+func (t *GetInvite) GetInvite() *GetInvite_Invite {
+	if t == nil {
+		t = &GetInvite{}
+	}
+	return &t.Invite
+}
+
+type InvitesByOrgID struct {
+	Invites InvitesByOrgID_Invites "json:\"invites\" graphql:\"invites\""
+}
+
+func (t *InvitesByOrgID) GetInvites() *InvitesByOrgID_Invites {
+	if t == nil {
+		t = &InvitesByOrgID{}
+	}
+	return &t.Invites
+}
+
 type GetOrganizationByID struct {
 	Organization GetOrganizationByID_Organization "json:\"organization\" graphql:\"organization\""
 }
@@ -5632,6 +5925,133 @@ func (c *Client) GetGroupSetting(ctx context.Context, groupSettingID string, int
 
 	var res GetGroupSetting
 	if err := c.Client.Post(ctx, "GetGroupSetting", GetGroupSettingDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!) {
+	createInvite(input: $input) {
+		invite {
+			recipient
+			owner {
+				id
+			}
+		}
+	}
+}
+`
+
+func (c *Client) CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res CreateInvite
+	if err := c.Client.Post(ctx, "CreateInvite", CreateInviteDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteInviteDocument = `mutation DeleteInvite ($deleteInviteId: ID!) {
+	deleteInvite(id: $deleteInviteId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteInvite(ctx context.Context, deleteInviteID string, interceptors ...clientv2.RequestInterceptor) (*DeleteInvite, error) {
+	vars := map[string]interface{}{
+		"deleteInviteId": deleteInviteID,
+	}
+
+	var res DeleteInvite
+	if err := c.Client.Post(ctx, "DeleteInvite", DeleteInviteDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetInviteDocument = `query GetInvite ($inviteId: ID!) {
+	invite(id: $inviteId) {
+		id
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		deletedAt
+		deletedBy
+		expires
+		recipient
+		status
+		requestorID
+		owner {
+			id
+			displayName
+			name
+		}
+	}
+}
+`
+
+func (c *Client) GetInvite(ctx context.Context, inviteID string, interceptors ...clientv2.RequestInterceptor) (*GetInvite, error) {
+	vars := map[string]interface{}{
+		"inviteId": inviteID,
+	}
+
+	var res GetInvite
+	if err := c.Client.Post(ctx, "GetInvite", GetInviteDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const InvitesByOrgIDDocument = `query InvitesByOrgID ($where: InviteWhereInput) {
+	invites(where: $where) {
+		edges {
+			node {
+				owner {
+					id
+					invites {
+						recipient
+						status
+						requestorID
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) InvitesByOrgID(ctx context.Context, where *InviteWhereInput, interceptors ...clientv2.RequestInterceptor) (*InvitesByOrgID, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res InvitesByOrgID
+	if err := c.Client.Post(ctx, "InvitesByOrgID", InvitesByOrgIDDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -6615,6 +7035,10 @@ var DocumentOperationNames = map[string]string{
 	UpdateUserRoleInGroupDocument:      "UpdateUserRoleInGroup",
 	RemoveUserFromGroupDocument:        "RemoveUserFromGroup",
 	GetGroupSettingDocument:            "GetGroupSetting",
+	CreateInviteDocument:               "CreateInvite",
+	DeleteInviteDocument:               "DeleteInvite",
+	GetInviteDocument:                  "GetInvite",
+	InvitesByOrgIDDocument:             "InvitesByOrgID",
 	GetOrganizationByIDDocument:        "GetOrganizationByID",
 	GetAllOrganizationsDocument:        "GetAllOrganizations",
 	OrganizationsWhereDocument:         "OrganizationsWhere",

@@ -579,17 +579,15 @@ func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUp
 
 // CreateInviteInput represents a mutation input for creating invites.
 type CreateInviteInput struct {
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
-	CreatedBy    *string
-	UpdatedBy    *string
-	Token        string
-	TTL          time.Time
-	InvitedEmail string
-	Invitestatus *enums.InviteStatus
-	RequestorID  string
-	Secret       []byte
-	OwnerID      string
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	Expires     time.Time
+	Recipient   string
+	Status      *enums.InviteStatus
+	RequestorID string
+	OwnerID     string
 }
 
 // Mutate applies the CreateInviteInput on the InviteMutation builder.
@@ -606,16 +604,12 @@ func (i *CreateInviteInput) Mutate(m *InviteMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	m.SetToken(i.Token)
-	m.SetTTL(i.TTL)
-	m.SetInvitedEmail(i.InvitedEmail)
-	if v := i.Invitestatus; v != nil {
-		m.SetInvitestatus(*v)
+	m.SetExpires(i.Expires)
+	m.SetRecipient(i.Recipient)
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
 	}
 	m.SetRequestorID(i.RequestorID)
-	if v := i.Secret; v != nil {
-		m.SetSecret(v)
-	}
 	m.SetOwnerID(i.OwnerID)
 }
 
@@ -630,12 +624,9 @@ type UpdateInviteInput struct {
 	UpdatedAt      *time.Time
 	ClearUpdatedBy bool
 	UpdatedBy      *string
-	Token          *string
-	TTL            *time.Time
-	InvitedEmail   *string
-	Invitestatus   *enums.InviteStatus
-	RequestorID    *string
-	Secret         []byte
+	Expires        *time.Time
+	Recipient      *string
+	Status         *enums.InviteStatus
 	OwnerID        *string
 }
 
@@ -650,23 +641,14 @@ func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	if v := i.Token; v != nil {
-		m.SetToken(*v)
+	if v := i.Expires; v != nil {
+		m.SetExpires(*v)
 	}
-	if v := i.TTL; v != nil {
-		m.SetTTL(*v)
+	if v := i.Recipient; v != nil {
+		m.SetRecipient(*v)
 	}
-	if v := i.InvitedEmail; v != nil {
-		m.SetInvitedEmail(*v)
-	}
-	if v := i.Invitestatus; v != nil {
-		m.SetInvitestatus(*v)
-	}
-	if v := i.RequestorID; v != nil {
-		m.SetRequestorID(*v)
-	}
-	if v := i.Secret; v != nil {
-		m.SetSecret(v)
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)

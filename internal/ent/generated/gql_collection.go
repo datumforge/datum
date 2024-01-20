@@ -820,35 +820,25 @@ func (i *InviteQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, invite.FieldDeletedBy)
 				fieldSeen[invite.FieldDeletedBy] = struct{}{}
 			}
-		case "token":
-			if _, ok := fieldSeen[invite.FieldToken]; !ok {
-				selectedFields = append(selectedFields, invite.FieldToken)
-				fieldSeen[invite.FieldToken] = struct{}{}
+		case "expires":
+			if _, ok := fieldSeen[invite.FieldExpires]; !ok {
+				selectedFields = append(selectedFields, invite.FieldExpires)
+				fieldSeen[invite.FieldExpires] = struct{}{}
 			}
-		case "ttl":
-			if _, ok := fieldSeen[invite.FieldTTL]; !ok {
-				selectedFields = append(selectedFields, invite.FieldTTL)
-				fieldSeen[invite.FieldTTL] = struct{}{}
+		case "recipient":
+			if _, ok := fieldSeen[invite.FieldRecipient]; !ok {
+				selectedFields = append(selectedFields, invite.FieldRecipient)
+				fieldSeen[invite.FieldRecipient] = struct{}{}
 			}
-		case "invitedEmail":
-			if _, ok := fieldSeen[invite.FieldInvitedEmail]; !ok {
-				selectedFields = append(selectedFields, invite.FieldInvitedEmail)
-				fieldSeen[invite.FieldInvitedEmail] = struct{}{}
-			}
-		case "invitestatus":
-			if _, ok := fieldSeen[invite.FieldInvitestatus]; !ok {
-				selectedFields = append(selectedFields, invite.FieldInvitestatus)
-				fieldSeen[invite.FieldInvitestatus] = struct{}{}
+		case "status":
+			if _, ok := fieldSeen[invite.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, invite.FieldStatus)
+				fieldSeen[invite.FieldStatus] = struct{}{}
 			}
 		case "requestorID":
 			if _, ok := fieldSeen[invite.FieldRequestorID]; !ok {
 				selectedFields = append(selectedFields, invite.FieldRequestorID)
 				fieldSeen[invite.FieldRequestorID] = struct{}{}
-			}
-		case "secret":
-			if _, ok := fieldSeen[invite.FieldSecret]; !ok {
-				selectedFields = append(selectedFields, invite.FieldSecret)
-				fieldSeen[invite.FieldSecret] = struct{}{}
 			}
 		case "id":
 		case "__typename":

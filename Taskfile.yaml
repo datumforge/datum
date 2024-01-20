@@ -212,7 +212,10 @@ tasks:
     desc: a task to burn local db and bring stack back up and re-test
     cmds:
       - task: buildcli
-      - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"
+      - curl http://localhost:17608/v1/verify?token={{.VERIFY_TOKEN}}
+    vars:
+      VERIFY_TOKEN:
+        bash: ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token
   shell:
     desc: open a new shell to launch server as a dep
     cmds:
@@ -227,3 +230,10 @@ tasks:
     silent: true
     cmds:
       - go run -mod=mod entgo.io/ent/cmd/ent new --template ./internal/ent/base/entinit.tmpl --target ./internal/ent/schema {{.CLI_ARGS}}
+  verifyuser:
+    desc: a task to register a user, parse out the token respoonse, and submit it to the verify endpoint
+    cmds:
+      - curl http://localhost:17608/v1/verify?token={{.VERIFY_TOKEN}}
+    vars:
+      VERIFY_TOKEN:
+        sh: ./datum-cli register --email="mitb@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token

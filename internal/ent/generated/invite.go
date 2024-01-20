@@ -33,18 +33,18 @@ type Invite struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
-	// the verification token sent to the user via email which should only be provided to the /verify endpoint + handler
-	Token string `json:"token,omitempty"`
-	// the ttl of the verification token which defaults to 7 days
-	TTL *time.Time `json:"ttl,omitempty"`
-	// the email used as input to generate the verification token and is the destination person the invitation is sent to who is required to accept to join the organization
-	InvitedEmail string `json:"invited_email,omitempty"`
-	// Invitestatus holds the value of the "invitestatus" field.
-	Invitestatus enums.InviteStatus `json:"invitestatus,omitempty"`
+	// the invitation token sent to the user via email which should only be provided to the /verify endpoint + handler
+	Token string `json:"-"`
+	// the expiration date of the invitation token which defaults to 14 days in the future from creation
+	Expires *time.Time `json:"expires,omitempty"`
+	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
+	Recipient string `json:"recipient,omitempty"`
+	// the status of the invitation
+	Status enums.InviteStatus `json:"status,omitempty"`
 	// the user who initatied the invitation
 	RequestorID string `json:"requestor_id,omitempty"`
 	// the comparison secret to verify the token's signature
-	Secret *[]byte `json:"secret,omitempty"`
+	Secret *[]byte `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InviteQuery when eager-loading is set.
 	Edges        InviteEdges `json:"edges"`
@@ -82,9 +82,9 @@ func (*Invite) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case invite.FieldSecret:
 			values[i] = new([]byte)
-		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldDeletedBy, invite.FieldOwnerID, invite.FieldToken, invite.FieldInvitedEmail, invite.FieldInvitestatus, invite.FieldRequestorID:
+		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldDeletedBy, invite.FieldOwnerID, invite.FieldToken, invite.FieldRecipient, invite.FieldStatus, invite.FieldRequestorID:
 			values[i] = new(sql.NullString)
-		case invite.FieldCreatedAt, invite.FieldUpdatedAt, invite.FieldDeletedAt, invite.FieldTTL:
+		case invite.FieldCreatedAt, invite.FieldUpdatedAt, invite.FieldDeletedAt, invite.FieldExpires:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -155,24 +155,24 @@ func (i *Invite) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				i.Token = value.String
 			}
-		case invite.FieldTTL:
+		case invite.FieldExpires:
 			if value, ok := values[j].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field ttl", values[j])
+				return fmt.Errorf("unexpected type %T for field expires", values[j])
 			} else if value.Valid {
-				i.TTL = new(time.Time)
-				*i.TTL = value.Time
+				i.Expires = new(time.Time)
+				*i.Expires = value.Time
 			}
-		case invite.FieldInvitedEmail:
+		case invite.FieldRecipient:
 			if value, ok := values[j].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field invited_email", values[j])
+				return fmt.Errorf("unexpected type %T for field recipient", values[j])
 			} else if value.Valid {
-				i.InvitedEmail = value.String
+				i.Recipient = value.String
 			}
-		case invite.FieldInvitestatus:
+		case invite.FieldStatus:
 			if value, ok := values[j].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field invitestatus", values[j])
+				return fmt.Errorf("unexpected type %T for field status", values[j])
 			} else if value.Valid {
-				i.Invitestatus = enums.InviteStatus(value.String)
+				i.Status = enums.InviteStatus(value.String)
 			}
 		case invite.FieldRequestorID:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -248,27 +248,23 @@ func (i *Invite) String() string {
 	builder.WriteString("owner_id=")
 	builder.WriteString(i.OwnerID)
 	builder.WriteString(", ")
-	builder.WriteString("token=")
-	builder.WriteString(i.Token)
+	builder.WriteString("token=<sensitive>")
 	builder.WriteString(", ")
-	if v := i.TTL; v != nil {
-		builder.WriteString("ttl=")
+	if v := i.Expires; v != nil {
+		builder.WriteString("expires=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
-	builder.WriteString("invited_email=")
-	builder.WriteString(i.InvitedEmail)
+	builder.WriteString("recipient=")
+	builder.WriteString(i.Recipient)
 	builder.WriteString(", ")
-	builder.WriteString("invitestatus=")
-	builder.WriteString(fmt.Sprintf("%v", i.Invitestatus))
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", i.Status))
 	builder.WriteString(", ")
 	builder.WriteString("requestor_id=")
 	builder.WriteString(i.RequestorID)
 	builder.WriteString(", ")
-	if v := i.Secret; v != nil {
-		builder.WriteString("secret=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString("secret=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
 }

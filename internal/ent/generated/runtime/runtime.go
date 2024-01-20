@@ -291,8 +291,10 @@ func init() {
 	inviteMixin := schema.Invite{}.Mixin()
 	inviteMixinHooks0 := inviteMixin[0].Hooks()
 	inviteMixinHooks2 := inviteMixin[2].Hooks()
+	inviteHooks := schema.Invite{}.Hooks()
 	invite.Hooks[0] = inviteMixinHooks0[0]
 	invite.Hooks[1] = inviteMixinHooks2[0]
+	invite.Hooks[2] = inviteHooks[0]
 	inviteMixinInters2 := inviteMixin[2].Interceptors()
 	invite.Interceptors[0] = inviteMixinInters2[0]
 	inviteMixinFields0 := inviteMixin[0].Fields()
@@ -315,18 +317,18 @@ func init() {
 	inviteDescToken := inviteFields[0].Descriptor()
 	// invite.TokenValidator is a validator for the "token" field. It is called by the builders before save.
 	invite.TokenValidator = inviteDescToken.Validators[0].(func(string) error)
-	// inviteDescInvitedEmail is the schema descriptor for invited_email field.
-	inviteDescInvitedEmail := inviteFields[2].Descriptor()
-	// invite.InvitedEmailValidator is a validator for the "invited_email" field. It is called by the builders before save.
-	invite.InvitedEmailValidator = func() func(string) error {
-		validators := inviteDescInvitedEmail.Validators
+	// inviteDescRecipient is the schema descriptor for recipient field.
+	inviteDescRecipient := inviteFields[2].Descriptor()
+	// invite.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
+	invite.RecipientValidator = func() func(string) error {
+		validators := inviteDescRecipient.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
 		}
-		return func(invited_email string) error {
+		return func(recipient string) error {
 			for _, fn := range fns {
-				if err := fn(invited_email); err != nil {
+				if err := fn(recipient); err != nil {
 					return err
 				}
 			}

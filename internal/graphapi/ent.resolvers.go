@@ -69,6 +69,11 @@ func (r *queryResolver) Integrations(ctx context.Context, after *entgql.Cursor[s
 	return r.client.Integration.Query().Paginate(ctx, after, first, before, last, generated.WithIntegrationOrder(orderBy), generated.WithIntegrationFilter(where.Filter))
 }
 
+// Invites is the resolver for the invites field.
+func (r *queryResolver) Invites(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.InviteWhereInput) (*generated.InviteConnection, error) {
+	return r.client.Invite.Query().Paginate(ctx, after, first, before, last, generated.WithInviteFilter(where.Filter))
+}
+
 // OauthProviders is the resolver for the oauthProviders field.
 func (r *queryResolver) OauthProviders(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) (*generated.OauthProviderConnection, error) {
 	panic(fmt.Errorf("not implemented: OauthProviders - oauthProviders"))

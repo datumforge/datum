@@ -2577,14 +2577,14 @@
                   "token": {
                     "type": "string"
                   },
-                  "ttl": {
+                  "expires": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "invited_email": {
+                  "recipient": {
                     "type": "string"
                   },
-                  "invitestatus": {
+                  "status": {
                     "type": "string",
                     "enum": [
                       "INVITATION_SENT"
@@ -2607,9 +2607,9 @@
                   "updated_at",
                   "owner_id",
                   "token",
-                  "ttl",
-                  "invited_email",
-                  "invitestatus",
+                  "expires",
+                  "recipient",
+                  "status",
                   "requestor_id",
                   "secret",
                   "owner"
@@ -2764,25 +2764,19 @@
                   "owner_id": {
                     "type": "string"
                   },
-                  "token": {
-                    "type": "string"
-                  },
-                  "ttl": {
+                  "expires": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "invited_email": {
+                  "recipient": {
                     "type": "string"
                   },
-                  "invitestatus": {
+                  "status": {
                     "type": "string",
                     "enum": [
                       "INVITATION_SENT"
                     ],
                     "default": "INVITATION_SENT"
-                  },
-                  "requestor_id": {
-                    "type": "string"
                   },
                   "secret": {
                     "type": "string",
@@ -10011,14 +10005,14 @@
           "token": {
             "type": "string"
           },
-          "ttl": {
+          "expires": {
             "type": "string",
             "format": "date-time"
           },
-          "invited_email": {
+          "recipient": {
             "type": "string"
           },
-          "invitestatus": {
+          "status": {
             "type": "string",
             "enum": [
               "INVITATION_SENT"
@@ -10042,8 +10036,8 @@
           "updated_at",
           "owner_id",
           "token",
-          "invited_email",
-          "invitestatus",
+          "recipient",
+          "status",
           "requestor_id",
           "owner"
         ]
@@ -10078,17 +10072,14 @@
           "owner_id": {
             "type": "string"
           },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
+          "expires": {
             "type": "string",
             "format": "date-time"
           },
-          "invited_email": {
+          "recipient": {
             "type": "string"
           },
-          "invitestatus": {
+          "status": {
             "type": "string",
             "enum": [
               "INVITATION_SENT"
@@ -10097,10 +10088,6 @@
           },
           "requestor_id": {
             "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
           }
         },
         "required": [
@@ -10108,9 +10095,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "token",
-          "invited_email",
-          "invitestatus",
+          "recipient",
+          "status",
           "requestor_id"
         ]
       },
@@ -10144,17 +10130,14 @@
           "owner_id": {
             "type": "string"
           },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
+          "expires": {
             "type": "string",
             "format": "date-time"
           },
-          "invited_email": {
+          "recipient": {
             "type": "string"
           },
-          "invitestatus": {
+          "status": {
             "type": "string",
             "enum": [
               "INVITATION_SENT"
@@ -10163,10 +10146,6 @@
           },
           "requestor_id": {
             "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
           }
         },
         "required": [
@@ -10174,9 +10153,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "token",
-          "invited_email",
-          "invitestatus",
+          "recipient",
+          "status",
           "requestor_id"
         ]
       },
@@ -10210,17 +10188,14 @@
           "owner_id": {
             "type": "string"
           },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
+          "expires": {
             "type": "string",
             "format": "date-time"
           },
-          "invited_email": {
+          "recipient": {
             "type": "string"
           },
-          "invitestatus": {
+          "status": {
             "type": "string",
             "enum": [
               "INVITATION_SENT"
@@ -10229,10 +10204,6 @@
           },
           "requestor_id": {
             "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
           }
         },
         "required": [
@@ -10240,9 +10211,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "token",
-          "invited_email",
-          "invitestatus",
+          "recipient",
+          "status",
           "requestor_id"
         ]
       },
@@ -10276,17 +10246,14 @@
           "owner_id": {
             "type": "string"
           },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
+          "expires": {
             "type": "string",
             "format": "date-time"
           },
-          "invited_email": {
+          "recipient": {
             "type": "string"
           },
-          "invitestatus": {
+          "status": {
             "type": "string",
             "enum": [
               "INVITATION_SENT"
@@ -10295,10 +10262,6 @@
           },
           "requestor_id": {
             "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
           }
         },
         "required": [
@@ -10306,9 +10269,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "token",
-          "invited_email",
-          "invitestatus",
+          "recipient",
+          "status",
           "requestor_id"
         ]
       },
@@ -12475,17 +12437,14 @@
           "owner_id": {
             "type": "string"
           },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
+          "expires": {
             "type": "string",
             "format": "date-time"
           },
-          "invited_email": {
+          "recipient": {
             "type": "string"
           },
-          "invitestatus": {
+          "status": {
             "type": "string",
             "enum": [
               "INVITATION_SENT"
@@ -12494,10 +12453,6 @@
           },
           "requestor_id": {
             "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
           }
         },
         "required": [
@@ -12505,9 +12460,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "token",
-          "invited_email",
-          "invitestatus",
+          "recipient",
+          "status",
           "requestor_id"
         ]
       },

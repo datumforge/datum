@@ -3129,51 +3129,36 @@ type InviteWhereInput struct {
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 
-	// "token" field predicates.
-	Token             *string  `json:"token,omitempty"`
-	TokenNEQ          *string  `json:"tokenNEQ,omitempty"`
-	TokenIn           []string `json:"tokenIn,omitempty"`
-	TokenNotIn        []string `json:"tokenNotIn,omitempty"`
-	TokenGT           *string  `json:"tokenGT,omitempty"`
-	TokenGTE          *string  `json:"tokenGTE,omitempty"`
-	TokenLT           *string  `json:"tokenLT,omitempty"`
-	TokenLTE          *string  `json:"tokenLTE,omitempty"`
-	TokenContains     *string  `json:"tokenContains,omitempty"`
-	TokenHasPrefix    *string  `json:"tokenHasPrefix,omitempty"`
-	TokenHasSuffix    *string  `json:"tokenHasSuffix,omitempty"`
-	TokenEqualFold    *string  `json:"tokenEqualFold,omitempty"`
-	TokenContainsFold *string  `json:"tokenContainsFold,omitempty"`
+	// "expires" field predicates.
+	Expires      *time.Time  `json:"expires,omitempty"`
+	ExpiresNEQ   *time.Time  `json:"expiresNEQ,omitempty"`
+	ExpiresIn    []time.Time `json:"expiresIn,omitempty"`
+	ExpiresNotIn []time.Time `json:"expiresNotIn,omitempty"`
+	ExpiresGT    *time.Time  `json:"expiresGT,omitempty"`
+	ExpiresGTE   *time.Time  `json:"expiresGTE,omitempty"`
+	ExpiresLT    *time.Time  `json:"expiresLT,omitempty"`
+	ExpiresLTE   *time.Time  `json:"expiresLTE,omitempty"`
 
-	// "ttl" field predicates.
-	TTL      *time.Time  `json:"ttl,omitempty"`
-	TTLNEQ   *time.Time  `json:"ttlNEQ,omitempty"`
-	TTLIn    []time.Time `json:"ttlIn,omitempty"`
-	TTLNotIn []time.Time `json:"ttlNotIn,omitempty"`
-	TTLGT    *time.Time  `json:"ttlGT,omitempty"`
-	TTLGTE   *time.Time  `json:"ttlGTE,omitempty"`
-	TTLLT    *time.Time  `json:"ttlLT,omitempty"`
-	TTLLTE   *time.Time  `json:"ttlLTE,omitempty"`
+	// "recipient" field predicates.
+	Recipient             *string  `json:"recipient,omitempty"`
+	RecipientNEQ          *string  `json:"recipientNEQ,omitempty"`
+	RecipientIn           []string `json:"recipientIn,omitempty"`
+	RecipientNotIn        []string `json:"recipientNotIn,omitempty"`
+	RecipientGT           *string  `json:"recipientGT,omitempty"`
+	RecipientGTE          *string  `json:"recipientGTE,omitempty"`
+	RecipientLT           *string  `json:"recipientLT,omitempty"`
+	RecipientLTE          *string  `json:"recipientLTE,omitempty"`
+	RecipientContains     *string  `json:"recipientContains,omitempty"`
+	RecipientHasPrefix    *string  `json:"recipientHasPrefix,omitempty"`
+	RecipientHasSuffix    *string  `json:"recipientHasSuffix,omitempty"`
+	RecipientEqualFold    *string  `json:"recipientEqualFold,omitempty"`
+	RecipientContainsFold *string  `json:"recipientContainsFold,omitempty"`
 
-	// "invited_email" field predicates.
-	InvitedEmail             *string  `json:"invitedEmail,omitempty"`
-	InvitedEmailNEQ          *string  `json:"invitedEmailNEQ,omitempty"`
-	InvitedEmailIn           []string `json:"invitedEmailIn,omitempty"`
-	InvitedEmailNotIn        []string `json:"invitedEmailNotIn,omitempty"`
-	InvitedEmailGT           *string  `json:"invitedEmailGT,omitempty"`
-	InvitedEmailGTE          *string  `json:"invitedEmailGTE,omitempty"`
-	InvitedEmailLT           *string  `json:"invitedEmailLT,omitempty"`
-	InvitedEmailLTE          *string  `json:"invitedEmailLTE,omitempty"`
-	InvitedEmailContains     *string  `json:"invitedEmailContains,omitempty"`
-	InvitedEmailHasPrefix    *string  `json:"invitedEmailHasPrefix,omitempty"`
-	InvitedEmailHasSuffix    *string  `json:"invitedEmailHasSuffix,omitempty"`
-	InvitedEmailEqualFold    *string  `json:"invitedEmailEqualFold,omitempty"`
-	InvitedEmailContainsFold *string  `json:"invitedEmailContainsFold,omitempty"`
-
-	// "invitestatus" field predicates.
-	Invitestatus      *enums.InviteStatus  `json:"invitestatus,omitempty"`
-	InvitestatusNEQ   *enums.InviteStatus  `json:"invitestatusNEQ,omitempty"`
-	InvitestatusIn    []enums.InviteStatus `json:"invitestatusIn,omitempty"`
-	InvitestatusNotIn []enums.InviteStatus `json:"invitestatusNotIn,omitempty"`
+	// "status" field predicates.
+	Status      *enums.InviteStatus  `json:"status,omitempty"`
+	StatusNEQ   *enums.InviteStatus  `json:"statusNEQ,omitempty"`
+	StatusIn    []enums.InviteStatus `json:"statusIn,omitempty"`
+	StatusNotIn []enums.InviteStatus `json:"statusNotIn,omitempty"`
 
 	// "requestor_id" field predicates.
 	RequestorID             *string  `json:"requestorID,omitempty"`
@@ -3509,119 +3494,80 @@ func (i *InviteWhereInput) P() (predicate.Invite, error) {
 	if i.DeletedByContainsFold != nil {
 		predicates = append(predicates, invite.DeletedByContainsFold(*i.DeletedByContainsFold))
 	}
-	if i.Token != nil {
-		predicates = append(predicates, invite.TokenEQ(*i.Token))
+	if i.Expires != nil {
+		predicates = append(predicates, invite.ExpiresEQ(*i.Expires))
 	}
-	if i.TokenNEQ != nil {
-		predicates = append(predicates, invite.TokenNEQ(*i.TokenNEQ))
+	if i.ExpiresNEQ != nil {
+		predicates = append(predicates, invite.ExpiresNEQ(*i.ExpiresNEQ))
 	}
-	if len(i.TokenIn) > 0 {
-		predicates = append(predicates, invite.TokenIn(i.TokenIn...))
+	if len(i.ExpiresIn) > 0 {
+		predicates = append(predicates, invite.ExpiresIn(i.ExpiresIn...))
 	}
-	if len(i.TokenNotIn) > 0 {
-		predicates = append(predicates, invite.TokenNotIn(i.TokenNotIn...))
+	if len(i.ExpiresNotIn) > 0 {
+		predicates = append(predicates, invite.ExpiresNotIn(i.ExpiresNotIn...))
 	}
-	if i.TokenGT != nil {
-		predicates = append(predicates, invite.TokenGT(*i.TokenGT))
+	if i.ExpiresGT != nil {
+		predicates = append(predicates, invite.ExpiresGT(*i.ExpiresGT))
 	}
-	if i.TokenGTE != nil {
-		predicates = append(predicates, invite.TokenGTE(*i.TokenGTE))
+	if i.ExpiresGTE != nil {
+		predicates = append(predicates, invite.ExpiresGTE(*i.ExpiresGTE))
 	}
-	if i.TokenLT != nil {
-		predicates = append(predicates, invite.TokenLT(*i.TokenLT))
+	if i.ExpiresLT != nil {
+		predicates = append(predicates, invite.ExpiresLT(*i.ExpiresLT))
 	}
-	if i.TokenLTE != nil {
-		predicates = append(predicates, invite.TokenLTE(*i.TokenLTE))
+	if i.ExpiresLTE != nil {
+		predicates = append(predicates, invite.ExpiresLTE(*i.ExpiresLTE))
 	}
-	if i.TokenContains != nil {
-		predicates = append(predicates, invite.TokenContains(*i.TokenContains))
+	if i.Recipient != nil {
+		predicates = append(predicates, invite.RecipientEQ(*i.Recipient))
 	}
-	if i.TokenHasPrefix != nil {
-		predicates = append(predicates, invite.TokenHasPrefix(*i.TokenHasPrefix))
+	if i.RecipientNEQ != nil {
+		predicates = append(predicates, invite.RecipientNEQ(*i.RecipientNEQ))
 	}
-	if i.TokenHasSuffix != nil {
-		predicates = append(predicates, invite.TokenHasSuffix(*i.TokenHasSuffix))
+	if len(i.RecipientIn) > 0 {
+		predicates = append(predicates, invite.RecipientIn(i.RecipientIn...))
 	}
-	if i.TokenEqualFold != nil {
-		predicates = append(predicates, invite.TokenEqualFold(*i.TokenEqualFold))
+	if len(i.RecipientNotIn) > 0 {
+		predicates = append(predicates, invite.RecipientNotIn(i.RecipientNotIn...))
 	}
-	if i.TokenContainsFold != nil {
-		predicates = append(predicates, invite.TokenContainsFold(*i.TokenContainsFold))
+	if i.RecipientGT != nil {
+		predicates = append(predicates, invite.RecipientGT(*i.RecipientGT))
 	}
-	if i.TTL != nil {
-		predicates = append(predicates, invite.TTLEQ(*i.TTL))
+	if i.RecipientGTE != nil {
+		predicates = append(predicates, invite.RecipientGTE(*i.RecipientGTE))
 	}
-	if i.TTLNEQ != nil {
-		predicates = append(predicates, invite.TTLNEQ(*i.TTLNEQ))
+	if i.RecipientLT != nil {
+		predicates = append(predicates, invite.RecipientLT(*i.RecipientLT))
 	}
-	if len(i.TTLIn) > 0 {
-		predicates = append(predicates, invite.TTLIn(i.TTLIn...))
+	if i.RecipientLTE != nil {
+		predicates = append(predicates, invite.RecipientLTE(*i.RecipientLTE))
 	}
-	if len(i.TTLNotIn) > 0 {
-		predicates = append(predicates, invite.TTLNotIn(i.TTLNotIn...))
+	if i.RecipientContains != nil {
+		predicates = append(predicates, invite.RecipientContains(*i.RecipientContains))
 	}
-	if i.TTLGT != nil {
-		predicates = append(predicates, invite.TTLGT(*i.TTLGT))
+	if i.RecipientHasPrefix != nil {
+		predicates = append(predicates, invite.RecipientHasPrefix(*i.RecipientHasPrefix))
 	}
-	if i.TTLGTE != nil {
-		predicates = append(predicates, invite.TTLGTE(*i.TTLGTE))
+	if i.RecipientHasSuffix != nil {
+		predicates = append(predicates, invite.RecipientHasSuffix(*i.RecipientHasSuffix))
 	}
-	if i.TTLLT != nil {
-		predicates = append(predicates, invite.TTLLT(*i.TTLLT))
+	if i.RecipientEqualFold != nil {
+		predicates = append(predicates, invite.RecipientEqualFold(*i.RecipientEqualFold))
 	}
-	if i.TTLLTE != nil {
-		predicates = append(predicates, invite.TTLLTE(*i.TTLLTE))
+	if i.RecipientContainsFold != nil {
+		predicates = append(predicates, invite.RecipientContainsFold(*i.RecipientContainsFold))
 	}
-	if i.InvitedEmail != nil {
-		predicates = append(predicates, invite.InvitedEmailEQ(*i.InvitedEmail))
+	if i.Status != nil {
+		predicates = append(predicates, invite.StatusEQ(*i.Status))
 	}
-	if i.InvitedEmailNEQ != nil {
-		predicates = append(predicates, invite.InvitedEmailNEQ(*i.InvitedEmailNEQ))
+	if i.StatusNEQ != nil {
+		predicates = append(predicates, invite.StatusNEQ(*i.StatusNEQ))
 	}
-	if len(i.InvitedEmailIn) > 0 {
-		predicates = append(predicates, invite.InvitedEmailIn(i.InvitedEmailIn...))
+	if len(i.StatusIn) > 0 {
+		predicates = append(predicates, invite.StatusIn(i.StatusIn...))
 	}
-	if len(i.InvitedEmailNotIn) > 0 {
-		predicates = append(predicates, invite.InvitedEmailNotIn(i.InvitedEmailNotIn...))
-	}
-	if i.InvitedEmailGT != nil {
-		predicates = append(predicates, invite.InvitedEmailGT(*i.InvitedEmailGT))
-	}
-	if i.InvitedEmailGTE != nil {
-		predicates = append(predicates, invite.InvitedEmailGTE(*i.InvitedEmailGTE))
-	}
-	if i.InvitedEmailLT != nil {
-		predicates = append(predicates, invite.InvitedEmailLT(*i.InvitedEmailLT))
-	}
-	if i.InvitedEmailLTE != nil {
-		predicates = append(predicates, invite.InvitedEmailLTE(*i.InvitedEmailLTE))
-	}
-	if i.InvitedEmailContains != nil {
-		predicates = append(predicates, invite.InvitedEmailContains(*i.InvitedEmailContains))
-	}
-	if i.InvitedEmailHasPrefix != nil {
-		predicates = append(predicates, invite.InvitedEmailHasPrefix(*i.InvitedEmailHasPrefix))
-	}
-	if i.InvitedEmailHasSuffix != nil {
-		predicates = append(predicates, invite.InvitedEmailHasSuffix(*i.InvitedEmailHasSuffix))
-	}
-	if i.InvitedEmailEqualFold != nil {
-		predicates = append(predicates, invite.InvitedEmailEqualFold(*i.InvitedEmailEqualFold))
-	}
-	if i.InvitedEmailContainsFold != nil {
-		predicates = append(predicates, invite.InvitedEmailContainsFold(*i.InvitedEmailContainsFold))
-	}
-	if i.Invitestatus != nil {
-		predicates = append(predicates, invite.InvitestatusEQ(*i.Invitestatus))
-	}
-	if i.InvitestatusNEQ != nil {
-		predicates = append(predicates, invite.InvitestatusNEQ(*i.InvitestatusNEQ))
-	}
-	if len(i.InvitestatusIn) > 0 {
-		predicates = append(predicates, invite.InvitestatusIn(i.InvitestatusIn...))
-	}
-	if len(i.InvitestatusNotIn) > 0 {
-		predicates = append(predicates, invite.InvitestatusNotIn(i.InvitestatusNotIn...))
+	if len(i.StatusNotIn) > 0 {
+		predicates = append(predicates, invite.StatusNotIn(i.StatusNotIn...))
 	}
 	if i.RequestorID != nil {
 		predicates = append(predicates, invite.RequestorIDEQ(*i.RequestorID))

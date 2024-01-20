@@ -34,12 +34,12 @@ const (
 	FieldOwnerID = "owner_id"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
-	// FieldTTL holds the string denoting the ttl field in the database.
-	FieldTTL = "ttl"
-	// FieldInvitedEmail holds the string denoting the invited_email field in the database.
-	FieldInvitedEmail = "invited_email"
-	// FieldInvitestatus holds the string denoting the invitestatus field in the database.
-	FieldInvitestatus = "invitestatus"
+	// FieldExpires holds the string denoting the expires field in the database.
+	FieldExpires = "expires"
+	// FieldRecipient holds the string denoting the recipient field in the database.
+	FieldRecipient = "recipient"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
 	// FieldRequestorID holds the string denoting the requestor_id field in the database.
 	FieldRequestorID = "requestor_id"
 	// FieldSecret holds the string denoting the secret field in the database.
@@ -68,9 +68,9 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldOwnerID,
 	FieldToken,
-	FieldTTL,
-	FieldInvitedEmail,
-	FieldInvitestatus,
+	FieldExpires,
+	FieldRecipient,
+	FieldStatus,
 	FieldRequestorID,
 	FieldSecret,
 }
@@ -91,7 +91,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [2]ent.Hook
+	Hooks        [3]ent.Hook
 	Interceptors [1]ent.Interceptor
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
@@ -101,8 +101,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// TokenValidator is a validator for the "token" field. It is called by the builders before save.
 	TokenValidator func(string) error
-	// InvitedEmailValidator is a validator for the "invited_email" field. It is called by the builders before save.
-	InvitedEmailValidator func(string) error
+	// RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
+	RecipientValidator func(string) error
 	// RequestorIDValidator is a validator for the "requestor_id" field. It is called by the builders before save.
 	RequestorIDValidator func(string) error
 	// SecretValidator is a validator for the "secret" field. It is called by the builders before save.
@@ -111,15 +111,15 @@ var (
 	DefaultID func() string
 )
 
-const DefaultInvitestatus enums.InviteStatus = "INVITATION_SENT"
+const DefaultStatus enums.InviteStatus = "INVITATION_SENT"
 
-// InvitestatusValidator is a validator for the "invitestatus" field enum values. It is called by the builders before save.
-func InvitestatusValidator(i enums.InviteStatus) error {
-	switch i.String() {
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s enums.InviteStatus) error {
+	switch s.String() {
 	case "INVITATION_SENT":
 		return nil
 	default:
-		return fmt.Errorf("invite: invalid enum value for invitestatus field: %q", i)
+		return fmt.Errorf("invite: invalid enum value for status field: %q", s)
 	}
 }
 
@@ -171,19 +171,19 @@ func ByToken(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldToken, opts...).ToFunc()
 }
 
-// ByTTL orders the results by the ttl field.
-func ByTTL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTTL, opts...).ToFunc()
+// ByExpires orders the results by the expires field.
+func ByExpires(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpires, opts...).ToFunc()
 }
 
-// ByInvitedEmail orders the results by the invited_email field.
-func ByInvitedEmail(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldInvitedEmail, opts...).ToFunc()
+// ByRecipient orders the results by the recipient field.
+func ByRecipient(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRecipient, opts...).ToFunc()
 }
 
-// ByInvitestatus orders the results by the invitestatus field.
-func ByInvitestatus(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldInvitestatus, opts...).ToFunc()
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
 // ByRequestorID orders the results by the requestor_id field.

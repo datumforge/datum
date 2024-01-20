@@ -108,14 +108,14 @@ func Token(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldToken, v))
 }
 
-// TTL applies equality check predicate on the "ttl" field. It's identical to TTLEQ.
-func TTL(v time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldEQ(FieldTTL, v))
+// Expires applies equality check predicate on the "expires" field. It's identical to ExpiresEQ.
+func Expires(v time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldExpires, v))
 }
 
-// InvitedEmail applies equality check predicate on the "invited_email" field. It's identical to InvitedEmailEQ.
-func InvitedEmail(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldEQ(FieldInvitedEmail, v))
+// Recipient applies equality check predicate on the "recipient" field. It's identical to RecipientEQ.
+func Recipient(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldRecipient, v))
 }
 
 // RequestorID applies equality check predicate on the "requestor_id" field. It's identical to RequestorIDEQ.
@@ -613,139 +613,139 @@ func TokenContainsFold(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldContainsFold(FieldToken, v))
 }
 
-// TTLEQ applies the EQ predicate on the "ttl" field.
-func TTLEQ(v time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldEQ(FieldTTL, v))
+// ExpiresEQ applies the EQ predicate on the "expires" field.
+func ExpiresEQ(v time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldExpires, v))
 }
 
-// TTLNEQ applies the NEQ predicate on the "ttl" field.
-func TTLNEQ(v time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldNEQ(FieldTTL, v))
+// ExpiresNEQ applies the NEQ predicate on the "expires" field.
+func ExpiresNEQ(v time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldNEQ(FieldExpires, v))
 }
 
-// TTLIn applies the In predicate on the "ttl" field.
-func TTLIn(vs ...time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldIn(FieldTTL, vs...))
+// ExpiresIn applies the In predicate on the "expires" field.
+func ExpiresIn(vs ...time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldIn(FieldExpires, vs...))
 }
 
-// TTLNotIn applies the NotIn predicate on the "ttl" field.
-func TTLNotIn(vs ...time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldNotIn(FieldTTL, vs...))
+// ExpiresNotIn applies the NotIn predicate on the "expires" field.
+func ExpiresNotIn(vs ...time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldNotIn(FieldExpires, vs...))
 }
 
-// TTLGT applies the GT predicate on the "ttl" field.
-func TTLGT(v time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldGT(FieldTTL, v))
+// ExpiresGT applies the GT predicate on the "expires" field.
+func ExpiresGT(v time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldGT(FieldExpires, v))
 }
 
-// TTLGTE applies the GTE predicate on the "ttl" field.
-func TTLGTE(v time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldGTE(FieldTTL, v))
+// ExpiresGTE applies the GTE predicate on the "expires" field.
+func ExpiresGTE(v time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldGTE(FieldExpires, v))
 }
 
-// TTLLT applies the LT predicate on the "ttl" field.
-func TTLLT(v time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldLT(FieldTTL, v))
+// ExpiresLT applies the LT predicate on the "expires" field.
+func ExpiresLT(v time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldLT(FieldExpires, v))
 }
 
-// TTLLTE applies the LTE predicate on the "ttl" field.
-func TTLLTE(v time.Time) predicate.Invite {
-	return predicate.Invite(sql.FieldLTE(FieldTTL, v))
+// ExpiresLTE applies the LTE predicate on the "expires" field.
+func ExpiresLTE(v time.Time) predicate.Invite {
+	return predicate.Invite(sql.FieldLTE(FieldExpires, v))
 }
 
-// InvitedEmailEQ applies the EQ predicate on the "invited_email" field.
-func InvitedEmailEQ(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldEQ(FieldInvitedEmail, v))
+// RecipientEQ applies the EQ predicate on the "recipient" field.
+func RecipientEQ(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldRecipient, v))
 }
 
-// InvitedEmailNEQ applies the NEQ predicate on the "invited_email" field.
-func InvitedEmailNEQ(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldNEQ(FieldInvitedEmail, v))
+// RecipientNEQ applies the NEQ predicate on the "recipient" field.
+func RecipientNEQ(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldNEQ(FieldRecipient, v))
 }
 
-// InvitedEmailIn applies the In predicate on the "invited_email" field.
-func InvitedEmailIn(vs ...string) predicate.Invite {
-	return predicate.Invite(sql.FieldIn(FieldInvitedEmail, vs...))
+// RecipientIn applies the In predicate on the "recipient" field.
+func RecipientIn(vs ...string) predicate.Invite {
+	return predicate.Invite(sql.FieldIn(FieldRecipient, vs...))
 }
 
-// InvitedEmailNotIn applies the NotIn predicate on the "invited_email" field.
-func InvitedEmailNotIn(vs ...string) predicate.Invite {
-	return predicate.Invite(sql.FieldNotIn(FieldInvitedEmail, vs...))
+// RecipientNotIn applies the NotIn predicate on the "recipient" field.
+func RecipientNotIn(vs ...string) predicate.Invite {
+	return predicate.Invite(sql.FieldNotIn(FieldRecipient, vs...))
 }
 
-// InvitedEmailGT applies the GT predicate on the "invited_email" field.
-func InvitedEmailGT(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldGT(FieldInvitedEmail, v))
+// RecipientGT applies the GT predicate on the "recipient" field.
+func RecipientGT(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldGT(FieldRecipient, v))
 }
 
-// InvitedEmailGTE applies the GTE predicate on the "invited_email" field.
-func InvitedEmailGTE(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldGTE(FieldInvitedEmail, v))
+// RecipientGTE applies the GTE predicate on the "recipient" field.
+func RecipientGTE(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldGTE(FieldRecipient, v))
 }
 
-// InvitedEmailLT applies the LT predicate on the "invited_email" field.
-func InvitedEmailLT(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldLT(FieldInvitedEmail, v))
+// RecipientLT applies the LT predicate on the "recipient" field.
+func RecipientLT(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldLT(FieldRecipient, v))
 }
 
-// InvitedEmailLTE applies the LTE predicate on the "invited_email" field.
-func InvitedEmailLTE(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldLTE(FieldInvitedEmail, v))
+// RecipientLTE applies the LTE predicate on the "recipient" field.
+func RecipientLTE(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldLTE(FieldRecipient, v))
 }
 
-// InvitedEmailContains applies the Contains predicate on the "invited_email" field.
-func InvitedEmailContains(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldContains(FieldInvitedEmail, v))
+// RecipientContains applies the Contains predicate on the "recipient" field.
+func RecipientContains(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldContains(FieldRecipient, v))
 }
 
-// InvitedEmailHasPrefix applies the HasPrefix predicate on the "invited_email" field.
-func InvitedEmailHasPrefix(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldHasPrefix(FieldInvitedEmail, v))
+// RecipientHasPrefix applies the HasPrefix predicate on the "recipient" field.
+func RecipientHasPrefix(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldHasPrefix(FieldRecipient, v))
 }
 
-// InvitedEmailHasSuffix applies the HasSuffix predicate on the "invited_email" field.
-func InvitedEmailHasSuffix(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldHasSuffix(FieldInvitedEmail, v))
+// RecipientHasSuffix applies the HasSuffix predicate on the "recipient" field.
+func RecipientHasSuffix(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldHasSuffix(FieldRecipient, v))
 }
 
-// InvitedEmailEqualFold applies the EqualFold predicate on the "invited_email" field.
-func InvitedEmailEqualFold(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldEqualFold(FieldInvitedEmail, v))
+// RecipientEqualFold applies the EqualFold predicate on the "recipient" field.
+func RecipientEqualFold(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldEqualFold(FieldRecipient, v))
 }
 
-// InvitedEmailContainsFold applies the ContainsFold predicate on the "invited_email" field.
-func InvitedEmailContainsFold(v string) predicate.Invite {
-	return predicate.Invite(sql.FieldContainsFold(FieldInvitedEmail, v))
+// RecipientContainsFold applies the ContainsFold predicate on the "recipient" field.
+func RecipientContainsFold(v string) predicate.Invite {
+	return predicate.Invite(sql.FieldContainsFold(FieldRecipient, v))
 }
 
-// InvitestatusEQ applies the EQ predicate on the "invitestatus" field.
-func InvitestatusEQ(v enums.InviteStatus) predicate.Invite {
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v enums.InviteStatus) predicate.Invite {
 	vc := v
-	return predicate.Invite(sql.FieldEQ(FieldInvitestatus, vc))
+	return predicate.Invite(sql.FieldEQ(FieldStatus, vc))
 }
 
-// InvitestatusNEQ applies the NEQ predicate on the "invitestatus" field.
-func InvitestatusNEQ(v enums.InviteStatus) predicate.Invite {
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v enums.InviteStatus) predicate.Invite {
 	vc := v
-	return predicate.Invite(sql.FieldNEQ(FieldInvitestatus, vc))
+	return predicate.Invite(sql.FieldNEQ(FieldStatus, vc))
 }
 
-// InvitestatusIn applies the In predicate on the "invitestatus" field.
-func InvitestatusIn(vs ...enums.InviteStatus) predicate.Invite {
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...enums.InviteStatus) predicate.Invite {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.Invite(sql.FieldIn(FieldInvitestatus, v...))
+	return predicate.Invite(sql.FieldIn(FieldStatus, v...))
 }
 
-// InvitestatusNotIn applies the NotIn predicate on the "invitestatus" field.
-func InvitestatusNotIn(vs ...enums.InviteStatus) predicate.Invite {
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...enums.InviteStatus) predicate.Invite {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.Invite(sql.FieldNotIn(FieldInvitestatus, v...))
+	return predicate.Invite(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // RequestorIDEQ applies the EQ predicate on the "requestor_id" field.

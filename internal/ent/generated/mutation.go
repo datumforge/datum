@@ -6568,9 +6568,9 @@ type InviteMutation struct {
 	deleted_at    *time.Time
 	deleted_by    *string
 	token         *string
-	ttl           *time.Time
-	invited_email *string
-	invitestatus  *enums.InviteStatus
+	expires       *time.Time
+	recipient     *string
+	status        *enums.InviteStatus
 	requestor_id  *string
 	secret        *[]byte
 	clearedFields map[string]struct{}
@@ -7025,112 +7025,112 @@ func (m *InviteMutation) ResetToken() {
 	m.token = nil
 }
 
-// SetTTL sets the "ttl" field.
-func (m *InviteMutation) SetTTL(t time.Time) {
-	m.ttl = &t
+// SetExpires sets the "expires" field.
+func (m *InviteMutation) SetExpires(t time.Time) {
+	m.expires = &t
 }
 
-// TTL returns the value of the "ttl" field in the mutation.
-func (m *InviteMutation) TTL() (r time.Time, exists bool) {
-	v := m.ttl
+// Expires returns the value of the "expires" field in the mutation.
+func (m *InviteMutation) Expires() (r time.Time, exists bool) {
+	v := m.expires
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldTTL returns the old "ttl" field's value of the Invite entity.
+// OldExpires returns the old "expires" field's value of the Invite entity.
 // If the Invite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InviteMutation) OldTTL(ctx context.Context) (v *time.Time, err error) {
+func (m *InviteMutation) OldExpires(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTTL is only allowed on UpdateOne operations")
+		return v, errors.New("OldExpires is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTTL requires an ID field in the mutation")
+		return v, errors.New("OldExpires requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTTL: %w", err)
+		return v, fmt.Errorf("querying old value for OldExpires: %w", err)
 	}
-	return oldValue.TTL, nil
+	return oldValue.Expires, nil
 }
 
-// ResetTTL resets all changes to the "ttl" field.
-func (m *InviteMutation) ResetTTL() {
-	m.ttl = nil
+// ResetExpires resets all changes to the "expires" field.
+func (m *InviteMutation) ResetExpires() {
+	m.expires = nil
 }
 
-// SetInvitedEmail sets the "invited_email" field.
-func (m *InviteMutation) SetInvitedEmail(s string) {
-	m.invited_email = &s
+// SetRecipient sets the "recipient" field.
+func (m *InviteMutation) SetRecipient(s string) {
+	m.recipient = &s
 }
 
-// InvitedEmail returns the value of the "invited_email" field in the mutation.
-func (m *InviteMutation) InvitedEmail() (r string, exists bool) {
-	v := m.invited_email
+// Recipient returns the value of the "recipient" field in the mutation.
+func (m *InviteMutation) Recipient() (r string, exists bool) {
+	v := m.recipient
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldInvitedEmail returns the old "invited_email" field's value of the Invite entity.
+// OldRecipient returns the old "recipient" field's value of the Invite entity.
 // If the Invite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InviteMutation) OldInvitedEmail(ctx context.Context) (v string, err error) {
+func (m *InviteMutation) OldRecipient(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldInvitedEmail is only allowed on UpdateOne operations")
+		return v, errors.New("OldRecipient is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldInvitedEmail requires an ID field in the mutation")
+		return v, errors.New("OldRecipient requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInvitedEmail: %w", err)
+		return v, fmt.Errorf("querying old value for OldRecipient: %w", err)
 	}
-	return oldValue.InvitedEmail, nil
+	return oldValue.Recipient, nil
 }
 
-// ResetInvitedEmail resets all changes to the "invited_email" field.
-func (m *InviteMutation) ResetInvitedEmail() {
-	m.invited_email = nil
+// ResetRecipient resets all changes to the "recipient" field.
+func (m *InviteMutation) ResetRecipient() {
+	m.recipient = nil
 }
 
-// SetInvitestatus sets the "invitestatus" field.
-func (m *InviteMutation) SetInvitestatus(es enums.InviteStatus) {
-	m.invitestatus = &es
+// SetStatus sets the "status" field.
+func (m *InviteMutation) SetStatus(es enums.InviteStatus) {
+	m.status = &es
 }
 
-// Invitestatus returns the value of the "invitestatus" field in the mutation.
-func (m *InviteMutation) Invitestatus() (r enums.InviteStatus, exists bool) {
-	v := m.invitestatus
+// Status returns the value of the "status" field in the mutation.
+func (m *InviteMutation) Status() (r enums.InviteStatus, exists bool) {
+	v := m.status
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldInvitestatus returns the old "invitestatus" field's value of the Invite entity.
+// OldStatus returns the old "status" field's value of the Invite entity.
 // If the Invite object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *InviteMutation) OldInvitestatus(ctx context.Context) (v enums.InviteStatus, err error) {
+func (m *InviteMutation) OldStatus(ctx context.Context) (v enums.InviteStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldInvitestatus is only allowed on UpdateOne operations")
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldInvitestatus requires an ID field in the mutation")
+		return v, errors.New("OldStatus requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInvitestatus: %w", err)
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
 	}
-	return oldValue.Invitestatus, nil
+	return oldValue.Status, nil
 }
 
-// ResetInvitestatus resets all changes to the "invitestatus" field.
-func (m *InviteMutation) ResetInvitestatus() {
-	m.invitestatus = nil
+// ResetStatus resets all changes to the "status" field.
+func (m *InviteMutation) ResetStatus() {
+	m.status = nil
 }
 
 // SetRequestorID sets the "requestor_id" field.
@@ -7291,14 +7291,14 @@ func (m *InviteMutation) Fields() []string {
 	if m.token != nil {
 		fields = append(fields, invite.FieldToken)
 	}
-	if m.ttl != nil {
-		fields = append(fields, invite.FieldTTL)
+	if m.expires != nil {
+		fields = append(fields, invite.FieldExpires)
 	}
-	if m.invited_email != nil {
-		fields = append(fields, invite.FieldInvitedEmail)
+	if m.recipient != nil {
+		fields = append(fields, invite.FieldRecipient)
 	}
-	if m.invitestatus != nil {
-		fields = append(fields, invite.FieldInvitestatus)
+	if m.status != nil {
+		fields = append(fields, invite.FieldStatus)
 	}
 	if m.requestor_id != nil {
 		fields = append(fields, invite.FieldRequestorID)
@@ -7330,12 +7330,12 @@ func (m *InviteMutation) Field(name string) (ent.Value, bool) {
 		return m.OwnerID()
 	case invite.FieldToken:
 		return m.Token()
-	case invite.FieldTTL:
-		return m.TTL()
-	case invite.FieldInvitedEmail:
-		return m.InvitedEmail()
-	case invite.FieldInvitestatus:
-		return m.Invitestatus()
+	case invite.FieldExpires:
+		return m.Expires()
+	case invite.FieldRecipient:
+		return m.Recipient()
+	case invite.FieldStatus:
+		return m.Status()
 	case invite.FieldRequestorID:
 		return m.RequestorID()
 	case invite.FieldSecret:
@@ -7365,12 +7365,12 @@ func (m *InviteMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldOwnerID(ctx)
 	case invite.FieldToken:
 		return m.OldToken(ctx)
-	case invite.FieldTTL:
-		return m.OldTTL(ctx)
-	case invite.FieldInvitedEmail:
-		return m.OldInvitedEmail(ctx)
-	case invite.FieldInvitestatus:
-		return m.OldInvitestatus(ctx)
+	case invite.FieldExpires:
+		return m.OldExpires(ctx)
+	case invite.FieldRecipient:
+		return m.OldRecipient(ctx)
+	case invite.FieldStatus:
+		return m.OldStatus(ctx)
 	case invite.FieldRequestorID:
 		return m.OldRequestorID(ctx)
 	case invite.FieldSecret:
@@ -7440,26 +7440,26 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetToken(v)
 		return nil
-	case invite.FieldTTL:
+	case invite.FieldExpires:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetTTL(v)
+		m.SetExpires(v)
 		return nil
-	case invite.FieldInvitedEmail:
+	case invite.FieldRecipient:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetInvitedEmail(v)
+		m.SetRecipient(v)
 		return nil
-	case invite.FieldInvitestatus:
+	case invite.FieldStatus:
 		v, ok := value.(enums.InviteStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetInvitestatus(v)
+		m.SetStatus(v)
 		return nil
 	case invite.FieldRequestorID:
 		v, ok := value.(string)
@@ -7575,14 +7575,14 @@ func (m *InviteMutation) ResetField(name string) error {
 	case invite.FieldToken:
 		m.ResetToken()
 		return nil
-	case invite.FieldTTL:
-		m.ResetTTL()
+	case invite.FieldExpires:
+		m.ResetExpires()
 		return nil
-	case invite.FieldInvitedEmail:
-		m.ResetInvitedEmail()
+	case invite.FieldRecipient:
+		m.ResetRecipient()
 		return nil
-	case invite.FieldInvitestatus:
-		m.ResetInvitestatus()
+	case invite.FieldStatus:
+		m.ResetStatus()
 		return nil
 	case invite.FieldRequestorID:
 		m.ResetRequestorID()

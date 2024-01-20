@@ -231,9 +231,9 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "token", Type: field.TypeString, Unique: true},
-		{Name: "ttl", Type: field.TypeTime},
-		{Name: "invited_email", Type: field.TypeString},
-		{Name: "invitestatus", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT"}, Default: "INVITATION_SENT"},
+		{Name: "expires", Type: field.TypeTime},
+		{Name: "recipient", Type: field.TypeString},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT"}, Default: "INVITATION_SENT"},
 		{Name: "requestor_id", Type: field.TypeString},
 		{Name: "secret", Type: field.TypeBytes},
 		{Name: "owner_id", Type: field.TypeString},
@@ -249,6 +249,16 @@ var (
 				Columns:    []*schema.Column{InvitesColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "invite_recipient",
+				Unique:  true,
+				Columns: []*schema.Column{InvitesColumns[9]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
 			},
 		},
 	}

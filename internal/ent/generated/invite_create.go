@@ -118,28 +118,28 @@ func (ic *InviteCreate) SetToken(s string) *InviteCreate {
 	return ic
 }
 
-// SetTTL sets the "ttl" field.
-func (ic *InviteCreate) SetTTL(t time.Time) *InviteCreate {
-	ic.mutation.SetTTL(t)
+// SetExpires sets the "expires" field.
+func (ic *InviteCreate) SetExpires(t time.Time) *InviteCreate {
+	ic.mutation.SetExpires(t)
 	return ic
 }
 
-// SetInvitedEmail sets the "invited_email" field.
-func (ic *InviteCreate) SetInvitedEmail(s string) *InviteCreate {
-	ic.mutation.SetInvitedEmail(s)
+// SetRecipient sets the "recipient" field.
+func (ic *InviteCreate) SetRecipient(s string) *InviteCreate {
+	ic.mutation.SetRecipient(s)
 	return ic
 }
 
-// SetInvitestatus sets the "invitestatus" field.
-func (ic *InviteCreate) SetInvitestatus(es enums.InviteStatus) *InviteCreate {
-	ic.mutation.SetInvitestatus(es)
+// SetStatus sets the "status" field.
+func (ic *InviteCreate) SetStatus(es enums.InviteStatus) *InviteCreate {
+	ic.mutation.SetStatus(es)
 	return ic
 }
 
-// SetNillableInvitestatus sets the "invitestatus" field if the given value is not nil.
-func (ic *InviteCreate) SetNillableInvitestatus(es *enums.InviteStatus) *InviteCreate {
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableStatus(es *enums.InviteStatus) *InviteCreate {
 	if es != nil {
-		ic.SetInvitestatus(*es)
+		ic.SetStatus(*es)
 	}
 	return ic
 }
@@ -226,9 +226,9 @@ func (ic *InviteCreate) defaults() error {
 		v := invite.DefaultUpdatedAt()
 		ic.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := ic.mutation.Invitestatus(); !ok {
-		v := invite.DefaultInvitestatus
-		ic.mutation.SetInvitestatus(v)
+	if _, ok := ic.mutation.Status(); !ok {
+		v := invite.DefaultStatus
+		ic.mutation.SetStatus(v)
 	}
 	if _, ok := ic.mutation.ID(); !ok {
 		if invite.DefaultID == nil {
@@ -259,23 +259,23 @@ func (ic *InviteCreate) check() error {
 			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
 		}
 	}
-	if _, ok := ic.mutation.TTL(); !ok {
-		return &ValidationError{Name: "ttl", err: errors.New(`generated: missing required field "Invite.ttl"`)}
+	if _, ok := ic.mutation.Expires(); !ok {
+		return &ValidationError{Name: "expires", err: errors.New(`generated: missing required field "Invite.expires"`)}
 	}
-	if _, ok := ic.mutation.InvitedEmail(); !ok {
-		return &ValidationError{Name: "invited_email", err: errors.New(`generated: missing required field "Invite.invited_email"`)}
+	if _, ok := ic.mutation.Recipient(); !ok {
+		return &ValidationError{Name: "recipient", err: errors.New(`generated: missing required field "Invite.recipient"`)}
 	}
-	if v, ok := ic.mutation.InvitedEmail(); ok {
-		if err := invite.InvitedEmailValidator(v); err != nil {
-			return &ValidationError{Name: "invited_email", err: fmt.Errorf(`generated: validator failed for field "Invite.invited_email": %w`, err)}
+	if v, ok := ic.mutation.Recipient(); ok {
+		if err := invite.RecipientValidator(v); err != nil {
+			return &ValidationError{Name: "recipient", err: fmt.Errorf(`generated: validator failed for field "Invite.recipient": %w`, err)}
 		}
 	}
-	if _, ok := ic.mutation.Invitestatus(); !ok {
-		return &ValidationError{Name: "invitestatus", err: errors.New(`generated: missing required field "Invite.invitestatus"`)}
+	if _, ok := ic.mutation.Status(); !ok {
+		return &ValidationError{Name: "status", err: errors.New(`generated: missing required field "Invite.status"`)}
 	}
-	if v, ok := ic.mutation.Invitestatus(); ok {
-		if err := invite.InvitestatusValidator(v); err != nil {
-			return &ValidationError{Name: "invitestatus", err: fmt.Errorf(`generated: validator failed for field "Invite.invitestatus": %w`, err)}
+	if v, ok := ic.mutation.Status(); ok {
+		if err := invite.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "Invite.status": %w`, err)}
 		}
 	}
 	if _, ok := ic.mutation.RequestorID(); !ok {
@@ -361,17 +361,17 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 		_spec.SetField(invite.FieldToken, field.TypeString, value)
 		_node.Token = value
 	}
-	if value, ok := ic.mutation.TTL(); ok {
-		_spec.SetField(invite.FieldTTL, field.TypeTime, value)
-		_node.TTL = &value
+	if value, ok := ic.mutation.Expires(); ok {
+		_spec.SetField(invite.FieldExpires, field.TypeTime, value)
+		_node.Expires = &value
 	}
-	if value, ok := ic.mutation.InvitedEmail(); ok {
-		_spec.SetField(invite.FieldInvitedEmail, field.TypeString, value)
-		_node.InvitedEmail = value
+	if value, ok := ic.mutation.Recipient(); ok {
+		_spec.SetField(invite.FieldRecipient, field.TypeString, value)
+		_node.Recipient = value
 	}
-	if value, ok := ic.mutation.Invitestatus(); ok {
-		_spec.SetField(invite.FieldInvitestatus, field.TypeEnum, value)
-		_node.Invitestatus = value
+	if value, ok := ic.mutation.Status(); ok {
+		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
 	}
 	if value, ok := ic.mutation.RequestorID(); ok {
 		_spec.SetField(invite.FieldRequestorID, field.TypeString, value)

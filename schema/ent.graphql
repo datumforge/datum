@@ -134,26 +134,21 @@ input CreateInviteInput {
   createdBy: String
   updatedBy: String
   """
-  the verification token sent to the user via email which should only be provided to the /verify endpoint + handler
+  the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
-  token: String!
+  expires: Time!
   """
-  the ttl of the verification token which defaults to 7 days
+  the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
   """
-  ttl: Time!
+  recipient: String!
   """
-  the email used as input to generate the verification token and is the destination person the invitation is sent to who is required to accept to join the organization
+  the status of the invitation
   """
-  invitedEmail: String!
-  invitestatus: InviteInviteStatus
+  status: InviteInviteStatus
   """
   the user who initatied the invitation
   """
   requestorID: String!
-  """
-  the comparison secret to verify the token's signature
-  """
-  secret: []byte!
   ownerID: ID!
 }
 """
@@ -1544,26 +1539,21 @@ type Invite implements Node {
   deletedAt: Time
   deletedBy: String
   """
-  the verification token sent to the user via email which should only be provided to the /verify endpoint + handler
+  the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
-  token: String!
+  expires: Time!
   """
-  the ttl of the verification token which defaults to 7 days
+  the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
   """
-  ttl: Time!
+  recipient: String!
   """
-  the email used as input to generate the verification token and is the destination person the invitation is sent to who is required to accept to join the organization
+  the status of the invitation
   """
-  invitedEmail: String!
-  invitestatus: InviteInviteStatus!
+  status: InviteInviteStatus!
   """
   the user who initatied the invitation
   """
   requestorID: String!
-  """
-  the comparison secret to verify the token's signature
-  """
-  secret: []byte!
   owner: Organization!
 }
 """
@@ -1597,7 +1587,7 @@ type InviteEdge {
   cursor: Cursor!
 }
 """
-InviteInviteStatus is enum for the field invitestatus
+InviteInviteStatus is enum for the field status
 """
 enum InviteInviteStatus @goModel(model: "github.com/datumforge/datum/internal/ent/enums.InviteStatus") {
   INVITATION_SENT
@@ -1713,55 +1703,39 @@ input InviteWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
-  token field predicates
+  expires field predicates
   """
-  token: String
-  tokenNEQ: String
-  tokenIn: [String!]
-  tokenNotIn: [String!]
-  tokenGT: String
-  tokenGTE: String
-  tokenLT: String
-  tokenLTE: String
-  tokenContains: String
-  tokenHasPrefix: String
-  tokenHasSuffix: String
-  tokenEqualFold: String
-  tokenContainsFold: String
+  expires: Time
+  expiresNEQ: Time
+  expiresIn: [Time!]
+  expiresNotIn: [Time!]
+  expiresGT: Time
+  expiresGTE: Time
+  expiresLT: Time
+  expiresLTE: Time
   """
-  ttl field predicates
+  recipient field predicates
   """
-  ttl: Time
-  ttlNEQ: Time
-  ttlIn: [Time!]
-  ttlNotIn: [Time!]
-  ttlGT: Time
-  ttlGTE: Time
-  ttlLT: Time
-  ttlLTE: Time
+  recipient: String
+  recipientNEQ: String
+  recipientIn: [String!]
+  recipientNotIn: [String!]
+  recipientGT: String
+  recipientGTE: String
+  recipientLT: String
+  recipientLTE: String
+  recipientContains: String
+  recipientHasPrefix: String
+  recipientHasSuffix: String
+  recipientEqualFold: String
+  recipientContainsFold: String
   """
-  invited_email field predicates
+  status field predicates
   """
-  invitedEmail: String
-  invitedEmailNEQ: String
-  invitedEmailIn: [String!]
-  invitedEmailNotIn: [String!]
-  invitedEmailGT: String
-  invitedEmailGTE: String
-  invitedEmailLT: String
-  invitedEmailLTE: String
-  invitedEmailContains: String
-  invitedEmailHasPrefix: String
-  invitedEmailHasSuffix: String
-  invitedEmailEqualFold: String
-  invitedEmailContainsFold: String
-  """
-  invitestatus field predicates
-  """
-  invitestatus: InviteInviteStatus
-  invitestatusNEQ: InviteInviteStatus
-  invitestatusIn: [InviteInviteStatus!]
-  invitestatusNotIn: [InviteInviteStatus!]
+  status: InviteInviteStatus
+  statusNEQ: InviteInviteStatus
+  statusIn: [InviteInviteStatus!]
+  statusNotIn: [InviteInviteStatus!]
   """
   requestor_id field predicates
   """
@@ -3925,26 +3899,17 @@ input UpdateInviteInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   """
-  the verification token sent to the user via email which should only be provided to the /verify endpoint + handler
+  the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
-  token: String
+  expires: Time
   """
-  the ttl of the verification token which defaults to 7 days
+  the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
   """
-  ttl: Time
+  recipient: String
   """
-  the email used as input to generate the verification token and is the destination person the invitation is sent to who is required to accept to join the organization
+  the status of the invitation
   """
-  invitedEmail: String
-  invitestatus: InviteInviteStatus
-  """
-  the user who initatied the invitation
-  """
-  requestorID: String
-  """
-  the comparison secret to verify the token's signature
-  """
-  secret: []byte
+  status: InviteInviteStatus
   ownerID: ID
 }
 """

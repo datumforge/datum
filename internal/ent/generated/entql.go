@@ -185,19 +185,19 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Invite",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			invite.FieldCreatedAt:    {Type: field.TypeTime, Column: invite.FieldCreatedAt},
-			invite.FieldUpdatedAt:    {Type: field.TypeTime, Column: invite.FieldUpdatedAt},
-			invite.FieldCreatedBy:    {Type: field.TypeString, Column: invite.FieldCreatedBy},
-			invite.FieldUpdatedBy:    {Type: field.TypeString, Column: invite.FieldUpdatedBy},
-			invite.FieldDeletedAt:    {Type: field.TypeTime, Column: invite.FieldDeletedAt},
-			invite.FieldDeletedBy:    {Type: field.TypeString, Column: invite.FieldDeletedBy},
-			invite.FieldOwnerID:      {Type: field.TypeString, Column: invite.FieldOwnerID},
-			invite.FieldToken:        {Type: field.TypeString, Column: invite.FieldToken},
-			invite.FieldTTL:          {Type: field.TypeTime, Column: invite.FieldTTL},
-			invite.FieldInvitedEmail: {Type: field.TypeString, Column: invite.FieldInvitedEmail},
-			invite.FieldInvitestatus: {Type: field.TypeEnum, Column: invite.FieldInvitestatus},
-			invite.FieldRequestorID:  {Type: field.TypeString, Column: invite.FieldRequestorID},
-			invite.FieldSecret:       {Type: field.TypeBytes, Column: invite.FieldSecret},
+			invite.FieldCreatedAt:   {Type: field.TypeTime, Column: invite.FieldCreatedAt},
+			invite.FieldUpdatedAt:   {Type: field.TypeTime, Column: invite.FieldUpdatedAt},
+			invite.FieldCreatedBy:   {Type: field.TypeString, Column: invite.FieldCreatedBy},
+			invite.FieldUpdatedBy:   {Type: field.TypeString, Column: invite.FieldUpdatedBy},
+			invite.FieldDeletedAt:   {Type: field.TypeTime, Column: invite.FieldDeletedAt},
+			invite.FieldDeletedBy:   {Type: field.TypeString, Column: invite.FieldDeletedBy},
+			invite.FieldOwnerID:     {Type: field.TypeString, Column: invite.FieldOwnerID},
+			invite.FieldToken:       {Type: field.TypeString, Column: invite.FieldToken},
+			invite.FieldExpires:     {Type: field.TypeTime, Column: invite.FieldExpires},
+			invite.FieldRecipient:   {Type: field.TypeString, Column: invite.FieldRecipient},
+			invite.FieldStatus:      {Type: field.TypeEnum, Column: invite.FieldStatus},
+			invite.FieldRequestorID: {Type: field.TypeString, Column: invite.FieldRequestorID},
+			invite.FieldSecret:      {Type: field.TypeBytes, Column: invite.FieldSecret},
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
@@ -1666,19 +1666,19 @@ func (f *InviteFilter) WhereToken(p entql.StringP) {
 	f.Where(p.Field(invite.FieldToken))
 }
 
-// WhereTTL applies the entql time.Time predicate on the ttl field.
-func (f *InviteFilter) WhereTTL(p entql.TimeP) {
-	f.Where(p.Field(invite.FieldTTL))
+// WhereExpires applies the entql time.Time predicate on the expires field.
+func (f *InviteFilter) WhereExpires(p entql.TimeP) {
+	f.Where(p.Field(invite.FieldExpires))
 }
 
-// WhereInvitedEmail applies the entql string predicate on the invited_email field.
-func (f *InviteFilter) WhereInvitedEmail(p entql.StringP) {
-	f.Where(p.Field(invite.FieldInvitedEmail))
+// WhereRecipient applies the entql string predicate on the recipient field.
+func (f *InviteFilter) WhereRecipient(p entql.StringP) {
+	f.Where(p.Field(invite.FieldRecipient))
 }
 
-// WhereInvitestatus applies the entql string predicate on the invitestatus field.
-func (f *InviteFilter) WhereInvitestatus(p entql.StringP) {
-	f.Where(p.Field(invite.FieldInvitestatus))
+// WhereStatus applies the entql string predicate on the status field.
+func (f *InviteFilter) WhereStatus(p entql.StringP) {
+	f.Where(p.Field(invite.FieldStatus))
 }
 
 // WhereRequestorID applies the entql string predicate on the requestor_id field.

@@ -61,4 +61,3 @@ results.txt
 # Configs
 *.env
 *.env-dev
-*.env-devauth

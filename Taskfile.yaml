@@ -85,19 +85,13 @@ tasks:
     cmds:
       - 'open "http://localhost:4000"'
       - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
-  run-dev-auth:
-    dotenv: ['{{.ENV}}/.env-devauth']
+  run-dev:
+    dotenv: ['{{.ENV}}/.env-dev']
     desc: runs the datum server with oidc enabled
     cmds:
     - task: compose:redis
     - task: compose:fga
     - go run main.go serve --debug --pretty
-  run-dev:
-    dotenv: ['{{.ENV}}/.env-dev']
-    desc: runs the datum server with oidc disabled for easy local testing / querying
-    cmds:
-      - task: compose:redis
-      - go run main.go serve  --debug --pretty
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
@@ -166,15 +160,10 @@ tasks:
     cmds:
       - docker build -f docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
   compose:datum:
-    desc: brings up the compose environment for the datum server
-    deps: [docker:build]
-    cmds:
-      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -p datum up -d"
-  compose:datum-auth:
     desc: brings up the compose environment for the datum server configured with auth
     deps: [docker:build]
     cmds:
-      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-auth.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
+      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
   compose:datum:down:
     desc: brings the datum compose environment down
     cmds:
@@ -182,12 +171,12 @@ tasks:
   compose:all:up:
     desc: brings up the full docker compose development environment including datum server, fga, and rover
     cmds:
-      - task: compose:datum-auth
+      - task: compose:datum
       - task: rover
   compose:all:down: 
     desc: brings down both fga and datum server compose environments 
     cmds:
-      - task: compose:datum-auth:down
+      - task: compose:datum:down
   pr:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
     cmds:
@@ -224,7 +213,7 @@ tasks:
     cmds:
       - rm -f datum.db
       - rm -f datum-cli
-      - osascript -e 'tell app "Terminal" to do script "cd {{.PWD}} && task run-dev-auth"'
+      - osascript -e 'tell app "Terminal" to do script "cd {{.PWD}} && task run-dev"'
     vars:
       PWD:
         sh: pwd

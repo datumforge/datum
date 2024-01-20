@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -84,47 +85,7 @@ func TestQuery_Organization(t *testing.T) {
 	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
 }
 
-func TestQuery_OrganizationsNoAuth(t *testing.T) {
-	// Setup Test Graph Client Without Auth
-	client := graphTestClientNoAuth(t, EntClient)
-
-	reqCtx := echoContext()
-
-	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
-	org2 := (&OrganizationBuilder{ParentOrgID: org1.ParentOrganizationID}).MustNew(reqCtx)
-
-	t.Run("Get Organizations", func(t *testing.T) {
-		resp, err := client.GetAllOrganizations(reqCtx)
-
-		require.NoError(t, err)
-		require.NotNil(t, resp)
-		require.NotNil(t, resp.Organizations.Edges)
-
-		// make sure at least two organizations are returned
-		assert.GreaterOrEqual(t, len(resp.Organizations.Edges), 2)
-
-		org1Found := false
-		org2Found := false
-		for _, o := range resp.Organizations.Edges {
-			if o.Node.ID == org1.ID {
-				org1Found = true
-			} else if o.Node.ID == org2.ID {
-				org2Found = true
-			}
-		}
-
-		// if one of the orgs isn't found, fail the test
-		if !org1Found || !org2Found {
-			t.Fail()
-		}
-	})
-
-	// delete created orgs
-	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
-	(&OrganizationCleanup{OrgID: org2.ID}).MustDelete(reqCtx)
-}
-
-func TestQuery_OrganizationsAuth(t *testing.T) {
+func TestQuery_Organizations(t *testing.T) {
 	// setup entdb with authz
 	authClient := setupAuthEntDB(t)
 	defer authClient.entDB.Close()
@@ -359,86 +320,6 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 	(&OrganizationCleanup{OrgID: parentOrg.ID}).MustDelete(reqCtx)
 	(&OrganizationCleanup{OrgID: parentPersonalOrg.ID}).MustDelete(reqCtx)
-}
-
-func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
-	// Setup Test Graph Client Without Auth
-	client := graphTestClientNoAuth(t, EntClient)
-
-	reqCtx := echoContext()
-
-	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx)
-
-	testCases := []struct {
-		name           string
-		orgName        string
-		displayName    string
-		orgDescription string
-		parentOrgID    string
-		errorMsg       string
-	}{
-		{
-			name:           "happy path organization",
-			orgName:        gofakeit.Name(),
-			displayName:    gofakeit.LetterN(50),
-			orgDescription: gofakeit.HipsterSentence(10),
-			parentOrgID:    "", // root org
-		},
-		{
-			name:           "happy path organization with parent org",
-			orgName:        gofakeit.Name(),
-			orgDescription: gofakeit.HipsterSentence(10),
-			parentOrgID:    parentOrg.ID,
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run("Create "+tc.name, func(t *testing.T) {
-			tc := tc
-			input := datumclient.CreateOrganizationInput{
-				Name:        tc.orgName,
-				Description: &tc.orgDescription,
-			}
-
-			if tc.displayName != "" {
-				input.DisplayName = &tc.displayName
-			}
-
-			if tc.parentOrgID != "" {
-				input.ParentID = &tc.parentOrgID
-			}
-
-			resp, err := client.CreateOrganization(reqCtx, input)
-
-			if tc.errorMsg != "" {
-				require.Error(t, err)
-				assert.ErrorContains(t, err, tc.errorMsg)
-				assert.Nil(t, resp)
-
-				return
-			}
-
-			require.NoError(t, err)
-			require.NotNil(t, resp)
-			require.NotNil(t, resp.CreateOrganization.Organization)
-
-			// Make sure provided values match
-			assert.Equal(t, tc.orgName, resp.CreateOrganization.Organization.Name)
-			assert.Equal(t, tc.orgDescription, *resp.CreateOrganization.Organization.Description)
-
-			if tc.parentOrgID == "" {
-				assert.Nil(t, resp.CreateOrganization.Organization.Parent)
-			} else {
-				parent := resp.CreateOrganization.Organization.GetParent()
-				assert.Equal(t, tc.parentOrgID, parent.ID)
-			}
-
-			// cleanup org
-			(&OrganizationCleanup{OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx)
-		})
-	}
-
-	(&OrganizationCleanup{OrgID: parentOrg.ID}).MustDelete(reqCtx)
 }
 
 func TestMutation_UpdateOrganization(t *testing.T) {
@@ -710,16 +591,42 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 }
 
 func TestMutation_OrganizationCascadeDelete(t *testing.T) {
-	client := graphTestClientNoAuth(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	reqCtx := echoContext()
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
 
+	listOrgs := []string{fmt.Sprintf("organization:%s", org.ID)}
+
 	group1 := (&GroupBuilder{Owner: org.ID}).MustNew(reqCtx)
 
+	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
+
+	// mocks checks for all calls
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listGroups)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listOrgs)
+
+	// mock writes to delete member of org
+	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+
 	// delete org
-	resp, err := client.DeleteOrganization(reqCtx, org.ID)
+	resp, err := authClient.gc.DeleteOrganization(reqCtx, org.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -728,26 +635,32 @@ func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 	// make sure the deletedID matches the ID we wanted to delete
 	assert.Equal(t, org.ID, resp.DeleteOrganization.DeletedID)
 
-	o, err := client.GetOrganizationByID(reqCtx, org.ID)
+	o, err := authClient.gc.GetOrganizationByID(reqCtx, org.ID)
 
 	require.Nil(t, o)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
-	g, err := client.GetGroupByID(reqCtx, group1.ID)
+	g, err := authClient.gc.GetGroupByID(reqCtx, group1.ID)
 
 	require.Nil(t, g)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
-	ctx := mixin.SkipSoftDelete(reqCtx)
+	// allow after tuples have been deleted
+	ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
-	o, err = client.GetOrganizationByID(ctx, org.ID)
+	ctx = mixin.SkipSoftDelete(ctx)
+
+	o, err = authClient.gc.GetOrganizationByID(ctx, org.ID)
 
 	require.NoError(t, err)
 	require.Equal(t, o.Organization.ID, org.ID)
 
-	g, err = client.GetGroupByID(ctx, group1.ID)
+	// allow after tuples have been deleted
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	g, err = authClient.gc.GetGroupByID(ctx, group1.ID)
 
 	require.NoError(t, err)
 	require.Equal(t, g.Group.ID, group1.ID)

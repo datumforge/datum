@@ -16,10 +16,6 @@ import (
 
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	org, err := withTransactionalMutation(ctx).Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -66,12 +62,6 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 
 	ctx = viewer.NewContext(ctx, v)
 
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -109,18 +99,12 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
 func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			OrgID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		OrgID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	if err := withTransactionalMutation(ctx).Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
@@ -144,18 +128,12 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 
 // Organization is the resolver for the organization field.
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			OrgID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		OrgID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	org, err := r.client.Organization.Get(ctx, id)
 	if err != nil {

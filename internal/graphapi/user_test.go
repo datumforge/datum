@@ -18,55 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
-func TestQuery_UserNoAuth(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClientNoAuth(t, EntClient)
-
-	// setup user context
-	reqCtx, err := userContext()
-	require.NoError(t, err)
-
-	user1 := (&UserBuilder{}).MustNew(reqCtx)
-
-	testCases := []struct {
-		name     string
-		queryID  string
-		expected *ent.User
-		errorMsg string
-	}{
-		{
-			name:     "happy path user",
-			queryID:  user1.ID,
-			expected: user1,
-		},
-		{
-			name:     "invalid-id",
-			queryID:  "tacos-for-dinner",
-			errorMsg: "user not found",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
-			resp, err := client.GetUserByID(reqCtx, tc.queryID)
-
-			if tc.errorMsg != "" {
-				require.Error(t, err)
-				assert.ErrorContains(t, err, tc.errorMsg)
-				assert.Nil(t, resp)
-
-				return
-			}
-
-			require.NoError(t, err)
-			require.NotNil(t, resp)
-			require.NotNil(t, resp.User)
-		})
-	}
-
-	(&UserCleanup{UserID: user1.ID}).MustDelete(reqCtx)
-}
-
 func TestQuery_User(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(t, EntClient)
@@ -218,6 +169,9 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 	client := graphTestClientNoAuth(t, EntClient)
 
 	ctx := echoContext()
+
+	// Bypass auth checks to ensure input checks for now
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	displayName := gofakeit.LetterN(50)
 
@@ -487,125 +441,6 @@ func TestMutation_CreateUser(t *testing.T) {
 	}
 }
 
-func TestMutation_UpdateUserNoAuth(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClientNoAuth(t, EntClient)
-
-	// setup user context
-	reqCtx, err := userContext()
-	require.NoError(t, err)
-
-	firstNameUpdate := gofakeit.FirstName()
-	lastNameUpdate := gofakeit.LastName()
-	emailUpdate := gofakeit.Email()
-	displayNameUpdate := gofakeit.LetterN(40)
-	nameUpdateLong := gofakeit.LetterN(200)
-
-	user := (&UserBuilder{}).MustNew(reqCtx)
-
-	weakPassword := "notsecure"
-
-	testCases := []struct {
-		name        string
-		updateInput datumclient.UpdateUserInput
-		expectedRes datumclient.UpdateUser_UpdateUser_User
-		errorMsg    string
-	}{
-		{
-			name: "update first name and password, happy path",
-			updateInput: datumclient.UpdateUserInput{
-				FirstName: &firstNameUpdate,
-			},
-			expectedRes: datumclient.UpdateUser_UpdateUser_User{
-				ID:          user.ID,
-				FirstName:   firstNameUpdate,
-				LastName:    user.LastName,
-				DisplayName: user.DisplayName,
-				Email:       user.Email,
-			},
-		},
-		{
-			name: "update last name, happy path",
-			updateInput: datumclient.UpdateUserInput{
-				LastName: &lastNameUpdate,
-			},
-			expectedRes: datumclient.UpdateUser_UpdateUser_User{
-				ID:          user.ID,
-				FirstName:   firstNameUpdate, // this would have been updated on the prior test
-				LastName:    lastNameUpdate,
-				DisplayName: user.DisplayName,
-				Email:       user.Email,
-			},
-		},
-		{
-			name: "update email, happy path",
-			updateInput: datumclient.UpdateUserInput{
-				Email: &emailUpdate,
-			},
-			expectedRes: datumclient.UpdateUser_UpdateUser_User{
-				ID:          user.ID,
-				FirstName:   firstNameUpdate,
-				LastName:    lastNameUpdate, // this would have been updated on the prior test
-				DisplayName: user.DisplayName,
-				Email:       emailUpdate,
-			},
-		},
-		{
-			name: "update display name, happy path",
-			updateInput: datumclient.UpdateUserInput{
-				DisplayName: &displayNameUpdate,
-			},
-			expectedRes: datumclient.UpdateUser_UpdateUser_User{
-				ID:          user.ID,
-				FirstName:   firstNameUpdate,
-				LastName:    lastNameUpdate,
-				DisplayName: displayNameUpdate,
-				Email:       emailUpdate, // this would have been updated on the prior test
-			},
-		},
-		{
-			name: "update name, too long",
-			updateInput: datumclient.UpdateUserInput{
-				FirstName: &nameUpdateLong,
-			},
-			errorMsg: "value is greater than the required length",
-		},
-		{
-			name: "update with weak password",
-			updateInput: datumclient.UpdateUserInput{
-				Password: &weakPassword,
-			},
-			errorMsg: auth.ErrPasswordTooWeak.Error(),
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run("Update "+tc.name, func(t *testing.T) {
-			// update user
-			resp, err := client.UpdateUser(reqCtx, user.ID, tc.updateInput)
-
-			if tc.errorMsg != "" {
-				require.Error(t, err)
-				assert.ErrorContains(t, err, tc.errorMsg)
-				assert.Nil(t, resp)
-
-				return
-			}
-
-			require.NoError(t, err)
-			require.NotNil(t, resp)
-			require.NotNil(t, resp.UpdateUser.User)
-
-			// Make sure provided values match
-			updatedUser := resp.GetUpdateUser().User
-			assert.Equal(t, tc.expectedRes.FirstName, updatedUser.FirstName)
-			assert.Equal(t, tc.expectedRes.LastName, updatedUser.LastName)
-			assert.Equal(t, tc.expectedRes.DisplayName, updatedUser.DisplayName)
-			assert.Equal(t, tc.expectedRes.Email, updatedUser.Email)
-		})
-	}
-}
-
 func TestMutation_UpdateUser(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(t, EntClient)
@@ -737,80 +572,6 @@ func TestMutation_UpdateUser(t *testing.T) {
 	}
 }
 
-func TestMutation_DeleteUserNoAuth(t *testing.T) {
-	// Setup Test Graph Client
-	client := graphTestClientNoAuth(t, EntClient)
-
-	// Setup echo context
-	reqCtx := echoContext()
-
-	user := (&UserBuilder{}).MustNew(reqCtx)
-
-	userSetting, err := user.Setting(reqCtx)
-	require.NoError(t, err)
-
-	testCases := []struct {
-		name     string
-		userID   string
-		errorMsg string
-	}{
-		{
-			name:   "delete user, happy path",
-			userID: user.ID,
-		},
-		{
-			name:     "delete user, not found",
-			userID:   "tacos-tuesday",
-			errorMsg: "not found",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run("Delete "+tc.name, func(t *testing.T) {
-			var orgID string
-
-			if tc.errorMsg == "" {
-				// get personal org first
-				u, err := client.GetUserByID(context.Background(), user.ID)
-				require.NoError(t, err)
-				require.Len(t, u.User.Organizations, 1)
-
-				orgID = u.User.Organizations[0].ID
-			}
-
-			// delete user
-			resp, err := client.DeleteUser(reqCtx, tc.userID)
-
-			if tc.errorMsg != "" {
-				require.Error(t, err)
-				assert.ErrorContains(t, err, tc.errorMsg)
-				assert.Nil(t, resp)
-
-				return
-			}
-
-			require.NoError(t, err)
-			require.NotNil(t, resp)
-			require.NotNil(t, resp.DeleteUser.DeletedID)
-
-			// make sure the personal org is deleted
-			org, err := client.GetOrganizationByID(reqCtx, orgID)
-			require.Nil(t, org)
-			require.Error(t, err)
-			assert.ErrorContains(t, err, "not found")
-
-			// make sure the deletedID matches the ID we wanted to delete
-			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
-
-			// make sure the user setting is deleted
-			out, err := client.GetUserSettingByID(reqCtx, userSetting.ID)
-			require.Nil(t, out)
-			require.Error(t, err)
-			assert.ErrorContains(t, err, "not found")
-		})
-	}
-}
-
 func TestMutation_DeleteUser(t *testing.T) {
 	// setup entdb with authz
 	authClient := setupAuthEntDB(t)
@@ -913,17 +674,50 @@ func TestMutation_DeleteUser(t *testing.T) {
 	}
 }
 
-func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
-	client := graphTestClientNoAuth(t, EntClient)
+func TestMutation_UserCascadeDelete(t *testing.T) {
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	reqCtx := echoContext()
+	ec := echocontext.NewTestEchoContext()
 
-	usr := (&UserBuilder{}).MustNew(reqCtx)
+	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	token1 := (&PersonalAccessTokenBuilder{OwnerID: usr.ID}).MustNew(reqCtx)
+	ec.SetRequest(ec.Request().WithContext(ctx))
+
+	usr := (&UserBuilder{}).MustNew(ctx)
+
+	token1 := (&PersonalAccessTokenBuilder{OwnerID: usr.ID}).MustNew(ctx)
+
+	// setup valid user context
+	userCtx, err := auth.NewTestContextWithValidUser(usr.ID)
+	if err != nil {
+		t.Fatal()
+	}
+
+	reqCtx := context.WithValue(userCtx.Request().Context(), echocontext.EchoContextKey, userCtx)
+
+	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
+
+	// mock checks
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+
+	orgs, err := usr.OrgMemberships(ctx)
+	require.NoError(t, err)
+	require.Len(t, orgs, 1)
+
+	listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrgID)}
+
+	mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+	mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+
+	// mock writes to clean up personal org
+	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 
 	// delete user
-	resp, err := client.DeleteUser(reqCtx, usr.ID)
+	resp, err := authClient.gc.DeleteUser(reqCtx, usr.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -932,39 +726,48 @@ func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
 	// make sure the deletedID matches the ID we wanted to delete
 	assert.Equal(t, usr.ID, resp.DeleteUser.DeletedID)
 
-	o, err := client.GetUserByID(reqCtx, usr.ID)
+	o, err := authClient.gc.GetUserByID(reqCtx, usr.ID)
 
 	require.Nil(t, o)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
-	g, err := client.GetPersonalAccessTokenByID(reqCtx, token1.ID)
+	g, err := authClient.gc.GetPersonalAccessTokenByID(reqCtx, token1.ID)
 	require.Error(t, err)
 
 	require.Nil(t, g)
 	assert.ErrorContains(t, err, "not found")
 
-	ctx := mixin.SkipSoftDelete(reqCtx)
+	ctx = mixin.SkipSoftDelete(reqCtx)
 
-	o, err = client.GetUserByID(ctx, usr.ID)
+	// skip checks because tuples will be deleted at this point
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	o, err = authClient.gc.GetUserByID(ctx, usr.ID)
 	require.NoError(t, err)
 
 	require.Equal(t, o.User.ID, usr.ID)
 
 	// Bypass auth check to get owner of access token
-	// this should only be done in non-auth tests
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	g, err = client.GetPersonalAccessTokenByID(ctx, token1.ID)
+	g, err = authClient.gc.GetPersonalAccessTokenByID(ctx, token1.ID)
 	require.NoError(t, err)
 
 	require.Equal(t, g.PersonalAccessToken.ID, token1.ID)
 }
 
 func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
-	client := graphTestClientNoAuth(t, EntClient)
+	// setup entdb with authz
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	reqCtx := echoContext()
+	// Setup echo context
+	ec := echocontext.NewTestEchoContext()
+
+	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(ctx))
 
 	input := datumclient.CreateUserInput{
 		FirstName: "Abraxos",
@@ -972,35 +775,67 @@ func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
 		Email:     "abraxos@datum.net",
 	}
 
-	resp, err := client.CreateUser(reqCtx, input)
+	// skip auth checks because user creation is not generally allowed via a direct mutation
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	// mocks
+	// the object ID doesn't matter here because we end up needing to bypass auth checks
+	listObjects := []string{fmt.Sprintf("organization:%s", "test")}
+
+	// write tuples for personal org on create, delete, and create again
+	mockWriteAny(authClient.mockCtrl, authClient.mc, ctx, nil)
+	mockWriteAny(authClient.mockCtrl, authClient.mc, ctx, nil)
+	mockWriteAny(authClient.mockCtrl, authClient.mc, ctx, nil)
+
+	// check access for requests
+	mockCheckAny(authClient.mockCtrl, authClient.mc, ctx, true)
+	mockListAny(authClient.mockCtrl, authClient.mc, ctx, listObjects)
+	mockListAny(authClient.mockCtrl, authClient.mc, ctx, listObjects)
+
+	resp, err := authClient.gc.CreateUser(ctx, input)
 	require.NoError(t, err)
 
 	// should fail on unique
-	_, err = client.CreateUser(reqCtx, input)
+	_, err = authClient.gc.CreateUser(ctx, input)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "UNIQUE")
 
+	// setup valid user context
+	userCtx, err := auth.NewTestContextWithValidUser(resp.CreateUser.User.ID)
+	if err != nil {
+		t.Fatal()
+	}
+
+	reqCtx := context.WithValue(userCtx.Request().Context(), echocontext.EchoContextKey, userCtx)
+
+	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
+
 	// delete user
-	_, err = client.DeleteUser(reqCtx, resp.CreateUser.User.ID)
+	_, err = authClient.gc.DeleteUser(userCtx.Request().Context(), resp.CreateUser.User.ID)
 	require.NoError(t, err)
 
-	o, err := client.GetUserByID(reqCtx, resp.CreateUser.User.ID)
+	// skip checks because tuples will be deleted at this point
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	o, err := authClient.gc.GetUserByID(ctx, resp.CreateUser.User.ID)
 
 	require.Nil(t, o)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
 	// Ensure user is soft deleted
-	ctx := mixin.SkipSoftDelete(reqCtx)
+	ctx = mixin.SkipSoftDelete(userCtx.Request().Context())
 
-	o, err = client.GetUserByID(ctx, resp.CreateUser.User.ID)
+	o, err = authClient.gc.GetUserByID(ctx, resp.CreateUser.User.ID)
 	require.NoError(t, err)
 
 	require.Equal(t, o.User.ID, resp.CreateUser.User.ID)
 
 	// create the user again, this should work because we should ignore soft deleted
 	// records on unique email
-	resp, err = client.CreateUser(reqCtx, input)
+	// skip auth checks because user creation is not generally allowed via a direct mutation
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	resp, err = authClient.gc.CreateUser(ctx, input)
 	require.NoError(t, err)
 	assert.Equal(t, input.Email, resp.CreateUser.User.Email)
 }

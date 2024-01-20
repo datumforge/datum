@@ -107,13 +107,11 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 
 func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupMutation) error {
 	// get userID from context
-	// if this is nil that means we are running without authentication
-	// and no user will get added to the group
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
-		m.Logger.Infow("unable to get user id from echo context, not adding user to group")
+		m.Logger.Infow("unable to get user id from echo context, unable to add user to group")
 
-		return nil
+		return err
 	}
 
 	// Add user as admin of group

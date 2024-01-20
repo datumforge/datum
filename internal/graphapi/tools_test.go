@@ -40,6 +40,7 @@ var (
 
 const (
 	rawToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.oGFhqfFFDi9sJMJ1U2dWJZNYEiUQBEtZRVuwKE7Uiak" //nolint:gosec
+	session  = "MTcwNTY0MjU5NnxkR1FweHFEX0RONDVzVDg0LTVuT3hLQmQ5THNicGJuZDk2dm8wbm5RMjZSdGFpY0xtcVBFdE1SR1IxT19IcTZhMzd1SWJBYldQWncwWlVmWGd6a0FzTDFMYlNjWkVJb3BRX1htM05qVjdOYS1hYy11SGo2aWRRcnFZYXRuWWJKXy1HNlF8AXSjkzY_IpNBe7u1T5YfHMcsKCwzdKKW2yeNbnmm_Z0="
 )
 
 func TestMain(m *testing.M) {
@@ -214,7 +215,7 @@ func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {
 	}
 
 	// setup interceptors
-	i := datumclient.WithAccessToken(rawToken)
+	i := datumclient.WithAuthorization(rawToken, session)
 
 	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
 }

@@ -4,13 +4,16 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/rsa"
+	"io"
 	"log"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/alicebob/miniredis/v2"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/redis/go-redis/v9"
 
 	echo "github.com/datumforge/echox"
 	ofgaclient "github.com/openfga/go-sdk/client"
@@ -18,12 +21,14 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
+	"github.com/datumforge/datum/internal/cookies"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
+	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/testutils"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/marionette"
@@ -86,11 +91,14 @@ func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
 		t.Fatal("error creating token manager")
 	}
 
+	rc := newRedisClient()
+
 	h := &handlers.Handler{
-		TM:           tm,
-		DBClient:     ent,
-		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
-		CookieDomain: "datum.net",
+		TM:          tm,
+		DBClient:    ent,
+		RedisClient: rc,
+		Logger:      zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
+		SM:          createSessionManager(),
 	}
 
 	if err := h.NewTestEmailManager(); err != nil {
@@ -190,6 +198,39 @@ func errPanic(msg string, err error) {
 	if err != nil {
 		log.Panicf("%s err: %s", msg, err.Error())
 	}
+}
+
+func newRedisClient() *redis.Client {
+	mr, err := miniredis.Run()
+	if err != nil {
+		log.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	client := redis.NewClient(&redis.Options{
+		Addr: mr.Addr(),
+	})
+
+	return client
+}
+
+func createSessionManager() sessions.CookieStore {
+	hashKey := randomString(32)  //nolint:gomnd
+	blockKey := randomString(32) //nolint:gomnd
+
+	sm := sessions.NewCookieStore(&cookies.DebugOnlyCookieConfig,
+		hashKey, blockKey)
+
+	return sm
+}
+
+func randomString(n int) []byte {
+	id := make([]byte, n)
+
+	if _, err := io.ReadFull(rand.Reader, id); err != nil {
+		panic(err) // This shouldn't happen
+	}
+
+	return id
 }
 
 func createTokenManager(refreshOverlap time.Duration) (*tokens.TokenManager, error) {

@@ -14,7 +14,6 @@ import (
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/tokens"
 )
 
 func TestGetAccessToken(t *testing.T) {
@@ -220,8 +219,6 @@ func TestSetAuthCookies(t *testing.T) {
 		ctx          echo.Context
 		accessToken  string
 		refreshToken string
-		wantErr      bool
-		err          error
 	}{
 
 		{
@@ -229,38 +226,12 @@ func TestSetAuthCookies(t *testing.T) {
 			ctx:          validCtx,
 			accessToken:  testAccessToken,
 			refreshToken: testRefreshToken,
-			wantErr:      false,
-			err:          nil,
-		},
-		{
-			name:         "invalid access token",
-			ctx:          validCtx,
-			accessToken:  "poke",
-			refreshToken: testRefreshToken,
-			wantErr:      true,
-			err:          tokens.ErrTokenMalformed,
-		},
-		{
-			name:         "invalid refresh token",
-			ctx:          validCtx,
-			accessToken:  testAccessToken,
-			refreshToken: "poke",
-			wantErr:      true,
-			err:          tokens.ErrTokenMalformed,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			err := auth.SetAuthCookies(tc.ctx, tc.accessToken, tc.refreshToken)
-			if tc.wantErr {
-				assert.Error(t, err)
-				assert.ErrorContains(t, err, tc.err.Error())
-
-				return
-			}
-
-			require.NoError(t, err)
+			auth.SetAuthCookies(tc.ctx, tc.accessToken, tc.refreshToken)
 		})
 	}
 }

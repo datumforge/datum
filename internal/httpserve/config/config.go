@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 
+	"github.com/datumforge/datum/internal/cache"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -50,6 +51,9 @@ type (
 
 		// DB contains the database configuration
 		DB entdb.Config `yaml:"db"`
+
+		// RedisConfig contains the redis configuration
+		RedisConfig cache.Config `yaml:"redisConfig"`
 
 		// Logger contains the logger used by echo functions
 		Logger *zap.SugaredLogger `yaml:"logger"`

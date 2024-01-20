@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/http/cookiejar"
 	"os"
 	"syscall"
 
@@ -62,8 +63,15 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 		Password: password,
 	}
 
-	// setup datum http client
-	h := &http.Client{}
+	// setup datum http client with cookie jar
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return nil, err
+	}
+
+	h := &http.Client{
+		Jar: jar,
+	}
 
 	// set options
 	opt := &clientv2.Options{}
@@ -73,6 +81,8 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 
 	// this allows the use of the graph client to be used for the REST endpoints
 	dc := c.(*datumclient.Client)
+
+	defer datum.StoreSessionCookies(dc)
 
 	tokens, err := datumclient.Login(dc, ctx, login)
 	if err != nil {
@@ -85,7 +95,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 		return nil, err
 	}
 
-	fmt.Println("auth token successfully stored in keychain")
+	fmt.Println("auth tokens successfully stored in keychain")
 
 	return tokens, nil
 }

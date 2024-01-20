@@ -6,10 +6,12 @@ import (
 	"net/http"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
+
+	"github.com/datumforge/datum/internal/sessions"
 )
 
-// WithAccessToken adds the authorization header to the client request
-func WithAccessToken(accessToken string) clientv2.RequestInterceptor {
+// WithAuthorization adds the authorization header and session to the client request
+func WithAuthorization(accessToken string, session string) clientv2.RequestInterceptor {
 	return func(
 		ctx context.Context,
 		req *http.Request,
@@ -22,6 +24,19 @@ func WithAccessToken(accessToken string) clientv2.RequestInterceptor {
 		if h == "" {
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 		}
+
+		// add session cookie
+		req.AddCookie(sessions.NewSessionCookie(session))
+
+		return next(ctx, req, gqlInfo, res)
+	}
+}
+
+// WithLoggingInterceptor adds a http debug logging interceptor
+func WithLoggingInterceptor() clientv2.RequestInterceptor {
+	return func(ctx context.Context, req *http.Request, gqlInfo *clientv2.GQLRequestInfo, res interface{}, next clientv2.RequestInterceptorFunc) error {
+		fmt.Println("Request header sent:", req.Header)
+		fmt.Println("Request body sent:", req.Body)
 
 		return next(ctx, req, gqlInfo, res)
 	}

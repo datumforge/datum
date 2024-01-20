@@ -13,7 +13,6 @@ import (
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
@@ -24,18 +23,15 @@ import (
 )
 
 func TestRefreshHandler(t *testing.T) {
+	h := handlerSetup(t, EntClient)
+
 	// Set full overlap of the refresh and access token so the refresh token is immediately valid
 	tm, err := createTokenManager(-60 * time.Minute) //nolint:gomnd
 	if err != nil {
 		t.Error("error creating token manager")
 	}
 
-	h := handlers.Handler{
-		TM:           tm,
-		DBClient:     EntClient,
-		Logger:       zap.NewNop().Sugar(),
-		CookieDomain: "datum.net",
-	}
+	h.TM = tm
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 

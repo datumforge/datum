@@ -7,6 +7,8 @@ services:
       - ../config/.env-devauth
     environment:
       DATUM_AUTHZ_HOST: openfga:8080
+      DATUM_REDIS_ADDRESS: redis:6379
+      DATUM_SEND_GRID_API_KEY: "THIS_IS_A_FAKE_KEY"
     command:
       - serve
       - --debug

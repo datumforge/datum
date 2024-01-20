@@ -89,12 +89,14 @@ tasks:
     dotenv: ['{{.ENV}}/.env-devauth']
     desc: runs the datum server with oidc enabled
     cmds:
+    - task: compose:redis
     - task: compose:fga
     - go run main.go serve --debug --pretty
   run-dev:
     dotenv: ['{{.ENV}}/.env-dev']
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:
+      - task: compose:redis
       - go run main.go serve  --debug --pretty
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
@@ -151,6 +153,10 @@ tasks:
     desc: brings the fga compose environment down
     cmds: 
       - docker compose -p fga down
+  compose:redis:
+    desc: brings up the compose environment for redis
+    cmds:
+      - "docker compose -f ./docker/docker-compose-redis.yml up -d"
   docker:build:
     desc: builds the datum docker image
     cmds:
@@ -163,12 +169,12 @@ tasks:
     desc: brings up the compose environment for the datum server
     deps: [docker:build]
     cmds:
-      - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
+      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -p datum up -d"
   compose:datum-auth:
     desc: brings up the compose environment for the datum server configured with auth
     deps: [docker:build]
     cmds:
-      - "docker compose -f ./docker/docker-compose.yml -f ./docker/docker-compose-auth.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
+      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-auth.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
   compose:datum:down:
     desc: brings the datum compose environment down
     cmds:

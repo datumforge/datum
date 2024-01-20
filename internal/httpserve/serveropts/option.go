@@ -309,7 +309,7 @@ func WithRedisCache() ServerOption {
 	})
 }
 
-// WithSessionManager sets up the default session manager with a 5 minute ttl
+// WithSessionManager sets up the default session manager with a 10 minute ttl
 func WithSessionManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		config := &sessions.Config{}

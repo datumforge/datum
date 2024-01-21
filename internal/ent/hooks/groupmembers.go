@@ -74,7 +74,7 @@ func groupMemberCreateHook(ctx context.Context, m *generated.GroupMembershipMuta
 			return err
 		}
 
-		m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", tuple.Object)
+		m.Logger.Debugw("created relationship tuples", "relation", fga.OwnerRelation, "object", tuple.Object)
 	}
 
 	return nil

@@ -108,7 +108,7 @@ func createOrgMemberOwner(ctx context.Context, oID string, m *generated.Organiza
 	// get userID from context
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
-		m.Logger.Infow("unable to get user id from echo context, unable to add user to organization")
+		m.Logger.Errorw("unable to get user id from echo context, unable to add user to organization")
 
 		return err
 	}

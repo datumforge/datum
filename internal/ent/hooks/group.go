@@ -87,7 +87,7 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 		org, orgexists := m.OwnerID()
 
 		if exists && orgexists {
-			m.Logger.Infow("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
+			m.Logger.Debugw("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
 
 			orgTuple, err := getTupleKey(org, "organization", objID, objType, fga.ParentRelation)
 			if err != nil {
@@ -109,7 +109,7 @@ func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupM
 	// get userID from context
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
-		m.Logger.Infow("unable to get user id from echo context, unable to add user to group")
+		m.Logger.Errorw("unable to get user id from echo context, unable to add user to group")
 
 		return err
 	}
@@ -137,18 +137,15 @@ func groupDeleteHook(ctx context.Context, m *generated.GroupMutation) error {
 		objType := strings.ToLower(m.Type())
 		object := fmt.Sprintf("%s:%s", objType, objID)
 
-		m.Logger.Infow("deleting relationship tuples", "object", object)
+		m.Logger.Debugw("deleting relationship tuples", "object", object)
 
-		// Add relationship tuples if authz is enabled
-		if m.Authz.Ofga != nil {
-			if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
-				m.Logger.Errorw("failed to delete relationship tuples", "error", err)
+		if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
+			m.Logger.Errorw("failed to delete relationship tuples", "error", err)
 
-				return ErrInternalServerError
-			}
-
-			m.Logger.Infow("deleted relationship tuples", "object", object)
+			return ErrInternalServerError
 		}
+
+		m.Logger.Debugw("deleted relationship tuples", "object", object)
 	}
 
 	return nil

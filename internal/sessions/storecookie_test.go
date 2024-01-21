@@ -5,12 +5,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func Test_New(t *testing.T) {
@@ -50,7 +50,7 @@ func Test_NewSessionCookie(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 		},
 		{
 			name:    "empty string still results in session",
@@ -76,7 +76,7 @@ func Test_NewDebugSessionCookie(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 		},
 		{
 			name:    "empty string still results in session",
@@ -103,7 +103,7 @@ func Test_SaveGet(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 			userID:  "mitb",
 		},
 	}
@@ -145,7 +145,7 @@ func Test_GetUserFromSession(t *testing.T) {
 	}{
 		{
 			name:    "happy path",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 			userID:  "mitb",
 		},
 	}

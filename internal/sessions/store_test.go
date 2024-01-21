@@ -6,12 +6,12 @@ import (
 	"testing"
 
 	"github.com/alicebob/miniredis/v2"
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func Test_Exists(t *testing.T) {
@@ -38,7 +38,7 @@ func Test_Exists(t *testing.T) {
 			ps := sessions.NewStore(rc)
 
 			if tc.exists == int64(1) {
-				err := ps.StoreSession(context.Background(), gofakeit.UUID(), tc.userID)
+				err := ps.StoreSession(context.Background(), ulids.New().String(), tc.userID)
 				require.NoError(t, err)
 			}
 
@@ -59,7 +59,7 @@ func Test_GetSession(t *testing.T) {
 		{
 			name:    "happy path",
 			userID:  "MITB",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 			exists:  true,
 		},
 		{
@@ -101,7 +101,7 @@ func Test_DeleteSession(t *testing.T) {
 		{
 			name:    "happy path",
 			userID:  "MITB",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 			exists:  true,
 		},
 		{

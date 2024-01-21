@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/google/uuid"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 const (
@@ -21,7 +21,9 @@ type ContextKey struct {
 }
 
 type Config struct {
-	SigningKey    string `yaml:"signingKey" split_words:"true" default:"my-signing-secret"`   // $DATUM_SESSIONS_SIGNING_KEY
+	// SigningKey must be a 16, 32, or 64 character string used to encode the cookie
+	SigningKey string `yaml:"signingKey" split_words:"true" default:"my-signing-secret"` // $DATUM_SESSIONS_SIGNING_KEY
+	// EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie
 	EncryptionKey string `yaml:"encryptionKey" split_words:"true" default:"encryptionsecret"` // $DATUM_SESSIONS_ENCRYPTION_KEY
 }
 
@@ -89,11 +91,9 @@ func (s *Session) Destroy(w http.ResponseWriter) {
 	s.store.Destroy(w, s.name)
 }
 
-// GenerateSessionID returns a random UUID
+// GenerateSessionID returns a random ulid
 func GenerateSessionID() string {
-	id, _ := uuid.NewRandom()
-
-	return id.String()
+	return ulids.New().String()
 }
 
 // Token returns the session token from the context

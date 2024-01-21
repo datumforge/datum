@@ -3,11 +3,11 @@ package sessions_test
 import (
 	"testing"
 
-	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func Test_Set(t *testing.T) {
@@ -19,7 +19,7 @@ func Test_Set(t *testing.T) {
 		{
 			name:    "happy path",
 			userID:  "01HMDBSNBGH4DTEP0SR8118Y96",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 		},
 	}
 
@@ -48,7 +48,7 @@ func Test_GetOk(t *testing.T) {
 		{
 			name:    "happy path",
 			userID:  "01HMDBSNBGH4DTEP0SR8118Y96",
-			session: gofakeit.UUID(),
+			session: ulids.New().String(),
 		},
 	}
 

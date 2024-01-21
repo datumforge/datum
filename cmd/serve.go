@@ -6,13 +6,12 @@ import (
 	_ "github.com/lib/pq"           // postgres driver
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 
-	"github.com/datumforge/datum/internal/otelx"
-
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/cache"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
@@ -20,6 +19,8 @@ import (
 	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
+	"github.com/datumforge/datum/internal/otelx"
+	"github.com/datumforge/datum/internal/sessions"
 )
 
 var serveCmd = &cobra.Command{
@@ -53,11 +54,13 @@ func serve(ctx context.Context) error {
 		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(),
 		serveropts.WithSQLiteDB(),
+		serveropts.WithRedisCache(),
 		serveropts.WithAuth(),
 		serveropts.WithFGAAuthz(),
 		serveropts.WithTracer(),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
+		serveropts.WithSessionManager(),
 	)
 
 	so := serveropts.NewServerOptions(serverOpts)
@@ -106,13 +109,29 @@ func serve(ctx context.Context) error {
 
 	defer entdbClient.Close()
 
+	// Setup Redis connection
+	redisClient := cache.New(so.Config.RedisConfig)
+	defer redisClient.Close()
+
 	// add ready checks
-	so.AddServerOptions(serveropts.WithReadyChecks(dbConfig, fgaClient))
+	so.AddServerOptions(serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient))
 
 	// Add Driver to the Handlers Config
 	so.Config.Server.Handler.DBClient = entdbClient
 
+	// Add redis client to Handlers Config
+	so.Config.Server.Handler.RedisClient = redisClient
+
 	srv := server.NewServer(so.Config.Server, so.Config.Logger)
+
+	// add session middleware, this has to be added after the authMiddleware so we have the user id
+	// when we get to the session. this is also added here so its only added to the graph routes
+	// REST routes are expected to add the session middleware, as required
+	mw = append(mw, sessions.LoadAndSave(
+		so.Config.Server.SM,
+		redisClient,
+		so.Config.Logger,
+	))
 
 	// Setup Graph API Handlers
 	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient, mw))

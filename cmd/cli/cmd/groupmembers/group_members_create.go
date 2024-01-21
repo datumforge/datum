@@ -39,6 +39,10 @@ func addGroupMember(ctx context.Context) error {
 		return err
 	}
 
+	// save session cookies on function exit
+	client, _ := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(client)
+
 	gID := viper.GetString("groupmember.create.groupid")
 	if gID == "" {
 		return datum.NewRequiredFieldMissingError("group id")

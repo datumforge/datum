@@ -45,6 +45,10 @@ func createUser(ctx context.Context) error {
 		return err
 	}
 
+	// save session cookies on function exit
+	client, _ := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(client)
+
 	var s []byte
 
 	email := viper.GetString("user.create.email")

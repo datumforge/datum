@@ -39,6 +39,10 @@ func addOrgMember(ctx context.Context) error {
 		return err
 	}
 
+	// save session cookies on function exit
+	client, _ := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(client)
+
 	oID := viper.GetString("orgmember.create.orgid")
 	if oID == "" {
 		return datum.NewRequiredFieldMissingError("organization id")

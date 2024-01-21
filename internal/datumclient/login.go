@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/route"
+	"github.com/datumforge/datum/internal/sessions"
 )
 
 // Login creates a login request to the Datum API
@@ -60,8 +61,8 @@ func Login(c *Client, ctx context.Context, login handlers.LoginRequest) (*oauth2
 }
 
 // getTokensFromCookies parses the HTTP Response for cookies and returns the access and refresh tokens
-func getTokensFromCookies(resp *http.Response) *oauth2.Token {
-	token := &oauth2.Token{}
+func getTokensFromCookies(resp *http.Response) (token *oauth2.Token) {
+	token = &oauth2.Token{}
 
 	// parse cookies
 	cookies := resp.Cookies()
@@ -77,4 +78,36 @@ func getTokensFromCookies(resp *http.Response) *oauth2.Token {
 	}
 
 	return token
+}
+
+// GetSessionFromCookies parses the HTTP Response for cookies and returns session
+func GetSessionFromCookies(resp *http.Response) (sessionID string) {
+	// parse cookies
+	cookies := resp.Cookies()
+
+	for _, c := range cookies {
+		if c.Name == sessions.DefaultSessionName {
+			return c.Value
+		}
+	}
+
+	return ""
+}
+
+// GetSessionFromCookieJar parses the cookie jar for the session cookie
+func GetSessionFromCookieJar(c *Client) (sessionID string, err error) {
+	u, err := url.Parse(c.Client.BaseURL)
+	if err != nil {
+		return "", err
+	}
+
+	cookies := c.Client.Client.Jar.Cookies(u)
+
+	for _, c := range cookies {
+		if c.Name == sessions.DefaultSessionName {
+			return c.Value, nil
+		}
+	}
+
+	return "", nil
 }

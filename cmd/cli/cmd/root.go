@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/http/cookiejar"
 	"os"
 	"path"
 	"strings"
@@ -146,6 +147,19 @@ func ViperBindFlag(name string, flag *pflag.Flag) {
 	}
 }
 
+// StoreSessionCookies gets the session cookie from the cookie jar
+// and stores it in the keychain for future requests
+func StoreSessionCookies(client *datumclient.Client) {
+	session, err := datumclient.GetSessionFromCookieJar(client)
+	if err != nil {
+		return
+	}
+
+	if err := StoreSession(session); err != nil {
+		return
+	}
+}
+
 func JSONPrint(s []byte) error {
 	var obj map[string]interface{}
 
@@ -167,10 +181,18 @@ func JSONPrint(s []byte) error {
 	return nil
 }
 
-func GetClient(ctx context.Context) (CLI, error) {
+func GetClient(ctx context.Context) (*CLI, error) {
 	cli := CLI{}
-	// setup datum http client
-	h := &http.Client{}
+
+	// setup datum http client with cookie jar
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return nil, err
+	}
+
+	h := &http.Client{
+		Jar: jar,
+	}
 
 	// set options
 	opt := &clientv2.Options{
@@ -186,18 +208,18 @@ func GetClient(ctx context.Context) (CLI, error) {
 		cli.Interceptor = i
 		cli.AccessToken = ""
 
-		return cli, nil
+		return &cli, nil
 	}
 
 	// setup interceptors
-	token, err := GetTokenFromKeyring(ctx)
+	token, session, err := GetTokenFromKeyring(ctx)
 	if err != nil {
-		return cli, err
+		return nil, err
 	}
 
 	expired, err := tokens.IsExpired(token.AccessToken)
 	if err != nil {
-		return cli, err
+		return nil, err
 	}
 
 	// refresh and store the new token pair if the existing access token
@@ -206,50 +228,60 @@ func GetClient(ctx context.Context) (CLI, error) {
 		// refresh the token pair using the refresh token
 		token, err = refreshToken(ctx, token.RefreshToken)
 		if err != nil {
-			return cli, err
+			return nil, err
 		}
 
 		// store the new token
 		if err := StoreToken(token); err != nil {
-			return cli, err
+			return nil, err
 		}
 	}
 
 	accessToken := token.AccessToken
 
-	i := datumclient.WithAccessToken(accessToken)
+	i := datumclient.WithAuthorization(accessToken, session)
+	interceptors := []clientv2.RequestInterceptor{i}
 
-	cli.Client = datumclient.NewClient(h, GraphAPIHost, opt, i)
+	if viper.GetBool("logging.debug") {
+		interceptors = append(interceptors, datumclient.WithLoggingInterceptor())
+	}
+
+	cli.Client = datumclient.NewClient(h, GraphAPIHost, opt, interceptors...)
 	cli.Interceptor = i
 	cli.AccessToken = accessToken
 
 	// new client with params
-	return cli, nil
+	return &cli, nil
 }
 
 // GetTokenFromKeyring will return the oauth token from the keyring
 // if the token is expired, but the refresh token is still valid, the
 // token will be refreshed
-func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, error) {
+func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, string, error) {
 	ring, err := GetKeyring()
 	if err != nil {
-		return nil, fmt.Errorf("error opening keyring: %w", err)
+		return nil, "", fmt.Errorf("error opening keyring: %w", err)
 	}
 
 	access, err := ring.Get("datum_token")
 	if err != nil {
-		return nil, fmt.Errorf("error fetching auth token: %w", err)
+		return nil, "", fmt.Errorf("error fetching auth token: %w", err)
 	}
 
 	refresh, err := ring.Get("datum_refresh_token")
 	if err != nil {
-		return nil, fmt.Errorf("error fetching refresh token: %w", err)
+		return nil, "", fmt.Errorf("error fetching refresh token: %w", err)
+	}
+
+	session, err := ring.Get("datum_session")
+	if err != nil {
+		return nil, "", fmt.Errorf("error fetching refresh token: %w", err)
 	}
 
 	return &oauth2.Token{
 		AccessToken:  string(access.Data),
 		RefreshToken: string(refresh.Data),
-	}, nil
+	}, string(session.Data), nil
 }
 
 func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {
@@ -269,12 +301,7 @@ func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {
 		RefreshToken: refresh,
 	}
 
-	token, err := datumclient.Refresh(dc, ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return token, nil
+	return datumclient.Refresh(dc, ctx, req)
 }
 
 // GetKeyring will return the already loaded keyring so that we don't prompt users for passwords multiple times
@@ -335,6 +362,24 @@ func StoreToken(token *oauth2.Token) error {
 	})
 	if err != nil {
 		return fmt.Errorf("failed saving refresh token: %w", err)
+	}
+
+	return nil
+}
+
+// StoreSession in local keyring
+func StoreSession(session string) error {
+	ring, err := GetKeyring()
+	if err != nil {
+		return fmt.Errorf("error opening keyring: %w", err)
+	}
+
+	err = ring.Set(keyring.Item{
+		Key:  "datum_session",
+		Data: []byte(session),
+	})
+	if err != nil {
+		return fmt.Errorf("failed saving session: %w", err)
 	}
 
 	return nil

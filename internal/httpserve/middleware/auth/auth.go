@@ -8,6 +8,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -97,9 +98,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 		}
 
 		// Set the new access and refresh cookies
-		if err = SetAuthCookies(c, reply.AccessToken, reply.RefreshToken); err != nil {
-			return "", err
-		}
+		SetAuthCookies(c, reply.AccessToken, reply.RefreshToken)
 
 		return reply.AccessToken, nil
 	}
@@ -193,74 +192,16 @@ func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
 // access token expires. The refresh token cookie is not an http only cookie (it can be
 // accessed by client-side scripts) and it expires when the refresh token expires. Both
 // cookies require https and will not be set (silently) over http connections.
-func SetAuthCookies(c echo.Context, accessToken, refreshToken string) error {
-	// Parse access token to get expiration time
-	accessExpires, err := tokens.ExpiresAt(accessToken)
-	if err != nil {
-		return err
-	}
-
-	// Set the access token cookie: httpOnly is true; cannot be accessed by Javascript
-	accessMaxAge := int((time.Until(accessExpires)).Seconds())
-	cookie := &http.Cookie{
-		Name:     AccessTokenCookie,
-		Value:    accessToken,
-		MaxAge:   accessMaxAge,
-		Domain:   "",
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-	}
-	c.SetCookie(cookie)
-
-	// Parse refresh token to get expiration time
-	refreshExpires, err := tokens.ExpiresAt(refreshToken)
-	if err != nil {
-		return err
-	}
-
-	// Set the refresh token cookie: httpOnly is false; can be accessed by Javascript
-	refreshMaxAge := int((time.Until(refreshExpires)).Seconds())
-	cookie = &http.Cookie{
-		Name:     RefreshTokenCookie,
-		Value:    refreshToken,
-		MaxAge:   refreshMaxAge,
-		Domain:   "",
-		Path:     "/",
-		HttpOnly: false,
-		Secure:   true,
-	}
-
-	c.SetCookie(cookie)
-
-	return err
+func SetAuthCookies(c echo.Context, accessToken, refreshToken string) {
+	cookies.SetCookie(c.Response().Writer, accessToken, AccessTokenCookie, cookies.DefaultCookieConfig)
+	cookies.SetCookie(c.Response().Writer, refreshToken, RefreshTokenCookie, cookies.DefaultCookieConfig)
 }
 
 // ClearAuthCookies is a helper function to clear authentication cookies on a echo
 // request to effectively logger out a user.
 func ClearAuthCookies(c echo.Context) {
-	cookie := &http.Cookie{
-		Name:     AccessTokenCookie,
-		Value:    "",
-		MaxAge:   -1,
-		Domain:   "",
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-	}
-	c.SetCookie(cookie)
-
-	cookie = &http.Cookie{
-		Name:     RefreshTokenCookie,
-		Value:    "",
-		MaxAge:   -1,
-		Domain:   "",
-		Path:     "/",
-		HttpOnly: false,
-		Secure:   true,
-	}
-
-	c.SetCookie(cookie)
+	cookies.RemoveCookie(c.Response().Writer, AccessTokenCookie, cookies.DefaultCookieConfig)
+	cookies.RemoveCookie(c.Response().Writer, RefreshTokenCookie, cookies.DefaultCookieConfig)
 }
 
 // CookieExpired checks to see if a cookie is expired

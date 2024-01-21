@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -39,9 +40,15 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	}
 
 	// set cookies on request with the access and refresh token
-	// when cookie domain is localhost, this is dropped but expected
-	if err := auth.SetAuthCookies(ctx, access, refresh); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+	auth.SetAuthCookies(ctx, access, refresh)
+
+	// set sessions in response
+	sc := sessions.NewSessionConfig(h.SM, h.RedisClient, h.Logger)
+
+	if err := sc.SaveAndStoreSession(ctx, user.ID); err != nil {
+		h.Logger.Errorw("unable to save session", "error", err)
+
+		return err
 	}
 
 	if err := h.updateUserLastSeen(userCtx, user.ID); err != nil {

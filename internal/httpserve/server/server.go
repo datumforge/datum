@@ -68,7 +68,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		middleware.RequestID(), // add request id
 		middleware.Recover(),   // recover server from any panic/fatal error gracefully
 		middleware.LoggerWithConfig(middleware.LoggerConfig{
-			Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Session}, auth=${header:Authorization}\n",
+			Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, auth=${header:Authorization}\n",
 		}),
 		echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 		echozap.ZapLogger(s.logger.Desugar()),        // add zap logger, middleware requires the "regular" zap logger

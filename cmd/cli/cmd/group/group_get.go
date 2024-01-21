@@ -36,6 +36,10 @@ func getGroup(ctx context.Context) error {
 		return err
 	}
 
+	// save session cookies on function exit
+	client, _ := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(client)
+
 	// filter options
 	gID := viper.GetString("group.get.id")
 	ownerID := viper.GetString("group.get.owner")
@@ -54,7 +58,7 @@ func getGroup(ctx context.Context) error {
 
 		return datum.JSONPrint(s)
 	}
-	// TODO : https://github.com/datumforge/datum/issues/261
+
 	if ownerID != "" {
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{

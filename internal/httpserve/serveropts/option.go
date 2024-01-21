@@ -10,8 +10,11 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/kelseyhightower/envconfig"
+	goredis "github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 
+	"github.com/datumforge/datum/internal/cache"
+	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
@@ -19,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
+	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/ulids"
@@ -217,7 +221,7 @@ func WithAuth() ServerOption {
 }
 
 // WithReadyChecks adds readiness checks to the server
-func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
+func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client, r *goredis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Always add a check to the primary db connection
 		s.Config.Server.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
@@ -230,6 +234,11 @@ func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
 		// Check the connection to openFGA, if enabled
 		if s.Config.Authz.Enabled {
 			s.Config.Server.Handler.AddReadinessCheck("fga", fga.Healthcheck(*f))
+		}
+
+		// Check the connection to redis, if enabled
+		if s.Config.RedisConfig.Enabled {
+			s.Config.Server.Handler.AddReadinessCheck("redis", cache.Healthcheck(r))
 		}
 	})
 }
@@ -283,5 +292,49 @@ func WithTaskManager() ServerOption {
 		tm.Start()
 
 		s.Config.Server.Handler.TaskMan = tm
+	})
+}
+
+// WithRedisCache sets up the redis config use as a key-value store for things such as session management
+func WithRedisCache() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		config := &cache.Config{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_redis", config); err != nil {
+			panic(err)
+		}
+
+		s.Config.RedisConfig = *config
+	})
+}
+
+// WithSessionManager sets up the default session manager with a 10 minute ttl
+func WithSessionManager() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		config := &sessions.Config{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_sessions", config); err != nil {
+			panic(err)
+		}
+
+		cc := cookies.DefaultCookieConfig
+
+		// In order for things to work in dev mode with localhost
+		// we need to se the debug cookie config
+		if s.Config.Server.Dev {
+			cc = cookies.DebugOnlyCookieConfig
+		}
+
+		sm := sessions.NewCookieStore(&cc,
+			[]byte(config.SigningKey),
+			[]byte(config.EncryptionKey),
+		)
+
+		// Make the cookie session store available
+		// to graph and REST endpoints
+		s.Config.Server.Handler.SM = sm
+		s.Config.Server.SM = sm
 	})
 }

@@ -33,6 +33,10 @@ func orgMembers(ctx context.Context) error {
 		return err
 	}
 
+	// save session cookies on function exit
+	client, _ := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(client)
+
 	// filter options
 	oID := viper.GetString("orgmember.get.id")
 	if oID == "" {

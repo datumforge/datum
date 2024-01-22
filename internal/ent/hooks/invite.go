@@ -6,13 +6,16 @@ import (
 
 	"entgo.io/ent"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 // HookInvite runs on invite mutations
@@ -109,4 +112,16 @@ func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*gener
 	m.SetRequestorID(userID)
 
 	return m, nil
+}
+
+func constructEmails(h handlers.Handler, recipient, requestor, orgName, token string) error {
+	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+		return h.SendOrgInvitationEmail(recipient, requestor, orgName, token)
+	}), marionette.WithRetries(3), // nolint: gomnd
+		marionette.WithBackoff(backoff.NewExponentialBackOff()),
+	); err != nil {
+		return err
+	}
+
+	return nil
 }

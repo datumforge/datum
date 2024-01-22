@@ -105,8 +105,6 @@ func (e EmailData) Build(text, html string) (msg *mail.SGMailV3, err error) {
 	), nil
 }
 
-// TODO: implement handlers / sending logic for the below structs; things such as "Role" may change over time and require updates as the stack evolves.
-
 // WelcomeData is used to complete the welcome email template
 type WelcomeData struct {
 	EmailData

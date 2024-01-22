@@ -1,12 +1,15 @@
 package handlers
 
 import (
+	"context"
 	"net/url"
 	"path/filepath"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/kelseyhightower/envconfig"
 
 	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
@@ -145,9 +148,54 @@ func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 	return h.emailManager.Send(msg)
 }
 
+type Invite struct {
+	Token     string
+	OrgName   string
+	Recipient string
+	Requestor string
+}
+
+// SendOrgInvitationEmail sends an email inviting a user to join Datum and an existing organization
+func (h *Handler) SendOrgInvitationEmail(i *Invite) error {
+	data := emails.InviteData{
+		InviterName: i.Requestor,
+		OrgName:     i.OrgName,
+		EmailData: emails.EmailData{
+			Sender: h.SendGridConfig.MustFromContact(),
+			Recipient: sendgrid.Contact{
+				Email: i.Recipient,
+			},
+		},
+	}
+
+	var err error
+	if data.InviteURL, err = h.EmailURL.InviteURL(i.Token); err != nil {
+		return err
+	}
+
+	msg, err := emails.InviteEmail(data)
+	if err != nil {
+		return err
+	}
+
+	return h.emailManager.Send(msg)
+}
+
+func (h *Handler) SendInvitationEmail(i *Invite) error {
+	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+		return h.SendOrgInvitationEmail(i)
+	}), marionette.WithRetries(3), // nolint: gomnd
+		marionette.WithBackoff(backoff.NewExponentialBackOff()),
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // URLConfig for the datum registration
 type URLConfig struct {
-	Base   string `split_words:"true" default:"https://app.datum.net"`
+	Base   string `split_words:"true" default:"https://api.datum.net"`
 	Verify string `split_words:"true" default:"/v1/verify"`
 	Invite string `split_words:"true" default:"/v1/invite"`
 	Reset  string `split_words:"true" default:"/v1/reset-password"`

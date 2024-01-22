@@ -25,7 +25,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.81.2
 	github.com/openfga/go-sdk v0.3.3
-	github.com/openfga/language/pkg/go v0.0.0-20240115071850-08a9a21f6178
+	github.com/openfga/language/pkg/go v0.0.0-20240122114256-aaa86ab89379
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.18.0
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e

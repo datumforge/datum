@@ -265,7 +265,7 @@ func WithMiddleware(mw []echo.MiddlewareFunc) ServerOption {
 // on registration, password reset, etc
 func WithEmailManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		emailConfig := emails.Config{}
+		emailConfig := &emails.Config{}
 
 		// load defaults and env vars
 		err := envconfig.Process("datum_email", emailConfig)
@@ -273,7 +273,7 @@ func WithEmailManager() ServerOption {
 			panic(err)
 		}
 
-		em, err := emails.New(emailConfig)
+		em, err := emails.New(*emailConfig)
 		if err != nil {
 			return
 		}

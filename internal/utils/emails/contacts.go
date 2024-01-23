@@ -11,7 +11,7 @@ import (
 // SendGrid but is not added to any marketing lists - the intent of this is to track within Sendgrid the
 // signups and track PLG-related stuff
 func (m *EmailManager) AddContact(contact *sg.Contact, listIDs ...string) (err error) {
-	if !m.conf.Enabled() {
+	if !m.Enabled() {
 		return ErrSendgridNotEnabled
 	}
 

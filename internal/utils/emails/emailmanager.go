@@ -5,12 +5,14 @@ import (
 	sgmail "github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
 // EmailManager allows a server to send rich emails using the SendGrid service
 type EmailManager struct {
 	conf   Config
 	client SendGridClient
+	URLConfig
 }
 
 // SendGridClient is an interface that can be implemented by live email clients to send
@@ -22,7 +24,7 @@ type SendGridClient interface {
 // New email manager with the specified configuration
 func New(conf Config) (m *EmailManager, err error) {
 	// conf.Valdate checks presence of admin, from email, and testing flags
-	if err := conf.Validate(); err != nil {
+	if err := m.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -40,6 +42,69 @@ func (m *EmailManager) Send(message *sgmail.SGMailV3) (err error) {
 
 	if rep.StatusCode < 200 || rep.StatusCode >= 300 {
 		return auth.ErrorResponse(rep.Body)
+	}
+
+	return nil
+}
+
+// MustFromContact function is a helper function that returns the
+// `sendgrid.Contact` for the `FromEmail` field in the `Config` struct
+func (m *EmailManager) MustFromContact() sendgrid.Contact {
+	contact, err := m.FromContact()
+	if err != nil {
+		panic(err)
+	}
+
+	return contact
+}
+
+// Enabled returns true if there is a SendGrid API key available
+func (m *EmailManager) Enabled() bool {
+	return m.conf.SendGridAPIKey != ""
+}
+
+// FromContact parses the FromEmail and returns a sendgrid contact
+func (m *EmailManager) FromContact() (sendgrid.Contact, error) {
+	return parseEmail(m.conf.FromEmail)
+}
+
+// AdminContact parses the AdminEmail and returns a sendgrid contact
+func (m *EmailManager) AdminContact() (sendgrid.Contact, error) {
+	return parseEmail(m.conf.AdminEmail)
+}
+
+// MustAdminContact is a helper function that returns the
+// `sendgrid.Contact` for the `AdminEmail` field in the `Config` struct. It first calls the
+// `AdminContact` function to parse the `AdminEmail` and return a `sendgrid.Contact`. If there is an
+// error parsing the email, it will panic and throw an error. Otherwise, it will return the parsed
+// `sendgrid.Contact`
+func (m *EmailManager) MustAdminContact() sendgrid.Contact {
+	contact, err := m.AdminContact()
+	if err != nil {
+		panic(err)
+	}
+
+	return contact
+}
+
+// Validate the from and admin emails are present if the SendGrid API is enabled
+func (m *EmailManager) Validate() (err error) {
+	if m.Enabled() {
+		if m.conf.AdminEmail == "" || m.conf.FromEmail == "" {
+			return ErrBothAdminAndFromRequired
+		}
+
+		if _, err = m.AdminContact(); err != nil {
+			return ErrEmailNotParseable
+		}
+
+		if _, err = m.FromContact(); err != nil {
+			return ErrAdminEmailNotParseable
+		}
+
+		if !m.conf.Testing && m.conf.Archive != "" {
+			return ErrEmailArchiveOnlyInTestMode
+		}
 	}
 
 	return nil

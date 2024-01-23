@@ -18,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/emails"
 )
 
 type Server struct {
@@ -104,15 +103,9 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		return err
 	}
 
-	em, err := emails.New(s.config.Email)
-	if err != nil {
-		return err
-	}
-
 	// pass to the REST handlers
 	s.config.Handler.JWTKeys = keys
 	s.config.Handler.TM = tm
-	s.config.Handler.EmailManager = em
 
 	// Add base routes to the server
 	if err := route.RegisterRoutes(srv, &s.config.Handler); err != nil {

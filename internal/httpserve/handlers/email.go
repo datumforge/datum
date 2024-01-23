@@ -10,9 +10,6 @@ import (
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
-var EmailURL = &emails.URLConfig{}
-var EM = &emails.Config{}
-
 func (h *Handler) SendVerificationEmail(user *User) error {
 	contact := &sendgrid.Contact{
 		Email:     user.Email,
@@ -22,7 +19,7 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 
 	data := emails.VerifyEmailData{
 		EmailData: emails.EmailData{
-			Sender: EM.MustFromContact(),
+			Sender: h.EmailManager.MustFromContact(),
 			Recipient: sendgrid.Contact{
 				Email:     user.Email,
 				FirstName: user.FirstName,
@@ -33,7 +30,7 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 	}
 
 	var err error
-	if data.VerifyURL, err = EmailURL.VerifyURL(user.GetVerificationToken()); err != nil {
+	if data.VerifyURL, err = h.EmailManager.URLConfig.VerifyURL(user.GetVerificationToken()); err != nil {
 		return err
 	}
 
@@ -50,7 +47,7 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data := emails.ResetRequestData{
 		EmailData: emails.EmailData{
-			Sender: EM.MustFromContact(),
+			Sender: h.EmailManager.MustFromContact(),
 			Recipient: sendgrid.Contact{
 				Email:     user.Email,
 				FirstName: user.FirstName,
@@ -61,7 +58,7 @@ func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data.Recipient.ParseName(user.Name)
 
 	var err error
-	if data.ResetURL, err = EmailURL.ResetURL(user.GetPasswordResetToken()); err != nil {
+	if data.ResetURL, err = h.EmailManager.URLConfig.ResetURL(user.GetPasswordResetToken()); err != nil {
 		return err
 	}
 
@@ -77,7 +74,7 @@ func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 // SendPasswordResetSuccessEmail Send an email to a user to inform them that their password has been reset
 func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 	data := emails.EmailData{
-		Sender: EM.MustFromContact(),
+		Sender: h.EmailManager.MustFromContact(),
 		Recipient: sendgrid.Contact{
 			Email: user.Email,
 		},
@@ -99,7 +96,7 @@ func (h *Handler) SendOrgInvitationEmail(i *emails.Invite) error {
 		InviterName: i.Requestor,
 		OrgName:     i.OrgName,
 		EmailData: emails.EmailData{
-			Sender: EM.MustFromContact(),
+			Sender: h.EmailManager.MustFromContact(),
 			Recipient: sendgrid.Contact{
 				Email: i.Recipient,
 			},
@@ -107,7 +104,7 @@ func (h *Handler) SendOrgInvitationEmail(i *emails.Invite) error {
 	}
 
 	var err error
-	if data.InviteURL, err = EmailURL.InviteURL(i.Token); err != nil {
+	if data.InviteURL, err = h.EmailManager.URLConfig.InviteURL(i.Token); err != nil {
 		return err
 	}
 

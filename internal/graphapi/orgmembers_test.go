@@ -11,18 +11,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func TestQuery_OrgMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
+	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
 
 	orgMember, err := org1.Members(reqCtx)
 	require.NoError(t, err)
@@ -52,7 +52,7 @@ func TestQuery_OrgMembers(t *testing.T) {
 				OrgID: &orgID,
 			}
 
-			resp, err := authClient.gc.GetOrgMembersByOrgID(reqCtx, &whereInput)
+			resp, err := client.datum.GetOrgMembersByOrgID(reqCtx, &whereInput)
 			require.NoError(t, err)
 
 			if tc.expected == nil {
@@ -69,28 +69,27 @@ func TestQuery_OrgMembers(t *testing.T) {
 	}
 
 	// delete created org
-	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
 func TestQuery_CreateOrgMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
-	personalOrg := (&OrganizationBuilder{PersonalOrg: true}).MustNew(reqCtx)
+	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	personalOrg := (&OrganizationBuilder{client: client, PersonalOrg: true}).MustNew(reqCtx, t)
 	listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", personalOrg.ID)}
 
 	orgMember, err := org1.Members(reqCtx)
 	require.NoError(t, err)
 	require.Len(t, orgMember, 1)
 
-	testUser1 := (&UserBuilder{}).MustNew(reqCtx)
-	testUser2 := (&UserBuilder{}).MustNew(reqCtx)
+	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	testUser2 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name     string
@@ -158,13 +157,15 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
 			if tc.errMsg == "" {
-				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mock_fga.WriteAny(t, client.fga)
 			}
 
 			if tc.checkOrg {
 				// checks for adding orgs to ensure not a personal org
-				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+				mock_fga.ListAny(t, client.fga, listObjects)
 			}
 
 			role := tc.role
@@ -174,7 +175,7 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 				Role:   &role,
 			}
 
-			resp, err := authClient.gc.AddUserToOrgWithRole(reqCtx, input)
+			resp, err := client.datum.AddUserToOrgWithRole(reqCtx, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -193,21 +194,20 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 	}
 
 	// delete created org and users
-	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
-	(&UserCleanup{UserID: testUser1.ID}).MustDelete(reqCtx)
-	(&UserCleanup{UserID: testUser2.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
 func TestQuery_UpdateOrgMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&OrgMemberBuilder{}).MustNew(reqCtx)
+	om := (&OrgMemberBuilder{client: client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name       string
@@ -240,8 +240,10 @@ func TestQuery_UpdateOrgMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
 			if tc.tupleWrite {
-				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mock_fga.WriteAny(t, client.fga)
 			}
 
 			role := tc.role
@@ -249,7 +251,7 @@ func TestQuery_UpdateOrgMembers(t *testing.T) {
 				Role: &role,
 			}
 
-			resp, err := authClient.gc.UpdateUserRoleInOrg(reqCtx, om.ID, input)
+			resp, err := client.datum.UpdateUserRoleInOrg(reqCtx, om.ID, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -266,23 +268,22 @@ func TestQuery_UpdateOrgMembers(t *testing.T) {
 	}
 
 	// delete created org and users
-	(&OrgMemberCleanup{ID: om.ID}).MustDelete(reqCtx)
+	(&OrgMemberCleanup{client: client, ID: om.ID}).MustDelete(reqCtx, t)
 }
 
 func TestQuery_DeleteOrgMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&OrgMemberBuilder{}).MustNew(reqCtx)
+	om := (&OrgMemberBuilder{client: client}).MustNew(reqCtx, t)
 
-	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mock_fga.WriteAny(t, client.fga)
 
-	resp, err := authClient.gc.RemoveUserFromOrg(reqCtx, om.ID)
+	resp, err := client.datum.RemoveUserFromOrg(reqCtx, om.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)

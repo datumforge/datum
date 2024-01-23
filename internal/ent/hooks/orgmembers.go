@@ -93,65 +93,59 @@ func HookOrgMembersAuthz() ent.Hook {
 
 func orgMemberCreateHook(ctx context.Context, m *generated.OrgMembershipMutation) error {
 	// Add relationship tuples if authz is enabled
-	if m.Authz.Ofga != nil {
-		tuple, err := getOrgMemberTuple(m)
-		if err != nil {
-			return err
-		}
-
-		m.Logger.Infow("details for fga", "object", tuple.Object, "relation", tuple.Relation, "subject", tuple.Subject)
-
-		if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
-			m.Logger.Errorw("failed to create relationship tuple", "error", err)
-
-			return err
-		}
-
-		m.Logger.Debugw("created organization relationship tuples")
+	tuple, err := getOrgMemberTuple(m)
+	if err != nil {
+		return err
 	}
+
+	m.Logger.Debugw("details for fga", "object", tuple.Object, "relation", tuple.Relation, "subject", tuple.Subject)
+
+	if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
+		m.Logger.Errorw("failed to create relationship tuple", "error", err)
+
+		return err
+	}
+
+	m.Logger.Debugw("created organization relationship tuples")
 
 	return nil
 }
 
 func orgMemberDeleteHook(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) error {
-	if m.Authz.Ofga != nil {
-		tuples, err := getDeleteOrgMemberTuples(ctx, m, ids)
-		if err != nil {
+	tuples, err := getDeleteOrgMemberTuples(ctx, m, ids)
+	if err != nil {
+		return err
+	}
+
+	if len(tuples) > 0 {
+		if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
+			m.Logger.Errorw("failed to delete relationship tuple", "error", err)
+
 			return err
 		}
 
-		if len(tuples) > 0 {
-			if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
-				m.Logger.Errorw("failed to delete relationship tuple", "error", err)
-
-				return err
-			}
-
-			m.Logger.Infow("deleted relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
-		}
+		m.Logger.Debugw("deleted relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
 	}
 
 	return nil
 }
 
 func orgMemberUpdateHook(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) error {
-	if m.Authz.Ofga != nil {
-		writes, deletes, err := getUpdateOrgMemberTuples(ctx, m, ids)
-		if err != nil {
-			return err
-		}
+	writes, deletes, err := getUpdateOrgMemberTuples(ctx, m, ids)
+	if err != nil {
+		return err
+	}
 
-		if len(writes) == 0 && len(deletes) == 0 {
-			m.Logger.Debugw("no relationships to create or delete")
+	if len(writes) == 0 && len(deletes) == 0 {
+		m.Logger.Debugw("no relationships to create or delete")
 
-			return nil
-		}
+		return nil
+	}
 
-		if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
-			m.Logger.Errorw("failed to update relationship tuple", "error", err)
+	if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
+		m.Logger.Errorw("failed to update relationship tuple", "error", err)
 
-			return err
-		}
+		return err
 	}
 
 	return nil

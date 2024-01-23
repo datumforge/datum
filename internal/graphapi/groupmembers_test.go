@@ -9,18 +9,18 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func TestQuery_GroupMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	group := (&GroupBuilder{}).MustNew(reqCtx)
+	group := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
 
 	groupMember, err := group.Members(reqCtx)
 	require.NoError(t, err)
@@ -50,7 +50,7 @@ func TestQuery_GroupMembers(t *testing.T) {
 				GroupID: &groupID,
 			}
 
-			resp, err := authClient.gc.GetGroupMembersByGroupID(reqCtx, &whereInput)
+			resp, err := client.datum.GetGroupMembersByGroupID(reqCtx, &whereInput)
 			require.NoError(t, err)
 
 			if tc.expected == nil {
@@ -67,26 +67,25 @@ func TestQuery_GroupMembers(t *testing.T) {
 	}
 
 	// delete created group
-	(&GroupCleanup{GroupID: group.ID}).MustDelete(reqCtx)
+	(&GroupCleanup{client: client, GroupID: group.ID}).MustDelete(reqCtx, t)
 }
 
 func TestQuery_CreateGroupMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	group1 := (&GroupBuilder{}).MustNew(reqCtx)
+	group1 := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
 
 	groupMember, err := group1.Members(reqCtx)
 	require.NoError(t, err)
 	require.Len(t, groupMember, 1)
 
-	testUser1 := (&UserBuilder{}).MustNew(reqCtx)
-	testUser2 := (&UserBuilder{}).MustNew(reqCtx)
+	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	testUser2 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name    string
@@ -146,8 +145,10 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
 			if tc.errMsg == "" {
-				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mock_fga.WriteAny(t, client.fga)
 			}
 
 			role := tc.role
@@ -157,7 +158,7 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 				Role:    &role,
 			}
 
-			resp, err := authClient.gc.AddUserToGroupWithRole(reqCtx, input)
+			resp, err := client.datum.AddUserToGroupWithRole(reqCtx, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -176,21 +177,20 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 	}
 
 	// delete created group and users
-	(&GroupCleanup{GroupID: group1.ID}).MustDelete(reqCtx)
-	(&UserCleanup{UserID: testUser1.ID}).MustDelete(reqCtx)
-	(&UserCleanup{UserID: testUser2.ID}).MustDelete(reqCtx)
+	(&GroupCleanup{client: client, GroupID: group1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
 func TestQuery_UpdateGroupMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&GroupMemberBuilder{}).MustNew(reqCtx)
+	om := (&GroupMemberBuilder{client: client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name   string
@@ -214,8 +214,10 @@ func TestQuery_UpdateGroupMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
 			if tc.errMsg == "" {
-				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mock_fga.WriteAny(t, client.fga)
 			}
 
 			role := tc.role
@@ -223,7 +225,7 @@ func TestQuery_UpdateGroupMembers(t *testing.T) {
 				Role: &role,
 			}
 
-			resp, err := authClient.gc.UpdateUserRoleInGroup(reqCtx, om.ID, input)
+			resp, err := client.datum.UpdateUserRoleInGroup(reqCtx, om.ID, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -240,23 +242,22 @@ func TestQuery_UpdateGroupMembers(t *testing.T) {
 	}
 
 	// delete created group
-	(&GroupMemberCleanup{ID: om.ID}).MustDelete(reqCtx)
+	(&GroupMemberCleanup{client: client, ID: om.ID}).MustDelete(reqCtx, t)
 }
 
 func TestQuery_DeleteGroupMembers(t *testing.T) {
-	// setup entdb with authz
-	authClient := setupAuthEntDB(t)
-	defer authClient.entDB.Close()
+	client := setupTest(t)
+	defer client.db.Close()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&GroupMemberBuilder{}).MustNew(reqCtx)
+	om := (&GroupMemberBuilder{client: client}).MustNew(reqCtx, t)
 
-	mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mock_fga.WriteAny(t, client.fga)
 
-	resp, err := authClient.gc.RemoveUserFromGroup(reqCtx, om.ID)
+	resp, err := client.datum.RemoveUserFromGroup(reqCtx, om.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)

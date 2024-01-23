@@ -14,12 +14,6 @@ import (
 
 // CreateGroupMembership is the resolver for the createGroupMembership field.
 func (r *mutationResolver) CreateGroupMembership(ctx context.Context, input generated.CreateGroupMembershipInput) (*GroupMembershipCreatePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	om, err := withTransactionalMutation(ctx).GroupMembership.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -52,12 +46,6 @@ func (r *mutationResolver) CreateGroupMembership(ctx context.Context, input gene
 
 // UpdateGroupMembership is the resolver for the updateGroupMembership field.
 func (r *mutationResolver) UpdateGroupMembership(ctx context.Context, id string, input generated.UpdateGroupMembershipInput) (*GroupMembershipUpdatePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	groupMember, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -95,12 +83,6 @@ func (r *mutationResolver) UpdateGroupMembership(ctx context.Context, id string,
 
 // DeleteGroupMembership is the resolver for the deleteGroupMembership field.
 func (r *mutationResolver) DeleteGroupMembership(ctx context.Context, id string) (*GroupMembershipDeletePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	if err := withTransactionalMutation(ctx).GroupMembership.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -123,12 +105,6 @@ func (r *mutationResolver) DeleteGroupMembership(ctx context.Context, id string)
 
 // GroupMembership is the resolver for the groupMembership field.
 func (r *queryResolver) GroupMembership(ctx context.Context, id string) (*generated.GroupMembership, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	gm, err := withTransactionalMutation(ctx).GroupMembership.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get members of group", "error", err)

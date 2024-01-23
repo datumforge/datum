@@ -1,0 +1,5 @@
+with-expecter: true
+dir: internal/fga/mockery/
+all: true
+packages:
+    github.com/openfga/go-sdk/client:

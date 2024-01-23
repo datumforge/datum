@@ -2,15 +2,12 @@ package fga
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	openfga "github.com/openfga/go-sdk"
-	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func Test_EntityString(t *testing.T) {
@@ -307,20 +304,15 @@ func Test_tupleKeyToDeleteRequest(t *testing.T) {
 }
 
 func Test_WriteTupleKeys(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-	c := mock_client.NewMockSdkClient(mockCtrl)
+	// setup mock client
+	c := mock_fga.NewMockSdkClient(t)
 
-	fc, err := NewTestFGAClient(t, mockCtrl, c)
-	if err != nil {
-		t.Fatal()
-	}
+	fc := NewMockFGAClient(t, c)
 
 	testCases := []struct {
 		name    string
 		writes  []TupleKey
 		deletes []TupleKey
-		errRes  error
 	}{
 		{
 			name: "happy path with relation",
@@ -337,13 +329,12 @@ func Test_WriteTupleKeys(t *testing.T) {
 					},
 				},
 			},
-			errRes: nil,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			mockWriteAny(mockCtrl, c, context.Background(), tc.errRes)
+			mock_fga.WriteAny(t, c)
 
 			_, err := fc.WriteTupleKeys(context.Background(), tc.writes, tc.deletes)
 			assert.NoError(t, err)
@@ -352,14 +343,10 @@ func Test_WriteTupleKeys(t *testing.T) {
 }
 
 func Test_DeleteRelationshipTuple(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-	c := mock_client.NewMockSdkClient(mockCtrl)
+	// setup mock client
+	c := mock_fga.NewMockSdkClient(t)
 
-	fc, err := NewTestFGAClient(t, mockCtrl, c)
-	if err != nil {
-		t.Fatal()
-	}
+	fc := NewMockFGAClient(t, c)
 
 	testCases := []struct {
 		name        string
@@ -393,6 +380,8 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(c)
+
 			tuples := []openfga.TupleKeyWithoutCondition{
 				{
 					User:     "user:ulid-of-member",
@@ -401,9 +390,9 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 				},
 			}
 
-			mockDeleteTuples(mockCtrl, c, context.Background(), tuples, tc.errRes)
+			mock_fga.DeleteAny(t, c, tc.errRes)
 
-			_, err = fc.DeleteRelationshipTuple(context.Background(), tuples)
+			_, err := fc.DeleteRelationshipTuple(context.Background(), tuples)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)
@@ -415,98 +404,4 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 			assert.NoError(t, err)
 		})
 	}
-}
-
-// mockDeleteTuples creates mock responses based on the mock FGA client
-func mockDeleteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, tuples []openfga.TupleKeyWithoutCondition, errMsg string) {
-	mockExecute := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
-
-	if errMsg == "" {
-		expectedResponse := ofgaclient.ClientWriteResponse{
-			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
-				{
-					TupleKey: tuples[0],
-					Status:   ofgaclient.SUCCESS,
-				},
-			},
-		}
-
-		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
-	} else {
-		var err error
-
-		expectedResponse := ofgaclient.ClientWriteResponse{
-			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
-				{
-					TupleKey: tuples[0],
-					Status:   ofgaclient.FAILURE,
-				},
-			},
-		}
-
-		if errMsg != "" {
-			err = errors.New(errMsg) // nolint:goerr113
-		}
-
-		mockExecute.EXPECT().Execute().Return(&expectedResponse, err)
-	}
-
-	mockRequest := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
-
-	options := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString("test-model-id")}
-
-	mockRequest.EXPECT().Options(options).Return(mockExecute)
-
-	mockBody := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
-
-	mockBody.EXPECT().Body(tuples).Return(mockRequest)
-
-	c.EXPECT().DeleteTuples(ctx).Return(mockBody)
-}
-
-// mockWriteAny creates mock responses based on the mock FGA client
-func mockWriteAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
-	mockExecute := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
-
-	if errMsg == nil {
-		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
-				{
-					Status: ofgaclient.SUCCESS,
-				},
-			},
-			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
-				{
-					Status: ofgaclient.SUCCESS,
-				},
-			},
-		}
-
-		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
-	} else {
-		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
-				{
-					Status: ofgaclient.FAILURE,
-				},
-			},
-			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
-				{
-					Status: ofgaclient.FAILURE,
-				},
-			},
-		}
-
-		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
-	}
-
-	mockRequest := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
-
-	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
-
-	mockBody := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
-
-	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
-
-	c.EXPECT().Write(gomock.Any()).Return(mockBody)
 }

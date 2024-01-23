@@ -38,7 +38,6 @@ require (
 	github.com/wundergraph/graphql-go-tools v1.67.0
 	go.opentelemetry.io/otel v1.22.0
 	go.opentelemetry.io/otel/sdk v1.22.0
-	go.uber.org/mock v0.4.0
 	go.uber.org/zap v1.26.0
 	golang.org/x/oauth2 v0.16.0
 	golang.org/x/term v0.16.0
@@ -123,6 +122,7 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

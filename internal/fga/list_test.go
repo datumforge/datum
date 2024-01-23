@@ -8,9 +8,8 @@ import (
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func Test_ListContains(t *testing.T) {
@@ -93,24 +92,20 @@ func Test_ListObjectsRequest(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// setup mock controller
-			mockCtrl := gomock.NewController(t)
-			c := mock_client.NewMockSdkClient(mockCtrl)
+			// setup mock client
+			mc := mock_fga.NewMockSdkClient(t)
 
-			fc, err := NewTestFGAClient(t, mockCtrl, c)
-			if err != nil {
-				t.Fatal()
-			}
+			c := NewMockFGAClient(t, mc)
 
 			// mock response for input
 			body := []string{
 				"organization:datum",
 			}
 
-			mockListAny(mockCtrl, c, context.Background(), body, tc.errRes)
+			mock_fga.ListOnce(t, mc, body, tc.errRes)
 
 			// do request
-			resp, err := fc.ListObjectsRequest(
+			resp, err := c.ListObjectsRequest(
 				context.Background(),
 				tc.userID,
 				tc.objectType,
@@ -129,24 +124,4 @@ func Test_ListObjectsRequest(t *testing.T) {
 			assert.Equal(t, tc.expectedRes.GetObjects(), resp.GetObjects())
 		})
 	}
-}
-
-func mockListAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, allowedObjects []string, err error) {
-	mockExecute := mock_client.NewMockSdkClientListObjectsRequestInterface(mockCtrl)
-
-	resp := ofgaclient.ClientListObjectsResponse{
-		Objects: allowedObjects,
-	}
-
-	if err == nil {
-		mockExecute.EXPECT().Execute().Return(&resp, nil)
-	} else {
-		mockExecute.EXPECT().Execute().Return(nil, err)
-	}
-
-	mockBody := mock_client.NewMockSdkClientListObjectsRequestInterface(mockCtrl)
-
-	mockBody.EXPECT().Body(gomock.Any()).Return(mockExecute)
-
-	c.EXPECT().ListObjects(gomock.Any()).Return(mockBody)
 }

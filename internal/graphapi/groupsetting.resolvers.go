@@ -31,16 +31,12 @@ func (r *mutationResolver) DeleteGroupSetting(ctx context.Context, id string) (*
 
 // GroupSetting is the resolver for the groupSetting field.
 func (r *queryResolver) GroupSetting(ctx context.Context, id string) (*generated.GroupSetting, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			GroupID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		GroupID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	group, err := r.client.GroupSetting.Get(ctx, id)
 	if err != nil {

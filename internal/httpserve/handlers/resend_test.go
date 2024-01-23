@@ -14,23 +14,31 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
 func TestResendHandler(t *testing.T) {
-	h := handlerSetup(t, EntClient)
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// add handler
+	client.e.POST("resend", client.h.ResendEmail)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
+	// add mocks for writes
+	mock_fga.WriteAny(t, client.fga)
+
 	// create user in the database
-	userSetting := EntClient.UserSetting.Create().
+	userSetting := client.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	u := EntClient.User.Create().
+	_ = client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("bsanderson@datum.net").
@@ -39,11 +47,11 @@ func TestResendHandler(t *testing.T) {
 		SaveX(ctx)
 
 	// create user in the database
-	userSetting2 := EntClient.UserSetting.Create().
+	userSetting2 := client.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ctx)
 
-	u2 := EntClient.User.Create().
+	_ = client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("dabraham@datum.net").
@@ -83,10 +91,6 @@ func TestResendHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context with middleware
-			e := setupEcho()
-			e.POST("resend", h.ResendEmail)
-
 			resendJSON := handlers.ResendRequest{
 				Email: tc.email,
 			}
@@ -102,7 +106,7 @@ func TestResendHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -124,8 +128,4 @@ func TestResendHandler(t *testing.T) {
 			}
 		})
 	}
-
-	// cleanup after
-	EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
-	EntClient.User.DeleteOneID(u2.ID).ExecX(ctx)
 }

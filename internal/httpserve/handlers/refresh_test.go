@@ -16,6 +16,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/tokens"
@@ -23,7 +24,11 @@ import (
 )
 
 func TestRefreshHandler(t *testing.T) {
-	h := handlerSetup(t, EntClient)
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// add handler
+	client.e.POST("refresh", client.h.RefreshHandler)
 
 	// Set full overlap of the refresh and access token so the refresh token is immediately valid
 	tm, err := createTokenManager(-60 * time.Minute) //nolint:gomnd
@@ -31,7 +36,7 @@ func TestRefreshHandler(t *testing.T) {
 		t.Error("error creating token manager")
 	}
 
-	h.TM = tm
+	client.h.TM = tm
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -39,17 +44,20 @@ func TestRefreshHandler(t *testing.T) {
 	// authentication in the tests
 	ec = privacy.DecisionContext(ec, privacy.Allow)
 
+	// add mocks for writes
+	mock_fga.WriteAny(t, client.fga)
+
 	// create user in the database
 	validUser := gofakeit.Email()
 	validPassword := gofakeit.Password(true, true, true, true, false, 20)
 
 	userID := ulids.New().String()
 
-	userSetting := EntClient.UserSetting.Create().
+	userSetting := client.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ec)
 
-	user := EntClient.User.Create().
+	user := client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validUser).
@@ -93,10 +101,6 @@ func TestRefreshHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context with middleware
-			e := setupEcho()
-			e.POST("refresh", h.RefreshHandler)
-
 			refreshJSON := handlers.RefreshRequest{
 				RefreshToken: tc.refresh,
 			}
@@ -112,7 +116,7 @@ func TestRefreshHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -133,7 +137,4 @@ func TestRefreshHandler(t *testing.T) {
 			}
 		})
 	}
-
-	// cleanup after
-	EntClient.User.DeleteOneID(user.ID).ExecX(ec)
 }

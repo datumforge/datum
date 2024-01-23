@@ -31,18 +31,12 @@ func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id str
 
 // OrganizationSetting is the resolver for the organizationSetting field.
 func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			OrgID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		OrgID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	org, err := r.client.OrganizationSetting.Get(ctx, id)
 	if err != nil {

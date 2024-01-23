@@ -14,10 +14,9 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/redis/go-redis/v9"
+	"github.com/stretchr/testify/require"
 
 	echo "github.com/datumforge/echox"
-	ofgaclient "github.com/openfga/go-sdk/client"
-	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
@@ -25,7 +24,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/sessions"
@@ -35,8 +34,7 @@ import (
 )
 
 var (
-	EntClient   *ent.Client
-	DBContainer *testutils.TC
+	dbContainer *testutils.TC
 
 	// commonly used vars in tests
 	emptyResponse = "null\n"
@@ -47,31 +45,14 @@ var (
 	pollIntervalInMillis = 50
 )
 
-func TestMain(m *testing.M) {
-	// setup the database if needed
-	setupDB()
-	// run the tests
-	code := m.Run()
-	// teardown the database
-	teardownDB()
-	// return the test response code
-	os.Exit(code)
+type client struct {
+	e   *echo.Echo
+	db  *ent.Client
+	h   *handlers.Handler
+	fga *mock_fga.MockSdkClient
 }
 
-func setupEcho() *echo.Echo {
-	// create echo context with middleware
-	e := echo.New()
-	transactionConfig := transaction.Client{
-		EntDBClient: EntClient,
-		Logger:      zap.NewNop().Sugar(),
-	}
-
-	e.Use(transactionConfig.Middleware)
-
-	return e
-}
-
-func setupEchoAuth(entClient *ent.Client) *echo.Echo {
+func setupEcho(entClient *ent.Client) *echo.Echo {
 	// create echo context with middleware
 	e := echo.New()
 	transactionConfig := transaction.Client{
@@ -117,87 +98,55 @@ func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
 	return h
 }
 
-func setupDB() {
+func setupTest(t *testing.T) *client {
 	ctx := context.Background()
 
-	// don't setup the datastore if we already have one
-	if EntClient != nil {
-		return
+	c := &client{
+		fga: mock_fga.NewMockSdkClient(t),
 	}
 
+	// create mock FGA client
+	fc := fga.NewMockFGAClient(t, c.fga)
+
+	// setup logger
 	logger := zap.NewNop().Sugar()
 
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
 
 	ctr := testutils.GetTestURI(ctx, testDBURI)
-	DBContainer = ctr
+	dbContainer = ctr
 
 	dbconf := entdb.Config{
 		Debug:           true,
-		DriverName:      ctr.Dialect,
-		PrimaryDBSource: ctr.URI,
-	}
-
-	entConfig := entdb.NewDBConfig(dbconf, logger)
-
-	opts := []ent.Option{ent.Logger(*logger)}
-
-	c, err := entConfig.NewMultiDriverDBClient(ctx, opts)
-	if err != nil {
-		errPanic("failed opening connection to database:", err)
-	}
-
-	errPanic("failed creating db schema", c.Schema.Create(ctx))
-
-	EntClient = c
-}
-
-func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *ent.Client {
-	fc, err := fga.NewTestFGAClient(t, mockCtrl, mc)
-	if err != nil {
-		t.Fatalf("enable to create test FGA client")
-	}
-
-	logger := zap.NewNop().Sugar()
-
-	if DBContainer == nil {
-		t.Fatalf("DBContainer is nil")
-	}
-
-	dbconf := entdb.Config{
-		Debug:           true,
-		DriverName:      DBContainer.Dialect,
-		PrimaryDBSource: DBContainer.URI,
+		DriverName:      dbContainer.Dialect,
+		PrimaryDBSource: dbContainer.URI,
 		CacheTTL:        -1 * time.Second, // do not cache results in tests
 	}
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)
 
-	ctx := context.Background()
-
 	opts := []ent.Option{ent.Logger(*logger), ent.Authz(*fc)}
 
-	c, err := entConfig.NewMultiDriverDBClient(ctx, opts)
+	db, err := entConfig.NewMultiDriverDBClient(ctx, opts)
 	if err != nil {
-		errPanic("failed opening connection to database:", err)
+		require.NoError(t, err, "failed opening connection to database")
 	}
 
-	errPanic("failed creating db schema", c.Schema.Create(ctx))
+	if err := db.Schema.Create(ctx); err != nil {
+		require.NoError(t, err, "failed creating database schema")
+	}
+
+	// add db to test client
+	c.db = db
+
+	// setup handler
+	c.h = handlerSetup(t, c.db)
+
+	// setup echo router
+	c.e = setupEcho(c.db)
 
 	return c
-}
-
-func teardownDB() {
-	if EntClient != nil {
-		errPanic("teardown failed to close database connection", EntClient.Close())
-	}
-}
-
-func errPanic(msg string, err error) {
-	if err != nil {
-		log.Panicf("%s err: %s", msg, err.Error())
-	}
 }
 
 func newRedisClient() *redis.Client {
@@ -248,51 +197,4 @@ func createTokenManager(refreshOverlap time.Duration) (*tokens.TokenManager, err
 	}
 
 	return tokens.NewWithKey(key, conf)
-}
-
-// mockWriteAny creates mock responses based on the mock FGA client
-func mockWriteAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
-	mockExecute := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
-
-	if errMsg == nil {
-		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
-				{
-					Status: ofgaclient.SUCCESS,
-				},
-			},
-			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
-				{
-					Status: ofgaclient.SUCCESS,
-				},
-			},
-		}
-
-		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
-	} else {
-		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
-				{
-					Status: ofgaclient.FAILURE,
-				},
-			},
-			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
-				{
-					Status: ofgaclient.FAILURE,
-				},
-			},
-		}
-
-		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
-	}
-
-	mockRequest := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
-
-	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
-
-	mockBody := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
-
-	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
-
-	c.EXPECT().Write(gomock.Any()).Return(mockBody)
 }

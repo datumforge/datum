@@ -15,10 +15,6 @@ import (
 
 // CreateGroup is the resolver for the createGroup field.
 func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.CreateGroupInput) (*GroupCreatePayload, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	group, err := withTransactionalMutation(ctx).Group.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -51,18 +47,12 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 
 // UpdateGroup is the resolver for the updateGroup field.
 func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input generated.UpdateGroupInput) (*GroupUpdatePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			GroupID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		GroupID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	group, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
 	if err != nil {
@@ -101,16 +91,12 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input gen
 
 // DeleteGroup is the resolver for the deleteGroup field.
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDeletePayload, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			GroupID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		GroupID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	if err := withTransactionalMutation(ctx).Group.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
@@ -130,17 +116,12 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 
 // Group is the resolver for the group field.
 func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group, error) {
-	r.logger.Infow("auth policy", "disabled", r.authDisabled)
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			GroupID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		GroupID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	group, err := r.client.Group.Get(ctx, id)
 	if err != nil {

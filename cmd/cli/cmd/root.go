@@ -77,9 +77,6 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&DatumHost, "host", defaultRootHost, "api host url")
 	ViperBindFlag("datum.host", RootCmd.PersistentFlags().Lookup("host"))
 
-	RootCmd.PersistentFlags().Bool("no-auth", false, "disable attempts to look up access token, any calls that require auth will fail")
-	ViperBindFlag("no-auth", RootCmd.PersistentFlags().Lookup("no-auth"))
-
 	// Logging flags
 	RootCmd.PersistentFlags().Bool("debug", false, "enable debug logging")
 	ViperBindFlag("logging.debug", RootCmd.PersistentFlags().Lookup("debug"))
@@ -197,18 +194,6 @@ func GetClient(ctx context.Context) (*CLI, error) {
 	// set options
 	opt := &clientv2.Options{
 		ParseDataAlongWithErrors: false,
-	}
-
-	// if auth is disabled in the client, proceed without
-	// obtaining the token
-	if viper.GetBool("no-auth") {
-		i := datumclient.WithEmptyInterceptor()
-
-		cli.Client = datumclient.NewClient(h, GraphAPIHost, opt, i)
-		cli.Interceptor = i
-		cli.AccessToken = ""
-
-		return &cli, nil
 	}
 
 	// setup interceptors

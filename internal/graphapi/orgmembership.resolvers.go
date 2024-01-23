@@ -15,18 +15,12 @@ import (
 
 // CreateOrgMembership is the resolver for the createOrgMembership field.
 func (r *mutationResolver) CreateOrgMembership(ctx context.Context, input generated.CreateOrgMembershipInput) (*OrgMembershipCreatePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			OrgID: input.OrgID,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		OrgID: input.OrgID,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	om, err := withTransactionalMutation(ctx).OrgMembership.Create().SetInput(input).Save(ctx)
 	if err != nil {
@@ -60,19 +54,13 @@ func (r *mutationResolver) CreateOrgMembership(ctx context.Context, input genera
 
 // UpdateOrgMembership is the resolver for the updateOrgMembership field.
 func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, input generated.UpdateOrgMembershipInput) (*OrgMembershipUpdatePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		v := viewer.UserViewer{
-			// TODO: this isn't right, fix it
-			OrgID: id,
-		}
-
-		ctx = viewer.NewContext(ctx, v)
+	// setup view context
+	v := viewer.UserViewer{
+		// TODO: this isn't right, fix it
+		OrgID: id,
 	}
+
+	ctx = viewer.NewContext(ctx, v)
 
 	orgMember, err := withTransactionalMutation(ctx).OrgMembership.Get(ctx, id)
 	if err != nil {
@@ -111,17 +99,11 @@ func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, i
 
 // DeleteOrgMembership is the resolver for the deleteOrgMembership field.
 func (r *mutationResolver) DeleteOrgMembership(ctx context.Context, id string) (*OrgMembershipDeletePayload, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		// TODO: make this the org in question?
-		v := viewer.UserViewer{}
+	// setup view context
+	// TODO: make this the org in question?
+	v := viewer.UserViewer{}
 
-		ctx = viewer.NewContext(ctx, v)
-	}
+	ctx = viewer.NewContext(ctx, v)
 
 	if err := withTransactionalMutation(ctx).OrgMembership.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
@@ -145,17 +127,11 @@ func (r *mutationResolver) DeleteOrgMembership(ctx context.Context, id string) (
 
 // OrgMembership is the resolver for the orgMembership field.
 func (r *queryResolver) OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error) {
-	// check permissions if authz is enabled
-	// if auth is disabled, policy decisions will be skipped
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		// TODO: fix this
-		v := viewer.UserViewer{}
+	// setup view context
+	// TODO: fix this
+	v := viewer.UserViewer{}
 
-		ctx = viewer.NewContext(ctx, v)
-	}
+	ctx = viewer.NewContext(ctx, v)
 
 	org, err := withTransactionalMutation(ctx).OrgMembership.Get(ctx, id)
 	if err != nil {

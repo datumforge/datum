@@ -14,13 +14,18 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
 func TestLoginHandler(t *testing.T) {
-	h := handlerSetup(t, EntClient)
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// add login handler
+	client.e.POST("login", client.h.LoginHandler)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -28,15 +33,18 @@ func TestLoginHandler(t *testing.T) {
 	// authentication in the tests
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
+	// add mocks for writes
+	mock_fga.WriteAny(t, client.fga)
+
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"
 	validPassword := "sup3rs3cu7e!"
 
-	userSetting := EntClient.UserSetting.Create().
+	userSetting := client.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ec)
 
-	userConfirmed := EntClient.User.Create().
+	_ = client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validConfirmedUser).
@@ -46,11 +54,11 @@ func TestLoginHandler(t *testing.T) {
 
 	validUnconfirmedUser := "msmith@datum.net"
 
-	userSetting = EntClient.UserSetting.Create().
+	userSetting = client.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	userUnconfirmed := EntClient.User.Create().
+	_ = client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validUnconfirmedUser).
@@ -110,10 +118,6 @@ func TestLoginHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context with middleware
-			e := setupEcho()
-			e.POST("login", h.LoginHandler)
-
 			loginJSON := handlers.LoginRequest{
 				Username: tc.username,
 				Password: tc.password,
@@ -130,7 +134,7 @@ func TestLoginHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -151,8 +155,4 @@ func TestLoginHandler(t *testing.T) {
 			}
 		})
 	}
-
-	// cleanup after
-	EntClient.User.DeleteOneID(userConfirmed.ID).ExecX(ctx)
-	EntClient.User.DeleteOneID(userUnconfirmed.ID).ExecX(ctx)
 }

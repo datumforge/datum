@@ -3,6 +3,7 @@ package handlers_test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -13,29 +14,24 @@ import (
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/emails/mock"
 )
 
 func TestRegisterHandler(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
+	client := setupTest(t)
+	defer client.db.Close()
 
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
-	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
-
-	h := handlerSetup(t, entClient)
+	// add handler
+	client.e.POST("register", client.h.RegisterHandler)
 
 	testCases := []struct {
 		name               string
@@ -107,18 +103,14 @@ func TestRegisterHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
 			sent := time.Now()
 			mock.ResetEmailMock()
 
-			// create echo context with middleware
-			e := setupEchoAuth(entClient)
-
 			// setup mock authz writes
 			if tc.expectedErrMessage == "" {
-				mockWriteAny(mockCtrl, mc, context.Background(), nil)
+				mock_fga.WriteAny(t, client.fga)
 			}
-
-			e.POST("register", h.RegisterHandler)
 
 			registerJSON := handlers.RegisterRequest{
 				FirstName: tc.firstName,
@@ -138,7 +130,7 @@ func TestRegisterHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -158,32 +150,43 @@ func TestRegisterHandler(t *testing.T) {
 				assert.NotEmpty(t, out.ID)
 
 				// setup context to get the data back
-				ec := echocontext.NewTestEchoContext().Request().Context()
-				ctx := privacy.DecisionContext(ec, privacy.Allow)
+				ec, err := auth.NewTestContextWithValidUser(out.ID)
+				require.NoError(t, err)
+
+				ctx := ec.Request().Context()
 
 				// get the user and make sure things were created as expected
-				user, err := EntClient.User.Get(ctx, out.ID)
+				user, err := client.db.User.Get(ctx, out.ID)
 				require.NoError(t, err)
 
 				// make sure personal org was created
-				orgs, err := user.Organizations(ctx)
+				setting, err := user.Setting(ctx)
 				require.NoError(t, err)
-				require.Len(t, orgs, 1)
-				assert.True(t, orgs[0].PersonalOrg)
+
+				personalOrg := setting.DefaultOrg
+
+				// setup echo context
+				ctx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+				// Bypass auth check because user is not authenticated before verified
+				ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+				// mocks to check for org access
+				listObjects := []string{fmt.Sprintf("organization:%s", personalOrg)}
+				mock_fga.ListAny(t, client.fga, listObjects)
+
+				org, err := client.db.Organization.Get(ctx, personalOrg)
+				require.NoError(t, err)
+				assert.True(t, org.PersonalOrg)
 
 				// make sure user is an owner of their personal org
 				orgMemberships, err := user.OrgMemberships(ctx)
 				require.NoError(t, err)
-				require.Len(t, orgs, 1)
+				require.Len(t, orgMemberships, 1)
 				assert.Equal(t, orgMemberships[0].Role, enums.RoleOwner)
 
-				// make sure the personal org was set as the user's default org
-				userSettings, err := user.Setting(ctx)
-				require.NoError(t, err)
-				assert.Equal(t, userSettings.DefaultOrg, orgs[0].ID)
-
 				// delete user
-				EntClient.User.DeleteOneID(out.ID).ExecX(ctx)
+				client.db.User.DeleteOneID(out.ID).ExecX(ctx)
 			} else {
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
 			}
@@ -192,7 +195,7 @@ func TestRegisterHandler(t *testing.T) {
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
-					From:      h.SendGridConfig.FromEmail,
+					From:      client.h.SendGridConfig.FromEmail,
 					Subject:   emails.VerifyEmailRE,
 					Timestamp: sent,
 				},
@@ -200,7 +203,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			// wait for messages
 			predicate := func() bool {
-				return h.TaskMan.GetQueueLength() == 0
+				return client.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 

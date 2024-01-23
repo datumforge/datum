@@ -17,10 +17,6 @@ import (
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	}
-
 	user, err := withTransactionalMutation(ctx).User.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -51,12 +47,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-	}
+	// setup view context
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
 	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
@@ -94,12 +86,8 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-	}
+	// setup view context
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
 	if err := withTransactionalMutation(ctx).User.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
@@ -124,12 +112,8 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDele
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, error) {
-	if r.authDisabled {
-		ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	} else {
-		// setup view context
-		ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-	}
+	// setup view context
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
 	user, err := r.client.User.Get(ctx, id)
 	if err != nil {

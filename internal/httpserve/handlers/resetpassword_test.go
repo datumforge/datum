@@ -19,6 +19,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/emails"
@@ -26,7 +27,11 @@ import (
 )
 
 func TestResetPassword(t *testing.T) {
-	h := handlerSetup(t, EntClient)
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// setup request request
+	client.e.POST("reset-password", client.h.ResetPassword)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -106,15 +111,9 @@ func TestResetPassword(t *testing.T) {
 			sent := time.Now()
 			mock.ResetEmailMock()
 
-			// create echo context with middleware
-			e := setupEcho()
-
 			// create user in the database
-			rt, userID, err := createUserWithResetToken(ec, tc.email, tc.ttl)
+			rt, _, err := createUserWithResetToken(t, client, ec, tc.email, tc.ttl)
 			require.NoError(t, err)
-
-			// setup request request
-			e.POST("reset-password", h.ResetPassword)
 
 			pwResetJSON := handlers.ResetPasswordRequest{
 				Password: tc.newPassword,
@@ -141,7 +140,7 @@ func TestResetPassword(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			// get result
 			res := recorder.Result()
@@ -165,7 +164,7 @@ func TestResetPassword(t *testing.T) {
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
-					From:      h.SendGridConfig.FromEmail,
+					From:      client.h.SendGridConfig.FromEmail,
 					Subject:   tc.expectedEmailSubject,
 					Timestamp: sent,
 				},
@@ -173,7 +172,7 @@ func TestResetPassword(t *testing.T) {
 
 			// wait for messages
 			predicate := func() bool {
-				return h.TaskMan.GetQueueLength() == 0
+				return client.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 
@@ -186,23 +185,22 @@ func TestResetPassword(t *testing.T) {
 			} else {
 				mock.CheckEmails(t, nil)
 			}
-
-			// cleanup after
-			ctx := privacy.DecisionContext(ec, privacy.Allow)
-			EntClient.User.DeleteOneID(userID).ExecX(ctx)
 		})
 	}
 }
 
 // createUserWithResetToken creates a user with a valid reset token and returns the token, user id, and error if one occurred
-func createUserWithResetToken(ec context.Context, email string, ttl string) (*ent.PasswordResetToken, string, error) {
+func createUserWithResetToken(t *testing.T, client *client, ec context.Context, email string, ttl string) (*ent.PasswordResetToken, string, error) {
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
-	userSetting := EntClient.UserSetting.Create().
+	// add mocks for writes
+	mock_fga.WriteAny(t, client.fga)
+
+	userSetting := client.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ctx)
 
-	u := EntClient.User.Create().
+	u := client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(email).
@@ -227,17 +225,22 @@ func createUserWithResetToken(ec context.Context, email string, ttl string) (*en
 	}
 
 	// set expiry if provided in test case
-	t, err := time.Parse(time.RFC3339Nano, user.PasswordResetExpires.String)
+	expiry, err := time.Parse(time.RFC3339Nano, user.PasswordResetExpires.String)
 	if err != nil {
 		return nil, "", err
 	}
 
 	// store token in db
-	return EntClient.PasswordResetToken.Create().
+	pr := client.db.PasswordResetToken.Create().
 		SetOwner(u).
 		SetToken(user.PasswordResetToken.String).
 		SetEmail(user.Email).
 		SetSecret(user.PasswordResetSecret).
-		SetTTL(t).
-		SaveX(ctx), u.ID, nil
+		SetTTL(expiry).
+		SaveX(ctx)
+
+	// clear mocks
+	mock_fga.ClearMocks(client.fga)
+
+	return pr, u.ID, nil
 }

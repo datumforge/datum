@@ -2,9 +2,11 @@ package emails
 
 import (
 	"github.com/sendgrid/rest"
+	sg "github.com/sendgrid/sendgrid-go"
 	sgmail "github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/utils/emails/mock"
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
@@ -24,11 +26,23 @@ type SendGridClient interface {
 // New email manager with the specified configuration
 func New(conf Config) (m *EmailManager, err error) {
 	// conf.Valdate checks presence of admin, from email, and testing flags
+	m = &EmailManager{conf: conf}
+
 	if err := m.Validate(); err != nil {
 		return nil, err
 	}
 
-	m = &EmailManager{conf: conf}
+	if conf.Testing {
+		// there's an additional Storage field in the SendGridClient within mock
+		m.client = &mock.SendGridClient{
+			Storage: conf.Archive,
+		}
+	} else {
+		if conf.SendGridAPIKey == "" {
+			return nil, ErrFailedToCreateEmailClient
+		}
+		m.client = sg.NewSendClient(conf.SendGridAPIKey)
+	}
 
 	return m, nil
 }

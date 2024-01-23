@@ -48,7 +48,7 @@ func TestResetPassword(t *testing.T) {
 			email:                "kelsier@datum.net",
 			tokenSet:             true,
 			newPassword:          "6z9Fqc-E-9v32NsJzLNU",
-			from:                 "funkhous@datum.net",
+			from:                 "mitb@datum.net",
 			emailExpected:        true,
 			expectedEmailSubject: emails.PasswordResetSuccessRE,
 			expectedResp:         emptyResponse,

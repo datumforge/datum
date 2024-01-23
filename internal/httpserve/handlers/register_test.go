@@ -193,7 +193,7 @@ func TestRegisterHandler(t *testing.T) {
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
-					From:      "no-reply@datum.net",
+					From:      "mitb@datum.net",
 					Subject:   emails.VerifyEmailRE,
 					Timestamp: sent,
 				},

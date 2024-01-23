@@ -31,67 +31,64 @@ type URLConfig struct {
 	Reset  string `split_words:"true" default:"/v1/reset-password"`
 }
 
-// Validate the from and admin emails are present if the SendGrid API is enabled
-func (c Config) Validate() (err error) {
-	if c.Enabled() {
-		if c.AdminEmail == "" || c.FromEmail == "" {
-			return ErrBothAdminAndFromRequired
-		}
-
-		if _, err = c.AdminContact(); err != nil {
-			return ErrEmailNotParseable
-		}
-
-		if _, err = c.FromContact(); err != nil {
-			return ErrAdminEmailNotParseable
-		}
-
-		if !c.Testing && c.Archive != "" {
-			return ErrEmailArchiveOnlyInTestMode
-		}
-	}
-
-	return nil
+// SetSendGridAPIKey to provided key
+func (m *EmailManager) SetSendGridAPIKey(key string) {
+	m.conf.SendGridAPIKey = key
 }
 
-// Enabled returns true if there is a SendGrid API key available
-func (c Config) Enabled() bool {
-	return c.SendGridAPIKey != ""
+// GetSendGridAPIKey from the email manager config
+func (m *EmailManager) GetSendGridAPIKey() string {
+	return m.conf.SendGridAPIKey
 }
 
-// FromContact parses the FromEmail and returns a sendgrid contact
-func (c Config) FromContact() (sendgrid.Contact, error) {
-	return parseEmail(c.FromEmail)
+// SetFromEmail to provided email
+func (m *EmailManager) SetFromEmail(email string) {
+	m.conf.FromEmail = email
 }
 
-// AdminContact parses the AdminEmail and returns a sendgrid contact
-func (c Config) AdminContact() (sendgrid.Contact, error) {
-	return parseEmail(c.AdminEmail)
+// GetFromEmail from the email manager config
+func (m *EmailManager) GetFromEmail() string {
+	return m.conf.FromEmail
 }
 
-// MustFromContact function is a helper function that returns the
-// `sendgrid.Contact` for the `FromEmail` field in the `Config` struct
-func (c Config) MustFromContact() sendgrid.Contact {
-	contact, err := c.FromContact()
-	if err != nil {
-		panic(err)
-	}
-
-	return contact
+// SetAdminEmail to provided email
+func (m *EmailManager) SetAdminEmail(email string) {
+	m.conf.AdminEmail = email
 }
 
-// MustAdminContact is a helper function that returns the
-// `sendgrid.Contact` for the `AdminEmail` field in the `Config` struct. It first calls the
-// `AdminContact` function to parse the `AdminEmail` and return a `sendgrid.Contact`. If there is an
-// error parsing the email, it will panic and throw an error. Otherwise, it will return the parsed
-// `sendgrid.Contact`
-func (c Config) MustAdminContact() sendgrid.Contact {
-	contact, err := c.AdminContact()
-	if err != nil {
-		panic(err)
-	}
+// GetAdminEmail from the email manager config
+func (m *EmailManager) GetAdminEmail() string {
+	return m.conf.AdminEmail
+}
 
-	return contact
+// SetTesting to true/false to enable testing settings
+func (m *EmailManager) SetTesting(testing bool) {
+	m.conf.Testing = testing
+}
+
+// GetTesting from the email manager config
+func (m *EmailManager) GetTesting() bool {
+	return m.conf.Testing
+}
+
+// SetArchive location of email fixtures
+func (m *EmailManager) SetArchive(archive string) {
+	m.conf.Archive = archive
+}
+
+// GetArchive from the email manager config
+func (m *EmailManager) GetArchive() string {
+	return m.conf.Archive
+}
+
+// SetDatumListID to provided uuid
+func (m *EmailManager) SetDatumListID(id string) {
+	m.conf.DatumListID = id
+}
+
+// GetDatumListID from the email manager config
+func (m *EmailManager) GetDatumListID() string {
+	return m.conf.DatumListID
 }
 
 // parseEmail takes an email string as input and parses it into a `sendgrid.Contact`

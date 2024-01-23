@@ -81,24 +81,22 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 		}
 	}
 
-	if m.Authz.Ofga != nil {
-		objType := strings.ToLower(m.Type())
-		object := fmt.Sprintf("%s:%s", objType, objID)
-		org, orgexists := m.OwnerID()
+	objType := strings.ToLower(m.Type())
+	object := fmt.Sprintf("%s:%s", objType, objID)
+	org, orgexists := m.OwnerID()
 
-		if exists && orgexists {
-			m.Logger.Infow("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
+	if exists && orgexists {
+		m.Logger.Debugw("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
 
-			orgTuple, err := getTupleKey(org, "organization", objID, objType, fga.ParentRelation)
-			if err != nil {
-				return err
-			}
+		orgTuple, err := getTupleKey(org, "organization", objID, objType, fga.ParentRelation)
+		if err != nil {
+			return err
+		}
 
-			if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{orgTuple}, nil); err != nil {
-				m.Logger.Errorw("failed to create relationship tuple", "error", err)
+		if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{orgTuple}, nil); err != nil {
+			m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
-				return ErrInternalServerError
-			}
+			return ErrInternalServerError
 		}
 	}
 
@@ -107,13 +105,11 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 
 func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupMutation) error {
 	// get userID from context
-	// if this is nil that means we are running without authentication
-	// and no user will get added to the group
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
-		m.Logger.Infow("unable to get user id from echo context, not adding user to group")
+		m.Logger.Errorw("unable to get user id from echo context, unable to add user to group")
 
-		return nil
+		return err
 	}
 
 	// Add user as admin of group
@@ -134,24 +130,19 @@ func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupM
 
 func groupDeleteHook(ctx context.Context, m *generated.GroupMutation) error {
 	// Add relationship tuples if authz is enabled
-	if m.Authz.Ofga != nil {
-		objID, _ := m.ID()
-		objType := strings.ToLower(m.Type())
-		object := fmt.Sprintf("%s:%s", objType, objID)
+	objID, _ := m.ID()
+	objType := strings.ToLower(m.Type())
+	object := fmt.Sprintf("%s:%s", objType, objID)
 
-		m.Logger.Infow("deleting relationship tuples", "object", object)
+	m.Logger.Debugw("deleting relationship tuples", "object", object)
 
-		// Add relationship tuples if authz is enabled
-		if m.Authz.Ofga != nil {
-			if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
-				m.Logger.Errorw("failed to delete relationship tuples", "error", err)
+	if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
+		m.Logger.Errorw("failed to delete relationship tuples", "error", err)
 
-				return ErrInternalServerError
-			}
-
-			m.Logger.Infow("deleted relationship tuples", "object", object)
-		}
+		return ErrInternalServerError
 	}
+
+	m.Logger.Debugw("deleted relationship tuples", "object", object)
 
 	return nil
 }

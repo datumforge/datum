@@ -13,7 +13,7 @@ steps:
     key: "generate"
     plugins:
       - docker#v5.9.0:
-          image: "ghcr.io/datumforge/base-ci-image:v1.0.2"
+          image: "ghcr.io/datumforge/base-ci-image:v1.0.3"
           command: ["task", "ci"]
           environment: 
             - "GOTOOLCHAIN=auto"
@@ -191,7 +191,7 @@ steps:
     if: build.branch == "main"
     commands: |
       #!/bin/bash
-      cp config/.env-allinone.example config/.env-devauth
+      cp config/.env-allinone.example config/.env-dev
     plugins:
       - docker-login#v3.0.0:
           username: _json_key_base64

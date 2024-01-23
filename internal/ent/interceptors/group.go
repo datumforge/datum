@@ -16,18 +16,13 @@ import (
 func InterceptorGroup() ent.Interceptor {
 	return ent.InterceptFunc(func(next ent.Querier) ent.Querier {
 		return intercept.GroupFunc(func(ctx context.Context, q *generated.GroupQuery) (generated.Value, error) {
-			// We only care these checks with authz is enabled, if this is empty skip interception checks
-			if q.Authz.Ofga != nil {
-				// run the query
-				v, err := next.Query(ctx, q)
-				if err != nil {
-					return nil, err
-				}
-
-				return filterGroupsByAccess(ctx, q, v)
+			// run the query
+			v, err := next.Query(ctx, q)
+			if err != nil {
+				return nil, err
 			}
 
-			return next.Query(ctx, q)
+			return filterGroupsByAccess(ctx, q, v)
 		})
 	})
 }

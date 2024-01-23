@@ -4,12 +4,10 @@ import (
 	"context"
 	"testing"
 
-	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/mock/gomock"
 
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func Test_CheckTuple(t *testing.T) {
@@ -38,14 +36,9 @@ func Test_CheckTuple(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// setup mock controller
-			mockCtrl := gomock.NewController(t)
-			c := mock_client.NewMockSdkClient(mockCtrl)
-
-			fc, err := NewTestFGAClient(t, mockCtrl, c)
-			if err != nil {
-				t.Fatal()
-			}
+			// setup mock client
+			c := mock_fga.NewMockSdkClient(t)
+			mc := NewMockFGAClient(t, c)
 
 			// mock response for input
 			body := ofgaclient.ClientCheckRequest{
@@ -54,10 +47,10 @@ func Test_CheckTuple(t *testing.T) {
 				Object:   tc.object,
 			}
 
-			mockCheck(mockCtrl, c, context.Background(), body, tc.expectedRes)
+			mock_fga.MockeryCheckAny(t, c, tc.expectedRes)
 
 			// do request
-			valid, err := fc.CheckTuple(context.Background(), body)
+			valid, err := mc.CheckTuple(context.Background(), body)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)
@@ -71,22 +64,4 @@ func Test_CheckTuple(t *testing.T) {
 			assert.Equal(t, tc.expectedRes, valid)
 		})
 	}
-}
-
-func mockCheck(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, body ofgaclient.ClientCheckRequest, allowed bool) {
-	mockExecute := mock_client.NewMockSdkClientCheckRequestInterface(mockCtrl)
-
-	resp := ofgaclient.ClientCheckResponse{
-		CheckResponse: openfga.CheckResponse{
-			Allowed: openfga.PtrBool(allowed),
-		},
-	}
-
-	mockExecute.EXPECT().Execute().Return(&resp, nil)
-
-	mockBody := mock_client.NewMockSdkClientCheckRequestInterface(mockCtrl)
-
-	mockBody.EXPECT().Body(body).Return(mockExecute)
-
-	c.EXPECT().Check(ctx).Return(mockBody)
 }

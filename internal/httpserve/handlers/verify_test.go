@@ -15,12 +15,17 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
 func TestVerifyHandler(t *testing.T) {
-	h := handlerSetup(t, EntClient)
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// add handler
+	client.e.GET("verify", client.h.VerifyEmail)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -70,20 +75,21 @@ func TestVerifyHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context with middleware
-			e := setupEcho()
-			e.GET("verify", h.VerifyEmail)
+			defer mock_fga.ClearMocks(client.fga)
 
 			// set privacy allow in order to allow the creation of the users without
 			// authentication in the tests
 			ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 			// create user in the database
-			userSetting := EntClient.UserSetting.Create().
+			userSetting := client.db.UserSetting.Create().
 				SetEmailConfirmed(tc.userConfirmed).
 				SaveX(ctx)
 
-			u := EntClient.User.Create().
+			// mock writes for user creation
+			mock_fga.WriteAny(t, client.fga)
+
+			u := client.db.User.Create().
 				SetFirstName(gofakeit.FirstName()).
 				SetLastName(gofakeit.LastName()).
 				SetEmail(tc.email).
@@ -113,7 +119,7 @@ func TestVerifyHandler(t *testing.T) {
 			}
 
 			// store token in db
-			et := EntClient.EmailVerificationToken.Create().
+			et := client.db.EmailVerificationToken.Create().
 				SetOwner(u).
 				SetToken(user.EmailVerificationToken.String).
 				SetEmail(user.Email).
@@ -132,7 +138,7 @@ func TestVerifyHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -149,9 +155,6 @@ func TestVerifyHandler(t *testing.T) {
 
 				assert.Contains(t, out.Message, tc.expectedResp)
 			}
-
-			// cleanup after
-			EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
 		})
 	}
 }

@@ -62,63 +62,57 @@ func HookGroupMembersAuthz() ent.Hook {
 
 func groupMemberCreateHook(ctx context.Context, m *generated.GroupMembershipMutation) error {
 	// Add relationship tuples if authz is enabled
-	if m.Authz.Ofga != nil {
-		tuple, err := getGroupMemberTuple(m)
-		if err != nil {
-			return err
-		}
-
-		if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
-			m.Logger.Errorw("failed to create relationship tuple", "error", err)
-
-			return err
-		}
-
-		m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", tuple.Object)
+	tuple, err := getGroupMemberTuple(m)
+	if err != nil {
+		return err
 	}
+
+	if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
+		m.Logger.Errorw("failed to create relationship tuple", "error", err)
+
+		return err
+	}
+
+	m.Logger.Debugw("created relationship tuples", "relation", fga.OwnerRelation, "object", tuple.Object)
 
 	return nil
 }
 
 func groupMemberDeleteHook(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) error {
-	if m.Authz.Ofga != nil {
-		tuples, err := getDeleteGroupMemberTuples(ctx, m, ids)
-		if err != nil {
+	tuples, err := getDeleteGroupMemberTuples(ctx, m, ids)
+	if err != nil {
+		return err
+	}
+
+	if len(tuples) > 0 {
+		if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
+			m.Logger.Errorw("failed to delete relationship tuple", "error", err)
+
 			return err
 		}
 
-		if len(tuples) > 0 {
-			if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
-				m.Logger.Errorw("failed to delete relationship tuple", "error", err)
-
-				return err
-			}
-
-			m.Logger.Debugw("deleted group relationship tuples")
-		}
+		m.Logger.Debugw("deleted group relationship tuples")
 	}
 
 	return nil
 }
 
 func groupMemberUpdateHook(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) error {
-	if m.Authz.Ofga != nil {
-		writes, deletes, err := getUpdateGroupMemberTuples(ctx, m, ids)
-		if err != nil {
-			return err
-		}
+	writes, deletes, err := getUpdateGroupMemberTuples(ctx, m, ids)
+	if err != nil {
+		return err
+	}
 
-		if len(writes) == 0 && len(deletes) == 0 {
-			m.Logger.Debugw("no relationships to create or delete")
+	if len(writes) == 0 && len(deletes) == 0 {
+		m.Logger.Debugw("no relationships to create or delete")
 
-			return nil
-		}
+		return nil
+	}
 
-		if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
-			m.Logger.Errorw("failed to update relationship tuple", "error", err)
+	if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
+		m.Logger.Errorw("failed to update relationship tuple", "error", err)
 
-			return err
-		}
+		return err
 	}
 
 	return nil

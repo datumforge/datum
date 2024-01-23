@@ -16,18 +16,12 @@ import (
 func InterceptorOrganization() ent.Interceptor {
 	return ent.InterceptFunc(func(next ent.Querier) ent.Querier {
 		return intercept.OrganizationFunc(func(ctx context.Context, q *generated.OrganizationQuery) (generated.Value, error) {
-			// We only care these checks with authz is enabled, if this is empty skip interception checks
-			if q.Authz.Ofga != nil {
-				// run the query
-				v, err := next.Query(ctx, q)
-				if err != nil {
-					return nil, err
-				}
-
-				return filterOrgsByAccess(ctx, q, v)
+			v, err := next.Query(ctx, q)
+			if err != nil {
+				return nil, err
 			}
 
-			return next.Query(ctx, q)
+			return filterOrgsByAccess(ctx, q, v)
 		})
 	})
 }

@@ -35,17 +35,6 @@ func (r *updateGroupInputResolver) AddGroupMembers(ctx context.Context, obj *gen
 		return ErrInternalServerError
 	}
 
-	// if r.authDisabled {
-	// 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	// } else {
-	// 	// setup view context
-	// 	v := viewer.UserViewer{
-	// 		GroupID: groupID.(string),
-	// 	}
-
-	// 	ctx = viewer.NewContext(ctx, v)
-	// }
-
 	c := withTransactionalMutation(ctx)
 	builders := make([]*generated.GroupMembershipCreate, len(data))
 	for i := range data {

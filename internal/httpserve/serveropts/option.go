@@ -128,10 +128,6 @@ func WithFGAAuthz() ServerOption {
 		}
 
 		s.Config.Authz = *config
-
-		if !s.Config.Authz.Enabled {
-			return
-		}
 	})
 }
 
@@ -247,7 +243,7 @@ func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client, r *goredis.Client)
 func WithGraphRoute(srv *server.Server, c *generated.Client, mw []echo.MiddlewareFunc) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Setup Graph API Handlers
-		r := graphapi.NewResolver(c, s.Config.Auth.Enabled).
+		r := graphapi.NewResolver(c).
 			WithLogger(s.Config.Logger.Named("resolvers"))
 
 		handler := r.Handler(s.Config.Server.Dev, mw...)

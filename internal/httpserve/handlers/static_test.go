@@ -9,7 +9,13 @@ import (
 )
 
 func TestStaticHandler(t *testing.T) {
-	h := handlerSetup(t, EntClient)
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// add handlers
+	client.e.GET("security.txt", client.h.SecurityHandler)
+	client.e.GET("robots.txt", client.h.RobotsHandler)
+	client.e.GET(".well-known", client.h.JWKSWellKnownHandler)
 
 	testCases := []struct {
 		name         string
@@ -55,20 +61,13 @@ func TestStaticHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context with middleware
-			e := setupEchoAuth(EntClient)
-
-			e.GET("security.txt", h.SecurityHandler)
-			e.GET("robots.txt", h.RobotsHandler)
-			e.GET(".well-known", h.JWKSWellKnownHandler)
-
 			req := httptest.NewRequest(http.MethodGet, tc.path, nil)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

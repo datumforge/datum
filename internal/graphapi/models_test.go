@@ -2,6 +2,8 @@ package graphapi_test
 
 import (
 	"context"
+	"fmt"
+	"testing"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -9,9 +11,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 type OrganizationBuilder struct {
+	client *client
+
+	// Fields
 	Name        string
 	DisplayName string
 	Description *string
@@ -21,19 +27,31 @@ type OrganizationBuilder struct {
 }
 
 type OrganizationCleanup struct {
+	client *client
+
+	// Fields
 	OrgID string
 }
 
 type GroupBuilder struct {
+	client *client
+
+	// Fields
 	Name  string
 	Owner string
 }
 
 type GroupCleanup struct {
+	client *client
+
+	// Fields
 	GroupID string
 }
 
 type UserBuilder struct {
+	client *client
+
+	// Fields
 	FirstName string
 	LastName  string
 	Email     string
@@ -41,30 +59,48 @@ type UserBuilder struct {
 }
 
 type UserCleanup struct {
+	client *client
+
+	// Fields
 	UserID string
 }
 
 type OrgMemberBuilder struct {
+	client *client
+
+	// Fields
 	UserID string
 	OrgID  string
 	Role   string
 }
 
 type OrgMemberCleanup struct {
+	client *client
+
+	// Fields
 	ID string
 }
 
 type GroupMemberBuilder struct {
+	client *client
+
+	// Fields
 	UserID  string
 	GroupID string
 	Role    string
 }
 
 type GroupMemberCleanup struct {
+	client *client
+
+	// Fields
 	ID string
 }
 
 type PersonalAccessTokenBuilder struct {
+	client *client
+
+	// Fields
 	Name        string
 	Token       string
 	Abilities   []string
@@ -74,7 +110,13 @@ type PersonalAccessTokenBuilder struct {
 }
 
 // MustNew organization builder is used to create, without authz checks, orgs in the database
-func (o *OrganizationBuilder) MustNew(ctx context.Context) *ent.Organization {
+func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Organization {
+	if !o.PersonalOrg {
+		// mock writes
+		mock_fga.WriteOnce(t, o.client.fga)
+	}
+
+	// no auth, so allow policy
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	if o.Name == "" {
@@ -90,24 +132,32 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context) *ent.Organization {
 		o.Description = &desc
 	}
 
-	m := EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SetDisplayName(o.DisplayName).SetPersonalOrg(o.PersonalOrg)
+	m := o.client.db.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SetDisplayName(o.DisplayName).SetPersonalOrg(o.PersonalOrg)
 
 	if o.ParentOrgID != "" {
 		m.SetParentID(o.ParentOrgID)
 	}
 
-	return m.SaveX(ctx)
+	org := m.SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(o.client.fga)
+
+	return org
 }
 
 // MustDelete is used to cleanup, without authz checks, orgs in the database
-func (o *OrganizationCleanup) MustDelete(ctx context.Context) {
+func (o *OrganizationCleanup) MustDelete(ctx context.Context, t *testing.T) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	EntClient.Organization.DeleteOneID(o.OrgID).ExecX(ctx)
+	o.client.db.Organization.DeleteOneID(o.OrgID).ExecX(ctx)
 }
 
 // MustNew user builder is used to create, without authz checks, users in the database
-func (u *UserBuilder) MustNew(ctx context.Context) *ent.User {
+func (u *UserBuilder) MustNew(ctx context.Context, t *testing.T) *ent.User {
+	// mock writes
+	mock_fga.WriteOnce(t, u.client.fga)
+
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	if u.FirstName == "" {
@@ -127,35 +177,46 @@ func (u *UserBuilder) MustNew(ctx context.Context) *ent.User {
 	}
 
 	// create user setting
-	userSetting := EntClient.UserSetting.Create().SaveX(ctx)
+	userSetting := u.client.db.UserSetting.Create().SaveX(ctx)
 
-	return EntClient.User.Create().
+	user := u.client.db.User.Create().
 		SetFirstName(u.FirstName).
 		SetLastName(u.LastName).
 		SetEmail(u.Email).
 		SetPassword(u.Password).
 		SetSetting(userSetting).
 		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(u.client.fga)
+
+	return user
 }
 
 // MustDelete is used to cleanup, without authz checks, users in the database
-func (u *UserCleanup) MustDelete(ctx context.Context) {
+func (u *UserCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	// mock checks
+	mock_fga.ListAny(t, u.client.fga, []string{})
+
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	EntClient.User.DeleteOneID(u.UserID).ExecX(ctx)
+	u.client.db.User.DeleteOneID(u.UserID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(u.client.fga)
 }
 
 // MustNew user builder is used to create, without authz checks, org members in the database
-func (om *OrgMemberBuilder) MustNew(ctx context.Context) *ent.OrgMembership {
+func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgMembership {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	if om.OrgID == "" {
-		org := (&OrganizationBuilder{}).MustNew(ctx)
+		org := (&OrganizationBuilder{client: om.client}).MustNew(ctx, t)
 		om.OrgID = org.ID
 	}
 
 	if om.UserID == "" {
-		user := (&UserBuilder{}).MustNew(ctx)
+		user := (&UserBuilder{client: om.client}).MustNew(ctx, t)
 		om.UserID = user.ID
 	}
 
@@ -164,22 +225,37 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context) *ent.OrgMembership {
 		role = enums.RoleMember
 	}
 
-	return EntClient.OrgMembership.Create().
+	// mock writes
+	mock_fga.ListOnce(t, om.client.fga, []string{fmt.Sprintf("organization:%s", om.OrgID)}, nil)
+	mock_fga.WriteOnce(t, om.client.fga)
+
+	orgMembers := om.client.db.OrgMembership.Create().
 		SetUserID(om.UserID).
 		SetOrgID(om.OrgID).
 		SetRole(role).
 		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(om.client.fga)
+
+	return orgMembers
 }
 
 // MustDelete is used to cleanup, without authz checks, org members in the database
-func (om *OrgMemberCleanup) MustDelete(ctx context.Context) {
+func (om *OrgMemberCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	// mock writes
+	mock_fga.WriteOnce(t, om.client.fga)
+
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	EntClient.OrgMembership.DeleteOneID(om.ID).ExecX(ctx)
+	om.client.db.OrgMembership.DeleteOneID(om.ID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(om.client.fga)
 }
 
 // MustNew group builder is used to create, without authz checks, groups in the database
-func (g *GroupBuilder) MustNew(ctx context.Context) *ent.Group {
+func (g *GroupBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Group {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	if g.Name == "" {
@@ -190,76 +266,76 @@ func (g *GroupBuilder) MustNew(ctx context.Context) *ent.Group {
 	owner := g.Owner
 
 	if g.Owner == "" {
-		org := (&OrganizationBuilder{}).MustNew(ctx)
+		org := (&OrganizationBuilder{client: g.client}).MustNew(ctx, t)
 		owner = org.ID
 	}
 
-	return EntClient.Group.Create().SetName(g.Name).SetOwnerID(owner).SaveX(ctx)
-}
+	// mock writes
+	mock_fga.WriteAny(t, g.client.fga)
 
-// MustNewWithRelations group builder is used to create groups in the database with an auth'ed client
-func (g *GroupBuilder) MustNewWithRelations(ctx context.Context, c *ent.Client) *ent.Group {
-	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	group := g.client.db.Group.Create().SetName(g.Name).SetOwnerID(owner).SaveX(ctx)
 
-	if g.Name == "" {
-		g.Name = gofakeit.AppName()
-	}
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(g.client.fga)
 
-	// create owner if not provided
-	owner := g.Owner
-
-	if g.Owner == "" {
-		org := (&OrganizationBuilder{}).MustNew(ctx)
-		owner = org.ID
-	}
-
-	return c.Group.Create().SetName(g.Name).SetOwnerID(owner).SaveX(ctx)
+	return group
 }
 
 // MustDelete is used to cleanup, without authz checks, groups in the database
-func (g *GroupCleanup) MustDelete(ctx context.Context) {
+func (g *GroupCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	// mock writes
+	mock_fga.ReadAny(t, g.client.fga)
+
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	EntClient.Group.DeleteOneID(g.GroupID).ExecX(ctx)
+	g.client.db.Group.DeleteOneID(g.GroupID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(g.client.fga)
 }
 
 // MustNew group builder is used to create, without authz checks, personal access tokens in the database
-func (t *PersonalAccessTokenBuilder) MustNew(ctx context.Context) *ent.PersonalAccessToken {
+func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.PersonalAccessToken {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	if t.Name == "" {
-		t.Name = gofakeit.AppName()
+	if pat.Name == "" {
+		pat.Name = gofakeit.AppName()
 	}
 
-	if t.Description == "" {
-		t.Description = gofakeit.HipsterSentence(5)
+	if pat.Description == "" {
+		pat.Description = gofakeit.HipsterSentence(5)
 	}
 
-	if t.OwnerID == "" {
-		owner := (&UserBuilder{}).MustNew(ctx)
-		t.OwnerID = owner.ID
+	if pat.OwnerID == "" {
+		owner := (&UserBuilder{client: pat.client}).MustNew(ctx, t)
+		pat.OwnerID = owner.ID
 	}
 
-	return EntClient.PersonalAccessToken.Create().
-		SetName(t.Name).
-		SetOwnerID(t.OwnerID).
-		SetToken(t.Token).
-		SetDescription(t.Description).
-		SetExpiresAt(t.ExpiresAt).
+	token := pat.client.db.PersonalAccessToken.Create().
+		SetName(pat.Name).
+		SetOwnerID(pat.OwnerID).
+		SetToken(pat.Token).
+		SetDescription(pat.Description).
+		SetExpiresAt(pat.ExpiresAt).
 		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(pat.client.fga)
+
+	return token
 }
 
 // MustNew user builder is used to create, without authz checks, group members in the database
-func (gm *GroupMemberBuilder) MustNew(ctx context.Context) *ent.GroupMembership {
+func (gm *GroupMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.GroupMembership {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	if gm.GroupID == "" {
-		group := (&GroupBuilder{}).MustNew(ctx)
+		group := (&GroupBuilder{client: gm.client}).MustNew(ctx, t)
 		gm.GroupID = group.ID
 	}
 
 	if gm.UserID == "" {
-		user := (&UserBuilder{}).MustNew(ctx)
+		user := (&UserBuilder{client: gm.client}).MustNew(ctx, t)
 		gm.UserID = user.ID
 	}
 
@@ -268,16 +344,30 @@ func (gm *GroupMemberBuilder) MustNew(ctx context.Context) *ent.GroupMembership 
 		role = enums.RoleMember
 	}
 
-	return EntClient.GroupMembership.Create().
+	// mock writes
+	mock_fga.WriteOnce(t, gm.client.fga)
+
+	groupMember := gm.client.db.GroupMembership.Create().
 		SetUserID(gm.UserID).
 		SetGroupID(gm.GroupID).
 		SetRole(role).
 		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(gm.client.fga)
+
+	return groupMember
 }
 
 // MustDelete is used to cleanup, without authz checks, group members in the database
-func (gm *GroupMemberCleanup) MustDelete(ctx context.Context) {
+func (gm *GroupMemberCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	// mock writes
+	mock_fga.WriteOnce(t, gm.client.fga)
+
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	EntClient.GroupMembership.DeleteOneID(gm.ID).ExecX(ctx)
+	gm.client.db.GroupMembership.DeleteOneID(gm.ID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(gm.client.fga)
 }

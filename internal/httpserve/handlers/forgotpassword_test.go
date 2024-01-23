@@ -16,6 +16,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/emails"
@@ -23,18 +24,25 @@ import (
 )
 
 func TestForgotPasswordHandler(t *testing.T) {
-	h := handlerSetup(t, EntClient)
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// setup handler
+	client.e.POST("forgot-password", client.h.ForgotPassword)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
 	// create user in the database
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
-	userSetting := EntClient.UserSetting.Create().
+	// add mocks for writes
+	mock_fga.WriteAny(t, client.fga)
+
+	userSetting := client.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	u := EntClient.User.Create().
+	_ = client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("asandler@datum.net").
@@ -73,9 +81,6 @@ func TestForgotPasswordHandler(t *testing.T) {
 			sent := time.Now()
 			mock.ResetEmailMock()
 
-			e := setupEcho()
-			e.POST("forgot-password", h.ForgotPassword)
-
 			resendJSON := handlers.ForgotPasswordRequest{
 				Email: tc.email,
 			}
@@ -91,7 +96,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -113,7 +118,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
-					From:      h.SendGridConfig.FromEmail,
+					From:      client.h.SendGridConfig.FromEmail,
 					Subject:   emails.PasswordResetRequestRE,
 					Timestamp: sent,
 				},
@@ -121,7 +126,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 			// wait for messages
 			predicate := func() bool {
-				return h.TaskMan.GetQueueLength() == 0
+				return client.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 
@@ -136,7 +141,4 @@ func TestForgotPasswordHandler(t *testing.T) {
 			}
 		})
 	}
-
-	// cleanup after
-	EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
 }

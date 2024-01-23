@@ -35,17 +35,14 @@ var (
 
 // Resolver provides a graph response resolver
 type Resolver struct {
-	client       *ent.Client
-	logger       *zap.SugaredLogger
-	authDisabled bool
+	client *ent.Client
+	logger *zap.SugaredLogger
 }
 
 // NewResolver returns a resolver configured with the given ent client
-func NewResolver(client *ent.Client, authEnabled bool) *Resolver {
+func NewResolver(client *ent.Client) *Resolver {
 	return &Resolver{
 		client: client,
-		// do not disable auth by default
-		authDisabled: !authEnabled,
 	}
 }
 

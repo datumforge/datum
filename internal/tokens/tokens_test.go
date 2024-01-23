@@ -7,11 +7,11 @@ import (
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 const (
@@ -205,7 +205,7 @@ func (s *TokenTestSuite) TestInvalidTokens() {
 	now := time.Now()
 	claims := &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ID:        uuid.NewString(),                               // id not validated
+			ID:        ulids.New().String(),                           // id not validated
 			Subject:   "01H6PGFB4T34D4WWEXQMAGJNMK",                   // correct subject
 			Audience:  jwt.ClaimStrings{"http://foo.example.com"},     // wrong audience
 			IssuedAt:  jwt.NewNumericDate(now.Add(-1 * time.Hour)),    // iat not validated

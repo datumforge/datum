@@ -8,6 +8,8 @@ import (
 	"github.com/datumforge/datum/internal/utils/emails"
 )
 
+const adminEmail = "meow@mattthecat.com"
+
 func TestSendGrid(t *testing.T) {
 	conf := &emails.Config{}
 	require.False(t, conf.Enabled(), "sendgrid should be disabled when there is no API key")
@@ -18,27 +20,27 @@ func TestSendGrid(t *testing.T) {
 
 	// FromEmail is required when enabled
 	conf.FromEmail = ""
-	conf.AdminEmail = "meow@mattthecat.com"
+	conf.AdminEmail = adminEmail
 	require.Error(t, conf.Validate(), "expected from email to be required")
 
 	// AdminEmail is required when enabled
-	conf.FromEmail = "meow@mattthecat.com"
+	conf.FromEmail = adminEmail
 	conf.AdminEmail = ""
 	require.Error(t, conf.Validate(), "expected admin email to be required")
 
 	// Require parsable emails when enabled
 	conf.FromEmail = "tacos"
-	conf.AdminEmail = "meow@mattthecat.com"
+	conf.AdminEmail = adminEmail
 	require.Error(t, conf.Validate())
 
-	conf.FromEmail = "meow@mattthecat.com"
+	conf.FromEmail = adminEmail
 	conf.AdminEmail = "tacos"
 	require.Error(t, conf.Validate())
 
 	// Should be valid when enabled and emails are specified
 	conf = &emails.Config{
 		SendGridAPIKey: "testing123",
-		FromEmail:      "meow@mattthecat.com",
+		FromEmail:      adminEmail,
 		AdminEmail:     "sarahistheboss@example.com",
 	}
 	require.NoError(t, conf.Validate(), "expected configuration to be valid")

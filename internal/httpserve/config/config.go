@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/emails"
 )
 
 var (
@@ -88,6 +89,8 @@ type (
 		Handler handlers.Handler `yaml:"checks"`
 		// Token contains the token config settings
 		Token tokens.Config `yaml:"token"`
+
+		Email emails.Config `yaml:"email"`
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together

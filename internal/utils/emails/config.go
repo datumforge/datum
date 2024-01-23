@@ -2,9 +2,7 @@ package emails
 
 import (
 	"net/mail"
-
-	"github.com/sendgrid/rest"
-	sgmail "github.com/sendgrid/sendgrid-go/helpers/mail"
+	"net/url"
 
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
@@ -25,17 +23,16 @@ type Config struct {
 	AdminEmail string `split_words:"true" default:"admins@datum.net"`
 }
 
-// Email subject lines
-const (
-	WelcomeRE              = "Welcome to Datum!"
-	VerifyEmailRE          = "Please verify your email address to login to Datum"
-	InviteRE               = "Join Your Teammate %s on Datum!"
-	PasswordResetRequestRE = "Datum Password Reset - Action Required"
-	PasswordResetSuccessRE = "Datum Password Reset Confirmation"
-)
+// URLConfig for the datum registration
+type URLConfig struct {
+	Base   string `split_words:"true" default:"https://api.datum.net"`
+	Verify string `split_words:"true" default:"/v1/verify"`
+	Invite string `split_words:"true" default:"/v1/invite"`
+	Reset  string `split_words:"true" default:"/v1/reset-password"`
+}
 
 // Validate the from and admin emails are present if the SendGrid API is enabled
-func (c *Config) Validate() (err error) {
+func (c Config) Validate() (err error) {
 	if c.Enabled() {
 		if c.AdminEmail == "" || c.FromEmail == "" {
 			return ErrBothAdminAndFromRequired
@@ -58,12 +55,12 @@ func (c *Config) Validate() (err error) {
 }
 
 // Enabled returns true if there is a SendGrid API key available
-func (c *Config) Enabled() bool {
+func (c Config) Enabled() bool {
 	return c.SendGridAPIKey != ""
 }
 
 // FromContact parses the FromEmail and returns a sendgrid contact
-func (c *Config) FromContact() (sendgrid.Contact, error) {
+func (c Config) FromContact() (sendgrid.Contact, error) {
 	return parseEmail(c.FromEmail)
 }
 
@@ -74,7 +71,7 @@ func (c Config) AdminContact() (sendgrid.Contact, error) {
 
 // MustFromContact function is a helper function that returns the
 // `sendgrid.Contact` for the `FromEmail` field in the `Config` struct
-func (c *Config) MustFromContact() sendgrid.Contact {
+func (c Config) MustFromContact() sendgrid.Contact {
 	contact, err := c.FromContact()
 	if err != nil {
 		panic(err)
@@ -88,7 +85,7 @@ func (c *Config) MustFromContact() sendgrid.Contact {
 // `AdminContact` function to parse the `AdminEmail` and return a `sendgrid.Contact`. If there is an
 // error parsing the email, it will panic and throw an error. Otherwise, it will return the parsed
 // `sendgrid.Contact`
-func (c *Config) MustAdminContact() sendgrid.Contact {
+func (c Config) MustAdminContact() sendgrid.Contact {
 	contact, err := c.AdminContact()
 	if err != nil {
 		panic(err)
@@ -121,8 +118,59 @@ func parseEmail(email string) (contact sendgrid.Contact, err error) {
 	return contact, nil
 }
 
-// SendGridClient is an interface that can be implemented by live email clients to send
-// real emails or by mock clients for testing
-type SendGridClient interface {
-	Send(email *sgmail.SGMailV3) (*rest.Response, error)
+func (c URLConfig) Validate() error {
+	if c.Base == "" {
+		return newInvalidEmailConfigError("base URL")
+	}
+
+	if c.Invite == "" {
+		return newInvalidEmailConfigError("invite path")
+	}
+
+	if c.Verify == "" {
+		return newInvalidEmailConfigError("verify path")
+	}
+
+	if c.Reset == "" {
+		return newInvalidEmailConfigError("reset path")
+	}
+
+	return nil
+}
+
+// InviteURL Construct an invite URL from the token.
+func (c URLConfig) InviteURL(token string) (string, error) {
+	if token == "" {
+		return "", newMissingRequiredFieldError("token")
+	}
+
+	base, _ := url.Parse(c.Base)
+	url := base.ResolveReference(&url.URL{Path: c.Invite, RawQuery: url.Values{"token": []string{token}}.Encode()})
+
+	return url.String(), nil
+}
+
+// VerifyURL constructs a verify URL from the token.
+func (c URLConfig) VerifyURL(token string) (string, error) {
+	if token == "" {
+		return "", newMissingRequiredFieldError("token")
+	}
+
+	base, _ := url.Parse(c.Base)
+	url := base.ResolveReference(&url.URL{Path: c.Verify, RawQuery: url.Values{"token": []string{token}}.Encode()})
+
+	return url.String(), nil
+}
+
+// ResetURL constructs a reset URL from the token.
+func (c URLConfig) ResetURL(token string) (string, error) {
+	if token == "" {
+		return "", newMissingRequiredFieldError("token")
+	}
+
+	base, _ := url.Parse(c.Base)
+
+	url := base.ResolveReference(&url.URL{Path: c.Reset, RawQuery: url.Values{"token": []string{token}}.Encode()})
+
+	return url.String(), nil
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -20,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
@@ -30,11 +32,22 @@ func TestRefreshHandler(t *testing.T) {
 		t.Error("error creating token manager")
 	}
 
+	emConfig := emails.Config{
+		Testing:   true,
+		Archive:   filepath.Join("fixtures", "emails"),
+		FromEmail: "mitb@datum.net",
+	}
+
+	em, err := emails.New(emConfig)
+	if err != nil {
+		t.Error("error creating email manager")
+	}
+
 	h := handlers.Handler{
 		TM:           tm,
 		DBClient:     EntClient,
 		Logger:       zap.NewNop().Sugar(),
-		CookieDomain: "datum.net",
+		EmailManager: em,
 	}
 
 	ec := echocontext.NewTestEchoContext().Request().Context()

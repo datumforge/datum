@@ -41,12 +41,14 @@ func TestResetPassword(t *testing.T) {
 		expectedEmailSubject string
 		expectedResp         string
 		expectedStatus       int
+		from                 string
 	}{
 		{
 			name:                 "happy path",
 			email:                "kelsier@datum.net",
 			tokenSet:             true,
 			newPassword:          "6z9Fqc-E-9v32NsJzLNU",
+			from:                 "funkhous@datum.net",
 			emailExpected:        true,
 			expectedEmailSubject: emails.PasswordResetSuccessRE,
 			expectedResp:         emptyResponse,
@@ -59,6 +61,7 @@ func TestResetPassword(t *testing.T) {
 			tokenProvided:  "thisisnotavalidtoken",
 			newPassword:    "6z9Fqc-E-9v32NsJzLNU",
 			emailExpected:  false,
+			from:           "notactuallyanemail",
 			expectedResp:   "password reset token invalid",
 			expectedStatus: http.StatusBadRequest,
 		},
@@ -68,6 +71,7 @@ func TestResetPassword(t *testing.T) {
 			tokenSet:       true,
 			newPassword:    "weak1",
 			emailExpected:  false,
+			from:           "nottodaysatan",
 			expectedResp:   "password is too weak",
 			expectedStatus: http.StatusBadRequest,
 		},
@@ -77,6 +81,7 @@ func TestResetPassword(t *testing.T) {
 			tokenSet:       true,
 			newPassword:    validPassword,
 			emailExpected:  false,
+			from:           "mmhmm",
 			expectedResp:   "password was already used",
 			expectedStatus: http.StatusBadRequest,
 		},
@@ -86,6 +91,7 @@ func TestResetPassword(t *testing.T) {
 			tokenSet:       false,
 			newPassword:    "6z9Fqc-E-9v32NsJzLNU",
 			emailExpected:  false,
+			from:           "yadayadayada",
 			expectedResp:   "token is required",
 			expectedStatus: http.StatusBadRequest,
 		},
@@ -95,6 +101,7 @@ func TestResetPassword(t *testing.T) {
 			newPassword:    "6z9Fqc-E-9v32NsJzLNP",
 			tokenSet:       true,
 			emailExpected:  false,
+			from:           "zonkertons",
 			ttl:            "1987-08-16T03:04:11.169086-07:00",
 			expectedResp:   "reset token is expired, please request a new token using forgot-password",
 			expectedStatus: http.StatusBadRequest,
@@ -165,7 +172,7 @@ func TestResetPassword(t *testing.T) {
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
-					From:      h.SendGridConfig.FromEmail,
+					From:      tc.from,
 					Subject:   tc.expectedEmailSubject,
 					Timestamp: sent,
 				},

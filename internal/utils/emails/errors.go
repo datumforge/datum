@@ -1,6 +1,9 @@
 package emails
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 var (
 	// ErrMissingSubject is returned when the email is missing a subject
@@ -33,3 +36,39 @@ var (
 	// ErrBothAdminAndFromRequired
 	ErrBothAdminAndFromRequired = errors.New("invalid configuration: admin and from emails are required if sendgrid is enabled")
 )
+
+// InvalidEmailConfigError is returned when an invalid url configuration was provided
+type InvalidEmailConfigError struct {
+	// RequiredField that is missing
+	RequiredField string
+}
+
+// Error returns the InvalidEmailConfigError in string format
+func (e *InvalidEmailConfigError) Error() string {
+	return fmt.Sprintf("invalid email url configuration: %s is required", e.RequiredField)
+}
+
+// newInvalidEmailConfigError returns an error for a missing required field in the email config
+func newInvalidEmailConfigError(field string) *InvalidEmailConfigError {
+	return &InvalidEmailConfigError{
+		RequiredField: field,
+	}
+}
+
+// MissingRequiredFieldError is returned when a required field was not provided in a request
+type MissingRequiredFieldError struct {
+	// RequiredField that is missing
+	RequiredField string
+}
+
+// Error returns the InvalidEmailConfigError in string format
+func (e *MissingRequiredFieldError) Error() string {
+	return fmt.Sprintf("%s is required", e.RequiredField)
+}
+
+// newMissingRequiredField returns an error for a missing required field
+func newMissingRequiredFieldError(field string) *MissingRequiredFieldError {
+	return &MissingRequiredFieldError{
+		RequiredField: field,
+	}
+}

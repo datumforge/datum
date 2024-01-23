@@ -6,16 +6,13 @@ import (
 
 	"entgo.io/ent"
 
-	"github.com/cenkalti/backoff/v4"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 // HookInvite runs on invite mutations
@@ -85,6 +82,9 @@ func doesUserHaveMembership(ctx context.Context, m *generated.InviteMutation) (b
 
 func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	email, _ := m.Recipient()
+	//	orgID, _ := m.OwnerID()
+
+	//	org, err := m.Client().Organization.Query().Where(organization.ID(orgID)).Only(ctx)
 
 	verify, err := tokens.NewVerificationToken(email)
 	if err != nil {
@@ -111,17 +111,14 @@ func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*gener
 
 	m.SetRequestorID(userID)
 
+	//	requestor, err := m.Client().User.Query().Where(user.ID(userID)).Only(ctx)
+
+	//	invite := &handlers.Invite{
+	//		OrgName:	org.Name,
+	//		Token:	token,
+	//		Requestor: requestor.FirstName,
+	//		Recipient: email,
+	//	}
+
 	return m, nil
-}
-
-func constructEmails(h handlers.Handler, recipient, requestor, orgName, token string) error {
-	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return h.SendOrgInvitationEmail(recipient, requestor, orgName, token)
-	}), marionette.WithRetries(3), // nolint: gomnd
-		marionette.WithBackoff(backoff.NewExponentialBackOff()),
-	); err != nil {
-		return err
-	}
-
-	return nil
 }

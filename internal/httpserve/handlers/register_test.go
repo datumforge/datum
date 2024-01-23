@@ -46,6 +46,7 @@ func TestRegisterHandler(t *testing.T) {
 		emailExpected      bool
 		expectedErrMessage string
 		expectedStatus     int
+		from               string
 	}{
 		{
 			name:           "happy path",
@@ -192,7 +193,7 @@ func TestRegisterHandler(t *testing.T) {
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
-					From:      h.SendGridConfig.FromEmail,
+					From:      "no-reply@datum.net",
 					Subject:   emails.VerifyEmailRE,
 					Timestamp: sent,
 				},

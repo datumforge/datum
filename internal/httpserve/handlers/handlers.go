@@ -16,20 +16,14 @@ type Handler struct {
 	DBClient *ent.Client
 	// TM contains the token manager in order to validate auth requests
 	TM *tokens.TokenManager
-	// CookieDomain is the domain set in cookie for authenticated requests, defaults to datum.net
-	CookieDomain string
 	// Logger provides the zap logger to do logging things from the handlers
 	Logger *zap.SugaredLogger
 	// ReadyChecks is a set of checkFuncs to determine if the application is "ready" upon startup
 	ReadyChecks Checks
 	// JWTKeys contains the set of valid JWT authentication key
 	JWTKeys jwk.Set
-	// SendGridConfig containing the email configuration
-	SendGridConfig *emails.Config
-	// emailManager to handle sending emails
-	emailManager *emails.EmailManager
-	// EmailURL contains the urls used within emails
-	EmailURL *URLConfig
+	// EmailManager to handle sending emails
+	EmailManager *emails.EmailManager
 	// TaskMan manages tasks in a separate goroutine to allow for non blocking operations
 	TaskMan *marionette.TaskManager
 }

@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -18,8 +19,8 @@ type Entitlement struct {
 func (Entitlement) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("tier").
-			Values("free", "pro", "enterprise").
-			Default("free"),
+			GoType(enums.Tier("")).
+			Default(string(enums.Free)),
 		field.String("external_customer_id").
 			Comment("used to store references to external systems, e.g. Stripe").
 			Optional(),

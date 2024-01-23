@@ -4,13 +4,13 @@ package groupsetting
 
 import (
 	"fmt"
-	"io"
-	"strconv"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 const (
@@ -114,54 +114,24 @@ var (
 	DefaultID func() string
 )
 
-// Visibility defines the type for the "visibility" enum field.
-type Visibility string
-
-// VisibilityPublic is the default value of the Visibility enum.
-const DefaultVisibility = VisibilityPublic
-
-// Visibility values.
-const (
-	VisibilityPublic  Visibility = "PUBLIC"
-	VisibilityPrivate Visibility = "PRIVATE"
-)
-
-func (v Visibility) String() string {
-	return string(v)
-}
+const DefaultVisibility enums.Visibility = "PUBLIC"
 
 // VisibilityValidator is a validator for the "visibility" field enum values. It is called by the builders before save.
-func VisibilityValidator(v Visibility) error {
-	switch v {
-	case VisibilityPublic, VisibilityPrivate:
+func VisibilityValidator(v enums.Visibility) error {
+	switch v.String() {
+	case "PUBLIC", "PRIVATE":
 		return nil
 	default:
 		return fmt.Errorf("groupsetting: invalid enum value for visibility field: %q", v)
 	}
 }
 
-// JoinPolicy defines the type for the "join_policy" enum field.
-type JoinPolicy string
-
-// JoinPolicyInviteOrApplication is the default value of the JoinPolicy enum.
-const DefaultJoinPolicy = JoinPolicyInviteOrApplication
-
-// JoinPolicy values.
-const (
-	JoinPolicyOpen                JoinPolicy = "OPEN"
-	JoinPolicyInviteOnly          JoinPolicy = "INVITE_ONLY"
-	JoinPolicyApplicationOnly     JoinPolicy = "APPLICATION_ONLY"
-	JoinPolicyInviteOrApplication JoinPolicy = "INVITE_OR_APPLICATION"
-)
-
-func (jp JoinPolicy) String() string {
-	return string(jp)
-}
+const DefaultJoinPolicy enums.JoinPolicy = "INVITE_OR_APPLICATION"
 
 // JoinPolicyValidator is a validator for the "join_policy" field enum values. It is called by the builders before save.
-func JoinPolicyValidator(jp JoinPolicy) error {
-	switch jp {
-	case JoinPolicyOpen, JoinPolicyInviteOnly, JoinPolicyApplicationOnly, JoinPolicyInviteOrApplication:
+func JoinPolicyValidator(jp enums.JoinPolicy) error {
+	switch jp.String() {
+	case "OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION":
 		return nil
 	default:
 		return fmt.Errorf("groupsetting: invalid enum value for join_policy field: %q", jp)
@@ -240,38 +210,16 @@ func newGroupStep() *sqlgraph.Step {
 	)
 }
 
-// MarshalGQL implements graphql.Marshaler interface.
-func (e Visibility) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(e.String()))
-}
+var (
+	// enums.Visibility must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.Visibility)(nil)
+	// enums.Visibility must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.Visibility)(nil)
+)
 
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *Visibility) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*e = Visibility(str)
-	if err := VisibilityValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid Visibility", str)
-	}
-	return nil
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (e JoinPolicy) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(e.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *JoinPolicy) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*e = JoinPolicy(str)
-	if err := JoinPolicyValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid JoinPolicy", str)
-	}
-	return nil
-}
+var (
+	// enums.JoinPolicy must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.JoinPolicy)(nil)
+	// enums.JoinPolicy must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.JoinPolicy)(nil)
+)

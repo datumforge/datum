@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -20,16 +21,12 @@ func (GroupSetting) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("visibility").
 			Comment("whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization").
-			NamedValues("public", "PUBLIC", "private", "PRIVATE").
-			Default("PUBLIC"),
+			GoType(enums.Visibility("")).
+			Default(string(enums.Public)),
 		field.Enum("join_policy").
 			Comment("the policy governing ability to freely join a group, whether it requires an invitation, application, or either").
-			NamedValues(
-				"open", "OPEN",
-				"invite_only", "INVITE_ONLY",
-				"application_only", "APPLICATION_ONLY",
-				"invite_or_application", "INVITE_OR_APPLICATION",
-			).Default("INVITE_OR_APPLICATION"),
+			GoType(enums.JoinPolicy("")).
+			Default(string(enums.InviteOrApplication)),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the object").
 			Default([]string{}),

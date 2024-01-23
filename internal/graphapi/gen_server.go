@@ -17,9 +17,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/entitlement"
-	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
-	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -4276,7 +4273,7 @@ input CreateUserSettingInput {
   local user password recovery code generated during account creation - does not exist for oauth'd users
   """
   recoveryCode: String
-  status: UserSettingStatus
+  status: UserSettingUserStatus
   """
   organization to load on user login
   """
@@ -4357,10 +4354,10 @@ type EntitlementEdge {
 """
 EntitlementTier is enum for the field tier
 """
-enum EntitlementTier @goModel(model: "github.com/datumforge/datum/internal/ent/generated/entitlement.Tier") {
-  free
-  pro
-  enterprise
+enum EntitlementTier @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Tier") {
+  FREE
+  PRO
+  ENTERPRISE
 }
 """
 EntitlementWhereInput is used for filtering Entitlement objects.
@@ -4853,7 +4850,7 @@ type GroupSettingEdge {
 """
 GroupSettingJoinPolicy is enum for the field join_policy
 """
-enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.JoinPolicy") {
+enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/enums.JoinPolicy") {
   OPEN
   INVITE_ONLY
   APPLICATION_ONLY
@@ -4862,7 +4859,7 @@ enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/interna
 """
 GroupSettingVisibility is enum for the field visibility
 """
-enum GroupSettingVisibility @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.Visibility") {
+enum GroupSettingVisibility @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Visibility") {
   PUBLIC
   PRIVATE
 }
@@ -7794,7 +7791,7 @@ input UpdateUserSettingInput {
   """
   recoveryCode: String
   clearRecoveryCode: Boolean
-  status: UserSettingStatus
+  status: UserSettingUserStatus
   """
   organization to load on user login
   """
@@ -7926,7 +7923,7 @@ type UserSetting implements Node {
   The time the user was suspended
   """
   suspendedAt: Time
-  status: UserSettingStatus!
+  status: UserSettingUserStatus!
   """
   organization to load on user login
   """
@@ -7969,9 +7966,9 @@ type UserSettingEdge {
   cursor: Cursor!
 }
 """
-UserSettingStatus is enum for the field status
+UserSettingUserStatus is enum for the field status
 """
-enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Status") {
+enum UserSettingUserStatus @goModel(model: "github.com/datumforge/datum/internal/ent/enums.UserStatus") {
   ACTIVE
   INACTIVE
   DEACTIVATED
@@ -8121,10 +8118,10 @@ input UserSettingWhereInput {
   """
   status field predicates
   """
-  status: UserSettingStatus
-  statusNEQ: UserSettingStatus
-  statusIn: [UserSettingStatus!]
-  statusNotIn: [UserSettingStatus!]
+  status: UserSettingUserStatus
+  statusNEQ: UserSettingUserStatus
+  statusIn: [UserSettingUserStatus!]
+  statusNotIn: [UserSettingUserStatus!]
   """
   default_org field predicates
   """
@@ -11514,9 +11511,9 @@ func (ec *executionContext) _Entitlement_tier(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(entitlement.Tier)
+	res := resTmp.(enums.Tier)
 	fc.Result = res
-	return ec.marshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, field.Selections, res)
+	return ec.marshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Entitlement_tier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14848,9 +14845,9 @@ func (ec *executionContext) _GroupSetting_visibility(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(groupsetting.Visibility)
+	res := resTmp.(enums.Visibility)
 	fc.Result = res
-	return ec.marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, field.Selections, res)
+	return ec.marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GroupSetting_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14892,9 +14889,9 @@ func (ec *executionContext) _GroupSetting_joinPolicy(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(groupsetting.JoinPolicy)
+	res := resTmp.(enums.JoinPolicy)
 	fc.Result = res
-	return ec.marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, field.Selections, res)
+	return ec.marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GroupSetting_joinPolicy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -30551,9 +30548,9 @@ func (ec *executionContext) _UserSetting_status(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(usersetting.Status)
+	res := resTmp.(enums.UserStatus)
 	fc.Result = res
-	return ec.marshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNUserSettingUserStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserSetting_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -30563,7 +30560,7 @@ func (ec *executionContext) fieldContext_UserSetting_status(ctx context.Context,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UserSettingStatus does not have child fields")
+			return nil, errors.New("field of type UserSettingUserStatus does not have child fields")
 		},
 	}
 	return fc, nil
@@ -33154,7 +33151,7 @@ func (ec *executionContext) unmarshalInputCreateEntitlementInput(ctx context.Con
 			it.UpdatedBy = data
 		case "tier":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tier"))
-			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, v)
+			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -33433,14 +33430,14 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingInput(ctx context.Co
 			it.UpdatedBy = data
 		case "visibility":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
-			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Visibility = data
 		case "joinPolicy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicy"))
-			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -34450,7 +34447,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 			it.RecoveryCode = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35093,28 +35090,28 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 			it.DeletedByContainsFold = data
 		case "tier":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tier"))
-			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, v)
+			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Tier = data
 		case "tierNEQ":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tierNEQ"))
-			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, v)
+			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.TierNEQ = data
 		case "tierIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tierIn"))
-			data, err := ec.unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTierᚄ(ctx, v)
+			data, err := ec.unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTierᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.TierIn = data
 		case "tierNotIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tierNotIn"))
-			data, err := ec.unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTierᚄ(ctx, v)
+			data, err := ec.unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTierᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36739,56 +36736,56 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 			it.DeletedByContainsFold = data
 		case "visibility":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
-			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Visibility = data
 		case "visibilityNEQ":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibilityNEQ"))
-			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.VisibilityNEQ = data
 		case "visibilityIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibilityIn"))
-			data, err := ec.unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibilityᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.VisibilityIn = data
 		case "visibilityNotIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibilityNotIn"))
-			data, err := ec.unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibilityᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.VisibilityNotIn = data
 		case "joinPolicy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicy"))
-			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.JoinPolicy = data
 		case "joinPolicyNEQ":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicyNEQ"))
-			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.JoinPolicyNEQ = data
 		case "joinPolicyIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicyIn"))
-			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicyᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.JoinPolicyIn = data
 		case "joinPolicyNotIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicyNotIn"))
-			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicyᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -44844,7 +44841,7 @@ func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Con
 			it.ClearUpdatedBy = data
 		case "tier":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tier"))
-			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, v)
+			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -45153,14 +45150,14 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingInput(ctx context.Co
 			it.ClearUpdatedBy = data
 		case "visibility":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
-			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Visibility = data
 		case "joinPolicy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicy"))
-			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46501,7 +46498,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 			it.ClearRecoveryCode = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -47357,28 +47354,28 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 			it.SuspendedAtNotNil = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Status = data
 		case "statusNEQ":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNEQ"))
-			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.StatusNEQ = data
 		case "statusIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusIn"))
-			data, err := ec.unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingUserStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatusᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.StatusIn = data
 		case "statusNotIn":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNotIn"))
-			data, err := ec.unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingUserStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatusᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -55379,13 +55376,13 @@ func (ec *executionContext) marshalNEntitlementDeletePayload2ᚖgithubᚗcomᚋd
 	return ec._EntitlementDeletePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx context.Context, v interface{}) (entitlement.Tier, error) {
-	var res entitlement.Tier
+func (ec *executionContext) unmarshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx context.Context, v interface{}) (enums.Tier, error) {
+	var res enums.Tier
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx context.Context, sel ast.SelectionSet, v entitlement.Tier) graphql.Marshaler {
+func (ec *executionContext) marshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx context.Context, sel ast.SelectionSet, v enums.Tier) graphql.Marshaler {
 	return v
 }
 
@@ -55621,13 +55618,13 @@ func (ec *executionContext) marshalNGroupSettingDeletePayload2ᚖgithubᚗcomᚋ
 	return ec._GroupSettingDeletePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, v interface{}) (groupsetting.JoinPolicy, error) {
-	var res groupsetting.JoinPolicy
+func (ec *executionContext) unmarshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx context.Context, v interface{}) (enums.JoinPolicy, error) {
+	var res enums.JoinPolicy
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v groupsetting.JoinPolicy) graphql.Marshaler {
+func (ec *executionContext) marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v enums.JoinPolicy) graphql.Marshaler {
 	return v
 }
 
@@ -55645,13 +55642,13 @@ func (ec *executionContext) marshalNGroupSettingUpdatePayload2ᚖgithubᚗcomᚋ
 	return ec._GroupSettingUpdatePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, v interface{}) (groupsetting.Visibility, error) {
-	var res groupsetting.Visibility
+func (ec *executionContext) unmarshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx context.Context, v interface{}) (enums.Visibility, error) {
+	var res enums.Visibility
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, sel ast.SelectionSet, v groupsetting.Visibility) graphql.Marshaler {
+func (ec *executionContext) marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx context.Context, sel ast.SelectionSet, v enums.Visibility) graphql.Marshaler {
 	return v
 }
 
@@ -56636,16 +56633,6 @@ func (ec *executionContext) marshalNUserSettingDeletePayload2ᚖgithubᚗcomᚋd
 	return ec._UserSettingDeletePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, v interface{}) (usersetting.Status, error) {
-	var res usersetting.Status
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, sel ast.SelectionSet, v usersetting.Status) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) marshalNUserSettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingUpdatePayload) graphql.Marshaler {
 	return ec._UserSettingUpdatePayload(ctx, sel, &v)
 }
@@ -56658,6 +56645,16 @@ func (ec *executionContext) marshalNUserSettingUpdatePayload2ᚖgithubᚗcomᚋd
 		return graphql.Null
 	}
 	return ec._UserSettingUpdatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUserSettingUserStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx context.Context, v interface{}) (enums.UserStatus, error) {
+	var res enums.UserStatus
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUserSettingUserStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx context.Context, sel ast.SelectionSet, v enums.UserStatus) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNUserSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInput(ctx context.Context, v interface{}) (*generated.UserSettingWhereInput, error) {
@@ -57137,7 +57134,7 @@ func (ec *executionContext) marshalOEntitlementEdge2ᚖgithubᚗcomᚋdatumforge
 	return ec._EntitlementEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTierᚄ(ctx context.Context, v interface{}) ([]entitlement.Tier, error) {
+func (ec *executionContext) unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTierᚄ(ctx context.Context, v interface{}) ([]enums.Tier, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -57146,10 +57143,10 @@ func (ec *executionContext) unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumfor
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]entitlement.Tier, len(vSlice))
+	res := make([]enums.Tier, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -57157,7 +57154,7 @@ func (ec *executionContext) unmarshalOEntitlementTier2ᚕgithubᚗcomᚋdatumfor
 	return res, nil
 }
 
-func (ec *executionContext) marshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTierᚄ(ctx context.Context, sel ast.SelectionSet, v []entitlement.Tier) graphql.Marshaler {
+func (ec *executionContext) marshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTierᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.Tier) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -57184,7 +57181,7 @@ func (ec *executionContext) marshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforge
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, sel, v[i])
+			ret[i] = ec.marshalNEntitlementTier2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -57204,16 +57201,16 @@ func (ec *executionContext) marshalOEntitlementTier2ᚕgithubᚗcomᚋdatumforge
 	return ret
 }
 
-func (ec *executionContext) unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx context.Context, v interface{}) (*entitlement.Tier, error) {
+func (ec *executionContext) unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx context.Context, v interface{}) (*enums.Tier, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(entitlement.Tier)
+	var res = new(enums.Tier)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx context.Context, sel ast.SelectionSet, v *entitlement.Tier) graphql.Marshaler {
+func (ec *executionContext) marshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐTier(ctx context.Context, sel ast.SelectionSet, v *enums.Tier) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -57626,7 +57623,7 @@ func (ec *executionContext) marshalOGroupSettingEdge2ᚖgithubᚗcomᚋdatumforg
 	return ec._GroupSettingEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx context.Context, v interface{}) ([]groupsetting.JoinPolicy, error) {
+func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicyᚄ(ctx context.Context, v interface{}) ([]enums.JoinPolicy, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -57635,10 +57632,10 @@ func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋd
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]groupsetting.JoinPolicy, len(vSlice))
+	res := make([]enums.JoinPolicy, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -57646,7 +57643,7 @@ func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋd
 	return res, nil
 }
 
-func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx context.Context, sel ast.SelectionSet, v []groupsetting.JoinPolicy) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicyᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.JoinPolicy) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -57673,7 +57670,7 @@ func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdat
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, sel, v[i])
+			ret[i] = ec.marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -57693,23 +57690,23 @@ func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdat
 	return ret
 }
 
-func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, v interface{}) (*groupsetting.JoinPolicy, error) {
+func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx context.Context, v interface{}) (*enums.JoinPolicy, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(groupsetting.JoinPolicy)
+	var res = new(enums.JoinPolicy)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v *groupsetting.JoinPolicy) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v *enums.JoinPolicy) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx context.Context, v interface{}) ([]groupsetting.Visibility, error) {
+func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibilityᚄ(ctx context.Context, v interface{}) ([]enums.Visibility, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -57718,10 +57715,10 @@ func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋd
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]groupsetting.Visibility, len(vSlice))
+	res := make([]enums.Visibility, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -57729,7 +57726,7 @@ func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋd
 	return res, nil
 }
 
-func (ec *executionContext) marshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx context.Context, sel ast.SelectionSet, v []groupsetting.Visibility) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibilityᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.Visibility) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -57756,7 +57753,7 @@ func (ec *executionContext) marshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdat
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, sel, v[i])
+			ret[i] = ec.marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -57776,16 +57773,16 @@ func (ec *executionContext) marshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdat
 	return ret
 }
 
-func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, v interface{}) (*groupsetting.Visibility, error) {
+func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx context.Context, v interface{}) (*enums.Visibility, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(groupsetting.Visibility)
+	var res = new(enums.Visibility)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, sel ast.SelectionSet, v *groupsetting.Visibility) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐVisibility(ctx context.Context, sel ast.SelectionSet, v *enums.Visibility) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -59187,7 +59184,7 @@ func (ec *executionContext) marshalOUserSettingEdge2ᚖgithubᚗcomᚋdatumforge
 	return ec._UserSettingEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx context.Context, v interface{}) ([]usersetting.Status, error) {
+func (ec *executionContext) unmarshalOUserSettingUserStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatusᚄ(ctx context.Context, v interface{}) ([]enums.UserStatus, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -59196,10 +59193,10 @@ func (ec *executionContext) unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumf
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]usersetting.Status, len(vSlice))
+	res := make([]enums.UserStatus, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNUserSettingUserStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -59207,7 +59204,7 @@ func (ec *executionContext) unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumf
 	return res, nil
 }
 
-func (ec *executionContext) marshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []usersetting.Status) graphql.Marshaler {
+func (ec *executionContext) marshalOUserSettingUserStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.UserStatus) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -59234,7 +59231,7 @@ func (ec *executionContext) marshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumfor
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, sel, v[i])
+			ret[i] = ec.marshalNUserSettingUserStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -59254,16 +59251,16 @@ func (ec *executionContext) marshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumfor
 	return ret
 }
 
-func (ec *executionContext) unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, v interface{}) (*usersetting.Status, error) {
+func (ec *executionContext) unmarshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx context.Context, v interface{}) (*enums.UserStatus, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(usersetting.Status)
+	var res = new(enums.UserStatus)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, sel ast.SelectionSet, v *usersetting.Status) graphql.Marshaler {
+func (ec *executionContext) marshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx context.Context, sel ast.SelectionSet, v *enums.UserStatus) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

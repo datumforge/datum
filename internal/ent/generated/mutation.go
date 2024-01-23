@@ -1073,7 +1073,7 @@ type EntitlementMutation struct {
 	updated_by               *string
 	deleted_at               *time.Time
 	deleted_by               *string
-	tier                     *entitlement.Tier
+	tier                     *enums.Tier
 	external_customer_id     *string
 	external_subscription_id *string
 	expires                  *bool
@@ -1496,12 +1496,12 @@ func (m *EntitlementMutation) ResetOwnerID() {
 }
 
 // SetTier sets the "tier" field.
-func (m *EntitlementMutation) SetTier(e entitlement.Tier) {
+func (m *EntitlementMutation) SetTier(e enums.Tier) {
 	m.tier = &e
 }
 
 // Tier returns the value of the "tier" field in the mutation.
-func (m *EntitlementMutation) Tier() (r entitlement.Tier, exists bool) {
+func (m *EntitlementMutation) Tier() (r enums.Tier, exists bool) {
 	v := m.tier
 	if v == nil {
 		return
@@ -1512,7 +1512,7 @@ func (m *EntitlementMutation) Tier() (r entitlement.Tier, exists bool) {
 // OldTier returns the old "tier" field's value of the Entitlement entity.
 // If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntitlementMutation) OldTier(ctx context.Context) (v entitlement.Tier, err error) {
+func (m *EntitlementMutation) OldTier(ctx context.Context) (v enums.Tier, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTier is only allowed on UpdateOne operations")
 	}
@@ -1979,7 +1979,7 @@ func (m *EntitlementMutation) SetField(name string, value ent.Value) error {
 		m.SetOwnerID(v)
 		return nil
 	case entitlement.FieldTier:
-		v, ok := value.(entitlement.Tier)
+		v, ok := value.(enums.Tier)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4529,8 +4529,8 @@ type GroupSettingMutation struct {
 	updated_by     *string
 	deleted_at     *time.Time
 	deleted_by     *string
-	visibility     *groupsetting.Visibility
-	join_policy    *groupsetting.JoinPolicy
+	visibility     *enums.Visibility
+	join_policy    *enums.JoinPolicy
 	tags           *[]string
 	appendtags     []string
 	sync_to_slack  *bool
@@ -4916,12 +4916,12 @@ func (m *GroupSettingMutation) ResetDeletedBy() {
 }
 
 // SetVisibility sets the "visibility" field.
-func (m *GroupSettingMutation) SetVisibility(gr groupsetting.Visibility) {
-	m.visibility = &gr
+func (m *GroupSettingMutation) SetVisibility(e enums.Visibility) {
+	m.visibility = &e
 }
 
 // Visibility returns the value of the "visibility" field in the mutation.
-func (m *GroupSettingMutation) Visibility() (r groupsetting.Visibility, exists bool) {
+func (m *GroupSettingMutation) Visibility() (r enums.Visibility, exists bool) {
 	v := m.visibility
 	if v == nil {
 		return
@@ -4932,7 +4932,7 @@ func (m *GroupSettingMutation) Visibility() (r groupsetting.Visibility, exists b
 // OldVisibility returns the old "visibility" field's value of the GroupSetting entity.
 // If the GroupSetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupSettingMutation) OldVisibility(ctx context.Context) (v groupsetting.Visibility, err error) {
+func (m *GroupSettingMutation) OldVisibility(ctx context.Context) (v enums.Visibility, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldVisibility is only allowed on UpdateOne operations")
 	}
@@ -4952,12 +4952,12 @@ func (m *GroupSettingMutation) ResetVisibility() {
 }
 
 // SetJoinPolicy sets the "join_policy" field.
-func (m *GroupSettingMutation) SetJoinPolicy(gp groupsetting.JoinPolicy) {
-	m.join_policy = &gp
+func (m *GroupSettingMutation) SetJoinPolicy(ep enums.JoinPolicy) {
+	m.join_policy = &ep
 }
 
 // JoinPolicy returns the value of the "join_policy" field in the mutation.
-func (m *GroupSettingMutation) JoinPolicy() (r groupsetting.JoinPolicy, exists bool) {
+func (m *GroupSettingMutation) JoinPolicy() (r enums.JoinPolicy, exists bool) {
 	v := m.join_policy
 	if v == nil {
 		return
@@ -4968,7 +4968,7 @@ func (m *GroupSettingMutation) JoinPolicy() (r groupsetting.JoinPolicy, exists b
 // OldJoinPolicy returns the old "join_policy" field's value of the GroupSetting entity.
 // If the GroupSetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupSettingMutation) OldJoinPolicy(ctx context.Context) (v groupsetting.JoinPolicy, err error) {
+func (m *GroupSettingMutation) OldJoinPolicy(ctx context.Context) (v enums.JoinPolicy, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldJoinPolicy is only allowed on UpdateOne operations")
 	}
@@ -5330,14 +5330,14 @@ func (m *GroupSettingMutation) SetField(name string, value ent.Value) error {
 		m.SetDeletedBy(v)
 		return nil
 	case groupsetting.FieldVisibility:
-		v, ok := value.(groupsetting.Visibility)
+		v, ok := value.(enums.Visibility)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVisibility(v)
 		return nil
 	case groupsetting.FieldJoinPolicy:
-		v, ok := value.(groupsetting.JoinPolicy)
+		v, ok := value.(enums.JoinPolicy)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -17260,7 +17260,7 @@ type UserSettingMutation struct {
 	silenced_at     *time.Time
 	suspended_at    *time.Time
 	recovery_code   *string
-	status          *usersetting.Status
+	status          *enums.UserStatus
 	default_org     *string
 	email_confirmed *bool
 	tags            *[]string
@@ -17829,12 +17829,12 @@ func (m *UserSettingMutation) ResetRecoveryCode() {
 }
 
 // SetStatus sets the "status" field.
-func (m *UserSettingMutation) SetStatus(u usersetting.Status) {
-	m.status = &u
+func (m *UserSettingMutation) SetStatus(es enums.UserStatus) {
+	m.status = &es
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *UserSettingMutation) Status() (r usersetting.Status, exists bool) {
+func (m *UserSettingMutation) Status() (r enums.UserStatus, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -17845,7 +17845,7 @@ func (m *UserSettingMutation) Status() (r usersetting.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the UserSetting entity.
 // If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserSettingMutation) OldStatus(ctx context.Context) (v usersetting.Status, err error) {
+func (m *UserSettingMutation) OldStatus(ctx context.Context) (v enums.UserStatus, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -18269,7 +18269,7 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 		m.SetRecoveryCode(v)
 		return nil
 	case usersetting.FieldStatus:
-		v, ok := value.(usersetting.Status)
+		v, ok := value.(enums.UserStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

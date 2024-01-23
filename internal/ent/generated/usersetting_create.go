@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -162,15 +163,15 @@ func (usc *UserSettingCreate) SetNillableRecoveryCode(s *string) *UserSettingCre
 }
 
 // SetStatus sets the "status" field.
-func (usc *UserSettingCreate) SetStatus(u usersetting.Status) *UserSettingCreate {
-	usc.mutation.SetStatus(u)
+func (usc *UserSettingCreate) SetStatus(es enums.UserStatus) *UserSettingCreate {
+	usc.mutation.SetStatus(es)
 	return usc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableStatus(u *usersetting.Status) *UserSettingCreate {
-	if u != nil {
-		usc.SetStatus(*u)
+func (usc *UserSettingCreate) SetNillableStatus(es *enums.UserStatus) *UserSettingCreate {
+	if es != nil {
+		usc.SetStatus(*es)
 	}
 	return usc
 }

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -112,13 +113,13 @@ func (eu *EntitlementUpdate) SetNillableOwnerID(s *string) *EntitlementUpdate {
 }
 
 // SetTier sets the "tier" field.
-func (eu *EntitlementUpdate) SetTier(e entitlement.Tier) *EntitlementUpdate {
+func (eu *EntitlementUpdate) SetTier(e enums.Tier) *EntitlementUpdate {
 	eu.mutation.SetTier(e)
 	return eu
 }
 
 // SetNillableTier sets the "tier" field if the given value is not nil.
-func (eu *EntitlementUpdate) SetNillableTier(e *entitlement.Tier) *EntitlementUpdate {
+func (eu *EntitlementUpdate) SetNillableTier(e *enums.Tier) *EntitlementUpdate {
 	if e != nil {
 		eu.SetTier(*e)
 	}
@@ -481,13 +482,13 @@ func (euo *EntitlementUpdateOne) SetNillableOwnerID(s *string) *EntitlementUpdat
 }
 
 // SetTier sets the "tier" field.
-func (euo *EntitlementUpdateOne) SetTier(e entitlement.Tier) *EntitlementUpdateOne {
+func (euo *EntitlementUpdateOne) SetTier(e enums.Tier) *EntitlementUpdateOne {
 	euo.mutation.SetTier(e)
 	return euo
 }
 
 // SetNillableTier sets the "tier" field if the given value is not nil.
-func (euo *EntitlementUpdateOne) SetNillableTier(e *entitlement.Tier) *EntitlementUpdateOne {
+func (euo *EntitlementUpdateOne) SetNillableTier(e *enums.Tier) *EntitlementUpdateOne {
 	if e != nil {
 		euo.SetTier(*e)
 	}

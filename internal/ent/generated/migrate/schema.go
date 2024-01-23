@@ -57,7 +57,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "tier", Type: field.TypeEnum, Enums: []string{"free", "pro", "enterprise"}, Default: "free"},
+		{Name: "tier", Type: field.TypeEnum, Enums: []string{"FREE", "PRO", "ENTERPRISE"}, Default: "FREE"},
 		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
 		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
 		{Name: "expires", Type: field.TypeBool, Default: false},

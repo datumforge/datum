@@ -4,13 +4,13 @@ package entitlement
 
 import (
 	"fmt"
-	"io"
-	"strconv"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 const (
@@ -107,27 +107,12 @@ var (
 	DefaultID func() string
 )
 
-// Tier defines the type for the "tier" enum field.
-type Tier string
-
-// TierFree is the default value of the Tier enum.
-const DefaultTier = TierFree
-
-// Tier values.
-const (
-	TierFree       Tier = "free"
-	TierPro        Tier = "pro"
-	TierEnterprise Tier = "enterprise"
-)
-
-func (t Tier) String() string {
-	return string(t)
-}
+const DefaultTier enums.Tier = "FREE"
 
 // TierValidator is a validator for the "tier" field enum values. It is called by the builders before save.
-func TierValidator(t Tier) error {
-	switch t {
-	case TierFree, TierPro, TierEnterprise:
+func TierValidator(t enums.Tier) error {
+	switch t.String() {
+	case "FREE", "PRO", "ENTERPRISE":
 		return nil
 	default:
 		return fmt.Errorf("entitlement: invalid enum value for tier field: %q", t)
@@ -221,20 +206,9 @@ func newOwnerStep() *sqlgraph.Step {
 	)
 }
 
-// MarshalGQL implements graphql.Marshaler interface.
-func (e Tier) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(e.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *Tier) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*e = Tier(str)
-	if err := TierValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid Tier", str)
-	}
-	return nil
-}
+var (
+	// enums.Tier must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.Tier)(nil)
+	// enums.Tier must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.Tier)(nil)
+)

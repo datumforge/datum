@@ -373,7 +373,7 @@ input CreateUserSettingInput {
   local user password recovery code generated during account creation - does not exist for oauth'd users
   """
   recoveryCode: String
-  status: UserSettingStatus
+  status: UserSettingUserStatus
   """
   organization to load on user login
   """
@@ -454,10 +454,10 @@ type EntitlementEdge {
 """
 EntitlementTier is enum for the field tier
 """
-enum EntitlementTier @goModel(model: "github.com/datumforge/datum/internal/ent/generated/entitlement.Tier") {
-  free
-  pro
-  enterprise
+enum EntitlementTier @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Tier") {
+  FREE
+  PRO
+  ENTERPRISE
 }
 """
 EntitlementWhereInput is used for filtering Entitlement objects.
@@ -950,7 +950,7 @@ type GroupSettingEdge {
 """
 GroupSettingJoinPolicy is enum for the field join_policy
 """
-enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.JoinPolicy") {
+enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/enums.JoinPolicy") {
   OPEN
   INVITE_ONLY
   APPLICATION_ONLY
@@ -959,7 +959,7 @@ enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/interna
 """
 GroupSettingVisibility is enum for the field visibility
 """
-enum GroupSettingVisibility @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.Visibility") {
+enum GroupSettingVisibility @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Visibility") {
   PUBLIC
   PRIVATE
 }
@@ -3891,7 +3891,7 @@ input UpdateUserSettingInput {
   """
   recoveryCode: String
   clearRecoveryCode: Boolean
-  status: UserSettingStatus
+  status: UserSettingUserStatus
   """
   organization to load on user login
   """
@@ -4023,7 +4023,7 @@ type UserSetting implements Node {
   The time the user was suspended
   """
   suspendedAt: Time
-  status: UserSettingStatus!
+  status: UserSettingUserStatus!
   """
   organization to load on user login
   """
@@ -4066,9 +4066,9 @@ type UserSettingEdge {
   cursor: Cursor!
 }
 """
-UserSettingStatus is enum for the field status
+UserSettingUserStatus is enum for the field status
 """
-enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Status") {
+enum UserSettingUserStatus @goModel(model: "github.com/datumforge/datum/internal/ent/enums.UserStatus") {
   ACTIVE
   INACTIVE
   DEACTIVATED
@@ -4218,10 +4218,10 @@ input UserSettingWhereInput {
   """
   status field predicates
   """
-  status: UserSettingStatus
-  statusNEQ: UserSettingStatus
-  statusIn: [UserSettingStatus!]
-  statusNotIn: [UserSettingStatus!]
+  status: UserSettingUserStatus
+  statusNEQ: UserSettingUserStatus
+  statusIn: [UserSettingUserStatus!]
+  statusNotIn: [UserSettingUserStatus!]
   """
   default_org field predicates
   """

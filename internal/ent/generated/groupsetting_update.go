@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -99,29 +100,29 @@ func (gsu *GroupSettingUpdate) ClearDeletedBy() *GroupSettingUpdate {
 }
 
 // SetVisibility sets the "visibility" field.
-func (gsu *GroupSettingUpdate) SetVisibility(gr groupsetting.Visibility) *GroupSettingUpdate {
-	gsu.mutation.SetVisibility(gr)
+func (gsu *GroupSettingUpdate) SetVisibility(e enums.Visibility) *GroupSettingUpdate {
+	gsu.mutation.SetVisibility(e)
 	return gsu
 }
 
 // SetNillableVisibility sets the "visibility" field if the given value is not nil.
-func (gsu *GroupSettingUpdate) SetNillableVisibility(gr *groupsetting.Visibility) *GroupSettingUpdate {
-	if gr != nil {
-		gsu.SetVisibility(*gr)
+func (gsu *GroupSettingUpdate) SetNillableVisibility(e *enums.Visibility) *GroupSettingUpdate {
+	if e != nil {
+		gsu.SetVisibility(*e)
 	}
 	return gsu
 }
 
 // SetJoinPolicy sets the "join_policy" field.
-func (gsu *GroupSettingUpdate) SetJoinPolicy(gp groupsetting.JoinPolicy) *GroupSettingUpdate {
-	gsu.mutation.SetJoinPolicy(gp)
+func (gsu *GroupSettingUpdate) SetJoinPolicy(ep enums.JoinPolicy) *GroupSettingUpdate {
+	gsu.mutation.SetJoinPolicy(ep)
 	return gsu
 }
 
 // SetNillableJoinPolicy sets the "join_policy" field if the given value is not nil.
-func (gsu *GroupSettingUpdate) SetNillableJoinPolicy(gp *groupsetting.JoinPolicy) *GroupSettingUpdate {
-	if gp != nil {
-		gsu.SetJoinPolicy(*gp)
+func (gsu *GroupSettingUpdate) SetNillableJoinPolicy(ep *enums.JoinPolicy) *GroupSettingUpdate {
+	if ep != nil {
+		gsu.SetJoinPolicy(*ep)
 	}
 	return gsu
 }
@@ -429,29 +430,29 @@ func (gsuo *GroupSettingUpdateOne) ClearDeletedBy() *GroupSettingUpdateOne {
 }
 
 // SetVisibility sets the "visibility" field.
-func (gsuo *GroupSettingUpdateOne) SetVisibility(gr groupsetting.Visibility) *GroupSettingUpdateOne {
-	gsuo.mutation.SetVisibility(gr)
+func (gsuo *GroupSettingUpdateOne) SetVisibility(e enums.Visibility) *GroupSettingUpdateOne {
+	gsuo.mutation.SetVisibility(e)
 	return gsuo
 }
 
 // SetNillableVisibility sets the "visibility" field if the given value is not nil.
-func (gsuo *GroupSettingUpdateOne) SetNillableVisibility(gr *groupsetting.Visibility) *GroupSettingUpdateOne {
-	if gr != nil {
-		gsuo.SetVisibility(*gr)
+func (gsuo *GroupSettingUpdateOne) SetNillableVisibility(e *enums.Visibility) *GroupSettingUpdateOne {
+	if e != nil {
+		gsuo.SetVisibility(*e)
 	}
 	return gsuo
 }
 
 // SetJoinPolicy sets the "join_policy" field.
-func (gsuo *GroupSettingUpdateOne) SetJoinPolicy(gp groupsetting.JoinPolicy) *GroupSettingUpdateOne {
-	gsuo.mutation.SetJoinPolicy(gp)
+func (gsuo *GroupSettingUpdateOne) SetJoinPolicy(ep enums.JoinPolicy) *GroupSettingUpdateOne {
+	gsuo.mutation.SetJoinPolicy(ep)
 	return gsuo
 }
 
 // SetNillableJoinPolicy sets the "join_policy" field if the given value is not nil.
-func (gsuo *GroupSettingUpdateOne) SetNillableJoinPolicy(gp *groupsetting.JoinPolicy) *GroupSettingUpdateOne {
-	if gp != nil {
-		gsuo.SetJoinPolicy(*gp)
+func (gsuo *GroupSettingUpdateOne) SetNillableJoinPolicy(ep *enums.JoinPolicy) *GroupSettingUpdateOne {
+	if ep != nil {
+		gsuo.SetJoinPolicy(*ep)
 	}
 	return gsuo
 }

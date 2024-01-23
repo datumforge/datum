@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -548,23 +549,33 @@ func OwnerIDContainsFold(v string) predicate.Entitlement {
 }
 
 // TierEQ applies the EQ predicate on the "tier" field.
-func TierEQ(v Tier) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldTier, v))
+func TierEQ(v enums.Tier) predicate.Entitlement {
+	vc := v
+	return predicate.Entitlement(sql.FieldEQ(FieldTier, vc))
 }
 
 // TierNEQ applies the NEQ predicate on the "tier" field.
-func TierNEQ(v Tier) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldTier, v))
+func TierNEQ(v enums.Tier) predicate.Entitlement {
+	vc := v
+	return predicate.Entitlement(sql.FieldNEQ(FieldTier, vc))
 }
 
 // TierIn applies the In predicate on the "tier" field.
-func TierIn(vs ...Tier) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldTier, vs...))
+func TierIn(vs ...enums.Tier) predicate.Entitlement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Entitlement(sql.FieldIn(FieldTier, v...))
 }
 
 // TierNotIn applies the NotIn predicate on the "tier" field.
-func TierNotIn(vs ...Tier) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldTier, vs...))
+func TierNotIn(vs ...enums.Tier) predicate.Entitlement {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Entitlement(sql.FieldNotIn(FieldTier, v...))
 }
 
 // ExternalCustomerIDEQ applies the EQ predicate on the "external_customer_id" field.

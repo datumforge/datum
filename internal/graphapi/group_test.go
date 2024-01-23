@@ -11,7 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
@@ -258,8 +257,6 @@ func TestMutation_CreateGroup(t *testing.T) {
 
 	listObjects := []string{fmt.Sprintf("organization:%s", owner1.ID)}
 
-	inviteOnly := groupsetting.JoinPolicyInviteOnly
-
 	testCases := []struct {
 		name        string
 		groupName   string
@@ -285,7 +282,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 			description: gofakeit.HipsterSentence(10),
 			owner:       owner1.ID,
 			settings: &datumclient.CreateGroupSettingInput{
-				JoinPolicy: &inviteOnly,
+				JoinPolicy: &enums.InviteOnly,
 			},
 			allowed: true,
 		},
@@ -374,7 +371,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 			}
 
 			if tc.settings != nil {
-				assert.Equal(t, resp.CreateGroup.Group.Setting.JoinPolicy, inviteOnly)
+				assert.Equal(t, resp.CreateGroup.Group.Setting.JoinPolicy, enums.InviteOnly)
 			}
 
 			// cleanup group
@@ -402,8 +399,6 @@ func TestMutation_UpdateGroup(t *testing.T) {
 	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
-
-	openPolicy := groupsetting.JoinPolicyOpen
 
 	testCases := []struct {
 		name        string
@@ -458,7 +453,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 			allowed: true,
 			updateInput: datumclient.UpdateGroupInput{
 				UpdateGroupSettings: &datumclient.UpdateGroupSettingInput{
-					JoinPolicy: &openPolicy,
+					JoinPolicy: &enums.Open,
 				},
 			},
 			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
@@ -467,7 +462,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 				DisplayName: displayNameUpdate,
 				Description: &descriptionUpdate,
 				Setting: datumclient.UpdateGroup_UpdateGroup_Group_Setting{
-					JoinPolicy: openPolicy,
+					JoinPolicy: enums.Open,
 				},
 			},
 		},
@@ -527,7 +522,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 			}
 
 			if tc.updateInput.UpdateGroupSettings != nil {
-				assert.Equal(t, updatedGroup.GetSetting().JoinPolicy, openPolicy)
+				assert.Equal(t, updatedGroup.GetSetting().JoinPolicy, enums.Open)
 			}
 		})
 	}

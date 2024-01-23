@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
@@ -112,13 +113,13 @@ func (ec *EntitlementCreate) SetOwnerID(s string) *EntitlementCreate {
 }
 
 // SetTier sets the "tier" field.
-func (ec *EntitlementCreate) SetTier(e entitlement.Tier) *EntitlementCreate {
+func (ec *EntitlementCreate) SetTier(e enums.Tier) *EntitlementCreate {
 	ec.mutation.SetTier(e)
 	return ec
 }
 
 // SetNillableTier sets the "tier" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableTier(e *entitlement.Tier) *EntitlementCreate {
+func (ec *EntitlementCreate) SetNillableTier(e *enums.Tier) *EntitlementCreate {
 	if e != nil {
 		ec.SetTier(*e)
 	}

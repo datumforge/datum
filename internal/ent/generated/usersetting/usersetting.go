@@ -4,13 +4,13 @@ package usersetting
 
 import (
 	"fmt"
-	"io"
-	"strconv"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 const (
@@ -123,28 +123,12 @@ var (
 	DefaultID func() string
 )
 
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusActive is the default value of the Status enum.
-const DefaultStatus = StatusActive
-
-// Status values.
-const (
-	StatusActive      Status = "ACTIVE"
-	StatusInactive    Status = "INACTIVE"
-	StatusDeactivated Status = "DEACTIVATED"
-	StatusSuspended   Status = "SUSPENDED"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
+const DefaultStatus enums.UserStatus = "ACTIVE"
 
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
-	switch s {
-	case StatusActive, StatusInactive, StatusDeactivated, StatusSuspended:
+func StatusValidator(s enums.UserStatus) error {
+	switch s.String() {
+	case "ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED":
 		return nil
 	default:
 		return fmt.Errorf("usersetting: invalid enum value for status field: %q", s)
@@ -238,20 +222,9 @@ func newUserStep() *sqlgraph.Step {
 	)
 }
 
-// MarshalGQL implements graphql.Marshaler interface.
-func (e Status) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(e.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *Status) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*e = Status(str)
-	if err := StatusValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid Status", str)
-	}
-	return nil
-}
+var (
+	// enums.UserStatus must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.UserStatus)(nil)
+	// enums.UserStatus must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.UserStatus)(nil)
+)

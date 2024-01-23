@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -44,13 +45,8 @@ func (UserSetting) Fields() []ent.Field {
 			Nillable().
 			Optional(),
 		field.Enum("status").
-			NamedValues(
-				"Active", "ACTIVE",
-				"Inactive", "INACTIVE",
-				"Deactivated", "DEACTIVATED",
-				"Suspended", "SUSPENDED",
-			).
-			Default("ACTIVE"),
+			GoType(enums.UserStatus("")).
+			Default(string(enums.Active)),
 		field.String("default_org").
 			Comment("organization to load on user login").
 			Optional(),

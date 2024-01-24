@@ -8,7 +8,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"github.com/flume/enthistory"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -110,10 +109,6 @@ func (Group) Annotations() []schema.Annotation {
 				},
 			},
 		),
-		enthistory.Annotations{
-			IsHistory: false,
-			Exclude:   true,
-		},
 	}
 }
 

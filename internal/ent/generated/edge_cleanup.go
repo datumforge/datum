@@ -40,12 +40,22 @@ func GroupEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func GroupHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func GroupMembershipEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
 func GroupSettingEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func GroupSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -103,7 +113,17 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func OrganizationHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func OrganizationSettingEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func OrganizationSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -165,7 +185,17 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func UserHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func UserSettingEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func UserSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

@@ -18,10 +18,14 @@ type Tx struct {
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
+	// GroupHistory is the client for interacting with the GroupHistory builders.
+	GroupHistory *GroupHistoryClient
 	// GroupMembership is the client for interacting with the GroupMembership builders.
 	GroupMembership *GroupMembershipClient
 	// GroupSetting is the client for interacting with the GroupSetting builders.
 	GroupSetting *GroupSettingClient
+	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
+	GroupSettingHistory *GroupSettingHistoryClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
@@ -32,16 +36,24 @@ type Tx struct {
 	OrgMembership *OrgMembershipClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// OrganizationHistory is the client for interacting with the OrganizationHistory builders.
+	OrganizationHistory *OrganizationHistoryClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
 	OrganizationSetting *OrganizationSettingClient
+	// OrganizationSettingHistory is the client for interacting with the OrganizationSettingHistory builders.
+	OrganizationSettingHistory *OrganizationSettingHistoryClient
 	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
 	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserHistory is the client for interacting with the UserHistory builders.
+	UserHistory *UserHistoryClient
 	// UserSetting is the client for interacting with the UserSetting builders.
 	UserSetting *UserSettingClient
+	// UserSettingHistory is the client for interacting with the UserSettingHistory builders.
+	UserSettingHistory *UserSettingHistoryClient
 
 	// lazily loaded.
 	client     *Client
@@ -176,18 +188,24 @@ func (tx *Tx) init() {
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
+	tx.GroupHistory = NewGroupHistoryClient(tx.config)
 	tx.GroupMembership = NewGroupMembershipClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
+	tx.GroupSettingHistory = NewGroupSettingHistoryClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
 	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
 	tx.OrgMembership = NewOrgMembershipClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
+	tx.OrganizationHistory = NewOrganizationHistoryClient(tx.config)
 	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
+	tx.OrganizationSettingHistory = NewOrganizationSettingHistoryClient(tx.config)
 	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserHistory = NewUserHistoryClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)
+	tx.UserSettingHistory = NewUserSettingHistoryClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

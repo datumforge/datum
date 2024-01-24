@@ -15,11 +15,17 @@ type Entitlement func(*sql.Selector)
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
+// GroupHistory is the predicate function for grouphistory builders.
+type GroupHistory func(*sql.Selector)
+
 // GroupMembership is the predicate function for groupmembership builders.
 type GroupMembership func(*sql.Selector)
 
 // GroupSetting is the predicate function for groupsetting builders.
 type GroupSetting func(*sql.Selector)
+
+// GroupSettingHistory is the predicate function for groupsettinghistory builders.
+type GroupSettingHistory func(*sql.Selector)
 
 // Integration is the predicate function for integration builders.
 type Integration func(*sql.Selector)
@@ -36,8 +42,14 @@ type OrgMembership func(*sql.Selector)
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
 
+// OrganizationHistory is the predicate function for organizationhistory builders.
+type OrganizationHistory func(*sql.Selector)
+
 // OrganizationSetting is the predicate function for organizationsetting builders.
 type OrganizationSetting func(*sql.Selector)
+
+// OrganizationSettingHistory is the predicate function for organizationsettinghistory builders.
+type OrganizationSettingHistory func(*sql.Selector)
 
 // PasswordResetToken is the predicate function for passwordresettoken builders.
 type PasswordResetToken func(*sql.Selector)
@@ -48,5 +60,11 @@ type PersonalAccessToken func(*sql.Selector)
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 
+// UserHistory is the predicate function for userhistory builders.
+type UserHistory func(*sql.Selector)
+
 // UserSetting is the predicate function for usersetting builders.
 type UserSetting func(*sql.Selector)
+
+// UserSettingHistory is the predicate function for usersettinghistory builders.
+type UserSettingHistory func(*sql.Selector)

@@ -10,6 +10,7 @@ import (
 	"reflect"
 
 	"github.com/datumforge/datum/internal/ent/generated/migrate"
+	"github.com/flume/enthistory"
 
 	"net/http"
 
@@ -20,18 +21,24 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 	"github.com/datumforge/datum/internal/fga"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
@@ -50,10 +57,14 @@ type Client struct {
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
+	// GroupHistory is the client for interacting with the GroupHistory builders.
+	GroupHistory *GroupHistoryClient
 	// GroupMembership is the client for interacting with the GroupMembership builders.
 	GroupMembership *GroupMembershipClient
 	// GroupSetting is the client for interacting with the GroupSetting builders.
 	GroupSetting *GroupSettingClient
+	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
+	GroupSettingHistory *GroupSettingHistoryClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
@@ -64,21 +75,34 @@ type Client struct {
 	OrgMembership *OrgMembershipClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// OrganizationHistory is the client for interacting with the OrganizationHistory builders.
+	OrganizationHistory *OrganizationHistoryClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
 	OrganizationSetting *OrganizationSettingClient
+	// OrganizationSettingHistory is the client for interacting with the OrganizationSettingHistory builders.
+	OrganizationSettingHistory *OrganizationSettingHistoryClient
 	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
 	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserHistory is the client for interacting with the UserHistory builders.
+	UserHistory *UserHistoryClient
 	// UserSetting is the client for interacting with the UserSetting builders.
 	UserSetting *UserSettingClient
+	// UserSettingHistory is the client for interacting with the UserSettingHistory builders.
+	UserSettingHistory *UserSettingHistoryClient
+
+	// historyActivated determines if the history hooks have already been activated
+	historyActivated bool
 }
 
 // NewClient creates a new client configured with the given options.
 func NewClient(opts ...Option) *Client {
-	client := &Client{config: newConfig(opts...)}
+	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
+	cfg.options(opts...)
+	client := &Client{config: cfg}
 	client.init()
 	return client
 }
@@ -88,18 +112,49 @@ func (c *Client) init() {
 	c.EmailVerificationToken = NewEmailVerificationTokenClient(c.config)
 	c.Entitlement = NewEntitlementClient(c.config)
 	c.Group = NewGroupClient(c.config)
+	c.GroupHistory = NewGroupHistoryClient(c.config)
 	c.GroupMembership = NewGroupMembershipClient(c.config)
 	c.GroupSetting = NewGroupSettingClient(c.config)
+	c.GroupSettingHistory = NewGroupSettingHistoryClient(c.config)
 	c.Integration = NewIntegrationClient(c.config)
 	c.OauthProvider = NewOauthProviderClient(c.config)
 	c.OhAuthTooToken = NewOhAuthTooTokenClient(c.config)
 	c.OrgMembership = NewOrgMembershipClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
+	c.OrganizationHistory = NewOrganizationHistoryClient(c.config)
 	c.OrganizationSetting = NewOrganizationSettingClient(c.config)
+	c.OrganizationSettingHistory = NewOrganizationSettingHistoryClient(c.config)
 	c.PasswordResetToken = NewPasswordResetTokenClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserHistory = NewUserHistoryClient(c.config)
 	c.UserSetting = NewUserSettingClient(c.config)
+	c.UserSettingHistory = NewUserSettingHistoryClient(c.config)
+}
+
+// withHistory adds the history hooks to the appropriate schemas - generated by enthistory
+func (c *Client) WithHistory() {
+	if !c.historyActivated {
+		for _, hook := range enthistory.HistoryHooks[*GroupMutation]() {
+			c.Group.Use(hook)
+		}
+		for _, hook := range enthistory.HistoryHooks[*GroupSettingMutation]() {
+			c.GroupSetting.Use(hook)
+		}
+		for _, hook := range enthistory.HistoryHooks[*OrganizationMutation]() {
+			c.Organization.Use(hook)
+		}
+		for _, hook := range enthistory.HistoryHooks[*OrganizationSettingMutation]() {
+			c.OrganizationSetting.Use(hook)
+		}
+		for _, hook := range enthistory.HistoryHooks[*UserMutation]() {
+			c.User.Use(hook)
+		}
+		for _, hook := range enthistory.HistoryHooks[*UserSettingMutation]() {
+			c.UserSetting.Use(hook)
+		}
+		c.historyActivated = true
+	}
 }
 
 type (
@@ -224,23 +279,29 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                    ctx,
-		config:                 cfg,
-		EmailVerificationToken: NewEmailVerificationTokenClient(cfg),
-		Entitlement:            NewEntitlementClient(cfg),
-		Group:                  NewGroupClient(cfg),
-		GroupMembership:        NewGroupMembershipClient(cfg),
-		GroupSetting:           NewGroupSettingClient(cfg),
-		Integration:            NewIntegrationClient(cfg),
-		OauthProvider:          NewOauthProviderClient(cfg),
-		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
-		OrgMembership:          NewOrgMembershipClient(cfg),
-		Organization:           NewOrganizationClient(cfg),
-		OrganizationSetting:    NewOrganizationSettingClient(cfg),
-		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
-		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		User:                   NewUserClient(cfg),
-		UserSetting:            NewUserSettingClient(cfg),
+		ctx:                        ctx,
+		config:                     cfg,
+		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
+		Entitlement:                NewEntitlementClient(cfg),
+		Group:                      NewGroupClient(cfg),
+		GroupHistory:               NewGroupHistoryClient(cfg),
+		GroupMembership:            NewGroupMembershipClient(cfg),
+		GroupSetting:               NewGroupSettingClient(cfg),
+		GroupSettingHistory:        NewGroupSettingHistoryClient(cfg),
+		Integration:                NewIntegrationClient(cfg),
+		OauthProvider:              NewOauthProviderClient(cfg),
+		OhAuthTooToken:             NewOhAuthTooTokenClient(cfg),
+		OrgMembership:              NewOrgMembershipClient(cfg),
+		Organization:               NewOrganizationClient(cfg),
+		OrganizationHistory:        NewOrganizationHistoryClient(cfg),
+		OrganizationSetting:        NewOrganizationSettingClient(cfg),
+		OrganizationSettingHistory: NewOrganizationSettingHistoryClient(cfg),
+		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
+		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
+		User:                       NewUserClient(cfg),
+		UserHistory:                NewUserHistoryClient(cfg),
+		UserSetting:                NewUserSettingClient(cfg),
+		UserSettingHistory:         NewUserSettingHistoryClient(cfg),
 	}, nil
 }
 
@@ -258,23 +319,29 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                    ctx,
-		config:                 cfg,
-		EmailVerificationToken: NewEmailVerificationTokenClient(cfg),
-		Entitlement:            NewEntitlementClient(cfg),
-		Group:                  NewGroupClient(cfg),
-		GroupMembership:        NewGroupMembershipClient(cfg),
-		GroupSetting:           NewGroupSettingClient(cfg),
-		Integration:            NewIntegrationClient(cfg),
-		OauthProvider:          NewOauthProviderClient(cfg),
-		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
-		OrgMembership:          NewOrgMembershipClient(cfg),
-		Organization:           NewOrganizationClient(cfg),
-		OrganizationSetting:    NewOrganizationSettingClient(cfg),
-		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
-		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		User:                   NewUserClient(cfg),
-		UserSetting:            NewUserSettingClient(cfg),
+		ctx:                        ctx,
+		config:                     cfg,
+		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
+		Entitlement:                NewEntitlementClient(cfg),
+		Group:                      NewGroupClient(cfg),
+		GroupHistory:               NewGroupHistoryClient(cfg),
+		GroupMembership:            NewGroupMembershipClient(cfg),
+		GroupSetting:               NewGroupSettingClient(cfg),
+		GroupSettingHistory:        NewGroupSettingHistoryClient(cfg),
+		Integration:                NewIntegrationClient(cfg),
+		OauthProvider:              NewOauthProviderClient(cfg),
+		OhAuthTooToken:             NewOhAuthTooTokenClient(cfg),
+		OrgMembership:              NewOrgMembershipClient(cfg),
+		Organization:               NewOrganizationClient(cfg),
+		OrganizationHistory:        NewOrganizationHistoryClient(cfg),
+		OrganizationSetting:        NewOrganizationSettingClient(cfg),
+		OrganizationSettingHistory: NewOrganizationSettingHistoryClient(cfg),
+		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
+		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
+		User:                       NewUserClient(cfg),
+		UserHistory:                NewUserHistoryClient(cfg),
+		UserSetting:                NewUserSettingClient(cfg),
+		UserSettingHistory:         NewUserSettingHistoryClient(cfg),
 	}, nil
 }
 
@@ -304,10 +371,12 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
-		c.GroupSetting, c.Integration, c.OauthProvider, c.OhAuthTooToken,
-		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.User, c.UserSetting,
+		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupHistory,
+		c.GroupMembership, c.GroupSetting, c.GroupSettingHistory, c.Integration,
+		c.OauthProvider, c.OhAuthTooToken, c.OrgMembership, c.Organization,
+		c.OrganizationHistory, c.OrganizationSetting, c.OrganizationSettingHistory,
+		c.PasswordResetToken, c.PersonalAccessToken, c.User, c.UserHistory,
+		c.UserSetting, c.UserSettingHistory,
 	} {
 		n.Use(hooks...)
 	}
@@ -317,10 +386,12 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
-		c.GroupSetting, c.Integration, c.OauthProvider, c.OhAuthTooToken,
-		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.User, c.UserSetting,
+		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupHistory,
+		c.GroupMembership, c.GroupSetting, c.GroupSettingHistory, c.Integration,
+		c.OauthProvider, c.OhAuthTooToken, c.OrgMembership, c.Organization,
+		c.OrganizationHistory, c.OrganizationSetting, c.OrganizationSettingHistory,
+		c.PasswordResetToken, c.PersonalAccessToken, c.User, c.UserHistory,
+		c.UserSetting, c.UserSettingHistory,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -335,10 +406,14 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Entitlement.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
+	case *GroupHistoryMutation:
+		return c.GroupHistory.mutate(ctx, m)
 	case *GroupMembershipMutation:
 		return c.GroupMembership.mutate(ctx, m)
 	case *GroupSettingMutation:
 		return c.GroupSetting.mutate(ctx, m)
+	case *GroupSettingHistoryMutation:
+		return c.GroupSettingHistory.mutate(ctx, m)
 	case *IntegrationMutation:
 		return c.Integration.mutate(ctx, m)
 	case *OauthProviderMutation:
@@ -349,16 +424,24 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.OrgMembership.mutate(ctx, m)
 	case *OrganizationMutation:
 		return c.Organization.mutate(ctx, m)
+	case *OrganizationHistoryMutation:
+		return c.OrganizationHistory.mutate(ctx, m)
 	case *OrganizationSettingMutation:
 		return c.OrganizationSetting.mutate(ctx, m)
+	case *OrganizationSettingHistoryMutation:
+		return c.OrganizationSettingHistory.mutate(ctx, m)
 	case *PasswordResetTokenMutation:
 		return c.PasswordResetToken.mutate(ctx, m)
 	case *PersonalAccessTokenMutation:
 		return c.PersonalAccessToken.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *UserHistoryMutation:
+		return c.UserHistory.mutate(ctx, m)
 	case *UserSettingMutation:
 		return c.UserSetting.mutate(ctx, m)
+	case *UserSettingHistoryMutation:
+		return c.UserSettingHistory.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("generated: unknown mutation type %T", m)
 	}
@@ -883,6 +966,139 @@ func (c *GroupClient) mutate(ctx context.Context, m *GroupMutation) (Value, erro
 	}
 }
 
+// GroupHistoryClient is a client for the GroupHistory schema.
+type GroupHistoryClient struct {
+	config
+}
+
+// NewGroupHistoryClient returns a client for the GroupHistory from the given config.
+func NewGroupHistoryClient(c config) *GroupHistoryClient {
+	return &GroupHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `grouphistory.Hooks(f(g(h())))`.
+func (c *GroupHistoryClient) Use(hooks ...Hook) {
+	c.hooks.GroupHistory = append(c.hooks.GroupHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `grouphistory.Intercept(f(g(h())))`.
+func (c *GroupHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.GroupHistory = append(c.inters.GroupHistory, interceptors...)
+}
+
+// Create returns a builder for creating a GroupHistory entity.
+func (c *GroupHistoryClient) Create() *GroupHistoryCreate {
+	mutation := newGroupHistoryMutation(c.config, OpCreate)
+	return &GroupHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GroupHistory entities.
+func (c *GroupHistoryClient) CreateBulk(builders ...*GroupHistoryCreate) *GroupHistoryCreateBulk {
+	return &GroupHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *GroupHistoryClient) MapCreateBulk(slice any, setFunc func(*GroupHistoryCreate, int)) *GroupHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &GroupHistoryCreateBulk{err: fmt.Errorf("calling to GroupHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*GroupHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &GroupHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GroupHistory.
+func (c *GroupHistoryClient) Update() *GroupHistoryUpdate {
+	mutation := newGroupHistoryMutation(c.config, OpUpdate)
+	return &GroupHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GroupHistoryClient) UpdateOne(gh *GroupHistory) *GroupHistoryUpdateOne {
+	mutation := newGroupHistoryMutation(c.config, OpUpdateOne, withGroupHistory(gh))
+	return &GroupHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GroupHistoryClient) UpdateOneID(id string) *GroupHistoryUpdateOne {
+	mutation := newGroupHistoryMutation(c.config, OpUpdateOne, withGroupHistoryID(id))
+	return &GroupHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GroupHistory.
+func (c *GroupHistoryClient) Delete() *GroupHistoryDelete {
+	mutation := newGroupHistoryMutation(c.config, OpDelete)
+	return &GroupHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GroupHistoryClient) DeleteOne(gh *GroupHistory) *GroupHistoryDeleteOne {
+	return c.DeleteOneID(gh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GroupHistoryClient) DeleteOneID(id string) *GroupHistoryDeleteOne {
+	builder := c.Delete().Where(grouphistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GroupHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for GroupHistory.
+func (c *GroupHistoryClient) Query() *GroupHistoryQuery {
+	return &GroupHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGroupHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a GroupHistory entity by its id.
+func (c *GroupHistoryClient) Get(ctx context.Context, id string) (*GroupHistory, error) {
+	return c.Query().Where(grouphistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GroupHistoryClient) GetX(ctx context.Context, id string) *GroupHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GroupHistoryClient) Hooks() []Hook {
+	return c.hooks.GroupHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *GroupHistoryClient) Interceptors() []Interceptor {
+	return c.inters.GroupHistory
+}
+
+func (c *GroupHistoryClient) mutate(ctx context.Context, m *GroupHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GroupHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GroupHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GroupHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GroupHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown GroupHistory mutation op: %q", m.Op())
+	}
+}
+
 // GroupMembershipClient is a client for the GroupMembership schema.
 type GroupMembershipClient struct {
 	config
@@ -1207,6 +1423,139 @@ func (c *GroupSettingClient) mutate(ctx context.Context, m *GroupSettingMutation
 		return (&GroupSettingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown GroupSetting mutation op: %q", m.Op())
+	}
+}
+
+// GroupSettingHistoryClient is a client for the GroupSettingHistory schema.
+type GroupSettingHistoryClient struct {
+	config
+}
+
+// NewGroupSettingHistoryClient returns a client for the GroupSettingHistory from the given config.
+func NewGroupSettingHistoryClient(c config) *GroupSettingHistoryClient {
+	return &GroupSettingHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `groupsettinghistory.Hooks(f(g(h())))`.
+func (c *GroupSettingHistoryClient) Use(hooks ...Hook) {
+	c.hooks.GroupSettingHistory = append(c.hooks.GroupSettingHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `groupsettinghistory.Intercept(f(g(h())))`.
+func (c *GroupSettingHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.GroupSettingHistory = append(c.inters.GroupSettingHistory, interceptors...)
+}
+
+// Create returns a builder for creating a GroupSettingHistory entity.
+func (c *GroupSettingHistoryClient) Create() *GroupSettingHistoryCreate {
+	mutation := newGroupSettingHistoryMutation(c.config, OpCreate)
+	return &GroupSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GroupSettingHistory entities.
+func (c *GroupSettingHistoryClient) CreateBulk(builders ...*GroupSettingHistoryCreate) *GroupSettingHistoryCreateBulk {
+	return &GroupSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *GroupSettingHistoryClient) MapCreateBulk(slice any, setFunc func(*GroupSettingHistoryCreate, int)) *GroupSettingHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &GroupSettingHistoryCreateBulk{err: fmt.Errorf("calling to GroupSettingHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*GroupSettingHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &GroupSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GroupSettingHistory.
+func (c *GroupSettingHistoryClient) Update() *GroupSettingHistoryUpdate {
+	mutation := newGroupSettingHistoryMutation(c.config, OpUpdate)
+	return &GroupSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GroupSettingHistoryClient) UpdateOne(gsh *GroupSettingHistory) *GroupSettingHistoryUpdateOne {
+	mutation := newGroupSettingHistoryMutation(c.config, OpUpdateOne, withGroupSettingHistory(gsh))
+	return &GroupSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GroupSettingHistoryClient) UpdateOneID(id string) *GroupSettingHistoryUpdateOne {
+	mutation := newGroupSettingHistoryMutation(c.config, OpUpdateOne, withGroupSettingHistoryID(id))
+	return &GroupSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GroupSettingHistory.
+func (c *GroupSettingHistoryClient) Delete() *GroupSettingHistoryDelete {
+	mutation := newGroupSettingHistoryMutation(c.config, OpDelete)
+	return &GroupSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GroupSettingHistoryClient) DeleteOne(gsh *GroupSettingHistory) *GroupSettingHistoryDeleteOne {
+	return c.DeleteOneID(gsh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GroupSettingHistoryClient) DeleteOneID(id string) *GroupSettingHistoryDeleteOne {
+	builder := c.Delete().Where(groupsettinghistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GroupSettingHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for GroupSettingHistory.
+func (c *GroupSettingHistoryClient) Query() *GroupSettingHistoryQuery {
+	return &GroupSettingHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGroupSettingHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a GroupSettingHistory entity by its id.
+func (c *GroupSettingHistoryClient) Get(ctx context.Context, id string) (*GroupSettingHistory, error) {
+	return c.Query().Where(groupsettinghistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GroupSettingHistoryClient) GetX(ctx context.Context, id string) *GroupSettingHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GroupSettingHistoryClient) Hooks() []Hook {
+	return c.hooks.GroupSettingHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *GroupSettingHistoryClient) Interceptors() []Interceptor {
+	return c.inters.GroupSettingHistory
+}
+
+func (c *GroupSettingHistoryClient) mutate(ctx context.Context, m *GroupSettingHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GroupSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GroupSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GroupSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GroupSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown GroupSettingHistory mutation op: %q", m.Op())
 	}
 }
 
@@ -2130,6 +2479,139 @@ func (c *OrganizationClient) mutate(ctx context.Context, m *OrganizationMutation
 	}
 }
 
+// OrganizationHistoryClient is a client for the OrganizationHistory schema.
+type OrganizationHistoryClient struct {
+	config
+}
+
+// NewOrganizationHistoryClient returns a client for the OrganizationHistory from the given config.
+func NewOrganizationHistoryClient(c config) *OrganizationHistoryClient {
+	return &OrganizationHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organizationhistory.Hooks(f(g(h())))`.
+func (c *OrganizationHistoryClient) Use(hooks ...Hook) {
+	c.hooks.OrganizationHistory = append(c.hooks.OrganizationHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `organizationhistory.Intercept(f(g(h())))`.
+func (c *OrganizationHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OrganizationHistory = append(c.inters.OrganizationHistory, interceptors...)
+}
+
+// Create returns a builder for creating a OrganizationHistory entity.
+func (c *OrganizationHistoryClient) Create() *OrganizationHistoryCreate {
+	mutation := newOrganizationHistoryMutation(c.config, OpCreate)
+	return &OrganizationHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrganizationHistory entities.
+func (c *OrganizationHistoryClient) CreateBulk(builders ...*OrganizationHistoryCreate) *OrganizationHistoryCreateBulk {
+	return &OrganizationHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OrganizationHistoryClient) MapCreateBulk(slice any, setFunc func(*OrganizationHistoryCreate, int)) *OrganizationHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OrganizationHistoryCreateBulk{err: fmt.Errorf("calling to OrganizationHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OrganizationHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OrganizationHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrganizationHistory.
+func (c *OrganizationHistoryClient) Update() *OrganizationHistoryUpdate {
+	mutation := newOrganizationHistoryMutation(c.config, OpUpdate)
+	return &OrganizationHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationHistoryClient) UpdateOne(oh *OrganizationHistory) *OrganizationHistoryUpdateOne {
+	mutation := newOrganizationHistoryMutation(c.config, OpUpdateOne, withOrganizationHistory(oh))
+	return &OrganizationHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationHistoryClient) UpdateOneID(id string) *OrganizationHistoryUpdateOne {
+	mutation := newOrganizationHistoryMutation(c.config, OpUpdateOne, withOrganizationHistoryID(id))
+	return &OrganizationHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrganizationHistory.
+func (c *OrganizationHistoryClient) Delete() *OrganizationHistoryDelete {
+	mutation := newOrganizationHistoryMutation(c.config, OpDelete)
+	return &OrganizationHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrganizationHistoryClient) DeleteOne(oh *OrganizationHistory) *OrganizationHistoryDeleteOne {
+	return c.DeleteOneID(oh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OrganizationHistoryClient) DeleteOneID(id string) *OrganizationHistoryDeleteOne {
+	builder := c.Delete().Where(organizationhistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for OrganizationHistory.
+func (c *OrganizationHistoryClient) Query() *OrganizationHistoryQuery {
+	return &OrganizationHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOrganizationHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OrganizationHistory entity by its id.
+func (c *OrganizationHistoryClient) Get(ctx context.Context, id string) (*OrganizationHistory, error) {
+	return c.Query().Where(organizationhistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationHistoryClient) GetX(ctx context.Context, id string) *OrganizationHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationHistoryClient) Hooks() []Hook {
+	return c.hooks.OrganizationHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *OrganizationHistoryClient) Interceptors() []Interceptor {
+	return c.inters.OrganizationHistory
+}
+
+func (c *OrganizationHistoryClient) mutate(ctx context.Context, m *OrganizationHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OrganizationHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OrganizationHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OrganizationHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OrganizationHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown OrganizationHistory mutation op: %q", m.Op())
+	}
+}
+
 // OrganizationSettingClient is a client for the OrganizationSetting schema.
 type OrganizationSettingClient struct {
 	config
@@ -2281,6 +2763,139 @@ func (c *OrganizationSettingClient) mutate(ctx context.Context, m *OrganizationS
 		return (&OrganizationSettingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown OrganizationSetting mutation op: %q", m.Op())
+	}
+}
+
+// OrganizationSettingHistoryClient is a client for the OrganizationSettingHistory schema.
+type OrganizationSettingHistoryClient struct {
+	config
+}
+
+// NewOrganizationSettingHistoryClient returns a client for the OrganizationSettingHistory from the given config.
+func NewOrganizationSettingHistoryClient(c config) *OrganizationSettingHistoryClient {
+	return &OrganizationSettingHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organizationsettinghistory.Hooks(f(g(h())))`.
+func (c *OrganizationSettingHistoryClient) Use(hooks ...Hook) {
+	c.hooks.OrganizationSettingHistory = append(c.hooks.OrganizationSettingHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `organizationsettinghistory.Intercept(f(g(h())))`.
+func (c *OrganizationSettingHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OrganizationSettingHistory = append(c.inters.OrganizationSettingHistory, interceptors...)
+}
+
+// Create returns a builder for creating a OrganizationSettingHistory entity.
+func (c *OrganizationSettingHistoryClient) Create() *OrganizationSettingHistoryCreate {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpCreate)
+	return &OrganizationSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrganizationSettingHistory entities.
+func (c *OrganizationSettingHistoryClient) CreateBulk(builders ...*OrganizationSettingHistoryCreate) *OrganizationSettingHistoryCreateBulk {
+	return &OrganizationSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OrganizationSettingHistoryClient) MapCreateBulk(slice any, setFunc func(*OrganizationSettingHistoryCreate, int)) *OrganizationSettingHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OrganizationSettingHistoryCreateBulk{err: fmt.Errorf("calling to OrganizationSettingHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OrganizationSettingHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OrganizationSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrganizationSettingHistory.
+func (c *OrganizationSettingHistoryClient) Update() *OrganizationSettingHistoryUpdate {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpUpdate)
+	return &OrganizationSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationSettingHistoryClient) UpdateOne(osh *OrganizationSettingHistory) *OrganizationSettingHistoryUpdateOne {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpUpdateOne, withOrganizationSettingHistory(osh))
+	return &OrganizationSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationSettingHistoryClient) UpdateOneID(id string) *OrganizationSettingHistoryUpdateOne {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpUpdateOne, withOrganizationSettingHistoryID(id))
+	return &OrganizationSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrganizationSettingHistory.
+func (c *OrganizationSettingHistoryClient) Delete() *OrganizationSettingHistoryDelete {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpDelete)
+	return &OrganizationSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrganizationSettingHistoryClient) DeleteOne(osh *OrganizationSettingHistory) *OrganizationSettingHistoryDeleteOne {
+	return c.DeleteOneID(osh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OrganizationSettingHistoryClient) DeleteOneID(id string) *OrganizationSettingHistoryDeleteOne {
+	builder := c.Delete().Where(organizationsettinghistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationSettingHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for OrganizationSettingHistory.
+func (c *OrganizationSettingHistoryClient) Query() *OrganizationSettingHistoryQuery {
+	return &OrganizationSettingHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOrganizationSettingHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OrganizationSettingHistory entity by its id.
+func (c *OrganizationSettingHistoryClient) Get(ctx context.Context, id string) (*OrganizationSettingHistory, error) {
+	return c.Query().Where(organizationsettinghistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationSettingHistoryClient) GetX(ctx context.Context, id string) *OrganizationSettingHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationSettingHistoryClient) Hooks() []Hook {
+	return c.hooks.OrganizationSettingHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *OrganizationSettingHistoryClient) Interceptors() []Interceptor {
+	return c.inters.OrganizationSettingHistory
+}
+
+func (c *OrganizationSettingHistoryClient) mutate(ctx context.Context, m *OrganizationSettingHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OrganizationSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OrganizationSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OrganizationSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OrganizationSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown OrganizationSettingHistory mutation op: %q", m.Op())
 	}
 }
 
@@ -2879,6 +3494,139 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
+// UserHistoryClient is a client for the UserHistory schema.
+type UserHistoryClient struct {
+	config
+}
+
+// NewUserHistoryClient returns a client for the UserHistory from the given config.
+func NewUserHistoryClient(c config) *UserHistoryClient {
+	return &UserHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userhistory.Hooks(f(g(h())))`.
+func (c *UserHistoryClient) Use(hooks ...Hook) {
+	c.hooks.UserHistory = append(c.hooks.UserHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userhistory.Intercept(f(g(h())))`.
+func (c *UserHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserHistory = append(c.inters.UserHistory, interceptors...)
+}
+
+// Create returns a builder for creating a UserHistory entity.
+func (c *UserHistoryClient) Create() *UserHistoryCreate {
+	mutation := newUserHistoryMutation(c.config, OpCreate)
+	return &UserHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserHistory entities.
+func (c *UserHistoryClient) CreateBulk(builders ...*UserHistoryCreate) *UserHistoryCreateBulk {
+	return &UserHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserHistoryClient) MapCreateBulk(slice any, setFunc func(*UserHistoryCreate, int)) *UserHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserHistoryCreateBulk{err: fmt.Errorf("calling to UserHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserHistory.
+func (c *UserHistoryClient) Update() *UserHistoryUpdate {
+	mutation := newUserHistoryMutation(c.config, OpUpdate)
+	return &UserHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserHistoryClient) UpdateOne(uh *UserHistory) *UserHistoryUpdateOne {
+	mutation := newUserHistoryMutation(c.config, OpUpdateOne, withUserHistory(uh))
+	return &UserHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserHistoryClient) UpdateOneID(id string) *UserHistoryUpdateOne {
+	mutation := newUserHistoryMutation(c.config, OpUpdateOne, withUserHistoryID(id))
+	return &UserHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserHistory.
+func (c *UserHistoryClient) Delete() *UserHistoryDelete {
+	mutation := newUserHistoryMutation(c.config, OpDelete)
+	return &UserHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserHistoryClient) DeleteOne(uh *UserHistory) *UserHistoryDeleteOne {
+	return c.DeleteOneID(uh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserHistoryClient) DeleteOneID(id string) *UserHistoryDeleteOne {
+	builder := c.Delete().Where(userhistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for UserHistory.
+func (c *UserHistoryClient) Query() *UserHistoryQuery {
+	return &UserHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserHistory entity by its id.
+func (c *UserHistoryClient) Get(ctx context.Context, id string) (*UserHistory, error) {
+	return c.Query().Where(userhistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserHistoryClient) GetX(ctx context.Context, id string) *UserHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserHistoryClient) Hooks() []Hook {
+	return c.hooks.UserHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserHistoryClient) Interceptors() []Interceptor {
+	return c.inters.UserHistory
+}
+
+func (c *UserHistoryClient) mutate(ctx context.Context, m *UserHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown UserHistory mutation op: %q", m.Op())
+	}
+}
+
 // UserSettingClient is a client for the UserSetting schema.
 type UserSettingClient struct {
 	config
@@ -3033,19 +3781,154 @@ func (c *UserSettingClient) mutate(ctx context.Context, m *UserSettingMutation) 
 	}
 }
 
+// UserSettingHistoryClient is a client for the UserSettingHistory schema.
+type UserSettingHistoryClient struct {
+	config
+}
+
+// NewUserSettingHistoryClient returns a client for the UserSettingHistory from the given config.
+func NewUserSettingHistoryClient(c config) *UserSettingHistoryClient {
+	return &UserSettingHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usersettinghistory.Hooks(f(g(h())))`.
+func (c *UserSettingHistoryClient) Use(hooks ...Hook) {
+	c.hooks.UserSettingHistory = append(c.hooks.UserSettingHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usersettinghistory.Intercept(f(g(h())))`.
+func (c *UserSettingHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserSettingHistory = append(c.inters.UserSettingHistory, interceptors...)
+}
+
+// Create returns a builder for creating a UserSettingHistory entity.
+func (c *UserSettingHistoryClient) Create() *UserSettingHistoryCreate {
+	mutation := newUserSettingHistoryMutation(c.config, OpCreate)
+	return &UserSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserSettingHistory entities.
+func (c *UserSettingHistoryClient) CreateBulk(builders ...*UserSettingHistoryCreate) *UserSettingHistoryCreateBulk {
+	return &UserSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserSettingHistoryClient) MapCreateBulk(slice any, setFunc func(*UserSettingHistoryCreate, int)) *UserSettingHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserSettingHistoryCreateBulk{err: fmt.Errorf("calling to UserSettingHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserSettingHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserSettingHistory.
+func (c *UserSettingHistoryClient) Update() *UserSettingHistoryUpdate {
+	mutation := newUserSettingHistoryMutation(c.config, OpUpdate)
+	return &UserSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserSettingHistoryClient) UpdateOne(ush *UserSettingHistory) *UserSettingHistoryUpdateOne {
+	mutation := newUserSettingHistoryMutation(c.config, OpUpdateOne, withUserSettingHistory(ush))
+	return &UserSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserSettingHistoryClient) UpdateOneID(id string) *UserSettingHistoryUpdateOne {
+	mutation := newUserSettingHistoryMutation(c.config, OpUpdateOne, withUserSettingHistoryID(id))
+	return &UserSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserSettingHistory.
+func (c *UserSettingHistoryClient) Delete() *UserSettingHistoryDelete {
+	mutation := newUserSettingHistoryMutation(c.config, OpDelete)
+	return &UserSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserSettingHistoryClient) DeleteOne(ush *UserSettingHistory) *UserSettingHistoryDeleteOne {
+	return c.DeleteOneID(ush.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserSettingHistoryClient) DeleteOneID(id string) *UserSettingHistoryDeleteOne {
+	builder := c.Delete().Where(usersettinghistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserSettingHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for UserSettingHistory.
+func (c *UserSettingHistoryClient) Query() *UserSettingHistoryQuery {
+	return &UserSettingHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserSettingHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserSettingHistory entity by its id.
+func (c *UserSettingHistoryClient) Get(ctx context.Context, id string) (*UserSettingHistory, error) {
+	return c.Query().Where(usersettinghistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserSettingHistoryClient) GetX(ctx context.Context, id string) *UserSettingHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserSettingHistoryClient) Hooks() []Hook {
+	return c.hooks.UserSettingHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserSettingHistoryClient) Interceptors() []Interceptor {
+	return c.inters.UserSettingHistory
+}
+
+func (c *UserSettingHistoryClient) mutate(ctx context.Context, m *UserSettingHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown UserSettingHistory mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
-		Integration, OauthProvider, OhAuthTooToken, OrgMembership, Organization,
-		OrganizationSetting, PasswordResetToken, PersonalAccessToken, User,
-		UserSetting []ent.Hook
+		EmailVerificationToken, Entitlement, Group, GroupHistory, GroupMembership,
+		GroupSetting, GroupSettingHistory, Integration, OauthProvider, OhAuthTooToken,
+		OrgMembership, Organization, OrganizationHistory, OrganizationSetting,
+		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken, User,
+		UserHistory, UserSetting, UserSettingHistory []ent.Hook
 	}
 	inters struct {
-		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
-		Integration, OauthProvider, OhAuthTooToken, OrgMembership, Organization,
-		OrganizationSetting, PasswordResetToken, PersonalAccessToken, User,
-		UserSetting []ent.Interceptor
+		EmailVerificationToken, Entitlement, Group, GroupHistory, GroupMembership,
+		GroupSetting, GroupSettingHistory, Integration, OauthProvider, OhAuthTooToken,
+		OrgMembership, Organization, OrganizationHistory, OrganizationSetting,
+		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken, User,
+		UserHistory, UserSetting, UserSettingHistory []ent.Interceptor
 	}
 )
 

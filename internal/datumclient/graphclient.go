@@ -1589,15 +1589,43 @@ func (t *CreateInvite_CreateInvite_Invite_Owner) GetID() string {
 }
 
 type CreateInvite_CreateInvite_Invite struct {
-	Recipient string                                 "json:\"recipient\" graphql:\"recipient\""
-	Owner     CreateInvite_CreateInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                                 "json:\"id\" graphql:\"id\""
+	Recipient   string                                 "json:\"recipient\" graphql:\"recipient\""
+	Status      enums.InviteStatus                     "json:\"status\" graphql:\"status\""
+	RequestorID string                                 "json:\"requestorID\" graphql:\"requestorID\""
+	Expires     time.Time                              "json:\"expires\" graphql:\"expires\""
+	Owner       CreateInvite_CreateInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
 }
 
+func (t *CreateInvite_CreateInvite_Invite) GetID() string {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return t.ID
+}
 func (t *CreateInvite_CreateInvite_Invite) GetRecipient() string {
 	if t == nil {
 		t = &CreateInvite_CreateInvite_Invite{}
 	}
 	return t.Recipient
+}
+func (t *CreateInvite_CreateInvite_Invite) GetStatus() *enums.InviteStatus {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return &t.Status
+}
+func (t *CreateInvite_CreateInvite_Invite) GetRequestorID() string {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return t.RequestorID
+}
+func (t *CreateInvite_CreateInvite_Invite) GetExpires() *time.Time {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return &t.Expires
 }
 func (t *CreateInvite_CreateInvite_Invite) GetOwner() *CreateInvite_CreateInvite_Invite_Owner {
 	if t == nil {
@@ -5936,7 +5964,11 @@ func (c *Client) GetGroupSetting(ctx context.Context, groupSettingID string, int
 const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!) {
 	createInvite(input: $input) {
 		invite {
+			id
 			recipient
+			status
+			requestorID
+			expires
 			owner {
 				id
 			}

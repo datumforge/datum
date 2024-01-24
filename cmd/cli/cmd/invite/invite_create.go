@@ -35,6 +35,10 @@ func createInvite(ctx context.Context) error {
 		return err
 	}
 
+	// save session cookies on function exit
+	client, _ := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(client)
+
 	oID := viper.GetString("invite.create.orgid")
 	if oID == "" {
 		return datum.NewRequiredFieldMissingError("org id")

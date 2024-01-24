@@ -81,7 +81,7 @@ tasks:
     desc: launches an interactive browser to navigate the configured graph schema
     cmds:
       - 'open "http://localhost:4000"'
-      - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+      - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept --skip-update-check --skip-update
   run-dev:
     dotenv: ['{{.ENV}}/.env-dev']
     desc: runs the datum server with oidc enabled
@@ -226,6 +226,7 @@ tasks:
     desc: a task to register a user, parse out the token respoonse, and submit it to the verify endpoint
     cmds:
       - curl http://localhost:17608/v1/verify?token={{.VERIFY_TOKEN}}
+      - ./datum-cli login -u mitb@datum.net
     vars:
       VERIFY_TOKEN:
         sh: ./datum-cli register --email="mitb@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token

@@ -1,7 +1,11 @@
 mutation CreateInvite($input: CreateInviteInput!) {
   createInvite(input: $input) {
     invite {
+      id
       recipient
+      status
+      requestorID
+      expires
       owner {
         id
       }

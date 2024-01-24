@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
+	"github.com/datumforge/datum/internal/datumclient"
 )
 
 var inviteGetCmd = &cobra.Command{
@@ -31,6 +32,10 @@ func invites(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// save session cookies on function exit
+	client, _ := cli.Client.(*datumclient.Client)
+	defer datum.StoreSessionCookies(client)
 
 	// filter options
 	invID := viper.GetString("invite.get.id")

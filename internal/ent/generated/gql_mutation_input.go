@@ -1437,7 +1437,7 @@ type CreateUserInput struct {
 	Email                     string
 	FirstName                 string
 	LastName                  string
-	DisplayName               *string
+	DisplayName               string
 	AvatarRemoteURL           *string
 	AvatarLocalFile           *string
 	AvatarUpdatedAt           *time.Time
@@ -1470,9 +1470,7 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	m.SetEmail(i.Email)
 	m.SetFirstName(i.FirstName)
 	m.SetLastName(i.LastName)
-	if v := i.DisplayName; v != nil {
-		m.SetDisplayName(*v)
-	}
+	m.SetDisplayName(i.DisplayName)
 	if v := i.AvatarRemoteURL; v != nil {
 		m.SetAvatarRemoteURL(*v)
 	}

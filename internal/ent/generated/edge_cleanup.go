@@ -165,6 +165,11 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func UserHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func UserSettingEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil

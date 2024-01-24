@@ -21,6 +21,7 @@ type SchemaConfig struct {
 	PasswordResetToken     string // PasswordResetToken table.
 	PersonalAccessToken    string // PersonalAccessToken table.
 	User                   string // User table.
+	UserHistory            string // UserHistory table.
 	UserSetting            string // UserSetting table.
 }
 

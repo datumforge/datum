@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 
 	"entgo.io/ent/dialect/sql"
@@ -28,7 +29,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 15)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 16)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -382,6 +383,39 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 	}
 	graph.Nodes[14] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   userhistory.Table,
+			Columns: userhistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: userhistory.FieldID,
+			},
+		},
+		Type: "UserHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			userhistory.FieldHistoryTime:     {Type: field.TypeTime, Column: userhistory.FieldHistoryTime},
+			userhistory.FieldOperation:       {Type: field.TypeEnum, Column: userhistory.FieldOperation},
+			userhistory.FieldRef:             {Type: field.TypeString, Column: userhistory.FieldRef},
+			userhistory.FieldCreatedAt:       {Type: field.TypeTime, Column: userhistory.FieldCreatedAt},
+			userhistory.FieldUpdatedAt:       {Type: field.TypeTime, Column: userhistory.FieldUpdatedAt},
+			userhistory.FieldCreatedBy:       {Type: field.TypeString, Column: userhistory.FieldCreatedBy},
+			userhistory.FieldUpdatedBy:       {Type: field.TypeString, Column: userhistory.FieldUpdatedBy},
+			userhistory.FieldDeletedAt:       {Type: field.TypeTime, Column: userhistory.FieldDeletedAt},
+			userhistory.FieldDeletedBy:       {Type: field.TypeString, Column: userhistory.FieldDeletedBy},
+			userhistory.FieldEmail:           {Type: field.TypeString, Column: userhistory.FieldEmail},
+			userhistory.FieldFirstName:       {Type: field.TypeString, Column: userhistory.FieldFirstName},
+			userhistory.FieldLastName:        {Type: field.TypeString, Column: userhistory.FieldLastName},
+			userhistory.FieldDisplayName:     {Type: field.TypeString, Column: userhistory.FieldDisplayName},
+			userhistory.FieldAvatarRemoteURL: {Type: field.TypeString, Column: userhistory.FieldAvatarRemoteURL},
+			userhistory.FieldAvatarLocalFile: {Type: field.TypeString, Column: userhistory.FieldAvatarLocalFile},
+			userhistory.FieldAvatarUpdatedAt: {Type: field.TypeTime, Column: userhistory.FieldAvatarUpdatedAt},
+			userhistory.FieldLastSeen:        {Type: field.TypeTime, Column: userhistory.FieldLastSeen},
+			userhistory.FieldPassword:        {Type: field.TypeString, Column: userhistory.FieldPassword},
+			userhistory.FieldSub:             {Type: field.TypeString, Column: userhistory.FieldSub},
+			userhistory.FieldOauth:           {Type: field.TypeBool, Column: userhistory.FieldOauth},
+		},
+	}
+	graph.Nodes[15] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -2698,6 +2732,146 @@ func (f *UserFilter) WhereHasOrgMembershipsWith(preds ...predicate.OrgMembership
 }
 
 // addPredicate implements the predicateAdder interface.
+func (uhq *UserHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	uhq.predicates = append(uhq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserHistoryQuery builder.
+func (uhq *UserHistoryQuery) Filter() *UserHistoryFilter {
+	return &UserHistoryFilter{config: uhq.config, predicateAdder: uhq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserHistoryMutation builder.
+func (m *UserHistoryMutation) Filter() *UserHistoryFilter {
+	return &UserHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// UserHistoryFilter provides a generic filtering capability at runtime for UserHistoryQuery.
+type UserHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *UserHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *UserHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *UserHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *UserHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *UserHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *UserHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *UserHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *UserHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *UserHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *UserHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldDeletedBy))
+}
+
+// WhereEmail applies the entql string predicate on the email field.
+func (f *UserHistoryFilter) WhereEmail(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldEmail))
+}
+
+// WhereFirstName applies the entql string predicate on the first_name field.
+func (f *UserHistoryFilter) WhereFirstName(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldFirstName))
+}
+
+// WhereLastName applies the entql string predicate on the last_name field.
+func (f *UserHistoryFilter) WhereLastName(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldLastName))
+}
+
+// WhereDisplayName applies the entql string predicate on the display_name field.
+func (f *UserHistoryFilter) WhereDisplayName(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldDisplayName))
+}
+
+// WhereAvatarRemoteURL applies the entql string predicate on the avatar_remote_url field.
+func (f *UserHistoryFilter) WhereAvatarRemoteURL(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldAvatarRemoteURL))
+}
+
+// WhereAvatarLocalFile applies the entql string predicate on the avatar_local_file field.
+func (f *UserHistoryFilter) WhereAvatarLocalFile(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldAvatarLocalFile))
+}
+
+// WhereAvatarUpdatedAt applies the entql time.Time predicate on the avatar_updated_at field.
+func (f *UserHistoryFilter) WhereAvatarUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldAvatarUpdatedAt))
+}
+
+// WhereLastSeen applies the entql time.Time predicate on the last_seen field.
+func (f *UserHistoryFilter) WhereLastSeen(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldLastSeen))
+}
+
+// WherePassword applies the entql string predicate on the password field.
+func (f *UserHistoryFilter) WherePassword(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldPassword))
+}
+
+// WhereSub applies the entql string predicate on the sub field.
+func (f *UserHistoryFilter) WhereSub(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldSub))
+}
+
+// WhereOauth applies the entql bool predicate on the oauth field.
+func (f *UserHistoryFilter) WhereOauth(p entql.BoolP) {
+	f.Where(p.Field(userhistory.FieldOauth))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (usq *UserSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	usq.predicates = append(usq.predicates, pred)
 }
@@ -2726,7 +2900,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

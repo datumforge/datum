@@ -483,7 +483,7 @@ var (
 		{Name: "email", Type: field.TypeString},
 		{Name: "first_name", Type: field.TypeString, Size: 64},
 		{Name: "last_name", Type: field.TypeString, Size: 64},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "display_name", Type: field.TypeString, Size: 64},
 		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_local_file", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_updated_at", Type: field.TypeTime, Nullable: true},
@@ -510,6 +510,43 @@ var (
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
+			},
+		},
+	}
+	// UserHistoryColumns holds the columns for the "user_history" table.
+	UserHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString},
+		{Name: "first_name", Type: field.TypeString, Size: 64},
+		{Name: "last_name", Type: field.TypeString, Size: 64},
+		{Name: "display_name", Type: field.TypeString, Size: 64},
+		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "avatar_local_file", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "avatar_updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
+		{Name: "password", Type: field.TypeString, Nullable: true},
+		{Name: "sub", Type: field.TypeString, Nullable: true},
+		{Name: "oauth", Type: field.TypeBool, Default: false},
+	}
+	// UserHistoryTable holds the schema information for the "user_history" table.
+	UserHistoryTable = &schema.Table{
+		Name:       "user_history",
+		Columns:    UserHistoryColumns,
+		PrimaryKey: []*schema.Column{UserHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "userhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{UserHistoryColumns[1]},
 			},
 		},
 	}
@@ -562,6 +599,7 @@ var (
 		PasswordResetTokensTable,
 		PersonalAccessTokensTable,
 		UsersTable,
+		UserHistoryTable,
 		UserSettingsTable,
 	}
 )
@@ -581,5 +619,8 @@ func init() {
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
+	UserHistoryTable.Annotation = &entsql.Annotation{
+		Table: "user_history",
+	}
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 }

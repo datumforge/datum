@@ -447,6 +447,30 @@ func (f UserMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Muta
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserMutation", m)
 }
 
+// The UserHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserHistoryQueryRuleFunc func(context.Context, *generated.UserHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.UserHistoryQuery", q)
+}
+
+// The UserHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserHistoryMutationRuleFunc func(context.Context, *generated.UserHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.UserHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserHistoryMutation", m)
+}
+
 // The UserSettingQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserSettingQueryRuleFunc func(context.Context, *generated.UserSettingQuery) error
@@ -534,6 +558,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
+	case *generated.UserHistoryQuery:
+		return q.Filter(), nil
 	case *generated.UserSettingQuery:
 		return q.Filter(), nil
 	default:
@@ -570,6 +596,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.PersonalAccessTokenMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
+		return m.Filter(), nil
+	case *generated.UserHistoryMutation:
 		return m.Filter(), nil
 	case *generated.UserSettingMutation:
 		return m.Filter(), nil

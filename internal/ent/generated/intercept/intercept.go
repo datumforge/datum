@@ -23,6 +23,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
@@ -460,6 +461,33 @@ func (f TraverseUser) Traverse(ctx context.Context, q generated.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *generated.UserQuery", q)
 }
 
+// The UserHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type UserHistoryFunc func(context.Context, *generated.UserHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f UserHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.UserHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.UserHistoryQuery", q)
+}
+
+// The TraverseUserHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseUserHistory func(context.Context, *generated.UserHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseUserHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseUserHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.UserHistoryQuery", q)
+}
+
 // The UserSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserSettingFunc func(context.Context, *generated.UserSettingQuery) (generated.Value, error)
 
@@ -518,6 +546,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
+	case *generated.UserHistoryQuery:
+		return &query[*generated.UserHistoryQuery, predicate.UserHistory, userhistory.OrderOption]{typ: generated.TypeUserHistory, tq: q}, nil
 	case *generated.UserSettingQuery:
 		return &query[*generated.UserSettingQuery, predicate.UserSetting, usersetting.OrderOption]{typ: generated.TypeUserSetting, tq: q}, nil
 	default:

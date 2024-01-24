@@ -48,5 +48,8 @@ type PersonalAccessToken func(*sql.Selector)
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 
+// UserHistory is the predicate function for userhistory builders.
+type UserHistory func(*sql.Selector)
+
 // UserSetting is the predicate function for usersetting builders.
 type UserSetting func(*sql.Selector)

@@ -26,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
@@ -101,6 +102,7 @@ func checkColumn(table, column string) error {
 			passwordresettoken.Table:     passwordresettoken.ValidColumn,
 			personalaccesstoken.Table:    personalaccesstoken.ValidColumn,
 			user.Table:                   user.ValidColumn,
+			userhistory.Table:            userhistory.ValidColumn,
 			usersetting.Table:            usersetting.ValidColumn,
 		})
 	})

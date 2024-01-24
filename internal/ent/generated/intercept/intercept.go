@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -242,6 +243,33 @@ func (f TraverseIntegration) Traverse(ctx context.Context, q generated.Query) er
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.IntegrationQuery", q)
+}
+
+// The InviteFunc type is an adapter to allow the use of ordinary function as a Querier.
+type InviteFunc func(context.Context, *generated.InviteQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f InviteFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.InviteQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.InviteQuery", q)
+}
+
+// The TraverseInvite type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseInvite func(context.Context, *generated.InviteQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseInvite) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseInvite) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.InviteQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.InviteQuery", q)
 }
 
 // The OauthProviderFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -502,6 +530,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.GroupSettingQuery, predicate.GroupSetting, groupsetting.OrderOption]{typ: generated.TypeGroupSetting, tq: q}, nil
 	case *generated.IntegrationQuery:
 		return &query[*generated.IntegrationQuery, predicate.Integration, integration.OrderOption]{typ: generated.TypeIntegration, tq: q}, nil
+	case *generated.InviteQuery:
+		return &query[*generated.InviteQuery, predicate.Invite, invite.OrderOption]{typ: generated.TypeInvite, tq: q}, nil
 	case *generated.OauthProviderQuery:
 		return &query[*generated.OauthProviderQuery, predicate.OauthProvider, oauthprovider.OrderOption]{typ: generated.TypeOauthProvider, tq: q}, nil
 	case *generated.OhAuthTooTokenQuery:

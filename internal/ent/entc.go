@@ -22,6 +22,8 @@ import (
 
 	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 var (
@@ -176,6 +178,14 @@ func main() {
 		),
 		entc.Dependency(
 			entc.DependencyType(&http.Client{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("Emails"),
+			entc.DependencyType(emails.EmailManager{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("Marionette"),
+			entc.DependencyType(marionette.TaskManager{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

@@ -22,4 +22,7 @@ var (
 
 	// ErrMissingRole is returned when an update request is made that contains no role
 	ErrMissingRole = errors.New("missing role in update")
+
+	// ErrUserAlreadyOrgMember is returned when an user attempts to be invited to an org they are already a member of
+	ErrUserAlreadyOrgMember = errors.New("user already member of organization")
 )

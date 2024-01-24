@@ -24,6 +24,9 @@ type GroupSetting func(*sql.Selector)
 // Integration is the predicate function for integration builders.
 type Integration func(*sql.Selector)
 
+// Invite is the predicate function for invite builders.
+type Invite func(*sql.Selector)
+
 // OauthProvider is the predicate function for oauthprovider builders.
 type OauthProvider func(*sql.Selector)
 

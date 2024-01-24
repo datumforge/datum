@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -30,6 +31,7 @@ import (
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/testutils"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
@@ -74,16 +76,24 @@ func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
 
 	rc := newRedisClient()
 
-	h := &handlers.Handler{
-		TM:          tm,
-		DBClient:    ent,
-		RedisClient: rc,
-		Logger:      zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
-		SM:          createSessionManager(),
+	emConfig := emails.Config{
+		Testing:   true,
+		Archive:   filepath.Join("fixtures", "emails"),
+		FromEmail: "mitb@datum.net",
 	}
 
-	if err := h.NewTestEmailManager(); err != nil {
-		t.Fatalf("error creating email manager: %v", err)
+	em, err := emails.New(emConfig)
+	if err != nil {
+		t.Fatal("error creating email manager")
+	}
+
+	h := &handlers.Handler{
+		TM:           tm,
+		DBClient:     ent,
+		RedisClient:  rc,
+		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
+		SM:           createSessionManager(),
+		EmailManager: em,
 	}
 
 	// Start task manager

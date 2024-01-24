@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
@@ -260,6 +261,21 @@ func (ou *OrganizationUpdate) AddUsers(u ...*User) *OrganizationUpdate {
 	return ou.AddUserIDs(ids...)
 }
 
+// AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
+func (ou *OrganizationUpdate) AddInviteIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddInviteIDs(ids...)
+	return ou
+}
+
+// AddInvites adds the "invites" edges to the Invite entity.
+func (ou *OrganizationUpdate) AddInvites(i ...*Invite) *OrganizationUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return ou.AddInviteIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ou *OrganizationUpdate) AddMemberIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddMemberIDs(ids...)
@@ -410,6 +426,27 @@ func (ou *OrganizationUpdate) RemoveUsers(u ...*User) *OrganizationUpdate {
 		ids[i] = u[i].ID
 	}
 	return ou.RemoveUserIDs(ids...)
+}
+
+// ClearInvites clears all "invites" edges to the Invite entity.
+func (ou *OrganizationUpdate) ClearInvites() *OrganizationUpdate {
+	ou.mutation.ClearInvites()
+	return ou
+}
+
+// RemoveInviteIDs removes the "invites" edge to Invite entities by IDs.
+func (ou *OrganizationUpdate) RemoveInviteIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveInviteIDs(ids...)
+	return ou
+}
+
+// RemoveInvites removes "invites" edges to Invite entities.
+func (ou *OrganizationUpdate) RemoveInvites(i ...*Invite) *OrganizationUpdate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return ou.RemoveInviteIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -878,6 +915,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.InvitesTable,
+			Columns: []string{organization.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Invite
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedInvitesIDs(); len(nodes) > 0 && !ou.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.InvitesTable,
+			Columns: []string{organization.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Invite
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.InvitesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.InvitesTable,
+			Columns: []string{organization.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Invite
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1171,6 +1256,21 @@ func (ouo *OrganizationUpdateOne) AddUsers(u ...*User) *OrganizationUpdateOne {
 	return ouo.AddUserIDs(ids...)
 }
 
+// AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
+func (ouo *OrganizationUpdateOne) AddInviteIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddInviteIDs(ids...)
+	return ouo
+}
+
+// AddInvites adds the "invites" edges to the Invite entity.
+func (ouo *OrganizationUpdateOne) AddInvites(i ...*Invite) *OrganizationUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return ouo.AddInviteIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ouo *OrganizationUpdateOne) AddMemberIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddMemberIDs(ids...)
@@ -1321,6 +1421,27 @@ func (ouo *OrganizationUpdateOne) RemoveUsers(u ...*User) *OrganizationUpdateOne
 		ids[i] = u[i].ID
 	}
 	return ouo.RemoveUserIDs(ids...)
+}
+
+// ClearInvites clears all "invites" edges to the Invite entity.
+func (ouo *OrganizationUpdateOne) ClearInvites() *OrganizationUpdateOne {
+	ouo.mutation.ClearInvites()
+	return ouo
+}
+
+// RemoveInviteIDs removes the "invites" edge to Invite entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveInviteIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveInviteIDs(ids...)
+	return ouo
+}
+
+// RemoveInvites removes "invites" edges to Invite entities.
+func (ouo *OrganizationUpdateOne) RemoveInvites(i ...*Invite) *OrganizationUpdateOne {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return ouo.RemoveInviteIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -1816,6 +1937,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.InvitesTable,
+			Columns: []string{organization.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Invite
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedInvitesIDs(); len(nodes) > 0 && !ouo.mutation.InvitesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.InvitesTable,
+			Columns: []string{organization.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Invite
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.InvitesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.InvitesTable,
+			Columns: []string{organization.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Invite
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}

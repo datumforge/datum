@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
@@ -40,6 +41,7 @@ type OrganizationQuery struct {
 	withEntitlements       *EntitlementQuery
 	withOauthprovider      *OauthProviderQuery
 	withUsers              *UserQuery
+	withInvites            *InviteQuery
 	withMembers            *OrgMembershipQuery
 	modifiers              []func(*sql.Selector)
 	loadTotal              []func(context.Context, []*Organization) error
@@ -49,6 +51,7 @@ type OrganizationQuery struct {
 	withNamedEntitlements  map[string]*EntitlementQuery
 	withNamedOauthprovider map[string]*OauthProviderQuery
 	withNamedUsers         map[string]*UserQuery
+	withNamedInvites       map[string]*InviteQuery
 	withNamedMembers       map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -286,6 +289,31 @@ func (oq *OrganizationQuery) QueryUsers() *UserQuery {
 	return query
 }
 
+// QueryInvites chains the current query on the "invites" edge.
+func (oq *OrganizationQuery) QueryInvites() *InviteQuery {
+	query := (&InviteClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(invite.Table, invite.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.InvitesTable, organization.InvitesColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Invite
+		step.Edge.Schema = schemaConfig.Invite
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryMembers chains the current query on the "members" edge.
 func (oq *OrganizationQuery) QueryMembers() *OrgMembershipQuery {
 	query := (&OrgMembershipClient{config: oq.config}).Query()
@@ -511,6 +539,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withEntitlements:  oq.withEntitlements.Clone(),
 		withOauthprovider: oq.withOauthprovider.Clone(),
 		withUsers:         oq.withUsers.Clone(),
+		withInvites:       oq.withInvites.Clone(),
 		withMembers:       oq.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
@@ -603,6 +632,17 @@ func (oq *OrganizationQuery) WithUsers(opts ...func(*UserQuery)) *OrganizationQu
 		opt(query)
 	}
 	oq.withUsers = query
+	return oq
+}
+
+// WithInvites tells the query-builder to eager-load the nodes that are connected to
+// the "invites" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithInvites(opts ...func(*InviteQuery)) *OrganizationQuery {
+	query := (&InviteClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withInvites = query
 	return oq
 }
 
@@ -701,7 +741,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
@@ -710,6 +750,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withEntitlements != nil,
 			oq.withOauthprovider != nil,
 			oq.withUsers != nil,
+			oq.withInvites != nil,
 			oq.withMembers != nil,
 		}
 	)
@@ -790,6 +831,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withInvites; query != nil {
+		if err := oq.loadInvites(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Invites = []*Invite{} },
+			func(n *Organization, e *Invite) { n.Edges.Invites = append(n.Edges.Invites, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withMembers; query != nil {
 		if err := oq.loadMembers(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Members = []*OrgMembership{} },
@@ -836,6 +884,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadUsers(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedUsers(name) },
 			func(n *Organization, e *User) { n.appendNamedUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedInvites {
+		if err := oq.loadInvites(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedInvites(name) },
+			func(n *Organization, e *Invite) { n.appendNamedInvites(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1125,6 +1180,36 @@ func (oq *OrganizationQuery) loadUsers(ctx context.Context, query *UserQuery, no
 	}
 	return nil
 }
+func (oq *OrganizationQuery) loadInvites(ctx context.Context, query *InviteQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Invite)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(invite.FieldOwnerID)
+	}
+	query.Where(predicate.Invite(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.InvitesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (oq *OrganizationQuery) loadMembers(ctx context.Context, query *OrgMembershipQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrgMembership)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Organization)
@@ -1329,6 +1414,20 @@ func (oq *OrganizationQuery) WithNamedUsers(name string, opts ...func(*UserQuery
 		oq.withNamedUsers = make(map[string]*UserQuery)
 	}
 	oq.withNamedUsers[name] = query
+	return oq
+}
+
+// WithNamedInvites tells the query-builder to eager-load the nodes that are connected to the "invites"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedInvites(name string, opts ...func(*InviteQuery)) *OrganizationQuery {
+	query := (&InviteClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedInvites == nil {
+		oq.withNamedInvites = make(map[string]*InviteQuery)
+	}
+	oq.withNamedInvites[name] = query
 	return oq
 }
 

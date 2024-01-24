@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -755,6 +756,132 @@ func newIntegrationPaginateArgs(rv map[string]any) *integrationPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (i *InviteQuery) CollectFields(ctx context.Context, satisfies ...string) (*InviteQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return i, nil
+	}
+	if err := i.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return i, nil
+}
+
+func (i *InviteQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(invite.Columns))
+		selectedFields = []string{invite.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: i.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			i.withOwner = query
+			if _, ok := fieldSeen[invite.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, invite.FieldOwnerID)
+				fieldSeen[invite.FieldOwnerID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[invite.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, invite.FieldCreatedAt)
+				fieldSeen[invite.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[invite.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, invite.FieldUpdatedAt)
+				fieldSeen[invite.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[invite.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, invite.FieldCreatedBy)
+				fieldSeen[invite.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[invite.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, invite.FieldUpdatedBy)
+				fieldSeen[invite.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[invite.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, invite.FieldDeletedAt)
+				fieldSeen[invite.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[invite.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, invite.FieldDeletedBy)
+				fieldSeen[invite.FieldDeletedBy] = struct{}{}
+			}
+		case "expires":
+			if _, ok := fieldSeen[invite.FieldExpires]; !ok {
+				selectedFields = append(selectedFields, invite.FieldExpires)
+				fieldSeen[invite.FieldExpires] = struct{}{}
+			}
+		case "recipient":
+			if _, ok := fieldSeen[invite.FieldRecipient]; !ok {
+				selectedFields = append(selectedFields, invite.FieldRecipient)
+				fieldSeen[invite.FieldRecipient] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[invite.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, invite.FieldStatus)
+				fieldSeen[invite.FieldStatus] = struct{}{}
+			}
+		case "requestorID":
+			if _, ok := fieldSeen[invite.FieldRequestorID]; !ok {
+				selectedFields = append(selectedFields, invite.FieldRequestorID)
+				fieldSeen[invite.FieldRequestorID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		i.Select(selectedFields...)
+	}
+	return nil
+}
+
+type invitePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []InvitePaginateOption
+}
+
+func newInvitePaginateArgs(rv map[string]any) *invitePaginateArgs {
+	args := &invitePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*InviteWhereInput); ok {
+		args.opts = append(args.opts, WithInviteFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (op *OauthProviderQuery) CollectFields(ctx context.Context, satisfies ...string) (*OauthProviderQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1345,6 +1472,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				return err
 			}
 			o.WithNamedUsers(alias, func(wq *UserQuery) {
+				*wq = *query
+			})
+		case "invites":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&InviteClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedInvites(alias, func(wq *InviteQuery) {
 				*wq = *query
 			})
 		case "members":

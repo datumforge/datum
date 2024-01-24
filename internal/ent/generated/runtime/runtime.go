@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -287,6 +288,65 @@ func init() {
 	integrationDescID := integrationMixinFields1[0].Descriptor()
 	// integration.DefaultID holds the default value on creation for the id field.
 	integration.DefaultID = integrationDescID.Default.(func() string)
+	inviteMixin := schema.Invite{}.Mixin()
+	inviteMixinHooks0 := inviteMixin[0].Hooks()
+	inviteMixinHooks2 := inviteMixin[2].Hooks()
+	inviteHooks := schema.Invite{}.Hooks()
+	invite.Hooks[0] = inviteMixinHooks0[0]
+	invite.Hooks[1] = inviteMixinHooks2[0]
+	invite.Hooks[2] = inviteHooks[0]
+	inviteMixinInters2 := inviteMixin[2].Interceptors()
+	invite.Interceptors[0] = inviteMixinInters2[0]
+	inviteMixinFields0 := inviteMixin[0].Fields()
+	_ = inviteMixinFields0
+	inviteMixinFields1 := inviteMixin[1].Fields()
+	_ = inviteMixinFields1
+	inviteFields := schema.Invite{}.Fields()
+	_ = inviteFields
+	// inviteDescCreatedAt is the schema descriptor for created_at field.
+	inviteDescCreatedAt := inviteMixinFields0[0].Descriptor()
+	// invite.DefaultCreatedAt holds the default value on creation for the created_at field.
+	invite.DefaultCreatedAt = inviteDescCreatedAt.Default.(func() time.Time)
+	// inviteDescUpdatedAt is the schema descriptor for updated_at field.
+	inviteDescUpdatedAt := inviteMixinFields0[1].Descriptor()
+	// invite.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	invite.DefaultUpdatedAt = inviteDescUpdatedAt.Default.(func() time.Time)
+	// invite.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	invite.UpdateDefaultUpdatedAt = inviteDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// inviteDescToken is the schema descriptor for token field.
+	inviteDescToken := inviteFields[0].Descriptor()
+	// invite.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	invite.TokenValidator = inviteDescToken.Validators[0].(func(string) error)
+	// inviteDescRecipient is the schema descriptor for recipient field.
+	inviteDescRecipient := inviteFields[2].Descriptor()
+	// invite.RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
+	invite.RecipientValidator = func() func(string) error {
+		validators := inviteDescRecipient.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(recipient string) error {
+			for _, fn := range fns {
+				if err := fn(recipient); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// inviteDescRequestorID is the schema descriptor for requestor_id field.
+	inviteDescRequestorID := inviteFields[4].Descriptor()
+	// invite.RequestorIDValidator is a validator for the "requestor_id" field. It is called by the builders before save.
+	invite.RequestorIDValidator = inviteDescRequestorID.Validators[0].(func(string) error)
+	// inviteDescSecret is the schema descriptor for secret field.
+	inviteDescSecret := inviteFields[5].Descriptor()
+	// invite.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
+	invite.SecretValidator = inviteDescSecret.Validators[0].(func([]byte) error)
+	// inviteDescID is the schema descriptor for id field.
+	inviteDescID := inviteMixinFields1[0].Descriptor()
+	// invite.DefaultID holds the default value on creation for the id field.
+	invite.DefaultID = inviteDescID.Default.(func() string)
 	oauthproviderMixin := schema.OauthProvider{}.Mixin()
 	oauthproviderMixinHooks0 := oauthproviderMixin[0].Hooks()
 	oauthproviderMixinHooks2 := oauthproviderMixin[2].Hooks()

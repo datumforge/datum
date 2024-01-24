@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
@@ -313,6 +314,21 @@ func (oc *OrganizationCreate) AddUsers(u ...*User) *OrganizationCreate {
 		ids[i] = u[i].ID
 	}
 	return oc.AddUserIDs(ids...)
+}
+
+// AddInviteIDs adds the "invites" edge to the Invite entity by IDs.
+func (oc *OrganizationCreate) AddInviteIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddInviteIDs(ids...)
+	return oc
+}
+
+// AddInvites adds the "invites" edges to the Invite entity.
+func (oc *OrganizationCreate) AddInvites(i ...*Invite) *OrganizationCreate {
+	ids := make([]string, len(i))
+	for j := range i {
+		ids[j] = i[j].ID
+	}
+	return oc.AddInviteIDs(ids...)
 }
 
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
@@ -643,6 +659,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		edge.Target.Fields = specE.Fields
 		if specE.ID.Value != nil {
 			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.InvitesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.InvitesTable,
+			Columns: []string{organization.InvitesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(invite.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Invite
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}

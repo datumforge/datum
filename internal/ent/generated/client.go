@@ -23,6 +23,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -33,6 +34,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/marionette"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
@@ -56,6 +59,8 @@ type Client struct {
 	GroupSetting *GroupSettingClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
+	// Invite is the client for interacting with the Invite builders.
+	Invite *InviteClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
 	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
@@ -91,6 +96,7 @@ func (c *Client) init() {
 	c.GroupMembership = NewGroupMembershipClient(c.config)
 	c.GroupSetting = NewGroupSettingClient(c.config)
 	c.Integration = NewIntegrationClient(c.config)
+	c.Invite = NewInviteClient(c.config)
 	c.OauthProvider = NewOauthProviderClient(c.config)
 	c.OhAuthTooToken = NewOhAuthTooTokenClient(c.config)
 	c.OrgMembership = NewOrgMembershipClient(c.config)
@@ -119,6 +125,8 @@ type (
 		Authz         fga.Client
 		Logger        zap.SugaredLogger
 		HTTPClient    *http.Client
+		Emails        emails.EmailManager
+		Marionette    marionette.TaskManager
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -192,6 +200,20 @@ func HTTPClient(v *http.Client) Option {
 	}
 }
 
+// Emails configures the Emails.
+func Emails(v emails.EmailManager) Option {
+	return func(c *config) {
+		c.Emails = v
+	}
+}
+
+// Marionette configures the Marionette.
+func Marionette(v marionette.TaskManager) Option {
+	return func(c *config) {
+		c.Marionette = v
+	}
+}
+
 // Open opens a database/sql.DB specified by the driver name and
 // the data source name, and returns a new client attached to it.
 // Optional parameters can be added for configuring the client.
@@ -232,6 +254,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		GroupMembership:        NewGroupMembershipClient(cfg),
 		GroupSetting:           NewGroupSettingClient(cfg),
 		Integration:            NewIntegrationClient(cfg),
+		Invite:                 NewInviteClient(cfg),
 		OauthProvider:          NewOauthProviderClient(cfg),
 		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
 		OrgMembership:          NewOrgMembershipClient(cfg),
@@ -266,6 +289,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		GroupMembership:        NewGroupMembershipClient(cfg),
 		GroupSetting:           NewGroupSettingClient(cfg),
 		Integration:            NewIntegrationClient(cfg),
+		Invite:                 NewInviteClient(cfg),
 		OauthProvider:          NewOauthProviderClient(cfg),
 		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
 		OrgMembership:          NewOrgMembershipClient(cfg),
@@ -305,7 +329,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
-		c.GroupSetting, c.Integration, c.OauthProvider, c.OhAuthTooToken,
+		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
 		c.PersonalAccessToken, c.User, c.UserSetting,
 	} {
@@ -318,7 +342,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
-		c.GroupSetting, c.Integration, c.OauthProvider, c.OhAuthTooToken,
+		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
 		c.PersonalAccessToken, c.User, c.UserSetting,
 	} {
@@ -341,6 +365,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.GroupSetting.mutate(ctx, m)
 	case *IntegrationMutation:
 		return c.Integration.mutate(ctx, m)
+	case *InviteMutation:
+		return c.Invite.mutate(ctx, m)
 	case *OauthProviderMutation:
 		return c.OauthProvider.mutate(ctx, m)
 	case *OhAuthTooTokenMutation:
@@ -1364,6 +1390,160 @@ func (c *IntegrationClient) mutate(ctx context.Context, m *IntegrationMutation) 
 	}
 }
 
+// InviteClient is a client for the Invite schema.
+type InviteClient struct {
+	config
+}
+
+// NewInviteClient returns a client for the Invite from the given config.
+func NewInviteClient(c config) *InviteClient {
+	return &InviteClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invite.Hooks(f(g(h())))`.
+func (c *InviteClient) Use(hooks ...Hook) {
+	c.hooks.Invite = append(c.hooks.Invite, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invite.Intercept(f(g(h())))`.
+func (c *InviteClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Invite = append(c.inters.Invite, interceptors...)
+}
+
+// Create returns a builder for creating a Invite entity.
+func (c *InviteClient) Create() *InviteCreate {
+	mutation := newInviteMutation(c.config, OpCreate)
+	return &InviteCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Invite entities.
+func (c *InviteClient) CreateBulk(builders ...*InviteCreate) *InviteCreateBulk {
+	return &InviteCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InviteClient) MapCreateBulk(slice any, setFunc func(*InviteCreate, int)) *InviteCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InviteCreateBulk{err: fmt.Errorf("calling to InviteClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InviteCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InviteCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Invite.
+func (c *InviteClient) Update() *InviteUpdate {
+	mutation := newInviteMutation(c.config, OpUpdate)
+	return &InviteUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InviteClient) UpdateOne(i *Invite) *InviteUpdateOne {
+	mutation := newInviteMutation(c.config, OpUpdateOne, withInvite(i))
+	return &InviteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InviteClient) UpdateOneID(id string) *InviteUpdateOne {
+	mutation := newInviteMutation(c.config, OpUpdateOne, withInviteID(id))
+	return &InviteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Invite.
+func (c *InviteClient) Delete() *InviteDelete {
+	mutation := newInviteMutation(c.config, OpDelete)
+	return &InviteDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InviteClient) DeleteOne(i *Invite) *InviteDeleteOne {
+	return c.DeleteOneID(i.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InviteClient) DeleteOneID(id string) *InviteDeleteOne {
+	builder := c.Delete().Where(invite.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InviteDeleteOne{builder}
+}
+
+// Query returns a query builder for Invite.
+func (c *InviteClient) Query() *InviteQuery {
+	return &InviteQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvite},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Invite entity by its id.
+func (c *InviteClient) Get(ctx context.Context, id string) (*Invite, error) {
+	return c.Query().Where(invite.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InviteClient) GetX(ctx context.Context, id string) *Invite {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a Invite.
+func (c *InviteClient) QueryOwner(i *Invite) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invite.Table, invite.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, invite.OwnerTable, invite.OwnerColumn),
+		)
+		schemaConfig := i.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Invite
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InviteClient) Hooks() []Hook {
+	hooks := c.hooks.Invite
+	return append(hooks[:len(hooks):len(hooks)], invite.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *InviteClient) Interceptors() []Interceptor {
+	inters := c.inters.Invite
+	return append(inters[:len(inters):len(inters)], invite.Interceptors[:]...)
+}
+
+func (c *InviteClient) mutate(ctx context.Context, m *InviteMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InviteCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InviteUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InviteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InviteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown Invite mutation op: %q", m.Op())
+	}
+}
+
 // OauthProviderClient is a client for the OauthProvider schema.
 type OauthProviderClient struct {
 	config
@@ -2078,6 +2258,25 @@ func (c *OrganizationClient) QueryUsers(o *Organization) *UserQuery {
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.OrgMembership
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvites queries the invites edge of a Organization.
+func (c *OrganizationClient) QueryInvites(o *Organization) *InviteQuery {
+	query := (&InviteClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(invite.Table, invite.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.InvitesTable, organization.InvitesColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Invite
+		step.Edge.Schema = schemaConfig.Invite
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -3037,15 +3236,15 @@ func (c *UserSettingClient) mutate(ctx context.Context, m *UserSettingMutation) 
 type (
 	hooks struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
-		Integration, OauthProvider, OhAuthTooToken, OrgMembership, Organization,
-		OrganizationSetting, PasswordResetToken, PersonalAccessToken, User,
-		UserSetting []ent.Hook
+		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
+		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
+		User, UserSetting []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
-		Integration, OauthProvider, OhAuthTooToken, OrgMembership, Organization,
-		OrganizationSetting, PasswordResetToken, PersonalAccessToken, User,
-		UserSetting []ent.Interceptor
+		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
+		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
+		User, UserSetting []ent.Interceptor
 	}
 )
 

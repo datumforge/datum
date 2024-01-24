@@ -380,3 +380,14 @@ func GetRoleEnum(role string) (enums.Role, error) {
 
 	return r, nil
 }
+
+// GetInviteStatusEnum returns the invitation status if valid, otherwise returns an error
+func GetInviteStatusEnum(status string) (enums.InviteStatus, error) {
+	r := enums.InviteEnum(status)
+
+	if r == enums.InviteInvalid {
+		return r, ErrInvalidInviteStatus
+	}
+
+	return r, nil
+}

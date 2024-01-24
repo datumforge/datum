@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -93,6 +94,7 @@ func checkColumn(table, column string) error {
 			groupmembership.Table:        groupmembership.ValidColumn,
 			groupsetting.Table:           groupsetting.ValidColumn,
 			integration.Table:            integration.ValidColumn,
+			invite.Table:                 invite.ValidColumn,
 			oauthprovider.Table:          oauthprovider.ValidColumn,
 			ohauthtootoken.Table:         ohauthtootoken.ValidColumn,
 			orgmembership.Table:          orgmembership.ValidColumn,

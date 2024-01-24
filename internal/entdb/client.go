@@ -153,6 +153,9 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 
 	client := ent.NewClient(cOpts...)
 
+	// add the history hooks
+	client.WithHistory()
+
 	client.Intercept(interceptors.QueryLogger(c.logger))
 
 	return client, nil

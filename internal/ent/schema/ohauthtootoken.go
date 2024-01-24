@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"github.com/flume/enthistory"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
@@ -62,5 +63,9 @@ func (OhAuthTooToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		enthistory.Annotations{
+			IsHistory: false,
+			Exclude:   true,
+		},
 	}
 }

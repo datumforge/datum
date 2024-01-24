@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/flume/enthistory"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -80,6 +81,10 @@ func (PasswordResetToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
+		enthistory.Annotations{
+			IsHistory: false,
+			Exclude:   true,
+		},
 	}
 }
 

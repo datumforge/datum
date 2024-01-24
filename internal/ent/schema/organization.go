@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/flume/enthistory"
 	"github.com/ogen-go/ogen"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -115,7 +116,12 @@ func (Organization) Annotations() []schema.Annotation {
 					Through: "OrgMembership",
 				},
 			},
-		)}
+		),
+		enthistory.Annotations{
+			IsHistory: false,
+			Exclude:   true,
+		},
+	}
 }
 
 // Mixin of the Organization

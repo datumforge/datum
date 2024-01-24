@@ -203,7 +203,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    gofakeit.LastName(),
-				DisplayName: &displayName,
+				DisplayName: displayName,
 				Email:       gofakeit.Email(),
 				Password:    &strongPassword,
 			},
@@ -214,7 +214,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    gofakeit.LastName(),
-				DisplayName: &displayName,
+				DisplayName: displayName,
 				Email:       "",
 			},
 			errorMsg: "mail: no address",
@@ -224,7 +224,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   "",
 				LastName:    gofakeit.LastName(),
-				DisplayName: &displayName,
+				DisplayName: displayName,
 				Email:       gofakeit.Email(),
 			},
 			errorMsg: "value is less than the required length",
@@ -234,7 +234,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    "",
-				DisplayName: &displayName,
+				DisplayName: displayName,
 				Email:       gofakeit.Email(),
 			},
 			errorMsg: "value is less than the required length",
@@ -289,10 +289,10 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
 
 			// display name defaults to email if not provided
-			if tc.userInput.DisplayName == nil {
+			if tc.userInput.DisplayName == "" {
 				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
 			} else {
-				assert.Equal(t, *tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
+				assert.Equal(t, tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
 			}
 
 			// ensure a user setting was created
@@ -353,7 +353,7 @@ func TestMutation_CreateUser(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    gofakeit.LastName(),
-				DisplayName: &displayName,
+				DisplayName: displayName,
 				Email:       gofakeit.Email(),
 				Password:    &strongPassword,
 			},
@@ -368,7 +368,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   gofakeit.FirstName(),
 		// 		LastName:    gofakeit.LastName(),
-		// 		DisplayName: &displayName,
+		// 		DisplayName: displayName,
 		// 		Email:       gofakeit.Email(),
 		// 		Password:    &strongPassword,
 		// 	},
@@ -379,7 +379,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   gofakeit.FirstName(),
 		// 		LastName:    gofakeit.LastName(),
-		// 		DisplayName: &displayName,
+		// 		DisplayName: displayName,
 		// 		Email:       "",
 		// 	},
 		// 	errorMsg: "mail: no address",
@@ -389,7 +389,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   "",
 		// 		LastName:    gofakeit.LastName(),
-		// 		DisplayName: &displayName,
+		// 		DisplayName: displayName,
 		// 		Email:       gofakeit.Email(),
 		// 	},
 		// 	errorMsg: "value is less than the required length",
@@ -399,7 +399,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   gofakeit.FirstName(),
 		// 		LastName:    "",
-		// 		DisplayName: &displayName,
+		// 		DisplayName: displayName,
 		// 		Email:       gofakeit.Email(),
 		// 	},
 		// 	errorMsg: "value is less than the required length",
@@ -454,10 +454,10 @@ func TestMutation_CreateUser(t *testing.T) {
 			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
 
 			// display name defaults to email if not provided
-			if tc.userInput.DisplayName == nil {
+			if tc.userInput.DisplayName == "" {
 				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
 			} else {
-				assert.Equal(t, *tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
+				assert.Equal(t, tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
 			}
 
 			// ensure a user setting was created

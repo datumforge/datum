@@ -1,5 +1,7 @@
 module github.com/datumforge/datum
 
+replace github.com/flume/enthistory => /Users/sarahfunkhouser/go/src/github.com/golanglemonade/enthistory
+
 go 1.21.6
 
 require (
@@ -16,6 +18,7 @@ require (
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
+	github.com/flume/enthistory v0.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/gorilla/securecookie v1.1.2
 	github.com/hashicorp/go-multierror v1.1.1
@@ -122,7 +125,7 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/stretchr/objx v0.5.1 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

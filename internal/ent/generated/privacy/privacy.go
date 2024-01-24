@@ -159,6 +159,30 @@ func (f EntitlementMutationRuleFunc) EvalMutation(ctx context.Context, m generat
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementMutation", m)
 }
 
+// The EntitlementHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntitlementHistoryQueryRuleFunc func(context.Context, *generated.EntitlementHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntitlementHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EntitlementHistoryQuery", q)
+}
+
+// The EntitlementHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntitlementHistoryMutationRuleFunc func(context.Context, *generated.EntitlementHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntitlementHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EntitlementHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementHistoryMutation", m)
+}
+
 // The GroupQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type GroupQueryRuleFunc func(context.Context, *generated.GroupQuery) error
@@ -229,6 +253,30 @@ func (f GroupMembershipMutationRuleFunc) EvalMutation(ctx context.Context, m gen
 		return f(ctx, m)
 	}
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.GroupMembershipMutation", m)
+}
+
+// The GroupMembershipHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type GroupMembershipHistoryQueryRuleFunc func(context.Context, *generated.GroupMembershipHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f GroupMembershipHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.GroupMembershipHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.GroupMembershipHistoryQuery", q)
+}
+
+// The GroupMembershipHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type GroupMembershipHistoryMutationRuleFunc func(context.Context, *generated.GroupMembershipHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f GroupMembershipHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.GroupMembershipHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.GroupMembershipHistoryMutation", m)
 }
 
 // The GroupSettingQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -303,6 +351,30 @@ func (f IntegrationMutationRuleFunc) EvalMutation(ctx context.Context, m generat
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.IntegrationMutation", m)
 }
 
+// The IntegrationHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type IntegrationHistoryQueryRuleFunc func(context.Context, *generated.IntegrationHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f IntegrationHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.IntegrationHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.IntegrationHistoryQuery", q)
+}
+
+// The IntegrationHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type IntegrationHistoryMutationRuleFunc func(context.Context, *generated.IntegrationHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f IntegrationHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.IntegrationHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.IntegrationHistoryMutation", m)
+}
+
 // The OauthProviderQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OauthProviderQueryRuleFunc func(context.Context, *generated.OauthProviderQuery) error
@@ -373,6 +445,30 @@ func (f OrgMembershipMutationRuleFunc) EvalMutation(ctx context.Context, m gener
 		return f(ctx, m)
 	}
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrgMembershipMutation", m)
+}
+
+// The OrgMembershipHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrgMembershipHistoryQueryRuleFunc func(context.Context, *generated.OrgMembershipHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrgMembershipHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrgMembershipHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OrgMembershipHistoryQuery", q)
+}
+
+// The OrgMembershipHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrgMembershipHistoryMutationRuleFunc func(context.Context, *generated.OrgMembershipHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrgMembershipHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.OrgMembershipHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrgMembershipHistoryMutation", m)
 }
 
 // The OrganizationQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -654,11 +750,15 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.EntitlementQuery:
 		return q.Filter(), nil
+	case *generated.EntitlementHistoryQuery:
+		return q.Filter(), nil
 	case *generated.GroupQuery:
 		return q.Filter(), nil
 	case *generated.GroupHistoryQuery:
 		return q.Filter(), nil
 	case *generated.GroupMembershipQuery:
+		return q.Filter(), nil
+	case *generated.GroupMembershipHistoryQuery:
 		return q.Filter(), nil
 	case *generated.GroupSettingQuery:
 		return q.Filter(), nil
@@ -666,11 +766,15 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.IntegrationQuery:
 		return q.Filter(), nil
+	case *generated.IntegrationHistoryQuery:
+		return q.Filter(), nil
 	case *generated.OauthProviderQuery:
 		return q.Filter(), nil
 	case *generated.OhAuthTooTokenQuery:
 		return q.Filter(), nil
 	case *generated.OrgMembershipQuery:
+		return q.Filter(), nil
+	case *generated.OrgMembershipHistoryQuery:
 		return q.Filter(), nil
 	case *generated.OrganizationQuery:
 		return q.Filter(), nil
@@ -703,11 +807,15 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.EntitlementMutation:
 		return m.Filter(), nil
+	case *generated.EntitlementHistoryMutation:
+		return m.Filter(), nil
 	case *generated.GroupMutation:
 		return m.Filter(), nil
 	case *generated.GroupHistoryMutation:
 		return m.Filter(), nil
 	case *generated.GroupMembershipMutation:
+		return m.Filter(), nil
+	case *generated.GroupMembershipHistoryMutation:
 		return m.Filter(), nil
 	case *generated.GroupSettingMutation:
 		return m.Filter(), nil
@@ -715,11 +823,15 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.IntegrationMutation:
 		return m.Filter(), nil
+	case *generated.IntegrationHistoryMutation:
+		return m.Filter(), nil
 	case *generated.OauthProviderMutation:
 		return m.Filter(), nil
 	case *generated.OhAuthTooTokenMutation:
 		return m.Filter(), nil
 	case *generated.OrgMembershipMutation:
+		return m.Filter(), nil
+	case *generated.OrgMembershipHistoryMutation:
 		return m.Filter(), nil
 	case *generated.OrganizationMutation:
 		return m.Filter(), nil

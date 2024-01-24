@@ -15,12 +15,15 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -28,6 +31,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/userhistory"
@@ -359,6 +363,252 @@ func (e *Entitlement) ToEdge(order *EntitlementOrder) *EntitlementEdge {
 	return &EntitlementEdge{
 		Node:   e,
 		Cursor: order.Field.toCursor(e),
+	}
+}
+
+// EntitlementHistoryEdge is the edge representation of EntitlementHistory.
+type EntitlementHistoryEdge struct {
+	Node   *EntitlementHistory `json:"node"`
+	Cursor Cursor              `json:"cursor"`
+}
+
+// EntitlementHistoryConnection is the connection containing edges to EntitlementHistory.
+type EntitlementHistoryConnection struct {
+	Edges      []*EntitlementHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                  `json:"pageInfo"`
+	TotalCount int                       `json:"totalCount"`
+}
+
+func (c *EntitlementHistoryConnection) build(nodes []*EntitlementHistory, pager *entitlementhistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *EntitlementHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *EntitlementHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *EntitlementHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntitlementHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntitlementHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntitlementHistoryPaginateOption enables pagination customization.
+type EntitlementHistoryPaginateOption func(*entitlementhistoryPager) error
+
+// WithEntitlementHistoryOrder configures pagination ordering.
+func WithEntitlementHistoryOrder(order *EntitlementHistoryOrder) EntitlementHistoryPaginateOption {
+	if order == nil {
+		order = DefaultEntitlementHistoryOrder
+	}
+	o := *order
+	return func(pager *entitlementhistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntitlementHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntitlementHistoryFilter configures pagination filter.
+func WithEntitlementHistoryFilter(filter func(*EntitlementHistoryQuery) (*EntitlementHistoryQuery, error)) EntitlementHistoryPaginateOption {
+	return func(pager *entitlementhistoryPager) error {
+		if filter == nil {
+			return errors.New("EntitlementHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitlementhistoryPager struct {
+	reverse bool
+	order   *EntitlementHistoryOrder
+	filter  func(*EntitlementHistoryQuery) (*EntitlementHistoryQuery, error)
+}
+
+func newEntitlementHistoryPager(opts []EntitlementHistoryPaginateOption, reverse bool) (*entitlementhistoryPager, error) {
+	pager := &entitlementhistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntitlementHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *entitlementhistoryPager) applyFilter(query *EntitlementHistoryQuery) (*EntitlementHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitlementhistoryPager) toCursor(eh *EntitlementHistory) Cursor {
+	return p.order.Field.toCursor(eh)
+}
+
+func (p *entitlementhistoryPager) applyCursors(query *EntitlementHistoryQuery, after, before *Cursor) (*EntitlementHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntitlementHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitlementhistoryPager) applyOrder(query *EntitlementHistoryQuery) *EntitlementHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntitlementHistoryOrder.Field {
+		query = query.Order(DefaultEntitlementHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitlementhistoryPager) orderExpr(query *EntitlementHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntitlementHistoryOrder.Field {
+			b.Comma().Ident(DefaultEntitlementHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to EntitlementHistory.
+func (eh *EntitlementHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntitlementHistoryPaginateOption,
+) (*EntitlementHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntitlementHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if eh, err = pager.applyFilter(eh); err != nil {
+		return nil, err
+	}
+	conn := &EntitlementHistoryConnection{Edges: []*EntitlementHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = eh.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if eh, err = pager.applyCursors(eh, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		eh.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := eh.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	eh = pager.applyOrder(eh)
+	nodes, err := eh.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// EntitlementHistoryOrderField defines the ordering field of EntitlementHistory.
+type EntitlementHistoryOrderField struct {
+	// Value extracts the ordering value from the given EntitlementHistory.
+	Value    func(*EntitlementHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitlementhistory.OrderOption
+	toCursor func(*EntitlementHistory) Cursor
+}
+
+// EntitlementHistoryOrder defines the ordering of EntitlementHistory.
+type EntitlementHistoryOrder struct {
+	Direction OrderDirection                `json:"direction"`
+	Field     *EntitlementHistoryOrderField `json:"field"`
+}
+
+// DefaultEntitlementHistoryOrder is the default ordering of EntitlementHistory.
+var DefaultEntitlementHistoryOrder = &EntitlementHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntitlementHistoryOrderField{
+		Value: func(eh *EntitlementHistory) (ent.Value, error) {
+			return eh.ID, nil
+		},
+		column: entitlementhistory.FieldID,
+		toTerm: entitlementhistory.ByID,
+		toCursor: func(eh *EntitlementHistory) Cursor {
+			return Cursor{ID: eh.ID}
+		},
+	},
+}
+
+// ToEdge converts EntitlementHistory into EntitlementHistoryEdge.
+func (eh *EntitlementHistory) ToEdge(order *EntitlementHistoryOrder) *EntitlementHistoryEdge {
+	if order == nil {
+		order = DefaultEntitlementHistoryOrder
+	}
+	return &EntitlementHistoryEdge{
+		Node:   eh,
+		Cursor: order.Field.toCursor(eh),
 	}
 }
 
@@ -1230,6 +1480,252 @@ func (gm *GroupMembership) ToEdge(order *GroupMembershipOrder) *GroupMembershipE
 	}
 }
 
+// GroupMembershipHistoryEdge is the edge representation of GroupMembershipHistory.
+type GroupMembershipHistoryEdge struct {
+	Node   *GroupMembershipHistory `json:"node"`
+	Cursor Cursor                  `json:"cursor"`
+}
+
+// GroupMembershipHistoryConnection is the connection containing edges to GroupMembershipHistory.
+type GroupMembershipHistoryConnection struct {
+	Edges      []*GroupMembershipHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                      `json:"pageInfo"`
+	TotalCount int                           `json:"totalCount"`
+}
+
+func (c *GroupMembershipHistoryConnection) build(nodes []*GroupMembershipHistory, pager *groupmembershiphistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *GroupMembershipHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *GroupMembershipHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *GroupMembershipHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*GroupMembershipHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &GroupMembershipHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// GroupMembershipHistoryPaginateOption enables pagination customization.
+type GroupMembershipHistoryPaginateOption func(*groupmembershiphistoryPager) error
+
+// WithGroupMembershipHistoryOrder configures pagination ordering.
+func WithGroupMembershipHistoryOrder(order *GroupMembershipHistoryOrder) GroupMembershipHistoryPaginateOption {
+	if order == nil {
+		order = DefaultGroupMembershipHistoryOrder
+	}
+	o := *order
+	return func(pager *groupmembershiphistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultGroupMembershipHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithGroupMembershipHistoryFilter configures pagination filter.
+func WithGroupMembershipHistoryFilter(filter func(*GroupMembershipHistoryQuery) (*GroupMembershipHistoryQuery, error)) GroupMembershipHistoryPaginateOption {
+	return func(pager *groupmembershiphistoryPager) error {
+		if filter == nil {
+			return errors.New("GroupMembershipHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type groupmembershiphistoryPager struct {
+	reverse bool
+	order   *GroupMembershipHistoryOrder
+	filter  func(*GroupMembershipHistoryQuery) (*GroupMembershipHistoryQuery, error)
+}
+
+func newGroupMembershipHistoryPager(opts []GroupMembershipHistoryPaginateOption, reverse bool) (*groupmembershiphistoryPager, error) {
+	pager := &groupmembershiphistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultGroupMembershipHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *groupmembershiphistoryPager) applyFilter(query *GroupMembershipHistoryQuery) (*GroupMembershipHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *groupmembershiphistoryPager) toCursor(gmh *GroupMembershipHistory) Cursor {
+	return p.order.Field.toCursor(gmh)
+}
+
+func (p *groupmembershiphistoryPager) applyCursors(query *GroupMembershipHistoryQuery, after, before *Cursor) (*GroupMembershipHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultGroupMembershipHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *groupmembershiphistoryPager) applyOrder(query *GroupMembershipHistoryQuery) *GroupMembershipHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultGroupMembershipHistoryOrder.Field {
+		query = query.Order(DefaultGroupMembershipHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *groupmembershiphistoryPager) orderExpr(query *GroupMembershipHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultGroupMembershipHistoryOrder.Field {
+			b.Comma().Ident(DefaultGroupMembershipHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to GroupMembershipHistory.
+func (gmh *GroupMembershipHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...GroupMembershipHistoryPaginateOption,
+) (*GroupMembershipHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newGroupMembershipHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if gmh, err = pager.applyFilter(gmh); err != nil {
+		return nil, err
+	}
+	conn := &GroupMembershipHistoryConnection{Edges: []*GroupMembershipHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = gmh.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if gmh, err = pager.applyCursors(gmh, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		gmh.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := gmh.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	gmh = pager.applyOrder(gmh)
+	nodes, err := gmh.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// GroupMembershipHistoryOrderField defines the ordering field of GroupMembershipHistory.
+type GroupMembershipHistoryOrderField struct {
+	// Value extracts the ordering value from the given GroupMembershipHistory.
+	Value    func(*GroupMembershipHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) groupmembershiphistory.OrderOption
+	toCursor func(*GroupMembershipHistory) Cursor
+}
+
+// GroupMembershipHistoryOrder defines the ordering of GroupMembershipHistory.
+type GroupMembershipHistoryOrder struct {
+	Direction OrderDirection                    `json:"direction"`
+	Field     *GroupMembershipHistoryOrderField `json:"field"`
+}
+
+// DefaultGroupMembershipHistoryOrder is the default ordering of GroupMembershipHistory.
+var DefaultGroupMembershipHistoryOrder = &GroupMembershipHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &GroupMembershipHistoryOrderField{
+		Value: func(gmh *GroupMembershipHistory) (ent.Value, error) {
+			return gmh.ID, nil
+		},
+		column: groupmembershiphistory.FieldID,
+		toTerm: groupmembershiphistory.ByID,
+		toCursor: func(gmh *GroupMembershipHistory) Cursor {
+			return Cursor{ID: gmh.ID}
+		},
+	},
+}
+
+// ToEdge converts GroupMembershipHistory into GroupMembershipHistoryEdge.
+func (gmh *GroupMembershipHistory) ToEdge(order *GroupMembershipHistoryOrder) *GroupMembershipHistoryEdge {
+	if order == nil {
+		order = DefaultGroupMembershipHistoryOrder
+	}
+	return &GroupMembershipHistoryEdge{
+		Node:   gmh,
+		Cursor: order.Field.toCursor(gmh),
+	}
+}
+
 // GroupSettingEdge is the edge representation of GroupSetting.
 type GroupSettingEdge struct {
 	Node   *GroupSetting `json:"node"`
@@ -2033,6 +2529,317 @@ func (i *Integration) ToEdge(order *IntegrationOrder) *IntegrationEdge {
 	}
 }
 
+// IntegrationHistoryEdge is the edge representation of IntegrationHistory.
+type IntegrationHistoryEdge struct {
+	Node   *IntegrationHistory `json:"node"`
+	Cursor Cursor              `json:"cursor"`
+}
+
+// IntegrationHistoryConnection is the connection containing edges to IntegrationHistory.
+type IntegrationHistoryConnection struct {
+	Edges      []*IntegrationHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                  `json:"pageInfo"`
+	TotalCount int                       `json:"totalCount"`
+}
+
+func (c *IntegrationHistoryConnection) build(nodes []*IntegrationHistory, pager *integrationhistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *IntegrationHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *IntegrationHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *IntegrationHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*IntegrationHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &IntegrationHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// IntegrationHistoryPaginateOption enables pagination customization.
+type IntegrationHistoryPaginateOption func(*integrationhistoryPager) error
+
+// WithIntegrationHistoryOrder configures pagination ordering.
+func WithIntegrationHistoryOrder(order *IntegrationHistoryOrder) IntegrationHistoryPaginateOption {
+	if order == nil {
+		order = DefaultIntegrationHistoryOrder
+	}
+	o := *order
+	return func(pager *integrationhistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultIntegrationHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithIntegrationHistoryFilter configures pagination filter.
+func WithIntegrationHistoryFilter(filter func(*IntegrationHistoryQuery) (*IntegrationHistoryQuery, error)) IntegrationHistoryPaginateOption {
+	return func(pager *integrationhistoryPager) error {
+		if filter == nil {
+			return errors.New("IntegrationHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type integrationhistoryPager struct {
+	reverse bool
+	order   *IntegrationHistoryOrder
+	filter  func(*IntegrationHistoryQuery) (*IntegrationHistoryQuery, error)
+}
+
+func newIntegrationHistoryPager(opts []IntegrationHistoryPaginateOption, reverse bool) (*integrationhistoryPager, error) {
+	pager := &integrationhistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultIntegrationHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *integrationhistoryPager) applyFilter(query *IntegrationHistoryQuery) (*IntegrationHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *integrationhistoryPager) toCursor(ih *IntegrationHistory) Cursor {
+	return p.order.Field.toCursor(ih)
+}
+
+func (p *integrationhistoryPager) applyCursors(query *IntegrationHistoryQuery, after, before *Cursor) (*IntegrationHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultIntegrationHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *integrationhistoryPager) applyOrder(query *IntegrationHistoryQuery) *IntegrationHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultIntegrationHistoryOrder.Field {
+		query = query.Order(DefaultIntegrationHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *integrationhistoryPager) orderExpr(query *IntegrationHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultIntegrationHistoryOrder.Field {
+			b.Comma().Ident(DefaultIntegrationHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to IntegrationHistory.
+func (ih *IntegrationHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...IntegrationHistoryPaginateOption,
+) (*IntegrationHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newIntegrationHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if ih, err = pager.applyFilter(ih); err != nil {
+		return nil, err
+	}
+	conn := &IntegrationHistoryConnection{Edges: []*IntegrationHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = ih.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if ih, err = pager.applyCursors(ih, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		ih.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := ih.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	ih = pager.applyOrder(ih)
+	nodes, err := ih.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// IntegrationHistoryOrderFieldName orders IntegrationHistory by name.
+	IntegrationHistoryOrderFieldName = &IntegrationHistoryOrderField{
+		Value: func(ih *IntegrationHistory) (ent.Value, error) {
+			return ih.Name, nil
+		},
+		column: integrationhistory.FieldName,
+		toTerm: integrationhistory.ByName,
+		toCursor: func(ih *IntegrationHistory) Cursor {
+			return Cursor{
+				ID:    ih.ID,
+				Value: ih.Name,
+			}
+		},
+	}
+	// IntegrationHistoryOrderFieldKind orders IntegrationHistory by kind.
+	IntegrationHistoryOrderFieldKind = &IntegrationHistoryOrderField{
+		Value: func(ih *IntegrationHistory) (ent.Value, error) {
+			return ih.Kind, nil
+		},
+		column: integrationhistory.FieldKind,
+		toTerm: integrationhistory.ByKind,
+		toCursor: func(ih *IntegrationHistory) Cursor {
+			return Cursor{
+				ID:    ih.ID,
+				Value: ih.Kind,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f IntegrationHistoryOrderField) String() string {
+	var str string
+	switch f.column {
+	case IntegrationHistoryOrderFieldName.column:
+		str = "name"
+	case IntegrationHistoryOrderFieldKind.column:
+		str = "kind"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f IntegrationHistoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *IntegrationHistoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("IntegrationHistoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *IntegrationHistoryOrderFieldName
+	case "kind":
+		*f = *IntegrationHistoryOrderFieldKind
+	default:
+		return fmt.Errorf("%s is not a valid IntegrationHistoryOrderField", str)
+	}
+	return nil
+}
+
+// IntegrationHistoryOrderField defines the ordering field of IntegrationHistory.
+type IntegrationHistoryOrderField struct {
+	// Value extracts the ordering value from the given IntegrationHistory.
+	Value    func(*IntegrationHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) integrationhistory.OrderOption
+	toCursor func(*IntegrationHistory) Cursor
+}
+
+// IntegrationHistoryOrder defines the ordering of IntegrationHistory.
+type IntegrationHistoryOrder struct {
+	Direction OrderDirection                `json:"direction"`
+	Field     *IntegrationHistoryOrderField `json:"field"`
+}
+
+// DefaultIntegrationHistoryOrder is the default ordering of IntegrationHistory.
+var DefaultIntegrationHistoryOrder = &IntegrationHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &IntegrationHistoryOrderField{
+		Value: func(ih *IntegrationHistory) (ent.Value, error) {
+			return ih.ID, nil
+		},
+		column: integrationhistory.FieldID,
+		toTerm: integrationhistory.ByID,
+		toCursor: func(ih *IntegrationHistory) Cursor {
+			return Cursor{ID: ih.ID}
+		},
+	},
+}
+
+// ToEdge converts IntegrationHistory into IntegrationHistoryEdge.
+func (ih *IntegrationHistory) ToEdge(order *IntegrationHistoryOrder) *IntegrationHistoryEdge {
+	if order == nil {
+		order = DefaultIntegrationHistoryOrder
+	}
+	return &IntegrationHistoryEdge{
+		Node:   ih,
+		Cursor: order.Field.toCursor(ih),
+	}
+}
+
 // OauthProviderEdge is the edge representation of OauthProvider.
 type OauthProviderEdge struct {
 	Node   *OauthProvider `json:"node"`
@@ -2768,6 +3575,252 @@ func (om *OrgMembership) ToEdge(order *OrgMembershipOrder) *OrgMembershipEdge {
 	return &OrgMembershipEdge{
 		Node:   om,
 		Cursor: order.Field.toCursor(om),
+	}
+}
+
+// OrgMembershipHistoryEdge is the edge representation of OrgMembershipHistory.
+type OrgMembershipHistoryEdge struct {
+	Node   *OrgMembershipHistory `json:"node"`
+	Cursor Cursor                `json:"cursor"`
+}
+
+// OrgMembershipHistoryConnection is the connection containing edges to OrgMembershipHistory.
+type OrgMembershipHistoryConnection struct {
+	Edges      []*OrgMembershipHistoryEdge `json:"edges"`
+	PageInfo   PageInfo                    `json:"pageInfo"`
+	TotalCount int                         `json:"totalCount"`
+}
+
+func (c *OrgMembershipHistoryConnection) build(nodes []*OrgMembershipHistory, pager *orgmembershiphistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *OrgMembershipHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *OrgMembershipHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *OrgMembershipHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*OrgMembershipHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &OrgMembershipHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// OrgMembershipHistoryPaginateOption enables pagination customization.
+type OrgMembershipHistoryPaginateOption func(*orgmembershiphistoryPager) error
+
+// WithOrgMembershipHistoryOrder configures pagination ordering.
+func WithOrgMembershipHistoryOrder(order *OrgMembershipHistoryOrder) OrgMembershipHistoryPaginateOption {
+	if order == nil {
+		order = DefaultOrgMembershipHistoryOrder
+	}
+	o := *order
+	return func(pager *orgmembershiphistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultOrgMembershipHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithOrgMembershipHistoryFilter configures pagination filter.
+func WithOrgMembershipHistoryFilter(filter func(*OrgMembershipHistoryQuery) (*OrgMembershipHistoryQuery, error)) OrgMembershipHistoryPaginateOption {
+	return func(pager *orgmembershiphistoryPager) error {
+		if filter == nil {
+			return errors.New("OrgMembershipHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type orgmembershiphistoryPager struct {
+	reverse bool
+	order   *OrgMembershipHistoryOrder
+	filter  func(*OrgMembershipHistoryQuery) (*OrgMembershipHistoryQuery, error)
+}
+
+func newOrgMembershipHistoryPager(opts []OrgMembershipHistoryPaginateOption, reverse bool) (*orgmembershiphistoryPager, error) {
+	pager := &orgmembershiphistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultOrgMembershipHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *orgmembershiphistoryPager) applyFilter(query *OrgMembershipHistoryQuery) (*OrgMembershipHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *orgmembershiphistoryPager) toCursor(omh *OrgMembershipHistory) Cursor {
+	return p.order.Field.toCursor(omh)
+}
+
+func (p *orgmembershiphistoryPager) applyCursors(query *OrgMembershipHistoryQuery, after, before *Cursor) (*OrgMembershipHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultOrgMembershipHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *orgmembershiphistoryPager) applyOrder(query *OrgMembershipHistoryQuery) *OrgMembershipHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultOrgMembershipHistoryOrder.Field {
+		query = query.Order(DefaultOrgMembershipHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *orgmembershiphistoryPager) orderExpr(query *OrgMembershipHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultOrgMembershipHistoryOrder.Field {
+			b.Comma().Ident(DefaultOrgMembershipHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to OrgMembershipHistory.
+func (omh *OrgMembershipHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...OrgMembershipHistoryPaginateOption,
+) (*OrgMembershipHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newOrgMembershipHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if omh, err = pager.applyFilter(omh); err != nil {
+		return nil, err
+	}
+	conn := &OrgMembershipHistoryConnection{Edges: []*OrgMembershipHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = omh.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if omh, err = pager.applyCursors(omh, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		omh.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := omh.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	omh = pager.applyOrder(omh)
+	nodes, err := omh.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// OrgMembershipHistoryOrderField defines the ordering field of OrgMembershipHistory.
+type OrgMembershipHistoryOrderField struct {
+	// Value extracts the ordering value from the given OrgMembershipHistory.
+	Value    func(*OrgMembershipHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) orgmembershiphistory.OrderOption
+	toCursor func(*OrgMembershipHistory) Cursor
+}
+
+// OrgMembershipHistoryOrder defines the ordering of OrgMembershipHistory.
+type OrgMembershipHistoryOrder struct {
+	Direction OrderDirection                  `json:"direction"`
+	Field     *OrgMembershipHistoryOrderField `json:"field"`
+}
+
+// DefaultOrgMembershipHistoryOrder is the default ordering of OrgMembershipHistory.
+var DefaultOrgMembershipHistoryOrder = &OrgMembershipHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &OrgMembershipHistoryOrderField{
+		Value: func(omh *OrgMembershipHistory) (ent.Value, error) {
+			return omh.ID, nil
+		},
+		column: orgmembershiphistory.FieldID,
+		toTerm: orgmembershiphistory.ByID,
+		toCursor: func(omh *OrgMembershipHistory) Cursor {
+			return Cursor{ID: omh.ID}
+		},
+	},
+}
+
+// ToEdge converts OrgMembershipHistory into OrgMembershipHistoryEdge.
+func (omh *OrgMembershipHistory) ToEdge(order *OrgMembershipHistoryOrder) *OrgMembershipHistoryEdge {
+	if order == nil {
+		order = DefaultOrgMembershipHistoryOrder
+	}
+	return &OrgMembershipHistoryEdge{
+		Node:   omh,
+		Cursor: order.Field.toCursor(omh),
 	}
 }
 

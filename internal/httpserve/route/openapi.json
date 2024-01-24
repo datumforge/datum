@@ -373,6 +373,359 @@
         }
       }
     },
+    "/entitlement-histories": {
+      "get": {
+        "tags": [
+          "EntitlementHistory"
+        ],
+        "summary": "List EntitlementHistories",
+        "description": "List EntitlementHistories.",
+        "operationId": "listEntitlementHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result EntitlementHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EntitlementHistoryList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "EntitlementHistory"
+        ],
+        "summary": "Create a new EntitlementHistory",
+        "description": "Creates a new EntitlementHistory and persists it to storage.",
+        "operationId": "createEntitlementHistory",
+        "requestBody": {
+          "description": "EntitlementHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "tier": {
+                    "type": "string",
+                    "enum": [
+                      "FREE",
+                      "PRO",
+                      "ENTERPRISE"
+                    ],
+                    "default": "FREE"
+                  },
+                  "external_customer_id": {
+                    "type": "string"
+                  },
+                  "external_subscription_id": {
+                    "type": "string"
+                  },
+                  "expires": {
+                    "type": "boolean"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "cancelled": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "created_at",
+                  "updated_at",
+                  "owner_id",
+                  "tier",
+                  "expires",
+                  "cancelled"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "EntitlementHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementHistoryCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/entitlement-histories/{id}": {
+      "get": {
+        "tags": [
+          "EntitlementHistory"
+        ],
+        "summary": "Find a EntitlementHistory by ID",
+        "description": "Finds the EntitlementHistory with the requested ID and returns it.",
+        "operationId": "readEntitlementHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the EntitlementHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "EntitlementHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementHistoryRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "EntitlementHistory"
+        ],
+        "summary": "Deletes a EntitlementHistory by ID",
+        "description": "Deletes the EntitlementHistory with the requested ID.",
+        "operationId": "deleteEntitlementHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the EntitlementHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "EntitlementHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "EntitlementHistory"
+        ],
+        "summary": "Updates a EntitlementHistory",
+        "description": "Updates a EntitlementHistory and persists changes to storage.",
+        "operationId": "updateEntitlementHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the EntitlementHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "EntitlementHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "tier": {
+                    "type": "string",
+                    "enum": [
+                      "FREE",
+                      "PRO",
+                      "ENTERPRISE"
+                    ],
+                    "default": "FREE"
+                  },
+                  "external_customer_id": {
+                    "type": "string"
+                  },
+                  "external_subscription_id": {
+                    "type": "string"
+                  },
+                  "expires": {
+                    "type": "boolean"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "cancelled": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "EntitlementHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntitlementHistoryUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/entitlements": {
       "get": {
         "tags": [
@@ -1074,6 +1427,324 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GroupHistoryUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/group-membership-histories": {
+      "get": {
+        "tags": [
+          "GroupMembershipHistory"
+        ],
+        "summary": "List GroupMembershipHistories",
+        "description": "List GroupMembershipHistories.",
+        "operationId": "listGroupMembershipHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result GroupMembershipHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupMembershipHistoryList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GroupMembershipHistory"
+        ],
+        "summary": "Create a new GroupMembershipHistory",
+        "description": "Creates a new GroupMembershipHistory and persists it to storage.",
+        "operationId": "createGroupMembershipHistory",
+        "requestBody": {
+          "description": "GroupMembershipHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER"
+                    ],
+                    "default": "MEMBER"
+                  },
+                  "group_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "created_at",
+                  "updated_at",
+                  "role",
+                  "group_id",
+                  "user_id"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "GroupMembershipHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembershipHistoryCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/group-membership-histories/{id}": {
+      "get": {
+        "tags": [
+          "GroupMembershipHistory"
+        ],
+        "summary": "Find a GroupMembershipHistory by ID",
+        "description": "Finds the GroupMembershipHistory with the requested ID and returns it.",
+        "operationId": "readGroupMembershipHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembershipHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GroupMembershipHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembershipHistoryRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GroupMembershipHistory"
+        ],
+        "summary": "Deletes a GroupMembershipHistory by ID",
+        "description": "Deletes the GroupMembershipHistory with the requested ID.",
+        "operationId": "deleteGroupMembershipHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembershipHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "GroupMembershipHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "GroupMembershipHistory"
+        ],
+        "summary": "Updates a GroupMembershipHistory",
+        "description": "Updates a GroupMembershipHistory and persists changes to storage.",
+        "operationId": "updateGroupMembershipHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembershipHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "GroupMembershipHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER"
+                    ],
+                    "default": "MEMBER"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "GroupMembershipHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembershipHistoryUpdate"
                 }
               }
             }
@@ -2819,6 +3490,322 @@
         }
       }
     },
+    "/integration-histories": {
+      "get": {
+        "tags": [
+          "IntegrationHistory"
+        ],
+        "summary": "List IntegrationHistories",
+        "description": "List IntegrationHistories.",
+        "operationId": "listIntegrationHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result IntegrationHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IntegrationHistoryList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "IntegrationHistory"
+        ],
+        "summary": "Create a new IntegrationHistory",
+        "description": "Creates a new IntegrationHistory and persists it to storage.",
+        "operationId": "createIntegrationHistory",
+        "requestBody": {
+          "description": "IntegrationHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "secret_name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "created_at",
+                  "updated_at",
+                  "name",
+                  "secret_name"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "IntegrationHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationHistoryCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/integration-histories/{id}": {
+      "get": {
+        "tags": [
+          "IntegrationHistory"
+        ],
+        "summary": "Find a IntegrationHistory by ID",
+        "description": "Finds the IntegrationHistory with the requested ID and returns it.",
+        "operationId": "readIntegrationHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the IntegrationHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "IntegrationHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationHistoryRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "IntegrationHistory"
+        ],
+        "summary": "Deletes a IntegrationHistory by ID",
+        "description": "Deletes the IntegrationHistory with the requested ID.",
+        "operationId": "deleteIntegrationHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the IntegrationHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "IntegrationHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "IntegrationHistory"
+        ],
+        "summary": "Updates a IntegrationHistory",
+        "description": "Updates a IntegrationHistory and persists changes to storage.",
+        "operationId": "updateIntegrationHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the IntegrationHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "IntegrationHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "IntegrationHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationHistoryUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/integrations": {
       "get": {
         "tags": [
@@ -3916,6 +4903,326 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OhAuthTooTokenUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/org-membership-histories": {
+      "get": {
+        "tags": [
+          "OrgMembershipHistory"
+        ],
+        "summary": "List OrgMembershipHistories",
+        "description": "List OrgMembershipHistories.",
+        "operationId": "listOrgMembershipHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result OrgMembershipHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrgMembershipHistoryList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OrgMembershipHistory"
+        ],
+        "summary": "Create a new OrgMembershipHistory",
+        "description": "Creates a new OrgMembershipHistory and persists it to storage.",
+        "operationId": "createOrgMembershipHistory",
+        "requestBody": {
+          "description": "OrgMembershipHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER"
+                    ],
+                    "default": "MEMBER"
+                  },
+                  "org_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "created_at",
+                  "updated_at",
+                  "role",
+                  "org_id",
+                  "user_id"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrgMembershipHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembershipHistoryCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/org-membership-histories/{id}": {
+      "get": {
+        "tags": [
+          "OrgMembershipHistory"
+        ],
+        "summary": "Find a OrgMembershipHistory by ID",
+        "description": "Finds the OrgMembershipHistory with the requested ID and returns it.",
+        "operationId": "readOrgMembershipHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembershipHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OrgMembershipHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembershipHistoryRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OrgMembershipHistory"
+        ],
+        "summary": "Deletes a OrgMembershipHistory by ID",
+        "description": "Deletes the OrgMembershipHistory with the requested ID.",
+        "operationId": "deleteOrgMembershipHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembershipHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OrgMembershipHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OrgMembershipHistory"
+        ],
+        "summary": "Updates a OrgMembershipHistory",
+        "description": "Updates a OrgMembershipHistory and persists changes to storage.",
+        "operationId": "updateOrgMembershipHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembershipHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "OrgMembershipHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER"
+                    ],
+                    "default": "MEMBER"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrgMembershipHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembershipHistoryUpdate"
                 }
               }
             }
@@ -9750,6 +11057,421 @@
           "cancelled"
         ]
       },
+      "EntitlementHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
+            ],
+            "default": "FREE"
+          },
+          "external_customer_id": {
+            "type": "string"
+          },
+          "external_subscription_id": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "tier",
+          "expires",
+          "cancelled"
+        ]
+      },
+      "EntitlementHistoryCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
+            ],
+            "default": "FREE"
+          },
+          "external_customer_id": {
+            "type": "string"
+          },
+          "external_subscription_id": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "tier",
+          "expires",
+          "cancelled"
+        ]
+      },
+      "EntitlementHistoryList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
+            ],
+            "default": "FREE"
+          },
+          "external_customer_id": {
+            "type": "string"
+          },
+          "external_subscription_id": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "tier",
+          "expires",
+          "cancelled"
+        ]
+      },
+      "EntitlementHistoryRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
+            ],
+            "default": "FREE"
+          },
+          "external_customer_id": {
+            "type": "string"
+          },
+          "external_subscription_id": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "tier",
+          "expires",
+          "cancelled"
+        ]
+      },
+      "EntitlementHistoryUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
+            ],
+            "default": "FREE"
+          },
+          "external_customer_id": {
+            "type": "string"
+          },
+          "external_subscription_id": {
+            "type": "string"
+          },
+          "expires": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "tier",
+          "expires",
+          "cancelled"
+        ]
+      },
       "EntitlementList": {
         "type": "object",
         "properties": {
@@ -10648,6 +12370,346 @@
         },
         "required": [
           "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipHistoryCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipHistoryList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipHistoryRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipHistoryUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
           "created_at",
           "updated_at",
           "role",
@@ -12219,6 +14281,331 @@
           "secret_name"
         ]
       },
+      "IntegrationHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "secret_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "name",
+          "secret_name"
+        ]
+      },
+      "IntegrationHistoryCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "secret_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "name",
+          "secret_name"
+        ]
+      },
+      "IntegrationHistoryList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "secret_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "name",
+          "secret_name"
+        ]
+      },
+      "IntegrationHistoryRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "secret_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "name",
+          "secret_name"
+        ]
+      },
+      "IntegrationHistoryUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "secret_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "name",
+          "secret_name"
+        ]
+      },
       "IntegrationList": {
         "type": "object",
         "properties": {
@@ -13270,6 +15657,351 @@
         },
         "required": [
           "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipHistoryCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipHistoryList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipHistoryRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipHistoryUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
           "created_at",
           "updated_at",
           "role",

@@ -9,15 +9,19 @@ import "context"
 type SchemaConfig struct {
 	EmailVerificationToken     string // EmailVerificationToken table.
 	Entitlement                string // Entitlement table.
+	EntitlementHistory         string // EntitlementHistory table.
 	Group                      string // Group table.
 	GroupHistory               string // GroupHistory table.
 	GroupMembership            string // GroupMembership table.
+	GroupMembershipHistory     string // GroupMembershipHistory table.
 	GroupSetting               string // GroupSetting table.
 	GroupSettingHistory        string // GroupSettingHistory table.
 	Integration                string // Integration table.
+	IntegrationHistory         string // IntegrationHistory table.
 	OauthProvider              string // OauthProvider table.
 	OhAuthTooToken             string // OhAuthTooToken table.
 	OrgMembership              string // OrgMembership table.
+	OrgMembershipHistory       string // OrgMembershipHistory table.
 	Organization               string // Organization table.
 	OrganizationHistory        string // OrganizationHistory table.
 	OrganizationSetting        string // OrganizationSetting table.

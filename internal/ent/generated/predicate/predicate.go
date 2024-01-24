@@ -12,6 +12,9 @@ type EmailVerificationToken func(*sql.Selector)
 // Entitlement is the predicate function for entitlement builders.
 type Entitlement func(*sql.Selector)
 
+// EntitlementHistory is the predicate function for entitlementhistory builders.
+type EntitlementHistory func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
@@ -20,6 +23,9 @@ type GroupHistory func(*sql.Selector)
 
 // GroupMembership is the predicate function for groupmembership builders.
 type GroupMembership func(*sql.Selector)
+
+// GroupMembershipHistory is the predicate function for groupmembershiphistory builders.
+type GroupMembershipHistory func(*sql.Selector)
 
 // GroupSetting is the predicate function for groupsetting builders.
 type GroupSetting func(*sql.Selector)
@@ -30,6 +36,9 @@ type GroupSettingHistory func(*sql.Selector)
 // Integration is the predicate function for integration builders.
 type Integration func(*sql.Selector)
 
+// IntegrationHistory is the predicate function for integrationhistory builders.
+type IntegrationHistory func(*sql.Selector)
+
 // OauthProvider is the predicate function for oauthprovider builders.
 type OauthProvider func(*sql.Selector)
 
@@ -38,6 +47,9 @@ type OhAuthTooToken func(*sql.Selector)
 
 // OrgMembership is the predicate function for orgmembership builders.
 type OrgMembership func(*sql.Selector)
+
+// OrgMembershipHistory is the predicate function for orgmembershiphistory builders.
+type OrgMembershipHistory func(*sql.Selector)
 
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)

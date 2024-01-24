@@ -8,13 +8,63 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 )
+
+func (e *Entitlement) History() *EntitlementHistoryQuery {
+	historyClient := NewEntitlementHistoryClient(e.config)
+	return historyClient.Query().Where(entitlementhistory.Ref(e.ID))
+}
+
+func (eh *EntitlementHistory) Next(ctx context.Context) (*EntitlementHistory, error) {
+	client := NewEntitlementHistoryClient(eh.config)
+	return client.Query().
+		Where(
+			entitlementhistory.Ref(eh.Ref),
+			entitlementhistory.HistoryTimeGT(eh.HistoryTime),
+		).
+		Order(entitlementhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (eh *EntitlementHistory) Prev(ctx context.Context) (*EntitlementHistory, error) {
+	client := NewEntitlementHistoryClient(eh.config)
+	return client.Query().
+		Where(
+			entitlementhistory.Ref(eh.Ref),
+			entitlementhistory.HistoryTimeLT(eh.HistoryTime),
+		).
+		Order(entitlementhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ehq *EntitlementHistoryQuery) Earliest(ctx context.Context) (*EntitlementHistory, error) {
+	return ehq.
+		Order(entitlementhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ehq *EntitlementHistoryQuery) Latest(ctx context.Context) (*EntitlementHistory, error) {
+	return ehq.
+		Order(entitlementhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ehq *EntitlementHistoryQuery) AsOf(ctx context.Context, time time.Time) (*EntitlementHistory, error) {
+	return ehq.
+		Where(entitlementhistory.HistoryTimeLTE(time)).
+		Order(entitlementhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
 
 func (gr *Group) History() *GroupHistoryQuery {
 	historyClient := NewGroupHistoryClient(gr.config)
@@ -62,6 +112,52 @@ func (ghq *GroupHistoryQuery) AsOf(ctx context.Context, time time.Time) (*GroupH
 		First(ctx)
 }
 
+func (gm *GroupMembership) History() *GroupMembershipHistoryQuery {
+	historyClient := NewGroupMembershipHistoryClient(gm.config)
+	return historyClient.Query().Where(groupmembershiphistory.Ref(gm.ID))
+}
+
+func (gmh *GroupMembershipHistory) Next(ctx context.Context) (*GroupMembershipHistory, error) {
+	client := NewGroupMembershipHistoryClient(gmh.config)
+	return client.Query().
+		Where(
+			groupmembershiphistory.Ref(gmh.Ref),
+			groupmembershiphistory.HistoryTimeGT(gmh.HistoryTime),
+		).
+		Order(groupmembershiphistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (gmh *GroupMembershipHistory) Prev(ctx context.Context) (*GroupMembershipHistory, error) {
+	client := NewGroupMembershipHistoryClient(gmh.config)
+	return client.Query().
+		Where(
+			groupmembershiphistory.Ref(gmh.Ref),
+			groupmembershiphistory.HistoryTimeLT(gmh.HistoryTime),
+		).
+		Order(groupmembershiphistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (gmhq *GroupMembershipHistoryQuery) Earliest(ctx context.Context) (*GroupMembershipHistory, error) {
+	return gmhq.
+		Order(groupmembershiphistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (gmhq *GroupMembershipHistoryQuery) Latest(ctx context.Context) (*GroupMembershipHistory, error) {
+	return gmhq.
+		Order(groupmembershiphistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (gmhq *GroupMembershipHistoryQuery) AsOf(ctx context.Context, time time.Time) (*GroupMembershipHistory, error) {
+	return gmhq.
+		Where(groupmembershiphistory.HistoryTimeLTE(time)).
+		Order(groupmembershiphistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
 func (gs *GroupSetting) History() *GroupSettingHistoryQuery {
 	historyClient := NewGroupSettingHistoryClient(gs.config)
 	return historyClient.Query().Where(groupsettinghistory.Ref(gs.ID))
@@ -105,6 +201,98 @@ func (gshq *GroupSettingHistoryQuery) AsOf(ctx context.Context, time time.Time) 
 	return gshq.
 		Where(groupsettinghistory.HistoryTimeLTE(time)).
 		Order(groupsettinghistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (i *Integration) History() *IntegrationHistoryQuery {
+	historyClient := NewIntegrationHistoryClient(i.config)
+	return historyClient.Query().Where(integrationhistory.Ref(i.ID))
+}
+
+func (ih *IntegrationHistory) Next(ctx context.Context) (*IntegrationHistory, error) {
+	client := NewIntegrationHistoryClient(ih.config)
+	return client.Query().
+		Where(
+			integrationhistory.Ref(ih.Ref),
+			integrationhistory.HistoryTimeGT(ih.HistoryTime),
+		).
+		Order(integrationhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ih *IntegrationHistory) Prev(ctx context.Context) (*IntegrationHistory, error) {
+	client := NewIntegrationHistoryClient(ih.config)
+	return client.Query().
+		Where(
+			integrationhistory.Ref(ih.Ref),
+			integrationhistory.HistoryTimeLT(ih.HistoryTime),
+		).
+		Order(integrationhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ihq *IntegrationHistoryQuery) Earliest(ctx context.Context) (*IntegrationHistory, error) {
+	return ihq.
+		Order(integrationhistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (ihq *IntegrationHistoryQuery) Latest(ctx context.Context) (*IntegrationHistory, error) {
+	return ihq.
+		Order(integrationhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (ihq *IntegrationHistoryQuery) AsOf(ctx context.Context, time time.Time) (*IntegrationHistory, error) {
+	return ihq.
+		Where(integrationhistory.HistoryTimeLTE(time)).
+		Order(integrationhistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (om *OrgMembership) History() *OrgMembershipHistoryQuery {
+	historyClient := NewOrgMembershipHistoryClient(om.config)
+	return historyClient.Query().Where(orgmembershiphistory.Ref(om.ID))
+}
+
+func (omh *OrgMembershipHistory) Next(ctx context.Context) (*OrgMembershipHistory, error) {
+	client := NewOrgMembershipHistoryClient(omh.config)
+	return client.Query().
+		Where(
+			orgmembershiphistory.Ref(omh.Ref),
+			orgmembershiphistory.HistoryTimeGT(omh.HistoryTime),
+		).
+		Order(orgmembershiphistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (omh *OrgMembershipHistory) Prev(ctx context.Context) (*OrgMembershipHistory, error) {
+	client := NewOrgMembershipHistoryClient(omh.config)
+	return client.Query().
+		Where(
+			orgmembershiphistory.Ref(omh.Ref),
+			orgmembershiphistory.HistoryTimeLT(omh.HistoryTime),
+		).
+		Order(orgmembershiphistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (omhq *OrgMembershipHistoryQuery) Earliest(ctx context.Context) (*OrgMembershipHistory, error) {
+	return omhq.
+		Order(orgmembershiphistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (omhq *OrgMembershipHistoryQuery) Latest(ctx context.Context) (*OrgMembershipHistory, error) {
+	return omhq.
+		Order(orgmembershiphistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (omhq *OrgMembershipHistoryQuery) AsOf(ctx context.Context, time time.Time) (*OrgMembershipHistory, error) {
+	return omhq.
+		Where(orgmembershiphistory.HistoryTimeLTE(time)).
+		Order(orgmembershiphistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }
 

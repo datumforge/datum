@@ -14,12 +14,15 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -27,6 +30,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -95,15 +99,19 @@ func checkColumn(table, column string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			emailverificationtoken.Table:     emailverificationtoken.ValidColumn,
 			entitlement.Table:                entitlement.ValidColumn,
+			entitlementhistory.Table:         entitlementhistory.ValidColumn,
 			group.Table:                      group.ValidColumn,
 			grouphistory.Table:               grouphistory.ValidColumn,
 			groupmembership.Table:            groupmembership.ValidColumn,
+			groupmembershiphistory.Table:     groupmembershiphistory.ValidColumn,
 			groupsetting.Table:               groupsetting.ValidColumn,
 			groupsettinghistory.Table:        groupsettinghistory.ValidColumn,
 			integration.Table:                integration.ValidColumn,
+			integrationhistory.Table:         integrationhistory.ValidColumn,
 			oauthprovider.Table:              oauthprovider.ValidColumn,
 			ohauthtootoken.Table:             ohauthtootoken.ValidColumn,
 			orgmembership.Table:              orgmembership.ValidColumn,
+			orgmembershiphistory.Table:       orgmembershiphistory.ValidColumn,
 			organization.Table:               organization.ValidColumn,
 			organizationhistory.Table:        organizationhistory.ValidColumn,
 			organizationsetting.Table:        organizationsetting.ValidColumn,

@@ -28,6 +28,11 @@ func EntitlementEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func EntitlementHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func GroupEdgeCleanup(ctx context.Context, id string) error {
 
 	if exists, err := FromContext(ctx).GroupMembership.Query().Where((groupmembership.HasGroupWith(group.ID(id)))).Exist(ctx); err == nil && exists {
@@ -50,6 +55,11 @@ func GroupMembershipEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func GroupMembershipHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func GroupSettingEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
@@ -65,6 +75,11 @@ func IntegrationEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func IntegrationHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func OauthProviderEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
@@ -76,6 +91,11 @@ func OhAuthTooTokenEdgeCleanup(ctx context.Context, id string) error {
 }
 
 func OrgMembershipEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func OrgMembershipHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

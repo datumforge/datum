@@ -11,10 +11,14 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 	"github.com/flume/enthistory"
@@ -44,6 +48,72 @@ var (
 	MismatchedRefError    = errors.New("cannot take diff of histories with different Refs")
 	IdenticalHistoryError = errors.New("cannot take diff of identical history")
 )
+
+func (eh *EntitlementHistory) changes(new *EntitlementHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(eh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(entitlementhistory.FieldCreatedAt, eh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(eh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(entitlementhistory.FieldUpdatedAt, eh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(eh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(entitlementhistory.FieldCreatedBy, eh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(eh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(entitlementhistory.FieldDeletedAt, eh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(eh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(entitlementhistory.FieldDeletedBy, eh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(eh.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(entitlementhistory.FieldOwnerID, eh.OwnerID, new.OwnerID))
+	}
+	if !reflect.DeepEqual(eh.Tier, new.Tier) {
+		changes = append(changes, NewChange(entitlementhistory.FieldTier, eh.Tier, new.Tier))
+	}
+	if !reflect.DeepEqual(eh.ExternalCustomerID, new.ExternalCustomerID) {
+		changes = append(changes, NewChange(entitlementhistory.FieldExternalCustomerID, eh.ExternalCustomerID, new.ExternalCustomerID))
+	}
+	if !reflect.DeepEqual(eh.ExternalSubscriptionID, new.ExternalSubscriptionID) {
+		changes = append(changes, NewChange(entitlementhistory.FieldExternalSubscriptionID, eh.ExternalSubscriptionID, new.ExternalSubscriptionID))
+	}
+	if !reflect.DeepEqual(eh.Expires, new.Expires) {
+		changes = append(changes, NewChange(entitlementhistory.FieldExpires, eh.Expires, new.Expires))
+	}
+	if !reflect.DeepEqual(eh.ExpiresAt, new.ExpiresAt) {
+		changes = append(changes, NewChange(entitlementhistory.FieldExpiresAt, eh.ExpiresAt, new.ExpiresAt))
+	}
+	if !reflect.DeepEqual(eh.Cancelled, new.Cancelled) {
+		changes = append(changes, NewChange(entitlementhistory.FieldCancelled, eh.Cancelled, new.Cancelled))
+	}
+	return changes
+}
+
+func (eh *EntitlementHistory) Diff(history *EntitlementHistory) (*HistoryDiff[EntitlementHistory], error) {
+	if eh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	ehUnix, historyUnix := eh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	ehOlder := ehUnix < historyUnix || (ehUnix == historyUnix && eh.ID < history.ID)
+	historyOlder := ehUnix > historyUnix || (ehUnix == historyUnix && eh.ID > history.ID)
+
+	if ehOlder {
+		return &HistoryDiff[EntitlementHistory]{
+			Old:     eh,
+			New:     history,
+			Changes: eh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[EntitlementHistory]{
+			Old:     history,
+			New:     eh,
+			Changes: history.changes(eh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
 
 func (gh *GroupHistory) changes(new *GroupHistory) []Change {
 	var changes []Change
@@ -108,6 +178,60 @@ func (gh *GroupHistory) Diff(history *GroupHistory) (*HistoryDiff[GroupHistory],
 	return nil, IdenticalHistoryError
 }
 
+func (gmh *GroupMembershipHistory) changes(new *GroupMembershipHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(gmh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldCreatedAt, gmh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(gmh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldUpdatedAt, gmh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(gmh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldCreatedBy, gmh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(gmh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldDeletedAt, gmh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(gmh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldDeletedBy, gmh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(gmh.Role, new.Role) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldRole, gmh.Role, new.Role))
+	}
+	if !reflect.DeepEqual(gmh.GroupID, new.GroupID) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldGroupID, gmh.GroupID, new.GroupID))
+	}
+	if !reflect.DeepEqual(gmh.UserID, new.UserID) {
+		changes = append(changes, NewChange(groupmembershiphistory.FieldUserID, gmh.UserID, new.UserID))
+	}
+	return changes
+}
+
+func (gmh *GroupMembershipHistory) Diff(history *GroupMembershipHistory) (*HistoryDiff[GroupMembershipHistory], error) {
+	if gmh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	gmhUnix, historyUnix := gmh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	gmhOlder := gmhUnix < historyUnix || (gmhUnix == historyUnix && gmh.ID < history.ID)
+	historyOlder := gmhUnix > historyUnix || (gmhUnix == historyUnix && gmh.ID > history.ID)
+
+	if gmhOlder {
+		return &HistoryDiff[GroupMembershipHistory]{
+			Old:     gmh,
+			New:     history,
+			Changes: gmh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[GroupMembershipHistory]{
+			Old:     history,
+			New:     gmh,
+			Changes: history.changes(gmh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
 func (gsh *GroupSettingHistory) changes(new *GroupSettingHistory) []Change {
 	var changes []Change
 	if !reflect.DeepEqual(gsh.CreatedAt, new.CreatedAt) {
@@ -163,6 +287,117 @@ func (gsh *GroupSettingHistory) Diff(history *GroupSettingHistory) (*HistoryDiff
 			Old:     history,
 			New:     gsh,
 			Changes: history.changes(gsh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (ih *IntegrationHistory) changes(new *IntegrationHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(ih.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(integrationhistory.FieldCreatedAt, ih.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(ih.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(integrationhistory.FieldUpdatedAt, ih.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(ih.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(integrationhistory.FieldCreatedBy, ih.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(ih.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(integrationhistory.FieldDeletedAt, ih.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(ih.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(integrationhistory.FieldDeletedBy, ih.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(ih.Name, new.Name) {
+		changes = append(changes, NewChange(integrationhistory.FieldName, ih.Name, new.Name))
+	}
+	if !reflect.DeepEqual(ih.Description, new.Description) {
+		changes = append(changes, NewChange(integrationhistory.FieldDescription, ih.Description, new.Description))
+	}
+	if !reflect.DeepEqual(ih.Kind, new.Kind) {
+		changes = append(changes, NewChange(integrationhistory.FieldKind, ih.Kind, new.Kind))
+	}
+	if !reflect.DeepEqual(ih.SecretName, new.SecretName) {
+		changes = append(changes, NewChange(integrationhistory.FieldSecretName, ih.SecretName, new.SecretName))
+	}
+	return changes
+}
+
+func (ih *IntegrationHistory) Diff(history *IntegrationHistory) (*HistoryDiff[IntegrationHistory], error) {
+	if ih.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	ihUnix, historyUnix := ih.HistoryTime.Unix(), history.HistoryTime.Unix()
+	ihOlder := ihUnix < historyUnix || (ihUnix == historyUnix && ih.ID < history.ID)
+	historyOlder := ihUnix > historyUnix || (ihUnix == historyUnix && ih.ID > history.ID)
+
+	if ihOlder {
+		return &HistoryDiff[IntegrationHistory]{
+			Old:     ih,
+			New:     history,
+			Changes: ih.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[IntegrationHistory]{
+			Old:     history,
+			New:     ih,
+			Changes: history.changes(ih),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
+func (omh *OrgMembershipHistory) changes(new *OrgMembershipHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(omh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldCreatedAt, omh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(omh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldUpdatedAt, omh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(omh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldCreatedBy, omh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(omh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldDeletedAt, omh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(omh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldDeletedBy, omh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(omh.Role, new.Role) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldRole, omh.Role, new.Role))
+	}
+	if !reflect.DeepEqual(omh.OrgID, new.OrgID) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldOrgID, omh.OrgID, new.OrgID))
+	}
+	if !reflect.DeepEqual(omh.UserID, new.UserID) {
+		changes = append(changes, NewChange(orgmembershiphistory.FieldUserID, omh.UserID, new.UserID))
+	}
+	return changes
+}
+
+func (omh *OrgMembershipHistory) Diff(history *OrgMembershipHistory) (*HistoryDiff[OrgMembershipHistory], error) {
+	if omh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	omhUnix, historyUnix := omh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	omhOlder := omhUnix < historyUnix || (omhUnix == historyUnix && omh.ID < history.ID)
+	historyOlder := omhUnix > historyUnix || (omhUnix == historyUnix && omh.ID > history.ID)
+
+	if omhOlder {
+		return &HistoryDiff[OrgMembershipHistory]{
+			Old:     omh,
+			New:     history,
+			Changes: omh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[OrgMembershipHistory]{
+			Old:     history,
+			New:     omh,
+			Changes: history.changes(omh),
 		}, nil
 	}
 	return nil, IdenticalHistoryError
@@ -484,13 +719,37 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	}
 	var record [][]string
 	var err error
+	record, err = auditEntitlementHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
 	record, err = auditGroupHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
 	records = append(records, record...)
 
+	record, err = auditGroupMembershipHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
 	record, err = auditGroupSettingHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditIntegrationHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditOrgMembershipHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
@@ -548,6 +807,58 @@ func (r *record) toRow() []string {
 	return row
 }
 
+type entitlementhistoryref struct {
+	Ref string
+}
+
+func auditEntitlementHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []entitlementhistoryref
+	client := NewEntitlementHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(entitlementhistory.ByRef()).
+		Select(entitlementhistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(entitlementhistory.Ref(currRef.Ref)).
+			Order(entitlementhistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "EntitlementHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&EntitlementHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&EntitlementHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&EntitlementHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
 type grouphistoryref struct {
 	Ref string
 }
@@ -600,6 +911,58 @@ func auditGroupHistory(ctx context.Context, config config) ([][]string, error) {
 	return records, nil
 }
 
+type groupmembershiphistoryref struct {
+	Ref string
+}
+
+func auditGroupMembershipHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []groupmembershiphistoryref
+	client := NewGroupMembershipHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(groupmembershiphistory.ByRef()).
+		Select(groupmembershiphistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(groupmembershiphistory.Ref(currRef.Ref)).
+			Order(groupmembershiphistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "GroupMembershipHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&GroupMembershipHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&GroupMembershipHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&GroupMembershipHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
 type groupsettinghistoryref struct {
 	Ref string
 }
@@ -642,6 +1005,110 @@ func auditGroupSettingHistory(ctx context.Context, config config) ([][]string, e
 			default:
 				if i == 0 {
 					record.Changes = (&GroupSettingHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type integrationhistoryref struct {
+	Ref string
+}
+
+func auditIntegrationHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []integrationhistoryref
+	client := NewIntegrationHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(integrationhistory.ByRef()).
+		Select(integrationhistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(integrationhistory.Ref(currRef.Ref)).
+			Order(integrationhistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "IntegrationHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&IntegrationHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&IntegrationHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&IntegrationHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type orgmembershiphistoryref struct {
+	Ref string
+}
+
+func auditOrgMembershipHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []orgmembershiphistoryref
+	client := NewOrgMembershipHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(orgmembershiphistory.ByRef()).
+		Select(orgmembershiphistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(orgmembershiphistory.Ref(currRef.Ref)).
+			Order(orgmembershiphistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "OrgMembershipHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&OrgMembershipHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&OrgMembershipHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&OrgMembershipHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}

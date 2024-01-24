@@ -79,6 +79,39 @@ var (
 			},
 		},
 	}
+	// EntitlementHistoryColumns holds the columns for the "entitlement_history" table.
+	EntitlementHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString},
+		{Name: "tier", Type: field.TypeEnum, Enums: []string{"FREE", "PRO", "ENTERPRISE"}, Default: "FREE"},
+		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
+		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
+		{Name: "expires", Type: field.TypeBool, Default: false},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "cancelled", Type: field.TypeBool, Default: false},
+	}
+	// EntitlementHistoryTable holds the schema information for the "entitlement_history" table.
+	EntitlementHistoryTable = &schema.Table{
+		Name:       "entitlement_history",
+		Columns:    EntitlementHistoryColumns,
+		PrimaryKey: []*schema.Column{EntitlementHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entitlementhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{EntitlementHistoryColumns[1]},
+			},
+		},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -194,6 +227,35 @@ var (
 			},
 		},
 	}
+	// GroupMembershipHistoryColumns holds the columns for the "group_membership_history" table.
+	GroupMembershipHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER"}, Default: "MEMBER"},
+		{Name: "group_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// GroupMembershipHistoryTable holds the schema information for the "group_membership_history" table.
+	GroupMembershipHistoryTable = &schema.Table{
+		Name:       "group_membership_history",
+		Columns:    GroupMembershipHistoryColumns,
+		PrimaryKey: []*schema.Column{GroupMembershipHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupmembershiphistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{GroupMembershipHistoryColumns[1]},
+			},
+		},
+	}
 	// GroupSettingsColumns holds the columns for the "group_settings" table.
 	GroupSettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -281,6 +343,36 @@ var (
 				Columns:    []*schema.Column{IntegrationsColumns[11]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// IntegrationHistoryColumns holds the columns for the "integration_history" table.
+	IntegrationHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
+		{Name: "secret_name", Type: field.TypeString},
+	}
+	// IntegrationHistoryTable holds the schema information for the "integration_history" table.
+	IntegrationHistoryTable = &schema.Table{
+		Name:       "integration_history",
+		Columns:    IntegrationHistoryColumns,
+		PrimaryKey: []*schema.Column{IntegrationHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "integrationhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{IntegrationHistoryColumns[1]},
 			},
 		},
 	}
@@ -380,6 +472,35 @@ var (
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
+			},
+		},
+	}
+	// OrgMembershipHistoryColumns holds the columns for the "org_membership_history" table.
+	OrgMembershipHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER"}, Default: "MEMBER"},
+		{Name: "org_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// OrgMembershipHistoryTable holds the schema information for the "org_membership_history" table.
+	OrgMembershipHistoryTable = &schema.Table{
+		Name:       "org_membership_history",
+		Columns:    OrgMembershipHistoryColumns,
+		PrimaryKey: []*schema.Column{OrgMembershipHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orgmembershiphistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{OrgMembershipHistoryColumns[1]},
 			},
 		},
 	}
@@ -751,15 +872,19 @@ var (
 	Tables = []*schema.Table{
 		EmailVerificationTokensTable,
 		EntitlementsTable,
+		EntitlementHistoryTable,
 		GroupsTable,
 		GroupHistoryTable,
 		GroupMembershipsTable,
+		GroupMembershipHistoryTable,
 		GroupSettingsTable,
 		GroupSettingHistoryTable,
 		IntegrationsTable,
+		IntegrationHistoryTable,
 		OauthProvidersTable,
 		OhAuthTooTokensTable,
 		OrgMembershipsTable,
+		OrgMembershipHistoryTable,
 		OrganizationsTable,
 		OrganizationHistoryTable,
 		OrganizationSettingsTable,
@@ -776,20 +901,32 @@ var (
 func init() {
 	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	EntitlementHistoryTable.Annotation = &entsql.Annotation{
+		Table: "entitlement_history",
+	}
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupHistoryTable.Annotation = &entsql.Annotation{
 		Table: "group_history",
 	}
 	GroupMembershipsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupMembershipsTable.ForeignKeys[1].RefTable = UsersTable
+	GroupMembershipHistoryTable.Annotation = &entsql.Annotation{
+		Table: "group_membership_history",
+	}
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupSettingHistoryTable.Annotation = &entsql.Annotation{
 		Table: "group_setting_history",
 	}
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	IntegrationHistoryTable.Annotation = &entsql.Annotation{
+		Table: "integration_history",
+	}
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrgMembershipsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrgMembershipsTable.ForeignKeys[1].RefTable = UsersTable
+	OrgMembershipHistoryTable.Annotation = &entsql.Annotation{
+		Table: "org_membership_history",
+	}
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationHistoryTable.Annotation = &entsql.Annotation{
 		Table: "organization_history",

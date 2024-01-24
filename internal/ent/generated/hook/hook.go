@@ -33,6 +33,18 @@ func (f EntitlementFunc) Mutate(ctx context.Context, m generated.Mutation) (gene
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementMutation", m)
 }
 
+// The EntitlementHistoryFunc type is an adapter to allow the use of ordinary
+// function as EntitlementHistory mutator.
+type EntitlementHistoryFunc func(context.Context, *generated.EntitlementHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntitlementHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EntitlementHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementHistoryMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *generated.GroupMutation) (generated.Value, error)
@@ -67,6 +79,18 @@ func (f GroupMembershipFunc) Mutate(ctx context.Context, m generated.Mutation) (
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupMembershipMutation", m)
+}
+
+// The GroupMembershipHistoryFunc type is an adapter to allow the use of ordinary
+// function as GroupMembershipHistory mutator.
+type GroupMembershipHistoryFunc func(context.Context, *generated.GroupMembershipHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupMembershipHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.GroupMembershipHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupMembershipHistoryMutation", m)
 }
 
 // The GroupSettingFunc type is an adapter to allow the use of ordinary
@@ -105,6 +129,18 @@ func (f IntegrationFunc) Mutate(ctx context.Context, m generated.Mutation) (gene
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.IntegrationMutation", m)
 }
 
+// The IntegrationHistoryFunc type is an adapter to allow the use of ordinary
+// function as IntegrationHistory mutator.
+type IntegrationHistoryFunc func(context.Context, *generated.IntegrationHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f IntegrationHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.IntegrationHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.IntegrationHistoryMutation", m)
+}
+
 // The OauthProviderFunc type is an adapter to allow the use of ordinary
 // function as OauthProvider mutator.
 type OauthProviderFunc func(context.Context, *generated.OauthProviderMutation) (generated.Value, error)
@@ -139,6 +175,18 @@ func (f OrgMembershipFunc) Mutate(ctx context.Context, m generated.Mutation) (ge
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrgMembershipMutation", m)
+}
+
+// The OrgMembershipHistoryFunc type is an adapter to allow the use of ordinary
+// function as OrgMembershipHistory mutator.
+type OrgMembershipHistoryFunc func(context.Context, *generated.OrgMembershipHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrgMembershipHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.OrgMembershipHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrgMembershipHistoryMutation", m)
 }
 
 // The OrganizationFunc type is an adapter to allow the use of ordinary

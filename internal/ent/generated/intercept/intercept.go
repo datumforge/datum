@@ -10,12 +10,15 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -23,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -142,6 +146,33 @@ func (f TraverseEntitlement) Traverse(ctx context.Context, q generated.Query) er
 	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementQuery", q)
 }
 
+// The EntitlementHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntitlementHistoryFunc func(context.Context, *generated.EntitlementHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntitlementHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntitlementHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementHistoryQuery", q)
+}
+
+// The TraverseEntitlementHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntitlementHistory func(context.Context, *generated.EntitlementHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntitlementHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntitlementHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementHistoryQuery", q)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary function as a Querier.
 type GroupFunc func(context.Context, *generated.GroupQuery) (generated.Value, error)
 
@@ -221,6 +252,33 @@ func (f TraverseGroupMembership) Traverse(ctx context.Context, q generated.Query
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.GroupMembershipQuery", q)
+}
+
+// The GroupMembershipHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type GroupMembershipHistoryFunc func(context.Context, *generated.GroupMembershipHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f GroupMembershipHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.GroupMembershipHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.GroupMembershipHistoryQuery", q)
+}
+
+// The TraverseGroupMembershipHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseGroupMembershipHistory func(context.Context, *generated.GroupMembershipHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseGroupMembershipHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseGroupMembershipHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.GroupMembershipHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.GroupMembershipHistoryQuery", q)
 }
 
 // The GroupSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -304,6 +362,33 @@ func (f TraverseIntegration) Traverse(ctx context.Context, q generated.Query) er
 	return fmt.Errorf("unexpected query type %T. expect *generated.IntegrationQuery", q)
 }
 
+// The IntegrationHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type IntegrationHistoryFunc func(context.Context, *generated.IntegrationHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f IntegrationHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.IntegrationHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.IntegrationHistoryQuery", q)
+}
+
+// The TraverseIntegrationHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseIntegrationHistory func(context.Context, *generated.IntegrationHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseIntegrationHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseIntegrationHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.IntegrationHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.IntegrationHistoryQuery", q)
+}
+
 // The OauthProviderFunc type is an adapter to allow the use of ordinary function as a Querier.
 type OauthProviderFunc func(context.Context, *generated.OauthProviderQuery) (generated.Value, error)
 
@@ -383,6 +468,33 @@ func (f TraverseOrgMembership) Traverse(ctx context.Context, q generated.Query) 
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.OrgMembershipQuery", q)
+}
+
+// The OrgMembershipHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type OrgMembershipHistoryFunc func(context.Context, *generated.OrgMembershipHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f OrgMembershipHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.OrgMembershipHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.OrgMembershipHistoryQuery", q)
+}
+
+// The TraverseOrgMembershipHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseOrgMembershipHistory func(context.Context, *generated.OrgMembershipHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseOrgMembershipHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseOrgMembershipHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrgMembershipHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.OrgMembershipHistoryQuery", q)
 }
 
 // The OrganizationFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -662,24 +774,32 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.EmailVerificationTokenQuery, predicate.EmailVerificationToken, emailverificationtoken.OrderOption]{typ: generated.TypeEmailVerificationToken, tq: q}, nil
 	case *generated.EntitlementQuery:
 		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
+	case *generated.EntitlementHistoryQuery:
+		return &query[*generated.EntitlementHistoryQuery, predicate.EntitlementHistory, entitlementhistory.OrderOption]{typ: generated.TypeEntitlementHistory, tq: q}, nil
 	case *generated.GroupQuery:
 		return &query[*generated.GroupQuery, predicate.Group, group.OrderOption]{typ: generated.TypeGroup, tq: q}, nil
 	case *generated.GroupHistoryQuery:
 		return &query[*generated.GroupHistoryQuery, predicate.GroupHistory, grouphistory.OrderOption]{typ: generated.TypeGroupHistory, tq: q}, nil
 	case *generated.GroupMembershipQuery:
 		return &query[*generated.GroupMembershipQuery, predicate.GroupMembership, groupmembership.OrderOption]{typ: generated.TypeGroupMembership, tq: q}, nil
+	case *generated.GroupMembershipHistoryQuery:
+		return &query[*generated.GroupMembershipHistoryQuery, predicate.GroupMembershipHistory, groupmembershiphistory.OrderOption]{typ: generated.TypeGroupMembershipHistory, tq: q}, nil
 	case *generated.GroupSettingQuery:
 		return &query[*generated.GroupSettingQuery, predicate.GroupSetting, groupsetting.OrderOption]{typ: generated.TypeGroupSetting, tq: q}, nil
 	case *generated.GroupSettingHistoryQuery:
 		return &query[*generated.GroupSettingHistoryQuery, predicate.GroupSettingHistory, groupsettinghistory.OrderOption]{typ: generated.TypeGroupSettingHistory, tq: q}, nil
 	case *generated.IntegrationQuery:
 		return &query[*generated.IntegrationQuery, predicate.Integration, integration.OrderOption]{typ: generated.TypeIntegration, tq: q}, nil
+	case *generated.IntegrationHistoryQuery:
+		return &query[*generated.IntegrationHistoryQuery, predicate.IntegrationHistory, integrationhistory.OrderOption]{typ: generated.TypeIntegrationHistory, tq: q}, nil
 	case *generated.OauthProviderQuery:
 		return &query[*generated.OauthProviderQuery, predicate.OauthProvider, oauthprovider.OrderOption]{typ: generated.TypeOauthProvider, tq: q}, nil
 	case *generated.OhAuthTooTokenQuery:
 		return &query[*generated.OhAuthTooTokenQuery, predicate.OhAuthTooToken, ohauthtootoken.OrderOption]{typ: generated.TypeOhAuthTooToken, tq: q}, nil
 	case *generated.OrgMembershipQuery:
 		return &query[*generated.OrgMembershipQuery, predicate.OrgMembership, orgmembership.OrderOption]{typ: generated.TypeOrgMembership, tq: q}, nil
+	case *generated.OrgMembershipHistoryQuery:
+		return &query[*generated.OrgMembershipHistoryQuery, predicate.OrgMembershipHistory, orgmembershiphistory.OrderOption]{typ: generated.TypeOrgMembershipHistory, tq: q}, nil
 	case *generated.OrganizationQuery:
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
 	case *generated.OrganizationHistoryQuery:

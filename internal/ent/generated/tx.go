@@ -16,24 +16,32 @@ type Tx struct {
 	EmailVerificationToken *EmailVerificationTokenClient
 	// Entitlement is the client for interacting with the Entitlement builders.
 	Entitlement *EntitlementClient
+	// EntitlementHistory is the client for interacting with the EntitlementHistory builders.
+	EntitlementHistory *EntitlementHistoryClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupHistory is the client for interacting with the GroupHistory builders.
 	GroupHistory *GroupHistoryClient
 	// GroupMembership is the client for interacting with the GroupMembership builders.
 	GroupMembership *GroupMembershipClient
+	// GroupMembershipHistory is the client for interacting with the GroupMembershipHistory builders.
+	GroupMembershipHistory *GroupMembershipHistoryClient
 	// GroupSetting is the client for interacting with the GroupSetting builders.
 	GroupSetting *GroupSettingClient
 	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
 	GroupSettingHistory *GroupSettingHistoryClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
+	// IntegrationHistory is the client for interacting with the IntegrationHistory builders.
+	IntegrationHistory *IntegrationHistoryClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
 	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
 	OhAuthTooToken *OhAuthTooTokenClient
 	// OrgMembership is the client for interacting with the OrgMembership builders.
 	OrgMembership *OrgMembershipClient
+	// OrgMembershipHistory is the client for interacting with the OrgMembershipHistory builders.
+	OrgMembershipHistory *OrgMembershipHistoryClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// OrganizationHistory is the client for interacting with the OrganizationHistory builders.
@@ -187,15 +195,19 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
+	tx.EntitlementHistory = NewEntitlementHistoryClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupHistory = NewGroupHistoryClient(tx.config)
 	tx.GroupMembership = NewGroupMembershipClient(tx.config)
+	tx.GroupMembershipHistory = NewGroupMembershipHistoryClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
 	tx.GroupSettingHistory = NewGroupSettingHistoryClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
+	tx.IntegrationHistory = NewIntegrationHistoryClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
 	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
 	tx.OrgMembership = NewOrgMembershipClient(tx.config)
+	tx.OrgMembershipHistory = NewOrgMembershipHistoryClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.OrganizationHistory = NewOrganizationHistoryClient(tx.config)
 	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)

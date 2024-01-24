@@ -9,8 +9,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"github.com/flume/enthistory"
-
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -54,10 +52,6 @@ func (GroupMembership) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
-		enthistory.Annotations{
-			IsHistory: false,
-			Exclude:   true,
-		},
 	}
 }
 

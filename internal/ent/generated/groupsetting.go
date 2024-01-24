@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 )
@@ -32,9 +33,9 @@ type GroupSetting struct {
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization
-	Visibility groupsetting.Visibility `json:"visibility,omitempty"`
+	Visibility enums.Visibility `json:"visibility,omitempty"`
 	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
-	JoinPolicy groupsetting.JoinPolicy `json:"join_policy,omitempty"`
+	JoinPolicy enums.JoinPolicy `json:"join_policy,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
 	// SyncToSlack holds the value of the "sync_to_slack" field.
@@ -148,13 +149,13 @@ func (gs *GroupSetting) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field visibility", values[i])
 			} else if value.Valid {
-				gs.Visibility = groupsetting.Visibility(value.String)
+				gs.Visibility = enums.Visibility(value.String)
 			}
 		case groupsetting.FieldJoinPolicy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field join_policy", values[i])
 			} else if value.Valid {
-				gs.JoinPolicy = groupsetting.JoinPolicy(value.String)
+				gs.JoinPolicy = enums.JoinPolicy(value.String)
 			}
 		case groupsetting.FieldTags:
 			if value, ok := values[i].(*[]byte); !ok {

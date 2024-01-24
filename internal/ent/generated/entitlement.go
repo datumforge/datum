@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
@@ -33,7 +34,7 @@ type Entitlement struct {
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// Tier holds the value of the "tier" field.
-	Tier entitlement.Tier `json:"tier,omitempty"`
+	Tier enums.Tier `json:"tier,omitempty"`
 	// used to store references to external systems, e.g. Stripe
 	ExternalCustomerID string `json:"external_customer_id,omitempty"`
 	// used to store references to external systems, e.g. Stripe
@@ -152,7 +153,7 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tier", values[i])
 			} else if value.Valid {
-				e.Tier = entitlement.Tier(value.String)
+				e.Tier = enums.Tier(value.String)
 			}
 		case entitlement.FieldExternalCustomerID:
 			if value, ok := values[i].(*sql.NullString); !ok {

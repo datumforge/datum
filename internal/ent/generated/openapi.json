@@ -471,11 +471,11 @@
                   "tier": {
                     "type": "string",
                     "enum": [
-                      "free",
-                      "pro",
-                      "enterprise"
+                      "FREE",
+                      "PRO",
+                      "ENTERPRISE"
                     ],
-                    "default": "free"
+                    "default": "FREE"
                   },
                   "external_customer_id": {
                     "type": "string"
@@ -659,11 +659,11 @@
                   "tier": {
                     "type": "string",
                     "enum": [
-                      "free",
-                      "pro",
-                      "enterprise"
+                      "FREE",
+                      "PRO",
+                      "ENTERPRISE"
                     ],
-                    "default": "free"
+                    "default": "FREE"
                   },
                   "external_customer_id": {
                     "type": "string"
@@ -7535,11 +7535,11 @@
           "tier": {
             "type": "string",
             "enum": [
-              "free",
-              "pro",
-              "enterprise"
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
             ],
-            "default": "free"
+            "default": "FREE"
           },
           "external_customer_id": {
             "type": "string"
@@ -7605,11 +7605,11 @@
           "tier": {
             "type": "string",
             "enum": [
-              "free",
-              "pro",
-              "enterprise"
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
             ],
-            "default": "free"
+            "default": "FREE"
           },
           "external_customer_id": {
             "type": "string"
@@ -7671,11 +7671,11 @@
           "tier": {
             "type": "string",
             "enum": [
-              "free",
-              "pro",
-              "enterprise"
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
             ],
-            "default": "free"
+            "default": "FREE"
           },
           "external_customer_id": {
             "type": "string"
@@ -7737,11 +7737,11 @@
           "tier": {
             "type": "string",
             "enum": [
-              "free",
-              "pro",
-              "enterprise"
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
             ],
-            "default": "free"
+            "default": "FREE"
           },
           "external_customer_id": {
             "type": "string"
@@ -7803,11 +7803,11 @@
           "tier": {
             "type": "string",
             "enum": [
-              "free",
-              "pro",
-              "enterprise"
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
             ],
-            "default": "free"
+            "default": "FREE"
           },
           "external_customer_id": {
             "type": "string"
@@ -11452,11 +11452,11 @@
           "tier": {
             "type": "string",
             "enum": [
-              "free",
-              "pro",
-              "enterprise"
+              "FREE",
+              "PRO",
+              "ENTERPRISE"
             ],
-            "default": "free"
+            "default": "FREE"
           },
           "external_customer_id": {
             "type": "string"

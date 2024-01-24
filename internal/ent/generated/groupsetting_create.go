@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 )
@@ -106,29 +107,29 @@ func (gsc *GroupSettingCreate) SetNillableDeletedBy(s *string) *GroupSettingCrea
 }
 
 // SetVisibility sets the "visibility" field.
-func (gsc *GroupSettingCreate) SetVisibility(gr groupsetting.Visibility) *GroupSettingCreate {
-	gsc.mutation.SetVisibility(gr)
+func (gsc *GroupSettingCreate) SetVisibility(e enums.Visibility) *GroupSettingCreate {
+	gsc.mutation.SetVisibility(e)
 	return gsc
 }
 
 // SetNillableVisibility sets the "visibility" field if the given value is not nil.
-func (gsc *GroupSettingCreate) SetNillableVisibility(gr *groupsetting.Visibility) *GroupSettingCreate {
-	if gr != nil {
-		gsc.SetVisibility(*gr)
+func (gsc *GroupSettingCreate) SetNillableVisibility(e *enums.Visibility) *GroupSettingCreate {
+	if e != nil {
+		gsc.SetVisibility(*e)
 	}
 	return gsc
 }
 
 // SetJoinPolicy sets the "join_policy" field.
-func (gsc *GroupSettingCreate) SetJoinPolicy(gp groupsetting.JoinPolicy) *GroupSettingCreate {
-	gsc.mutation.SetJoinPolicy(gp)
+func (gsc *GroupSettingCreate) SetJoinPolicy(ep enums.JoinPolicy) *GroupSettingCreate {
+	gsc.mutation.SetJoinPolicy(ep)
 	return gsc
 }
 
 // SetNillableJoinPolicy sets the "join_policy" field if the given value is not nil.
-func (gsc *GroupSettingCreate) SetNillableJoinPolicy(gp *groupsetting.JoinPolicy) *GroupSettingCreate {
-	if gp != nil {
-		gsc.SetJoinPolicy(*gp)
+func (gsc *GroupSettingCreate) SetNillableJoinPolicy(ep *enums.JoinPolicy) *GroupSettingCreate {
+	if ep != nil {
+		gsc.SetJoinPolicy(*ep)
 	}
 	return gsc
 }

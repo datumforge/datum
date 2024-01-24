@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -173,15 +174,15 @@ func (usu *UserSettingUpdate) ClearRecoveryCode() *UserSettingUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (usu *UserSettingUpdate) SetStatus(u usersetting.Status) *UserSettingUpdate {
-	usu.mutation.SetStatus(u)
+func (usu *UserSettingUpdate) SetStatus(es enums.UserStatus) *UserSettingUpdate {
+	usu.mutation.SetStatus(es)
 	return usu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (usu *UserSettingUpdate) SetNillableStatus(u *usersetting.Status) *UserSettingUpdate {
-	if u != nil {
-		usu.SetStatus(*u)
+func (usu *UserSettingUpdate) SetNillableStatus(es *enums.UserStatus) *UserSettingUpdate {
+	if es != nil {
+		usu.SetStatus(*es)
 	}
 	return usu
 }
@@ -585,15 +586,15 @@ func (usuo *UserSettingUpdateOne) ClearRecoveryCode() *UserSettingUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (usuo *UserSettingUpdateOne) SetStatus(u usersetting.Status) *UserSettingUpdateOne {
-	usuo.mutation.SetStatus(u)
+func (usuo *UserSettingUpdateOne) SetStatus(es enums.UserStatus) *UserSettingUpdateOne {
+	usuo.mutation.SetStatus(es)
 	return usuo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (usuo *UserSettingUpdateOne) SetNillableStatus(u *usersetting.Status) *UserSettingUpdateOne {
-	if u != nil {
-		usuo.SetStatus(*u)
+func (usuo *UserSettingUpdateOne) SetNillableStatus(es *enums.UserStatus) *UserSettingUpdateOne {
+	if es != nil {
+		usuo.SetStatus(*es)
 	}
 	return usuo
 }

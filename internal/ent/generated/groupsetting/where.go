@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -463,43 +464,63 @@ func DeletedByContainsFold(v string) predicate.GroupSetting {
 }
 
 // VisibilityEQ applies the EQ predicate on the "visibility" field.
-func VisibilityEQ(v Visibility) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldEQ(FieldVisibility, v))
+func VisibilityEQ(v enums.Visibility) predicate.GroupSetting {
+	vc := v
+	return predicate.GroupSetting(sql.FieldEQ(FieldVisibility, vc))
 }
 
 // VisibilityNEQ applies the NEQ predicate on the "visibility" field.
-func VisibilityNEQ(v Visibility) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldNEQ(FieldVisibility, v))
+func VisibilityNEQ(v enums.Visibility) predicate.GroupSetting {
+	vc := v
+	return predicate.GroupSetting(sql.FieldNEQ(FieldVisibility, vc))
 }
 
 // VisibilityIn applies the In predicate on the "visibility" field.
-func VisibilityIn(vs ...Visibility) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldIn(FieldVisibility, vs...))
+func VisibilityIn(vs ...enums.Visibility) predicate.GroupSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.GroupSetting(sql.FieldIn(FieldVisibility, v...))
 }
 
 // VisibilityNotIn applies the NotIn predicate on the "visibility" field.
-func VisibilityNotIn(vs ...Visibility) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldNotIn(FieldVisibility, vs...))
+func VisibilityNotIn(vs ...enums.Visibility) predicate.GroupSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.GroupSetting(sql.FieldNotIn(FieldVisibility, v...))
 }
 
 // JoinPolicyEQ applies the EQ predicate on the "join_policy" field.
-func JoinPolicyEQ(v JoinPolicy) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldEQ(FieldJoinPolicy, v))
+func JoinPolicyEQ(v enums.JoinPolicy) predicate.GroupSetting {
+	vc := v
+	return predicate.GroupSetting(sql.FieldEQ(FieldJoinPolicy, vc))
 }
 
 // JoinPolicyNEQ applies the NEQ predicate on the "join_policy" field.
-func JoinPolicyNEQ(v JoinPolicy) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldNEQ(FieldJoinPolicy, v))
+func JoinPolicyNEQ(v enums.JoinPolicy) predicate.GroupSetting {
+	vc := v
+	return predicate.GroupSetting(sql.FieldNEQ(FieldJoinPolicy, vc))
 }
 
 // JoinPolicyIn applies the In predicate on the "join_policy" field.
-func JoinPolicyIn(vs ...JoinPolicy) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldIn(FieldJoinPolicy, vs...))
+func JoinPolicyIn(vs ...enums.JoinPolicy) predicate.GroupSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.GroupSetting(sql.FieldIn(FieldJoinPolicy, v...))
 }
 
 // JoinPolicyNotIn applies the NotIn predicate on the "join_policy" field.
-func JoinPolicyNotIn(vs ...JoinPolicy) predicate.GroupSetting {
-	return predicate.GroupSetting(sql.FieldNotIn(FieldJoinPolicy, vs...))
+func JoinPolicyNotIn(vs ...enums.JoinPolicy) predicate.GroupSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.GroupSetting(sql.FieldNotIn(FieldJoinPolicy, v...))
 }
 
 // SyncToSlackEQ applies the EQ predicate on the "sync_to_slack" field.

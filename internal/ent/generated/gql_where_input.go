@@ -127,10 +127,10 @@ type EntitlementWhereInput struct {
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 
 	// "tier" field predicates.
-	Tier      *entitlement.Tier  `json:"tier,omitempty"`
-	TierNEQ   *entitlement.Tier  `json:"tierNEQ,omitempty"`
-	TierIn    []entitlement.Tier `json:"tierIn,omitempty"`
-	TierNotIn []entitlement.Tier `json:"tierNotIn,omitempty"`
+	Tier      *enums.Tier  `json:"tier,omitempty"`
+	TierNEQ   *enums.Tier  `json:"tierNEQ,omitempty"`
+	TierIn    []enums.Tier `json:"tierIn,omitempty"`
+	TierNotIn []enums.Tier `json:"tierNotIn,omitempty"`
 
 	// "external_customer_id" field predicates.
 	ExternalCustomerID             *string  `json:"externalCustomerID,omitempty"`
@@ -2003,16 +2003,16 @@ type GroupSettingWhereInput struct {
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 
 	// "visibility" field predicates.
-	Visibility      *groupsetting.Visibility  `json:"visibility,omitempty"`
-	VisibilityNEQ   *groupsetting.Visibility  `json:"visibilityNEQ,omitempty"`
-	VisibilityIn    []groupsetting.Visibility `json:"visibilityIn,omitempty"`
-	VisibilityNotIn []groupsetting.Visibility `json:"visibilityNotIn,omitempty"`
+	Visibility      *enums.Visibility  `json:"visibility,omitempty"`
+	VisibilityNEQ   *enums.Visibility  `json:"visibilityNEQ,omitempty"`
+	VisibilityIn    []enums.Visibility `json:"visibilityIn,omitempty"`
+	VisibilityNotIn []enums.Visibility `json:"visibilityNotIn,omitempty"`
 
 	// "join_policy" field predicates.
-	JoinPolicy      *groupsetting.JoinPolicy  `json:"joinPolicy,omitempty"`
-	JoinPolicyNEQ   *groupsetting.JoinPolicy  `json:"joinPolicyNEQ,omitempty"`
-	JoinPolicyIn    []groupsetting.JoinPolicy `json:"joinPolicyIn,omitempty"`
-	JoinPolicyNotIn []groupsetting.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
+	JoinPolicy      *enums.JoinPolicy  `json:"joinPolicy,omitempty"`
+	JoinPolicyNEQ   *enums.JoinPolicy  `json:"joinPolicyNEQ,omitempty"`
+	JoinPolicyIn    []enums.JoinPolicy `json:"joinPolicyIn,omitempty"`
+	JoinPolicyNotIn []enums.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
 
 	// "sync_to_slack" field predicates.
 	SyncToSlack    *bool `json:"syncToSlack,omitempty"`
@@ -8692,10 +8692,10 @@ type UserSettingWhereInput struct {
 	RecoveryCodeContainsFold *string  `json:"recoveryCodeContainsFold,omitempty"`
 
 	// "status" field predicates.
-	Status      *usersetting.Status  `json:"status,omitempty"`
-	StatusNEQ   *usersetting.Status  `json:"statusNEQ,omitempty"`
-	StatusIn    []usersetting.Status `json:"statusIn,omitempty"`
-	StatusNotIn []usersetting.Status `json:"statusNotIn,omitempty"`
+	Status      *enums.UserStatus  `json:"status,omitempty"`
+	StatusNEQ   *enums.UserStatus  `json:"statusNEQ,omitempty"`
+	StatusIn    []enums.UserStatus `json:"statusIn,omitempty"`
+	StatusNotIn []enums.UserStatus `json:"statusNotIn,omitempty"`
 
 	// "default_org" field predicates.
 	DefaultOrg             *string  `json:"defaultOrg,omitempty"`

@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -40,7 +41,7 @@ type UserSetting struct {
 	// local user password recovery code generated during account creation - does not exist for oauth'd users
 	RecoveryCode *string `json:"-"`
 	// Status holds the value of the "status" field.
-	Status usersetting.Status `json:"status,omitempty"`
+	Status enums.UserStatus `json:"status,omitempty"`
 	// organization to load on user login
 	DefaultOrg string `json:"default_org,omitempty"`
 	// EmailConfirmed holds the value of the "email_confirmed" field.
@@ -181,7 +182,7 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				us.Status = usersetting.Status(value.String)
+				us.Status = enums.UserStatus(value.String)
 			}
 		case usersetting.FieldDefaultOrg:
 			if value, ok := values[i].(*sql.NullString); !ok {

@@ -10,8 +10,6 @@ import (
 	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
-	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 type DatumClient interface {
@@ -140,16 +138,16 @@ func (t *GetGroupByID_Group_Owner) GetID() string {
 }
 
 type GetGroupByID_Group_Setting struct {
-	ID           string                  "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time               "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Visibility   groupsetting.Visibility "json:\"visibility\" graphql:\"visibility\""
-	JoinPolicy   groupsetting.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool                    "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool                    "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string                "json:\"tags\" graphql:\"tags\""
+	ID           string           "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags\" graphql:\"tags\""
 }
 
 func (t *GetGroupByID_Group_Setting) GetID() string {
@@ -182,13 +180,13 @@ func (t *GetGroupByID_Group_Setting) GetUpdatedBy() *string {
 	}
 	return t.UpdatedBy
 }
-func (t *GetGroupByID_Group_Setting) GetVisibility() *groupsetting.Visibility {
+func (t *GetGroupByID_Group_Setting) GetVisibility() *enums.Visibility {
 	if t == nil {
 		t = &GetGroupByID_Group_Setting{}
 	}
 	return &t.Visibility
 }
-func (t *GetGroupByID_Group_Setting) GetJoinPolicy() *groupsetting.JoinPolicy {
+func (t *GetGroupByID_Group_Setting) GetJoinPolicy() *enums.JoinPolicy {
 	if t == nil {
 		t = &GetGroupByID_Group_Setting{}
 	}
@@ -363,16 +361,16 @@ func (t *GroupsWhere_Groups_Edges_Node_Owner) GetID() string {
 }
 
 type GroupsWhere_Groups_Edges_Node_Setting struct {
-	ID           string                  "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time               "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Visibility   groupsetting.Visibility "json:\"visibility\" graphql:\"visibility\""
-	JoinPolicy   groupsetting.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool                    "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool                    "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string                "json:\"tags\" graphql:\"tags\""
+	ID           string           "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags\" graphql:\"tags\""
 }
 
 func (t *GroupsWhere_Groups_Edges_Node_Setting) GetID() string {
@@ -405,13 +403,13 @@ func (t *GroupsWhere_Groups_Edges_Node_Setting) GetUpdatedBy() *string {
 	}
 	return t.UpdatedBy
 }
-func (t *GroupsWhere_Groups_Edges_Node_Setting) GetVisibility() *groupsetting.Visibility {
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetVisibility() *enums.Visibility {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Setting{}
 	}
 	return &t.Visibility
 }
-func (t *GroupsWhere_Groups_Edges_Node_Setting) GetJoinPolicy() *groupsetting.JoinPolicy {
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetJoinPolicy() *enums.JoinPolicy {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Setting{}
 	}
@@ -608,16 +606,16 @@ func (t *GetAllGroups_Groups_Edges_Node_Owner) GetID() string {
 }
 
 type GetAllGroups_Groups_Edges_Node_Setting struct {
-	ID           string                  "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time               "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Visibility   groupsetting.Visibility "json:\"visibility\" graphql:\"visibility\""
-	JoinPolicy   groupsetting.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool                    "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool                    "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string                "json:\"tags\" graphql:\"tags\""
+	ID           string           "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags\" graphql:\"tags\""
 }
 
 func (t *GetAllGroups_Groups_Edges_Node_Setting) GetID() string {
@@ -650,13 +648,13 @@ func (t *GetAllGroups_Groups_Edges_Node_Setting) GetUpdatedBy() *string {
 	}
 	return t.UpdatedBy
 }
-func (t *GetAllGroups_Groups_Edges_Node_Setting) GetVisibility() *groupsetting.Visibility {
+func (t *GetAllGroups_Groups_Edges_Node_Setting) GetVisibility() *enums.Visibility {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Setting{}
 	}
 	return &t.Visibility
 }
-func (t *GetAllGroups_Groups_Edges_Node_Setting) GetJoinPolicy() *groupsetting.JoinPolicy {
+func (t *GetAllGroups_Groups_Edges_Node_Setting) GetJoinPolicy() *enums.JoinPolicy {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Setting{}
 	}
@@ -853,16 +851,16 @@ func (t *CreateGroup_CreateGroup_Group_Owner) GetID() string {
 }
 
 type CreateGroup_CreateGroup_Group_Setting struct {
-	ID           string                  "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time               "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Visibility   groupsetting.Visibility "json:\"visibility\" graphql:\"visibility\""
-	JoinPolicy   groupsetting.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool                    "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool                    "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string                "json:\"tags\" graphql:\"tags\""
+	ID           string           "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags\" graphql:\"tags\""
 }
 
 func (t *CreateGroup_CreateGroup_Group_Setting) GetID() string {
@@ -895,13 +893,13 @@ func (t *CreateGroup_CreateGroup_Group_Setting) GetUpdatedBy() *string {
 	}
 	return t.UpdatedBy
 }
-func (t *CreateGroup_CreateGroup_Group_Setting) GetVisibility() *groupsetting.Visibility {
+func (t *CreateGroup_CreateGroup_Group_Setting) GetVisibility() *enums.Visibility {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Setting{}
 	}
 	return &t.Visibility
 }
-func (t *CreateGroup_CreateGroup_Group_Setting) GetJoinPolicy() *groupsetting.JoinPolicy {
+func (t *CreateGroup_CreateGroup_Group_Setting) GetJoinPolicy() *enums.JoinPolicy {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Setting{}
 	}
@@ -1076,16 +1074,16 @@ func (t *CreateGroup_CreateGroup) GetGroup() *CreateGroup_CreateGroup_Group {
 }
 
 type UpdateGroup_UpdateGroup_Group_Setting struct {
-	ID           string                  "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time               "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Visibility   groupsetting.Visibility "json:\"visibility\" graphql:\"visibility\""
-	JoinPolicy   groupsetting.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool                    "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool                    "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string                "json:\"tags\" graphql:\"tags\""
+	ID           string           "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags\" graphql:\"tags\""
 }
 
 func (t *UpdateGroup_UpdateGroup_Group_Setting) GetID() string {
@@ -1118,13 +1116,13 @@ func (t *UpdateGroup_UpdateGroup_Group_Setting) GetUpdatedBy() *string {
 	}
 	return t.UpdatedBy
 }
-func (t *UpdateGroup_UpdateGroup_Group_Setting) GetVisibility() *groupsetting.Visibility {
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetVisibility() *enums.Visibility {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Setting{}
 	}
 	return &t.Visibility
 }
-func (t *UpdateGroup_UpdateGroup_Group_Setting) GetJoinPolicy() *groupsetting.JoinPolicy {
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetJoinPolicy() *enums.JoinPolicy {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Setting{}
 	}
@@ -1495,8 +1493,8 @@ type GetGroupSetting_GroupSetting struct {
 	UpdatedAt    time.Time                           "json:\"updatedAt\" graphql:\"updatedAt\""
 	CreatedBy    *string                             "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string                             "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Visibility   groupsetting.Visibility             "json:\"visibility\" graphql:\"visibility\""
-	JoinPolicy   groupsetting.JoinPolicy             "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	Visibility   enums.Visibility                    "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy                    "json:\"joinPolicy\" graphql:\"joinPolicy\""
 	Tags         []string                            "json:\"tags\" graphql:\"tags\""
 	SyncToSlack  bool                                "json:\"syncToSlack\" graphql:\"syncToSlack\""
 	SyncToGithub bool                                "json:\"syncToGithub\" graphql:\"syncToGithub\""
@@ -1533,13 +1531,13 @@ func (t *GetGroupSetting_GroupSetting) GetUpdatedBy() *string {
 	}
 	return t.UpdatedBy
 }
-func (t *GetGroupSetting_GroupSetting) GetVisibility() *groupsetting.Visibility {
+func (t *GetGroupSetting_GroupSetting) GetVisibility() *enums.Visibility {
 	if t == nil {
 		t = &GetGroupSetting_GroupSetting{}
 	}
 	return &t.Visibility
 }
-func (t *GetGroupSetting_GroupSetting) GetJoinPolicy() *groupsetting.JoinPolicy {
+func (t *GetGroupSetting_GroupSetting) GetJoinPolicy() *enums.JoinPolicy {
 	if t == nil {
 		t = &GetGroupSetting_GroupSetting{}
 	}
@@ -3577,17 +3575,17 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 }
 
 type GetUserByID_User_Setting struct {
-	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Tags           []string           "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool             "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags           []string         "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *GetUserByID_User_Setting) GetEmailConfirmed() bool {
@@ -3608,7 +3606,7 @@ func (t *GetUserByID_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *GetUserByID_User_Setting) GetStatus() *usersetting.Status {
+func (t *GetUserByID_User_Setting) GetStatus() *enums.UserStatus {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
 	}
@@ -3824,17 +3822,17 @@ func (t *GetUserByID_User) GetCreatedBy() *string {
 }
 
 type GetUserByIDWithOrgs_User_Setting struct {
-	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Tags           []string           "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool             "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags           []string         "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *GetUserByIDWithOrgs_User_Setting) GetEmailConfirmed() bool {
@@ -3855,7 +3853,7 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *GetUserByIDWithOrgs_User_Setting) GetStatus() *usersetting.Status {
+func (t *GetUserByIDWithOrgs_User_Setting) GetStatus() *enums.UserStatus {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
@@ -4064,17 +4062,17 @@ func (t *GetUserByIDWithOrgs_User) GetOrgMemberships() []*GetUserByIDWithOrgs_Us
 }
 
 type GetAllUsers_Users_Edges_Node_Setting struct {
-	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Tags           []string           "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool             "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags           []string         "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
@@ -4095,7 +4093,7 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *usersetting.Status {
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *enums.UserStatus {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
@@ -4312,17 +4310,17 @@ func (t *CreateUser_CreateUser_User_GroupMemberships) GetGroupID() string {
 }
 
 type CreateUser_CreateUser_User_Setting struct {
-	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Tags           []string           "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool             "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags           []string         "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
@@ -4343,7 +4341,7 @@ func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *CreateUser_CreateUser_User_Setting) GetStatus() *usersetting.Status {
+func (t *CreateUser_CreateUser_User_Setting) GetStatus() *enums.UserStatus {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
@@ -4525,17 +4523,17 @@ func (t *UpdateUser_UpdateUser_User_PersonalAccessTokens) GetID() string {
 }
 
 type UpdateUser_UpdateUser_User_Setting struct {
-	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Tags           []string           "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool             "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
+	Tags           []string         "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *UpdateUser_UpdateUser_User_Setting) GetEmailConfirmed() bool {
@@ -4556,7 +4554,7 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *UpdateUser_UpdateUser_User_Setting) GetStatus() *usersetting.Status {
+func (t *UpdateUser_UpdateUser_User_Setting) GetStatus() *enums.UserStatus {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
@@ -4723,20 +4721,20 @@ func (t *DeleteUser_DeleteUser) GetDeletedID() string {
 }
 
 type GetUserSettingByID_UserSetting struct {
-	ID             string             "json:\"id\" graphql:\"id\""
-	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	Tags           []string           "json:\"tags\" graphql:\"tags\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
-	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	DeletedAt      *time.Time         "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy      *string            "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID             string           "json:\"id\" graphql:\"id\""
+	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
+	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	Tags           []string         "json:\"tags\" graphql:\"tags\""
+	Locked         bool             "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	DeletedAt      *time.Time       "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string          "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetUserSettingByID_UserSetting) GetID() string {
@@ -4751,7 +4749,7 @@ func (t *GetUserSettingByID_UserSetting) GetSilencedAt() *time.Time {
 	}
 	return t.SilencedAt
 }
-func (t *GetUserSettingByID_UserSetting) GetStatus() *usersetting.Status {
+func (t *GetUserSettingByID_UserSetting) GetStatus() *enums.UserStatus {
 	if t == nil {
 		t = &GetUserSettingByID_UserSetting{}
 	}

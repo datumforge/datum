@@ -6,9 +6,6 @@ import (
 	"time"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/generated/entitlement"
-	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
-	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 // CreateEntitlementInput represents a mutation input for creating entitlements.
@@ -17,7 +14,7 @@ type CreateEntitlementInput struct {
 	UpdatedAt              *time.Time
 	CreatedBy              *string
 	UpdatedBy              *string
-	Tier                   *entitlement.Tier
+	Tier                   *enums.Tier
 	ExternalCustomerID     *string
 	ExternalSubscriptionID *string
 	Expires                *bool
@@ -72,7 +69,7 @@ type UpdateEntitlementInput struct {
 	UpdatedAt                   *time.Time
 	ClearUpdatedBy              bool
 	UpdatedBy                   *string
-	Tier                        *entitlement.Tier
+	Tier                        *enums.Tier
 	ClearExternalCustomerID     bool
 	ExternalCustomerID          *string
 	ClearExternalSubscriptionID bool
@@ -359,8 +356,8 @@ type CreateGroupSettingInput struct {
 	UpdatedAt    *time.Time
 	CreatedBy    *string
 	UpdatedBy    *string
-	Visibility   *groupsetting.Visibility
-	JoinPolicy   *groupsetting.JoinPolicy
+	Visibility   *enums.Visibility
+	JoinPolicy   *enums.JoinPolicy
 	Tags         []string
 	SyncToSlack  *bool
 	SyncToGithub *bool
@@ -412,8 +409,8 @@ type UpdateGroupSettingInput struct {
 	UpdatedAt      *time.Time
 	ClearUpdatedBy bool
 	UpdatedBy      *string
-	Visibility     *groupsetting.Visibility
-	JoinPolicy     *groupsetting.JoinPolicy
+	Visibility     *enums.Visibility
+	JoinPolicy     *enums.JoinPolicy
 	Tags           []string
 	AppendTags     []string
 	SyncToSlack    *bool
@@ -1695,7 +1692,7 @@ type CreateUserSettingInput struct {
 	SilencedAt     *time.Time
 	SuspendedAt    *time.Time
 	RecoveryCode   *string
-	Status         *usersetting.Status
+	Status         *enums.UserStatus
 	DefaultOrg     *string
 	EmailConfirmed *bool
 	Tags           []string
@@ -1763,7 +1760,7 @@ type UpdateUserSettingInput struct {
 	SuspendedAt       *time.Time
 	ClearRecoveryCode bool
 	RecoveryCode      *string
-	Status            *usersetting.Status
+	Status            *enums.UserStatus
 	ClearDefaultOrg   bool
 	DefaultOrg        *string
 	EmailConfirmed    *bool

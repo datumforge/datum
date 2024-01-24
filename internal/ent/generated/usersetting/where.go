@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -668,23 +669,33 @@ func RecoveryCodeContainsFold(v string) predicate.UserSetting {
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
-func StatusEQ(v Status) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldStatus, v))
+func StatusEQ(v enums.UserStatus) predicate.UserSetting {
+	vc := v
+	return predicate.UserSetting(sql.FieldEQ(FieldStatus, vc))
 }
 
 // StatusNEQ applies the NEQ predicate on the "status" field.
-func StatusNEQ(v Status) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldStatus, v))
+func StatusNEQ(v enums.UserStatus) predicate.UserSetting {
+	vc := v
+	return predicate.UserSetting(sql.FieldNEQ(FieldStatus, vc))
 }
 
 // StatusIn applies the In predicate on the "status" field.
-func StatusIn(vs ...Status) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIn(FieldStatus, vs...))
+func StatusIn(vs ...enums.UserStatus) predicate.UserSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserSetting(sql.FieldIn(FieldStatus, v...))
 }
 
 // StatusNotIn applies the NotIn predicate on the "status" field.
-func StatusNotIn(vs ...Status) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotIn(FieldStatus, vs...))
+func StatusNotIn(vs ...enums.UserStatus) predicate.UserSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserSetting(sql.FieldNotIn(FieldStatus, v...))
 }
 
 // DefaultOrgEQ applies the EQ predicate on the "default_org" field.

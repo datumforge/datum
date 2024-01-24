@@ -23,7 +23,7 @@ type OrgMembership struct {
 func (OrgMembership) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("role").
-			GoType(enums.RoleMember).
+			GoType(enums.Role("")).
 			Default(string(enums.RoleMember)).
 			Values(string(enums.RoleOwner)), // adds owner to possible values
 		field.String("org_id").Immutable(),

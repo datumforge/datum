@@ -40,8 +40,6 @@ type Tx struct {
 	PersonalAccessToken *PersonalAccessTokenClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
-	// UserHistory is the client for interacting with the UserHistory builders.
-	UserHistory *UserHistoryClient
 	// UserSetting is the client for interacting with the UserSetting builders.
 	UserSetting *UserSettingClient
 
@@ -189,7 +187,6 @@ func (tx *Tx) init() {
 	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.User = NewUserClient(tx.config)
-	tx.UserHistory = NewUserHistoryClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)
 }
 

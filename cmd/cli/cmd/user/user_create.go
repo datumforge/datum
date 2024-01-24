@@ -78,7 +78,7 @@ func createUser(ctx context.Context) error {
 
 	// if a displayName is not provided, the email is used
 	if displayName != "" {
-		input.DisplayName = displayName
+		input.DisplayName = &displayName
 	}
 
 	if password != "" {

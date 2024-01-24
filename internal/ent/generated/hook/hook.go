@@ -177,18 +177,6 @@ func (f UserFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserMutation", m)
 }
 
-// The UserHistoryFunc type is an adapter to allow the use of ordinary
-// function as UserHistory mutator.
-type UserHistoryFunc func(context.Context, *generated.UserHistoryMutation) (generated.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f UserHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.UserHistoryMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserHistoryMutation", m)
-}
-
 // The UserSettingFunc type is an adapter to allow the use of ordinary
 // function as UserSetting mutator.
 type UserSettingFunc func(context.Context, *generated.UserSettingMutation) (generated.Value, error)

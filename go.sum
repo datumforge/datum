@@ -99,8 +99,8 @@ github.com/datumforge/echox v0.0.0-20231205221251-eb30d6bad77a h1:UizrTzL6gE4Dde
 github.com/datumforge/echox v0.0.0-20231205221251-eb30d6bad77a/go.mod h1:PIZalzJ+wD5P0bUHkn8wk0H+TsT94MoZUf0y1lTAwa4=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PBRCAXbE29GW+HJXm8a99x0mGtSSE8iHM=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
-github.com/datumforge/enthistory v0.0.0-20240125004118-3698e64d0f19 h1:Yg4pxCpQXrvVa9xR76MujI9owPn4rJhZOa0uEQcveRY=
-github.com/datumforge/enthistory v0.0.0-20240125004118-3698e64d0f19/go.mod h1:9rO2Ln1nWAskaxy6nHid3pLYPqj0rPcbXh5Di7o/el0=
+github.com/datumforge/enthistory v0.0.0-20240125035001-45c63fe58e72 h1:WZtz6p8m6yNMhUa/8PHiyygPuUt7KBCYRTn+amMA19g=
+github.com/datumforge/enthistory v0.0.0-20240125035001-45c63fe58e72/go.mod h1:9rO2Ln1nWAskaxy6nHid3pLYPqj0rPcbXh5Di7o/el0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=

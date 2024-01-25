@@ -49,6 +49,8 @@ func (GroupSettingHistory) Fields() []ent.Field {
     }
 
     // get the fields from the mixins
+    // we only want to include mixin fields, not edges
+    // so this prevents FKs back to the main tables
     mixins := GroupSetting{}.Mixin()
     for _, mixin  := range mixins {
         for _, field := range mixin.Fields() {

@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 // IntegrationHistory is the model entity for the IntegrationHistory schema.

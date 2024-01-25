@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 // GroupMembershipHistory is the model entity for the GroupMembershipHistory schema.

@@ -7,7 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 // ID filters vertices based on their ID field.

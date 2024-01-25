@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 // OrganizationHistoryCreate is the builder for creating a OrganizationHistory entity.

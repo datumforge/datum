@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 // OrganizationSettingHistory is the model entity for the OrganizationSettingHistory schema.

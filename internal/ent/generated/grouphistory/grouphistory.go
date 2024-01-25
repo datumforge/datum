@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 const (

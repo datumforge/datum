@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 // CreateEntitlementInput is used for create Entitlement object.

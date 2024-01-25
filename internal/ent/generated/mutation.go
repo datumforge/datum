@@ -38,7 +38,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 )
 
 const (

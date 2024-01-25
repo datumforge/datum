@@ -10,7 +10,7 @@ import (
 	"reflect"
 
 	"github.com/datumforge/datum/internal/ent/generated/migrate"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 
 	"net/http"
 

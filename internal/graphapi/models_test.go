@@ -283,7 +283,7 @@ func (g *GroupBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Group {
 
 // MustDelete is used to cleanup, without authz checks, groups in the database
 func (g *GroupCleanup) MustDelete(ctx context.Context, t *testing.T) {
-	// mock writes
+	// mock reads
 	mock_fga.ReadAny(t, g.client.fga)
 
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)

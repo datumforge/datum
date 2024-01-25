@@ -17,7 +17,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/flume/enthistory"
+	"github.com/datumforge/enthistory"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -5688,7 +5688,7 @@ type EntitlementHistory implements Node {
 """
 EntitlementHistoryOpType is enum for the field operation
 """
-enum EntitlementHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum EntitlementHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -6202,7 +6202,7 @@ type GroupHistory implements Node {
 """
 GroupHistoryOpType is enum for the field operation
 """
-enum GroupHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum GroupHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -6468,7 +6468,7 @@ type GroupMembershipHistory implements Node {
 """
 GroupMembershipHistoryOpType is enum for the field operation
 """
-enum GroupMembershipHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum GroupMembershipHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -6903,7 +6903,7 @@ enum GroupSettingHistoryJoinPolicy @goModel(model: "github.com/datumforge/datum/
 """
 GroupSettingHistoryOpType is enum for the field operation
 """
-enum GroupSettingHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum GroupSettingHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -7480,7 +7480,7 @@ type IntegrationHistory implements Node {
 """
 IntegrationHistoryOpType is enum for the field operation
 """
-enum IntegrationHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum IntegrationHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -8503,7 +8503,7 @@ type OrgMembershipHistory implements Node {
 """
 OrgMembershipHistoryOpType is enum for the field operation
 """
-enum OrgMembershipHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum OrgMembershipHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -8953,7 +8953,7 @@ type OrganizationHistory implements Node {
 """
 OrganizationHistoryOpType is enum for the field operation
 """
-enum OrganizationHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum OrganizationHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -9283,7 +9283,7 @@ type OrganizationSettingHistory implements Node {
 """
 OrganizationSettingHistoryOpType is enum for the field operation
 """
-enum OrganizationSettingHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum OrganizationSettingHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -11206,7 +11206,7 @@ type UserHistory implements Node {
 """
 UserHistoryOpType is enum for the field operation
 """
-enum UserHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum UserHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE
@@ -11648,7 +11648,7 @@ type UserSettingHistory implements Node {
 """
 UserSettingHistoryOpType is enum for the field operation
 """
-enum UserSettingHistoryOpType @goModel(model: "github.com/flume/enthistory.OpType") {
+enum UserSettingHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
   INSERT
   UPDATE
   DELETE

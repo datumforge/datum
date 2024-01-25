@@ -464,23 +464,13 @@ func TestMutation_CreateUser(t *testing.T) {
 			assert.NotNil(t, resp.CreateUser.User.Setting)
 
 			// ensure personal org is created
-			personalOrg := true
-			whereInput := &datumclient.OrganizationWhereInput{
-				PersonalOrg: &personalOrg,
-			}
+			// default org will always be the personal org when the user is first created
+			personalOrgID := *resp.CreateUser.User.Setting.DefaultOrg
 
-			// TODO: update to pull by user once https://github.com/datumforge/datum/issues/293 is complete
-			orgs, err := client.datum.OrganizationsWhere(reqCtx, whereInput)
+			org, err := client.datum.GetOrganizationByID(reqCtx, personalOrgID, nil)
 			require.NoError(t, err)
-
-			orgCreated := false
-			for _, o := range orgs.Organizations.GetEdges() {
-				if *o.Node.Description == fmt.Sprintf("Personal Organization - %s %s", resp.CreateUser.User.FirstName, resp.CreateUser.User.LastName) {
-					orgCreated = true
-				}
-			}
-
-			assert.True(t, orgCreated, "personal org expected to be created")
+			assert.Equal(t, personalOrgID, org.Organization.ID)
+			assert.True(t, org.Organization.PersonalOrg)
 		})
 	}
 }

@@ -221,3 +221,22 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 
 	return err
 }
+
+// GetTupleKey creates a Tuple key with the provided subject, object, and role
+func GetTupleKey(subjectID, subjectType, objectID, objectType string, relation string) (TupleKey, error) {
+	sub := Entity{
+		Kind:       Kind(subjectType),
+		Identifier: subjectID,
+	}
+
+	object := Entity{
+		Kind:       Kind(objectType),
+		Identifier: objectID,
+	}
+
+	return TupleKey{
+		Subject:  sub,
+		Object:   object,
+		Relation: Relation(relation),
+	}, nil
+}

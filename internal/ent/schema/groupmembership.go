@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/fga/entfga"
 )
 
 // GroupMembership holds the schema definition for the GroupMembership entity
@@ -52,6 +52,9 @@ func (GroupMembership) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType: "group",
+		},
 	}
 }
 
@@ -75,6 +78,6 @@ func (GroupMembership) Mixin() []ent.Mixin {
 // Hooks of the GroupMembership
 func (GroupMembership) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hooks.HookGroupMembersAuthz(),
+		// hooks.HookGroupMembersAuthz(),
 	}
 }

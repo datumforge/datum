@@ -22,6 +22,7 @@ import (
 
 	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/fga/entfga"
 )
 
 var (
@@ -181,6 +182,7 @@ func main() {
 		entc.Extensions(
 			gqlExt,
 			oas,
+			entfga.NewFGAExtension(nil),
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

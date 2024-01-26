@@ -125,7 +125,7 @@ type (
 		Authz         fga.Client
 		Logger        zap.SugaredLogger
 		HTTPClient    *http.Client
-		Emails        emails.EmailManager
+		Emails        *emails.EmailManager
 		Marionette    *marionette.TaskManager
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
@@ -201,7 +201,7 @@ func HTTPClient(v *http.Client) Option {
 }
 
 // Emails configures the Emails.
-func Emails(v emails.EmailManager) Option {
+func Emails(v *emails.EmailManager) Option {
 	return func(c *config) {
 		c.Emails = v
 	}

@@ -181,7 +181,7 @@ func main() {
 		),
 		entc.Dependency(
 			entc.DependencyName("Emails"),
-			entc.DependencyType(emails.EmailManager{}),
+			entc.DependencyType(&emails.EmailManager{}),
 		),
 		entc.Dependency(
 			entc.DependencyName("Marionette"),

@@ -26,6 +26,9 @@ var (
 
 	// ErrUserAlreadyOrgMember is returned when an user attempts to be invited to an org they are already a member of
 	ErrUserAlreadyOrgMember = errors.New("user already member of organization")
+
+	// ErrMaxAttempts is returned when a user has reached the max attempts to resend an invitation to an org
+	ErrMaxAttempts = errors.New("too many attempts to resend org invitation")
 )
 
 // IsUniqueConstraintError reports if the error resulted from a DB uniqueness constraint violation.

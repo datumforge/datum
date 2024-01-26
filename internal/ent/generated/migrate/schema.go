@@ -252,6 +252,16 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "invite_recipient_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{InvitesColumns[9], InvitesColumns[14]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
 	}
 	// OauthProvidersColumns holds the columns for the "oauth_providers" table.
 	OauthProvidersColumns = []*schema.Column{

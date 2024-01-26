@@ -2768,6 +2768,9 @@
                   "owner_id": {
                     "type": "string"
                   },
+                  "token": {
+                    "type": "string"
+                  },
                   "expires": {
                     "type": "string",
                     "format": "date-time"

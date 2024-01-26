@@ -8,6 +8,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -42,24 +43,40 @@ func HookInvite() ent.Hook {
 				return nil, ErrUserAlreadyOrgMember
 			}
 
-			if IsUniqueConstraintError(err) {
-				m.Logger.Infow("invitation for user already exists")
-				inv, err := incrementAttempts(ctx, m)
-				if err == nil {
-					return inv, err
-				}
-
-				return nil, err
-			}
-
-			m, err = createAndSetToken(ctx, m)
+			m, err = setRequestorAndToken(ctx, m)
 			if err != nil {
 				m.Logger.Errorw("error creating verification token", "error", err)
 
 				return nil, err
 			}
 
-			return next.Mutate(ctx, m)
+			// attempt to do the mutation
+			retValue, err := next.Mutate(ctx, m)
+			if err != nil {
+				if IsUniqueConstraintError(err) {
+					m.Logger.Infow("invitation for user already exists")
+
+					// update invite instead
+					retValue, err = updateInvite(ctx, m)
+					if err != nil {
+						m.Logger.Errorw("unable to update invitation", "error", err)
+
+						return retValue, err
+					}
+				}
+
+				m.Logger.Errorw("unable to create org invitation", "error", err)
+
+				return retValue, err
+			}
+
+			if err := createInviteToSend(ctx, m); err != nil {
+				m.Logger.Errorw("error sending email to user", "error", err)
+
+				return nil, err
+			}
+
+			return retValue, err
 		})
 	}, ent.OpCreate)
 }
@@ -115,14 +132,8 @@ func personalOrgNoInvite(ctx context.Context, m *generated.InviteMutation) error
 	return nil
 }
 
-func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
+func setRequestorAndToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	email, _ := m.Recipient()
-	orgID, _ := m.OwnerID()
-
-	org, err := m.Client().Organization.Query().Where(organization.ID(orgID)).Only(ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	verify, err := tokens.NewVerificationToken(email)
 	if err != nil {
@@ -149,9 +160,23 @@ func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*gener
 
 	m.SetRequestorID(userID)
 
-	requestor, err := m.Client().User.Query().Where(user.ID(userID)).Only(ctx)
+	return m, nil
+}
+
+func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error {
+	orgID, _ := m.OwnerID()
+	reqID, _ := m.RequestorID()
+	token, _ := m.Token()
+	email, _ := m.Recipient()
+
+	org, err := m.Client().Organization.Get(ctx, orgID)
 	if err != nil {
-		return nil, err
+		return err
+	}
+
+	requestor, err := m.Client().User.Get(ctx, reqID)
+	if err != nil {
+		return err
 	}
 
 	invite := &emails.Invite{
@@ -167,10 +192,10 @@ func createAndSetToken(ctx context.Context, m *generated.InviteMutation) (*gener
 	); err != nil {
 		m.Logger.Errorw("unable to queue email for sending")
 
-		return nil, err
+		return err
 	}
 
-	return m, nil
+	return nil
 }
 
 func sendOrgInvitationEmail(ctx context.Context, m *generated.InviteMutation, i *emails.Invite) (err error) {
@@ -197,23 +222,39 @@ func sendOrgInvitationEmail(ctx context.Context, m *generated.InviteMutation, i 
 	return m.Emails.Send(msg)
 }
 
-var attempts = 5
+var maxAttempts = 5
 
-func incrementAttempts(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
-	curr, err := m.OldSendAttempts(ctx)
+// updateInvite if the invite already exists, set a new token, secret, expiration, and increment the attempts
+// error at max attempts to resend
+func updateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.Invite, error) {
+	// get the existing invite by recipient and owner
+	rec, _ := m.Recipient()
+	ownerID, _ := m.OwnerID()
+
+	invite, err := m.Client().Invite.Query().Where(invite.Recipient(rec)).Where(invite.OwnerID(ownerID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if curr <= attempts {
-		m.ResetRequestorID()
-		m.ResetToken()
-		m.ResetSecret()
-		m.ResetExpires()
-		m.SetSendAttempts(curr + 1)
-
-		return m, nil
-	} else {
-		return nil, err
+	// create update mutation
+	if invite.SendAttempts >= maxAttempts {
+		return nil, ErrMaxAttempts
 	}
+
+	// increment attempts
+	invite.SendAttempts++
+
+	// these were already set when the invite was attempted to be added
+	// we do not need to create these again
+	secret, _ := m.Secret()
+	token, _ := m.Token()
+
+	// update the invite
+	return m.Client().Invite.
+		UpdateOneID(invite.ID).
+		SetExpires(time.Now().AddDate(0, 0, 14)). //nolint:gomnd
+		SetSendAttempts(invite.SendAttempts).
+		SetToken(token).
+		SetSecret(secret).
+		Save(ctx)
 }

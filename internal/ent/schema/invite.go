@@ -5,8 +5,10 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -24,7 +26,6 @@ func (Invite) Fields() []ent.Field {
 		field.String("token").
 			Comment("the invitation token sent to the user via email which should only be provided to the /verify endpoint + handler").
 			Unique().
-			Immutable().
 			Sensitive().
 			Annotations(entgql.Skip()).
 			NotEmpty(),
@@ -71,12 +72,12 @@ func (Invite) Mixin() []ent.Mixin {
 }
 
 // Indexes of the Invite
-//func (Invite) Indexes() []ent.Index {
-//	return []ent.Index{
-//		index.Fields("recipient", "owner_id").
-//			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
-//	}
-//}
+func (Invite) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("recipient", "owner_id").
+			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
+	}
+}
 
 // Edges of the Invite
 func (Invite) Edges() []ent.Edge {

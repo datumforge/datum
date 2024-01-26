@@ -112,6 +112,20 @@ func (iu *InviteUpdate) SetNillableOwnerID(s *string) *InviteUpdate {
 	return iu
 }
 
+// SetToken sets the "token" field.
+func (iu *InviteUpdate) SetToken(s string) *InviteUpdate {
+	iu.mutation.SetToken(s)
+	return iu
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (iu *InviteUpdate) SetNillableToken(s *string) *InviteUpdate {
+	if s != nil {
+		iu.SetToken(*s)
+	}
+	return iu
+}
+
 // SetExpires sets the "expires" field.
 func (iu *InviteUpdate) SetExpires(t time.Time) *InviteUpdate {
 	iu.mutation.SetExpires(t)
@@ -241,6 +255,11 @@ func (iu *InviteUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iu *InviteUpdate) check() error {
+	if v, ok := iu.mutation.Token(); ok {
+		if err := invite.TokenValidator(v); err != nil {
+			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
+		}
+	}
 	if v, ok := iu.mutation.Recipient(); ok {
 		if err := invite.RecipientValidator(v); err != nil {
 			return &ValidationError{Name: "recipient", err: fmt.Errorf(`generated: validator failed for field "Invite.recipient": %w`, err)}
@@ -297,6 +316,9 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if iu.mutation.DeletedByCleared() {
 		_spec.ClearField(invite.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := iu.mutation.Token(); ok {
+		_spec.SetField(invite.FieldToken, field.TypeString, value)
 	}
 	if value, ok := iu.mutation.Expires(); ok {
 		_spec.SetField(invite.FieldExpires, field.TypeTime, value)
@@ -449,6 +471,20 @@ func (iuo *InviteUpdateOne) SetNillableOwnerID(s *string) *InviteUpdateOne {
 	return iuo
 }
 
+// SetToken sets the "token" field.
+func (iuo *InviteUpdateOne) SetToken(s string) *InviteUpdateOne {
+	iuo.mutation.SetToken(s)
+	return iuo
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (iuo *InviteUpdateOne) SetNillableToken(s *string) *InviteUpdateOne {
+	if s != nil {
+		iuo.SetToken(*s)
+	}
+	return iuo
+}
+
 // SetExpires sets the "expires" field.
 func (iuo *InviteUpdateOne) SetExpires(t time.Time) *InviteUpdateOne {
 	iuo.mutation.SetExpires(t)
@@ -591,6 +627,11 @@ func (iuo *InviteUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iuo *InviteUpdateOne) check() error {
+	if v, ok := iuo.mutation.Token(); ok {
+		if err := invite.TokenValidator(v); err != nil {
+			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Invite.token": %w`, err)}
+		}
+	}
 	if v, ok := iuo.mutation.Recipient(); ok {
 		if err := invite.RecipientValidator(v); err != nil {
 			return &ValidationError{Name: "recipient", err: fmt.Errorf(`generated: validator failed for field "Invite.recipient": %w`, err)}
@@ -664,6 +705,9 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	}
 	if iuo.mutation.DeletedByCleared() {
 		_spec.ClearField(invite.FieldDeletedBy, field.TypeString)
+	}
+	if value, ok := iuo.mutation.Token(); ok {
+		_spec.SetField(invite.FieldToken, field.TypeString, value)
 	}
 	if value, ok := iuo.mutation.Expires(); ok {
 		_spec.SetField(invite.FieldExpires, field.TypeTime, value)

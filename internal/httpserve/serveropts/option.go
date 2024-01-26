@@ -280,7 +280,7 @@ func WithEmailManager() ServerOption {
 
 		em, err := emails.New(*emailConfig)
 		if err != nil {
-			return
+			panic(err)
 		}
 
 		s.Config.Server.Handler.EmailManager = em

@@ -5,8 +5,6 @@ import (
 	"fmt"
 
 	"entgo.io/ent"
-
-	"github.com/datumforge/datum/internal/entx"
 )
 
 type Mutation interface {
@@ -80,10 +78,6 @@ func authzHookUpdate[T Mutation]() ent.Hook {
 			mutation, err := getTypedMutation[T](m)
 			if err != nil {
 				return nil, err
-			}
-
-			if entx.CheckIsSoftDelete(ctx) {
-				return next.Mutate(ctx, m)
 			}
 
 			if err = mutation.CreateTuplesFromUpdate(ctx); err != nil {

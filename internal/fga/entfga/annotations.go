@@ -2,7 +2,7 @@ package entfga
 
 // Annotations of the fga extension
 type Annotations struct {
-	ObjectType string `json:"object_type,omitempty"` // Object type for the fga relationship
+	ObjectType string `yaml:"ObjectType,omitempty"` // Object type for the fga relationship
 }
 
 // Name of the annotation

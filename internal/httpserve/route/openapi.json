@@ -3346,7 +3346,7 @@
                     ],
                     "default": "MEMBER"
                   },
-                  "org_id": {
+                  "organization_id": {
                     "type": "string"
                   },
                   "user_id": {
@@ -3363,7 +3363,7 @@
                   "created_at",
                   "updated_at",
                   "role",
-                  "org_id",
+                  "organization_id",
                   "user_id",
                   "org",
                   "user"
@@ -10299,7 +10299,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -10317,7 +10317,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id",
           "org",
           "user"
@@ -10359,7 +10359,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -10371,7 +10371,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -10411,7 +10411,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -10423,7 +10423,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -10463,7 +10463,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -10475,7 +10475,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -10515,7 +10515,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -10527,7 +10527,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -11624,7 +11624,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -11636,7 +11636,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -13657,7 +13657,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -13669,7 +13669,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },

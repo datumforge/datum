@@ -1709,18 +1709,18 @@ type OhAuthTooTokenWhereInput struct {
 }
 
 type OrgMembership struct {
-	ID        string       `json:"id"`
-	CreatedAt time.Time    `json:"createdAt"`
-	UpdatedAt time.Time    `json:"updatedAt"`
-	CreatedBy *string      `json:"createdBy,omitempty"`
-	UpdatedBy *string      `json:"updatedBy,omitempty"`
-	DeletedAt *time.Time   `json:"deletedAt,omitempty"`
-	DeletedBy *string      `json:"deletedBy,omitempty"`
-	Role      enums.Role   `json:"role"`
-	OrgID     string       `json:"orgID"`
-	UserID    string       `json:"userID"`
-	Org       Organization `json:"org"`
-	User      User         `json:"user"`
+	ID             string       `json:"id"`
+	CreatedAt      time.Time    `json:"createdAt"`
+	UpdatedAt      time.Time    `json:"updatedAt"`
+	CreatedBy      *string      `json:"createdBy,omitempty"`
+	UpdatedBy      *string      `json:"updatedBy,omitempty"`
+	DeletedAt      *time.Time   `json:"deletedAt,omitempty"`
+	DeletedBy      *string      `json:"deletedBy,omitempty"`
+	Role           enums.Role   `json:"role"`
+	OrganizationID string       `json:"organizationID"`
+	UserID         string       `json:"userID"`
+	Org            Organization `json:"org"`
+	User           User         `json:"user"`
 }
 
 func (OrgMembership) IsNode() {}
@@ -1856,12 +1856,12 @@ type OrgMembershipWhereInput struct {
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 	// role field predicates
-	Role      *enums.Role  `json:"role,omitempty"`
-	RoleNeq   *enums.Role  `json:"roleNEQ,omitempty"`
-	RoleIn    []enums.Role `json:"roleIn,omitempty"`
-	RoleNotIn []enums.Role `json:"roleNotIn,omitempty"`
-	OrgID     *string      `json:"orgID,omitempty"`
-	UserID    *string      `json:"userID,omitempty"`
+	Role           *enums.Role  `json:"role,omitempty"`
+	RoleNeq        *enums.Role  `json:"roleNEQ,omitempty"`
+	RoleIn         []enums.Role `json:"roleIn,omitempty"`
+	RoleNotIn      []enums.Role `json:"roleNotIn,omitempty"`
+	OrganizationID *string      `json:"organizationID,omitempty"`
+	UserID         *string      `json:"userID,omitempty"`
 }
 
 type Organization struct {

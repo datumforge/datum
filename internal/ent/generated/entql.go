@@ -237,15 +237,15 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "OrgMembership",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			orgmembership.FieldCreatedAt: {Type: field.TypeTime, Column: orgmembership.FieldCreatedAt},
-			orgmembership.FieldUpdatedAt: {Type: field.TypeTime, Column: orgmembership.FieldUpdatedAt},
-			orgmembership.FieldCreatedBy: {Type: field.TypeString, Column: orgmembership.FieldCreatedBy},
-			orgmembership.FieldUpdatedBy: {Type: field.TypeString, Column: orgmembership.FieldUpdatedBy},
-			orgmembership.FieldDeletedAt: {Type: field.TypeTime, Column: orgmembership.FieldDeletedAt},
-			orgmembership.FieldDeletedBy: {Type: field.TypeString, Column: orgmembership.FieldDeletedBy},
-			orgmembership.FieldRole:      {Type: field.TypeEnum, Column: orgmembership.FieldRole},
-			orgmembership.FieldOrgID:     {Type: field.TypeString, Column: orgmembership.FieldOrgID},
-			orgmembership.FieldUserID:    {Type: field.TypeString, Column: orgmembership.FieldUserID},
+			orgmembership.FieldCreatedAt:      {Type: field.TypeTime, Column: orgmembership.FieldCreatedAt},
+			orgmembership.FieldUpdatedAt:      {Type: field.TypeTime, Column: orgmembership.FieldUpdatedAt},
+			orgmembership.FieldCreatedBy:      {Type: field.TypeString, Column: orgmembership.FieldCreatedBy},
+			orgmembership.FieldUpdatedBy:      {Type: field.TypeString, Column: orgmembership.FieldUpdatedBy},
+			orgmembership.FieldDeletedAt:      {Type: field.TypeTime, Column: orgmembership.FieldDeletedAt},
+			orgmembership.FieldDeletedBy:      {Type: field.TypeString, Column: orgmembership.FieldDeletedBy},
+			orgmembership.FieldRole:           {Type: field.TypeEnum, Column: orgmembership.FieldRole},
+			orgmembership.FieldOrganizationID: {Type: field.TypeString, Column: orgmembership.FieldOrganizationID},
+			orgmembership.FieldUserID:         {Type: field.TypeString, Column: orgmembership.FieldUserID},
 		},
 	}
 	graph.Nodes[9] = &sqlgraph.Node{
@@ -1839,9 +1839,9 @@ func (f *OrgMembershipFilter) WhereRole(p entql.StringP) {
 	f.Where(p.Field(orgmembership.FieldRole))
 }
 
-// WhereOrgID applies the entql string predicate on the org_id field.
-func (f *OrgMembershipFilter) WhereOrgID(p entql.StringP) {
-	f.Where(p.Field(orgmembership.FieldOrgID))
+// WhereOrganizationID applies the entql string predicate on the organization_id field.
+func (f *OrgMembershipFilter) WhereOrganizationID(p entql.StringP) {
+	f.Where(p.Field(orgmembership.FieldOrganizationID))
 }
 
 // WhereUserID applies the entql string predicate on the user_id field.

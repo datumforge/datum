@@ -467,7 +467,7 @@ func (omq *OrgMembershipQuery) loadOrg(ctx context.Context, query *OrganizationQ
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*OrgMembership)
 	for i := range nodes {
-		fk := nodes[i].OrgID
+		fk := nodes[i].OrganizationID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -484,7 +484,7 @@ func (omq *OrgMembershipQuery) loadOrg(ctx context.Context, query *OrganizationQ
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "org_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "organization_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -553,7 +553,7 @@ func (omq *OrgMembershipQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 		if omq.withOrg != nil {
-			_spec.Node.AddColumnOnce(orgmembership.FieldOrgID)
+			_spec.Node.AddColumnOnce(orgmembership.FieldOrganizationID)
 		}
 		if omq.withUser != nil {
 			_spec.Node.AddColumnOnce(orgmembership.FieldUserID)

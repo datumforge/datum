@@ -32,7 +32,9 @@ type ExtensionOption = func(*AuthzExtension)
 func NewFGAExtension(opts ...ExtensionOption) *AuthzExtension {
 	extension := &AuthzExtension{
 		// Set configuration defaults that can get overridden with ExtensionOption
-		config: &Config{},
+		config: &Config{
+			SoftDeletes: false,
+		},
 	}
 
 	for _, opt := range opts {
@@ -45,18 +47,25 @@ func NewFGAExtension(opts ...ExtensionOption) *AuthzExtension {
 // WithSoftDeletes ensure the delete hook is still used even when soft deletes
 // change the Op to Update
 func WithSoftDeletes() ExtensionOption {
-	return func(ex *AuthzExtension) {
-		ex.config.SoftDeletes = true
+	return func(e *AuthzExtension) {
+		e.config.SoftDeletes = true
 	}
 }
 
 // Templates returns the generated templates which include the client, history query, history from mutation
 // and an optional auditing template
-func (h *AuthzExtension) Templates() []*gen.Template {
+func (e *AuthzExtension) Templates() []*gen.Template {
 	templates := []*gen.Template{
 		parseTemplate("authzFromMutation", "templates/authzFromMutation.tmpl"),
 		parseTemplate("client", "templates/client.tmpl"),
 	}
 
 	return templates
+}
+
+// Annotations of the AuthzExtension
+func (e *AuthzExtension) Annotations() []entc.Annotation {
+	return []entc.Annotation{
+		e.config,
+	}
 }

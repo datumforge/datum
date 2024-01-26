@@ -379,18 +379,18 @@ type ComplexityRoot struct {
 	}
 
 	OrgMembership struct {
-		CreatedAt func(childComplexity int) int
-		CreatedBy func(childComplexity int) int
-		DeletedAt func(childComplexity int) int
-		DeletedBy func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Org       func(childComplexity int) int
-		OrgID     func(childComplexity int) int
-		Role      func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
-		UpdatedBy func(childComplexity int) int
-		User      func(childComplexity int) int
-		UserID    func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		CreatedBy      func(childComplexity int) int
+		DeletedAt      func(childComplexity int) int
+		DeletedBy      func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Org            func(childComplexity int) int
+		OrganizationID func(childComplexity int) int
+		Role           func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UpdatedBy      func(childComplexity int) int
+		User           func(childComplexity int) int
+		UserID         func(childComplexity int) int
 	}
 
 	OrgMembershipConnection struct {
@@ -2380,12 +2380,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrgMembership.Org(childComplexity), true
 
-	case "OrgMembership.orgID":
-		if e.complexity.OrgMembership.OrgID == nil {
+	case "OrgMembership.organizationID":
+		if e.complexity.OrgMembership.OrganizationID == nil {
 			break
 		}
 
-		return e.complexity.OrgMembership.OrgID(childComplexity), true
+		return e.complexity.OrgMembership.OrganizationID(childComplexity), true
 
 	case "OrgMembership.role":
 		if e.complexity.OrgMembership.Role == nil {
@@ -5964,7 +5964,7 @@ type OrgMembership implements Node {
   deletedAt: Time
   deletedBy: String
   role: OrgMembershipRole!
-  orgID: ID!
+  organizationID: ID!
   userID: ID!
   org: Organization!
   user: User!
@@ -9140,7 +9140,7 @@ extend input UpdateOrganizationInput {
 }
 
 extend input OrgMembershipWhereInput {
-  orgID: String
+  organizationID: String
   userID: String
 }`, BuiltIn: false},
 	{Name: "../../schema/orgmembership.graphql", Input: `extend type Query {
@@ -21522,8 +21522,8 @@ func (ec *executionContext) fieldContext_OrgMembership_role(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _OrgMembership_orgID(ctx context.Context, field graphql.CollectedField, obj *generated.OrgMembership) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrgMembership_orgID(ctx, field)
+func (ec *executionContext) _OrgMembership_organizationID(ctx context.Context, field graphql.CollectedField, obj *generated.OrgMembership) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrgMembership_organizationID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -21536,7 +21536,7 @@ func (ec *executionContext) _OrgMembership_orgID(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.OrgID, nil
+		return obj.OrganizationID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21553,7 +21553,7 @@ func (ec *executionContext) _OrgMembership_orgID(ctx context.Context, field grap
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrgMembership_orgID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrgMembership_organizationID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrgMembership",
 		Field:      field,
@@ -21988,8 +21988,8 @@ func (ec *executionContext) fieldContext_OrgMembershipCreatePayload_orgMembershi
 				return ec.fieldContext_OrgMembership_deletedBy(ctx, field)
 			case "role":
 				return ec.fieldContext_OrgMembership_role(ctx, field)
-			case "orgID":
-				return ec.fieldContext_OrgMembership_orgID(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrgMembership_organizationID(ctx, field)
 			case "userID":
 				return ec.fieldContext_OrgMembership_userID(ctx, field)
 			case "org":
@@ -22099,8 +22099,8 @@ func (ec *executionContext) fieldContext_OrgMembershipEdge_node(ctx context.Cont
 				return ec.fieldContext_OrgMembership_deletedBy(ctx, field)
 			case "role":
 				return ec.fieldContext_OrgMembership_role(ctx, field)
-			case "orgID":
-				return ec.fieldContext_OrgMembership_orgID(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrgMembership_organizationID(ctx, field)
 			case "userID":
 				return ec.fieldContext_OrgMembership_userID(ctx, field)
 			case "org":
@@ -22213,8 +22213,8 @@ func (ec *executionContext) fieldContext_OrgMembershipUpdatePayload_orgMembershi
 				return ec.fieldContext_OrgMembership_deletedBy(ctx, field)
 			case "role":
 				return ec.fieldContext_OrgMembership_role(ctx, field)
-			case "orgID":
-				return ec.fieldContext_OrgMembership_orgID(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrgMembership_organizationID(ctx, field)
 			case "userID":
 				return ec.fieldContext_OrgMembership_userID(ctx, field)
 			case "org":
@@ -23353,8 +23353,8 @@ func (ec *executionContext) fieldContext_Organization_members(ctx context.Contex
 				return ec.fieldContext_OrgMembership_deletedBy(ctx, field)
 			case "role":
 				return ec.fieldContext_OrgMembership_role(ctx, field)
-			case "orgID":
-				return ec.fieldContext_OrgMembership_orgID(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrgMembership_organizationID(ctx, field)
 			case "userID":
 				return ec.fieldContext_OrgMembership_userID(ctx, field)
 			case "org":
@@ -28100,8 +28100,8 @@ func (ec *executionContext) fieldContext_Query_orgMembership(ctx context.Context
 				return ec.fieldContext_OrgMembership_deletedBy(ctx, field)
 			case "role":
 				return ec.fieldContext_OrgMembership_role(ctx, field)
-			case "orgID":
-				return ec.fieldContext_OrgMembership_orgID(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrgMembership_organizationID(ctx, field)
 			case "userID":
 				return ec.fieldContext_OrgMembership_userID(ctx, field)
 			case "org":
@@ -29671,8 +29671,8 @@ func (ec *executionContext) fieldContext_User_orgMemberships(ctx context.Context
 				return ec.fieldContext_OrgMembership_deletedBy(ctx, field)
 			case "role":
 				return ec.fieldContext_OrgMembership_role(ctx, field)
-			case "orgID":
-				return ec.fieldContext_OrgMembership_orgID(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrgMembership_organizationID(ctx, field)
 			case "userID":
 				return ec.fieldContext_OrgMembership_userID(ctx, field)
 			case "org":
@@ -40878,7 +40878,7 @@ func (ec *executionContext) unmarshalInputOrgMembershipWhereInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "orgID", "userID"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "organizationID", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41501,13 +41501,13 @@ func (ec *executionContext) unmarshalInputOrgMembershipWhereInput(ctx context.Co
 				return it, err
 			}
 			it.RoleNotIn = data
-		case "orgID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgID"))
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.OrgID = data
+			it.OrganizationID = data
 		case "userID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -51852,8 +51852,8 @@ func (ec *executionContext) _OrgMembership(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "orgID":
-			out.Values[i] = ec._OrgMembership_orgID(ctx, field, obj)
+		case "organizationID":
+			out.Values[i] = ec._OrgMembership_organizationID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

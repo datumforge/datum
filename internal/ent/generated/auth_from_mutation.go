@@ -7,6 +7,7 @@ package generated
 import (
 	"context"
 
+	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/fga/entfga"
 )
@@ -14,11 +15,11 @@ import (
 func (m *GroupMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
 	// Get fields for tuple creation
 	userID, _ := m.UserID()
-	objectID, _ := m.ID()
+	objectID, _ := m.GroupID()
 	role, _ := m.Role()
 
 	// get tuple key
-	tuple, err := fga.GetTupleKey(userID, "user", objectID, "object", role.String())
+	tuple, err := fga.GetTupleKey(userID, "user", objectID, "group", role.String())
 	if err != nil {
 		return err
 	}
@@ -35,6 +36,11 @@ func (m *GroupMembershipMutation) CreateTuplesFromCreate(ctx context.Context) er
 }
 
 func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateTuplesFromDelete(ctx)
+	}
+
 	// get ids that will be updated
 	ids, err := m.IDs(ctx)
 	if err != nil {
@@ -69,14 +75,14 @@ func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) er
 			return err
 		}
 
-		d, err := fga.GetTupleKey(member.UserID, "user", member.ID, "", oldRole.String())
+		d, err := fga.GetTupleKey(member.UserID, "user", member.GroupID, "group", oldRole.String())
 		if err != nil {
 			return err
 		}
 
 		deletes = append(deletes, d)
 
-		w, err := fga.GetTupleKey(member.UserID, "user", member.ID, "", newRole.String())
+		w, err := fga.GetTupleKey(member.UserID, "user", member.GroupID, "group", newRole.String())
 		if err != nil {
 			return err
 		}
@@ -100,6 +106,11 @@ func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) er
 }
 
 func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+
 	// get ids that will be deleted
 	ids, err := m.IDs(ctx)
 	if err != nil {
@@ -116,7 +127,7 @@ func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) er
 			return err
 		}
 
-		t, err := fga.GetTupleKey(members.UserID, "user", members.ID, "", members.Role.String())
+		t, err := fga.GetTupleKey(members.UserID, "user", members.GroupID, "group", members.Role.String())
 		if err != nil {
 			return err
 		}
@@ -140,11 +151,11 @@ func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) er
 func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
 	// Get fields for tuple creation
 	userID, _ := m.UserID()
-	objectID, _ := m.ID()
+	objectID, _ := m.OrganizationID()
 	role, _ := m.Role()
 
 	// get tuple key
-	tuple, err := fga.GetTupleKey(userID, "user", objectID, "object", role.String())
+	tuple, err := fga.GetTupleKey(userID, "user", objectID, "organization", role.String())
 	if err != nil {
 		return err
 	}
@@ -161,6 +172,11 @@ func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) erro
 }
 
 func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateTuplesFromDelete(ctx)
+	}
+
 	// get ids that will be updated
 	ids, err := m.IDs(ctx)
 	if err != nil {
@@ -195,14 +211,14 @@ func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) erro
 			return err
 		}
 
-		d, err := fga.GetTupleKey(member.UserID, "user", member.ID, "", oldRole.String())
+		d, err := fga.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", oldRole.String())
 		if err != nil {
 			return err
 		}
 
 		deletes = append(deletes, d)
 
-		w, err := fga.GetTupleKey(member.UserID, "user", member.ID, "", newRole.String())
+		w, err := fga.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", newRole.String())
 		if err != nil {
 			return err
 		}
@@ -226,6 +242,11 @@ func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) erro
 }
 
 func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+
 	// get ids that will be deleted
 	ids, err := m.IDs(ctx)
 	if err != nil {
@@ -242,7 +263,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) erro
 			return err
 		}
 
-		t, err := fga.GetTupleKey(members.UserID, "user", members.ID, "", members.Role.String())
+		t, err := fga.GetTupleKey(members.UserID, "user", members.OrganizationID, "organization", members.Role.String())
 		if err != nil {
 			return err
 		}

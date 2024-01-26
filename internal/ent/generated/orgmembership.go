@@ -34,8 +34,8 @@ type OrgMembership struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// Role holds the value of the "role" field.
 	Role enums.Role `json:"role,omitempty"`
-	// OrgID holds the value of the "org_id" field.
-	OrgID string `json:"org_id,omitempty"`
+	// OrganizationID holds the value of the "organization_id" field.
+	OrganizationID string `json:"organization_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -88,7 +88,7 @@ func (*OrgMembership) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orgmembership.FieldID, orgmembership.FieldCreatedBy, orgmembership.FieldUpdatedBy, orgmembership.FieldDeletedBy, orgmembership.FieldRole, orgmembership.FieldOrgID, orgmembership.FieldUserID:
+		case orgmembership.FieldID, orgmembership.FieldCreatedBy, orgmembership.FieldUpdatedBy, orgmembership.FieldDeletedBy, orgmembership.FieldRole, orgmembership.FieldOrganizationID, orgmembership.FieldUserID:
 			values[i] = new(sql.NullString)
 		case orgmembership.FieldCreatedAt, orgmembership.FieldUpdatedAt, orgmembership.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -155,11 +155,11 @@ func (om *OrgMembership) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				om.Role = enums.Role(value.String)
 			}
-		case orgmembership.FieldOrgID:
+		case orgmembership.FieldOrganizationID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field org_id", values[i])
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {
-				om.OrgID = value.String
+				om.OrganizationID = value.String
 			}
 		case orgmembership.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -234,8 +234,8 @@ func (om *OrgMembership) String() string {
 	builder.WriteString("role=")
 	builder.WriteString(fmt.Sprintf("%v", om.Role))
 	builder.WriteString(", ")
-	builder.WriteString("org_id=")
-	builder.WriteString(om.OrgID)
+	builder.WriteString("organization_id=")
+	builder.WriteString(om.OrganizationID)
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(om.UserID)

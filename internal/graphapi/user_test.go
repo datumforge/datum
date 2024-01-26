@@ -312,13 +312,13 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 			// mocks to check for org access
-			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrgID)}
+			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrganizationID)}
 			mock_fga.ListAny(t, client.fga, listObjects)
 
 			// Bypass auth checks to ensure input checks for now
 			reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
-			personalOrg, err := client.datum.GetOrganizationByID(reqCtx, orgs[0].OrgID)
+			personalOrg, err := client.datum.GetOrganizationByID(reqCtx, orgs[0].OrganizationID)
 			require.NoError(t, err)
 
 			assert.True(t, personalOrg.Organization.PersonalOrg)

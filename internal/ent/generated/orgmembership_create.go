@@ -121,9 +121,9 @@ func (omc *OrgMembershipCreate) SetNillableRole(e *enums.Role) *OrgMembershipCre
 	return omc
 }
 
-// SetOrgID sets the "org_id" field.
-func (omc *OrgMembershipCreate) SetOrgID(s string) *OrgMembershipCreate {
-	omc.mutation.SetOrgID(s)
+// SetOrganizationID sets the "organization_id" field.
+func (omc *OrgMembershipCreate) SetOrganizationID(s string) *OrgMembershipCreate {
+	omc.mutation.SetOrganizationID(s)
 	return omc
 }
 
@@ -144,6 +144,12 @@ func (omc *OrgMembershipCreate) SetNillableID(s *string) *OrgMembershipCreate {
 	if s != nil {
 		omc.SetID(*s)
 	}
+	return omc
+}
+
+// SetOrgID sets the "org" edge to the Organization entity by ID.
+func (omc *OrgMembershipCreate) SetOrgID(id string) *OrgMembershipCreate {
+	omc.mutation.SetOrgID(id)
 	return omc
 }
 
@@ -238,8 +244,8 @@ func (omc *OrgMembershipCreate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "OrgMembership.role": %w`, err)}
 		}
 	}
-	if _, ok := omc.mutation.OrgID(); !ok {
-		return &ValidationError{Name: "org_id", err: errors.New(`generated: missing required field "OrgMembership.org_id"`)}
+	if _, ok := omc.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "OrgMembership.organization_id"`)}
 	}
 	if _, ok := omc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`generated: missing required field "OrgMembership.user_id"`)}
@@ -329,7 +335,7 @@ func (omc *OrgMembershipCreate) createSpec() (*OrgMembership, *sqlgraph.CreateSp
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.OrgID = nodes[0]
+		_node.OrganizationID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := omc.mutation.UserIDs(); len(nodes) > 0 {

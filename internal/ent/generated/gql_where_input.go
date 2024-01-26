@@ -4604,20 +4604,20 @@ type OrgMembershipWhereInput struct {
 	RoleIn    []enums.Role `json:"roleIn,omitempty"`
 	RoleNotIn []enums.Role `json:"roleNotIn,omitempty"`
 
-	// "org_id" field predicates.
-	OrgID             *string  `json:"orgID,omitempty"`
-	OrgIDNEQ          *string  `json:"orgIDNEQ,omitempty"`
-	OrgIDIn           []string `json:"orgIDIn,omitempty"`
-	OrgIDNotIn        []string `json:"orgIDNotIn,omitempty"`
-	OrgIDGT           *string  `json:"orgIDGT,omitempty"`
-	OrgIDGTE          *string  `json:"orgIDGTE,omitempty"`
-	OrgIDLT           *string  `json:"orgIDLT,omitempty"`
-	OrgIDLTE          *string  `json:"orgIDLTE,omitempty"`
-	OrgIDContains     *string  `json:"orgIDContains,omitempty"`
-	OrgIDHasPrefix    *string  `json:"orgIDHasPrefix,omitempty"`
-	OrgIDHasSuffix    *string  `json:"orgIDHasSuffix,omitempty"`
-	OrgIDEqualFold    *string  `json:"orgIDEqualFold,omitempty"`
-	OrgIDContainsFold *string  `json:"orgIDContainsFold,omitempty"`
+	// "organization_id" field predicates.
+	OrganizationID             *string  `json:"organizationID,omitempty"`
+	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
+	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
+	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
+	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
+	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
+	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
+	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
+	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
+	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
+	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
+	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 
 	// "user_id" field predicates.
 	UserID             *string  `json:"userID,omitempty"`
@@ -4969,44 +4969,44 @@ func (i *OrgMembershipWhereInput) P() (predicate.OrgMembership, error) {
 	if len(i.RoleNotIn) > 0 {
 		predicates = append(predicates, orgmembership.RoleNotIn(i.RoleNotIn...))
 	}
-	if i.OrgID != nil {
-		predicates = append(predicates, orgmembership.OrgIDEQ(*i.OrgID))
+	if i.OrganizationID != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDEQ(*i.OrganizationID))
 	}
-	if i.OrgIDNEQ != nil {
-		predicates = append(predicates, orgmembership.OrgIDNEQ(*i.OrgIDNEQ))
+	if i.OrganizationIDNEQ != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDNEQ(*i.OrganizationIDNEQ))
 	}
-	if len(i.OrgIDIn) > 0 {
-		predicates = append(predicates, orgmembership.OrgIDIn(i.OrgIDIn...))
+	if len(i.OrganizationIDIn) > 0 {
+		predicates = append(predicates, orgmembership.OrganizationIDIn(i.OrganizationIDIn...))
 	}
-	if len(i.OrgIDNotIn) > 0 {
-		predicates = append(predicates, orgmembership.OrgIDNotIn(i.OrgIDNotIn...))
+	if len(i.OrganizationIDNotIn) > 0 {
+		predicates = append(predicates, orgmembership.OrganizationIDNotIn(i.OrganizationIDNotIn...))
 	}
-	if i.OrgIDGT != nil {
-		predicates = append(predicates, orgmembership.OrgIDGT(*i.OrgIDGT))
+	if i.OrganizationIDGT != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDGT(*i.OrganizationIDGT))
 	}
-	if i.OrgIDGTE != nil {
-		predicates = append(predicates, orgmembership.OrgIDGTE(*i.OrgIDGTE))
+	if i.OrganizationIDGTE != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDGTE(*i.OrganizationIDGTE))
 	}
-	if i.OrgIDLT != nil {
-		predicates = append(predicates, orgmembership.OrgIDLT(*i.OrgIDLT))
+	if i.OrganizationIDLT != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDLT(*i.OrganizationIDLT))
 	}
-	if i.OrgIDLTE != nil {
-		predicates = append(predicates, orgmembership.OrgIDLTE(*i.OrgIDLTE))
+	if i.OrganizationIDLTE != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDLTE(*i.OrganizationIDLTE))
 	}
-	if i.OrgIDContains != nil {
-		predicates = append(predicates, orgmembership.OrgIDContains(*i.OrgIDContains))
+	if i.OrganizationIDContains != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDContains(*i.OrganizationIDContains))
 	}
-	if i.OrgIDHasPrefix != nil {
-		predicates = append(predicates, orgmembership.OrgIDHasPrefix(*i.OrgIDHasPrefix))
+	if i.OrganizationIDHasPrefix != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
 	}
-	if i.OrgIDHasSuffix != nil {
-		predicates = append(predicates, orgmembership.OrgIDHasSuffix(*i.OrgIDHasSuffix))
+	if i.OrganizationIDHasSuffix != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
 	}
-	if i.OrgIDEqualFold != nil {
-		predicates = append(predicates, orgmembership.OrgIDEqualFold(*i.OrgIDEqualFold))
+	if i.OrganizationIDEqualFold != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
 	}
-	if i.OrgIDContainsFold != nil {
-		predicates = append(predicates, orgmembership.OrgIDContainsFold(*i.OrgIDContainsFold))
+	if i.OrganizationIDContainsFold != nil {
+		predicates = append(predicates, orgmembership.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
 	}
 	if i.UserID != nil {
 		predicates = append(predicates, orgmembership.UserIDEQ(*i.UserID))

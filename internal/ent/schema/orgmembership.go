@@ -27,7 +27,7 @@ func (OrgMembership) Fields() []ent.Field {
 			GoType(enums.Role("")).
 			Default(string(enums.RoleMember)).
 			Values(string(enums.RoleOwner)), // adds owner to possible values
-		field.String("org_id").Immutable(),
+		field.String("organization_id").Immutable(),
 		field.String("user_id").Immutable(),
 	}
 }
@@ -36,7 +36,7 @@ func (OrgMembership) Fields() []ent.Field {
 func (OrgMembership) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("org", Organization.Type).
-			Field("org_id").
+			Field("organization_id").
 			Required().
 			Unique().
 			Immutable(),
@@ -55,14 +55,14 @@ func (OrgMembership) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType: "group",
+			ObjectType: "organization",
 		},
 	}
 }
 
 func (OrgMembership) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("user_id", "org_id").
+		index.Fields("user_id", "organization_id").
 			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
 	}
 }

@@ -32,8 +32,8 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
-	// FieldOrgID holds the string denoting the org_id field in the database.
-	FieldOrgID = "org_id"
+	// FieldOrganizationID holds the string denoting the organization_id field in the database.
+	FieldOrganizationID = "organization_id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
 	// EdgeOrg holds the string denoting the org edge name in mutations.
@@ -48,7 +48,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
 	OrgInverseTable = "organizations"
 	// OrgColumn is the table column denoting the org relation/edge.
-	OrgColumn = "org_id"
+	OrgColumn = "organization_id"
 	// UserTable is the table that holds the user relation/edge.
 	UserTable = "org_memberships"
 	// UserInverseTable is the table name for the User entity.
@@ -68,7 +68,7 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldRole,
-	FieldOrgID,
+	FieldOrganizationID,
 	FieldUserID,
 }
 
@@ -155,9 +155,9 @@ func ByRole(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRole, opts...).ToFunc()
 }
 
-// ByOrgID orders the results by the org_id field.
-func ByOrgID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOrgID, opts...).ToFunc()
+// ByOrganizationID orders the results by the organization_id field.
+func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
 // ByUserID orders the results by the user_id field.

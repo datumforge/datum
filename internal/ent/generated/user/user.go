@@ -149,7 +149,7 @@ var (
 	GroupsPrimaryKey = []string{"user_id", "group_id"}
 	// OrganizationsPrimaryKey and OrganizationsColumn2 are the table columns denoting the
 	// primary key for the organizations relation (M2M).
-	OrganizationsPrimaryKey = []string{"user_id", "org_id"}
+	OrganizationsPrimaryKey = []string{"user_id", "organization_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

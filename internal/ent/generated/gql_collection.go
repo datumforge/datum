@@ -1054,9 +1054,9 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 				return err
 			}
 			om.withOrg = query
-			if _, ok := fieldSeen[orgmembership.FieldOrgID]; !ok {
-				selectedFields = append(selectedFields, orgmembership.FieldOrgID)
-				fieldSeen[orgmembership.FieldOrgID] = struct{}{}
+			if _, ok := fieldSeen[orgmembership.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldOrganizationID)
+				fieldSeen[orgmembership.FieldOrganizationID] = struct{}{}
 			}
 		case "user":
 			var (
@@ -1107,10 +1107,10 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 				selectedFields = append(selectedFields, orgmembership.FieldRole)
 				fieldSeen[orgmembership.FieldRole] = struct{}{}
 			}
-		case "orgID":
-			if _, ok := fieldSeen[orgmembership.FieldOrgID]; !ok {
-				selectedFields = append(selectedFields, orgmembership.FieldOrgID)
-				fieldSeen[orgmembership.FieldOrgID] = struct{}{}
+		case "organizationID":
+			if _, ok := fieldSeen[orgmembership.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldOrganizationID)
+				fieldSeen[orgmembership.FieldOrganizationID] = struct{}{}
 			}
 		case "userID":
 			if _, ok := fieldSeen[orgmembership.FieldUserID]; !ok {

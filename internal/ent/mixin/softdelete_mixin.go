@@ -52,16 +52,16 @@ func CheckSkipSoftDelete(ctx context.Context) bool {
 }
 
 // softDeleteKey is used to indicate a soft delete mutation is in progress
-type softDeleteKey struct{}
+var softDeleteKey = "datumSoftDelete"
 
 // IsSoftDelete returns a new context that informs the delete is a soft-delete for interceptor/hooks.
 func IsSoftDelete(parent context.Context) context.Context {
-	return context.WithValue(parent, softDeleteKey{}, true)
+	return context.WithValue(parent, softDeleteKey, true) // nolint:staticcheck
 }
 
 // CheckIsSoftDelete checks if the softDeleteKey is set in the context
 func CheckIsSoftDelete(ctx context.Context) bool {
-	return ctx.Value(softDeleteKey{}) != nil
+	return ctx.Value(softDeleteKey) != nil
 }
 
 // Interceptors of the SoftDeleteMixin.

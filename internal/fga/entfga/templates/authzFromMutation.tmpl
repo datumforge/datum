@@ -6,24 +6,13 @@
 	{{ $pkg := base $.Config.Package }}
 	{{ template "header" $ }}
 
-    func EntOpToHistoryOp(op ent.Op) entfga.OpType {
-        switch op {
-        case ent.OpDelete, ent.OpDeleteOne:
-            return entfga.OpTypeDelete
-        case ent.OpUpdate, ent.OpUpdateOne:
-            return entfga.OpTypeUpdate
-        default:
-            return entfga.OpTypeInsert
-        }
-    }
-
     {{ $objectType := extractObjectType $.Annotations.AuthzConfig.Object }}
 	{{ range $n := $.Nodes }}
 	    {{ $name := $n.Name }}
         {{ $mutator := $n.MutationName }}
         {{/* Only include nodes with the Autz annoation. See: Annotation.Name */}}
         {{ if $n.Annotations.Authz }}
-        func (m *{{ $mutator }}) CreateHistoryFromCreate(ctx context.Context) error {
+        func (m *{{ $mutator }}) CreateTuplesFromCreate(ctx context.Context) error {
             // Get fields for tuple creation
             userID, _ := m.UserID()
             objectID, _ := m.{{ $objectType }}ID()
@@ -46,7 +35,7 @@
             return nil
         }
 
-        func (m *{{ $mutator }}) CreateHistoryFromUpdate(ctx context.Context) error {
+        func (m *{{ $mutator }}) CreateTuplesFromUpdate(ctx context.Context) error {
             // get ids that will be updated
             ids, err := m.IDs(ctx)
             if err != nil {
@@ -111,7 +100,7 @@
             return nil
         }
 
-        func (m *{{ $mutator }}) CreateHistoryFromDelete(ctx context.Context) error {
+        func (m *{{ $mutator }}) CreateTuplesFromDelete(ctx context.Context) error {
             // get ids that will be deleted
             ids, err := m.IDs(ctx)
             if err != nil {

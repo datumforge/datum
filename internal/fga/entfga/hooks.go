@@ -21,7 +21,9 @@ type Mutator interface {
 func On(hk ent.Hook, op ent.Op) ent.Hook {
 	return func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if m.Op().Is(op) {
+			hasOp := m.Op().Is(op)
+
+			if hasOp {
 				return hk(next).Mutate(ctx, m)
 			}
 
@@ -76,6 +78,10 @@ func authzHookUpdate[T Mutation]() ent.Hook {
 			mutation, err := getTypedMutation[T](m)
 			if err != nil {
 				return nil, err
+			}
+
+			if ctx.Value("datumSoftDelete") != nil {
+				return next.Mutate(ctx, m)
 			}
 
 			if err = mutation.CreateTuplesFromUpdate(ctx); err != nil {

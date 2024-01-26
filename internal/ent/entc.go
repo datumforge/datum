@@ -182,7 +182,9 @@ func main() {
 		entc.Extensions(
 			gqlExt,
 			oas,
-			entfga.NewFGAExtension(nil),
+			entfga.NewFGAExtension(
+				entfga.WithSoftDeletes(),
+			),
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

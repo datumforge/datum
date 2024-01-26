@@ -77,7 +77,5 @@ func (GroupMembership) Mixin() []ent.Mixin {
 
 // Hooks of the GroupMembership
 func (GroupMembership) Hooks() []ent.Hook {
-	return []ent.Hook{
-		// hooks.HookGroupMembersAuthz(),
-	}
+	return []ent.Hook{}
 }

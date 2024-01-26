@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/fga/entfga"
 )
 
 // OrgMembership holds the schema definition for the OrgMembership entity
@@ -53,6 +54,9 @@ func (OrgMembership) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType: "group",
+		},
 	}
 }
 
@@ -76,6 +80,5 @@ func (OrgMembership) Mixin() []ent.Mixin {
 func (OrgMembership) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookOrgMembers(),
-		hooks.HookOrgMembersAuthz(),
 	}
 }

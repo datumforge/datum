@@ -13,6 +13,7 @@ var (
 )
 
 type Config struct {
+	SoftDeletes bool
 }
 
 func (c Config) Name() string {
@@ -34,11 +35,19 @@ func NewFGAExtension(opts ...ExtensionOption) *AuthzExtension {
 		config: &Config{},
 	}
 
-	// for _, opt := range opts {
-	// 	opt(extension)
-	// }
+	for _, opt := range opts {
+		opt(extension)
+	}
 
 	return extension
+}
+
+// WithSoftDeletes ensure the delete hook is still used even when soft deletes
+// change the Op to Update
+func WithSoftDeletes() ExtensionOption {
+	return func(ex *AuthzExtension) {
+		ex.config.SoftDeletes = true
+	}
 }
 
 // Templates returns the generated templates which include the client, history query, history from mutation
@@ -46,6 +55,7 @@ func NewFGAExtension(opts ...ExtensionOption) *AuthzExtension {
 func (h *AuthzExtension) Templates() []*gen.Template {
 	templates := []*gen.Template{
 		parseTemplate("authzFromMutation", "templates/authzFromMutation.tmpl"),
+		parseTemplate("client", "templates/client.tmpl"),
 	}
 
 	return templates

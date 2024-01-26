@@ -115,7 +115,7 @@ func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, e
 	// setup view context
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
-	user, err := r.client.User.Get(ctx, id)
+	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err

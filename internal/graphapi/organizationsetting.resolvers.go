@@ -38,7 +38,7 @@ func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*ge
 
 	ctx = viewer.NewContext(ctx, v)
 
-	org, err := r.client.OrganizationSetting.Get(ctx, id)
+	org, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get organization settings", "error", err)
 

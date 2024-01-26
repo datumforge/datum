@@ -20,7 +20,7 @@ func extractObjectType(val any) string {
 func parseTemplate(name, path string) *gen.Template {
 	t := gen.NewTemplate(name)
 	t.Funcs(template.FuncMap{
-		"objectType": extractObjectType,
+		"extractObjectType": extractObjectType,
 	})
 
 	return gen.MustParse(t.ParseFS(_templates, path))

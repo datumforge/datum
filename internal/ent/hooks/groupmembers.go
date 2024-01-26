@@ -36,7 +36,6 @@ func HookGroupMembersAuthz() ent.Hook {
 				// if we error, do not attempt to create the relationships
 				return retValue, err
 			}
-			out, err := m.Client().Group.UpdateOneID("IDGOESHERE").SetName("HERE").Exec(ctx)
 
 			switch op := m.Op(); op {
 			case ent.OpCreate:

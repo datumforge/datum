@@ -10,7 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
-	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
@@ -61,7 +61,7 @@ func HookGroupAuthz() ent.Hook {
 			if m.Op().Is(ent.OpCreate) {
 				// create the group member admin and relationship tuple for parent org
 				err = groupCreateHook(ctx, m)
-			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
+			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || entx.CheckIsSoftDelete(ctx) {
 				// delete all relationship tuples on delete, or soft delete (Update Op)
 				err = groupDeleteHook(ctx, m)
 			}

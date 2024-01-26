@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"entgo.io/ent"
+
+	"github.com/datumforge/datum/internal/entx"
 )
 
 type Mutation interface {
@@ -80,7 +82,7 @@ func authzHookUpdate[T Mutation]() ent.Hook {
 				return nil, err
 			}
 
-			if ctx.Value("datumSoftDelete") != nil {
+			if entx.CheckIsSoftDelete(ctx) {
 				return next.Mutate(ctx, m)
 			}
 

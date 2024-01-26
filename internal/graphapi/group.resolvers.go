@@ -123,7 +123,7 @@ func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group,
 
 	ctx = viewer.NewContext(ctx, v)
 
-	group, err := r.client.Group.Get(ctx, id)
+	group, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get group", "error", err)
 

@@ -74,7 +74,7 @@ func (r *mutationResolver) DeleteIntegration(ctx context.Context, id string) (*I
 func (r *queryResolver) Integration(ctx context.Context, id string) (*generated.Integration, error) {
 	// TODO - add permissions checks
 
-	i, err := r.client.Integration.Get(ctx, id)
+	i, err := withTransactionalMutation(ctx).Integration.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err

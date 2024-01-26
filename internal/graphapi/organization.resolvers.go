@@ -135,7 +135,7 @@ func (r *queryResolver) Organization(ctx context.Context, id string) (*generated
 
 	ctx = viewer.NewContext(ctx, v)
 
-	org, err := r.client.Organization.Get(ctx, id)
+	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get organization", "error", err)
 

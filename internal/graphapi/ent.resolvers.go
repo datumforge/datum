@@ -35,22 +35,22 @@ func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[s
 
 // Groups is the resolver for the groups field.
 func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error) {
-	return r.client.Group.Query().Paginate(ctx, after, first, before, last, generated.WithGroupOrder(orderBy), generated.WithGroupFilter(where.Filter))
+	return withTransactionalMutation(ctx).Group.Query().Paginate(ctx, after, first, before, last, generated.WithGroupOrder(orderBy), generated.WithGroupFilter(where.Filter))
 }
 
 // GroupMemberships is the resolver for the groupMemberships field.
 func (r *queryResolver) GroupMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) (*generated.GroupMembershipConnection, error) {
-	return r.client.GroupMembership.Query().Paginate(ctx, after, first, before, last, generated.WithGroupMembershipFilter(where.Filter))
+	return withTransactionalMutation(ctx).GroupMembership.Query().Paginate(ctx, after, first, before, last, generated.WithGroupMembershipFilter(where.Filter))
 }
 
 // GroupSettings is the resolver for the groupSettings field.
 func (r *queryResolver) GroupSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error) {
-	return r.client.GroupSetting.Query().Paginate(ctx, after, first, before, last, generated.WithGroupSettingFilter(where.Filter))
+	return withTransactionalMutation(ctx).GroupSetting.Query().Paginate(ctx, after, first, before, last, generated.WithGroupSettingFilter(where.Filter))
 }
 
 // Integrations is the resolver for the integrations field.
 func (r *queryResolver) Integrations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) (*generated.IntegrationConnection, error) {
-	return r.client.Integration.Query().Paginate(ctx, after, first, before, last, generated.WithIntegrationOrder(orderBy), generated.WithIntegrationFilter(where.Filter))
+	return withTransactionalMutation(ctx).Integration.Query().Paginate(ctx, after, first, before, last, generated.WithIntegrationOrder(orderBy), generated.WithIntegrationFilter(where.Filter))
 }
 
 // OauthProviders is the resolver for the oauthProviders field.
@@ -65,17 +65,17 @@ func (r *queryResolver) OhAuthTooTokens(ctx context.Context, after *entgql.Curso
 
 // OrgMemberships is the resolver for the orgMemberships field.
 func (r *queryResolver) OrgMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipWhereInput) (*generated.OrgMembershipConnection, error) {
-	return r.client.OrgMembership.Query().Paginate(ctx, after, first, before, last, generated.WithOrgMembershipFilter(where.Filter))
+	return withTransactionalMutation(ctx).OrgMembership.Query().Paginate(ctx, after, first, before, last, generated.WithOrgMembershipFilter(where.Filter))
 }
 
 // Organizations is the resolver for the organizations field.
 func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error) {
-	return r.client.Organization.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationOrder(orderBy), generated.WithOrganizationFilter(where.Filter))
+	return withTransactionalMutation(ctx).Organization.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationOrder(orderBy), generated.WithOrganizationFilter(where.Filter))
 }
 
 // OrganizationSettings is the resolver for the organizationSettings field.
 func (r *queryResolver) OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error) {
-	return r.client.OrganizationSetting.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationSettingFilter(where.Filter))
+	return withTransactionalMutation(ctx).OrganizationSetting.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationSettingFilter(where.Filter))
 }
 
 // PersonalAccessTokens is the resolver for the personalAccessTokens field.
@@ -87,7 +87,7 @@ func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
-	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
+	return withTransactionalMutation(ctx).User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
 }
 
 // UserSettings is the resolver for the userSettings field.

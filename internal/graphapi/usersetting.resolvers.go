@@ -28,7 +28,7 @@ func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*U
 
 // UserSetting is the resolver for the UserSetting field.
 func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.UserSetting, error) {
-	userSetting, err := r.client.UserSetting.Get(ctx, id)
+	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err

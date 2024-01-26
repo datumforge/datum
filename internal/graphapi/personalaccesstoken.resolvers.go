@@ -54,7 +54,7 @@ func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id str
 func (r *queryResolver) PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error) {
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
-	pat, err := r.client.PersonalAccessToken.Get(ctx, id)
+	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err

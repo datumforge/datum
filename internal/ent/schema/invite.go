@@ -5,10 +5,8 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -44,6 +42,9 @@ func (Invite) Fields() []ent.Field {
 			Comment("the status of the invitation").
 			GoType(enums.InvitationSent).
 			Default(string(enums.InvitationSent)),
+		field.Int("send_attempts").
+			Comment("the number of attempts made to perform email send of the invitation, maximum of 5").
+			Default(0),
 		field.String("requestor_id").
 			Comment("the user who initatied the invitation").
 			Immutable().
@@ -70,12 +71,12 @@ func (Invite) Mixin() []ent.Mixin {
 }
 
 // Indexes of the Invite
-func (Invite) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("recipient").
-			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
-	}
-}
+//func (Invite) Indexes() []ent.Index {
+//	return []ent.Index{
+//		index.Fields("recipient", "owner_id").
+//			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
+//	}
+//}
 
 // Edges of the Invite
 func (Invite) Edges() []ent.Edge {

@@ -576,15 +576,16 @@ func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUp
 
 // CreateInviteInput represents a mutation input for creating invites.
 type CreateInviteInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
-	Expires     time.Time
-	Recipient   string
-	Status      *enums.InviteStatus
-	RequestorID string
-	OwnerID     string
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Expires      time.Time
+	Recipient    string
+	Status       *enums.InviteStatus
+	SendAttempts *int
+	RequestorID  string
+	OwnerID      string
 }
 
 // Mutate applies the CreateInviteInput on the InviteMutation builder.
@@ -606,6 +607,9 @@ func (i *CreateInviteInput) Mutate(m *InviteMutation) {
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
 	}
+	if v := i.SendAttempts; v != nil {
+		m.SetSendAttempts(*v)
+	}
 	m.SetRequestorID(i.RequestorID)
 	m.SetOwnerID(i.OwnerID)
 }
@@ -624,6 +628,7 @@ type UpdateInviteInput struct {
 	Expires        *time.Time
 	Recipient      *string
 	Status         *enums.InviteStatus
+	SendAttempts   *int
 	OwnerID        *string
 }
 
@@ -646,6 +651,9 @@ func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
 	}
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
+	}
+	if v := i.SendAttempts; v != nil {
+		m.SetSendAttempts(*v)
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)

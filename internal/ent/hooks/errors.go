@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"errors"
+	"strings"
 )
 
 var (
@@ -26,3 +27,23 @@ var (
 	// ErrUserAlreadyOrgMember is returned when an user attempts to be invited to an org they are already a member of
 	ErrUserAlreadyOrgMember = errors.New("user already member of organization")
 )
+
+// IsUniqueConstraintError reports if the error resulted from a DB uniqueness constraint violation.
+// e.g. duplicate value in unique index.
+func IsUniqueConstraintError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	for _, s := range []string{
+		"Error 1062",                 // MySQL
+		"violates unique constraint", // Postgres
+		"UNIQUE constraint failed",   // SQLite
+	} {
+		if strings.Contains(err.Error(), s) {
+			return true
+		}
+	}
+
+	return false
+}

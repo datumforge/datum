@@ -3160,6 +3160,16 @@ type InviteWhereInput struct {
 	StatusIn    []enums.InviteStatus `json:"statusIn,omitempty"`
 	StatusNotIn []enums.InviteStatus `json:"statusNotIn,omitempty"`
 
+	// "send_attempts" field predicates.
+	SendAttempts      *int  `json:"sendAttempts,omitempty"`
+	SendAttemptsNEQ   *int  `json:"sendAttemptsNEQ,omitempty"`
+	SendAttemptsIn    []int `json:"sendAttemptsIn,omitempty"`
+	SendAttemptsNotIn []int `json:"sendAttemptsNotIn,omitempty"`
+	SendAttemptsGT    *int  `json:"sendAttemptsGT,omitempty"`
+	SendAttemptsGTE   *int  `json:"sendAttemptsGTE,omitempty"`
+	SendAttemptsLT    *int  `json:"sendAttemptsLT,omitempty"`
+	SendAttemptsLTE   *int  `json:"sendAttemptsLTE,omitempty"`
+
 	// "requestor_id" field predicates.
 	RequestorID             *string  `json:"requestorID,omitempty"`
 	RequestorIDNEQ          *string  `json:"requestorIDNEQ,omitempty"`
@@ -3568,6 +3578,30 @@ func (i *InviteWhereInput) P() (predicate.Invite, error) {
 	}
 	if len(i.StatusNotIn) > 0 {
 		predicates = append(predicates, invite.StatusNotIn(i.StatusNotIn...))
+	}
+	if i.SendAttempts != nil {
+		predicates = append(predicates, invite.SendAttemptsEQ(*i.SendAttempts))
+	}
+	if i.SendAttemptsNEQ != nil {
+		predicates = append(predicates, invite.SendAttemptsNEQ(*i.SendAttemptsNEQ))
+	}
+	if len(i.SendAttemptsIn) > 0 {
+		predicates = append(predicates, invite.SendAttemptsIn(i.SendAttemptsIn...))
+	}
+	if len(i.SendAttemptsNotIn) > 0 {
+		predicates = append(predicates, invite.SendAttemptsNotIn(i.SendAttemptsNotIn...))
+	}
+	if i.SendAttemptsGT != nil {
+		predicates = append(predicates, invite.SendAttemptsGT(*i.SendAttemptsGT))
+	}
+	if i.SendAttemptsGTE != nil {
+		predicates = append(predicates, invite.SendAttemptsGTE(*i.SendAttemptsGTE))
+	}
+	if i.SendAttemptsLT != nil {
+		predicates = append(predicates, invite.SendAttemptsLT(*i.SendAttemptsLT))
+	}
+	if i.SendAttemptsLTE != nil {
+		predicates = append(predicates, invite.SendAttemptsLTE(*i.SendAttemptsLTE))
 	}
 	if i.RequestorID != nil {
 		predicates = append(predicates, invite.RequestorIDEQ(*i.RequestorID))

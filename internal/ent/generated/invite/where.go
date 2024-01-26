@@ -118,6 +118,11 @@ func Recipient(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldRecipient, v))
 }
 
+// SendAttempts applies equality check predicate on the "send_attempts" field. It's identical to SendAttemptsEQ.
+func SendAttempts(v int) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldSendAttempts, v))
+}
+
 // RequestorID applies equality check predicate on the "requestor_id" field. It's identical to RequestorIDEQ.
 func RequestorID(v string) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldRequestorID, v))
@@ -746,6 +751,46 @@ func StatusNotIn(vs ...enums.InviteStatus) predicate.Invite {
 		v[i] = vs[i]
 	}
 	return predicate.Invite(sql.FieldNotIn(FieldStatus, v...))
+}
+
+// SendAttemptsEQ applies the EQ predicate on the "send_attempts" field.
+func SendAttemptsEQ(v int) predicate.Invite {
+	return predicate.Invite(sql.FieldEQ(FieldSendAttempts, v))
+}
+
+// SendAttemptsNEQ applies the NEQ predicate on the "send_attempts" field.
+func SendAttemptsNEQ(v int) predicate.Invite {
+	return predicate.Invite(sql.FieldNEQ(FieldSendAttempts, v))
+}
+
+// SendAttemptsIn applies the In predicate on the "send_attempts" field.
+func SendAttemptsIn(vs ...int) predicate.Invite {
+	return predicate.Invite(sql.FieldIn(FieldSendAttempts, vs...))
+}
+
+// SendAttemptsNotIn applies the NotIn predicate on the "send_attempts" field.
+func SendAttemptsNotIn(vs ...int) predicate.Invite {
+	return predicate.Invite(sql.FieldNotIn(FieldSendAttempts, vs...))
+}
+
+// SendAttemptsGT applies the GT predicate on the "send_attempts" field.
+func SendAttemptsGT(v int) predicate.Invite {
+	return predicate.Invite(sql.FieldGT(FieldSendAttempts, v))
+}
+
+// SendAttemptsGTE applies the GTE predicate on the "send_attempts" field.
+func SendAttemptsGTE(v int) predicate.Invite {
+	return predicate.Invite(sql.FieldGTE(FieldSendAttempts, v))
+}
+
+// SendAttemptsLT applies the LT predicate on the "send_attempts" field.
+func SendAttemptsLT(v int) predicate.Invite {
+	return predicate.Invite(sql.FieldLT(FieldSendAttempts, v))
+}
+
+// SendAttemptsLTE applies the LTE predicate on the "send_attempts" field.
+func SendAttemptsLTE(v int) predicate.Invite {
+	return predicate.Invite(sql.FieldLTE(FieldSendAttempts, v))
 }
 
 // RequestorIDEQ applies the EQ predicate on the "requestor_id" field.

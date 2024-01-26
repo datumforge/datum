@@ -40,6 +40,8 @@ const (
 	FieldRecipient = "recipient"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldSendAttempts holds the string denoting the send_attempts field in the database.
+	FieldSendAttempts = "send_attempts"
 	// FieldRequestorID holds the string denoting the requestor_id field in the database.
 	FieldRequestorID = "requestor_id"
 	// FieldSecret holds the string denoting the secret field in the database.
@@ -71,6 +73,7 @@ var Columns = []string{
 	FieldExpires,
 	FieldRecipient,
 	FieldStatus,
+	FieldSendAttempts,
 	FieldRequestorID,
 	FieldSecret,
 }
@@ -103,6 +106,8 @@ var (
 	TokenValidator func(string) error
 	// RecipientValidator is a validator for the "recipient" field. It is called by the builders before save.
 	RecipientValidator func(string) error
+	// DefaultSendAttempts holds the default value on creation for the "send_attempts" field.
+	DefaultSendAttempts int
 	// RequestorIDValidator is a validator for the "requestor_id" field. It is called by the builders before save.
 	RequestorIDValidator func(string) error
 	// SecretValidator is a validator for the "secret" field. It is called by the builders before save.
@@ -184,6 +189,11 @@ func ByRecipient(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// BySendAttempts orders the results by the send_attempts field.
+func BySendAttempts(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSendAttempts, opts...).ToFunc()
 }
 
 // ByRequestorID orders the results by the requestor_id field.

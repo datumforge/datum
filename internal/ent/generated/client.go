@@ -126,7 +126,7 @@ type (
 		Logger        zap.SugaredLogger
 		HTTPClient    *http.Client
 		Emails        emails.EmailManager
-		Marionette    marionette.TaskManager
+		Marionette    *marionette.TaskManager
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -208,7 +208,7 @@ func Emails(v emails.EmailManager) Option {
 }
 
 // Marionette configures the Marionette.
-func Marionette(v marionette.TaskManager) Option {
+func Marionette(v *marionette.TaskManager) Option {
 	return func(c *config) {
 		c.Marionette = v
 	}

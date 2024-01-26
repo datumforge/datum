@@ -154,6 +154,27 @@ func (iu *InviteUpdate) SetNillableStatus(es *enums.InviteStatus) *InviteUpdate 
 	return iu
 }
 
+// SetSendAttempts sets the "send_attempts" field.
+func (iu *InviteUpdate) SetSendAttempts(i int) *InviteUpdate {
+	iu.mutation.ResetSendAttempts()
+	iu.mutation.SetSendAttempts(i)
+	return iu
+}
+
+// SetNillableSendAttempts sets the "send_attempts" field if the given value is not nil.
+func (iu *InviteUpdate) SetNillableSendAttempts(i *int) *InviteUpdate {
+	if i != nil {
+		iu.SetSendAttempts(*i)
+	}
+	return iu
+}
+
+// AddSendAttempts adds i to the "send_attempts" field.
+func (iu *InviteUpdate) AddSendAttempts(i int) *InviteUpdate {
+	iu.mutation.AddSendAttempts(i)
+	return iu
+}
+
 // SetSecret sets the "secret" field.
 func (iu *InviteUpdate) SetSecret(b []byte) *InviteUpdate {
 	iu.mutation.SetSecret(b)
@@ -285,6 +306,12 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := iu.mutation.SendAttempts(); ok {
+		_spec.SetField(invite.FieldSendAttempts, field.TypeInt, value)
+	}
+	if value, ok := iu.mutation.AddedSendAttempts(); ok {
+		_spec.AddField(invite.FieldSendAttempts, field.TypeInt, value)
 	}
 	if value, ok := iu.mutation.Secret(); ok {
 		_spec.SetField(invite.FieldSecret, field.TypeBytes, value)
@@ -464,6 +491,27 @@ func (iuo *InviteUpdateOne) SetNillableStatus(es *enums.InviteStatus) *InviteUpd
 	return iuo
 }
 
+// SetSendAttempts sets the "send_attempts" field.
+func (iuo *InviteUpdateOne) SetSendAttempts(i int) *InviteUpdateOne {
+	iuo.mutation.ResetSendAttempts()
+	iuo.mutation.SetSendAttempts(i)
+	return iuo
+}
+
+// SetNillableSendAttempts sets the "send_attempts" field if the given value is not nil.
+func (iuo *InviteUpdateOne) SetNillableSendAttempts(i *int) *InviteUpdateOne {
+	if i != nil {
+		iuo.SetSendAttempts(*i)
+	}
+	return iuo
+}
+
+// AddSendAttempts adds i to the "send_attempts" field.
+func (iuo *InviteUpdateOne) AddSendAttempts(i int) *InviteUpdateOne {
+	iuo.mutation.AddSendAttempts(i)
+	return iuo
+}
+
 // SetSecret sets the "secret" field.
 func (iuo *InviteUpdateOne) SetSecret(b []byte) *InviteUpdateOne {
 	iuo.mutation.SetSecret(b)
@@ -625,6 +673,12 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	}
 	if value, ok := iuo.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := iuo.mutation.SendAttempts(); ok {
+		_spec.SetField(invite.FieldSendAttempts, field.TypeInt, value)
+	}
+	if value, ok := iuo.mutation.AddedSendAttempts(); ok {
+		_spec.AddField(invite.FieldSendAttempts, field.TypeInt, value)
 	}
 	if value, ok := iuo.mutation.Secret(); ok {
 		_spec.SetField(invite.FieldSecret, field.TypeBytes, value)

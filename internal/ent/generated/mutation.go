@@ -6558,27 +6558,29 @@ func (m *IntegrationMutation) ResetEdge(name string) error {
 // InviteMutation represents an operation that mutates the Invite nodes in the graph.
 type InviteMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	created_at    *time.Time
-	updated_at    *time.Time
-	created_by    *string
-	updated_by    *string
-	deleted_at    *time.Time
-	deleted_by    *string
-	token         *string
-	expires       *time.Time
-	recipient     *string
-	status        *enums.InviteStatus
-	requestor_id  *string
-	secret        *[]byte
-	clearedFields map[string]struct{}
-	owner         *string
-	clearedowner  bool
-	done          bool
-	oldValue      func(context.Context) (*Invite, error)
-	predicates    []predicate.Invite
+	op               Op
+	typ              string
+	id               *string
+	created_at       *time.Time
+	updated_at       *time.Time
+	created_by       *string
+	updated_by       *string
+	deleted_at       *time.Time
+	deleted_by       *string
+	token            *string
+	expires          *time.Time
+	recipient        *string
+	status           *enums.InviteStatus
+	send_attempts    *int
+	addsend_attempts *int
+	requestor_id     *string
+	secret           *[]byte
+	clearedFields    map[string]struct{}
+	owner            *string
+	clearedowner     bool
+	done             bool
+	oldValue         func(context.Context) (*Invite, error)
+	predicates       []predicate.Invite
 }
 
 var _ ent.Mutation = (*InviteMutation)(nil)
@@ -7133,6 +7135,62 @@ func (m *InviteMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetSendAttempts sets the "send_attempts" field.
+func (m *InviteMutation) SetSendAttempts(i int) {
+	m.send_attempts = &i
+	m.addsend_attempts = nil
+}
+
+// SendAttempts returns the value of the "send_attempts" field in the mutation.
+func (m *InviteMutation) SendAttempts() (r int, exists bool) {
+	v := m.send_attempts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSendAttempts returns the old "send_attempts" field's value of the Invite entity.
+// If the Invite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InviteMutation) OldSendAttempts(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSendAttempts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSendAttempts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSendAttempts: %w", err)
+	}
+	return oldValue.SendAttempts, nil
+}
+
+// AddSendAttempts adds i to the "send_attempts" field.
+func (m *InviteMutation) AddSendAttempts(i int) {
+	if m.addsend_attempts != nil {
+		*m.addsend_attempts += i
+	} else {
+		m.addsend_attempts = &i
+	}
+}
+
+// AddedSendAttempts returns the value that was added to the "send_attempts" field in this mutation.
+func (m *InviteMutation) AddedSendAttempts() (r int, exists bool) {
+	v := m.addsend_attempts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSendAttempts resets all changes to the "send_attempts" field.
+func (m *InviteMutation) ResetSendAttempts() {
+	m.send_attempts = nil
+	m.addsend_attempts = nil
+}
+
 // SetRequestorID sets the "requestor_id" field.
 func (m *InviteMutation) SetRequestorID(s string) {
 	m.requestor_id = &s
@@ -7266,7 +7324,7 @@ func (m *InviteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InviteMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, invite.FieldCreatedAt)
 	}
@@ -7299,6 +7357,9 @@ func (m *InviteMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, invite.FieldStatus)
+	}
+	if m.send_attempts != nil {
+		fields = append(fields, invite.FieldSendAttempts)
 	}
 	if m.requestor_id != nil {
 		fields = append(fields, invite.FieldRequestorID)
@@ -7336,6 +7397,8 @@ func (m *InviteMutation) Field(name string) (ent.Value, bool) {
 		return m.Recipient()
 	case invite.FieldStatus:
 		return m.Status()
+	case invite.FieldSendAttempts:
+		return m.SendAttempts()
 	case invite.FieldRequestorID:
 		return m.RequestorID()
 	case invite.FieldSecret:
@@ -7371,6 +7434,8 @@ func (m *InviteMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldRecipient(ctx)
 	case invite.FieldStatus:
 		return m.OldStatus(ctx)
+	case invite.FieldSendAttempts:
+		return m.OldSendAttempts(ctx)
 	case invite.FieldRequestorID:
 		return m.OldRequestorID(ctx)
 	case invite.FieldSecret:
@@ -7461,6 +7526,13 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
+	case invite.FieldSendAttempts:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSendAttempts(v)
+		return nil
 	case invite.FieldRequestorID:
 		v, ok := value.(string)
 		if !ok {
@@ -7482,13 +7554,21 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *InviteMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addsend_attempts != nil {
+		fields = append(fields, invite.FieldSendAttempts)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *InviteMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case invite.FieldSendAttempts:
+		return m.AddedSendAttempts()
+	}
 	return nil, false
 }
 
@@ -7497,6 +7577,13 @@ func (m *InviteMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *InviteMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case invite.FieldSendAttempts:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSendAttempts(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Invite numeric field %s", name)
 }
@@ -7583,6 +7670,9 @@ func (m *InviteMutation) ResetField(name string) error {
 		return nil
 	case invite.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case invite.FieldSendAttempts:
+		m.ResetSendAttempts()
 		return nil
 	case invite.FieldRequestorID:
 		m.ResetRequestorID()

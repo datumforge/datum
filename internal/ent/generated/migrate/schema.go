@@ -234,6 +234,7 @@ var (
 		{Name: "expires", Type: field.TypeTime},
 		{Name: "recipient", Type: field.TypeString},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT"}, Default: "INVITATION_SENT"},
+		{Name: "send_attempts", Type: field.TypeInt, Default: 0},
 		{Name: "requestor_id", Type: field.TypeString},
 		{Name: "secret", Type: field.TypeBytes},
 		{Name: "owner_id", Type: field.TypeString},
@@ -246,16 +247,16 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "invites_organizations_invites",
-				Columns:    []*schema.Column{InvitesColumns[13]},
+				Columns:    []*schema.Column{InvitesColumns[14]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "invite_recipient",
+				Name:    "invite_recipient_owner_id",
 				Unique:  true,
-				Columns: []*schema.Column{InvitesColumns[9]},
+				Columns: []*schema.Column{InvitesColumns[9], InvitesColumns[14]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},

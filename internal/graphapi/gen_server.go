@@ -255,18 +255,19 @@ type ComplexityRoot struct {
 	}
 
 	Invite struct {
-		CreatedAt   func(childComplexity int) int
-		CreatedBy   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		DeletedBy   func(childComplexity int) int
-		Expires     func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Owner       func(childComplexity int) int
-		Recipient   func(childComplexity int) int
-		RequestorID func(childComplexity int) int
-		Status      func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UpdatedBy   func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		CreatedBy    func(childComplexity int) int
+		DeletedAt    func(childComplexity int) int
+		DeletedBy    func(childComplexity int) int
+		Expires      func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Owner        func(childComplexity int) int
+		Recipient    func(childComplexity int) int
+		RequestorID  func(childComplexity int) int
+		SendAttempts func(childComplexity int) int
+		Status       func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		UpdatedBy    func(childComplexity int) int
 	}
 
 	InviteConnection struct {
@@ -1659,6 +1660,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invite.RequestorID(childComplexity), true
+
+	case "Invite.sendAttempts":
+		if e.complexity.Invite.SendAttempts == nil {
+			break
+		}
+
+		return e.complexity.Invite.SendAttempts(childComplexity), true
 
 	case "Invite.status":
 		if e.complexity.Invite.Status == nil {
@@ -4305,6 +4313,10 @@ input CreateInviteInput {
   """
   status: InviteInviteStatus
   """
+  the number of attempts made to perform email send of the invitation, maximum of 5
+  """
+  sendAttempts: Int
+  """
   the user who initatied the invitation
   """
   requestorID: String!
@@ -5710,6 +5722,10 @@ type Invite implements Node {
   """
   status: InviteInviteStatus!
   """
+  the number of attempts made to perform email send of the invitation, maximum of 5
+  """
+  sendAttempts: Int!
+  """
   the user who initatied the invitation
   """
   requestorID: String!
@@ -5895,6 +5911,17 @@ input InviteWhereInput {
   statusNEQ: InviteInviteStatus
   statusIn: [InviteInviteStatus!]
   statusNotIn: [InviteInviteStatus!]
+  """
+  send_attempts field predicates
+  """
+  sendAttempts: Int
+  sendAttemptsNEQ: Int
+  sendAttemptsIn: [Int!]
+  sendAttemptsNotIn: [Int!]
+  sendAttemptsGT: Int
+  sendAttemptsGTE: Int
+  sendAttemptsLT: Int
+  sendAttemptsLTE: Int
   """
   requestor_id field predicates
   """
@@ -8069,6 +8096,10 @@ input UpdateInviteInput {
   the status of the invitation
   """
   status: InviteInviteStatus
+  """
+  the number of attempts made to perform email send of the invitation, maximum of 5
+  """
+  sendAttempts: Int
   ownerID: ID
 }
 """
@@ -17828,6 +17859,50 @@ func (ec *executionContext) fieldContext_Invite_status(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Invite_sendAttempts(ctx context.Context, field graphql.CollectedField, obj *generated.Invite) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invite_sendAttempts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SendAttempts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invite_sendAttempts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invite",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Invite_requestorID(ctx context.Context, field graphql.CollectedField, obj *generated.Invite) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Invite_requestorID(ctx, field)
 	if err != nil {
@@ -18164,6 +18239,8 @@ func (ec *executionContext) fieldContext_InviteCreatePayload_invite(ctx context.
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "sendAttempts":
+				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
 				return ec.fieldContext_Invite_requestorID(ctx, field)
 			case "owner":
@@ -18275,6 +18352,8 @@ func (ec *executionContext) fieldContext_InviteEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "sendAttempts":
+				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
 				return ec.fieldContext_Invite_requestorID(ctx, field)
 			case "owner":
@@ -18389,6 +18468,8 @@ func (ec *executionContext) fieldContext_InviteUpdatePayload_invite(ctx context.
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "sendAttempts":
+				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
 				return ec.fieldContext_Invite_requestorID(ctx, field)
 			case "owner":
@@ -25313,6 +25394,8 @@ func (ec *executionContext) fieldContext_Organization_invites(ctx context.Contex
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "sendAttempts":
+				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
 				return ec.fieldContext_Invite_requestorID(ctx, field)
 			case "owner":
@@ -29834,6 +29917,8 @@ func (ec *executionContext) fieldContext_Query_invite(ctx context.Context, field
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "sendAttempts":
+				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
 				return ec.fieldContext_Invite_requestorID(ctx, field)
 			case "owner":
@@ -35745,7 +35830,7 @@ func (ec *executionContext) unmarshalInputCreateInviteInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "expires", "recipient", "status", "requestorID", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "expires", "recipient", "status", "sendAttempts", "requestorID", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35801,6 +35886,13 @@ func (ec *executionContext) unmarshalInputCreateInviteInput(ctx context.Context,
 				return it, err
 			}
 			it.Status = data
+		case "sendAttempts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttempts"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttempts = data
 		case "requestorID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requestorID"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -40907,7 +40999,7 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "sendAttempts", "sendAttemptsNEQ", "sendAttemptsIn", "sendAttemptsNotIn", "sendAttemptsGT", "sendAttemptsGTE", "sendAttemptsLT", "sendAttemptsLTE", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41677,6 +41769,62 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 				return it, err
 			}
 			it.StatusNotIn = data
+		case "sendAttempts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttempts"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttempts = data
+		case "sendAttemptsNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttemptsNEQ"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttemptsNEQ = data
+		case "sendAttemptsIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttemptsIn"))
+			data, err := ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttemptsIn = data
+		case "sendAttemptsNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttemptsNotIn"))
+			data, err := ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttemptsNotIn = data
+		case "sendAttemptsGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttemptsGT"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttemptsGT = data
+		case "sendAttemptsGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttemptsGTE"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttemptsGTE = data
+		case "sendAttemptsLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttemptsLT"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttemptsLT = data
+		case "sendAttemptsLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttemptsLTE"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttemptsLTE = data
 		case "requestorID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requestorID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -48478,7 +48626,7 @@ func (ec *executionContext) unmarshalInputUpdateInviteInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "expires", "recipient", "status", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "expires", "recipient", "status", "sendAttempts", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -48527,6 +48675,13 @@ func (ec *executionContext) unmarshalInputUpdateInviteInput(ctx context.Context,
 				return it, err
 			}
 			it.Status = data
+		case "sendAttempts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttempts"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SendAttempts = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -54146,6 +54301,11 @@ func (ec *executionContext) _Invite(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "status":
 			out.Values[i] = ec._Invite_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "sendAttempts":
+			out.Values[i] = ec._Invite_sendAttempts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

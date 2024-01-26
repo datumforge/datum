@@ -123,3 +123,29 @@ func (m *EmailManager) Validate() (err error) {
 
 	return nil
 }
+
+// SendOrgInvitationEmail sends an email inviting a user to join Datum and an existing organization
+func (m *EmailManager) SendOrgInvitationEmail(i *Invite) error {
+	data := InviteData{
+		InviterName: i.Requestor,
+		OrgName:     i.OrgName,
+		EmailData: EmailData{
+			Sender: m.MustFromContact(),
+			Recipient: sendgrid.Contact{
+				Email: i.Recipient,
+			},
+		},
+	}
+
+	var err error
+	if data.InviteURL, err = m.URLConfig.InviteURL(i.Token); err != nil {
+		return err
+	}
+
+	msg, err := InviteEmail(data)
+	if err != nil {
+		return err
+	}
+
+	return m.Send(msg)
+}

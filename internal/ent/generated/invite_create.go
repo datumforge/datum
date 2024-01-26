@@ -144,6 +144,20 @@ func (ic *InviteCreate) SetNillableStatus(es *enums.InviteStatus) *InviteCreate 
 	return ic
 }
 
+// SetSendAttempts sets the "send_attempts" field.
+func (ic *InviteCreate) SetSendAttempts(i int) *InviteCreate {
+	ic.mutation.SetSendAttempts(i)
+	return ic
+}
+
+// SetNillableSendAttempts sets the "send_attempts" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableSendAttempts(i *int) *InviteCreate {
+	if i != nil {
+		ic.SetSendAttempts(*i)
+	}
+	return ic
+}
+
 // SetRequestorID sets the "requestor_id" field.
 func (ic *InviteCreate) SetRequestorID(s string) *InviteCreate {
 	ic.mutation.SetRequestorID(s)
@@ -230,6 +244,10 @@ func (ic *InviteCreate) defaults() error {
 		v := invite.DefaultStatus
 		ic.mutation.SetStatus(v)
 	}
+	if _, ok := ic.mutation.SendAttempts(); !ok {
+		v := invite.DefaultSendAttempts
+		ic.mutation.SetSendAttempts(v)
+	}
 	if _, ok := ic.mutation.ID(); !ok {
 		if invite.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized invite.DefaultID (forgotten import generated/runtime?)")
@@ -277,6 +295,9 @@ func (ic *InviteCreate) check() error {
 		if err := invite.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "Invite.status": %w`, err)}
 		}
+	}
+	if _, ok := ic.mutation.SendAttempts(); !ok {
+		return &ValidationError{Name: "send_attempts", err: errors.New(`generated: missing required field "Invite.send_attempts"`)}
 	}
 	if _, ok := ic.mutation.RequestorID(); !ok {
 		return &ValidationError{Name: "requestor_id", err: errors.New(`generated: missing required field "Invite.requestor_id"`)}
@@ -372,6 +393,10 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := ic.mutation.SendAttempts(); ok {
+		_spec.SetField(invite.FieldSendAttempts, field.TypeInt, value)
+		_node.SendAttempts = value
 	}
 	if value, ok := ic.mutation.RequestorID(); ok {
 		_spec.SetField(invite.FieldRequestorID, field.TypeString, value)

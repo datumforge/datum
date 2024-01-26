@@ -146,6 +146,10 @@ input CreateInviteInput {
   """
   status: InviteInviteStatus
   """
+  the number of attempts made to perform email send of the invitation, maximum of 5
+  """
+  sendAttempts: Int
+  """
   the user who initatied the invitation
   """
   requestorID: String!
@@ -1551,6 +1555,10 @@ type Invite implements Node {
   """
   status: InviteInviteStatus!
   """
+  the number of attempts made to perform email send of the invitation, maximum of 5
+  """
+  sendAttempts: Int!
+  """
   the user who initatied the invitation
   """
   requestorID: String!
@@ -1736,6 +1744,17 @@ input InviteWhereInput {
   statusNEQ: InviteInviteStatus
   statusIn: [InviteInviteStatus!]
   statusNotIn: [InviteInviteStatus!]
+  """
+  send_attempts field predicates
+  """
+  sendAttempts: Int
+  sendAttemptsNEQ: Int
+  sendAttemptsIn: [Int!]
+  sendAttemptsNotIn: [Int!]
+  sendAttemptsGT: Int
+  sendAttemptsGTE: Int
+  sendAttemptsLT: Int
+  sendAttemptsLTE: Int
   """
   requestor_id field predicates
   """
@@ -3910,6 +3929,10 @@ input UpdateInviteInput {
   the status of the invitation
   """
   status: InviteInviteStatus
+  """
+  the number of attempts made to perform email send of the invitation, maximum of 5
+  """
+  sendAttempts: Int
   ownerID: ID
 }
 """

@@ -114,6 +114,8 @@ type CreateInviteInput struct {
 	Recipient string `json:"recipient"`
 	// the status of the invitation
 	Status *enums.InviteStatus `json:"status,omitempty"`
+	// the number of attempts made to perform email send of the invitation, maximum of 5
+	SendAttempts *int64 `json:"sendAttempts,omitempty"`
 	// the user who initatied the invitation
 	RequestorID string `json:"requestorID"`
 	OwnerID     string `json:"ownerID"`
@@ -1271,6 +1273,8 @@ type Invite struct {
 	Recipient string `json:"recipient"`
 	// the status of the invitation
 	Status enums.InviteStatus `json:"status"`
+	// the number of attempts made to perform email send of the invitation, maximum of 5
+	SendAttempts int64 `json:"sendAttempts"`
 	// the user who initatied the invitation
 	RequestorID string       `json:"requestorID"`
 	Owner       Organization `json:"owner"`
@@ -1436,6 +1440,15 @@ type InviteWhereInput struct {
 	StatusNeq   *enums.InviteStatus  `json:"statusNEQ,omitempty"`
 	StatusIn    []enums.InviteStatus `json:"statusIn,omitempty"`
 	StatusNotIn []enums.InviteStatus `json:"statusNotIn,omitempty"`
+	// send_attempts field predicates
+	SendAttempts      *int64  `json:"sendAttempts,omitempty"`
+	SendAttemptsNeq   *int64  `json:"sendAttemptsNEQ,omitempty"`
+	SendAttemptsIn    []int64 `json:"sendAttemptsIn,omitempty"`
+	SendAttemptsNotIn []int64 `json:"sendAttemptsNotIn,omitempty"`
+	SendAttemptsGt    *int64  `json:"sendAttemptsGT,omitempty"`
+	SendAttemptsGte   *int64  `json:"sendAttemptsGTE,omitempty"`
+	SendAttemptsLt    *int64  `json:"sendAttemptsLT,omitempty"`
+	SendAttemptsLte   *int64  `json:"sendAttemptsLTE,omitempty"`
 	// requestor_id field predicates
 	RequestorID             *string  `json:"requestorID,omitempty"`
 	RequestorIDNeq          *string  `json:"requestorIDNEQ,omitempty"`
@@ -2915,8 +2928,10 @@ type UpdateInviteInput struct {
 	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
 	Recipient *string `json:"recipient,omitempty"`
 	// the status of the invitation
-	Status  *enums.InviteStatus `json:"status,omitempty"`
-	OwnerID *string             `json:"ownerID,omitempty"`
+	Status *enums.InviteStatus `json:"status,omitempty"`
+	// the number of attempts made to perform email send of the invitation, maximum of 5
+	SendAttempts *int64  `json:"sendAttempts,omitempty"`
+	OwnerID      *string `json:"ownerID,omitempty"`
 }
 
 // UpdateOauthProviderInput is used for update OauthProvider object.

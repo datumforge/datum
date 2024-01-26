@@ -185,7 +185,7 @@ func main() {
 		),
 		entc.Dependency(
 			entc.DependencyName("Marionette"),
-			entc.DependencyType(marionette.TaskManager{}),
+			entc.DependencyType(&marionette.TaskManager{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

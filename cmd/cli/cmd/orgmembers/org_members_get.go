@@ -44,7 +44,7 @@ func orgMembers(ctx context.Context) error {
 	}
 
 	where := datumclient.OrgMembershipWhereInput{
-		OrgID: &oID,
+		OrganizationID: &oID,
 	}
 
 	var s []byte

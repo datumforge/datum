@@ -2675,7 +2675,7 @@ type OrgMembership implements Node {
 	deletedAt: Time
 	deletedBy: String
 	role: OrgMembershipRole!
-	orgID: ID!
+	organizationID: ID!
 	userID: ID!
 	org: Organization!
 	user: User!
@@ -2862,7 +2862,7 @@ input OrgMembershipWhereInput {
 	roleNEQ: OrgMembershipRole
 	roleIn: [OrgMembershipRole!]
 	roleNotIn: [OrgMembershipRole!]
-	orgID: String
+	organizationID: String
 	userID: String
 }
 type Organization implements Node {

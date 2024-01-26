@@ -129,7 +129,7 @@ mutation CreateUser($input: CreateUserInput!) {
       oauth
       orgMemberships {
         id
-        orgID
+        organizationID
       }
       groupMemberships {
         id

@@ -3,7 +3,7 @@ query GetOrgMembersByOrgID($where: OrgMembershipWhereInput) {
     edges {
       node {
         id
-        orgID
+        organizationID
         userID
         role
         user {
@@ -24,7 +24,7 @@ mutation AddUserToOrgWithRole($input: CreateOrgMembershipInput!) {
       id
       role
       userID
-      orgID
+      organizationID
     }
   }
 }
@@ -35,7 +35,7 @@ mutation UpdateUserRoleInOrg($updateOrgMemberId: ID!, $input: UpdateOrgMembershi
       id
       role
       userID
-      orgID
+      organizationID
     }
   }
 }

@@ -1,0 +1,80 @@
+version: "3"
+
+tasks:
+  run-dev:
+    dotenv: ['{{.ENV}}/.env-dev']
+    desc: runs the datum server with oidc enabled
+    cmds:
+    - task: compose:redis
+    - task: compose:fga
+    - go run main.go serve --debug --pretty
+
+  docker:build:
+    desc: builds the datum docker image
+    cmds:
+      - docker build -f docker/Dockerfile .
+
+  docker:build:aio:
+    desc: builds the datum docker image all-in-one image
+    cmds:
+      - docker build -f docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
+
+  compose:datum:
+    desc: brings up the compose environment for the datum server configured with auth
+    deps: [docker:build]
+    cmds:
+      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
+
+  compose:datum:down:
+    desc: brings the datum compose environment down
+    cmds:
+      - "docker compose -p datum down"
+
+  compose:all:up:
+    desc: brings up the full docker compose development environment including datum server, fga, and rover
+    cmds:
+      - task: compose:datum
+      - task: rover
+
+  compose:all:down: 
+    desc: brings down both fga and datum server compose environments 
+    cmds:
+      - task: compose:datum:down
+
+  compose:redis:
+    desc: brings up the compose environment for redis
+    cmds:
+      - "docker compose -f ./docker/docker-compose-redis.yml -p redis up -d"
+
+  compose:redis:down:
+    desc: brings up the compose environment for redis
+    cmds:
+      - "docker compose -p redis down"
+
+  compose:fga:
+    desc: brings up the compose environment for openfga development
+    cmds:
+      - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
+
+  compose:fga:down:
+    desc: brings the fga compose environment down
+    cmds: 
+      - docker compose -p fga down
+
+  fga:open:
+    desc: opens the fga playground in a browser
+    cmds: 
+      - 'open "http://localhost:3000/playground"'
+
+  fga:up:
+    desc: brings the fga compose environment up and opens the fga playground
+    aliases: [fgaup]
+    cmds:
+      - task: compose:fga
+      - task: fga:open
+
+  rover:
+    desc: launches an interactive browser to navigate the configured graph schema
+    cmds:
+      - 'open "http://localhost:4000"'
+      - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept

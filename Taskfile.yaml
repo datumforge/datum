@@ -2,6 +2,9 @@ version: '3'
 
 includes:
   cli: ./cli
+  docker: ./docker
+  fga: ./fga
+  db: ./db
 
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
@@ -10,25 +13,6 @@ env:
   ENV: config
 
 tasks:
-  clean:generated:
-    desc: cleans ent / gqlgen generated files to be re-generated
-    cmds:
-      - |
-        echo "Enter the name of the ent schema object name to clean:"
-        read clean;
-        go run ./internal/entclean/main.go --path=internal/ent ${clean};
-      - "rm -f schema/ent.graphql"
-      - "rm -f schema.graphql"
-      - "rm -rf internal/datumclient/"
-  clean:local:
-    desc: cleans up datum.db and datum-cli local
-    cmds:
-      - "rm -f datum.db"
-      - "rm -f datum-cli"
-  ent:
-    desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
-    cmds:
-      - go generate ./...
   install:
     desc: installs tools and packages needed to develop against the datum repo
     cmds:
@@ -41,6 +25,13 @@ tasks:
       - "brew install openfga/tap/fga"
       - "go install go.uber.org/mock/mockgen@latest"
       - defer: { task: go:tidy }
+
+  ## Generate tasks
+  ent:
+    desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
+    cmds:
+      - go generate ./...
+
   gqlgen:
     desc: runs gqlgen and gqlgenc commands using gen_generate.go and entc
     cmds:
@@ -48,72 +39,53 @@ tasks:
       - task: tidy
       - go run ./gen_schema.go
       - go run github.com/Yamashou/gqlgenc generate --configdir schema
+
   generate:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc. 
     cmds:
       - task: ent
       - task: gqlgen
       - cp ./internal/ent/generated/openapi.json ./internal/httpserve/route
-  atlas:
-    desc: runs the atlas create and lint commands
-    aliases: [atlas]
-    cmds:
-      - task: atlas:create
-      - task: atlas:lint
-  atlas:create:
-    desc: creates an atlas migration if one is needed based on the ent schema definitions
+
+  clean:generated:
+    desc: cleans ent / gqlgen generated files to be re-generated
     cmds:
       - |
-        echo "If there is no schema to generate, this will not create a file (hint: name it your branch name if you're not sure) - enter the name of the migration:"
-        read migration;
-        go run db/create_migrations.go ${migration};
-  atlas:lint:
-    desc: lints the pushed migration files
-    ignore_error: true
-    cmds:
-      - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w
-  atlas:migrate:
-    desc: pushes the generated migration files to atlas cloud
-    cmds:
-      - atlas migrate push datum --dev-url "sqlite://dev?mode=memory&_fk=1" --dir "file://db/migrations"
-  atlas:resethash:
-    desc: re-sets the checksum created by the atlas package so that a complete migration can be re-created if deleted
-    cmds:
-      - atlas migrate hash --dir="file://db/migrations"
-  rover:
-    desc: launches an interactive browser to navigate the configured graph schema
-    cmds:
-      - 'open "http://localhost:4000"'
-      - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
-  run-dev:
-    dotenv: ['{{.ENV}}/.env-dev']
-    desc: runs the datum server with oidc enabled
-    cmds:
-    - task: compose:redis
-    - task: compose:fga
-    - go run main.go serve --debug --pretty
+        echo "Enter the name of the ent schema object name to clean:"
+        read clean;
+        go run ./internal/entclean/main.go --path=internal/ent ${clean};
+      - "rm -f schema/ent.graphql"
+      - "rm -f schema.graphql"
+      - "rm -rf internal/datumclient/"
+
+  ## Go tasks
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
       - golangci-lint run -v
+
   go:test:
     desc: runs and outputs results of created go tests
     cmds:
       - go test -v ./...
+
   go:tidy:
     desc: Runs go mod tidy on the backend
     aliases: [tidy]
     cmds:
       - go mod tidy
+
   go:build:
     desc: Runs go build for the datum server
     cmds:
       - go build -mod=mod -o datum
+
   go:build-cli:
     aliases: [buildcli]
     desc: Runs go build for the datum cli
     cmds:
       - go build -mod=mod -o datum-cli ./cmd/cli 
+
   go:all:
     aliases: [go]
     desc: Runs all go test and lint related tasks
@@ -121,62 +93,9 @@ tasks:
       - task: go:tidy
       - task: go:lint
       - task: go:test
-  compose:fga:
-    desc: brings up the compose environment for openfga development
-    cmds:
-      - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
-  fga:create:
-    desc: creates a new fga store with the testdata model
-    cmds:
-      - fga store create --name "datum dev" --model fga/model/datum.fga
-  fga:open:
-    desc: opens the fga playground in a browser
-    cmds: 
-      - 'open "http://localhost:3000/playground"'
-  fga:up:
-    desc: brings the fga compose environment up and opens the fga playground
-    aliases: [fgaup]
-    cmds:
-      - task: compose:fga
-      - task: fga:open
-  fga:test:
-     desc: runs the fga model tests
-     cmds: 
-      - fga model test --tests fga/tests/tests.yaml 
-  compose:fga:down:
-    desc: brings the fga compose environment down
-    cmds: 
-      - docker compose -p fga down
-  compose:redis:
-    desc: brings up the compose environment for redis
-    cmds:
-      - "docker compose -f ./docker/docker-compose-redis.yml up -d"
-  docker:build:
-    desc: builds the datum docker image
-    cmds:
-      - docker build -f docker/Dockerfile .
-  docker:build:aio:
-    desc: builds the datum docker image all-in-one image
-    cmds:
-      - docker build -f docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
-  compose:datum:
-    desc: brings up the compose environment for the datum server configured with auth
-    deps: [docker:build]
-    cmds:
-      - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
-  compose:datum:down:
-    desc: brings the datum compose environment down
-    cmds:
-      - "docker compose -p datum down"
-  compose:all:up:
-    desc: brings up the full docker compose development environment including datum server, fga, and rover
-    cmds:
-      - task: compose:datum
-      - task: rover
-  compose:all:down: 
-    desc: brings down both fga and datum server compose environments 
-    cmds:
-      - task: compose:datum:down
+
+ 
+  # dev tasks
   pr:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
     cmds:
@@ -184,10 +103,7 @@ tasks:
       - task: atlas
       - task: go
       - task: fga:test
-  db:console:
-    desc: launches an interactive terminal to the local datum db with some tasty options
-    cmds:
-      -  sqlite3 -column -header -box datum.db
+
   ci:
     desc: a task that runs during CI
     cmds:
@@ -202,12 +118,13 @@ tasks:
         echo "$status"
         exit 1
         fi
-  email:
-    deps: [shell]
-    desc: a task to burn local db and bring stack back up and re-test
+
+  clean:local:
+    desc: cleans up datum.db and datum-cli local
     cmds:
-      - task: buildcli
-      - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"
+      - "rm -f datum.db"
+      - "rm -f datum-cli"
+
   shell:
     desc: open a new shell to launch server as a dep
     cmds:
@@ -217,8 +134,4 @@ tasks:
     vars:
       PWD:
         sh: pwd
-  newschema:
-    desc: generate a new ent schema from template
-    silent: true
-    cmds:
-      - go run -mod=mod entgo.io/ent/cmd/ent new --template ./internal/ent/base/entinit.tmpl --target ./internal/ent/schema {{.CLI_ARGS}}
+      

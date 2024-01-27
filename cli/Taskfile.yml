@@ -6,3 +6,10 @@ tasks:
     aliases: [createorg]
     cmds:
       - go run cmd/cli/main.go org create -n your_new_org -d "my new org again"
+
+  email:
+    deps: [shell]
+    desc: a task to burn local db and bring stack back up and re-test
+    cmds:
+      - task: buildcli
+      - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"

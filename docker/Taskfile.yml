@@ -1,62 +1,54 @@
 version: "3"
 
 tasks:
-  run-dev:
-    dotenv: ['{{.ENV}}/.env-dev']
-    desc: runs the datum server with oidc enabled
-    cmds:
-    - task: compose:redis
-    - task: compose:fga
-    - go run main.go serve --debug --pretty
-
-  docker:build:
+  build:
     desc: builds the datum docker image
     cmds:
       - docker build -f docker/Dockerfile .
 
-  docker:build:aio:
+  build:aio:
     desc: builds the datum docker image all-in-one image
     cmds:
       - docker build -f docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
 
-  compose:datum:
+  datum:
     desc: brings up the compose environment for the datum server configured with auth
     deps: [docker:build]
     cmds:
       - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
 
-  compose:datum:down:
+  datum:down:
     desc: brings the datum compose environment down
     cmds:
       - "docker compose -p datum down"
 
-  compose:all:up:
+  all:up:
     desc: brings up the full docker compose development environment including datum server, fga, and rover
     cmds:
-      - task: compose:datum
+      - task: datum
       - task: rover
 
-  compose:all:down: 
+  all:down: 
     desc: brings down both fga and datum server compose environments 
     cmds:
-      - task: compose:datum:down
+      - task: datum:down
 
-  compose:redis:
+  redis:
     desc: brings up the compose environment for redis
     cmds:
       - "docker compose -f ./docker/docker-compose-redis.yml -p redis up -d"
 
-  compose:redis:down:
+  redis:down:
     desc: brings up the compose environment for redis
     cmds:
       - "docker compose -p redis down"
 
-  compose:fga:
+  fga:
     desc: brings up the compose environment for openfga development
     cmds:
       - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
 
-  compose:fga:down:
+  fga:down:
     desc: brings the fga compose environment down
     cmds: 
       - docker compose -p fga down
@@ -70,7 +62,7 @@ tasks:
     desc: brings the fga compose environment up and opens the fga playground
     aliases: [fgaup]
     cmds:
-      - task: compose:fga
+      - task: fga
       - task: fga:open
 
   rover:

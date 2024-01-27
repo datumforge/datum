@@ -1,10 +1,19 @@
 version: '3'
 
 includes:
-  cli: ./cli
-  docker: ./docker
-  fga: ./fga
-  db: ./db
+  cli: 
+    taskfile: ./cmd/cli
+    dir: ./cmd/cli
+  docker: 
+    taskfile: ./docker
+    aliases: [compose]
+  fga: 
+    taskfile: ./fga
+    dir: ./fga
+  db: 
+    taskfile: ./db
+    dir: ./db
+    aliases: [atlas]
 
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
@@ -93,14 +102,21 @@ tasks:
       - task: go:tidy
       - task: go:lint
       - task: go:test
-
  
   # dev tasks
+  run-dev:
+    dotenv: ['{{.ENV}}/.env-dev']
+    desc: runs the datum server with oidc enabled
+    cmds:
+    - task: compose:redis
+    - task: compose:fga
+    - go run main.go serve --debug --pretty
+
   pr:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
     cmds:
       - task: generate
-      - task: atlas
+      - task: atlas:all
       - task: go
       - task: fga:test
 
@@ -124,6 +140,14 @@ tasks:
     cmds:
       - "rm -f datum.db"
       - "rm -f datum-cli"
+
+  email:
+    deps: [shell]
+    desc: a task to burn local db and bring stack back up and re-test
+    cmds:
+      - task: buildcli
+      - sleep 5
+      - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"
 
   shell:
     desc: open a new shell to launch server as a dep

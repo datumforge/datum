@@ -2,63 +2,75 @@ version: "3"
 
 tasks:
   build:
+    dir: ..
     desc: builds the datum docker image
     cmds:
       - docker build -f docker/Dockerfile .
 
   build:aio:
+    dir: ..
     desc: builds the datum docker image all-in-one image
     cmds:
-      - docker build -f docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
+      - docker build -f ./docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
 
   datum:
+    dir: ..
     desc: brings up the compose environment for the datum server configured with auth
-    deps: [docker:build]
+    deps: [build]
     cmds:
       - "docker compose -f ./docker/docker-compose-redis.yml  -f ./docker/docker-compose.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
 
   datum:down:
+    dir: ..
     desc: brings the datum compose environment down
     cmds:
       - "docker compose -p datum down"
 
   all:up:
+    dir: ..
     desc: brings up the full docker compose development environment including datum server, fga, and rover
     cmds:
       - task: datum
       - task: rover
 
   all:down: 
+    dir: ..
     desc: brings down both fga and datum server compose environments 
     cmds:
       - task: datum:down
 
   redis:
+    dir: ..
     desc: brings up the compose environment for redis
     cmds:
       - "docker compose -f ./docker/docker-compose-redis.yml -p redis up -d"
 
   redis:down:
+    dir: ..
     desc: brings up the compose environment for redis
     cmds:
       - "docker compose -p redis down"
 
   fga:
+    dir: ..
     desc: brings up the compose environment for openfga development
     cmds:
       - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
 
   fga:down:
+    dir: ..
     desc: brings the fga compose environment down
     cmds: 
       - docker compose -p fga down
 
   fga:open:
+    dir: ..
     desc: opens the fga playground in a browser
     cmds: 
       - 'open "http://localhost:3000/playground"'
 
   fga:up:
+    dir: ..
     desc: brings the fga compose environment up and opens the fga playground
     aliases: [fgaup]
     cmds:
@@ -66,6 +78,7 @@ tasks:
       - task: fga:open
 
   rover:
+    dir: ..
     desc: launches an interactive browser to navigate the configured graph schema
     cmds:
       - 'open "http://localhost:4000"'

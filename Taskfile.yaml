@@ -6,6 +6,7 @@ includes:
     dir: ./cmd/cli
   docker: 
     taskfile: ./docker
+    dir: ./docker
     aliases: [compose]
   fga: 
     taskfile: ./fga

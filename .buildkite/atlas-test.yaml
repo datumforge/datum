@@ -11,7 +11,7 @@ steps:
   - label: ":sqlite: atlas"
     key: "sqlite"
     plugins:
-      - datumforge/atlas#f80aafb72b2aa4d593e76208b6ce96cbc74c331f:
+      - datumforge/atlas#7b23368a9f641ef2e72344a90684acdf07a6f6ac:
           project: datum
           dev-url: "sqlite://dev?mode=memory&_fk=1"
           dir: "file://db/migrations"

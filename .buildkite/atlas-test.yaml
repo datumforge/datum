@@ -1,5 +1,5 @@
 agents:
-  hostname: datum-bk
+  name: buildkite-agent-vm-1
 
 env: 
   CI: true

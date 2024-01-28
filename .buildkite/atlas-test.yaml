@@ -1,5 +1,5 @@
 agents:
-  name: buildkite-agent-vm-1
+  tag: funk
 
 env: 
   CI: true

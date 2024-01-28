@@ -219,7 +219,7 @@ func (d SigningInfo) verifyData(data []byte, signature string, secret []byte) (e
 }
 
 // NewOrgInvitationToken creates a token struct from an email address that expires
-// in 7 days
+// in 14 days
 func NewOrgInvitationToken(email string, orgID ulid.ULID) (token *OrgInviteToken, err error) {
 	if email == "" {
 		return nil, ErrInvitetokenMissingEmail

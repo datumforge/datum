@@ -18,7 +18,7 @@ func OrgInvite(c *Client, ctx context.Context, r handlers.Invite) (*handlers.Inv
 	method := http.MethodPost
 	endpoint := "invite"
 
-	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
+	u := fmt.Sprintf("%s%s/%s?token=%s", c.Client.BaseURL, route.V1Version, endpoint, r.Token)
 
 	queryURL, err := url.Parse(u)
 	if err != nil {

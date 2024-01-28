@@ -8,6 +8,8 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
@@ -36,6 +38,17 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 		q.Logger.Errorw("unexpected type for organization query")
 
 		return nil, ErrInternalServerError
+	}
+
+	// by pass checks on invite
+	if rule.ContextHasPrivacyTokenOfType(ctx, &token.OrgInviteToken{}) {
+		if len(orgs) != 1 {
+			q.Logger.Errorw("unexpected number of orgs on invite")
+
+			return nil, ErrInternalServerError
+		}
+
+		return []*generated.Organization{orgs[0]}, nil
 	}
 
 	// get userID for tuple checks

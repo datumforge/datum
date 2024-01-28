@@ -71,7 +71,7 @@ func (h *Handler) OrganizationInvite(ctx echo.Context) error {
 	}
 
 	// set tokens for request
-	if err := invite.setOrgInviteTokens(invitedUser.Edges.Owner, inv.Token); err != nil {
+	if err := invite.setOrgInviteTokens(invitedUser, inv.Token); err != nil {
 		h.Logger.Errorw("unable to set invite token for request", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -135,11 +135,12 @@ func (h *Handler) OrganizationInvite(ctx echo.Context) error {
 	}
 
 	out := &InviteReply{
-		ID:          createdUser.ID,
-		Email:       createdUser.Email,
-		JoinedOrgID: mem.OrgID,
-		Role:        string(mem.Role),
-		Message:     "Welcome to your new organization!",
+		ID:            createdUser.ID,
+		Email:         createdUser.Email,
+		JoinedOrgID:   mem.OrgID,
+		PersonalOrgID: createdUser.Edges.Setting.DefaultOrg, // default org is set to personal org on user creation
+		Role:          string(mem.Role),
+		Message:       "Welcome to your new organization!",
 	}
 
 	return ctx.JSON(http.StatusCreated, out)
@@ -251,16 +252,13 @@ func (i *Invite) CreateInviteToken() error {
 }
 
 // setUserTokens sets the fields to verify the email
-func (i *Invite) setOrgInviteTokens(inv *generated.Organization, invToken string) error {
-	tokens := inv.Edges.Invites
-	for _, t := range tokens {
-		if t.Token == invToken {
-			i.InviteToken.Token = sql.NullString{String: t.Token, Valid: true}
-			i.InviteToken.Secret = *t.Secret
-			i.InviteToken.Expires = sql.NullString{String: t.Expires.Format(time.RFC3339Nano), Valid: true}
+func (i *Invite) setOrgInviteTokens(inv *generated.Invite, invToken string) error {
+	if inv.Token == invToken {
+		i.InviteToken.Token = sql.NullString{String: inv.Token, Valid: true}
+		i.InviteToken.Secret = *inv.Secret
+		i.InviteToken.Expires = sql.NullString{String: inv.Expires.Format(time.RFC3339Nano), Valid: true}
 
-			return nil
-		}
+		return nil
 	}
 
 	return ErrNotFound

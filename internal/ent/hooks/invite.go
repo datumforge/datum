@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/sendgrid"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 // HookInvite runs on invite mutations
@@ -71,6 +72,8 @@ func HookInvite() ent.Hook {
 
 						return retValue, err
 					}
+
+					return retValue, err
 				}
 
 				m.Logger.Errorw("unable to create org invitation", "error", err)
@@ -142,8 +145,14 @@ func personalOrgNoInvite(ctx context.Context, m *generated.InviteMutation) error
 
 func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	email, _ := m.Recipient()
+	owner, _ := m.OwnerID()
 
-	verify, err := tokens.NewVerificationToken(email)
+	oid, err := ulids.Parse(owner)
+	if err != nil {
+		return nil, err
+	}
+
+	verify, err := tokens.NewOrgInvitationToken(email, oid)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +164,7 @@ func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*ge
 
 	// set values on mutation
 	m.SetToken(token)
-	m.SetExpires(time.Now().Add(time.Hour * 24 * 14)) //nolint:gomnd
+	m.SetExpires(verify.ExpiresAt)
 	m.SetSecret(secret)
 
 	return m, nil

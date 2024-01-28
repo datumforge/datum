@@ -6,6 +6,7 @@ import (
 
 	"entgo.io/ent"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -23,6 +24,13 @@ import (
 func HookInvite() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.InviteFunc(func(ctx context.Context, m *generated.InviteMutation) (generated.Value, error) {
+			m, err := confirmRequestorRole(ctx, m)
+			if err != nil {
+				m.Logger.Errorw("requestor does not have permission to invite to organization")
+
+				return nil, err
+			}
+
 			if err := personalOrgNoInvite(ctx, m); err != nil {
 				m.Logger.Infow("external users cannot be invited to personal organizations")
 
@@ -43,7 +51,7 @@ func HookInvite() ent.Hook {
 				return nil, ErrUserAlreadyOrgMember
 			}
 
-			m, err = setRequestorAndToken(ctx, m)
+			m, err = setRecipientAndToken(ctx, m)
 			if err != nil {
 				m.Logger.Errorw("error creating verification token", "error", err)
 
@@ -132,7 +140,7 @@ func personalOrgNoInvite(ctx context.Context, m *generated.InviteMutation) error
 	return nil
 }
 
-func setRequestorAndToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
+func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	email, _ := m.Recipient()
 
 	verify, err := tokens.NewVerificationToken(email)
@@ -150,7 +158,12 @@ func setRequestorAndToken(ctx context.Context, m *generated.InviteMutation) (*ge
 	m.SetExpires(time.Now().Add(time.Hour * 24 * 14)) //nolint:gomnd
 	m.SetSecret(secret)
 
-	// requestor is the authenticated user
+	return m, nil
+}
+
+func confirmRequestorRole(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
+	orgID, _ := m.OwnerID()
+
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		m.Logger.Errorw("unable to get requestor", "error", err)
@@ -159,6 +172,13 @@ func setRequestorAndToken(ctx context.Context, m *generated.InviteMutation) (*ge
 	}
 
 	m.SetRequestorID(userID)
+
+	getRole, err := m.Client().OrgMembership.Query().Where((orgmembership.HasUserWith(user.ID(userID)))).Where(orgmembership.HasOrgWith(organization.ID(orgID))).Where(orgmembership.RoleEQ(enums.RoleAdmin)).Exist(ctx)
+	if getRole {
+		m.Logger.Errorw("requestor must be an admin to invite others to organization")
+
+		return nil, err
+	}
 
 	return m, nil
 }

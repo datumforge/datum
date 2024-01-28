@@ -111,6 +111,10 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
+	if err := registerInviteHandler(router, h); err != nil {
+		return err
+	}
+
 	return nil
 }
 

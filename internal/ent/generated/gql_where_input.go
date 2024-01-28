@@ -3160,6 +3160,12 @@ type InviteWhereInput struct {
 	StatusIn    []enums.InviteStatus `json:"statusIn,omitempty"`
 	StatusNotIn []enums.InviteStatus `json:"statusNotIn,omitempty"`
 
+	// "role" field predicates.
+	Role      *enums.Role  `json:"role,omitempty"`
+	RoleNEQ   *enums.Role  `json:"roleNEQ,omitempty"`
+	RoleIn    []enums.Role `json:"roleIn,omitempty"`
+	RoleNotIn []enums.Role `json:"roleNotIn,omitempty"`
+
 	// "send_attempts" field predicates.
 	SendAttempts      *int  `json:"sendAttempts,omitempty"`
 	SendAttemptsNEQ   *int  `json:"sendAttemptsNEQ,omitempty"`
@@ -3578,6 +3584,18 @@ func (i *InviteWhereInput) P() (predicate.Invite, error) {
 	}
 	if len(i.StatusNotIn) > 0 {
 		predicates = append(predicates, invite.StatusNotIn(i.StatusNotIn...))
+	}
+	if i.Role != nil {
+		predicates = append(predicates, invite.RoleEQ(*i.Role))
+	}
+	if i.RoleNEQ != nil {
+		predicates = append(predicates, invite.RoleNEQ(*i.RoleNEQ))
+	}
+	if len(i.RoleIn) > 0 {
+		predicates = append(predicates, invite.RoleIn(i.RoleIn...))
+	}
+	if len(i.RoleNotIn) > 0 {
+		predicates = append(predicates, invite.RoleNotIn(i.RoleNotIn...))
 	}
 	if i.SendAttempts != nil {
 		predicates = append(predicates, invite.SendAttemptsEQ(*i.SendAttempts))

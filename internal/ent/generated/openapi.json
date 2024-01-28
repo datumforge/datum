@@ -2591,6 +2591,15 @@
                     ],
                     "default": "INVITATION_SENT"
                   },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER"
+                    ],
+                    "default": "MEMBER"
+                  },
                   "send_attempts": {
                     "type": "integer"
                   },
@@ -2613,6 +2622,7 @@
                   "expires",
                   "recipient",
                   "status",
+                  "role",
                   "send_attempts",
                   "requestor_id",
                   "secret",
@@ -2784,6 +2794,15 @@
                       "INVITATION_SENT"
                     ],
                     "default": "INVITATION_SENT"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER"
+                    ],
+                    "default": "MEMBER"
                   },
                   "send_attempts": {
                     "type": "integer"
@@ -10029,6 +10048,15 @@
             ],
             "default": "INVITATION_SENT"
           },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
           "send_attempts": {
             "type": "integer"
           },
@@ -10051,6 +10079,7 @@
           "token",
           "recipient",
           "status",
+          "role",
           "send_attempts",
           "requestor_id",
           "owner"
@@ -10100,6 +10129,15 @@
             ],
             "default": "INVITATION_SENT"
           },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
           "send_attempts": {
             "type": "integer"
           },
@@ -10114,6 +10152,7 @@
           "owner_id",
           "recipient",
           "status",
+          "role",
           "send_attempts",
           "requestor_id"
         ]
@@ -10162,6 +10201,15 @@
             ],
             "default": "INVITATION_SENT"
           },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
           "send_attempts": {
             "type": "integer"
           },
@@ -10176,6 +10224,7 @@
           "owner_id",
           "recipient",
           "status",
+          "role",
           "send_attempts",
           "requestor_id"
         ]
@@ -10224,6 +10273,15 @@
             ],
             "default": "INVITATION_SENT"
           },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
           "send_attempts": {
             "type": "integer"
           },
@@ -10238,6 +10296,7 @@
           "owner_id",
           "recipient",
           "status",
+          "role",
           "send_attempts",
           "requestor_id"
         ]
@@ -10286,6 +10345,15 @@
             ],
             "default": "INVITATION_SENT"
           },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
           "send_attempts": {
             "type": "integer"
           },
@@ -10300,6 +10368,7 @@
           "owner_id",
           "recipient",
           "status",
+          "role",
           "send_attempts",
           "requestor_id"
         ]
@@ -12481,6 +12550,15 @@
             ],
             "default": "INVITATION_SENT"
           },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER"
+            ],
+            "default": "MEMBER"
+          },
           "send_attempts": {
             "type": "integer"
           },
@@ -12495,6 +12573,7 @@
           "owner_id",
           "recipient",
           "status",
+          "role",
           "send_attempts",
           "requestor_id"
         ]

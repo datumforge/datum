@@ -168,6 +168,20 @@ func (iu *InviteUpdate) SetNillableStatus(es *enums.InviteStatus) *InviteUpdate 
 	return iu
 }
 
+// SetRole sets the "role" field.
+func (iu *InviteUpdate) SetRole(e enums.Role) *InviteUpdate {
+	iu.mutation.SetRole(e)
+	return iu
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (iu *InviteUpdate) SetNillableRole(e *enums.Role) *InviteUpdate {
+	if e != nil {
+		iu.SetRole(*e)
+	}
+	return iu
+}
+
 // SetSendAttempts sets the "send_attempts" field.
 func (iu *InviteUpdate) SetSendAttempts(i int) *InviteUpdate {
 	iu.mutation.ResetSendAttempts()
@@ -270,6 +284,11 @@ func (iu *InviteUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "Invite.status": %w`, err)}
 		}
 	}
+	if v, ok := iu.mutation.Role(); ok {
+		if err := invite.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "Invite.role": %w`, err)}
+		}
+	}
 	if v, ok := iu.mutation.Secret(); ok {
 		if err := invite.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Invite.secret": %w`, err)}
@@ -328,6 +347,9 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := iu.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := iu.mutation.Role(); ok {
+		_spec.SetField(invite.FieldRole, field.TypeEnum, value)
 	}
 	if value, ok := iu.mutation.SendAttempts(); ok {
 		_spec.SetField(invite.FieldSendAttempts, field.TypeInt, value)
@@ -527,6 +549,20 @@ func (iuo *InviteUpdateOne) SetNillableStatus(es *enums.InviteStatus) *InviteUpd
 	return iuo
 }
 
+// SetRole sets the "role" field.
+func (iuo *InviteUpdateOne) SetRole(e enums.Role) *InviteUpdateOne {
+	iuo.mutation.SetRole(e)
+	return iuo
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (iuo *InviteUpdateOne) SetNillableRole(e *enums.Role) *InviteUpdateOne {
+	if e != nil {
+		iuo.SetRole(*e)
+	}
+	return iuo
+}
+
 // SetSendAttempts sets the "send_attempts" field.
 func (iuo *InviteUpdateOne) SetSendAttempts(i int) *InviteUpdateOne {
 	iuo.mutation.ResetSendAttempts()
@@ -642,6 +678,11 @@ func (iuo *InviteUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "Invite.status": %w`, err)}
 		}
 	}
+	if v, ok := iuo.mutation.Role(); ok {
+		if err := invite.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "Invite.role": %w`, err)}
+		}
+	}
 	if v, ok := iuo.mutation.Secret(); ok {
 		if err := invite.SecretValidator(v); err != nil {
 			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "Invite.secret": %w`, err)}
@@ -717,6 +758,9 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 	}
 	if value, ok := iuo.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := iuo.mutation.Role(); ok {
+		_spec.SetField(invite.FieldRole, field.TypeEnum, value)
 	}
 	if value, ok := iuo.mutation.SendAttempts(); ok {
 		_spec.SetField(invite.FieldSendAttempts, field.TypeInt, value)

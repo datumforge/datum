@@ -40,6 +40,8 @@ const (
 	FieldRecipient = "recipient"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldRole holds the string denoting the role field in the database.
+	FieldRole = "role"
 	// FieldSendAttempts holds the string denoting the send_attempts field in the database.
 	FieldSendAttempts = "send_attempts"
 	// FieldRequestorID holds the string denoting the requestor_id field in the database.
@@ -73,6 +75,7 @@ var Columns = []string{
 	FieldExpires,
 	FieldRecipient,
 	FieldStatus,
+	FieldRole,
 	FieldSendAttempts,
 	FieldRequestorID,
 	FieldSecret,
@@ -125,6 +128,18 @@ func StatusValidator(s enums.InviteStatus) error {
 		return nil
 	default:
 		return fmt.Errorf("invite: invalid enum value for status field: %q", s)
+	}
+}
+
+const DefaultRole enums.Role = "MEMBER"
+
+// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
+func RoleValidator(r enums.Role) error {
+	switch r.String() {
+	case "ADMIN", "MEMBER", "OWNER":
+		return nil
+	default:
+		return fmt.Errorf("invite: invalid enum value for role field: %q", r)
 	}
 }
 
@@ -191,6 +206,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
 }
 
+// ByRole orders the results by the role field.
+func ByRole(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRole, opts...).ToFunc()
+}
+
 // BySendAttempts orders the results by the send_attempts field.
 func BySendAttempts(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSendAttempts, opts...).ToFunc()
@@ -220,4 +240,11 @@ var (
 	_ graphql.Marshaler = (*enums.InviteStatus)(nil)
 	// enums.InviteStatus must implement graphql.Unmarshaler.
 	_ graphql.Unmarshaler = (*enums.InviteStatus)(nil)
+)
+
+var (
+	// enums.Role must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.Role)(nil)
+	// enums.Role must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.Role)(nil)
 )

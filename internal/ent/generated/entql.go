@@ -196,6 +196,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invite.FieldExpires:      {Type: field.TypeTime, Column: invite.FieldExpires},
 			invite.FieldRecipient:    {Type: field.TypeString, Column: invite.FieldRecipient},
 			invite.FieldStatus:       {Type: field.TypeEnum, Column: invite.FieldStatus},
+			invite.FieldRole:         {Type: field.TypeEnum, Column: invite.FieldRole},
 			invite.FieldSendAttempts: {Type: field.TypeInt, Column: invite.FieldSendAttempts},
 			invite.FieldRequestorID:  {Type: field.TypeString, Column: invite.FieldRequestorID},
 			invite.FieldSecret:       {Type: field.TypeBytes, Column: invite.FieldSecret},
@@ -1680,6 +1681,11 @@ func (f *InviteFilter) WhereRecipient(p entql.StringP) {
 // WhereStatus applies the entql string predicate on the status field.
 func (f *InviteFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(invite.FieldStatus))
+}
+
+// WhereRole applies the entql string predicate on the role field.
+func (f *InviteFilter) WhereRole(p entql.StringP) {
+	f.Where(p.Field(invite.FieldRole))
 }
 
 // WhereSendAttempts applies the entql int predicate on the send_attempts field.

@@ -41,6 +41,8 @@ type Invite struct {
 	Recipient string `json:"recipient,omitempty"`
 	// the status of the invitation
 	Status enums.InviteStatus `json:"status,omitempty"`
+	// Role holds the value of the "role" field.
+	Role enums.Role `json:"role,omitempty"`
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts int `json:"send_attempts,omitempty"`
 	// the user who initatied the invitation
@@ -86,7 +88,7 @@ func (*Invite) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case invite.FieldSendAttempts:
 			values[i] = new(sql.NullInt64)
-		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldDeletedBy, invite.FieldOwnerID, invite.FieldToken, invite.FieldRecipient, invite.FieldStatus, invite.FieldRequestorID:
+		case invite.FieldID, invite.FieldCreatedBy, invite.FieldUpdatedBy, invite.FieldDeletedBy, invite.FieldOwnerID, invite.FieldToken, invite.FieldRecipient, invite.FieldStatus, invite.FieldRole, invite.FieldRequestorID:
 			values[i] = new(sql.NullString)
 		case invite.FieldCreatedAt, invite.FieldUpdatedAt, invite.FieldDeletedAt, invite.FieldExpires:
 			values[i] = new(sql.NullTime)
@@ -177,6 +179,12 @@ func (i *Invite) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[j])
 			} else if value.Valid {
 				i.Status = enums.InviteStatus(value.String)
+			}
+		case invite.FieldRole:
+			if value, ok := values[j].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field role", values[j])
+			} else if value.Valid {
+				i.Role = enums.Role(value.String)
 			}
 		case invite.FieldSendAttempts:
 			if value, ok := values[j].(*sql.NullInt64); !ok {
@@ -270,6 +278,9 @@ func (i *Invite) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", i.Status))
+	builder.WriteString(", ")
+	builder.WriteString("role=")
+	builder.WriteString(fmt.Sprintf("%v", i.Role))
 	builder.WriteString(", ")
 	builder.WriteString("send_attempts=")
 	builder.WriteString(fmt.Sprintf("%v", i.SendAttempts))

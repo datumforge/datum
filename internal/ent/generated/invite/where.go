@@ -753,6 +753,36 @@ func StatusNotIn(vs ...enums.InviteStatus) predicate.Invite {
 	return predicate.Invite(sql.FieldNotIn(FieldStatus, v...))
 }
 
+// RoleEQ applies the EQ predicate on the "role" field.
+func RoleEQ(v enums.Role) predicate.Invite {
+	vc := v
+	return predicate.Invite(sql.FieldEQ(FieldRole, vc))
+}
+
+// RoleNEQ applies the NEQ predicate on the "role" field.
+func RoleNEQ(v enums.Role) predicate.Invite {
+	vc := v
+	return predicate.Invite(sql.FieldNEQ(FieldRole, vc))
+}
+
+// RoleIn applies the In predicate on the "role" field.
+func RoleIn(vs ...enums.Role) predicate.Invite {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Invite(sql.FieldIn(FieldRole, v...))
+}
+
+// RoleNotIn applies the NotIn predicate on the "role" field.
+func RoleNotIn(vs ...enums.Role) predicate.Invite {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Invite(sql.FieldNotIn(FieldRole, v...))
+}
+
 // SendAttemptsEQ applies the EQ predicate on the "send_attempts" field.
 func SendAttemptsEQ(v int) predicate.Invite {
 	return predicate.Invite(sql.FieldEQ(FieldSendAttempts, v))

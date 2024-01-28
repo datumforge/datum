@@ -336,15 +336,15 @@ func init() {
 		}
 	}()
 	// inviteDescSendAttempts is the schema descriptor for send_attempts field.
-	inviteDescSendAttempts := inviteFields[4].Descriptor()
+	inviteDescSendAttempts := inviteFields[5].Descriptor()
 	// invite.DefaultSendAttempts holds the default value on creation for the send_attempts field.
 	invite.DefaultSendAttempts = inviteDescSendAttempts.Default.(int)
 	// inviteDescRequestorID is the schema descriptor for requestor_id field.
-	inviteDescRequestorID := inviteFields[5].Descriptor()
+	inviteDescRequestorID := inviteFields[6].Descriptor()
 	// invite.RequestorIDValidator is a validator for the "requestor_id" field. It is called by the builders before save.
 	invite.RequestorIDValidator = inviteDescRequestorID.Validators[0].(func(string) error)
 	// inviteDescSecret is the schema descriptor for secret field.
-	inviteDescSecret := inviteFields[6].Descriptor()
+	inviteDescSecret := inviteFields[7].Descriptor()
 	// invite.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
 	invite.SecretValidator = inviteDescSecret.Validators[0].(func([]byte) error)
 	// inviteDescID is the schema descriptor for id field.

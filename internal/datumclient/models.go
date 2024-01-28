@@ -114,6 +114,7 @@ type CreateInviteInput struct {
 	Recipient string `json:"recipient"`
 	// the status of the invitation
 	Status *enums.InviteStatus `json:"status,omitempty"`
+	Role   *enums.Role         `json:"role,omitempty"`
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts *int64 `json:"sendAttempts,omitempty"`
 	// the user who initatied the invitation
@@ -1273,6 +1274,7 @@ type Invite struct {
 	Recipient string `json:"recipient"`
 	// the status of the invitation
 	Status enums.InviteStatus `json:"status"`
+	Role   enums.Role         `json:"role"`
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts int64 `json:"sendAttempts"`
 	// the user who initatied the invitation
@@ -1440,6 +1442,11 @@ type InviteWhereInput struct {
 	StatusNeq   *enums.InviteStatus  `json:"statusNEQ,omitempty"`
 	StatusIn    []enums.InviteStatus `json:"statusIn,omitempty"`
 	StatusNotIn []enums.InviteStatus `json:"statusNotIn,omitempty"`
+	// role field predicates
+	Role      *enums.Role  `json:"role,omitempty"`
+	RoleNeq   *enums.Role  `json:"roleNEQ,omitempty"`
+	RoleIn    []enums.Role `json:"roleIn,omitempty"`
+	RoleNotIn []enums.Role `json:"roleNotIn,omitempty"`
 	// send_attempts field predicates
 	SendAttempts      *int64  `json:"sendAttempts,omitempty"`
 	SendAttemptsNeq   *int64  `json:"sendAttemptsNEQ,omitempty"`
@@ -2929,6 +2936,7 @@ type UpdateInviteInput struct {
 	Recipient *string `json:"recipient,omitempty"`
 	// the status of the invitation
 	Status *enums.InviteStatus `json:"status,omitempty"`
+	Role   *enums.Role         `json:"role,omitempty"`
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts *int64  `json:"sendAttempts,omitempty"`
 	OwnerID      *string `json:"ownerID,omitempty"`

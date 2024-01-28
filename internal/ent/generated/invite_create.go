@@ -144,6 +144,20 @@ func (ic *InviteCreate) SetNillableStatus(es *enums.InviteStatus) *InviteCreate 
 	return ic
 }
 
+// SetRole sets the "role" field.
+func (ic *InviteCreate) SetRole(e enums.Role) *InviteCreate {
+	ic.mutation.SetRole(e)
+	return ic
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (ic *InviteCreate) SetNillableRole(e *enums.Role) *InviteCreate {
+	if e != nil {
+		ic.SetRole(*e)
+	}
+	return ic
+}
+
 // SetSendAttempts sets the "send_attempts" field.
 func (ic *InviteCreate) SetSendAttempts(i int) *InviteCreate {
 	ic.mutation.SetSendAttempts(i)
@@ -244,6 +258,10 @@ func (ic *InviteCreate) defaults() error {
 		v := invite.DefaultStatus
 		ic.mutation.SetStatus(v)
 	}
+	if _, ok := ic.mutation.Role(); !ok {
+		v := invite.DefaultRole
+		ic.mutation.SetRole(v)
+	}
 	if _, ok := ic.mutation.SendAttempts(); !ok {
 		v := invite.DefaultSendAttempts
 		ic.mutation.SetSendAttempts(v)
@@ -294,6 +312,14 @@ func (ic *InviteCreate) check() error {
 	if v, ok := ic.mutation.Status(); ok {
 		if err := invite.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`generated: validator failed for field "Invite.status": %w`, err)}
+		}
+	}
+	if _, ok := ic.mutation.Role(); !ok {
+		return &ValidationError{Name: "role", err: errors.New(`generated: missing required field "Invite.role"`)}
+	}
+	if v, ok := ic.mutation.Role(); ok {
+		if err := invite.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "Invite.role": %w`, err)}
 		}
 	}
 	if _, ok := ic.mutation.SendAttempts(); !ok {
@@ -393,6 +419,10 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.Status(); ok {
 		_spec.SetField(invite.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := ic.mutation.Role(); ok {
+		_spec.SetField(invite.FieldRole, field.TypeEnum, value)
+		_node.Role = value
 	}
 	if value, ok := ic.mutation.SendAttempts(); ok {
 		_spec.SetField(invite.FieldSendAttempts, field.TypeInt, value)

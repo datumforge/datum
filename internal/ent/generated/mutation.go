@@ -6571,6 +6571,7 @@ type InviteMutation struct {
 	expires          *time.Time
 	recipient        *string
 	status           *enums.InviteStatus
+	role             *enums.Role
 	send_attempts    *int
 	addsend_attempts *int
 	requestor_id     *string
@@ -7135,6 +7136,42 @@ func (m *InviteMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetRole sets the "role" field.
+func (m *InviteMutation) SetRole(e enums.Role) {
+	m.role = &e
+}
+
+// Role returns the value of the "role" field in the mutation.
+func (m *InviteMutation) Role() (r enums.Role, exists bool) {
+	v := m.role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRole returns the old "role" field's value of the Invite entity.
+// If the Invite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InviteMutation) OldRole(ctx context.Context) (v enums.Role, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRole is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRole requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRole: %w", err)
+	}
+	return oldValue.Role, nil
+}
+
+// ResetRole resets all changes to the "role" field.
+func (m *InviteMutation) ResetRole() {
+	m.role = nil
+}
+
 // SetSendAttempts sets the "send_attempts" field.
 func (m *InviteMutation) SetSendAttempts(i int) {
 	m.send_attempts = &i
@@ -7324,7 +7361,7 @@ func (m *InviteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InviteMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, invite.FieldCreatedAt)
 	}
@@ -7357,6 +7394,9 @@ func (m *InviteMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, invite.FieldStatus)
+	}
+	if m.role != nil {
+		fields = append(fields, invite.FieldRole)
 	}
 	if m.send_attempts != nil {
 		fields = append(fields, invite.FieldSendAttempts)
@@ -7397,6 +7437,8 @@ func (m *InviteMutation) Field(name string) (ent.Value, bool) {
 		return m.Recipient()
 	case invite.FieldStatus:
 		return m.Status()
+	case invite.FieldRole:
+		return m.Role()
 	case invite.FieldSendAttempts:
 		return m.SendAttempts()
 	case invite.FieldRequestorID:
@@ -7434,6 +7476,8 @@ func (m *InviteMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldRecipient(ctx)
 	case invite.FieldStatus:
 		return m.OldStatus(ctx)
+	case invite.FieldRole:
+		return m.OldRole(ctx)
 	case invite.FieldSendAttempts:
 		return m.OldSendAttempts(ctx)
 	case invite.FieldRequestorID:
@@ -7525,6 +7569,13 @@ func (m *InviteMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case invite.FieldRole:
+		v, ok := value.(enums.Role)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRole(v)
 		return nil
 	case invite.FieldSendAttempts:
 		v, ok := value.(int)
@@ -7670,6 +7721,9 @@ func (m *InviteMutation) ResetField(name string) error {
 		return nil
 	case invite.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case invite.FieldRole:
+		m.ResetRole()
 		return nil
 	case invite.FieldSendAttempts:
 		m.ResetSendAttempts()

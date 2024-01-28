@@ -6,6 +6,7 @@ mutation CreateInvite($input: CreateInviteInput!) {
       status
       requestorID
       expires
+      role
       owner {
         id
       }
@@ -32,6 +33,7 @@ query GetInvite($inviteId: ID!) {
     recipient
     status
     requestorID
+    role
     owner {
       id
       displayName
@@ -50,6 +52,7 @@ query InvitesByOrgID($where: InviteWhereInput) {
             recipient
             status
             requestorID
+            role
           }
         }
       }

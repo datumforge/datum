@@ -74,6 +74,12 @@ var (
 	// ErrTokenMissingUserID is returned when the reset token is missing the required user id
 	ErrTokenMissingUserID = errors.New("reset token is missing user id")
 
+	// ErrInviteTokenMissingOrgID is returned when the invite token is missing the org owner ID match
+	ErrInviteTokenMissingOrgID = errors.New("invite token is missing org id")
+
+	// ErrInvitetokenMissingEmail
+	ErrInvitetokenMissingEmail = errors.New("invite token is missing email")
+
 	// ErrExpirationIsRequired is returned when signing info is provided a zero-value expiration
 	ErrExpirationIsRequired = errors.New("signing info requires a non-zero expiration")
 

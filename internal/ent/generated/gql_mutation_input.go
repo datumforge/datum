@@ -583,6 +583,7 @@ type CreateInviteInput struct {
 	Expires      time.Time
 	Recipient    string
 	Status       *enums.InviteStatus
+	Role         *enums.Role
 	SendAttempts *int
 	RequestorID  string
 	OwnerID      string
@@ -607,6 +608,9 @@ func (i *CreateInviteInput) Mutate(m *InviteMutation) {
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
 	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
 	if v := i.SendAttempts; v != nil {
 		m.SetSendAttempts(*v)
 	}
@@ -628,6 +632,7 @@ type UpdateInviteInput struct {
 	Expires        *time.Time
 	Recipient      *string
 	Status         *enums.InviteStatus
+	Role           *enums.Role
 	SendAttempts   *int
 	OwnerID        *string
 }
@@ -651,6 +656,9 @@ func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
 	}
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
 	}
 	if v := i.SendAttempts; v != nil {
 		m.SetSendAttempts(*v)

@@ -1594,6 +1594,7 @@ type CreateInvite_CreateInvite_Invite struct {
 	Status      enums.InviteStatus                     "json:\"status\" graphql:\"status\""
 	RequestorID string                                 "json:\"requestorID\" graphql:\"requestorID\""
 	Expires     time.Time                              "json:\"expires\" graphql:\"expires\""
+	Role        enums.Role                             "json:\"role\" graphql:\"role\""
 	Owner       CreateInvite_CreateInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
 }
 
@@ -1626,6 +1627,12 @@ func (t *CreateInvite_CreateInvite_Invite) GetExpires() *time.Time {
 		t = &CreateInvite_CreateInvite_Invite{}
 	}
 	return &t.Expires
+}
+func (t *CreateInvite_CreateInvite_Invite) GetRole() *enums.Role {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return &t.Role
 }
 func (t *CreateInvite_CreateInvite_Invite) GetOwner() *CreateInvite_CreateInvite_Invite_Owner {
 	if t == nil {
@@ -1693,6 +1700,7 @@ type GetInvite_Invite struct {
 	Recipient   string                 "json:\"recipient\" graphql:\"recipient\""
 	Status      enums.InviteStatus     "json:\"status\" graphql:\"status\""
 	RequestorID string                 "json:\"requestorID\" graphql:\"requestorID\""
+	Role        enums.Role             "json:\"role\" graphql:\"role\""
 	Owner       GetInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
 }
 
@@ -1762,6 +1770,12 @@ func (t *GetInvite_Invite) GetRequestorID() string {
 	}
 	return t.RequestorID
 }
+func (t *GetInvite_Invite) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return &t.Role
+}
 func (t *GetInvite_Invite) GetOwner() *GetInvite_Invite_Owner {
 	if t == nil {
 		t = &GetInvite_Invite{}
@@ -1773,6 +1787,7 @@ type InvitesByOrgID_Invites_Edges_Node_Owner_Invites struct {
 	Recipient   string             "json:\"recipient\" graphql:\"recipient\""
 	Status      enums.InviteStatus "json:\"status\" graphql:\"status\""
 	RequestorID string             "json:\"requestorID\" graphql:\"requestorID\""
+	Role        enums.Role         "json:\"role\" graphql:\"role\""
 }
 
 func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRecipient() string {
@@ -1792,6 +1807,12 @@ func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRequestorID() strin
 		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
 	}
 	return t.RequestorID
+}
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRole() *enums.Role {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
+	}
+	return &t.Role
 }
 
 type InvitesByOrgID_Invites_Edges_Node_Owner struct {
@@ -5969,6 +5990,7 @@ const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!)
 			status
 			requestorID
 			expires
+			role
 			owner {
 				id
 			}
@@ -6031,6 +6053,7 @@ const GetInviteDocument = `query GetInvite ($inviteId: ID!) {
 		recipient
 		status
 		requestorID
+		role
 		owner {
 			id
 			displayName
@@ -6067,6 +6090,7 @@ const InvitesByOrgIDDocument = `query InvitesByOrgID ($where: InviteWhereInput) 
 						recipient
 						status
 						requestorID
+						role
 					}
 				}
 			}

@@ -6,6 +6,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -146,6 +147,22 @@ func (h *Handler) getUserBySub(ctx context.Context, subject string) (*ent.User, 
 	}
 
 	return user, nil
+}
+
+// getUserByInviteToken returns the ent user with the user settings based on the email in the request
+func (h *Handler) getUserByInviteToken(ctx context.Context, token string) (*ent.Invite, error) {
+	recipient, err := transaction.FromContext(ctx).Invite.Query().
+		Where(
+			invite.Token(token),
+		).WithOwner().Only(ctx)
+
+	if err != nil {
+		h.Logger.Errorw("error obtaining user from token", "error", err)
+
+		return nil, err
+	}
+
+	return recipient, err
 }
 
 // expireAllVerificationTokensUserByEmail expires all existing email verification tokens before issuing a new one

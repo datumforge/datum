@@ -835,6 +835,11 @@ func (i *InviteQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, invite.FieldStatus)
 				fieldSeen[invite.FieldStatus] = struct{}{}
 			}
+		case "role":
+			if _, ok := fieldSeen[invite.FieldRole]; !ok {
+				selectedFields = append(selectedFields, invite.FieldRole)
+				fieldSeen[invite.FieldRole] = struct{}{}
+			}
 		case "sendAttempts":
 			if _, ok := fieldSeen[invite.FieldSendAttempts]; !ok {
 				selectedFields = append(selectedFields, invite.FieldSendAttempts)

@@ -43,6 +43,10 @@ func (Invite) Fields() []ent.Field {
 			Comment("the status of the invitation").
 			GoType(enums.InvitationSent).
 			Default(string(enums.InvitationSent)),
+		field.Enum("role").
+			GoType(enums.Role("")).
+			Default(string(enums.RoleMember)).
+			Values(string(enums.RoleOwner)),
 		field.Int("send_attempts").
 			Comment("the number of attempts made to perform email send of the invitation, maximum of 5").
 			Default(0),
@@ -101,3 +105,38 @@ func (Invite) Hooks() []ent.Hook {
 		hooks.HookInvite(),
 	}
 }
+
+// Policy of the EmailVerificationToken
+// func (Invite) Policy() ent.Policy {
+//	return privacy.Policy{
+//		Query: privacy.QueryPolicy{
+//			rule.AllowIfOwnedByViewer(),
+//			rule.AllowAfterApplyingPrivacyTokenFilter(
+//				&token.OrgInviteToken{},
+//				func(t token.PrivacyToken, filter privacy.Filter) {
+//					actualToken := t.(*token.OrgInviteToken)
+//					tokenFilter := filter.(*generated.InviteFilter)
+//					tokenFilter.WhereToken(entql.StringEQ(actualToken.GetToken()))
+//				},
+//			),
+//			privacy.AlwaysDenyRule(),
+//		},
+//		Mutation: privacy.MutationPolicy{
+//			privacy.OnMutationOperation(
+//				privacy.MutationPolicy{
+//					rule.AllowIfAdmin(),
+//					rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
+//					privacy.AlwaysDenyRule(),
+//				},
+//				ent.OpCreate,
+//			),
+//			privacy.OnMutationOperation(
+//				privacy.MutationPolicy{
+//					rule.AllowIfAdmin(),
+//					privacy.AlwaysDenyRule(),
+//				},
+//				ent.OpUpdateOne|ent.OpUpdate|ent.OpDeleteOne|ent.OpDelete,
+//			),
+//		},
+//	}
+//}

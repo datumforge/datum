@@ -264,6 +264,7 @@ type ComplexityRoot struct {
 		Owner        func(childComplexity int) int
 		Recipient    func(childComplexity int) int
 		RequestorID  func(childComplexity int) int
+		Role         func(childComplexity int) int
 		SendAttempts func(childComplexity int) int
 		Status       func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
@@ -1660,6 +1661,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invite.RequestorID(childComplexity), true
+
+	case "Invite.role":
+		if e.complexity.Invite.Role == nil {
+			break
+		}
+
+		return e.complexity.Invite.Role(childComplexity), true
 
 	case "Invite.sendAttempts":
 		if e.complexity.Invite.SendAttempts == nil {
@@ -4312,6 +4320,7 @@ input CreateInviteInput {
   the status of the invitation
   """
   status: InviteInviteStatus
+  role: InviteRole
   """
   the number of attempts made to perform email send of the invitation, maximum of 5
   """
@@ -5721,6 +5730,7 @@ type Invite implements Node {
   the status of the invitation
   """
   status: InviteInviteStatus!
+  role: InviteRole!
   """
   the number of attempts made to perform email send of the invitation, maximum of 5
   """
@@ -5766,6 +5776,14 @@ InviteInviteStatus is enum for the field status
 """
 enum InviteInviteStatus @goModel(model: "github.com/datumforge/datum/internal/ent/enums.InviteStatus") {
   INVITATION_SENT
+}
+"""
+InviteRole is enum for the field role
+"""
+enum InviteRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
+  ADMIN
+  MEMBER
+  OWNER
 }
 """
 InviteWhereInput is used for filtering Invite objects.
@@ -5911,6 +5929,13 @@ input InviteWhereInput {
   statusNEQ: InviteInviteStatus
   statusIn: [InviteInviteStatus!]
   statusNotIn: [InviteInviteStatus!]
+  """
+  role field predicates
+  """
+  role: InviteRole
+  roleNEQ: InviteRole
+  roleIn: [InviteRole!]
+  roleNotIn: [InviteRole!]
   """
   send_attempts field predicates
   """
@@ -8096,6 +8121,7 @@ input UpdateInviteInput {
   the status of the invitation
   """
   status: InviteInviteStatus
+  role: InviteRole
   """
   the number of attempts made to perform email send of the invitation, maximum of 5
   """
@@ -17859,6 +17885,50 @@ func (ec *executionContext) fieldContext_Invite_status(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Invite_role(ctx context.Context, field graphql.CollectedField, obj *generated.Invite) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invite_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(enums.Role)
+	fc.Result = res
+	return ec.marshalNInviteRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invite_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invite",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type InviteRole does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Invite_sendAttempts(ctx context.Context, field graphql.CollectedField, obj *generated.Invite) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Invite_sendAttempts(ctx, field)
 	if err != nil {
@@ -18239,6 +18309,8 @@ func (ec *executionContext) fieldContext_InviteCreatePayload_invite(ctx context.
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "role":
+				return ec.fieldContext_Invite_role(ctx, field)
 			case "sendAttempts":
 				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
@@ -18352,6 +18424,8 @@ func (ec *executionContext) fieldContext_InviteEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "role":
+				return ec.fieldContext_Invite_role(ctx, field)
 			case "sendAttempts":
 				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
@@ -18468,6 +18542,8 @@ func (ec *executionContext) fieldContext_InviteUpdatePayload_invite(ctx context.
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "role":
+				return ec.fieldContext_Invite_role(ctx, field)
 			case "sendAttempts":
 				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
@@ -25394,6 +25470,8 @@ func (ec *executionContext) fieldContext_Organization_invites(ctx context.Contex
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "role":
+				return ec.fieldContext_Invite_role(ctx, field)
 			case "sendAttempts":
 				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
@@ -29917,6 +29995,8 @@ func (ec *executionContext) fieldContext_Query_invite(ctx context.Context, field
 				return ec.fieldContext_Invite_recipient(ctx, field)
 			case "status":
 				return ec.fieldContext_Invite_status(ctx, field)
+			case "role":
+				return ec.fieldContext_Invite_role(ctx, field)
 			case "sendAttempts":
 				return ec.fieldContext_Invite_sendAttempts(ctx, field)
 			case "requestorID":
@@ -35830,7 +35910,7 @@ func (ec *executionContext) unmarshalInputCreateInviteInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "expires", "recipient", "status", "sendAttempts", "requestorID", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "expires", "recipient", "status", "role", "sendAttempts", "requestorID", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35886,6 +35966,13 @@ func (ec *executionContext) unmarshalInputCreateInviteInput(ctx context.Context,
 				return it, err
 			}
 			it.Status = data
+		case "role":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOInviteRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
 		case "sendAttempts":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttempts"))
 			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
@@ -40999,7 +41086,7 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "sendAttempts", "sendAttemptsNEQ", "sendAttemptsIn", "sendAttemptsNotIn", "sendAttemptsGT", "sendAttemptsGTE", "sendAttemptsLT", "sendAttemptsLTE", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "sendAttempts", "sendAttemptsNEQ", "sendAttemptsIn", "sendAttemptsNotIn", "sendAttemptsGT", "sendAttemptsGTE", "sendAttemptsLT", "sendAttemptsLTE", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41769,6 +41856,34 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 				return it, err
 			}
 			it.StatusNotIn = data
+		case "role":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOInviteRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
+		case "roleNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNEQ"))
+			data, err := ec.unmarshalOInviteRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RoleNEQ = data
+		case "roleIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleIn"))
+			data, err := ec.unmarshalOInviteRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRoleᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RoleIn = data
+		case "roleNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNotIn"))
+			data, err := ec.unmarshalOInviteRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRoleᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RoleNotIn = data
 		case "sendAttempts":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttempts"))
 			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
@@ -48626,7 +48741,7 @@ func (ec *executionContext) unmarshalInputUpdateInviteInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "expires", "recipient", "status", "sendAttempts", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "expires", "recipient", "status", "role", "sendAttempts", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -48675,6 +48790,13 @@ func (ec *executionContext) unmarshalInputUpdateInviteInput(ctx context.Context,
 				return it, err
 			}
 			it.Status = data
+		case "role":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOInviteRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
 		case "sendAttempts":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sendAttempts"))
 			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
@@ -54304,6 +54426,11 @@ func (ec *executionContext) _Invite(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "role":
+			out.Values[i] = ec._Invite_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "sendAttempts":
 			out.Values[i] = ec._Invite_sendAttempts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -59741,6 +59868,16 @@ func (ec *executionContext) marshalNInviteInviteStatus2githubᚗcomᚋdatumforge
 	return v
 }
 
+func (ec *executionContext) unmarshalNInviteRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx context.Context, v interface{}) (enums.Role, error) {
+	var res enums.Role
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInviteRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx context.Context, sel ast.SelectionSet, v enums.Role) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNInviteUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐInviteUpdatePayload(ctx context.Context, sel ast.SelectionSet, v InviteUpdatePayload) graphql.Marshaler {
 	return ec._InviteUpdatePayload(ctx, sel, &v)
 }
@@ -62206,6 +62343,89 @@ func (ec *executionContext) unmarshalOInviteInviteStatus2ᚖgithubᚗcomᚋdatum
 }
 
 func (ec *executionContext) marshalOInviteInviteStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐInviteStatus(ctx context.Context, sel ast.SelectionSet, v *enums.InviteStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOInviteRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRoleᚄ(ctx context.Context, v interface{}) ([]enums.Role, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]enums.Role, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInviteRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOInviteRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.Role) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNInviteRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOInviteRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx context.Context, v interface{}) (*enums.Role, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(enums.Role)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInviteRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRole(ctx context.Context, sel ast.SelectionSet, v *enums.Role) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

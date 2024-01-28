@@ -145,6 +145,7 @@ input CreateInviteInput {
   the status of the invitation
   """
   status: InviteInviteStatus
+  role: InviteRole
   """
   the number of attempts made to perform email send of the invitation, maximum of 5
   """
@@ -1554,6 +1555,7 @@ type Invite implements Node {
   the status of the invitation
   """
   status: InviteInviteStatus!
+  role: InviteRole!
   """
   the number of attempts made to perform email send of the invitation, maximum of 5
   """
@@ -1599,6 +1601,14 @@ InviteInviteStatus is enum for the field status
 """
 enum InviteInviteStatus @goModel(model: "github.com/datumforge/datum/internal/ent/enums.InviteStatus") {
   INVITATION_SENT
+}
+"""
+InviteRole is enum for the field role
+"""
+enum InviteRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
+  ADMIN
+  MEMBER
+  OWNER
 }
 """
 InviteWhereInput is used for filtering Invite objects.
@@ -1744,6 +1754,13 @@ input InviteWhereInput {
   statusNEQ: InviteInviteStatus
   statusIn: [InviteInviteStatus!]
   statusNotIn: [InviteInviteStatus!]
+  """
+  role field predicates
+  """
+  role: InviteRole
+  roleNEQ: InviteRole
+  roleIn: [InviteRole!]
+  roleNotIn: [InviteRole!]
   """
   send_attempts field predicates
   """
@@ -3929,6 +3946,7 @@ input UpdateInviteInput {
   the status of the invitation
   """
   status: InviteInviteStatus
+  role: InviteRole
   """
   the number of attempts made to perform email send of the invitation, maximum of 5
   """

@@ -1,3 +1,6 @@
+agents:
+  hostname: datum-bk
+
 env: 
   CI: true
 

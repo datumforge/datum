@@ -78,8 +78,7 @@ func HookInvite() ent.Hook {
 					return nil, err
 				}
 
-				// do the mutation
-				return next.Mutate(ctx, m)
+				return nil, nil
 			}
 
 			if err != nil {

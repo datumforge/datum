@@ -1758,10 +1758,6 @@ InviteInviteStatus is enum for the field status
 """
 enum InviteInviteStatus @goModel(model: "github.com/datumforge/datum/internal/ent/enums.InviteStatus") {
 	INVITATION_SENT
-	APPROVAL_REQUIRED
-	INVITATION_ACCEPTED
-	INVITATION_EXPIRED
-	INVITE_INVALID
 }
 """
 InviteRole is enum for the field role

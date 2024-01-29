@@ -2587,11 +2587,7 @@
                   "status": {
                     "type": "string",
                     "enum": [
-                      "INVITATION_SENT",
-                      "APPROVAL_REQUIRED",
-                      "INVITATION_ACCEPTED",
-                      "INVITATION_EXPIRED",
-                      "INVITE_INVALID"
+                      "INVITATION_SENT"
                     ],
                     "default": "INVITATION_SENT"
                   },
@@ -2795,11 +2791,7 @@
                   "status": {
                     "type": "string",
                     "enum": [
-                      "INVITATION_SENT",
-                      "APPROVAL_REQUIRED",
-                      "INVITATION_ACCEPTED",
-                      "INVITATION_EXPIRED",
-                      "INVITE_INVALID"
+                      "INVITATION_SENT"
                     ],
                     "default": "INVITATION_SENT"
                   },
@@ -10052,11 +10044,7 @@
           "status": {
             "type": "string",
             "enum": [
-              "INVITATION_SENT",
-              "APPROVAL_REQUIRED",
-              "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_SENT"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10137,11 +10125,7 @@
           "status": {
             "type": "string",
             "enum": [
-              "INVITATION_SENT",
-              "APPROVAL_REQUIRED",
-              "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_SENT"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10213,11 +10197,7 @@
           "status": {
             "type": "string",
             "enum": [
-              "INVITATION_SENT",
-              "APPROVAL_REQUIRED",
-              "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_SENT"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10289,11 +10269,7 @@
           "status": {
             "type": "string",
             "enum": [
-              "INVITATION_SENT",
-              "APPROVAL_REQUIRED",
-              "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_SENT"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10365,11 +10341,7 @@
           "status": {
             "type": "string",
             "enum": [
-              "INVITATION_SENT",
-              "APPROVAL_REQUIRED",
-              "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_SENT"
             ],
             "default": "INVITATION_SENT"
           },
@@ -12574,11 +12546,7 @@
           "status": {
             "type": "string",
             "enum": [
-              "INVITATION_SENT",
-              "APPROVAL_REQUIRED",
-              "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_SENT"
             ],
             "default": "INVITATION_SENT"
           },

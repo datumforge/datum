@@ -17,10 +17,9 @@ var (
 )
 
 // Values returns a slice of strings that represents all the possible values of the InviteStatus enum.
-// Possible default values are "INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED",
-// and INVITE_INVALID
+// Possible default values are "INVITATION_SENT"
 func (InviteStatus) Values() (kinds []string) {
-	for _, s := range []InviteStatus{InvitationSent, ApprovalRequired, InvitationAccepted, InvitationExpired, InviteInvalid} {
+	for _, s := range []InviteStatus{InvitationSent} {
 		kinds = append(kinds, string(s))
 	}
 

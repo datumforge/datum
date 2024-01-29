@@ -84,12 +84,9 @@ func HookInvite() ent.Hook {
 
 			if err != nil {
 				// if we did not find the user, return now
-				if generated.IsNotFound(err) {
-					return false, nil
+				if !generated.IsNotFound(err) {
+					return nil, err
 				}
-
-				// any other error, we should error
-				return false, err
 			}
 
 			// generate token based on recipient + target org ID

@@ -45,7 +45,7 @@ This repository contains a number of code generating functions / utilities which
 
 ## Querying
 
-The best method of forming / testing queries against the server is to run `task rover` which will launch an interactive query UI.
+The best method of forming / testing queries against the server is to run `task docker:rover` which will launch an interactive query UI.
 
 ## OpenFGA Playground
 
@@ -53,7 +53,7 @@ You can load up a local openFGA environment with the compose setup in this repos
 
 ## Migrations
 
-`task atlas` or `task atlas:create` will generate the necessary migrations
+`task atlas:create` will generate the necessary migrations
 
 ## Creating a new Schema
 

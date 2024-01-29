@@ -5,7 +5,7 @@ tasks:
     dir: ..
     desc: builds the datum docker image
     cmds:
-      - docker build -f docker/Dockerfile .
+      - "docker build -f docker/Dockerfile ."
 
   build:aio:
     dir: ..

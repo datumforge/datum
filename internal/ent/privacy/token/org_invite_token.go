@@ -17,7 +17,7 @@ func (OrgInviteToken) GetContextKey() interface{} {
 
 // NewOrgInviteTokenWithToken creates a new PrivacyToken of type OrgInviteToken with
 // token set
-func NewOrgInviteTokenWithToken(token, orgID string) OrgInviteToken {
+func NewOrgInviteTokenWithToken(token string) OrgInviteToken {
 	return OrgInviteToken{
 		token: token,
 	}

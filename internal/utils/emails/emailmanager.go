@@ -149,3 +149,24 @@ func (m *EmailManager) SendOrgInvitationEmail(i *Invite) error {
 
 	return m.Send(msg)
 }
+
+// SendAddedtoOrgEmail sends an email notifying the user they've been added to an org
+func (m *EmailManager) SendAddedtoOrgEmail(i *Invite) error {
+	data := InviteData{
+		InviterName: i.Requestor,
+		OrgName:     i.OrgName,
+		EmailData: EmailData{
+			Sender: m.MustFromContact(),
+			Recipient: sendgrid.Contact{
+				Email: i.Recipient,
+			},
+		},
+	}
+
+	msg, err := InviteAccepted(data)
+	if err != nil {
+		return err
+	}
+
+	return m.Send(msg)
+}

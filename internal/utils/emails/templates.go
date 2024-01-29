@@ -41,6 +41,7 @@ type Invite struct {
 	OrgName   string
 	Recipient string
 	Requestor string
+	Role      string
 }
 
 // ResetRequestData is used to complete the password reset request email template
@@ -56,6 +57,7 @@ const (
 	InviteRE               = "Join Your Teammate %s on Datum!"
 	PasswordResetRequestRE = "Datum Password Reset - Action Required"
 	PasswordResetSuccessRE = "Datum Password Reset Confirmation"
+	InviteBeenAccepted     = "You've been added to an Organization on Datum"
 )
 
 // WelcomeEmail creates a welcome email for a new user
@@ -98,6 +100,19 @@ func InviteEmail(data InviteData) (message *mail.SGMailV3, err error) {
 	}
 
 	data.Subject = fmt.Sprintf(InviteRE, data.InviterName)
+
+	return data.Build(text, html)
+}
+
+// InviteAccepted creates an email to invite a user to join an organization
+func InviteAccepted(data InviteData) (message *mail.SGMailV3, err error) {
+	var text, html string
+
+	if text, html, err = Render("invite_joined", data); err != nil {
+		return nil, err
+	}
+
+	data.Subject = InviteBeenAccepted
 
 	return data.Build(text, html)
 }

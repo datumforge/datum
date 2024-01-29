@@ -1,12 +1,7 @@
 package handlers
 
 import (
-	"context"
-
-	"github.com/cenkalti/backoff/v4"
-
 	"github.com/datumforge/datum/internal/utils/emails"
-	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
@@ -114,16 +109,4 @@ func (h *Handler) SendOrgInvitationEmail(i *emails.Invite) error {
 	}
 
 	return h.EmailManager.Send(msg)
-}
-
-func (h *Handler) SendInvitationEmail(i *emails.Invite) error {
-	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return h.SendOrgInvitationEmail(i)
-	}), marionette.WithRetries(3), // nolint: gomnd
-		marionette.WithBackoff(backoff.NewExponentialBackOff()),
-	); err != nil {
-		return err
-	}
-
-	return nil
 }

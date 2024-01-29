@@ -25,6 +25,7 @@ import (
 func HookInvite() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.InviteFunc(func(ctx context.Context, m *generated.InviteMutation) (generated.Value, error) {
+			// ensure the inviter is an admin
 			m, err := confirmRequestorRole(ctx, m)
 			if err != nil {
 				m.Logger.Errorw("requestor does not have permission to invite to organization")
@@ -32,12 +33,14 @@ func HookInvite() ent.Hook {
 				return nil, err
 			}
 
+			// check that the invite isn't to a personal organization
 			if err := personalOrgNoInvite(ctx, m); err != nil {
 				m.Logger.Infow("external users cannot be invited to personal organizations")
 
 				return nil, ErrPersonalOrgsNoMembers
 			}
 
+			// check to see if user already has membership in the organization (or someone with the provided email)
 			isMember, err := doesUserHaveMembership(ctx, m)
 			if err != nil {
 				m.Logger.Errorw("error checking membership", "error", err)
@@ -52,6 +55,44 @@ func HookInvite() ent.Hook {
 				return nil, ErrUserAlreadyOrgMember
 			}
 
+			// if user isn't member, but exists, add them
+			inviteUser, err := confirmUserExists(ctx, m)
+
+			// user is only returned if exists, else nil
+			if inviteUser != nil {
+				// add user to dest org
+				_, err := addUserToOrganization(ctx, m, inviteUser)
+
+				if err != nil {
+					return nil, err
+				}
+
+				// flip invite status to accepted
+				inv, err := updateInviteStatusAccepted(ctx, m)
+				if err != nil {
+					return nil, err
+				}
+
+				// delete the invite
+				if err := deleteInvite(ctx, m, inv); err != nil {
+					return nil, err
+				}
+
+				// do the mutation
+				return next.Mutate(ctx, m)
+			}
+
+			if err != nil {
+				// if we did not find the user, return now
+				if generated.IsNotFound(err) {
+					return false, nil
+				}
+
+				// any other error, we should error
+				return false, err
+			}
+
+			// generate token based on recipient + target org ID
 			m, err = setRecipientAndToken(ctx, m)
 			if err != nil {
 				m.Logger.Errorw("error creating verification token", "error", err)
@@ -81,6 +122,7 @@ func HookInvite() ent.Hook {
 				return retValue, err
 			}
 
+			// non-blocking queued email
 			if err := createInviteToSend(ctx, m); err != nil {
 				m.Logger.Errorw("error sending email to user", "error", err)
 
@@ -143,6 +185,8 @@ func personalOrgNoInvite(ctx context.Context, m *generated.InviteMutation) error
 	return nil
 }
 
+// setRecipientAndToken function is responsible for generating a invite token based on the
+// recipient's email and the target organization ID
 func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	email, _ := m.Recipient()
 	owner, _ := m.OwnerID()
@@ -170,6 +214,7 @@ func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*ge
 	return m, nil
 }
 
+// confirmRequestorRole checks that the inviting user is an admin in the target organization
 func confirmRequestorRole(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	orgID, _ := m.OwnerID()
 
@@ -192,11 +237,13 @@ func confirmRequestorRole(ctx context.Context, m *generated.InviteMutation) (*ge
 	return m, nil
 }
 
+// createInviteToSend sets the necessary data to send invite email + token
 func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error {
 	orgID, _ := m.OwnerID()
 	reqID, _ := m.RequestorID()
 	token, _ := m.Token()
 	email, _ := m.Recipient()
+	role, _ := m.Role()
 
 	org, err := m.Client().Organization.Get(ctx, orgID)
 	if err != nil {
@@ -213,6 +260,7 @@ func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error 
 		Token:     token,
 		Requestor: requestor.FirstName,
 		Recipient: email,
+		Role:      string(role),
 	}
 
 	if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
@@ -227,6 +275,7 @@ func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error 
 	return nil
 }
 
+// sendOrgInvitationEmail composes the email metadata and sends via email manager
 func sendOrgInvitationEmail(ctx context.Context, m *generated.InviteMutation, i *emails.Invite) (err error) {
 	data := emails.InviteData{
 		InviterName: i.Requestor,
@@ -244,6 +293,27 @@ func sendOrgInvitationEmail(ctx context.Context, m *generated.InviteMutation, i 
 	}
 
 	msg, err := emails.InviteEmail(data)
+	if err != nil {
+		return err
+	}
+
+	return m.Emails.Send(msg)
+}
+
+// sendOrgAccepted composes the email metadata to notify the user they've been joined to the org
+func sendOrgAccepted(ctx context.Context, m *generated.InviteMutation, i *emails.Invite) (err error) {
+	data := emails.InviteData{
+		InviterName: i.Requestor,
+		OrgName:     i.OrgName,
+		EmailData: emails.EmailData{
+			Sender: m.Emails.MustFromContact(),
+			Recipient: sendgrid.Contact{
+				Email: i.Recipient,
+			},
+		},
+	}
+
+	msg, err := emails.InviteAccepted(data)
 	if err != nil {
 		return err
 	}
@@ -286,4 +356,69 @@ func updateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.
 		SetToken(token).
 		SetSecret(secret).
 		Save(ctx)
+}
+
+// addUserToOrganization function is responsible for adding a user to the organization
+// which is the parent of the invite (the inviting organization)
+func addUserToOrganization(ctx context.Context, m *generated.InviteMutation, user *generated.User) (*generated.OrgMembership, error) {
+	ownerID, _ := m.OwnerID()
+	role, _ := m.Role()
+	recipient, _ := m.Recipient()
+
+	input := generated.CreateOrgMembershipInput{
+		UserID: user.ID,
+		OrgID:  ownerID,
+		Role:   &role,
+	}
+
+	// add user to the inviting org
+	addedUser, err := m.Client().OrgMembership.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// fetch org details to pass the name
+	org, err := m.Client().Organization.Query().Where(organization.ID(ownerID)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	invite := &emails.Invite{
+		OrgName:   org.Name,
+		Recipient: recipient,
+		Role:      string(role),
+	}
+
+	// send an email to recipient notifying them they've been added to a datum organization
+	if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+		return sendOrgAccepted(ctx, m, invite)
+	}), marionette.WithErrorf("could not send invitation email to user %s", recipient),
+	); err != nil {
+		m.Logger.Errorw("unable to queue email for sending")
+
+		return nil, err
+	}
+
+	return addedUser, nil
+}
+
+// updateInviteStatusAccepted updates the status of an invite to "Accepted"
+func updateInviteStatusAccepted(ctx context.Context, m *generated.InviteMutation) (*generated.Invite, error) {
+	id, _ := m.ID()
+
+	status, err := m.Client().Invite.UpdateOneID(id).SetStatus(enums.InvitationAccepted).Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return status, nil
+}
+
+// deleteInvite deletes an invite
+func deleteInvite(ctx context.Context, m *generated.InviteMutation, i *generated.Invite) error {
+	if err := m.Client().Invite.DeleteOneID(i.ID).Exec(ctx); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -11,7 +11,7 @@ tasks:
     dir: ..
     desc: builds the datum docker image all-in-one image
     cmds:
-      - docker build -f ./docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
+      - "docker build -f ./docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio ."
 
   datum:
     dir: ..

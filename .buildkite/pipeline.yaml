@@ -33,7 +33,7 @@ steps:
   - label: ":sqlite: atlas lint"
     key: "atlas_lint"
     plugins:
-      - datumforge/atlas#v0.0.1:
+      - datumforge/atlas#6e02f85249494dda837be82c5740ffda07d56b38:
           project: datum
           dev-url: "sqlite://dev?mode=memory&_fk=1"
           dir: "file://db/migrations"

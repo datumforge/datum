@@ -134,6 +134,18 @@ steps:
             - GOARCH=arm64
           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
 
+- group: ":database: atlas lint + migrate"
+  key: "database"
+  steps:
+  - label: ":sqlite: atlas"
+    key: "atlas"
+    plugins:
+      - datumforge/atlas#bfeec782bacb48263c648c62a9def3a3cd9e8e57:
+          project: datum
+          dev-url: "sqlite://dev?mode=memory&_fk=1"
+          dir: "file://db/migrations"
+          step: all
+
 - group: ":docker: Image Build"
   depends_on: "go-builds"
   key: "image-build"

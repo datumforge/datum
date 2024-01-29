@@ -113,9 +113,6 @@ var (
 				Name:    "group_name_owner_id",
 				Unique:  true,
 				Columns: []*schema.Column{GroupsColumns[7], GroupsColumns[12]},
-				Annotation: &entsql.IndexAnnotation{
-					Where: "deleted_at is NULL",
-				},
 			},
 		},
 	}

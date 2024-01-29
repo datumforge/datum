@@ -86,7 +86,7 @@ func (u UserViewer) IsAdmin() bool {
 	return false
 }
 
-// GetID() returns the ID of the user and a boolean value indicating whether the ID exists or not
+// GetID returns the ID of the user and a boolean value indicating whether the ID exists or not
 func (u UserViewer) GetID() (string, bool) {
 	return u.id, u.hasID
 }

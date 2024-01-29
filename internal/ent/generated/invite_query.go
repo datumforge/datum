@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -368,6 +369,12 @@ func (iq *InviteQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		iq.sql = prev
+	}
+	if invite.Policy == nil {
+		return errors.New("generated: uninitialized invite.Policy (forgotten import generated/runtime?)")
+	}
+	if err := invite.Policy.EvalQuery(ctx, iq); err != nil {
+		return err
 	}
 	return nil
 }

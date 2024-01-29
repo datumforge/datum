@@ -25,10 +25,9 @@ import (
 func HookInvite() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.InviteFunc(func(ctx context.Context, m *generated.InviteMutation) (generated.Value, error) {
-			// ensure the inviter is an admin
-			m, err := confirmRequestorRole(ctx, m)
+			m, err := getRequestor(ctx, m)
 			if err != nil {
-				m.Logger.Errorw("requestor does not have permission to invite to organization")
+				m.Logger.Errorw("unable to determine requestor")
 
 				return nil, err
 			}
@@ -272,10 +271,8 @@ func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*ge
 	return m, nil
 }
 
-// confirmRequestorRole checks that the inviting user is an admin in the target organization and sets the requester on the mutation
-func confirmRequestorRole(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
-	orgID, _ := m.OwnerID()
-
+// getRequestor sets the requestor on the mutation
+func getRequestor(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		m.Logger.Errorw("unable to get requestor", "error", err)
@@ -284,15 +281,6 @@ func confirmRequestorRole(ctx context.Context, m *generated.InviteMutation) (*ge
 	}
 
 	m.SetRequestorID(userID)
-
-	isAdmin, err := m.Client().OrgMembership.Query().Where((orgmembership.HasUserWith(user.ID(userID)))).Where(orgmembership.HasOrgWith(organization.ID(orgID))).Where(orgmembership.RoleEQ(enums.RoleAdmin)).Exist(ctx)
-	if err != nil {
-		return m, err
-	}
-
-	if !isAdmin {
-		return m, ErrNoPermissionToInvite
-	}
 
 	return m, nil
 }

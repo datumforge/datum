@@ -11,8 +11,11 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 )
 
 // Invite holds the schema definition for the Invite entity
@@ -107,37 +110,21 @@ func (Invite) Hooks() []ent.Hook {
 	}
 }
 
-// Policy of the EmailVerificationToken
-// func (Invite) Policy() ent.Policy {
-//	return privacy.Policy{
-//		Query: privacy.QueryPolicy{
-//			rule.AllowIfOwnedByViewer(),
-//			rule.AllowAfterApplyingPrivacyTokenFilter(
-//				&token.OrgInviteToken{},
-//				func(t token.PrivacyToken, filter privacy.Filter) {
-//					actualToken := t.(*token.OrgInviteToken)
-//					tokenFilter := filter.(*generated.InviteFilter)
-//					tokenFilter.WhereToken(entql.StringEQ(actualToken.GetToken()))
-//				},
-//			),
-//			privacy.AlwaysDenyRule(),
-//		},
-//		Mutation: privacy.MutationPolicy{
-//			privacy.OnMutationOperation(
-//				privacy.MutationPolicy{
-//					rule.AllowIfAdmin(),
-//					rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
-//					privacy.AlwaysDenyRule(),
-//				},
-//				ent.OpCreate,
-//			),
-//			privacy.OnMutationOperation(
-//				privacy.MutationPolicy{
-//					rule.AllowIfAdmin(),
-//					privacy.AlwaysDenyRule(),
-//				},
-//				ent.OpUpdateOne|ent.OpUpdate|ent.OpDeleteOne|ent.OpDelete,
-//			),
-//		},
-//	}
-//}
+// Policy of the Invite
+func (Invite) Policy() ent.Policy {
+	return privacy.Policy{
+		// TODO: come back and add query + delete policies
+		Mutation: privacy.MutationPolicy{
+			privacy.OnMutationOperation(
+				privacy.MutationPolicy{
+					rule.AllowIfAdmin(),
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
+					rule.HasInviteEditAccess(),
+					rule.AllowMutationAfterApplyingOwnerFilter(),
+					privacy.AlwaysDenyRule(),
+				},
+				ent.OpCreate,
+			),
+		},
+	}
+}

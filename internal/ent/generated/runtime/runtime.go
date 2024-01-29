@@ -289,13 +289,26 @@ func init() {
 	// integration.DefaultID holds the default value on creation for the id field.
 	integration.DefaultID = integrationDescID.Default.(func() string)
 	inviteMixin := schema.Invite{}.Mixin()
+	invite.Policy = privacy.NewPolicies(schema.Invite{})
+	invite.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := invite.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	inviteMixinHooks0 := inviteMixin[0].Hooks()
 	inviteMixinHooks2 := inviteMixin[2].Hooks()
 	inviteHooks := schema.Invite{}.Hooks()
-	invite.Hooks[0] = inviteMixinHooks0[0]
-	invite.Hooks[1] = inviteMixinHooks2[0]
-	invite.Hooks[2] = inviteHooks[0]
-	invite.Hooks[3] = inviteHooks[1]
+
+	invite.Hooks[1] = inviteMixinHooks0[0]
+
+	invite.Hooks[2] = inviteMixinHooks2[0]
+
+	invite.Hooks[3] = inviteHooks[0]
+
+	invite.Hooks[4] = inviteHooks[1]
 	inviteMixinInters2 := inviteMixin[2].Interceptors()
 	invite.Interceptors[0] = inviteMixinInters2[0]
 	inviteMixinFields0 := inviteMixin[0].Fields()

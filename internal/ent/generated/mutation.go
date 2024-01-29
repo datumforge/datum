@@ -2245,7 +2245,7 @@ type GroupMutation struct {
 	deleted_by        *string
 	name              *string
 	description       *string
-	gravatar_logo_url *string
+	gravatar_logo_uri *string
 	logo_url          *string
 	display_name      *string
 	clearedFields     map[string]struct{}
@@ -2757,53 +2757,53 @@ func (m *GroupMutation) ResetDescription() {
 	delete(m.clearedFields, group.FieldDescription)
 }
 
-// SetGravatarLogoURL sets the "gravatar_logo_url" field.
-func (m *GroupMutation) SetGravatarLogoURL(s string) {
-	m.gravatar_logo_url = &s
+// SetGravatarLogoURI sets the "gravatar_logo_uri" field.
+func (m *GroupMutation) SetGravatarLogoURI(s string) {
+	m.gravatar_logo_uri = &s
 }
 
-// GravatarLogoURL returns the value of the "gravatar_logo_url" field in the mutation.
-func (m *GroupMutation) GravatarLogoURL() (r string, exists bool) {
-	v := m.gravatar_logo_url
+// GravatarLogoURI returns the value of the "gravatar_logo_uri" field in the mutation.
+func (m *GroupMutation) GravatarLogoURI() (r string, exists bool) {
+	v := m.gravatar_logo_uri
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldGravatarLogoURL returns the old "gravatar_logo_url" field's value of the Group entity.
+// OldGravatarLogoURI returns the old "gravatar_logo_uri" field's value of the Group entity.
 // If the Group object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupMutation) OldGravatarLogoURL(ctx context.Context) (v string, err error) {
+func (m *GroupMutation) OldGravatarLogoURI(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldGravatarLogoURL is only allowed on UpdateOne operations")
+		return v, errors.New("OldGravatarLogoURI is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldGravatarLogoURL requires an ID field in the mutation")
+		return v, errors.New("OldGravatarLogoURI requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldGravatarLogoURL: %w", err)
+		return v, fmt.Errorf("querying old value for OldGravatarLogoURI: %w", err)
 	}
-	return oldValue.GravatarLogoURL, nil
+	return oldValue.GravatarLogoURI, nil
 }
 
-// ClearGravatarLogoURL clears the value of the "gravatar_logo_url" field.
-func (m *GroupMutation) ClearGravatarLogoURL() {
-	m.gravatar_logo_url = nil
-	m.clearedFields[group.FieldGravatarLogoURL] = struct{}{}
+// ClearGravatarLogoURI clears the value of the "gravatar_logo_uri" field.
+func (m *GroupMutation) ClearGravatarLogoURI() {
+	m.gravatar_logo_uri = nil
+	m.clearedFields[group.FieldGravatarLogoURI] = struct{}{}
 }
 
-// GravatarLogoURLCleared returns if the "gravatar_logo_url" field was cleared in this mutation.
-func (m *GroupMutation) GravatarLogoURLCleared() bool {
-	_, ok := m.clearedFields[group.FieldGravatarLogoURL]
+// GravatarLogoURICleared returns if the "gravatar_logo_uri" field was cleared in this mutation.
+func (m *GroupMutation) GravatarLogoURICleared() bool {
+	_, ok := m.clearedFields[group.FieldGravatarLogoURI]
 	return ok
 }
 
-// ResetGravatarLogoURL resets all changes to the "gravatar_logo_url" field.
-func (m *GroupMutation) ResetGravatarLogoURL() {
-	m.gravatar_logo_url = nil
-	delete(m.clearedFields, group.FieldGravatarLogoURL)
+// ResetGravatarLogoURI resets all changes to the "gravatar_logo_uri" field.
+func (m *GroupMutation) ResetGravatarLogoURI() {
+	m.gravatar_logo_uri = nil
+	delete(m.clearedFields, group.FieldGravatarLogoURI)
 }
 
 // SetLogoURL sets the "logo_url" field.
@@ -3127,8 +3127,8 @@ func (m *GroupMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, group.FieldDescription)
 	}
-	if m.gravatar_logo_url != nil {
-		fields = append(fields, group.FieldGravatarLogoURL)
+	if m.gravatar_logo_uri != nil {
+		fields = append(fields, group.FieldGravatarLogoURI)
 	}
 	if m.logo_url != nil {
 		fields = append(fields, group.FieldLogoURL)
@@ -3162,8 +3162,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case group.FieldDescription:
 		return m.Description()
-	case group.FieldGravatarLogoURL:
-		return m.GravatarLogoURL()
+	case group.FieldGravatarLogoURI:
+		return m.GravatarLogoURI()
 	case group.FieldLogoURL:
 		return m.LogoURL()
 	case group.FieldDisplayName:
@@ -3195,8 +3195,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldName(ctx)
 	case group.FieldDescription:
 		return m.OldDescription(ctx)
-	case group.FieldGravatarLogoURL:
-		return m.OldGravatarLogoURL(ctx)
+	case group.FieldGravatarLogoURI:
+		return m.OldGravatarLogoURI(ctx)
 	case group.FieldLogoURL:
 		return m.OldLogoURL(ctx)
 	case group.FieldDisplayName:
@@ -3273,12 +3273,12 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDescription(v)
 		return nil
-	case group.FieldGravatarLogoURL:
+	case group.FieldGravatarLogoURI:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetGravatarLogoURL(v)
+		m.SetGravatarLogoURI(v)
 		return nil
 	case group.FieldLogoURL:
 		v, ok := value.(string)
@@ -3339,8 +3339,8 @@ func (m *GroupMutation) ClearedFields() []string {
 	if m.FieldCleared(group.FieldDescription) {
 		fields = append(fields, group.FieldDescription)
 	}
-	if m.FieldCleared(group.FieldGravatarLogoURL) {
-		fields = append(fields, group.FieldGravatarLogoURL)
+	if m.FieldCleared(group.FieldGravatarLogoURI) {
+		fields = append(fields, group.FieldGravatarLogoURI)
 	}
 	if m.FieldCleared(group.FieldLogoURL) {
 		fields = append(fields, group.FieldLogoURL)
@@ -3374,8 +3374,8 @@ func (m *GroupMutation) ClearField(name string) error {
 	case group.FieldDescription:
 		m.ClearDescription()
 		return nil
-	case group.FieldGravatarLogoURL:
-		m.ClearGravatarLogoURL()
+	case group.FieldGravatarLogoURI:
+		m.ClearGravatarLogoURI()
 		return nil
 	case group.FieldLogoURL:
 		m.ClearLogoURL()
@@ -3415,8 +3415,8 @@ func (m *GroupMutation) ResetField(name string) error {
 	case group.FieldDescription:
 		m.ResetDescription()
 		return nil
-	case group.FieldGravatarLogoURL:
-		m.ResetGravatarLogoURL()
+	case group.FieldGravatarLogoURI:
+		m.ResetGravatarLogoURI()
 		return nil
 	case group.FieldLogoURL:
 		m.ResetLogoURL()

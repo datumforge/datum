@@ -148,23 +148,23 @@ func (gu *GroupUpdate) ClearDescription() *GroupUpdate {
 	return gu
 }
 
-// SetGravatarLogoURL sets the "gravatar_logo_url" field.
-func (gu *GroupUpdate) SetGravatarLogoURL(s string) *GroupUpdate {
-	gu.mutation.SetGravatarLogoURL(s)
+// SetGravatarLogoURI sets the "gravatar_logo_uri" field.
+func (gu *GroupUpdate) SetGravatarLogoURI(s string) *GroupUpdate {
+	gu.mutation.SetGravatarLogoURI(s)
 	return gu
 }
 
-// SetNillableGravatarLogoURL sets the "gravatar_logo_url" field if the given value is not nil.
-func (gu *GroupUpdate) SetNillableGravatarLogoURL(s *string) *GroupUpdate {
+// SetNillableGravatarLogoURI sets the "gravatar_logo_uri" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableGravatarLogoURI(s *string) *GroupUpdate {
 	if s != nil {
-		gu.SetGravatarLogoURL(*s)
+		gu.SetGravatarLogoURI(*s)
 	}
 	return gu
 }
 
-// ClearGravatarLogoURL clears the value of the "gravatar_logo_url" field.
-func (gu *GroupUpdate) ClearGravatarLogoURL() *GroupUpdate {
-	gu.mutation.ClearGravatarLogoURL()
+// ClearGravatarLogoURI clears the value of the "gravatar_logo_uri" field.
+func (gu *GroupUpdate) ClearGravatarLogoURI() *GroupUpdate {
+	gu.mutation.ClearGravatarLogoURI()
 	return gu
 }
 
@@ -415,11 +415,11 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if gu.mutation.DescriptionCleared() {
 		_spec.ClearField(group.FieldDescription, field.TypeString)
 	}
-	if value, ok := gu.mutation.GravatarLogoURL(); ok {
-		_spec.SetField(group.FieldGravatarLogoURL, field.TypeString, value)
+	if value, ok := gu.mutation.GravatarLogoURI(); ok {
+		_spec.SetField(group.FieldGravatarLogoURI, field.TypeString, value)
 	}
-	if gu.mutation.GravatarLogoURLCleared() {
-		_spec.ClearField(group.FieldGravatarLogoURL, field.TypeString)
+	if gu.mutation.GravatarLogoURICleared() {
+		_spec.ClearField(group.FieldGravatarLogoURI, field.TypeString)
 	}
 	if value, ok := gu.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
@@ -745,23 +745,23 @@ func (guo *GroupUpdateOne) ClearDescription() *GroupUpdateOne {
 	return guo
 }
 
-// SetGravatarLogoURL sets the "gravatar_logo_url" field.
-func (guo *GroupUpdateOne) SetGravatarLogoURL(s string) *GroupUpdateOne {
-	guo.mutation.SetGravatarLogoURL(s)
+// SetGravatarLogoURI sets the "gravatar_logo_uri" field.
+func (guo *GroupUpdateOne) SetGravatarLogoURI(s string) *GroupUpdateOne {
+	guo.mutation.SetGravatarLogoURI(s)
 	return guo
 }
 
-// SetNillableGravatarLogoURL sets the "gravatar_logo_url" field if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableGravatarLogoURL(s *string) *GroupUpdateOne {
+// SetNillableGravatarLogoURI sets the "gravatar_logo_uri" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableGravatarLogoURI(s *string) *GroupUpdateOne {
 	if s != nil {
-		guo.SetGravatarLogoURL(*s)
+		guo.SetGravatarLogoURI(*s)
 	}
 	return guo
 }
 
-// ClearGravatarLogoURL clears the value of the "gravatar_logo_url" field.
-func (guo *GroupUpdateOne) ClearGravatarLogoURL() *GroupUpdateOne {
-	guo.mutation.ClearGravatarLogoURL()
+// ClearGravatarLogoURI clears the value of the "gravatar_logo_uri" field.
+func (guo *GroupUpdateOne) ClearGravatarLogoURI() *GroupUpdateOne {
+	guo.mutation.ClearGravatarLogoURI()
 	return guo
 }
 
@@ -1042,11 +1042,11 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	if guo.mutation.DescriptionCleared() {
 		_spec.ClearField(group.FieldDescription, field.TypeString)
 	}
-	if value, ok := guo.mutation.GravatarLogoURL(); ok {
-		_spec.SetField(group.FieldGravatarLogoURL, field.TypeString, value)
+	if value, ok := guo.mutation.GravatarLogoURI(); ok {
+		_spec.SetField(group.FieldGravatarLogoURI, field.TypeString, value)
 	}
-	if guo.mutation.GravatarLogoURLCleared() {
-		_spec.ClearField(group.FieldGravatarLogoURL, field.TypeString)
+	if guo.mutation.GravatarLogoURICleared() {
+		_spec.ClearField(group.FieldGravatarLogoURI, field.TypeString)
 	}
 	if value, ok := guo.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)

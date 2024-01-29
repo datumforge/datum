@@ -99,7 +99,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldOwnerID:         {Type: field.TypeString, Column: group.FieldOwnerID},
 			group.FieldName:            {Type: field.TypeString, Column: group.FieldName},
 			group.FieldDescription:     {Type: field.TypeString, Column: group.FieldDescription},
-			group.FieldGravatarLogoURL: {Type: field.TypeString, Column: group.FieldGravatarLogoURL},
+			group.FieldGravatarLogoURI: {Type: field.TypeString, Column: group.FieldGravatarLogoURI},
 			group.FieldLogoURL:         {Type: field.TypeString, Column: group.FieldLogoURL},
 			group.FieldDisplayName:     {Type: field.TypeString, Column: group.FieldDisplayName},
 		},
@@ -1138,9 +1138,9 @@ func (f *GroupFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(group.FieldDescription))
 }
 
-// WhereGravatarLogoURL applies the entql string predicate on the gravatar_logo_url field.
-func (f *GroupFilter) WhereGravatarLogoURL(p entql.StringP) {
-	f.Where(p.Field(group.FieldGravatarLogoURL))
+// WhereGravatarLogoURI applies the entql string predicate on the gravatar_logo_uri field.
+func (f *GroupFilter) WhereGravatarLogoURI(p entql.StringP) {
+	f.Where(p.Field(group.FieldGravatarLogoURI))
 }
 
 // WhereLogoURL applies the entql string predicate on the logo_url field.

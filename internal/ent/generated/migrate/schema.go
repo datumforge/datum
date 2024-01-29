@@ -90,7 +90,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
+		{Name: "gravatar_logo_uri", Type: field.TypeString, Nullable: true},
 		{Name: "logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "owner_id", Type: field.TypeString},

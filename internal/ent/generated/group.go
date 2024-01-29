@@ -38,7 +38,7 @@ type Group struct {
 	// the groups description
 	Description string `json:"description,omitempty"`
 	// the URL to an auto generated gravatar image for the group
-	GravatarLogoURL string `json:"gravatar_logo_url,omitempty"`
+	GravatarLogoURI string `json:"gravatar_logo_uri,omitempty"`
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL string `json:"logo_url,omitempty"`
 	// The group's displayed 'friendly' name
@@ -118,7 +118,7 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldDeletedBy, group.FieldOwnerID, group.FieldName, group.FieldDescription, group.FieldGravatarLogoURL, group.FieldLogoURL, group.FieldDisplayName:
+		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldDeletedBy, group.FieldOwnerID, group.FieldName, group.FieldDescription, group.FieldGravatarLogoURI, group.FieldLogoURL, group.FieldDisplayName:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt, group.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -197,11 +197,11 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gr.Description = value.String
 			}
-		case group.FieldGravatarLogoURL:
+		case group.FieldGravatarLogoURI:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field gravatar_logo_url", values[i])
+				return fmt.Errorf("unexpected type %T for field gravatar_logo_uri", values[i])
 			} else if value.Valid {
-				gr.GravatarLogoURL = value.String
+				gr.GravatarLogoURI = value.String
 			}
 		case group.FieldLogoURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -298,8 +298,8 @@ func (gr *Group) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(gr.Description)
 	builder.WriteString(", ")
-	builder.WriteString("gravatar_logo_url=")
-	builder.WriteString(gr.GravatarLogoURL)
+	builder.WriteString("gravatar_logo_uri=")
+	builder.WriteString(gr.GravatarLogoURI)
 	builder.WriteString(", ")
 	builder.WriteString("logo_url=")
 	builder.WriteString(gr.LogoURL)

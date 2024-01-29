@@ -134,16 +134,16 @@ func (gc *GroupCreate) SetNillableDescription(s *string) *GroupCreate {
 	return gc
 }
 
-// SetGravatarLogoURL sets the "gravatar_logo_url" field.
-func (gc *GroupCreate) SetGravatarLogoURL(s string) *GroupCreate {
-	gc.mutation.SetGravatarLogoURL(s)
+// SetGravatarLogoURI sets the "gravatar_logo_uri" field.
+func (gc *GroupCreate) SetGravatarLogoURI(s string) *GroupCreate {
+	gc.mutation.SetGravatarLogoURI(s)
 	return gc
 }
 
-// SetNillableGravatarLogoURL sets the "gravatar_logo_url" field if the given value is not nil.
-func (gc *GroupCreate) SetNillableGravatarLogoURL(s *string) *GroupCreate {
+// SetNillableGravatarLogoURI sets the "gravatar_logo_uri" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableGravatarLogoURI(s *string) *GroupCreate {
 	if s != nil {
-		gc.SetGravatarLogoURL(*s)
+		gc.SetGravatarLogoURI(*s)
 	}
 	return gc
 }
@@ -402,9 +402,9 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		_spec.SetField(group.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := gc.mutation.GravatarLogoURL(); ok {
-		_spec.SetField(group.FieldGravatarLogoURL, field.TypeString, value)
-		_node.GravatarLogoURL = value
+	if value, ok := gc.mutation.GravatarLogoURI(); ok {
+		_spec.SetField(group.FieldGravatarLogoURI, field.TypeString, value)
+		_node.GravatarLogoURI = value
 	}
 	if value, ok := gc.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)

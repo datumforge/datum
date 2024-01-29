@@ -270,10 +270,10 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, group.FieldDescription)
 				fieldSeen[group.FieldDescription] = struct{}{}
 			}
-		case "gravatarLogoURL":
-			if _, ok := fieldSeen[group.FieldGravatarLogoURL]; !ok {
-				selectedFields = append(selectedFields, group.FieldGravatarLogoURL)
-				fieldSeen[group.FieldGravatarLogoURL] = struct{}{}
+		case "gravatarLogoURI":
+			if _, ok := fieldSeen[group.FieldGravatarLogoURI]; !ok {
+				selectedFields = append(selectedFields, group.FieldGravatarLogoURI)
+				fieldSeen[group.FieldGravatarLogoURI] = struct{}{}
 			}
 		case "logoURL":
 			if _, ok := fieldSeen[group.FieldLogoURL]; !ok {

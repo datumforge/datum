@@ -33,8 +33,8 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldGravatarLogoURL holds the string denoting the gravatar_logo_url field in the database.
-	FieldGravatarLogoURL = "gravatar_logo_url"
+	// FieldGravatarLogoURI holds the string denoting the gravatar_logo_uri field in the database.
+	FieldGravatarLogoURI = "gravatar_logo_uri"
 	// FieldLogoURL holds the string denoting the logo_url field in the database.
 	FieldLogoURL = "logo_url"
 	// FieldDisplayName holds the string denoting the display_name field in the database.
@@ -89,7 +89,7 @@ var Columns = []string{
 	FieldOwnerID,
 	FieldName,
 	FieldDescription,
-	FieldGravatarLogoURL,
+	FieldGravatarLogoURI,
 	FieldLogoURL,
 	FieldDisplayName,
 }
@@ -188,9 +188,9 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByGravatarLogoURL orders the results by the gravatar_logo_url field.
-func ByGravatarLogoURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldGravatarLogoURL, opts...).ToFunc()
+// ByGravatarLogoURI orders the results by the gravatar_logo_uri field.
+func ByGravatarLogoURI(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGravatarLogoURI, opts...).ToFunc()
 }
 
 // ByLogoURL orders the results by the logo_url field.

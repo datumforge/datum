@@ -104,7 +104,7 @@ type ComplexityRoot struct {
 		DeletedBy       func(childComplexity int) int
 		Description     func(childComplexity int) int
 		DisplayName     func(childComplexity int) int
-		GravatarLogoURL func(childComplexity int) int
+		GravatarLogoURI func(childComplexity int) int
 		ID              func(childComplexity int) int
 		LogoURL         func(childComplexity int) int
 		Members         func(childComplexity int) int
@@ -995,12 +995,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Group.DisplayName(childComplexity), true
 
-	case "Group.gravatarLogoURL":
-		if e.complexity.Group.GravatarLogoURL == nil {
+	case "Group.gravatarLogoURI":
+		if e.complexity.Group.GravatarLogoURI == nil {
 			break
 		}
 
-		return e.complexity.Group.GravatarLogoURL(childComplexity), true
+		return e.complexity.Group.GravatarLogoURI(childComplexity), true
 
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
@@ -3952,7 +3952,7 @@ input CreateGroupInput {
   """
   the URL to an auto generated gravatar image for the group
   """
-  gravatarLogoURL: String
+  gravatarLogoURI: String
   """
   the URL to an image uploaded by the customer for the groups avatar image
   """
@@ -4560,7 +4560,7 @@ type Group implements Node {
   """
   the URL to an auto generated gravatar image for the group
   """
-  gravatarLogoURL: String
+  gravatarLogoURI: String
   """
   the URL to an image uploaded by the customer for the groups avatar image
   """
@@ -7427,8 +7427,8 @@ input UpdateGroupInput {
   """
   the URL to an auto generated gravatar image for the group
   """
-  gravatarLogoURL: String
-  clearGravatarLogoURL: Boolean
+  gravatarLogoURI: String
+  clearGravatarLogoURI: Boolean
   """
   the URL to an image uploaded by the customer for the groups avatar image
   """
@@ -12659,8 +12659,8 @@ func (ec *executionContext) fieldContext_Group_description(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Group_gravatarLogoURL(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+func (ec *executionContext) _Group_gravatarLogoURI(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12673,7 +12673,7 @@ func (ec *executionContext) _Group_gravatarLogoURL(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GravatarLogoURL, nil
+		return obj.GravatarLogoURI, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12687,7 +12687,7 @@ func (ec *executionContext) _Group_gravatarLogoURL(ctx context.Context, field gr
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Group_gravatarLogoURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Group_gravatarLogoURI(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Group",
 		Field:      field,
@@ -13301,8 +13301,8 @@ func (ec *executionContext) fieldContext_GroupCreatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -13420,8 +13420,8 @@ func (ec *executionContext) fieldContext_GroupEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -13970,8 +13970,8 @@ func (ec *executionContext) fieldContext_GroupMembership_group(ctx context.Conte
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -15093,8 +15093,8 @@ func (ec *executionContext) fieldContext_GroupSetting_group(ctx context.Context,
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -15617,8 +15617,8 @@ func (ec *executionContext) fieldContext_GroupUpdatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -22897,8 +22897,8 @@ func (ec *executionContext) fieldContext_Organization_groups(ctx context.Context
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -27404,8 +27404,8 @@ func (ec *executionContext) fieldContext_Query_group(ctx context.Context, field 
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -29448,8 +29448,8 @@ func (ec *executionContext) fieldContext_User_groups(ctx context.Context, field 
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
-			case "gravatarLogoURL":
-				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+			case "gravatarLogoURI":
+				return ec.fieldContext_Group_gravatarLogoURI(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
@@ -33211,7 +33211,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "gravatarLogoURL", "logoURL", "displayName", "ownerID", "settingID", "userIDs", "createGroupSettings"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "gravatarLogoURI", "logoURL", "displayName", "ownerID", "settingID", "userIDs", "createGroupSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -33260,13 +33260,13 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.Description = data
-		case "gravatarLogoURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gravatarLogoURL"))
+		case "gravatarLogoURI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gravatarLogoURI"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.GravatarLogoURL = data
+			it.GravatarLogoURI = data
 		case "logoURL":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("logoURL"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -44922,7 +44922,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "gravatarLogoURL", "clearGravatarLogoURL", "logoURL", "clearLogoURL", "displayName", "ownerID", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupMembers", "updateGroupSettings"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "gravatarLogoURI", "clearGravatarLogoURI", "logoURL", "clearLogoURL", "displayName", "ownerID", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupMembers", "updateGroupSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44971,20 +44971,20 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.ClearDescription = data
-		case "gravatarLogoURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gravatarLogoURL"))
+		case "gravatarLogoURI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gravatarLogoURI"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.GravatarLogoURL = data
-		case "clearGravatarLogoURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearGravatarLogoURL"))
+			it.GravatarLogoURI = data
+		case "clearGravatarLogoURI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearGravatarLogoURI"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearGravatarLogoURL = data
+			it.ClearGravatarLogoURI = data
 		case "logoURL":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("logoURL"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49485,8 +49485,8 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "description":
 			out.Values[i] = ec._Group_description(ctx, field, obj)
-		case "gravatarLogoURL":
-			out.Values[i] = ec._Group_gravatarLogoURL(ctx, field, obj)
+		case "gravatarLogoURI":
+			out.Values[i] = ec._Group_gravatarLogoURI(ctx, field, obj)
 		case "logoURL":
 			out.Values[i] = ec._Group_logoURL(ctx, field, obj)
 		case "displayName":

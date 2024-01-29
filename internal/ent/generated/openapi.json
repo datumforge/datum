@@ -1659,7 +1659,7 @@
                   "description": {
                     "type": "string"
                   },
-                  "gravatar_logo_url": {
+                  "gravatar_logo_uri": {
                     "type": "string"
                   },
                   "logo_url": {
@@ -1852,7 +1852,7 @@
                   "description": {
                     "type": "string"
                   },
-                  "gravatar_logo_url": {
+                  "gravatar_logo_uri": {
                     "type": "string"
                   },
                   "logo_url": {
@@ -7924,7 +7924,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -7999,7 +7999,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -8054,7 +8054,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -8372,7 +8372,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -8498,7 +8498,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -8901,7 +8901,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -8956,7 +8956,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -11521,7 +11521,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {
@@ -13602,7 +13602,7 @@
           "description": {
             "type": "string"
           },
-          "gravatar_logo_url": {
+          "gravatar_logo_uri": {
             "type": "string"
           },
           "logo_url": {

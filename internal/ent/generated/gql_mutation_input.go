@@ -144,7 +144,7 @@ type CreateGroupInput struct {
 	UpdatedBy       *string
 	Name            string
 	Description     *string
-	GravatarLogoURL *string
+	GravatarLogoURI *string
 	LogoURL         *string
 	DisplayName     *string
 	OwnerID         string
@@ -170,8 +170,8 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if v := i.GravatarLogoURL; v != nil {
-		m.SetGravatarLogoURL(*v)
+	if v := i.GravatarLogoURI; v != nil {
+		m.SetGravatarLogoURI(*v)
 	}
 	if v := i.LogoURL; v != nil {
 		m.SetLogoURL(*v)
@@ -200,8 +200,8 @@ type UpdateGroupInput struct {
 	Name                 *string
 	ClearDescription     bool
 	Description          *string
-	ClearGravatarLogoURL bool
-	GravatarLogoURL      *string
+	ClearGravatarLogoURI bool
+	GravatarLogoURI      *string
 	ClearLogoURL         bool
 	LogoURL              *string
 	DisplayName          *string
@@ -232,11 +232,11 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if i.ClearGravatarLogoURL {
-		m.ClearGravatarLogoURL()
+	if i.ClearGravatarLogoURI {
+		m.ClearGravatarLogoURI()
 	}
-	if v := i.GravatarLogoURL; v != nil {
-		m.SetGravatarLogoURL(*v)
+	if v := i.GravatarLogoURI; v != nil {
+		m.SetGravatarLogoURI(*v)
 	}
 	if i.ClearLogoURL {
 		m.ClearLogoURL()

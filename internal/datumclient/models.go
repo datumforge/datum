@@ -44,7 +44,7 @@ type CreateGroupInput struct {
 	// the groups description
 	Description *string `json:"description,omitempty"`
 	// the URL to an auto generated gravatar image for the group
-	GravatarLogoURL *string `json:"gravatarLogoURL,omitempty"`
+	GravatarLogoURI *string `json:"gravatarLogoURI,omitempty"`
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
@@ -511,7 +511,7 @@ type Group struct {
 	// the groups description
 	Description *string `json:"description,omitempty"`
 	// the URL to an auto generated gravatar image for the group
-	GravatarLogoURL *string `json:"gravatarLogoURL,omitempty"`
+	GravatarLogoURI *string `json:"gravatarLogoURI,omitempty"`
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
@@ -2622,8 +2622,8 @@ type UpdateGroupInput struct {
 	Description      *string `json:"description,omitempty"`
 	ClearDescription *bool   `json:"clearDescription,omitempty"`
 	// the URL to an auto generated gravatar image for the group
-	GravatarLogoURL      *string `json:"gravatarLogoURL,omitempty"`
-	ClearGravatarLogoURL *bool   `json:"clearGravatarLogoURL,omitempty"`
+	GravatarLogoURI      *string `json:"gravatarLogoURI,omitempty"`
+	ClearGravatarLogoURI *bool   `json:"clearGravatarLogoURI,omitempty"`
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL      *string `json:"logoURL,omitempty"`
 	ClearLogoURL *bool   `json:"clearLogoURL,omitempty"`

@@ -52,7 +52,7 @@ input CreateGroupInput {
 	"""
 	the URL to an auto generated gravatar image for the group
 	"""
-	gravatarLogoURL: String
+	gravatarLogoURI: String
 	"""
 	the URL to an image uploaded by the customer for the groups avatar image
 	"""
@@ -689,7 +689,7 @@ type Group implements Node {
 	"""
 	the URL to an auto generated gravatar image for the group
 	"""
-	gravatarLogoURL: String
+	gravatarLogoURI: String
 	"""
 	the URL to an image uploaded by the customer for the groups avatar image
 	"""
@@ -4365,8 +4365,8 @@ input UpdateGroupInput {
 	"""
 	the URL to an auto generated gravatar image for the group
 	"""
-	gravatarLogoURL: String
-	clearGravatarLogoURL: Boolean
+	gravatarLogoURI: String
+	clearGravatarLogoURI: Boolean
 	"""
 	the URL to an image uploaded by the customer for the groups avatar image
 	"""

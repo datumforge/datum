@@ -48,7 +48,7 @@ func (Group) Fields() []ent.Field {
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
 			),
-		field.String("gravatar_logo_url").
+		field.String("gravatar_logo_uri").
 			Comment("the URL to an auto generated gravatar image for the group").
 			Optional().
 			Annotations(

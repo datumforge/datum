@@ -97,7 +97,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [3]ent.Hook
+	Hooks        [4]ent.Hook
 	Interceptors [1]ent.Interceptor
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
@@ -124,7 +124,7 @@ const DefaultStatus enums.InviteStatus = "INVITATION_SENT"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.InviteStatus) error {
 	switch s.String() {
-	case "INVITATION_SENT":
+	case "INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED", "INVITE_INVALID":
 		return nil
 	default:
 		return fmt.Errorf("invite: invalid enum value for status field: %q", s)

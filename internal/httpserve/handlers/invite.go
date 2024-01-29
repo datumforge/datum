@@ -21,18 +21,15 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/emails"
-	"github.com/datumforge/datum/internal/utils/marionette"
-	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
-// OrganizationInvite function is a handler function that is responsible for handling the
+// OrganizationInviteAccept function is a handler function that is responsible for handling the
 // invitation of a user to an organization. It receives a request with the user's
 // invitation details, validates the request, retrieves the invited user based on the
 // invitation token, creates a new user and creates an organization
 // membership for the user, and returns a response with the user's details and
 // organization information
-func (h *Handler) OrganizationInvite(ctx echo.Context) error {
+func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	// parse the token out of the context
 	inv := &Invite{
 		Token: ctx.QueryParam("token"),
@@ -94,20 +91,20 @@ func (h *Handler) OrganizationInvite(ctx echo.Context) error {
 	}
 
 	// reconstruct the token based on recipient & owning organization so we can compare it to the one were receiving
-	token := &tokens.OrgInviteToken{
+	t := &tokens.OrgInviteToken{
 		Email: invitedUser.Recipient,
 		OrgID: oid,
 	}
 
 	// check and ensure the token has not expired
-	if token.ExpiresAt, err = invite.GetInviteExpires(); err != nil {
+	if t.ExpiresAt, err = invite.GetInviteExpires(); err != nil {
 		h.Logger.Errorw("unable to parse expiration", "error", err)
 
 		return ctx.JSON(http.StatusInternalServerError, tokens.ErrTokenExpired)
 	}
 
 	// Verify the token is valid with the stored secret
-	if err = token.Verify(invite.GetInviteToken(), invite.Secret); err != nil {
+	if err = t.Verify(invite.GetInviteToken(), invite.Secret); err != nil {
 		if errors.Is(err, tokens.ErrTokenExpired) {
 			if err := updateInviteStatusExpired(ctxWithToken, invitedUser); err != nil {
 				return err
@@ -133,47 +130,25 @@ func (h *Handler) OrganizationInvite(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("error creating new user", "error", err)
 
-		// this would only hit if the user registred normally after having already received an invite
-		if IsUniqueConstraintError(err) {
-			existingUser, err := h.getUserByEmail(ctxWithToken, invitedUser.Recipient)
-			if err != nil {
-				return err
+		// this would only hit if the user registered normally after having already received an invite
+		if !IsUniqueConstraintError(err) {
+			if generated.IsValidationError(err) {
+				field := err.(*generated.ValidationError).Name
+				return ctx.JSON(http.StatusBadRequest, ErrorResponse(fmt.Sprintf("%s was invalid", field)))
 			}
 
-			// set the context to the existing user if we find them
-			viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(existingUser.ID, true))
-
-			// addUserToOrganization updates the invite status to accepted, and sends the email
-			mem, err := h.addUserToOrganization(viewerCtx, invitedUser, existingUser)
-			if err != nil {
-				return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
-			}
-
-			out := &InviteReply{
-				ID:          existingUser.ID,
-				Email:       existingUser.Email,
-				JoinedOrgID: mem.OrgID,
-				Role:        string(mem.Role),
-				Message:     "Welcome to your new organization!",
-			}
-
-			// remove the accepted invite
-			if err := deleteInvite(viewerCtx, invitedUser); err != nil {
-				return err
-			}
-
-			return ctx.JSON(http.StatusCreated, out)
+			return err
 		}
-
-		if generated.IsValidationError(err) {
-			field := err.(*generated.ValidationError).Name
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(fmt.Sprintf("%s was invalid", field)))
-		}
-
-		return err
 	}
 
-	// finish following actions as created user
+	// if the user was created, use that user as the createdUser
+	if IsUniqueConstraintError(err) {
+		createdUser, err = h.getUserByEmail(ctxWithToken, invitedUser.Recipient)
+		if err != nil {
+			return err
+		}
+	}
+
 	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(createdUser.ID, true))
 
 	// don't require an additional email verification since the invite was sent to an email
@@ -181,9 +156,7 @@ func (h *Handler) OrganizationInvite(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// add user to the inviting organization given the invite can only be created by an existing, authenticated user + role checks are performed in the ent Hook
-	mem, err := h.addUserToOrganization(viewerCtx, invitedUser, createdUser)
-	if err != nil {
+	if err := updateInviteStatusAccepted(viewerCtx, invitedUser); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
@@ -191,14 +164,9 @@ func (h *Handler) OrganizationInvite(ctx echo.Context) error {
 	out := &InviteReply{
 		ID:          createdUser.ID,
 		Email:       createdUser.Email,
-		JoinedOrgID: mem.OrgID,
-		Role:        string(mem.Role),
+		JoinedOrgID: invitedUser.OwnerID,
+		Role:        string(invitedUser.Role),
 		Message:     "Welcome to your new organization!",
-	}
-
-	// remove the accepted invite
-	if err := deleteInvite(viewerCtx, invitedUser); err != nil {
-		return err
 	}
 
 	return ctx.JSON(http.StatusCreated, out)
@@ -280,28 +248,6 @@ func (i *Invite) GetInviteExpires() (time.Time, error) {
 	return time.Time{}, nil
 }
 
-// CreateInviteToken creates a invitation token for the user
-func (i *Invite) CreateInviteToken() error {
-	// Create a unique token from the user's email address and the joining organization ID
-	verify, err := tokens.NewOrgInvitationToken(i.Email, i.DestOrgID)
-	if err != nil {
-		return err
-	}
-
-	// Sign the token to ensure that we can verify it later
-	token, secret, err := verify.Sign()
-	if err != nil {
-		return err
-	}
-
-	// set the token details to return
-	i.InviteToken.Token = sql.NullString{Valid: true, String: token}
-	i.InviteToken.Expires = sql.NullString{Valid: true, String: verify.ExpiresAt.Format(time.RFC3339Nano)}
-	i.InviteToken.Secret = secret
-
-	return nil
-}
-
 // setOrgInviteTokens ets the fields of the `Invite` struct to verify the email
 // invitation. It takes in an `Invite` object and an invitation token as parameters. If
 // the invitation token matches the token stored in the `Invite` object, it sets the
@@ -319,42 +265,6 @@ func (i *Invite) setOrgInviteTokens(inv *generated.Invite, invToken string) erro
 	return ErrNotFound
 }
 
-// addUserToOrganization function is responsible for adding a user to the organization
-// which is the parent of the invite (the inviting organization). It creates a new
-// `CreateOrgMembershipInput` object with the user ID, organization ID, and role from the
-// invite object - if successful, it returns the created organization membership to be
-// to send communnications regarding the acceptance
-func (h *Handler) addUserToOrganization(ctx context.Context, i *generated.Invite, user *generated.User) (*generated.OrgMembership, error) {
-	input := generated.CreateOrgMembershipInput{
-		UserID: user.ID,
-		OrgID:  i.OwnerID,
-		Role:   &i.Role,
-	}
-
-	mem, err := transaction.FromContext(ctx).OrgMembership.Create().SetInput(input).Save(ctx)
-
-	if err != nil {
-		h.Logger.Errorw("error creating org membership for owner", "error", err)
-
-		return nil, err
-	}
-
-	if err := updateInviteStatusAccepted(ctx, i); err != nil {
-		return nil, err
-	}
-
-	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return h.SendOrgInviteAccepted(i)
-	}), marionette.WithErrorf("could not send invite accepted %s", user.Email),
-	); err != nil {
-		h.Logger.Errorw("error sending confirmation email", "error", err)
-
-		return nil, err
-	}
-
-	return mem, nil
-}
-
 // updateInviteStatusAccepted updates the status of an invite to "Accepted"
 func updateInviteStatusAccepted(ctx context.Context, i *generated.Invite) error {
 	_, err := transaction.FromContext(ctx).Invite.UpdateOneID(i.ID).SetStatus(enums.InvitationAccepted).Save(ctx)
@@ -365,7 +275,7 @@ func updateInviteStatusAccepted(ctx context.Context, i *generated.Invite) error 
 	return nil
 }
 
-// updateInviteStatusAccepted updates the status of an invite to "Accepted"
+// updateInviteStatusAccepted updates the status of an invite to "Expired"
 func updateInviteStatusExpired(ctx context.Context, i *generated.Invite) error {
 	_, err := transaction.FromContext(ctx).Invite.UpdateOneID(i.ID).SetStatus(enums.InvitationExpired).Save(ctx)
 	if err != nil {
@@ -373,33 +283,4 @@ func updateInviteStatusExpired(ctx context.Context, i *generated.Invite) error {
 	}
 
 	return nil
-}
-
-// deleteInvite deletes an invite
-func deleteInvite(ctx context.Context, i *generated.Invite) error {
-	if err := transaction.FromContext(ctx).Invite.DeleteOneID(i.ID).Exec(ctx); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// SendOrgInviteAccepted sends an email notifying of org joined
-func (h *Handler) SendOrgInviteAccepted(i *generated.Invite) error {
-	data := emails.InviteData{
-		OrgName: i.OwnerID,
-		EmailData: emails.EmailData{
-			Sender: h.EmailManager.MustFromContact(),
-			Recipient: sendgrid.Contact{
-				Email: i.Recipient,
-			},
-		},
-	}
-
-	msg, err := emails.InviteAccepted(data)
-	if err != nil {
-		return err
-	}
-
-	return h.EmailManager.Send(msg)
 }

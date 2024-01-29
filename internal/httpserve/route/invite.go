@@ -15,7 +15,7 @@ func registerInviteHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Handler: func(c echo.Context) error {
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 
-			return h.OrganizationInvite(c)
+			return h.OrganizationInviteAccept(c)
 		},
 	}.ForGroup(V1Version, mw))
 

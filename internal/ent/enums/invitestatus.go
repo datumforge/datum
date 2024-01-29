@@ -16,22 +16,23 @@ var (
 	InviteInvalid      InviteStatus = "INVITE_INVALID"
 )
 
-// Values returns a slice of strings that represents all the possible values of the Role enum.
-// Possible default values are "ADMIN", and "MEMBER".
+// Values returns a slice of strings that represents all the possible values of the InviteStatus enum.
+// Possible default values are "INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED",
+// and INVITE_INVALID
 func (InviteStatus) Values() (kinds []string) {
-	for _, s := range []InviteStatus{InvitationSent} {
+	for _, s := range []InviteStatus{InvitationSent, ApprovalRequired, InvitationAccepted, InvitationExpired, InviteInvalid} {
 		kinds = append(kinds, string(s))
 	}
 
 	return
 }
 
-// String returns the role as a string
+// String returns the invite status as a string
 func (r InviteStatus) String() string {
 	return string(r)
 }
 
-// InviteEnum returns the Role based on string input
+// InviteEnum returns the invite status based on string input
 func InviteEnum(r string) InviteStatus {
 	switch r := strings.ToUpper(r); r {
 	case InvitationSent.String():
@@ -56,7 +57,7 @@ func (r InviteStatus) MarshalGQL(w io.Writer) {
 func (r *InviteStatus) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("wrong type for Role, got: %T", v) //nolint:goerr113
+		return fmt.Errorf("wrong type for InviteStatus, got: %T", v) //nolint:goerr113
 	}
 
 	*r = InviteStatus(str)

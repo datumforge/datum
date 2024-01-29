@@ -30,6 +30,14 @@ steps:
           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
           environment: 
             - "GOTOOLCHAIN=auto"
+  - label: ":sqlite: atlas lint"
+    key: "atlas_lint"
+    plugins:
+      - datumforge/atlas#v0.0.1:
+          project: datum
+          dev-url: "sqlite://dev?mode=memory&_fk=1"
+          dir: "file://db/migrations"
+          step: lint
   - label: ":golang: go test - sqlite"
     key: "go_test_sqlite"
     env:
@@ -134,17 +142,19 @@ steps:
             - GOARCH=arm64
           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
 
-- group: ":database: atlas lint + migrate"
+- group: ":database: atlas migrate"
   key: "database"
+  if: build.branch == "main"
+  depends_on: ["tests", "go-builds"]
   steps:
   - label: ":sqlite: atlas"
-    key: "atlas"
+    key: "atlas_migrate"
     plugins:
-      - datumforge/atlas#bfeec782bacb48263c648c62a9def3a3cd9e8e57:
+      - datumforge/atlas#v0.0.1:
           project: datum
           dev-url: "sqlite://dev?mode=memory&_fk=1"
           dir: "file://db/migrations"
-          step: all
+          step: migrate
 
 - group: ":docker: Image Build"
   depends_on: "go-builds"

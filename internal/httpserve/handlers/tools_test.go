@@ -6,7 +6,6 @@ import (
 	"crypto/rsa"
 	"io"
 	"log"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -122,21 +121,6 @@ func setupTest(t *testing.T) *client {
 
 	taskMan.Start()
 
-	// Grab the DB environment variable or use the default
-	testDBURI := os.Getenv("TEST_DB_URL")
-
-	ctr := testutils.GetTestURI(ctx, testDBURI)
-	dbContainer = ctr
-
-	dbconf := entdb.Config{
-		Debug:           true,
-		DriverName:      dbContainer.Dialect,
-		PrimaryDBSource: dbContainer.URI,
-		CacheTTL:        -1 * time.Second, // do not cache results in tests
-	}
-
-	entConfig := entdb.NewDBConfig(dbconf, logger)
-
 	opts := []ent.Option{
 		ent.Logger(*logger),
 		ent.Authz(*fc),
@@ -144,16 +128,14 @@ func setupTest(t *testing.T) *client {
 		ent.Emails(em),
 	}
 
-	db, err := entConfig.NewMultiDriverDBClient(ctx, opts)
+	// create database connection
+	db, ctr, err := entdb.NewTestClient(ctx, opts)
 	if err != nil {
 		require.NoError(t, err, "failed opening connection to database")
 	}
 
-	if err := db.Schema.Create(ctx); err != nil {
-		require.NoError(t, err, "failed creating database schema")
-	}
-
 	// add db to test client
+	dbContainer = ctr
 	c.db = db
 
 	// setup handler

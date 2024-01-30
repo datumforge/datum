@@ -9,12 +9,14 @@ import (
 	"net/http"
 	"net/url"
 
+	"golang.org/x/oauth2"
+
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
 // OrgInvite a new user within Datum org
-func OrgInvite(c *Client, ctx context.Context, r handlers.Invite) (*handlers.InviteReply, error) {
+func OrgInvite(c *Client, ctx context.Context, r handlers.Invite) (*handlers.InviteReply, *oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "invite"
 
@@ -22,36 +24,36 @@ func OrgInvite(c *Client, ctx context.Context, r handlers.Invite) (*handlers.Inv
 
 	queryURL, err := url.Parse(u)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, queryURL.String(), nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	b, err := json.Marshal(r)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	req.Body = io.NopCloser(bytes.NewBuffer(b))
 
 	resp, err := c.Client.Client.Do(req.WithContext(ctx))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer resp.Body.Close()
 
 	out := handlers.InviteReply{}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if resp.StatusCode != http.StatusCreated {
-		return nil, newRequestError(resp.StatusCode, out.Message)
+		return nil, nil, newRequestError(resp.StatusCode, out.Message)
 	}
 
-	return &out, err
+	return &out, getTokensFromCookies(resp), err
 }

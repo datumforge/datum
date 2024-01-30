@@ -54,7 +54,7 @@ func (Invite) Fields() []ent.Field {
 			Comment("the number of attempts made to perform email send of the invitation, maximum of 5").
 			Default(0),
 		field.String("requestor_id").
-			Comment("the user who initatied the invitation").
+			Comment("the user who initiated the invitation").
 			Immutable().
 			NotEmpty(),
 		field.Bytes("secret").

@@ -29,7 +29,7 @@ func init() {
 	inviteCreateCmd.Flags().StringP("email", "e", "", "destination email for the invitation")
 	datum.ViperBindFlag("invite.create.email", inviteCreateCmd.Flags().Lookup("email"))
 
-	inviteCreateCmd.Flags().StringP("role", "r", "MEMBER", "role for the user in the organization (admin, member)")
+	inviteCreateCmd.Flags().StringP("role", "r", "member", "role for the user in the organization (admin, member)")
 	datum.ViperBindFlag("invite.create.role", inviteCreateCmd.Flags().Lookup("role"))
 }
 
@@ -53,7 +53,7 @@ func createInvite(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("email")
 	}
 
-	role := enums.Enum(viper.GetString("invite.create.role"))
+	role := enums.ToRole(viper.GetString("invite.create.role"))
 
 	input := datumclient.CreateInviteInput{
 		OwnerID:   oID,

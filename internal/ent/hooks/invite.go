@@ -2,7 +2,6 @@ package hooks
 
 import (
 	"context"
-	"time"
 
 	"entgo.io/ent"
 
@@ -21,11 +20,11 @@ import (
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-// HookInvite runs on invite mutations
+// HookInvite runs on invite create mutations
 func HookInvite() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.InviteFunc(func(ctx context.Context, m *generated.InviteMutation) (generated.Value, error) {
-			m, err := getRequestor(ctx, m)
+			m, err := setRequestor(ctx, m)
 			if err != nil {
 				m.Logger.Errorw("unable to determine requestor")
 
@@ -81,21 +80,19 @@ func HookInvite() ent.Hook {
 				retValue, err := next.Mutate(ctx, m)
 				if err != nil {
 					m.Logger.Errorw("unable to create invitation", "error", err)
-
-					return retValue, err
 				}
 
 				return retValue, nil
 			}
 
-			// attempt to do the mutation
+			// attempt to do the mutation for a new user invite
 			retValue, err := next.Mutate(ctx, m)
 			if err != nil {
 				if IsUniqueConstraintError(err) {
 					m.Logger.Infow("invitation for user already exists")
 
 					// update invite instead
-					retValue, err = updateInvite(ctx, m)
+					retValue, err = UpdateInvite(ctx, m)
 					if err != nil {
 						m.Logger.Errorw("unable to update invitation", "error", err)
 					}
@@ -139,6 +136,8 @@ func HookInviteAccepted() ent.Hook {
 
 				invite, err := m.Client().Invite.Get(ctx, id)
 				if err != nil {
+					m.Logger.Errorw("unable to get existing invite", "error", err)
+
 					return nil, err
 				}
 
@@ -162,6 +161,8 @@ func HookInviteAccepted() ent.Hook {
 
 			// add user to the inviting org
 			if _, err := m.Client().OrgMembership.Create().SetInput(input).Save(ctx); err != nil {
+				m.Logger.Errorw("unable to add user to organization", "error", err)
+
 				return nil, err
 			}
 
@@ -171,9 +172,11 @@ func HookInviteAccepted() ent.Hook {
 				return nil, err
 			}
 
-			// fetch org details to pass the name
+			// fetch org details to pass the name in the email
 			org, err := m.Client().Organization.Query().Where(organization.ID(ownerID)).Only(ctx)
 			if err != nil {
+				m.Logger.Errorw("unable to get organization", "error", err)
+
 				return retValue, err
 			}
 
@@ -203,7 +206,8 @@ func HookInviteAccepted() ent.Hook {
 	}, ent.OpCreate|ent.OpUpdate|ent.OpUpdateOne)
 }
 
-// getUserByEmail checks to see if there is an existing user in the system based on the provided email, and returns the user if they do exist or nil if they don't
+// getUserByEmail checks to see if there is an existing user in the system based on the provided email,
+// and returns the user if they do exist or nil if they don't
 func getUserByEmail(ctx context.Context, m *generated.InviteMutation, email string) (*generated.User, error) {
 	user, err := m.Client().User.Query().Where(user.Email(email)).Only(ctx)
 	if err != nil {
@@ -215,7 +219,7 @@ func getUserByEmail(ctx context.Context, m *generated.InviteMutation, email stri
 	return user, nil
 }
 
-// doesUserHaveMembership checks if the user already has membership to the requested organization; if false user exists, but without requested organization membership
+// doesUserHaveMembership checks if the user already has membership to the requested organization;
 func doesUserHaveMembership(ctx context.Context, m *generated.InviteMutation, entUser *generated.User) (bool, error) {
 	orgID, _ := m.OwnerID()
 
@@ -271,8 +275,8 @@ func setRecipientAndToken(ctx context.Context, m *generated.InviteMutation) (*ge
 	return m, nil
 }
 
-// getRequestor sets the requestor on the mutation
-func getRequestor(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
+// setRequestor sets the requestor on the mutation
+func setRequestor(ctx context.Context, m *generated.InviteMutation) (*generated.InviteMutation, error) {
 	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		m.Logger.Errorw("unable to get requestor", "error", err)
@@ -372,9 +376,9 @@ func sendOrgAccepted(ctx context.Context, m *generated.InviteMutation, i *emails
 
 var maxAttempts = 5
 
-// updateInvite if the invite already exists, set a new token, secret, expiration, and increment the attempts
+// UpdateInvite if the invite already exists, set a new token, secret, expiration, and increment the attempts
 // error at max attempts to resend
-func updateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.Invite, error) {
+func UpdateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.Invite, error) {
 	// get the existing invite by recipient and owner
 	rec, _ := m.Recipient()
 	ownerID, _ := m.OwnerID()
@@ -392,22 +396,25 @@ func updateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.
 	// increment attempts
 	invite.SendAttempts++
 
+	m.SetSendAttempts(invite.SendAttempts)
+
 	// these were already set when the invite was attempted to be added
 	// we do not need to create these again
 	secret, _ := m.Secret()
 	token, _ := m.Token()
+	expiresAt, _ := m.Expires()
 
 	// update the invite
 	return m.Client().Invite.
 		UpdateOneID(invite.ID).
-		SetExpires(time.Now().AddDate(0, 0, 14)). //nolint:gomnd
 		SetSendAttempts(invite.SendAttempts).
 		SetToken(token).
+		SetExpires(expiresAt).
 		SetSecret(secret).
 		Save(ctx)
 }
 
-// deleteInvite deletes an invite
+// deleteInvite deletes an invite from the database
 func deleteInvite(ctx context.Context, m *generated.InviteMutation) error {
 	id, _ := m.ID()
 

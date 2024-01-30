@@ -17,10 +17,9 @@ var (
 )
 
 // Values returns a slice of strings that represents all the possible values of the InviteStatus enum.
-// Possible default values are "INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED",
-// and INVITE_INVALID
+// Possible default values are "INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", and "INVITATION_EXPIRED"
 func (InviteStatus) Values() (kinds []string) {
-	for _, s := range []InviteStatus{InvitationSent, ApprovalRequired, InvitationAccepted, InvitationExpired, InviteInvalid} {
+	for _, s := range []InviteStatus{InvitationSent, ApprovalRequired, InvitationAccepted, InvitationExpired} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -32,8 +31,8 @@ func (r InviteStatus) String() string {
 	return string(r)
 }
 
-// InviteEnum returns the invite status based on string input
-func InviteEnum(r string) InviteStatus {
+// ToInviteStatus returns the invite status enum based on string input
+func ToInviteStatus(r string) InviteStatus {
 	switch r := strings.ToUpper(r); r {
 	case InvitationSent.String():
 		return InvitationSent

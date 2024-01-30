@@ -30,8 +30,8 @@ func (r Role) String() string {
 	return string(r)
 }
 
-// Enum returns the Role based on string input
-func Enum(r string) Role {
+// ToRole returns the Role based on string input
+func ToRole(r string) Role {
 	switch r := strings.ToUpper(r); r {
 	case RoleOwner.String():
 		return RoleOwner

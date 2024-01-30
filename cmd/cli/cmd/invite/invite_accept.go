@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"net/http/cookiejar"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/spf13/cobra"
@@ -68,8 +69,15 @@ func inviteAccept(ctx context.Context) error {
 		Token:     token,
 	}
 
-	// setup datum http client
-	h := &http.Client{}
+	// setup datum http client with cookie jar
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return err
+	}
+
+	h := &http.Client{
+		Jar: jar,
+	}
 
 	// set options
 	opt := &clientv2.Options{}
@@ -80,8 +88,14 @@ func inviteAccept(ctx context.Context) error {
 	// this allows the use of the graph client to be used for the REST endpoints
 	dc := c.(*datumclient.Client)
 
-	registration, err := datumclient.OrgInvite(dc, ctx, invite)
+	defer datum.StoreSessionCookies(dc)
+
+	registration, tokens, err := datumclient.OrgInvite(dc, ctx, invite)
 	if err != nil {
+		return err
+	}
+
+	if err := datum.StoreToken(tokens); err != nil {
 		return err
 	}
 

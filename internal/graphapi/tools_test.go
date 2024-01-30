@@ -4,10 +4,8 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
@@ -89,21 +87,6 @@ func setupTest(t *testing.T) *client {
 
 	taskMan.Start()
 
-	// Grab the DB environment variable or use the default
-	testDBURI := os.Getenv("TEST_DB_URL")
-
-	ctr := testutils.GetTestURI(ctx, testDBURI)
-	dbContainer = ctr
-
-	dbconf := entdb.Config{
-		Debug:           true,
-		DriverName:      dbContainer.Dialect,
-		PrimaryDBSource: dbContainer.URI,
-		CacheTTL:        -1 * time.Second, // do not cache results in tests
-	}
-
-	entConfig := entdb.NewDBConfig(dbconf, logger)
-
 	opts := []ent.Option{
 		ent.Logger(*logger),
 		ent.Authz(*fc),
@@ -111,15 +94,14 @@ func setupTest(t *testing.T) *client {
 		ent.Marionette(taskMan),
 	}
 
-	db, err := entConfig.NewMultiDriverDBClient(ctx, opts)
+	// create database connection
+	db, ctr, err := entdb.NewTestClient(ctx, opts)
 	if err != nil {
 		require.NoError(t, err, "failed opening connection to database")
 	}
 
-	if err := db.Schema.Create(ctx); err != nil {
-		require.NoError(t, err, "failed creating database schema")
-	}
-
+	// assign values
+	dbContainer = ctr
 	c.db = db
 	c.datum = graphTestClient(t, c.db)
 

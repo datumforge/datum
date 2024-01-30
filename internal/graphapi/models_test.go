@@ -236,7 +236,7 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 		om.UserID = user.ID
 	}
 
-	role := enums.Enum(om.Role)
+	role := enums.ToRole(om.Role)
 	if role == enums.Invalid {
 		role = enums.RoleMember
 	}
@@ -340,7 +340,7 @@ func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
 		SetRecipient(rec)
 
 	if i.Role != "" {
-		inviteQuery.SetRole(enums.Enum(i.Role))
+		inviteQuery.SetRole(enums.ToRole(i.Role))
 	}
 
 	invite := inviteQuery.SaveX(ctx)
@@ -409,7 +409,7 @@ func (gm *GroupMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Gr
 		gm.UserID = user.ID
 	}
 
-	role := enums.Enum(gm.Role)
+	role := enums.ToRole(gm.Role)
 	if role == enums.Invalid {
 		role = enums.RoleMember
 	}

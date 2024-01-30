@@ -13,7 +13,7 @@ import (
 
 var inviteGetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get existing members of a datum group",
+	Short: "Get organization invitation",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return invites(cmd.Context())
 	},

@@ -127,7 +127,7 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 			// mock auth
 			mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
 
-			acceptInviteJSON := handlers.InviteInput{
+			acceptInviteJSON := handlers.InviteRequest{
 				FirstName: tc.firstName,
 				LastName:  tc.lastName,
 				Password:  tc.password,

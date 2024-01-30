@@ -20,22 +20,21 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
-// OrganizationInviteAccept function is a handler function that is responsible for handling the
-// invitation of a user to an organization. It receives a request with the user's
-// invitation details, validates the request, retrieves the invited user based on the
-// invitation token, creates a new user and creates an organization
-// membership for the user, and returns a response with the user's details and
-// organization information
+// OrganizationInviteAccept is responsible for handling the invitation of a user to an organization.
+// It receives a request with the user's invitation details, validates the request,
+// and creates a new user and organization membership for the user
+// On success, it returns a response with the user's details and organization information
 func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	// parse the token out of the context
 	inv := &Invite{
 		Token: ctx.QueryParam("token"),
 	}
 
-	var in *InviteInput
+	var in *InviteRequest
 
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
 		h.Logger.Errorw("error parsing request", "error", err)
@@ -149,6 +148,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		}
 	}
 
+	// set new viewer context with user id
 	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(createdUser.ID, true))
 
 	// don't require an additional email verification since the invite was sent to an email
@@ -158,6 +158,33 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 
 	if err := updateInviteStatusAccepted(viewerCtx, invitedUser); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+	}
+
+	claims := createClaims(createdUser)
+
+	access, refresh, err := h.TM.CreateTokenPair(claims)
+	if err != nil {
+		h.Logger.Errorw("error creating token pair", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+	}
+
+	// set cookies on request with the access and refresh token
+	auth.SetAuthCookies(ctx, access, refresh)
+
+	// set sessions in response
+	sc := sessions.NewSessionConfig(h.SM, h.RedisClient, h.Logger)
+
+	if err := sc.SaveAndStoreSession(ctx, createdUser.ID); err != nil {
+		h.Logger.Errorw("unable to save session", "error", err)
+
+		return err
+	}
+
+	if err := h.updateUserLastSeen(viewerCtx, createdUser.ID); err != nil {
+		h.Logger.Errorw("unable to update last seen", "error", err)
+
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// reply with the relevant details
@@ -203,8 +230,8 @@ type InviteReply struct {
 	Role        string `json:"role"`
 }
 
-// InviteInput holds the additional input from the user collected during acceptance
-type InviteInput struct {
+// InviteRequest holds the additional input from the user collected during acceptance
+type InviteRequest struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Password  string `json:"password"`

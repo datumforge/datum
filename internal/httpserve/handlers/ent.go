@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 )
 
+// updateUserLastSeen updates the last seen timestamp of the user
 func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 	if _, err := transaction.FromContext(ctx).
 		User.
@@ -27,6 +28,7 @@ func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 	return nil
 }
 
+// createUser creates a user in the database based on the input and returns the user with user settings
 func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*ent.User, error) {
 	meowuser, err := transaction.FromContext(ctx).User.Create().
 		SetInput(input).
@@ -47,6 +49,7 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 	return meowuser, nil
 }
 
+// createEmailVerificationToken creates a new email verification for the user
 func (h *Handler) createEmailVerificationToken(ctx context.Context, user *User) (*ent.EmailVerificationToken, error) {
 	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
 	if err != nil {
@@ -156,7 +159,7 @@ func (h *Handler) getUserBySub(ctx context.Context, subject string) (*ent.User, 
 	return user, nil
 }
 
-// getUserByInviteToken returns the ent user with the user settings based on the email in the request
+// getUserByInviteToken returns the ent user based on the invite token in the request
 func (h *Handler) getUserByInviteToken(ctx context.Context, token string) (*ent.Invite, error) {
 	recipient, err := transaction.FromContext(ctx).Invite.Query().
 		Where(

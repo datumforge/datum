@@ -38,7 +38,7 @@ func TestEnum(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			res := enums.Enum(tc.role)
+			res := enums.ToRole(tc.role)
 			assert.Equal(t, tc.expected, res)
 		})
 	}

@@ -29,9 +29,6 @@ var (
 
 	// ErrMaxAttempts is returned when a user has reached the max attempts to resend an invitation to an org
 	ErrMaxAttempts = errors.New("too many attempts to resend org invitation")
-
-	// ErrNoPermissionToInvite is returned when the user is not authorized to invite members to the organization
-	ErrNoPermissionToInvite = errors.New("requestor does not have permission to invite to organization")
 )
 
 // IsUniqueConstraintError reports if the error resulted from a DB uniqueness constraint violation.

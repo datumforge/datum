@@ -43,7 +43,7 @@ func NewUserViewerFromUser(user *generated.User) *UserViewer {
 	return NewUserViewerFromID(user.ID, true)
 }
 
-// NewUserViewerFromID  ets the `id` and `hasID` fields of the `UserViewer`
+// NewUserViewerFromID gets the `id` and `hasID` fields of the `UserViewer`
 // struct and  is used to create a `UserViewer` when the user ID is known, but
 // the actual user object is not available
 func NewUserViewerFromID(id string, hasID bool) *UserViewer {

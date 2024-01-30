@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -43,6 +44,9 @@ func (n *GroupSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Integration) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *Invite) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *OauthProvider) IsNode() {}
@@ -178,6 +182,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.Integration.Query().
 			Where(integration.ID(id))
 		query, err := query.CollectFields(ctx, "Integration")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case invite.Table:
+		query := c.Invite.Query().
+			Where(invite.ID(id))
+		query, err := query.CollectFields(ctx, "Invite")
 		if err != nil {
 			return nil, err
 		}
@@ -423,6 +439,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.Integration.Query().
 			Where(integration.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Integration")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case invite.Table:
+		query := c.Invite.Query().
+			Where(invite.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Invite")
 		if err != nil {
 			return nil, err
 		}

@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/entx"
 )
 
@@ -90,6 +91,7 @@ func (Organization) Edges() []ent.Edge {
 		edge.From("users", User.Type).
 			Ref("organizations").
 			Through("members", OrgMembership.Type),
+		edge.To("invites", Invite.Type).Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 
@@ -136,7 +138,8 @@ func (Organization) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),   // Allow all other users (e.g. a user with a JWT should be able to create a new org)
 		},
 		Query: privacy.QueryPolicy{
-			rule.HasOrgReadAccess(),  // Requires a user to have can_view access of the org
+			rule.HasOrgReadAccess(), // Requires a user to have can_view access of the org
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}), // Allow invite tokens to query the org ID they are invited to
 			privacy.AlwaysDenyRule(), // Deny all other users
 		},
 	}

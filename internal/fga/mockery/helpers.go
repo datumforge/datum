@@ -152,8 +152,8 @@ func ReadAny(t *testing.T, c *MockSdkClient) {
 	c.EXPECT().Read(mock.Anything).Return(rr)
 }
 
-// MockeryCheckAny mocks a check request for any times in a test
-func MockeryCheckAny(t *testing.T, c *MockSdkClient, allowed bool) {
+// CheckAny mocks a check request for any times in a test
+func CheckAny(t *testing.T, c *MockSdkClient, allowed bool) {
 	cr := NewMockSdkClientCheckRequestInterface(t)
 
 	resp := ofgaclient.ClientCheckResponse{

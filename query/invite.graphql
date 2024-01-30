@@ -1,0 +1,64 @@
+mutation CreateInvite($input: CreateInviteInput!) {
+  createInvite(input: $input) {
+    invite {
+      id
+      recipient
+      status
+      requestorID
+      expires
+      role
+      sendAttempts
+      owner {
+        id
+      }
+    }
+  }
+}
+
+mutation DeleteInvite($deleteInviteId: ID!) {
+  deleteInvite(id: $deleteInviteId) {
+    deletedID
+  }
+}
+
+query GetInvite($inviteId: ID!) {
+  invite(id: $inviteId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    deletedAt
+    deletedBy
+    expires
+    recipient
+    status
+    requestorID
+    role
+    sendAttempts
+    owner {
+      id
+      displayName
+      name
+    }
+  }
+}
+
+query InvitesByOrgID($where: InviteWhereInput) {
+  invites(where: $where) {
+    edges {
+      node {
+        owner {
+          id
+          invites {
+            recipient
+            status
+            requestorID
+            role
+            sendAttempts
+          }
+        }
+      }
+    }
+  }
+}

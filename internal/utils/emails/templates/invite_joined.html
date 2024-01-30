@@ -1,0 +1,16 @@
+{{ template "base.html" . }}
+
+{{ define "title" }}You've been added to an organization{{ end }}
+{{ define "preheader" }}You have been successfully added to an additional Organization{{ end }}
+
+{{ define "content" }}
+<div class="header">
+  <h1>Collaborate with your team on Datum</h1>
+</div>
+
+<div class="content">
+  <p>You've been successfully added to an additional Datum Organization {{ .OrgName }}</p>
+
+  <p><br />The Datum Team<br /></p>
+</div>
+{{ end }}

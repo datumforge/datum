@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up invite by ID
+    """
+     invite(
+        """
+        ID of the invite
+        """
+        id: ID!
+    ):  Invite!
+}
+
+extend type Mutation{
+    """
+    Create a new invite
+    """
+    createInvite(
+        """
+        values of the invite
+        """
+        input: CreateInviteInput!
+    ): InviteCreatePayload!
+    """
+    Update an existing invite
+    """
+    updateInvite(
+        """
+        ID of the invite
+        """
+        id: ID!
+        """
+        New values for the invite
+        """
+        input: UpdateInviteInput!
+    ): InviteUpdatePayload!
+    """
+    Delete an existing invite
+    """
+    deleteInvite(
+        """
+        ID of the invite
+        """
+        id: ID!
+    ): InviteDeletePayload!
+}
+
+"""
+Return response for createInvite mutation
+"""
+type InviteCreatePayload {
+    """
+    Created invite
+    """
+    invite: Invite!
+}
+
+"""
+Return response for updateInvite mutation
+"""
+type InviteUpdatePayload {
+    """
+    Updated invite
+    """
+    invite: Invite!
+}
+
+"""
+Return response for deleteInvite mutation
+"""
+type InviteDeletePayload {
+    """
+    Deleted invite ID
+    """
+    deletedID: ID!
+}

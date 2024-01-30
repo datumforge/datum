@@ -52,6 +52,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 	testCases := []struct {
 		name               string
+		from               string
 		email              string
 		emailExpected      bool
 		expectedErrMessage string
@@ -60,17 +61,20 @@ func TestForgotPasswordHandler(t *testing.T) {
 		{
 			name:           "happy path",
 			email:          "asandler@datum.net",
+			from:           "mitb@datum.net",
 			emailExpected:  true,
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "email does not exist, should still return 204",
 			email:          "asandler1@datum.net",
+			from:           "mitb@datum.net",
 			emailExpected:  false,
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "email not sent in request",
+			from:           "mitb@datum.net",
 			emailExpected:  false,
 			expectedStatus: http.StatusBadRequest,
 		},
@@ -118,7 +122,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
-					From:      client.h.SendGridConfig.FromEmail,
+					From:      tc.from,
 					Subject:   emails.PasswordResetRequestRE,
 					Timestamp: sent,
 				},

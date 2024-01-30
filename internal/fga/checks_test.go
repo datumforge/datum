@@ -47,7 +47,7 @@ func Test_CheckTuple(t *testing.T) {
 				Object:   tc.object,
 			}
 
-			mock_fga.MockeryCheckAny(t, c, tc.expectedRes)
+			mock_fga.CheckAny(t, c, tc.expectedRes)
 
 			// do request
 			valid, err := mc.CheckTuple(context.Background(), body)

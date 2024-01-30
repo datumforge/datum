@@ -1,0 +1,7 @@
+You've been added to an Organization
+
+You have been successfully added to organization {{ .OrgName }}, login and start building!
+
+Thank you,
+
+The Datum Team

@@ -3,6 +3,7 @@ package entdb
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"ariga.io/entcache"
@@ -16,6 +17,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/interceptors"
+	"github.com/datumforge/datum/internal/testutils"
 )
 
 const (
@@ -216,4 +218,37 @@ func CheckMultiwriteSupport(d string) bool {
 	default:
 		return false
 	}
+}
+
+// NewTestClient creates a entdb client that can be used for TEST purposes ONLY
+func NewTestClient(ctx context.Context, entOpts []ent.Option) (*ent.Client, *testutils.TC, error) {
+	// setup logger
+	logger := zap.NewNop().Sugar()
+
+	// Grab the DB environment variable or use the default
+	testDBURI := os.Getenv("TEST_DB_URL")
+
+	ctr := testutils.GetTestURI(ctx, testDBURI)
+
+	dbconf := Config{
+		Debug:           true,
+		DriverName:      ctr.Dialect,
+		PrimaryDBSource: ctr.URI,
+		CacheTTL:        -1 * time.Second, // do not cache results in tests
+	}
+
+	entConfig := NewDBConfig(dbconf, logger)
+
+	entOpts = append(entOpts, ent.Logger(*logger))
+
+	db, err := entConfig.NewMultiDriverDBClient(ctx, entOpts)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if err := db.Schema.Create(ctx); err != nil {
+		return nil, nil, err
+	}
+
+	return db, ctr, nil
 }

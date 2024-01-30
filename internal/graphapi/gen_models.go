@@ -96,6 +96,24 @@ type IntegrationUpdatePayload struct {
 	Integration *generated.Integration `json:"integration"`
 }
 
+// Return response for createInvite mutation
+type InviteCreatePayload struct {
+	// Created invite
+	Invite *generated.Invite `json:"invite"`
+}
+
+// Return response for deleteInvite mutation
+type InviteDeletePayload struct {
+	// Deleted invite ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateInvite mutation
+type InviteUpdatePayload struct {
+	// Updated invite
+	Invite *generated.Invite `json:"invite"`
+}
+
 // Return response for createOauthProvider mutation
 type OauthProviderCreatePayload struct {
 	// Created oauthProvider

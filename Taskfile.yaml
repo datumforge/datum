@@ -33,7 +33,7 @@ tasks:
       - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
       - "go get -u github.com/openfga/go-sdk"
       - "brew install openfga/tap/fga"
-      - "go install go.uber.org/mock/mockgen@latest"
+      - go install github.com/vektra/mockery/v2@v2.40.1
       - defer: { task: go:tidy }
 
   ## Generate tasks
@@ -165,4 +165,3 @@ tasks:
     vars:
       PWD:
         sh: pwd
-      

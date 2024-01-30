@@ -17,12 +17,21 @@ type User struct {
 	LastName                 string
 	Name                     string
 	Email                    string
+	Password                 *string
 	EmailVerificationExpires sql.NullString
 	EmailVerificationToken   sql.NullString
 	EmailVerificationSecret  []byte
 	PasswordResetExpires     sql.NullString
 	PasswordResetToken       sql.NullString
 	PasswordResetSecret      []byte
+	URLToken
+}
+
+// URLToken holds data specific to a future user of the system for invite logic
+type URLToken struct {
+	Expires sql.NullString
+	Token   sql.NullString
+	Secret  []byte
 }
 
 // GetVerificationToken returns the verification token if its valid

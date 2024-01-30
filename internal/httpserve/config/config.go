@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/emails"
 )
 
 var (
@@ -61,6 +62,9 @@ type (
 
 		// Tracer contains the tracing config used by datum
 		Tracer otelx.Config `yaml:"tracer"`
+
+		// Email contains email sending configuration
+		Email emails.Config `yaml:"email"`
 	}
 
 	// Server settings

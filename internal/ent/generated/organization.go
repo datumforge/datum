@@ -64,13 +64,15 @@ type OrganizationEdges struct {
 	Oauthprovider []*OauthProvider `json:"oauthprovider,omitempty"`
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
+	// Invites holds the value of the invites edge.
+	Invites []*Invite `json:"invites,omitempty"`
 	// Members holds the value of the members edge.
 	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 	// totalCount holds the count of the edges above.
-	totalCount [9]map[string]int
+	totalCount [10]map[string]int
 
 	namedChildren      map[string][]*Organization
 	namedGroups        map[string][]*Group
@@ -78,6 +80,7 @@ type OrganizationEdges struct {
 	namedEntitlements  map[string][]*Entitlement
 	namedOauthprovider map[string][]*OauthProvider
 	namedUsers         map[string][]*User
+	namedInvites       map[string][]*Invite
 	namedMembers       map[string][]*OrgMembership
 }
 
@@ -161,10 +164,19 @@ func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "users"}
 }
 
+// InvitesOrErr returns the Invites value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) InvitesOrErr() ([]*Invite, error) {
+	if e.loadedTypes[8] {
+		return e.Invites, nil
+	}
+	return nil, &NotLoadedError{edge: "invites"}
+}
+
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) MembersOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.Members, nil
 	}
 	return nil, &NotLoadedError{edge: "members"}
@@ -319,6 +331,11 @@ func (o *Organization) QueryOauthprovider() *OauthProviderQuery {
 // QueryUsers queries the "users" edge of the Organization entity.
 func (o *Organization) QueryUsers() *UserQuery {
 	return NewOrganizationClient(o.config).QueryUsers(o)
+}
+
+// QueryInvites queries the "invites" edge of the Organization entity.
+func (o *Organization) QueryInvites() *InviteQuery {
+	return NewOrganizationClient(o.config).QueryInvites(o)
 }
 
 // QueryMembers queries the "members" edge of the Organization entity.
@@ -526,6 +543,30 @@ func (o *Organization) appendNamedUsers(name string, edges ...*User) {
 		o.Edges.namedUsers[name] = []*User{}
 	} else {
 		o.Edges.namedUsers[name] = append(o.Edges.namedUsers[name], edges...)
+	}
+}
+
+// NamedInvites returns the Invites named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedInvites(name string) ([]*Invite, error) {
+	if o.Edges.namedInvites == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedInvites[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedInvites(name string, edges ...*Invite) {
+	if o.Edges.namedInvites == nil {
+		o.Edges.namedInvites = make(map[string][]*Invite)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedInvites[name] = []*Invite{}
+	} else {
+		o.Edges.namedInvites[name] = append(o.Edges.namedInvites[name], edges...)
 	}
 }
 

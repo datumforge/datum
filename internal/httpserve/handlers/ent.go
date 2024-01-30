@@ -6,12 +6,14 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 )
 
+// updateUserLastSeen updates the last seen timestamp of the user
 func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 	if _, err := transaction.FromContext(ctx).
 		User.
@@ -26,6 +28,7 @@ func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 	return nil
 }
 
+// createUser creates a user in the database based on the input and returns the user with user settings
 func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*ent.User, error) {
 	meowuser, err := transaction.FromContext(ctx).User.Create().
 		SetInput(input).
@@ -36,9 +39,17 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 		return nil, err
 	}
 
+	meowuser.Edges.Setting, err = meowuser.Setting(ctx)
+	if err != nil {
+		h.Logger.Errorw("error getting settings", "error", err)
+
+		return nil, err
+	}
+
 	return meowuser, nil
 }
 
+// createEmailVerificationToken creates a new email verification for the user
 func (h *Handler) createEmailVerificationToken(ctx context.Context, user *User) (*ent.EmailVerificationToken, error) {
 	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
 	if err != nil {
@@ -146,6 +157,22 @@ func (h *Handler) getUserBySub(ctx context.Context, subject string) (*ent.User, 
 	}
 
 	return user, nil
+}
+
+// getUserByInviteToken returns the ent user based on the invite token in the request
+func (h *Handler) getUserByInviteToken(ctx context.Context, token string) (*ent.Invite, error) {
+	recipient, err := transaction.FromContext(ctx).Invite.Query().
+		Where(
+			invite.Token(token),
+		).WithOwner().Only(ctx)
+
+	if err != nil {
+		h.Logger.Errorw("error obtaining user from token", "error", err)
+
+		return nil, err
+	}
+
+	return recipient, err
 }
 
 // expireAllVerificationTokensUserByEmail expires all existing email verification tokens before issuing a new one

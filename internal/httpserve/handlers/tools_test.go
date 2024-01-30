@@ -6,7 +6,7 @@ import (
 	"crypto/rsa"
 	"io"
 	"log"
-	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -30,6 +30,7 @@ import (
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/testutils"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
@@ -66,7 +67,7 @@ func setupEcho(entClient *ent.Client) *echo.Echo {
 }
 
 // handlerSetup to be used for required references in the handler tests
-func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
+func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMan *marionette.TaskManager) *handlers.Handler {
 	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
 	if err != nil {
 		t.Fatal("error creating token manager")
@@ -75,25 +76,14 @@ func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
 	rc := newRedisClient()
 
 	h := &handlers.Handler{
-		TM:          tm,
-		DBClient:    ent,
-		RedisClient: rc,
-		Logger:      zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
-		SM:          createSessionManager(),
+		TM:           tm,
+		DBClient:     ent,
+		RedisClient:  rc,
+		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
+		SM:           createSessionManager(),
+		EmailManager: em,
+		TaskMan:      taskMan,
 	}
-
-	if err := h.NewTestEmailManager(); err != nil {
-		t.Fatalf("error creating email manager: %v", err)
-	}
-
-	// Start task manager
-	tmConfig := marionette.Config{
-		Logger: zap.NewNop().Sugar(),
-	}
-
-	h.TaskMan = marionette.New(tmConfig)
-
-	h.TaskMan.Start()
 
 	return h
 }
@@ -111,37 +101,45 @@ func setupTest(t *testing.T) *client {
 	// setup logger
 	logger := zap.NewNop().Sugar()
 
-	// Grab the DB environment variable or use the default
-	testDBURI := os.Getenv("TEST_DB_URL")
-
-	ctr := testutils.GetTestURI(ctx, testDBURI)
-	dbContainer = ctr
-
-	dbconf := entdb.Config{
-		Debug:           true,
-		DriverName:      dbContainer.Dialect,
-		PrimaryDBSource: dbContainer.URI,
-		CacheTTL:        -1 * time.Second, // do not cache results in tests
+	emConfig := emails.Config{
+		Testing:   true,
+		Archive:   filepath.Join("fixtures", "emails"),
+		FromEmail: "mitb@datum.net",
 	}
 
-	entConfig := entdb.NewDBConfig(dbconf, logger)
+	em, err := emails.New(emConfig)
+	if err != nil {
+		t.Fatal("error creating email manager")
+	}
 
-	opts := []ent.Option{ent.Logger(*logger), ent.Authz(*fc)}
+	// Start task manager
+	tmConfig := marionette.Config{
+		Logger: zap.NewNop().Sugar(),
+	}
 
-	db, err := entConfig.NewMultiDriverDBClient(ctx, opts)
+	taskMan := marionette.New(tmConfig)
+
+	taskMan.Start()
+
+	opts := []ent.Option{
+		ent.Logger(*logger),
+		ent.Authz(*fc),
+		ent.Marionette(taskMan),
+		ent.Emails(em),
+	}
+
+	// create database connection
+	db, ctr, err := entdb.NewTestClient(ctx, opts)
 	if err != nil {
 		require.NoError(t, err, "failed opening connection to database")
 	}
 
-	if err := db.Schema.Create(ctx); err != nil {
-		require.NoError(t, err, "failed creating database schema")
-	}
-
 	// add db to test client
+	dbContainer = ctr
 	c.db = db
 
 	// setup handler
-	c.h = handlerSetup(t, c.db)
+	c.h = handlerSetup(t, c.db, em, taskMan)
 
 	// setup echo router
 	c.e = setupEcho(c.db)

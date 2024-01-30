@@ -99,6 +99,13 @@ func serve(ctx context.Context) error {
 		mw = append(mw, authMiddleware)
 	}
 
+	// add additional ent dependencies
+	entOpts = append(
+		entOpts,
+		ent.Emails(so.Config.Server.Handler.EmailManager),
+		ent.Marionette(so.Config.Server.Handler.TaskMan),
+	)
+
 	// Setup DB connection
 	dbConfig := entdb.NewDBConfig(so.Config.DB, logger)
 

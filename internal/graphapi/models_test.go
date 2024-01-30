@@ -97,6 +97,22 @@ type GroupMemberCleanup struct {
 	ID string
 }
 
+type InviteBuilder struct {
+	client *client
+
+	// Fields
+	Recipient string
+	OrgID     string
+	Role      string
+}
+
+type InviteCleanup struct {
+	client *client
+
+	// Fields
+	ID string
+}
+
 type PersonalAccessTokenBuilder struct {
 	client *client
 
@@ -220,7 +236,7 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 		om.UserID = user.ID
 	}
 
-	role := enums.Enum(om.Role)
+	role := enums.ToRole(om.Role)
 	if role == enums.Invalid {
 		role = enums.RoleMember
 	}
@@ -294,6 +310,60 @@ func (g *GroupCleanup) MustDelete(ctx context.Context, t *testing.T) {
 	mock_fga.ClearMocks(g.client.fga)
 }
 
+// MustNew group builder is used to create, without authz checks, groups in the database
+func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	// create owner if not provided
+	orgID := i.OrgID
+
+	if orgID == "" {
+		org := (&OrganizationBuilder{client: i.client}).MustNew(ctx, t)
+		orgID = org.ID
+	}
+
+	// create user if not provided
+	rec := i.Recipient
+
+	if rec == "" {
+		rec = gofakeit.Email()
+	} else {
+		// assume this was an existing user and add a mock write
+		mock_fga.WriteAny(t, i.client.fga)
+	}
+
+	// mock check
+	mock_fga.ListAny(t, i.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
+
+	inviteQuery := i.client.db.Invite.Create().
+		SetOwnerID(orgID).
+		SetRecipient(rec)
+
+	if i.Role != "" {
+		inviteQuery.SetRole(enums.ToRole(i.Role))
+	}
+
+	invite := inviteQuery.SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(i.client.fga)
+
+	return invite
+}
+
+// MustDelete is used to cleanup, without authz checks, invites in the database
+func (i *InviteCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	// mock writes
+	mock_fga.ReadAny(t, i.client.fga)
+
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	i.client.db.Invite.DeleteOneID(i.ID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(i.client.fga)
+}
+
 // MustNew group builder is used to create, without authz checks, personal access tokens in the database
 func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.PersonalAccessToken {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
@@ -339,7 +409,7 @@ func (gm *GroupMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Gr
 		gm.UserID = user.ID
 	}
 
-	role := enums.Enum(gm.Role)
+	role := enums.ToRole(gm.Role)
 	if role == enums.Invalid {
 		role = enums.RoleMember
 	}

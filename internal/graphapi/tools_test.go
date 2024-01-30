@@ -4,9 +4,8 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"os"
+	"path/filepath"
 	"testing"
-	"time"
 
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
@@ -24,6 +23,8 @@ import (
 	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/marionette"
 
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/testutils"
@@ -65,32 +66,42 @@ func setupTest(t *testing.T) *client {
 	// setup logger
 	logger := zap.NewNop().Sugar()
 
-	// Grab the DB environment variable or use the default
-	testDBURI := os.Getenv("TEST_DB_URL")
-
-	ctr := testutils.GetTestURI(ctx, testDBURI)
-	dbContainer = ctr
-
-	dbconf := entdb.Config{
-		Debug:           true,
-		DriverName:      dbContainer.Dialect,
-		PrimaryDBSource: dbContainer.URI,
-		CacheTTL:        -1 * time.Second, // do not cache results in tests
+	// setup email manager
+	emConfig := emails.Config{
+		Testing:   true,
+		Archive:   filepath.Join("fixtures", "emails"),
+		FromEmail: "mitb@datum.net",
 	}
 
-	entConfig := entdb.NewDBConfig(dbconf, logger)
+	em, err := emails.New(emConfig)
+	if err != nil {
+		t.Fatal("error creating email manager")
+	}
 
-	opts := []ent.Option{ent.Logger(*logger), ent.Authz(*fc)}
+	// setup task manager
+	tmConfig := marionette.Config{
+		Logger: zap.NewNop().Sugar(),
+	}
 
-	db, err := entConfig.NewMultiDriverDBClient(ctx, opts)
+	taskMan := marionette.New(tmConfig)
+
+	taskMan.Start()
+
+	opts := []ent.Option{
+		ent.Logger(*logger),
+		ent.Authz(*fc),
+		ent.Emails(em),
+		ent.Marionette(taskMan),
+	}
+
+	// create database connection
+	db, ctr, err := entdb.NewTestClient(ctx, opts)
 	if err != nil {
 		require.NoError(t, err, "failed opening connection to database")
 	}
 
-	if err := db.Schema.Create(ctx); err != nil {
-		require.NoError(t, err, "failed creating database schema")
-	}
-
+	// assign values
+	dbContainer = ctr
 	c.db = db
 	c.datum = graphTestClient(t, c.db)
 

@@ -574,6 +574,112 @@ func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUp
 	return c
 }
 
+// CreateInviteInput represents a mutation input for creating invites.
+type CreateInviteInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Expires      time.Time
+	Recipient    string
+	Status       *enums.InviteStatus
+	Role         *enums.Role
+	SendAttempts *int
+	RequestorID  string
+	OwnerID      string
+}
+
+// Mutate applies the CreateInviteInput on the InviteMutation builder.
+func (i *CreateInviteInput) Mutate(m *InviteMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetExpires(i.Expires)
+	m.SetRecipient(i.Recipient)
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if v := i.SendAttempts; v != nil {
+		m.SetSendAttempts(*v)
+	}
+	m.SetRequestorID(i.RequestorID)
+	m.SetOwnerID(i.OwnerID)
+}
+
+// SetInput applies the change-set in the CreateInviteInput on the InviteCreate builder.
+func (c *InviteCreate) SetInput(i CreateInviteInput) *InviteCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateInviteInput represents a mutation input for updating invites.
+type UpdateInviteInput struct {
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Expires        *time.Time
+	Recipient      *string
+	Status         *enums.InviteStatus
+	Role           *enums.Role
+	SendAttempts   *int
+	OwnerID        *string
+}
+
+// Mutate applies the UpdateInviteInput on the InviteMutation builder.
+func (i *UpdateInviteInput) Mutate(m *InviteMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Expires; v != nil {
+		m.SetExpires(*v)
+	}
+	if v := i.Recipient; v != nil {
+		m.SetRecipient(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if v := i.SendAttempts; v != nil {
+		m.SetSendAttempts(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateInviteInput on the InviteUpdate builder.
+func (c *InviteUpdate) SetInput(i UpdateInviteInput) *InviteUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateInviteInput on the InviteUpdateOne builder.
+func (c *InviteUpdateOne) SetInput(i UpdateInviteInput) *InviteUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateOauthProviderInput represents a mutation input for creating oauthproviders.
 type CreateOauthProviderInput struct {
 	CreatedAt    *time.Time
@@ -931,6 +1037,7 @@ type CreateOrganizationInput struct {
 	EntitlementIDs   []string
 	OauthproviderIDs []string
 	UserIDs          []string
+	InviteIDs        []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -978,6 +1085,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.UserIDs; len(v) > 0 {
 		m.AddUserIDs(v...)
 	}
+	if v := i.InviteIDs; len(v) > 0 {
+		m.AddInviteIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -1012,6 +1122,9 @@ type UpdateOrganizationInput struct {
 	ClearUsers             bool
 	AddUserIDs             []string
 	RemoveUserIDs          []string
+	ClearInvites           bool
+	AddInviteIDs           []string
+	RemoveInviteIDs        []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -1087,6 +1200,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveUserIDs; len(v) > 0 {
 		m.RemoveUserIDs(v...)
+	}
+	if i.ClearInvites {
+		m.ClearInvites()
+	}
+	if v := i.AddInviteIDs; len(v) > 0 {
+		m.AddInviteIDs(v...)
+	}
+	if v := i.RemoveInviteIDs; len(v) > 0 {
+		m.RemoveInviteIDs(v...)
 	}
 }
 

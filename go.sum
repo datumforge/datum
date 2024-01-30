@@ -347,8 +347,8 @@ github.com/openfga/api/proto v0.0.0-20231222042535-3037910c90c0 h1:FW+CjkR6GrvJc
 github.com/openfga/api/proto v0.0.0-20231222042535-3037910c90c0/go.mod h1:YSbEQDNGnVlThfExHQ3zDNd+puWXf4zzfL0ms2VbIwI=
 github.com/openfga/go-sdk v0.3.4 h1:5VsDSmkXUP/XH9L4BtztYVPuthH5Pd3h1QZfqzZttL0=
 github.com/openfga/go-sdk v0.3.4/go.mod h1:u1iErzj5E9/bhe+8nsMv0gigcYbJtImcdgcE5DmpbBg=
-github.com/openfga/language/pkg/go v0.0.0-20240123095931-d4c79707596a h1:JPoEKIw2++zhomVcTapUlev0xEjXTHBdenalHcySoDQ=
-github.com/openfga/language/pkg/go v0.0.0-20240123095931-d4c79707596a/go.mod h1:dHJaJ7H5tViBCPidTsfl3IOd152FhYxWFQmZXOhZ2pw=
+github.com/openfga/language/pkg/go v0.0.0-20240129121047-c40760ddde79 h1:4RiqyN7x1UqtxgrKmM0kpIrVdN4uMnBGu6x7zpyXpQ4=
+github.com/openfga/language/pkg/go v0.0.0-20240129121047-c40760ddde79/go.mod h1:dHJaJ7H5tViBCPidTsfl3IOd152FhYxWFQmZXOhZ2pw=
 github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 github.com/pelletier/go-toml/v2 v2.1.1 h1:LWAJwfNvjQZCFIDKWYQaM62NcYeYViCmWIwmOStowAI=
 github.com/pelletier/go-toml/v2 v2.1.1/go.mod h1:tJU2Z3ZkXwnxa4DPO899bsyIoywizdUvyaeZurnPPDc=
@@ -462,8 +462,8 @@ github.com/vmihailenco/msgpack/v5 v5.4.1 h1:cQriyiUvjTwOHg8QZaPihLWeRAAVoCpE00IU
 github.com/vmihailenco/msgpack/v5 v5.4.1/go.mod h1:GaZTsDaehaPpQVyxrf5mtQlH+pc21PIudVV/E3rRQok=
 github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=
 github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=
-github.com/wundergraph/graphql-go-tools v1.67.0 h1:HcZowgnfDJVyew9egwey38C0Ew3gjmF+fHGia6s2SSA=
-github.com/wundergraph/graphql-go-tools v1.67.0/go.mod h1:0IQz0Tn4g3iJOs8HlxTzrOjgOXlRN805cuorvkZ2NX8=
+github.com/wundergraph/graphql-go-tools v1.67.1 h1:VMd3RUptjVeoFLdxbqOVFuIiFt1s1mAMwELOO+Foayg=
+github.com/wundergraph/graphql-go-tools v1.67.1/go.mod h1:XPiFH1mHduFuQTYiGpQe6ZtNI7/BX4EJQVMXr6oWxw0=
 github.com/xrash/smetrics v0.0.0-20231213231151-1d8dd44e695e h1:+SOyEddqYF09QP7vr7CgJ1eti3pY9Fn3LHO1M1r/0sI=
 github.com/xrash/smetrics v0.0.0-20231213231151-1d8dd44e695e/go.mod h1:N3UwUGtsrSj3ccvlPHLoLsHnpR27oXr4ZE984MbSER8=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

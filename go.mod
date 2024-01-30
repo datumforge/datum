@@ -24,7 +24,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.81.2
 	github.com/openfga/go-sdk v0.3.4
-	github.com/openfga/language/pkg/go v0.0.0-20240123095931-d4c79707596a
+	github.com/openfga/language/pkg/go v0.0.0-20240129121047-c40760ddde79
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.18.0
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
@@ -34,7 +34,7 @@ require (
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
 	github.com/vektah/gqlparser/v2 v2.5.11
-	github.com/wundergraph/graphql-go-tools v1.67.0
+	github.com/wundergraph/graphql-go-tools v1.67.1
 	go.opentelemetry.io/otel v1.22.0
 	go.opentelemetry.io/otel/sdk v1.22.0
 	go.uber.org/zap v1.26.0

@@ -213,7 +213,7 @@ func TestQuery_CreateInvite(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
-			mock_fga.MockeryCheckAny(t, client.fga, tc.accessAllowed)
+			mock_fga.CheckAny(t, client.fga, tc.accessAllowed)
 
 			if tc.accessAllowed {
 				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})

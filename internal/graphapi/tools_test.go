@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -24,6 +25,8 @@ import (
 	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/marionette"
 
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/testutils"
@@ -65,6 +68,27 @@ func setupTest(t *testing.T) *client {
 	// setup logger
 	logger := zap.NewNop().Sugar()
 
+	// setup email manager
+	emConfig := emails.Config{
+		Testing:   true,
+		Archive:   filepath.Join("fixtures", "emails"),
+		FromEmail: "mitb@datum.net",
+	}
+
+	em, err := emails.New(emConfig)
+	if err != nil {
+		t.Fatal("error creating email manager")
+	}
+
+	// setup task manager
+	tmConfig := marionette.Config{
+		Logger: zap.NewNop().Sugar(),
+	}
+
+	taskMan := marionette.New(tmConfig)
+
+	taskMan.Start()
+
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
 
@@ -80,7 +104,12 @@ func setupTest(t *testing.T) *client {
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)
 
-	opts := []ent.Option{ent.Logger(*logger), ent.Authz(*fc)}
+	opts := []ent.Option{
+		ent.Logger(*logger),
+		ent.Authz(*fc),
+		ent.Emails(em),
+		ent.Marionette(taskMan),
+	}
 
 	db, err := entConfig.NewMultiDriverDBClient(ctx, opts)
 	if err != nil {

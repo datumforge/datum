@@ -53,7 +53,7 @@ func TestQuery_Group(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
-			mock_fga.MockeryCheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, client.fga, tc.allowed)
 
 			// second check won't happen if org does not exist
 			if tc.errorMsg == "" {
@@ -336,7 +336,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 				input.CreateGroupSettings = tc.settings
 			}
 
-			mock_fga.MockeryCheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, client.fga, tc.allowed)
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
@@ -482,7 +482,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
-			mock_fga.MockeryCheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, client.fga, tc.allowed)
 
 			if tc.errorMsg == "" {
 				mock_fga.ListAny(t, client.fga, listObjects)
@@ -567,7 +567,7 @@ func TestMutation_DeleteGroup(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
 			// mock read of tuple
-			mock_fga.MockeryCheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, client.fga, tc.allowed)
 
 			if tc.allowed {
 				mock_fga.ReadAny(t, client.fga)

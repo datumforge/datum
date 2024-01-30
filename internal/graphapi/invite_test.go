@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
@@ -213,7 +213,7 @@ func TestQuery_CreateInvite(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
-			mock_fga.CheckAny(t, client.fga, tc.accessAllowed)
+			mock_fga.MockeryCheckAny(t, client.fga, tc.accessAllowed)
 
 			if tc.accessAllowed {
 				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})

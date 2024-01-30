@@ -55,7 +55,7 @@ func TestQuery_Organization(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
-			mock_fga.CheckAny(t, client.fga, true)
+			mock_fga.MockeryCheckAny(t, client.fga, true)
 			mock_fga.ListAny(t, client.fga, listObjects)
 
 			resp, err := client.datum.GetOrganizationByID(reqCtx, tc.queryID)
@@ -252,7 +252,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 				input.ParentID = &tc.parentOrgID
 
 				// There is a check to ensure user has write access to parent org
-				mock_fga.CheckAny(t, client.fga, true)
+				mock_fga.MockeryCheckAny(t, client.fga, true)
 				// There is a check to ensure the parent org is not a parent org
 				mock_fga.ListTimes(t, client.fga, listObjects, 1)
 			}
@@ -424,7 +424,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			// mock checks of tuple
 			defer mock_fga.ClearMocks(client.fga)
 			// get and update  organization
-			mock_fga.CheckAny(t, client.fga, true)
+			mock_fga.MockeryCheckAny(t, client.fga, true)
 
 			// check access
 			mock_fga.ListAny(t, client.fga, listObjects)
@@ -514,7 +514,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
 			// mock read of tuple
-			mock_fga.CheckAny(t, client.fga, tc.accessAllowed)
+			mock_fga.MockeryCheckAny(t, client.fga, tc.accessAllowed)
 
 			// additional check happens when the resource is found
 			if tc.errorMsg == "" {
@@ -573,7 +573,7 @@ func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
 
 	// mocks checks for all calls
-	mock_fga.CheckAny(t, client.fga, true)
+	mock_fga.MockeryCheckAny(t, client.fga, true)
 
 	mock_fga.ListTimes(t, client.fga, listOrgs, 5)
 	mock_fga.ListTimes(t, client.fga, listGroups, 1)

@@ -24,7 +24,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.20
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.81.2
-	github.com/openfga/go-sdk v0.3.4
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.18.0
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
@@ -111,6 +110,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.0-rc5 // indirect
 	github.com/opencontainers/runc v1.1.7 // indirect
 	github.com/openfga/api/proto v0.0.0-20231222042535-3037910c90c0 // indirect
+	github.com/openfga/go-sdk v0.3.4 // indirect
 	github.com/openfga/language/pkg/go v0.0.0-20240129121047-c40760ddde79 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect

@@ -36,7 +36,6 @@ cli:
 authorization:
 - changed-files:
   - any-glob-to-any-file: fga/**
-  - any-glob-to-any-file: internal/fga/**
 
 httpserve:
 - changed-files:

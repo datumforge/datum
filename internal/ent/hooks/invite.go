@@ -154,9 +154,9 @@ func HookInviteAccepted() ent.Hook {
 			}
 
 			input := generated.CreateOrgMembershipInput{
-				UserID: user.ID,
-				OrgID:  ownerID,
-				Role:   &role,
+				UserID:         user.ID,
+				OrganizationID: ownerID,
+				Role:           &role,
 			}
 
 			// add user to the inviting org
@@ -225,7 +225,7 @@ func doesUserHaveMembership(ctx context.Context, m *generated.InviteMutation, en
 
 	return m.Client().OrgMembership.Query().
 		Where((orgmembership.HasUserWith(user.ID(entUser.ID)))).
-		Where((orgmembership.HasOrgWith((organization.ID(orgID))))).Exist(ctx)
+		Where((orgmembership.HasOrganizationWith((organization.ID(orgID))))).Exist(ctx)
 }
 
 // personalOrgNoInvite checks if the mutation is for a personal org and denies if true or

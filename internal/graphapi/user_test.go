@@ -667,7 +667,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 
 			// mock check calls
 			if tc.errorMsg == "" {
-				mock_fga.CheckAny(t, client.fga, true)
+				mock_fga.MockeryCheckAny(t, client.fga, true)
 
 				mock_fga.ListAny(t, client.fga, listObjects)
 
@@ -737,7 +737,7 @@ func TestMutation_UserCascadeDelete(t *testing.T) {
 	listObjects := []string{fmt.Sprintf("organization:%s", userSettings.DefaultOrg)}
 
 	// mock checks
-	mock_fga.CheckAny(t, client.fga, true)
+	mock_fga.MockeryCheckAny(t, client.fga, true)
 	mock_fga.ListAny(t, client.fga, listObjects)
 	// mock writes to clean up personal org
 	mock_fga.WriteAny(t, client.fga)
@@ -811,7 +811,7 @@ func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
 	mock_fga.WriteAny(t, client.fga)
 
 	// check access for requests
-	mock_fga.CheckAny(t, client.fga, true)
+	mock_fga.MockeryCheckAny(t, client.fga, true)
 	mock_fga.ListAny(t, client.fga, listObjects)
 
 	resp, err := client.datum.CreateUser(ctx, input)

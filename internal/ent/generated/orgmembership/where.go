@@ -98,9 +98,9 @@ func DeletedBy(v string) predicate.OrgMembership {
 	return predicate.OrgMembership(sql.FieldEQ(FieldDeletedBy, v))
 }
 
-// OrgID applies equality check predicate on the "org_id" field. It's identical to OrgIDEQ.
-func OrgID(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldEQ(FieldOrgID, v))
+// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
+func OrganizationID(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldEQ(FieldOrganizationID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
@@ -493,69 +493,69 @@ func RoleNotIn(vs ...enums.Role) predicate.OrgMembership {
 	return predicate.OrgMembership(sql.FieldNotIn(FieldRole, v...))
 }
 
-// OrgIDEQ applies the EQ predicate on the "org_id" field.
-func OrgIDEQ(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldEQ(FieldOrgID, v))
+// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
+func OrganizationIDEQ(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldEQ(FieldOrganizationID, v))
 }
 
-// OrgIDNEQ applies the NEQ predicate on the "org_id" field.
-func OrgIDNEQ(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldNEQ(FieldOrgID, v))
+// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
+func OrganizationIDNEQ(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldNEQ(FieldOrganizationID, v))
 }
 
-// OrgIDIn applies the In predicate on the "org_id" field.
-func OrgIDIn(vs ...string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldIn(FieldOrgID, vs...))
+// OrganizationIDIn applies the In predicate on the "organization_id" field.
+func OrganizationIDIn(vs ...string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldIn(FieldOrganizationID, vs...))
 }
 
-// OrgIDNotIn applies the NotIn predicate on the "org_id" field.
-func OrgIDNotIn(vs ...string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldNotIn(FieldOrgID, vs...))
+// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
+func OrganizationIDNotIn(vs ...string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldNotIn(FieldOrganizationID, vs...))
 }
 
-// OrgIDGT applies the GT predicate on the "org_id" field.
-func OrgIDGT(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldGT(FieldOrgID, v))
+// OrganizationIDGT applies the GT predicate on the "organization_id" field.
+func OrganizationIDGT(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldGT(FieldOrganizationID, v))
 }
 
-// OrgIDGTE applies the GTE predicate on the "org_id" field.
-func OrgIDGTE(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldGTE(FieldOrgID, v))
+// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
+func OrganizationIDGTE(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldGTE(FieldOrganizationID, v))
 }
 
-// OrgIDLT applies the LT predicate on the "org_id" field.
-func OrgIDLT(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldLT(FieldOrgID, v))
+// OrganizationIDLT applies the LT predicate on the "organization_id" field.
+func OrganizationIDLT(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldLT(FieldOrganizationID, v))
 }
 
-// OrgIDLTE applies the LTE predicate on the "org_id" field.
-func OrgIDLTE(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldLTE(FieldOrgID, v))
+// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
+func OrganizationIDLTE(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldLTE(FieldOrganizationID, v))
 }
 
-// OrgIDContains applies the Contains predicate on the "org_id" field.
-func OrgIDContains(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldContains(FieldOrgID, v))
+// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
+func OrganizationIDContains(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldContains(FieldOrganizationID, v))
 }
 
-// OrgIDHasPrefix applies the HasPrefix predicate on the "org_id" field.
-func OrgIDHasPrefix(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldHasPrefix(FieldOrgID, v))
+// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
+func OrganizationIDHasPrefix(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldHasPrefix(FieldOrganizationID, v))
 }
 
-// OrgIDHasSuffix applies the HasSuffix predicate on the "org_id" field.
-func OrgIDHasSuffix(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldHasSuffix(FieldOrgID, v))
+// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
+func OrganizationIDHasSuffix(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldHasSuffix(FieldOrganizationID, v))
 }
 
-// OrgIDEqualFold applies the EqualFold predicate on the "org_id" field.
-func OrgIDEqualFold(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldEqualFold(FieldOrgID, v))
+// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
+func OrganizationIDEqualFold(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldEqualFold(FieldOrganizationID, v))
 }
 
-// OrgIDContainsFold applies the ContainsFold predicate on the "org_id" field.
-func OrgIDContainsFold(v string) predicate.OrgMembership {
-	return predicate.OrgMembership(sql.FieldContainsFold(FieldOrgID, v))
+// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
+func OrganizationIDContainsFold(v string) predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
@@ -623,12 +623,12 @@ func UserIDContainsFold(v string) predicate.OrgMembership {
 	return predicate.OrgMembership(sql.FieldContainsFold(FieldUserID, v))
 }
 
-// HasOrg applies the HasEdge predicate on the "org" edge.
-func HasOrg() predicate.OrgMembership {
+// HasOrganization applies the HasEdge predicate on the "organization" edge.
+func HasOrganization() predicate.OrgMembership {
 	return predicate.OrgMembership(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, OrgTable, OrgColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, OrganizationTable, OrganizationColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Organization
@@ -637,10 +637,10 @@ func HasOrg() predicate.OrgMembership {
 	})
 }
 
-// HasOrgWith applies the HasEdge predicate on the "org" edge with a given conditions (other predicates).
-func HasOrgWith(preds ...predicate.Organization) predicate.OrgMembership {
+// HasOrganizationWith applies the HasEdge predicate on the "organization" edge with a given conditions (other predicates).
+func HasOrganizationWith(preds ...predicate.Organization) predicate.OrgMembership {
 	return predicate.OrgMembership(func(s *sql.Selector) {
-		step := newOrgStep()
+		step := newOrganizationStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OrgMembership

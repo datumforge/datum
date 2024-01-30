@@ -39,7 +39,7 @@ func (r *updateOrganizationInputResolver) AddOrgMembers(ctx context.Context, obj
 	builders := make([]*generated.OrgMembershipCreate, len(data))
 	for i := range data {
 		input := *data[i]
-		input.OrgID = orgID.(string)
+		input.OrganizationID = orgID.(string)
 		builders[i] = c.OrgMembership.Create().SetInput(input)
 	}
 

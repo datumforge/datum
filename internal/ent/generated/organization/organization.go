@@ -120,7 +120,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "orgmembership" package.
 	MembersInverseTable = "org_memberships"
 	// MembersColumn is the table column denoting the members relation/edge.
-	MembersColumn = "org_id"
+	MembersColumn = "organization_id"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -142,7 +142,7 @@ var Columns = []string{
 var (
 	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
 	// primary key for the users relation (M2M).
-	UsersPrimaryKey = []string{"user_id", "org_id"}
+	UsersPrimaryKey = []string{"user_id", "organization_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).

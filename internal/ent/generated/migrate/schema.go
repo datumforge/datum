@@ -330,7 +330,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER"}, Default: "MEMBER"},
-		{Name: "org_id", Type: field.TypeString},
+		{Name: "organization_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
 	// OrgMembershipsTable holds the schema information for the "org_memberships" table.
@@ -340,7 +340,7 @@ var (
 		PrimaryKey: []*schema.Column{OrgMembershipsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "org_memberships_organizations_org",
+				Symbol:     "org_memberships_organizations_organization",
 				Columns:    []*schema.Column{OrgMembershipsColumns[8]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
@@ -354,7 +354,7 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "orgmembership_user_id_org_id",
+				Name:    "orgmembership_user_id_organization_id",
 				Unique:  true,
 				Columns: []*schema.Column{OrgMembershipsColumns[9], OrgMembershipsColumns[8]},
 				Annotation: &entsql.IndexAnnotation{

@@ -116,9 +116,9 @@ func createOrgMemberOwner(ctx context.Context, oID string, m *generated.Organiza
 	// Add User as owner of organization
 	owner := enums.RoleOwner
 	input := generated.CreateOrgMembershipInput{
-		UserID: userID,
-		OrgID:  oID,
-		Role:   &owner,
+		UserID:         userID,
+		OrganizationID: oID,
+		Role:           &owner,
 	}
 
 	if _, err := m.Client().OrgMembership.Create().SetInput(input).Save(ctx); err != nil {

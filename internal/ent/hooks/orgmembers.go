@@ -23,7 +23,7 @@ func HookOrgMembers() ent.Hook {
 			}
 
 			// get the organization based on input
-			orgID, exists := mutation.OrgID()
+			orgID, exists := mutation.OrganizationID()
 			if exists {
 				org, err := mutation.Client().Organization.Get(ctx, orgID)
 				if err != nil {
@@ -153,7 +153,7 @@ func orgMemberUpdateHook(ctx context.Context, m *generated.OrgMembershipMutation
 
 func getOrgMemberTuple(m *generated.OrgMembershipMutation) (tuple fgax.TupleKey, err error) {
 	userID, _ := m.UserID()
-	orgID, _ := m.OrgID()
+	orgID, _ := m.OrganizationID()
 	role, _ := m.Role()
 
 	return getUserTupleKey(userID, orgID, "organization", role)
@@ -171,7 +171,7 @@ func getDeleteOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 			return nil, err
 		}
 
-		t, err := getUserTupleKey(om.UserID, om.OrgID, "organization", om.Role)
+		t, err := getUserTupleKey(om.UserID, om.OrganizationID, "organization", om.Role)
 		if err != nil {
 			return nil, err
 		}
@@ -208,14 +208,14 @@ func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 			return writes, deletes, err
 		}
 
-		d, err := getUserTupleKey(om.UserID, om.OrgID, "organization", oldRole)
+		d, err := getUserTupleKey(om.UserID, om.OrganizationID, "organization", oldRole)
 		if err != nil {
 			return writes, deletes, err
 		}
 
 		deletes = append(deletes, d)
 
-		w, err := getUserTupleKey(om.UserID, om.OrgID, "organization", newRole)
+		w, err := getUserTupleKey(om.UserID, om.OrganizationID, "organization", newRole)
 		if err != nil {
 			return writes, deletes, err
 		}

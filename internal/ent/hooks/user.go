@@ -184,9 +184,9 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 
 	// Create Role as owner for user in the personal org
 	input := generated.CreateOrgMembershipInput{
-		OrgID:  org.ID,
-		UserID: user.ID,
-		Role:   &enums.RoleOwner,
+		OrganizationID: org.ID,
+		UserID:         user.ID,
+		Role:           &enums.RoleOwner,
 	}
 
 	if _, err := dbClient.OrgMembership.Create().

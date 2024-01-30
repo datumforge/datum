@@ -121,9 +121,9 @@ func (omc *OrgMembershipCreate) SetNillableRole(e *enums.Role) *OrgMembershipCre
 	return omc
 }
 
-// SetOrgID sets the "org_id" field.
-func (omc *OrgMembershipCreate) SetOrgID(s string) *OrgMembershipCreate {
-	omc.mutation.SetOrgID(s)
+// SetOrganizationID sets the "organization_id" field.
+func (omc *OrgMembershipCreate) SetOrganizationID(s string) *OrgMembershipCreate {
+	omc.mutation.SetOrganizationID(s)
 	return omc
 }
 
@@ -147,9 +147,9 @@ func (omc *OrgMembershipCreate) SetNillableID(s *string) *OrgMembershipCreate {
 	return omc
 }
 
-// SetOrg sets the "org" edge to the Organization entity.
-func (omc *OrgMembershipCreate) SetOrg(o *Organization) *OrgMembershipCreate {
-	return omc.SetOrgID(o.ID)
+// SetOrganization sets the "organization" edge to the Organization entity.
+func (omc *OrgMembershipCreate) SetOrganization(o *Organization) *OrgMembershipCreate {
+	return omc.SetOrganizationID(o.ID)
 }
 
 // SetUser sets the "user" edge to the User entity.
@@ -238,14 +238,14 @@ func (omc *OrgMembershipCreate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "OrgMembership.role": %w`, err)}
 		}
 	}
-	if _, ok := omc.mutation.OrgID(); !ok {
-		return &ValidationError{Name: "org_id", err: errors.New(`generated: missing required field "OrgMembership.org_id"`)}
+	if _, ok := omc.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "OrgMembership.organization_id"`)}
 	}
 	if _, ok := omc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`generated: missing required field "OrgMembership.user_id"`)}
 	}
-	if _, ok := omc.mutation.OrgID(); !ok {
-		return &ValidationError{Name: "org", err: errors.New(`generated: missing required edge "OrgMembership.org"`)}
+	if _, ok := omc.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization", err: errors.New(`generated: missing required edge "OrgMembership.organization"`)}
 	}
 	if _, ok := omc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`generated: missing required edge "OrgMembership.user"`)}
@@ -314,12 +314,12 @@ func (omc *OrgMembershipCreate) createSpec() (*OrgMembership, *sqlgraph.CreateSp
 		_spec.SetField(orgmembership.FieldRole, field.TypeEnum, value)
 		_node.Role = value
 	}
-	if nodes := omc.mutation.OrgIDs(); len(nodes) > 0 {
+	if nodes := omc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: false,
-			Table:   orgmembership.OrgTable,
-			Columns: []string{orgmembership.OrgColumn},
+			Table:   orgmembership.OrganizationTable,
+			Columns: []string{orgmembership.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -329,7 +329,7 @@ func (omc *OrgMembershipCreate) createSpec() (*OrgMembership, *sqlgraph.CreateSp
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.OrgID = nodes[0]
+		_node.OrganizationID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := omc.mutation.UserIDs(); len(nodes) > 0 {

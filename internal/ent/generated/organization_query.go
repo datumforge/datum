@@ -1221,7 +1221,7 @@ func (oq *OrganizationQuery) loadMembers(ctx context.Context, query *OrgMembersh
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(orgmembership.FieldOrgID)
+		query.ctx.AppendFieldOnce(orgmembership.FieldOrganizationID)
 	}
 	query.Where(predicate.OrgMembership(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(organization.MembersColumn), fks...))
@@ -1231,10 +1231,10 @@ func (oq *OrganizationQuery) loadMembers(ctx context.Context, query *OrgMembersh
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.OrgID
+		fk := n.OrganizationID
 		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "org_id" returned %v for node %v`, fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "organization_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

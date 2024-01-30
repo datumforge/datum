@@ -3764,13 +3764,13 @@
                     ],
                     "default": "MEMBER"
                   },
-                  "org_id": {
+                  "organization_id": {
                     "type": "string"
                   },
                   "user_id": {
                     "type": "string"
                   },
-                  "org": {
+                  "organization": {
                     "type": "string"
                   },
                   "user": {
@@ -3781,9 +3781,9 @@
                   "created_at",
                   "updated_at",
                   "role",
-                  "org_id",
+                  "organization_id",
                   "user_id",
-                  "org",
+                  "organization",
                   "user"
                 ]
               }
@@ -3942,7 +3942,7 @@
                     ],
                     "default": "MEMBER"
                   },
-                  "org": {
+                  "organization": {
                     "type": "string"
                   },
                   "user": {
@@ -3980,14 +3980,14 @@
         }
       }
     },
-    "/org-memberships/{id}/org": {
+    "/org-memberships/{id}/organization": {
       "get": {
         "tags": [
           "OrgMembership"
         ],
         "summary": "Find the attached Organization",
         "description": "Find the attached Organization of the OrgMembership with the given ID",
-        "operationId": "readOrgMembershipOrg",
+        "operationId": "readOrgMembershipOrganization",
         "parameters": [
           {
             "name": "id",
@@ -4005,7 +4005,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrgMembership_OrgRead"
+                  "$ref": "#/components/schemas/OrgMembership_OrganizationRead"
                 }
               }
             }
@@ -11232,13 +11232,13 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
             "type": "string"
           },
-          "org": {
+          "organization": {
             "$ref": "#/components/schemas/Organization"
           },
           "user": {
@@ -11250,9 +11250,9 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id",
-          "org",
+          "organization",
           "user"
         ]
       },
@@ -11292,7 +11292,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -11304,7 +11304,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -11344,7 +11344,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -11356,7 +11356,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -11396,7 +11396,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -11408,7 +11408,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -11448,7 +11448,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -11460,11 +11460,11 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
-      "OrgMembership_OrgRead": {
+      "OrgMembership_OrganizationRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -12638,7 +12638,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -12650,7 +12650,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },
@@ -14671,7 +14671,7 @@
             ],
             "default": "MEMBER"
           },
-          "org_id": {
+          "organization_id": {
             "type": "string"
           },
           "user_id": {
@@ -14683,7 +14683,7 @@
           "created_at",
           "updated_at",
           "role",
-          "org_id",
+          "organization_id",
           "user_id"
         ]
       },

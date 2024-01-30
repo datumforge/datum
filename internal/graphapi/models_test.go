@@ -247,7 +247,7 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 
 	orgMembers := om.client.db.OrgMembership.Create().
 		SetUserID(om.UserID).
-		SetOrgID(om.OrgID).
+		SetOrganizationID(om.OrgID).
 		SetRole(role).
 		SaveX(ctx)
 

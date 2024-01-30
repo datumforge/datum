@@ -10122,24 +10122,24 @@ func (m *OhAuthTooTokenMutation) ResetEdge(name string) error {
 // OrgMembershipMutation represents an operation that mutates the OrgMembership nodes in the graph.
 type OrgMembershipMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	created_at    *time.Time
-	updated_at    *time.Time
-	created_by    *string
-	updated_by    *string
-	deleted_at    *time.Time
-	deleted_by    *string
-	role          *enums.Role
-	clearedFields map[string]struct{}
-	org           *string
-	clearedorg    bool
-	user          *string
-	cleareduser   bool
-	done          bool
-	oldValue      func(context.Context) (*OrgMembership, error)
-	predicates    []predicate.OrgMembership
+	op                  Op
+	typ                 string
+	id                  *string
+	created_at          *time.Time
+	updated_at          *time.Time
+	created_by          *string
+	updated_by          *string
+	deleted_at          *time.Time
+	deleted_by          *string
+	role                *enums.Role
+	clearedFields       map[string]struct{}
+	organization        *string
+	clearedorganization bool
+	user                *string
+	cleareduser         bool
+	done                bool
+	oldValue            func(context.Context) (*OrgMembership, error)
+	predicates          []predicate.OrgMembership
 }
 
 var _ ent.Mutation = (*OrgMembershipMutation)(nil)
@@ -10550,40 +10550,40 @@ func (m *OrgMembershipMutation) ResetRole() {
 	m.role = nil
 }
 
-// SetOrgID sets the "org_id" field.
-func (m *OrgMembershipMutation) SetOrgID(s string) {
-	m.org = &s
+// SetOrganizationID sets the "organization_id" field.
+func (m *OrgMembershipMutation) SetOrganizationID(s string) {
+	m.organization = &s
 }
 
-// OrgID returns the value of the "org_id" field in the mutation.
-func (m *OrgMembershipMutation) OrgID() (r string, exists bool) {
-	v := m.org
+// OrganizationID returns the value of the "organization_id" field in the mutation.
+func (m *OrgMembershipMutation) OrganizationID() (r string, exists bool) {
+	v := m.organization
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldOrgID returns the old "org_id" field's value of the OrgMembership entity.
+// OldOrganizationID returns the old "organization_id" field's value of the OrgMembership entity.
 // If the OrgMembership object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrgMembershipMutation) OldOrgID(ctx context.Context) (v string, err error) {
+func (m *OrgMembershipMutation) OldOrganizationID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOrgID is only allowed on UpdateOne operations")
+		return v, errors.New("OldOrganizationID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOrgID requires an ID field in the mutation")
+		return v, errors.New("OldOrganizationID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOrgID: %w", err)
+		return v, fmt.Errorf("querying old value for OldOrganizationID: %w", err)
 	}
-	return oldValue.OrgID, nil
+	return oldValue.OrganizationID, nil
 }
 
-// ResetOrgID resets all changes to the "org_id" field.
-func (m *OrgMembershipMutation) ResetOrgID() {
-	m.org = nil
+// ResetOrganizationID resets all changes to the "organization_id" field.
+func (m *OrgMembershipMutation) ResetOrganizationID() {
+	m.organization = nil
 }
 
 // SetUserID sets the "user_id" field.
@@ -10622,31 +10622,31 @@ func (m *OrgMembershipMutation) ResetUserID() {
 	m.user = nil
 }
 
-// ClearOrg clears the "org" edge to the Organization entity.
-func (m *OrgMembershipMutation) ClearOrg() {
-	m.clearedorg = true
-	m.clearedFields[orgmembership.FieldOrgID] = struct{}{}
+// ClearOrganization clears the "organization" edge to the Organization entity.
+func (m *OrgMembershipMutation) ClearOrganization() {
+	m.clearedorganization = true
+	m.clearedFields[orgmembership.FieldOrganizationID] = struct{}{}
 }
 
-// OrgCleared reports if the "org" edge to the Organization entity was cleared.
-func (m *OrgMembershipMutation) OrgCleared() bool {
-	return m.clearedorg
+// OrganizationCleared reports if the "organization" edge to the Organization entity was cleared.
+func (m *OrgMembershipMutation) OrganizationCleared() bool {
+	return m.clearedorganization
 }
 
-// OrgIDs returns the "org" edge IDs in the mutation.
+// OrganizationIDs returns the "organization" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// OrgID instead. It exists only for internal usage by the builders.
-func (m *OrgMembershipMutation) OrgIDs() (ids []string) {
-	if id := m.org; id != nil {
+// OrganizationID instead. It exists only for internal usage by the builders.
+func (m *OrgMembershipMutation) OrganizationIDs() (ids []string) {
+	if id := m.organization; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetOrg resets all changes to the "org" edge.
-func (m *OrgMembershipMutation) ResetOrg() {
-	m.org = nil
-	m.clearedorg = false
+// ResetOrganization resets all changes to the "organization" edge.
+func (m *OrgMembershipMutation) ResetOrganization() {
+	m.organization = nil
+	m.clearedorganization = false
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -10732,8 +10732,8 @@ func (m *OrgMembershipMutation) Fields() []string {
 	if m.role != nil {
 		fields = append(fields, orgmembership.FieldRole)
 	}
-	if m.org != nil {
-		fields = append(fields, orgmembership.FieldOrgID)
+	if m.organization != nil {
+		fields = append(fields, orgmembership.FieldOrganizationID)
 	}
 	if m.user != nil {
 		fields = append(fields, orgmembership.FieldUserID)
@@ -10760,8 +10760,8 @@ func (m *OrgMembershipMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case orgmembership.FieldRole:
 		return m.Role()
-	case orgmembership.FieldOrgID:
-		return m.OrgID()
+	case orgmembership.FieldOrganizationID:
+		return m.OrganizationID()
 	case orgmembership.FieldUserID:
 		return m.UserID()
 	}
@@ -10787,8 +10787,8 @@ func (m *OrgMembershipMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldDeletedBy(ctx)
 	case orgmembership.FieldRole:
 		return m.OldRole(ctx)
-	case orgmembership.FieldOrgID:
-		return m.OldOrgID(ctx)
+	case orgmembership.FieldOrganizationID:
+		return m.OldOrganizationID(ctx)
 	case orgmembership.FieldUserID:
 		return m.OldUserID(ctx)
 	}
@@ -10849,12 +10849,12 @@ func (m *OrgMembershipMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRole(v)
 		return nil
-	case orgmembership.FieldOrgID:
+	case orgmembership.FieldOrganizationID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetOrgID(v)
+		m.SetOrganizationID(v)
 		return nil
 	case orgmembership.FieldUserID:
 		v, ok := value.(string)
@@ -10960,8 +10960,8 @@ func (m *OrgMembershipMutation) ResetField(name string) error {
 	case orgmembership.FieldRole:
 		m.ResetRole()
 		return nil
-	case orgmembership.FieldOrgID:
-		m.ResetOrgID()
+	case orgmembership.FieldOrganizationID:
+		m.ResetOrganizationID()
 		return nil
 	case orgmembership.FieldUserID:
 		m.ResetUserID()
@@ -10973,8 +10973,8 @@ func (m *OrgMembershipMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrgMembershipMutation) AddedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.org != nil {
-		edges = append(edges, orgmembership.EdgeOrg)
+	if m.organization != nil {
+		edges = append(edges, orgmembership.EdgeOrganization)
 	}
 	if m.user != nil {
 		edges = append(edges, orgmembership.EdgeUser)
@@ -10986,8 +10986,8 @@ func (m *OrgMembershipMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *OrgMembershipMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case orgmembership.EdgeOrg:
-		if id := m.org; id != nil {
+	case orgmembership.EdgeOrganization:
+		if id := m.organization; id != nil {
 			return []ent.Value{*id}
 		}
 	case orgmembership.EdgeUser:
@@ -11013,8 +11013,8 @@ func (m *OrgMembershipMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrgMembershipMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.clearedorg {
-		edges = append(edges, orgmembership.EdgeOrg)
+	if m.clearedorganization {
+		edges = append(edges, orgmembership.EdgeOrganization)
 	}
 	if m.cleareduser {
 		edges = append(edges, orgmembership.EdgeUser)
@@ -11026,8 +11026,8 @@ func (m *OrgMembershipMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *OrgMembershipMutation) EdgeCleared(name string) bool {
 	switch name {
-	case orgmembership.EdgeOrg:
-		return m.clearedorg
+	case orgmembership.EdgeOrganization:
+		return m.clearedorganization
 	case orgmembership.EdgeUser:
 		return m.cleareduser
 	}
@@ -11038,8 +11038,8 @@ func (m *OrgMembershipMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *OrgMembershipMutation) ClearEdge(name string) error {
 	switch name {
-	case orgmembership.EdgeOrg:
-		m.ClearOrg()
+	case orgmembership.EdgeOrganization:
+		m.ClearOrganization()
 		return nil
 	case orgmembership.EdgeUser:
 		m.ClearUser()
@@ -11052,8 +11052,8 @@ func (m *OrgMembershipMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *OrgMembershipMutation) ResetEdge(name string) error {
 	switch name {
-	case orgmembership.EdgeOrg:
-		m.ResetOrg()
+	case orgmembership.EdgeOrganization:
+		m.ResetOrganization()
 		return nil
 	case orgmembership.EdgeUser:
 		m.ResetUser()

@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
 	"github.com/datumforge/fgax"
+	"github.com/datumforge/fgax/entfga"
 	"github.com/ogen-go/ogen"
 	"github.com/stoewer/go-strcase"
 	"go.uber.org/zap"
@@ -191,6 +192,9 @@ func main() {
 		entc.Extensions(
 			gqlExt,
 			oas,
+			entfga.NewFGAExtension(
+				entfga.WithSoftDeletes(),
+			),
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

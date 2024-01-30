@@ -3516,11 +3516,11 @@ func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetEmail() string 
 }
 
 type GetOrgMembersByOrgID_OrgMemberships_Edges_Node struct {
-	ID     string                                              "json:\"id\" graphql:\"id\""
-	OrgID  string                                              "json:\"orgID\" graphql:\"orgID\""
-	UserID string                                              "json:\"userID\" graphql:\"userID\""
-	Role   enums.Role                                          "json:\"role\" graphql:\"role\""
-	User   GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User "json:\"user\" graphql:\"user\""
+	ID             string                                              "json:\"id\" graphql:\"id\""
+	OrganizationID string                                              "json:\"organizationID\" graphql:\"organizationID\""
+	UserID         string                                              "json:\"userID\" graphql:\"userID\""
+	Role           enums.Role                                          "json:\"role\" graphql:\"role\""
+	User           GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User "json:\"user\" graphql:\"user\""
 }
 
 func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetID() string {
@@ -3529,11 +3529,11 @@ func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetOrgID() string {
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetOrganizationID() string {
 	if t == nil {
 		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node{}
 	}
-	return t.OrgID
+	return t.OrganizationID
 }
 func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetUserID() string {
 	if t == nil {
@@ -3577,10 +3577,10 @@ func (t *GetOrgMembersByOrgID_OrgMemberships) GetEdges() []*GetOrgMembersByOrgID
 }
 
 type AddUserToOrgWithRole_CreateOrgMembership_OrgMembership struct {
-	ID     string     "json:\"id\" graphql:\"id\""
-	Role   enums.Role "json:\"role\" graphql:\"role\""
-	UserID string     "json:\"userID\" graphql:\"userID\""
-	OrgID  string     "json:\"orgID\" graphql:\"orgID\""
+	ID             string     "json:\"id\" graphql:\"id\""
+	Role           enums.Role "json:\"role\" graphql:\"role\""
+	UserID         string     "json:\"userID\" graphql:\"userID\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
 }
 
 func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetID() string {
@@ -3601,11 +3601,11 @@ func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetUserID() str
 	}
 	return t.UserID
 }
-func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetOrgID() string {
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetOrganizationID() string {
 	if t == nil {
 		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
 	}
-	return t.OrgID
+	return t.OrganizationID
 }
 
 type AddUserToOrgWithRole_CreateOrgMembership struct {
@@ -3620,10 +3620,10 @@ func (t *AddUserToOrgWithRole_CreateOrgMembership) GetOrgMembership() *AddUserTo
 }
 
 type UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership struct {
-	ID     string     "json:\"id\" graphql:\"id\""
-	Role   enums.Role "json:\"role\" graphql:\"role\""
-	UserID string     "json:\"userID\" graphql:\"userID\""
-	OrgID  string     "json:\"orgID\" graphql:\"orgID\""
+	ID             string     "json:\"id\" graphql:\"id\""
+	Role           enums.Role "json:\"role\" graphql:\"role\""
+	UserID         string     "json:\"userID\" graphql:\"userID\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
 }
 
 func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetID() string {
@@ -3644,11 +3644,11 @@ func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetUserID() stri
 	}
 	return t.UserID
 }
-func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetOrgID() string {
+func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetOrganizationID() string {
 	if t == nil {
 		t = &UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership{}
 	}
-	return t.OrgID
+	return t.OrganizationID
 }
 
 type UpdateUserRoleInOrg_UpdateOrgMembership struct {
@@ -4593,8 +4593,8 @@ func (t *GetAllUsers_Users) GetEdges() []*GetAllUsers_Users_Edges {
 }
 
 type CreateUser_CreateUser_User_OrgMemberships struct {
-	ID    string "json:\"id\" graphql:\"id\""
-	OrgID string "json:\"orgID\" graphql:\"orgID\""
+	ID             string "json:\"id\" graphql:\"id\""
+	OrganizationID string "json:\"organizationID\" graphql:\"organizationID\""
 }
 
 func (t *CreateUser_CreateUser_User_OrgMemberships) GetID() string {
@@ -4603,11 +4603,11 @@ func (t *CreateUser_CreateUser_User_OrgMemberships) GetID() string {
 	}
 	return t.ID
 }
-func (t *CreateUser_CreateUser_User_OrgMemberships) GetOrgID() string {
+func (t *CreateUser_CreateUser_User_OrgMemberships) GetOrganizationID() string {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_OrgMemberships{}
 	}
-	return t.OrgID
+	return t.OrganizationID
 }
 
 type CreateUser_CreateUser_User_GroupMemberships struct {
@@ -6543,7 +6543,7 @@ const GetOrgMembersByOrgIDDocument = `query GetOrgMembersByOrgID ($where: OrgMem
 		edges {
 			node {
 				id
-				orgID
+				organizationID
 				userID
 				role
 				user {
@@ -6582,7 +6582,7 @@ const AddUserToOrgWithRoleDocument = `mutation AddUserToOrgWithRole ($input: Cre
 			id
 			role
 			userID
-			orgID
+			organizationID
 		}
 	}
 }
@@ -6611,7 +6611,7 @@ const UpdateUserRoleInOrgDocument = `mutation UpdateUserRoleInOrg ($updateOrgMem
 			id
 			role
 			userID
-			orgID
+			organizationID
 		}
 	}
 }
@@ -6942,7 +6942,7 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			oauth
 			orgMemberships {
 				id
-				orgID
+				organizationID
 			}
 			groupMemberships {
 				id

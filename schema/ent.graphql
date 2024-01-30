@@ -231,7 +231,7 @@ input CreateOrgMembershipInput {
   createdBy: String
   updatedBy: String
   role: OrgMembershipRole
-  orgID: ID!
+  organizationID: ID!
   userID: ID!
 }
 """
@@ -2359,9 +2359,9 @@ type OrgMembership implements Node {
   deletedAt: Time
   deletedBy: String
   role: OrgMembershipRole!
-  orgID: ID!
+  organizationID: ID!
   userID: ID!
-  org: Organization!
+  organization: Organization!
   user: User!
 }
 """

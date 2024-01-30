@@ -104,10 +104,10 @@ func (op *OauthProvider) Owner(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
-func (om *OrgMembership) Org(ctx context.Context) (*Organization, error) {
-	result, err := om.Edges.OrgOrErr()
+func (om *OrgMembership) Organization(ctx context.Context) (*Organization, error) {
+	result, err := om.Edges.OrganizationOrErr()
 	if IsNotLoaded(err) {
-		result, err = om.QueryOrg().Only(ctx)
+		result, err = om.QueryOrganization().Only(ctx)
 	}
 	return result, err
 }

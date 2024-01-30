@@ -4326,7 +4326,7 @@ input CreateInviteInput {
   """
   sendAttempts: Int
   """
-  the user who initatied the invitation
+  the user who initiated the invitation
   """
   requestorID: String!
   ownerID: ID!
@@ -5736,7 +5736,7 @@ type Invite implements Node {
   """
   sendAttempts: Int!
   """
-  the user who initatied the invitation
+  the user who initiated the invitation
   """
   requestorID: String!
   owner: Organization!
@@ -5779,7 +5779,6 @@ enum InviteInviteStatus @goModel(model: "github.com/datumforge/datum/internal/en
   APPROVAL_REQUIRED
   INVITATION_ACCEPTED
   INVITATION_EXPIRED
-  INVITE_INVALID
 }
 """
 InviteRole is enum for the field role

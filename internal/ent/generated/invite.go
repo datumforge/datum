@@ -45,7 +45,7 @@ type Invite struct {
 	Role enums.Role `json:"role,omitempty"`
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts int `json:"send_attempts,omitempty"`
-	// the user who initatied the invitation
+	// the user who initiated the invitation
 	RequestorID string `json:"requestor_id,omitempty"`
 	// the comparison secret to verify the token's signature
 	Secret *[]byte `json:"-"`

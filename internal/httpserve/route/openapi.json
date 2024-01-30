@@ -2590,8 +2590,7 @@
                       "INVITATION_SENT",
                       "APPROVAL_REQUIRED",
                       "INVITATION_ACCEPTED",
-                      "INVITATION_EXPIRED",
-                      "INVITE_INVALID"
+                      "INVITATION_EXPIRED"
                     ],
                     "default": "INVITATION_SENT"
                   },
@@ -2798,8 +2797,7 @@
                       "INVITATION_SENT",
                       "APPROVAL_REQUIRED",
                       "INVITATION_ACCEPTED",
-                      "INVITATION_EXPIRED",
-                      "INVITE_INVALID"
+                      "INVITATION_EXPIRED"
                     ],
                     "default": "INVITATION_SENT"
                   },
@@ -10055,8 +10053,7 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_EXPIRED"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10140,8 +10137,7 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_EXPIRED"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10216,8 +10212,7 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_EXPIRED"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10292,8 +10287,7 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_EXPIRED"
             ],
             "default": "INVITATION_SENT"
           },
@@ -10368,8 +10362,7 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_EXPIRED"
             ],
             "default": "INVITATION_SENT"
           },
@@ -12577,8 +12570,7 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_EXPIRED"
             ],
             "default": "INVITATION_SENT"
           },

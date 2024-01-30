@@ -117,7 +117,7 @@ type CreateInviteInput struct {
 	Role   *enums.Role         `json:"role,omitempty"`
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts *int64 `json:"sendAttempts,omitempty"`
-	// the user who initatied the invitation
+	// the user who initiated the invitation
 	RequestorID string `json:"requestorID"`
 	OwnerID     string `json:"ownerID"`
 }
@@ -1277,7 +1277,7 @@ type Invite struct {
 	Role   enums.Role         `json:"role"`
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts int64 `json:"sendAttempts"`
-	// the user who initatied the invitation
+	// the user who initiated the invitation
 	RequestorID string       `json:"requestorID"`
 	Owner       Organization `json:"owner"`
 }

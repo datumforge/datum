@@ -92,7 +92,7 @@ func HookInvite() ent.Hook {
 					m.Logger.Infow("invitation for user already exists")
 
 					// update invite instead
-					retValue, err = UpdateInvite(ctx, m)
+					retValue, err = updateInvite(ctx, m)
 					if err != nil {
 						m.Logger.Errorw("unable to update invitation", "error", err)
 					}
@@ -376,9 +376,9 @@ func sendOrgAccepted(ctx context.Context, m *generated.InviteMutation, i *emails
 
 var maxAttempts = 5
 
-// UpdateInvite if the invite already exists, set a new token, secret, expiration, and increment the attempts
+// updateInvite if the invite already exists, set a new token, secret, expiration, and increment the attempts
 // error at max attempts to resend
-func UpdateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.Invite, error) {
+func updateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.Invite, error) {
 	// get the existing invite by recipient and owner
 	rec, _ := m.Recipient()
 	ownerID, _ := m.OwnerID()

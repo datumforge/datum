@@ -233,7 +233,7 @@ var (
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "expires", Type: field.TypeTime},
 		{Name: "recipient", Type: field.TypeString},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED", "INVITE_INVALID"}, Default: "INVITATION_SENT"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED"}, Default: "INVITATION_SENT"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER"}, Default: "MEMBER"},
 		{Name: "send_attempts", Type: field.TypeInt, Default: 0},
 		{Name: "requestor_id", Type: field.TypeString},

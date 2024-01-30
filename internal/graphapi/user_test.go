@@ -13,7 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/graphapi"
 	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
@@ -764,7 +764,7 @@ func TestMutation_UserCascadeDelete(t *testing.T) {
 	require.Nil(t, g)
 	assert.ErrorContains(t, err, "not found")
 
-	ctx = mixin.SkipSoftDelete(reqCtx)
+	ctx = entx.SkipSoftDelete(reqCtx)
 
 	// skip checks because tuples will be deleted at this point
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
@@ -846,7 +846,7 @@ func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
 	assert.ErrorContains(t, err, "not found")
 
 	// Ensure user is soft deleted
-	ctx = mixin.SkipSoftDelete(userCtx.Request().Context())
+	ctx = entx.SkipSoftDelete(userCtx.Request().Context())
 
 	o, err = client.datum.GetUserByID(ctx, resp.CreateUser.User.ID)
 	require.NoError(t, err)

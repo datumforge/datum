@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -53,6 +54,9 @@ func (OrgMembership) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType: "organization",
+		},
 	}
 }
 
@@ -76,6 +80,5 @@ func (OrgMembership) Mixin() []ent.Mixin {
 func (OrgMembership) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookOrgMembers(),
-		hooks.HookOrgMembersAuthz(),
 	}
 }

@@ -10,11 +10,11 @@ import (
 	"go.uber.org/zap"
 
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/cache"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
@@ -39,7 +39,7 @@ func serve(ctx context.Context) error {
 	// setup db connection for server
 	var (
 		entdbClient *ent.Client
-		fgaClient   *fga.Client
+		fgaClient   *fgax.Client
 		err         error
 		mw          []echo.MiddlewareFunc
 	)
@@ -79,7 +79,7 @@ func serve(ctx context.Context) error {
 	// this must come before the database setup because the FGA Client
 	// is used as an ent dependency
 	if so.Config.Authz.Enabled {
-		fgaClient, err = fga.CreateFGAClientWithStore(ctx, so.Config.Authz)
+		fgaClient, err = fgax.CreateFGAClientWithStore(ctx, so.Config.Authz)
 		if err != nil {
 			return err
 		}

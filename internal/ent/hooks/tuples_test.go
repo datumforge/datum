@@ -3,11 +3,11 @@ package hooks
 import (
 	"testing"
 
+	"github.com/datumforge/fgax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/fga"
 )
 
 func Test_getTupleKey(t *testing.T) {
@@ -18,7 +18,7 @@ func Test_getTupleKey(t *testing.T) {
 		objID       string
 		objType     string
 		role        enums.Role
-		expectedRes fga.TupleKey
+		expectedRes fgax.TupleKey
 		expectedErr error
 	}{
 		{
@@ -27,14 +27,14 @@ func Test_getTupleKey(t *testing.T) {
 			subType: "organization",
 			objID:   "01HM7RVM7G2AVBQBTJA2TWCHHG",
 			objType: "group",
-			role:    fga.ParentRelation,
-			expectedRes: fga.TupleKey{
-				Subject: fga.Entity{
+			role:    fgax.ParentRelation,
+			expectedRes: fgax.TupleKey{
+				Subject: fgax.Entity{
 					Kind:       "organization",
 					Identifier: "01HM7RYYECMKN3FJWSAZVVQE4A",
 				},
 				Relation: "parent",
-				Object: fga.Entity{
+				Object: fgax.Entity{
 					Kind:       "group",
 					Identifier: "01HM7RVM7G2AVBQBTJA2TWCHHG",
 				},
@@ -47,7 +47,7 @@ func Test_getTupleKey(t *testing.T) {
 			objID:       "01HM7RVM7G2AVBQBTJA2TWCHHG",
 			objType:     "group",
 			role:        "baller",
-			expectedRes: fga.TupleKey{},
+			expectedRes: fgax.TupleKey{},
 			expectedErr: ErrUnsupportedFGARole,
 		},
 	}
@@ -77,7 +77,7 @@ func Test_getUserTupleKey(t *testing.T) {
 		objID       string
 		objType     string
 		role        enums.Role
-		expectedRes fga.TupleKey
+		expectedRes fgax.TupleKey
 		expectedErr error
 	}{
 		{
@@ -85,14 +85,14 @@ func Test_getUserTupleKey(t *testing.T) {
 			subID:   "01HM7RYYECMKN3FJWSAZVVQE4A",
 			objID:   "01HM7RVM7G2AVBQBTJA2TWCHHG",
 			objType: "group",
-			role:    fga.ParentRelation,
-			expectedRes: fga.TupleKey{
-				Subject: fga.Entity{
+			role:    fgax.ParentRelation,
+			expectedRes: fgax.TupleKey{
+				Subject: fgax.Entity{
 					Kind:       "user",
 					Identifier: "01HM7RYYECMKN3FJWSAZVVQE4A",
 				},
 				Relation: "parent",
-				Object: fga.Entity{
+				Object: fgax.Entity{
 					Kind:       "group",
 					Identifier: "01HM7RVM7G2AVBQBTJA2TWCHHG",
 				},
@@ -104,7 +104,7 @@ func Test_getUserTupleKey(t *testing.T) {
 			objID:       "01HM7RVM7G2AVBQBTJA2TWCHHG",
 			objType:     "group",
 			role:        "baller",
-			expectedRes: fga.TupleKey{},
+			expectedRes: fgax.TupleKey{},
 			expectedErr: ErrUnsupportedFGARole,
 		},
 	}
@@ -150,7 +150,7 @@ func Test_roleToRelation(t *testing.T) {
 		},
 		{
 			name:        "happy path, parent",
-			roleInput:   fga.ParentRelation,
+			roleInput:   fgax.ParentRelation,
 			expectedRes: "parent",
 		},
 		{

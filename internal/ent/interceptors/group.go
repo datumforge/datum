@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -46,7 +46,7 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 	}
 
 	// See all groups user has view access
-	groupList, err := q.Authz.ListObjectsRequest(ctx, userID, "group", fga.CanView)
+	groupList, err := q.Authz.ListObjectsRequest(ctx, userID, "group", fgax.CanView)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,8 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 	for _, g := range groups {
 		entityType := strings.ToLower(g.Update().Mutation().Type())
 
-		if !fga.ListContains(entityType, userGroups, g.ID) {
-			q.Logger.Infow("access denied to group", "relation", fga.CanView, "group_id", g.ID, "type", entityType)
+		if !fgax.ListContains(entityType, userGroups, g.ID) {
+			q.Logger.Infow("access denied to group", "relation", fgax.CanView, "group_id", g.ID, "type", entityType)
 
 			continue
 		}

@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	"entgo.io/ent"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/fga"
 )
 
 func HookOrgMembers() ent.Hook {
@@ -100,7 +100,7 @@ func orgMemberCreateHook(ctx context.Context, m *generated.OrgMembershipMutation
 
 	m.Logger.Debugw("details for fga", "object", tuple.Object, "relation", tuple.Relation, "subject", tuple.Subject)
 
-	if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
+	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
 		m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 		return err
@@ -124,7 +124,7 @@ func orgMemberDeleteHook(ctx context.Context, m *generated.OrgMembershipMutation
 			return err
 		}
 
-		m.Logger.Debugw("deleted relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
+		m.Logger.Debugw("deleted relationship tuples", "relation", fgax.OwnerRelation, "object", tuples[0].Object)
 	}
 
 	return nil
@@ -151,7 +151,7 @@ func orgMemberUpdateHook(ctx context.Context, m *generated.OrgMembershipMutation
 	return nil
 }
 
-func getOrgMemberTuple(m *generated.OrgMembershipMutation) (tuple fga.TupleKey, err error) {
+func getOrgMemberTuple(m *generated.OrgMembershipMutation) (tuple fgax.TupleKey, err error) {
 	userID, _ := m.UserID()
 	orgID, _ := m.OrgID()
 	role, _ := m.Role()
@@ -160,7 +160,7 @@ func getOrgMemberTuple(m *generated.OrgMembershipMutation) (tuple fga.TupleKey, 
 }
 
 // getDeleteOrgMemberTuples gets all tuples related to the orgMembership IDs that were deleted
-func getDeleteOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) (tuples []fga.TupleKey, err error) {
+func getDeleteOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) (tuples []fgax.TupleKey, err error) {
 	// User the IDs of the org memberships and delete all related tuples
 	for _, id := range ids {
 		// this happens after soft-delete, allow the request to pull the record
@@ -183,7 +183,7 @@ func getDeleteOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 }
 
 // getUpdateOrgMemberTuples gets all tuples related to the orgMembership IDs that were updated
-func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) (writes []fga.TupleKey, deletes []fga.TupleKey, err error) {
+func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMutation, ids []string) (writes []fgax.TupleKey, deletes []fgax.TupleKey, err error) {
 	oldRole, err := m.OldRole(ctx)
 	if err != nil {
 		return writes, deletes, err

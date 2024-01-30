@@ -9,6 +9,7 @@ import (
 	"os"
 
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/fgax"
 	"github.com/kelseyhightower/envconfig"
 	goredis "github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -17,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
@@ -123,7 +123,7 @@ func WithTracer() ServerOption {
 // WithFGAAuthz supplies the FGA authz config for the server
 func WithFGAAuthz() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		config, err := fga.NewAuthzConfig(s.Config.Logger)
+		config, err := fgax.NewAuthzConfig(s.Config.Logger)
 		if err != nil {
 			panic(err)
 		}
@@ -218,7 +218,7 @@ func WithAuth() ServerOption {
 }
 
 // WithReadyChecks adds readiness checks to the server
-func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client, r *goredis.Client) ServerOption {
+func WithReadyChecks(c *entdb.EntClientConfig, f *fgax.Client, r *goredis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Always add a check to the primary db connection
 		s.Config.Server.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
@@ -230,7 +230,7 @@ func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client, r *goredis.Client)
 
 		// Check the connection to openFGA, if enabled
 		if s.Config.Authz.Enabled {
-			s.Config.Server.Handler.AddReadinessCheck("fga", fga.Healthcheck(*f))
+			s.Config.Server.Handler.AddReadinessCheck("fga", fgax.Healthcheck(*f))
 		}
 
 		// Check the connection to redis, if enabled

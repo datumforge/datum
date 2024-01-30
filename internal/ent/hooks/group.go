@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -86,14 +86,14 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 	org, orgexists := m.OwnerID()
 
 	if exists && orgexists {
-		m.Logger.Debugw("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
+		m.Logger.Debugw("creating parent relationship tuples", "relation", fgax.ParentRelation, "org", org, "object", object)
 
-		orgTuple, err := getTupleKey(org, "organization", objID, objType, fga.ParentRelation)
+		orgTuple, err := getTupleKey(org, "organization", objID, objType, fgax.ParentRelation)
 		if err != nil {
 			return err
 		}
 
-		if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{orgTuple}, nil); err != nil {
+		if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{orgTuple}, nil); err != nil {
 			m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 			return ErrInternalServerError

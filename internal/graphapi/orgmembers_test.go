@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/hooks"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func TestQuery_OrgMembers(t *testing.T) {

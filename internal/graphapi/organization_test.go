@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -14,7 +15,6 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 const (

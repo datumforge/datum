@@ -6,6 +6,7 @@ import (
 	"time"
 
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/fgax"
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/acme"
@@ -13,7 +14,6 @@ import (
 
 	"github.com/datumforge/datum/internal/cache"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/sessions"
@@ -49,7 +49,7 @@ type (
 		Auth Auth `yaml:"auth"`
 
 		// Authz contains the authorization settings
-		Authz fga.Config `yaml:"authz"`
+		Authz fgax.Config `yaml:"authz"`
 
 		// DB contains the database configuration
 		DB entdb.Config `yaml:"db"`

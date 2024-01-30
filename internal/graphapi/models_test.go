@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
+	mock_fga "github.com/datumforge/fgax/mockery"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 type OrganizationBuilder struct {

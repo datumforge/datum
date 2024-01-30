@@ -13,14 +13,14 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Yamashou/gqlgenc/clientv2"
+	"github.com/datumforge/fgax"
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/fga"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/emails"
@@ -35,7 +35,7 @@ var (
 	testUser    *ent.User
 )
 
-// client contains all the clients the test need to intrract with
+// client contains all the clients the test need to interact with
 type client struct {
 	db    *ent.Client
 	datum datumclient.DatumClient
@@ -61,7 +61,7 @@ func setupTest(t *testing.T) *client {
 	}
 
 	// create mock FGA client
-	fc := fga.NewMockFGAClient(t, c.fga)
+	fc := fgax.NewMockFGAClient(t, c.fga)
 
 	// setup logger
 	logger := zap.NewNop().Sugar()

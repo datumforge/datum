@@ -33,9 +33,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
+	"github.com/datumforge/fgax"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
@@ -122,7 +122,7 @@ type (
 		// interceptors to execute on queries.
 		inters        *inters
 		SecretsKeeper *secrets.Keeper
-		Authz         fga.Client
+		Authz         fgax.Client
 		Logger        zap.SugaredLogger
 		HTTPClient    *http.Client
 		Emails        *emails.EmailManager
@@ -180,7 +180,7 @@ func SecretsKeeper(v *secrets.Keeper) Option {
 }
 
 // Authz configures the Authz.
-func Authz(v fga.Client) Option {
+func Authz(v fgax.Client) Option {
 	return func(c *config) {
 		c.Authz = v
 	}

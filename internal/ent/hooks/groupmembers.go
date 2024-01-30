@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	"entgo.io/ent"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/fga"
 )
 
 // HookGroupMembersAuthz runs on group member mutations to setup or remove relationship tuples
@@ -67,13 +67,13 @@ func groupMemberCreateHook(ctx context.Context, m *generated.GroupMembershipMuta
 		return err
 	}
 
-	if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
+	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
 		m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 		return err
 	}
 
-	m.Logger.Debugw("created relationship tuples", "relation", fga.OwnerRelation, "object", tuple.Object)
+	m.Logger.Debugw("created relationship tuples", "relation", fgax.OwnerRelation, "object", tuple.Object)
 
 	return nil
 }
@@ -118,7 +118,7 @@ func groupMemberUpdateHook(ctx context.Context, m *generated.GroupMembershipMuta
 	return nil
 }
 
-func getGroupMemberTuple(m *generated.GroupMembershipMutation) (tuple fga.TupleKey, err error) {
+func getGroupMemberTuple(m *generated.GroupMembershipMutation) (tuple fgax.TupleKey, err error) {
 	userID, _ := m.UserID()
 	groupID, _ := m.GroupID()
 	role, _ := m.Role()
@@ -127,7 +127,7 @@ func getGroupMemberTuple(m *generated.GroupMembershipMutation) (tuple fga.TupleK
 }
 
 // getDeleteGroupMemberTuples gets all tuples related to the groupMembership IDs that were deleted
-func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (tuples []fga.TupleKey, err error) {
+func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (tuples []fgax.TupleKey, err error) {
 	// User the IDs of the group memberships and delete all related tuples
 	for _, id := range ids {
 		// this happens after soft-delete, allow the request to pull the record
@@ -150,7 +150,7 @@ func getDeleteGroupMemberTuples(ctx context.Context, m *generated.GroupMembershi
 }
 
 // getUpdateGroupMemberTuples gets all tuples related to the groupMembership IDs that were updated
-func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (writes []fga.TupleKey, deletes []fga.TupleKey, err error) {
+func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershipMutation, ids []string) (writes []fgax.TupleKey, deletes []fgax.TupleKey, err error) {
 	oldRole, err := m.OldRole(ctx)
 	if err != nil {
 		return writes, deletes, err

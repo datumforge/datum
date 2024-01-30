@@ -3,13 +3,13 @@ package graphapi_test
 import (
 	"testing"
 
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func TestQuery_GroupMembers(t *testing.T) {

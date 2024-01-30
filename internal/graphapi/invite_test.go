@@ -110,10 +110,10 @@ func TestQuery_CreateInvite(t *testing.T) {
 	// Org to invite users to
 	org := (&OrganizationBuilder{client: client}).MustNew(userCtx.Request().Context(), t)
 
-	// // Existing user to invite to org
+	// Existing user to invite to org
 	existingUser := (&UserBuilder{client: client}).MustNew(userCtx.Request().Context(), t)
 
-	// // Existing user already a member of org
+	// Existing user already a member of org
 	existingUser2 := (&UserBuilder{client: client}).MustNew(userCtx.Request().Context(), t)
 	_ = (&OrgMemberBuilder{client: client, OrgID: org.ID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
 
@@ -136,6 +136,24 @@ func TestQuery_CreateInvite(t *testing.T) {
 			wantErr:        false,
 		},
 		{
+			name:           "happy path, new user as admin",
+			existingUser:   false,
+			recipient:      "woof@datum.net",
+			orgID:          org.ID,
+			role:           enums.RoleAdmin,
+			expectedStatus: enums.InvitationSent,
+			wantErr:        false,
+		},
+		// TODO: uncomment with https://github.com/datumforge/datum/issues/405
+		// {
+		// 	name:         "new user as owner should fail",
+		// 	existingUser: false,
+		// 	recipient:    "woof@datum.net",
+		// 	orgID:        org.ID,
+		// 	role:         enums.RoleOwner,
+		// 	wantErr:      true,
+		// },
+		{
 			name:           "happy path, existing user as member",
 			existingUser:   true,
 			recipient:      existingUser.Email,
@@ -148,6 +166,13 @@ func TestQuery_CreateInvite(t *testing.T) {
 			name:      "user already a member",
 			recipient: existingUser2.Email,
 			orgID:     org.ID,
+			role:      enums.RoleMember,
+			wantErr:   true,
+		},
+		{
+			name:      "invalid org",
+			recipient: existingUser.Email,
+			orgID:     "boommeowboom",
 			role:      enums.RoleMember,
 			wantErr:   true,
 		},
@@ -189,6 +214,61 @@ func TestQuery_CreateInvite(t *testing.T) {
 			assert.Equal(t, orgAdmin.ID, resp.CreateInvite.Invite.RequestorID)
 			assert.Equal(t, tc.expectedStatus, resp.CreateInvite.Invite.Status)
 			assert.WithinDuration(t, time.Now().AddDate(0, 0, 14), resp.CreateInvite.Invite.Expires, time.Minute)
+		})
+	}
+}
+
+func TestQuery_DeleteInvite(t *testing.T) {
+	client := setupTest(t)
+	defer client.db.Close()
+
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
+
+	invite := (&InviteBuilder{client: client}).MustNew(reqCtx, t)
+
+	testCases := []struct {
+		name     string
+		queryID  string
+		allowed  bool
+		expected *ent.Invite
+		wantErr  bool
+	}{
+		{
+			name:     "happy path",
+			queryID:  invite.ID,
+			allowed:  true,
+			expected: invite,
+			wantErr:  false,
+		},
+		{
+			name:     "invalid id",
+			queryID:  "allthefooandbar",
+			allowed:  true,
+			expected: nil,
+			wantErr:  true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
+			resp, err := client.datum.DeleteInvite(reqCtx, tc.queryID)
+
+			if tc.wantErr {
+				require.Error(t, err)
+				assert.Nil(t, resp)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+
+			// assert equal
+			assert.Equal(t, tc.queryID, resp.DeleteInvite.DeletedID)
 		})
 	}
 }

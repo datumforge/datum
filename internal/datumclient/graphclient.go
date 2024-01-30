@@ -1589,13 +1589,14 @@ func (t *CreateInvite_CreateInvite_Invite_Owner) GetID() string {
 }
 
 type CreateInvite_CreateInvite_Invite struct {
-	ID          string                                 "json:\"id\" graphql:\"id\""
-	Recipient   string                                 "json:\"recipient\" graphql:\"recipient\""
-	Status      enums.InviteStatus                     "json:\"status\" graphql:\"status\""
-	RequestorID string                                 "json:\"requestorID\" graphql:\"requestorID\""
-	Expires     time.Time                              "json:\"expires\" graphql:\"expires\""
-	Role        enums.Role                             "json:\"role\" graphql:\"role\""
-	Owner       CreateInvite_CreateInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
+	ID           string                                 "json:\"id\" graphql:\"id\""
+	Recipient    string                                 "json:\"recipient\" graphql:\"recipient\""
+	Status       enums.InviteStatus                     "json:\"status\" graphql:\"status\""
+	RequestorID  string                                 "json:\"requestorID\" graphql:\"requestorID\""
+	Expires      time.Time                              "json:\"expires\" graphql:\"expires\""
+	Role         enums.Role                             "json:\"role\" graphql:\"role\""
+	SendAttempts int64                                  "json:\"sendAttempts\" graphql:\"sendAttempts\""
+	Owner        CreateInvite_CreateInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
 }
 
 func (t *CreateInvite_CreateInvite_Invite) GetID() string {
@@ -1633,6 +1634,12 @@ func (t *CreateInvite_CreateInvite_Invite) GetRole() *enums.Role {
 		t = &CreateInvite_CreateInvite_Invite{}
 	}
 	return &t.Role
+}
+func (t *CreateInvite_CreateInvite_Invite) GetSendAttempts() int64 {
+	if t == nil {
+		t = &CreateInvite_CreateInvite_Invite{}
+	}
+	return t.SendAttempts
 }
 func (t *CreateInvite_CreateInvite_Invite) GetOwner() *CreateInvite_CreateInvite_Invite_Owner {
 	if t == nil {
@@ -1689,19 +1696,20 @@ func (t *GetInvite_Invite_Owner) GetName() string {
 }
 
 type GetInvite_Invite struct {
-	ID          string                 "json:\"id\" graphql:\"id\""
-	CreatedAt   time.Time              "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt   time.Time              "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy   *string                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy   *string                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt   *time.Time             "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy   *string                "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Expires     time.Time              "json:\"expires\" graphql:\"expires\""
-	Recipient   string                 "json:\"recipient\" graphql:\"recipient\""
-	Status      enums.InviteStatus     "json:\"status\" graphql:\"status\""
-	RequestorID string                 "json:\"requestorID\" graphql:\"requestorID\""
-	Role        enums.Role             "json:\"role\" graphql:\"role\""
-	Owner       GetInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
+	ID           string                 "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time              "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time              "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt    *time.Time             "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy    *string                "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Expires      time.Time              "json:\"expires\" graphql:\"expires\""
+	Recipient    string                 "json:\"recipient\" graphql:\"recipient\""
+	Status       enums.InviteStatus     "json:\"status\" graphql:\"status\""
+	RequestorID  string                 "json:\"requestorID\" graphql:\"requestorID\""
+	Role         enums.Role             "json:\"role\" graphql:\"role\""
+	SendAttempts int64                  "json:\"sendAttempts\" graphql:\"sendAttempts\""
+	Owner        GetInvite_Invite_Owner "json:\"owner\" graphql:\"owner\""
 }
 
 func (t *GetInvite_Invite) GetID() string {
@@ -1776,6 +1784,12 @@ func (t *GetInvite_Invite) GetRole() *enums.Role {
 	}
 	return &t.Role
 }
+func (t *GetInvite_Invite) GetSendAttempts() int64 {
+	if t == nil {
+		t = &GetInvite_Invite{}
+	}
+	return t.SendAttempts
+}
 func (t *GetInvite_Invite) GetOwner() *GetInvite_Invite_Owner {
 	if t == nil {
 		t = &GetInvite_Invite{}
@@ -1784,10 +1798,11 @@ func (t *GetInvite_Invite) GetOwner() *GetInvite_Invite_Owner {
 }
 
 type InvitesByOrgID_Invites_Edges_Node_Owner_Invites struct {
-	Recipient   string             "json:\"recipient\" graphql:\"recipient\""
-	Status      enums.InviteStatus "json:\"status\" graphql:\"status\""
-	RequestorID string             "json:\"requestorID\" graphql:\"requestorID\""
-	Role        enums.Role         "json:\"role\" graphql:\"role\""
+	Recipient    string             "json:\"recipient\" graphql:\"recipient\""
+	Status       enums.InviteStatus "json:\"status\" graphql:\"status\""
+	RequestorID  string             "json:\"requestorID\" graphql:\"requestorID\""
+	Role         enums.Role         "json:\"role\" graphql:\"role\""
+	SendAttempts int64              "json:\"sendAttempts\" graphql:\"sendAttempts\""
 }
 
 func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRecipient() string {
@@ -1813,6 +1828,12 @@ func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetRole() *enums.Role 
 		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
 	}
 	return &t.Role
+}
+func (t *InvitesByOrgID_Invites_Edges_Node_Owner_Invites) GetSendAttempts() int64 {
+	if t == nil {
+		t = &InvitesByOrgID_Invites_Edges_Node_Owner_Invites{}
+	}
+	return t.SendAttempts
 }
 
 type InvitesByOrgID_Invites_Edges_Node_Owner struct {
@@ -5991,6 +6012,7 @@ const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!)
 			requestorID
 			expires
 			role
+			sendAttempts
 			owner {
 				id
 			}
@@ -6054,6 +6076,7 @@ const GetInviteDocument = `query GetInvite ($inviteId: ID!) {
 		status
 		requestorID
 		role
+		sendAttempts
 		owner {
 			id
 			displayName
@@ -6091,6 +6114,7 @@ const InvitesByOrgIDDocument = `query InvitesByOrgID ($where: InviteWhereInput) 
 						status
 						requestorID
 						role
+						sendAttempts
 					}
 				}
 			}

@@ -118,34 +118,48 @@ func TestQuery_CreateInvite(t *testing.T) {
 	_ = (&OrgMemberBuilder{client: client, OrgID: org.ID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
 
 	testCases := []struct {
-		name           string
-		existingUser   bool
-		recipient      string
-		orgID          string
-		role           enums.Role
-		accessAllowed  bool
-		expectedStatus enums.InviteStatus
-		wantErr        bool
+		name             string
+		existingUser     bool
+		recipient        string
+		orgID            string
+		role             enums.Role
+		accessAllowed    bool
+		expectedStatus   enums.InviteStatus
+		expectedAttempts int64
+		wantErr          bool
 	}{
 		{
-			name:           "happy path, new user as member",
-			existingUser:   false,
-			recipient:      "meow@datum.net",
-			orgID:          org.ID,
-			role:           enums.RoleMember,
-			accessAllowed:  true,
-			expectedStatus: enums.InvitationSent,
-			wantErr:        false,
+			name:             "happy path, new user as member",
+			existingUser:     false,
+			recipient:        "meow@datum.net",
+			orgID:            org.ID,
+			role:             enums.RoleMember,
+			accessAllowed:    true,
+			expectedStatus:   enums.InvitationSent,
+			expectedAttempts: 0,
+			wantErr:          false,
 		},
 		{
-			name:           "happy path, new user as admin",
-			existingUser:   false,
-			recipient:      "woof@datum.net",
-			orgID:          org.ID,
-			role:           enums.RoleAdmin,
-			accessAllowed:  true,
-			expectedStatus: enums.InvitationSent,
-			wantErr:        false,
+			name:             "re-invite new user as member",
+			existingUser:     false,
+			recipient:        "meow@datum.net",
+			orgID:            org.ID,
+			role:             enums.RoleMember,
+			accessAllowed:    true,
+			expectedStatus:   enums.InvitationSent,
+			expectedAttempts: 1,
+			wantErr:          false,
+		},
+		{
+			name:             "happy path, new user as admin",
+			existingUser:     false,
+			recipient:        "woof@datum.net",
+			orgID:            org.ID,
+			role:             enums.RoleAdmin,
+			accessAllowed:    true,
+			expectedStatus:   enums.InvitationSent,
+			expectedAttempts: 0,
+			wantErr:          false,
 		},
 		// TODO: uncomment with https://github.com/datumforge/datum/issues/405
 		// {
@@ -167,14 +181,15 @@ func TestQuery_CreateInvite(t *testing.T) {
 			wantErr:       true,
 		},
 		{
-			name:           "happy path, existing user as member",
-			existingUser:   true,
-			recipient:      existingUser.Email,
-			orgID:          org.ID,
-			role:           enums.RoleMember,
-			accessAllowed:  true,
-			expectedStatus: enums.InvitationAccepted,
-			wantErr:        false,
+			name:             "happy path, existing user as member",
+			existingUser:     true,
+			recipient:        existingUser.Email,
+			orgID:            org.ID,
+			role:             enums.RoleMember,
+			accessAllowed:    true,
+			expectedStatus:   enums.InvitationAccepted,
+			expectedAttempts: 0,
+			wantErr:          false,
 		},
 		{
 			name:          "user already a member",
@@ -232,6 +247,7 @@ func TestQuery_CreateInvite(t *testing.T) {
 			assert.Equal(t, tc.role, resp.CreateInvite.Invite.Role)
 			assert.Equal(t, orgAdmin.ID, resp.CreateInvite.Invite.RequestorID)
 			assert.Equal(t, tc.expectedStatus, resp.CreateInvite.Invite.Status)
+			assert.Equal(t, tc.expectedAttempts, resp.CreateInvite.Invite.SendAttempts)
 			assert.WithinDuration(t, time.Now().AddDate(0, 0, 14), resp.CreateInvite.Invite.Expires, time.Minute)
 		})
 	}

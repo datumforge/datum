@@ -123,6 +123,7 @@ func TestQuery_CreateInvite(t *testing.T) {
 		recipient      string
 		orgID          string
 		role           enums.Role
+		accessAllowed  bool
 		expectedStatus enums.InviteStatus
 		wantErr        bool
 	}{
@@ -132,6 +133,7 @@ func TestQuery_CreateInvite(t *testing.T) {
 			recipient:      "meow@datum.net",
 			orgID:          org.ID,
 			role:           enums.RoleMember,
+			accessAllowed:  true,
 			expectedStatus: enums.InvitationSent,
 			wantErr:        false,
 		},
@@ -141,6 +143,7 @@ func TestQuery_CreateInvite(t *testing.T) {
 			recipient:      "woof@datum.net",
 			orgID:          org.ID,
 			role:           enums.RoleAdmin,
+			accessAllowed:  true,
 			expectedStatus: enums.InvitationSent,
 			wantErr:        false,
 		},
@@ -151,30 +154,43 @@ func TestQuery_CreateInvite(t *testing.T) {
 		// 	recipient:    "woof@datum.net",
 		// 	orgID:        org.ID,
 		// 	role:         enums.RoleOwner,
+		//  accessAllowed: true,
 		// 	wantErr:      true,
 		// },
+		{
+			name:          "user not allowed to add to org",
+			existingUser:  false,
+			recipient:     "oink@datum.net",
+			orgID:         org.ID,
+			role:          enums.RoleAdmin,
+			accessAllowed: false,
+			wantErr:       true,
+		},
 		{
 			name:           "happy path, existing user as member",
 			existingUser:   true,
 			recipient:      existingUser.Email,
 			orgID:          org.ID,
 			role:           enums.RoleMember,
+			accessAllowed:  true,
 			expectedStatus: enums.InvitationAccepted,
 			wantErr:        false,
 		},
 		{
-			name:      "user already a member",
-			recipient: existingUser2.Email,
-			orgID:     org.ID,
-			role:      enums.RoleMember,
-			wantErr:   true,
+			name:          "user already a member",
+			recipient:     existingUser2.Email,
+			orgID:         org.ID,
+			role:          enums.RoleMember,
+			accessAllowed: true,
+			wantErr:       true,
 		},
 		{
-			name:      "invalid org",
-			recipient: existingUser.Email,
-			orgID:     "boommeowboom",
-			role:      enums.RoleMember,
-			wantErr:   true,
+			name:          "invalid org",
+			recipient:     existingUser.Email,
+			orgID:         "boommeowboom",
+			role:          enums.RoleMember,
+			accessAllowed: true,
+			wantErr:       true,
 		},
 	}
 
@@ -182,8 +198,11 @@ func TestQuery_CreateInvite(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
-			mock_fga.CheckAny(t, client.fga, true)
-			mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
+			mock_fga.CheckAny(t, client.fga, tc.accessAllowed)
+
+			if tc.accessAllowed {
+				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
+			}
 
 			if tc.existingUser {
 				mock_fga.WriteAny(t, client.fga)

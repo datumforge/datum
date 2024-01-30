@@ -19,10 +19,7 @@ func (m *GroupMembershipMutation) CreateTuplesFromCreate(ctx context.Context) er
 	role, _ := m.Role()
 
 	// get tuple key
-	tuple, err := fgax.GetTupleKey(userID, "user", objectID, "group", role.String())
-	if err != nil {
-		return err
-	}
+	tuple := fgax.GetTupleKey(userID, "user", objectID, "group", role.String())
 
 	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
 		m.Logger.Errorw("failed to create relationship tuple", "error", err)
@@ -75,17 +72,11 @@ func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) er
 			return err
 		}
 
-		d, err := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", oldRole.String())
-		if err != nil {
-			return err
-		}
+		d := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", oldRole.String())
 
 		deletes = append(deletes, d)
 
-		w, err := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", newRole.String())
-		if err != nil {
-			return err
-		}
+		w := fgax.GetTupleKey(member.UserID, "user", member.GroupID, "group", newRole.String())
 
 		writes = append(writes, w)
 
@@ -127,10 +118,7 @@ func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) er
 			return err
 		}
 
-		t, err := fgax.GetTupleKey(members.UserID, "user", members.GroupID, "group", members.Role.String())
-		if err != nil {
-			return err
-		}
+		t := fgax.GetTupleKey(members.UserID, "user", members.GroupID, "group", members.Role.String())
 
 		tuples = append(tuples, t)
 	}
@@ -155,10 +143,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) erro
 	role, _ := m.Role()
 
 	// get tuple key
-	tuple, err := fgax.GetTupleKey(userID, "user", objectID, "organization", role.String())
-	if err != nil {
-		return err
-	}
+	tuple := fgax.GetTupleKey(userID, "user", objectID, "organization", role.String())
 
 	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
 		m.Logger.Errorw("failed to create relationship tuple", "error", err)
@@ -211,17 +196,11 @@ func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) erro
 			return err
 		}
 
-		d, err := fgax.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", oldRole.String())
-		if err != nil {
-			return err
-		}
+		d := fgax.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", oldRole.String())
 
 		deletes = append(deletes, d)
 
-		w, err := fgax.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", newRole.String())
-		if err != nil {
-			return err
-		}
+		w := fgax.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", newRole.String())
 
 		writes = append(writes, w)
 
@@ -263,10 +242,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) erro
 			return err
 		}
 
-		t, err := fgax.GetTupleKey(members.UserID, "user", members.OrganizationID, "organization", members.Role.String())
-		if err != nil {
-			return err
-		}
+		t := fgax.GetTupleKey(members.UserID, "user", members.OrganizationID, "organization", members.Role.String())
 
 		tuples = append(tuples, t)
 	}

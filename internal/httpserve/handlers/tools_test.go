@@ -68,24 +68,13 @@ func setupEcho(entClient *ent.Client) *echo.Echo {
 }
 
 // handlerSetup to be used for required references in the handler tests
-func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
+func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMan *marionette.TaskManager) *handlers.Handler {
 	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
 	if err != nil {
 		t.Fatal("error creating token manager")
 	}
 
 	rc := newRedisClient()
-
-	emConfig := emails.Config{
-		Testing:   true,
-		Archive:   filepath.Join("fixtures", "emails"),
-		FromEmail: "mitb@datum.net",
-	}
-
-	em, err := emails.New(emConfig)
-	if err != nil {
-		t.Fatal("error creating email manager")
-	}
 
 	h := &handlers.Handler{
 		TM:           tm,
@@ -94,16 +83,8 @@ func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
 		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
 		SM:           createSessionManager(),
 		EmailManager: em,
+		TaskMan:      taskMan,
 	}
-
-	// Start task manager
-	tmConfig := marionette.Config{
-		Logger: zap.NewNop().Sugar(),
-	}
-
-	h.TaskMan = marionette.New(tmConfig)
-
-	h.TaskMan.Start()
 
 	return h
 }
@@ -121,6 +102,26 @@ func setupTest(t *testing.T) *client {
 	// setup logger
 	logger := zap.NewNop().Sugar()
 
+	emConfig := emails.Config{
+		Testing:   true,
+		Archive:   filepath.Join("fixtures", "emails"),
+		FromEmail: "mitb@datum.net",
+	}
+
+	em, err := emails.New(emConfig)
+	if err != nil {
+		t.Fatal("error creating email manager")
+	}
+
+	// Start task manager
+	tmConfig := marionette.Config{
+		Logger: zap.NewNop().Sugar(),
+	}
+
+	taskMan := marionette.New(tmConfig)
+
+	taskMan.Start()
+
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
 
@@ -136,7 +137,12 @@ func setupTest(t *testing.T) *client {
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)
 
-	opts := []ent.Option{ent.Logger(*logger), ent.Authz(*fc)}
+	opts := []ent.Option{
+		ent.Logger(*logger),
+		ent.Authz(*fc),
+		ent.Marionette(taskMan),
+		ent.Emails(em),
+	}
 
 	db, err := entConfig.NewMultiDriverDBClient(ctx, opts)
 	if err != nil {
@@ -151,7 +157,7 @@ func setupTest(t *testing.T) *client {
 	c.db = db
 
 	// setup handler
-	c.h = handlerSetup(t, c.db)
+	c.h = handlerSetup(t, c.db, em, taskMan)
 
 	// setup echo router
 	c.e = setupEcho(c.db)

@@ -59,7 +59,7 @@ func (h *Handler) RequireLogin(next http.Handler) http.Handler {
 }
 
 func (h *Handler) IsAuthenticated(req *http.Request) bool {
-	if _, err := h.SM.Get(req, sessions.DefaultCookieName); err == nil {
+	if _, err := h.SessionConfig.SessionManager.Get(req, sessions.DefaultCookieName); err == nil {
 		return true
 	}
 
@@ -95,7 +95,7 @@ func (h *Handler) issueGoogleSession() http.Handler {
 			return
 		}
 
-		session := h.SM.New(sessions.DefaultCookieName)
+		session := h.SessionConfig.SessionManager.New(sessions.DefaultCookieName)
 		sessionID := sessions.GenerateSessionID()
 
 		setSessionMap := map[string]string{}
@@ -145,7 +145,7 @@ func (h *Handler) issueGitHubSession() http.Handler {
 			return
 		}
 
-		session := h.SM.New(sessions.DefaultCookieName)
+		session := h.SessionConfig.SessionManager.New(sessions.DefaultCookieName)
 		sessionID := sessions.GenerateSessionID()
 
 		setSessionMap := map[string]string{}

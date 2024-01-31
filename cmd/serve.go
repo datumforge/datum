@@ -58,6 +58,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithTracer(),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
+		serveropts.WithMiddleware(),
 	)
 
 	so := serveropts.NewServerOptions(serverOpts)
@@ -113,8 +114,6 @@ func serve(ctx context.Context) error {
 	// Add redis client to Handlers Config
 	so.Config.Server.Handler.RedisClient = redisClient
 
-	srv := server.NewServer(so.Config.Server, so.Config.Logger)
-
 	// add ready checks
 	so.AddServerOptions(
 		serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient),
@@ -124,6 +123,8 @@ func serve(ctx context.Context) error {
 	so.AddServerOptions(
 		serveropts.WithSessionManager(redisClient),
 	)
+
+	srv := server.NewServer(so.Config.Server, so.Config.Logger)
 
 	// Setup Graph API Handlers
 	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient))

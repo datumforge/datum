@@ -8,7 +8,10 @@ import (
 	"fmt"
 	"os"
 
+	echoprometheus "github.com/datumforge/echo-prometheus/v5"
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/echox/middleware"
+	"github.com/datumforge/echozap"
 	"github.com/datumforge/fgax"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
@@ -21,6 +24,11 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/httpserve/middleware/cachecontrol"
+	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
+	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/sessions"
@@ -236,7 +244,7 @@ func WithAuth() ServerOption {
 			authmw.WithJWKSEndpoint(s.Config.Server.Token.JWKSEndpoint),
 		)
 
-		s.Config.Server.Middleware = append(s.Config.Server.Middleware, authmw.Authenticate(conf))
+		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware, authmw.Authenticate(conf))
 	})
 }
 
@@ -278,14 +286,29 @@ func WithGraphRoute(srv *server.Server, c *generated.Client) ServerOption {
 }
 
 // WithMiddleware adds the middleware to the server
-func WithMiddleware(mw []echo.MiddlewareFunc) ServerOption {
+func WithMiddleware() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Initialize middleware if null
-		if s.Config.Server.Middleware == nil {
-			s.Config.Server.Middleware = []echo.MiddlewareFunc{}
+		if s.Config.Server.DefaultMiddleware == nil {
+			s.Config.Server.DefaultMiddleware = []echo.MiddlewareFunc{}
 		}
 
-		s.Config.Server.Middleware = append(s.Config.Server.Middleware, mw...)
+		// default middleware
+		s.Config.Server.DefaultMiddleware = append(s.Config.Server.DefaultMiddleware,
+			middleware.RequestID(), // add request id
+			middleware.Recover(),   // recover server from any panic/fatal error gracefully
+			middleware.LoggerWithConfig(middleware.LoggerConfig{
+				Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, auth=${header:Authorization}\n",
+			}),
+			echoprometheus.MetricsMiddleware(),           // add prometheus metrics
+			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
+			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
+			cors.New(),                     // add cors middleware
+			mime.New(),                     // add mime middleware
+			cachecontrol.New(),             // add cache control middleware
+			ratelimit.DefaultRateLimiter(), // add ratelimit middleware
+			middleware.Secure(),            // add XSS middleware
+		)
 	})
 }
 
@@ -375,11 +398,6 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 			[]byte(config.EncryptionKey),
 		)
 
-		// Make the cookie session store available
-		// to graph and REST endpoints
-		s.Config.Server.Handler.SM = sm
-		s.Config.Server.SM = sm
-
 		// add session middleware, this has to be added after the authMiddleware so we have the user id
 		// when we get to the session. this is also added here so its only added to the graph routes
 		// REST routes are expected to add the session middleware, as required
@@ -389,10 +407,12 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 			sessions.WithLogger(s.Config.Logger),
 		)
 
-		// add to handler to be able to create new sessions on login
+		// Make the cookie session store available
+		// to graph and REST endpoints
 		s.Config.Server.Handler.SessionConfig = &sessionConfig
+		s.Config.Server.SessionConfig = &sessionConfig
 
-		s.Config.Server.Middleware = append(s.Config.Server.Middleware,
+		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware,
 			sessions.LoadAndSaveWithConfig(sessionConfig),
 		)
 	})

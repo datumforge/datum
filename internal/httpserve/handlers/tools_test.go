@@ -88,7 +88,6 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 		RedisClient:   rc,
 		Logger:        logger,
 		SessionConfig: &sessionConfig,
-		SM:            sm,
 		EmailManager:  em,
 		TaskMan:       taskMan,
 	}

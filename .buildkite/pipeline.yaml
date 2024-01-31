@@ -30,6 +30,16 @@ steps:
           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
           environment: 
             - "GOTOOLCHAIN=auto"
+  - label: ":sqlite: atlas lint"
+    key: "atlas_lint"
+    env:
+      BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
+    plugins:
+      - datumforge/atlas#fixes:
+          project: datum
+          dev-url: "sqlite://dev?mode=memory&_fk=1"
+          dir: "file://db/migrations"
+          step: lint
   - label: ":golang: go test - sqlite"
     key: "go_test_sqlite"
     env:

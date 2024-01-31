@@ -71,7 +71,6 @@ func (User) Fields() []ent.Field {
 			Comment("The user's displayed 'friendly' name").
 			MaxLen(nameMaxLen).
 			NotEmpty().
-			Default("").
 			Annotations(
 				entgql.OrderField("display_name"),
 			).

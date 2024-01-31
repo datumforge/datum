@@ -345,7 +345,7 @@ input CreateUserInput {
   """
   The user's displayed 'friendly' name
   """
-  displayName: String
+  displayName: String!
   """
   URL of the user's remote avatar
   """

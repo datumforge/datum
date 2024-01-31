@@ -4520,7 +4520,7 @@ input CreateUserInput {
   """
   The user's displayed 'friendly' name
   """
-  displayName: String
+  displayName: String!
   """
   URL of the user's remote avatar
   """
@@ -36724,7 +36724,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 			it.LastName = data
 		case "displayName":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

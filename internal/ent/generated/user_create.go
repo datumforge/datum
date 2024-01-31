@@ -136,14 +136,6 @@ func (uc *UserCreate) SetDisplayName(s string) *UserCreate {
 	return uc
 }
 
-// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
-func (uc *UserCreate) SetNillableDisplayName(s *string) *UserCreate {
-	if s != nil {
-		uc.SetDisplayName(*s)
-	}
-	return uc
-}
-
 // SetAvatarRemoteURL sets the "avatar_remote_url" field.
 func (uc *UserCreate) SetAvatarRemoteURL(s string) *UserCreate {
 	uc.mutation.SetAvatarRemoteURL(s)
@@ -422,10 +414,6 @@ func (uc *UserCreate) defaults() error {
 		}
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
-	}
-	if _, ok := uc.mutation.DisplayName(); !ok {
-		v := user.DefaultDisplayName
-		uc.mutation.SetDisplayName(v)
 	}
 	if _, ok := uc.mutation.Oauth(); !ok {
 		v := user.DefaultOauth

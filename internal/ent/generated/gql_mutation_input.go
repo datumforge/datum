@@ -1559,8 +1559,8 @@ type CreateUserInput struct {
 	Email                     string
 	FirstName                 string
 	LastName                  string
-	DisplayName               string
-	AvatarRemoteURL           *string
+	DisplayName               *string
+	AvatarRemoteURI           *string
 	AvatarLocalFile           *string
 	AvatarUpdatedAt           *time.Time
 	LastSeen                  *time.Time
@@ -1592,9 +1592,11 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	m.SetEmail(i.Email)
 	m.SetFirstName(i.FirstName)
 	m.SetLastName(i.LastName)
-	m.SetDisplayName(i.DisplayName)
-	if v := i.AvatarRemoteURL; v != nil {
-		m.SetAvatarRemoteURL(*v)
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
+	}
+	if v := i.AvatarRemoteURI; v != nil {
+		m.SetAvatarRemoteURI(*v)
 	}
 	if v := i.AvatarLocalFile; v != nil {
 		m.SetAvatarLocalFile(*v)
@@ -1647,8 +1649,8 @@ type UpdateUserInput struct {
 	FirstName                       *string
 	LastName                        *string
 	DisplayName                     *string
-	ClearAvatarRemoteURL            bool
-	AvatarRemoteURL                 *string
+	ClearAvatarRemoteURI            bool
+	AvatarRemoteURI                 *string
 	ClearAvatarLocalFile            bool
 	AvatarLocalFile                 *string
 	ClearAvatarUpdatedAt            bool
@@ -1701,11 +1703,11 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
-	if i.ClearAvatarRemoteURL {
-		m.ClearAvatarRemoteURL()
+	if i.ClearAvatarRemoteURI {
+		m.ClearAvatarRemoteURI()
 	}
-	if v := i.AvatarRemoteURL; v != nil {
-		m.SetAvatarRemoteURL(*v)
+	if v := i.AvatarRemoteURI; v != nil {
+		m.SetAvatarRemoteURI(*v)
 	}
 	if i.ClearAvatarLocalFile {
 		m.ClearAvatarLocalFile()

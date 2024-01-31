@@ -136,16 +136,24 @@ func (uc *UserCreate) SetDisplayName(s string) *UserCreate {
 	return uc
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (uc *UserCreate) SetAvatarRemoteURL(s string) *UserCreate {
-	uc.mutation.SetAvatarRemoteURL(s)
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDisplayName(s *string) *UserCreate {
+	if s != nil {
+		uc.SetDisplayName(*s)
+	}
 	return uc
 }
 
-// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
-func (uc *UserCreate) SetNillableAvatarRemoteURL(s *string) *UserCreate {
+// SetAvatarRemoteURI sets the "avatar_remote_uri" field.
+func (uc *UserCreate) SetAvatarRemoteURI(s string) *UserCreate {
+	uc.mutation.SetAvatarRemoteURI(s)
+	return uc
+}
+
+// SetNillableAvatarRemoteURI sets the "avatar_remote_uri" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAvatarRemoteURI(s *string) *UserCreate {
 	if s != nil {
-		uc.SetAvatarRemoteURL(*s)
+		uc.SetAvatarRemoteURI(*s)
 	}
 	return uc
 }
@@ -415,6 +423,10 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := uc.mutation.DisplayName(); !ok {
+		v := user.DefaultDisplayName
+		uc.mutation.SetDisplayName(v)
+	}
 	if _, ok := uc.mutation.Oauth(); !ok {
 		v := user.DefaultOauth
 		uc.mutation.SetOauth(v)
@@ -469,9 +481,9 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "User.display_name": %w`, err)}
 		}
 	}
-	if v, ok := uc.mutation.AvatarRemoteURL(); ok {
-		if err := user.AvatarRemoteURLValidator(v); err != nil {
-			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_url": %w`, err)}
+	if v, ok := uc.mutation.AvatarRemoteURI(); ok {
+		if err := user.AvatarRemoteURIValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_uri", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_uri": %w`, err)}
 		}
 	}
 	if v, ok := uc.mutation.AvatarLocalFile(); ok {
@@ -561,9 +573,9 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
 		_node.DisplayName = value
 	}
-	if value, ok := uc.mutation.AvatarRemoteURL(); ok {
-		_spec.SetField(user.FieldAvatarRemoteURL, field.TypeString, value)
-		_node.AvatarRemoteURL = &value
+	if value, ok := uc.mutation.AvatarRemoteURI(); ok {
+		_spec.SetField(user.FieldAvatarRemoteURI, field.TypeString, value)
+		_node.AvatarRemoteURI = &value
 	}
 	if value, ok := uc.mutation.AvatarLocalFile(); ok {
 		_spec.SetField(user.FieldAvatarLocalFile, field.TypeString, value)

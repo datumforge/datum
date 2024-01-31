@@ -39,7 +39,7 @@ type User struct {
 	// The user's displayed 'friendly' name
 	DisplayName string `json:"display_name,omitempty"`
 	// URL of the user's remote avatar
-	AvatarRemoteURL *string `json:"avatar_remote_url,omitempty"`
+	AvatarRemoteURI *string `json:"avatar_remote_uri,omitempty"`
 	// The user's local avatar file
 	AvatarLocalFile *string `json:"avatar_local_file,omitempty"`
 	// The time the user's (local) avatar was last updated
@@ -174,7 +174,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldOauth:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURI, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -259,12 +259,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.DisplayName = value.String
 			}
-		case user.FieldAvatarRemoteURL:
+		case user.FieldAvatarRemoteURI:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field avatar_remote_url", values[i])
+				return fmt.Errorf("unexpected type %T for field avatar_remote_uri", values[i])
 			} else if value.Valid {
-				u.AvatarRemoteURL = new(string)
-				*u.AvatarRemoteURL = value.String
+				u.AvatarRemoteURI = new(string)
+				*u.AvatarRemoteURI = value.String
 			}
 		case user.FieldAvatarLocalFile:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -412,8 +412,8 @@ func (u *User) String() string {
 	builder.WriteString("display_name=")
 	builder.WriteString(u.DisplayName)
 	builder.WriteString(", ")
-	if v := u.AvatarRemoteURL; v != nil {
-		builder.WriteString("avatar_remote_url=")
+	if v := u.AvatarRemoteURI; v != nil {
+		builder.WriteString("avatar_remote_uri=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")

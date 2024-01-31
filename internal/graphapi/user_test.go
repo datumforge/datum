@@ -188,6 +188,8 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 	// Bypass auth checks to ensure input checks for now
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
+	displayName := gofakeit.LetterN(50)
+
 	weakPassword := "notsecure"
 	strongPassword := "my&supers3cr3tpassw0rd!"
 
@@ -201,7 +203,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    gofakeit.LastName(),
-				DisplayName: gofakeit.LetterN(50),
+				DisplayName: &displayName,
 				Email:       gofakeit.Email(),
 				Password:    &strongPassword,
 			},
@@ -212,7 +214,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    gofakeit.LastName(),
-				DisplayName: gofakeit.LetterN(50),
+				DisplayName: &displayName,
 				Email:       "",
 			},
 			errorMsg: "mail: no address",
@@ -222,7 +224,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   "",
 				LastName:    gofakeit.LastName(),
-				DisplayName: gofakeit.LetterN(50),
+				DisplayName: &displayName,
 				Email:       gofakeit.Email(),
 			},
 			errorMsg: "value is less than the required length",
@@ -232,7 +234,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    "",
-				DisplayName: gofakeit.LetterN(50),
+				DisplayName: &displayName,
 				Email:       gofakeit.Email(),
 			},
 			errorMsg: "value is less than the required length",
@@ -287,10 +289,10 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
 
 			// display name defaults to email if not provided
-			if tc.userInput.DisplayName == "" {
+			if tc.userInput.DisplayName == nil {
 				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
 			} else {
-				assert.Equal(t, tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
+				assert.Equal(t, *tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
 			}
 
 			// ensure a user setting was created
@@ -336,6 +338,8 @@ func TestMutation_CreateUser(t *testing.T) {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
+	displayName := gofakeit.LetterN(50)
+
 	// weakPassword := "notsecure"
 	strongPassword := "my&supers3cr3tpassw0rd!"
 
@@ -349,7 +353,7 @@ func TestMutation_CreateUser(t *testing.T) {
 			userInput: datumclient.CreateUserInput{
 				FirstName:   gofakeit.FirstName(),
 				LastName:    gofakeit.LastName(),
-				DisplayName: gofakeit.LetterN(50),
+				DisplayName: &displayName,
 				Email:       gofakeit.Email(),
 				Password:    &strongPassword,
 			},
@@ -364,7 +368,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   gofakeit.FirstName(),
 		// 		LastName:    gofakeit.LastName(),
-		// 		DisplayName: gofakeit.LetterN(50),
+		// 		DisplayName: &displayName,
 		// 		Email:       gofakeit.Email(),
 		// 		Password:    &strongPassword,
 		// 	},
@@ -375,7 +379,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   gofakeit.FirstName(),
 		// 		LastName:    gofakeit.LastName(),
-		// 		DisplayName: gofakeit.LetterN(50),
+		// 		DisplayName: &displayName,
 		// 		Email:       "",
 		// 	},
 		// 	errorMsg: "mail: no address",
@@ -385,7 +389,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   "",
 		// 		LastName:    gofakeit.LastName(),
-		// 		DisplayName: gofakeit.LetterN(50),
+		// 		DisplayName: &displayName,
 		// 		Email:       gofakeit.Email(),
 		// 	},
 		// 	errorMsg: "value is less than the required length",
@@ -395,7 +399,7 @@ func TestMutation_CreateUser(t *testing.T) {
 		// 	userInput: datumclient.CreateUserInput{
 		// 		FirstName:   gofakeit.FirstName(),
 		// 		LastName:    "",
-		// 		DisplayName: gofakeit.LetterN(50),
+		// 		DisplayName: &displayName,
 		// 		Email:       gofakeit.Email(),
 		// 	},
 		// 	errorMsg: "value is less than the required length",
@@ -450,10 +454,10 @@ func TestMutation_CreateUser(t *testing.T) {
 			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
 
 			// display name defaults to email if not provided
-			if tc.userInput.DisplayName == "" {
+			if tc.userInput.DisplayName == nil {
 				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
 			} else {
-				assert.Equal(t, tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
+				assert.Equal(t, *tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
 			}
 
 			// ensure a user setting was created

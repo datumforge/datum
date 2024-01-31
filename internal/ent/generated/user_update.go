@@ -160,23 +160,23 @@ func (uu *UserUpdate) SetNillableDisplayName(s *string) *UserUpdate {
 	return uu
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (uu *UserUpdate) SetAvatarRemoteURL(s string) *UserUpdate {
-	uu.mutation.SetAvatarRemoteURL(s)
+// SetAvatarRemoteURI sets the "avatar_remote_uri" field.
+func (uu *UserUpdate) SetAvatarRemoteURI(s string) *UserUpdate {
+	uu.mutation.SetAvatarRemoteURI(s)
 	return uu
 }
 
-// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableAvatarRemoteURL(s *string) *UserUpdate {
+// SetNillableAvatarRemoteURI sets the "avatar_remote_uri" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAvatarRemoteURI(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetAvatarRemoteURL(*s)
+		uu.SetAvatarRemoteURI(*s)
 	}
 	return uu
 }
 
-// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
-func (uu *UserUpdate) ClearAvatarRemoteURL() *UserUpdate {
-	uu.mutation.ClearAvatarRemoteURL()
+// ClearAvatarRemoteURI clears the value of the "avatar_remote_uri" field.
+func (uu *UserUpdate) ClearAvatarRemoteURI() *UserUpdate {
+	uu.mutation.ClearAvatarRemoteURI()
 	return uu
 }
 
@@ -630,9 +630,9 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "User.display_name": %w`, err)}
 		}
 	}
-	if v, ok := uu.mutation.AvatarRemoteURL(); ok {
-		if err := user.AvatarRemoteURLValidator(v); err != nil {
-			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_url": %w`, err)}
+	if v, ok := uu.mutation.AvatarRemoteURI(); ok {
+		if err := user.AvatarRemoteURIValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_uri", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_uri": %w`, err)}
 		}
 	}
 	if v, ok := uu.mutation.AvatarLocalFile(); ok {
@@ -694,11 +694,11 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.AvatarRemoteURL(); ok {
-		_spec.SetField(user.FieldAvatarRemoteURL, field.TypeString, value)
+	if value, ok := uu.mutation.AvatarRemoteURI(); ok {
+		_spec.SetField(user.FieldAvatarRemoteURI, field.TypeString, value)
 	}
-	if uu.mutation.AvatarRemoteURLCleared() {
-		_spec.ClearField(user.FieldAvatarRemoteURL, field.TypeString)
+	if uu.mutation.AvatarRemoteURICleared() {
+		_spec.ClearField(user.FieldAvatarRemoteURI, field.TypeString)
 	}
 	if value, ok := uu.mutation.AvatarLocalFile(); ok {
 		_spec.SetField(user.FieldAvatarLocalFile, field.TypeString, value)
@@ -1286,23 +1286,23 @@ func (uuo *UserUpdateOne) SetNillableDisplayName(s *string) *UserUpdateOne {
 	return uuo
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (uuo *UserUpdateOne) SetAvatarRemoteURL(s string) *UserUpdateOne {
-	uuo.mutation.SetAvatarRemoteURL(s)
+// SetAvatarRemoteURI sets the "avatar_remote_uri" field.
+func (uuo *UserUpdateOne) SetAvatarRemoteURI(s string) *UserUpdateOne {
+	uuo.mutation.SetAvatarRemoteURI(s)
 	return uuo
 }
 
-// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableAvatarRemoteURL(s *string) *UserUpdateOne {
+// SetNillableAvatarRemoteURI sets the "avatar_remote_uri" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAvatarRemoteURI(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetAvatarRemoteURL(*s)
+		uuo.SetAvatarRemoteURI(*s)
 	}
 	return uuo
 }
 
-// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
-func (uuo *UserUpdateOne) ClearAvatarRemoteURL() *UserUpdateOne {
-	uuo.mutation.ClearAvatarRemoteURL()
+// ClearAvatarRemoteURI clears the value of the "avatar_remote_uri" field.
+func (uuo *UserUpdateOne) ClearAvatarRemoteURI() *UserUpdateOne {
+	uuo.mutation.ClearAvatarRemoteURI()
 	return uuo
 }
 
@@ -1769,9 +1769,9 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "User.display_name": %w`, err)}
 		}
 	}
-	if v, ok := uuo.mutation.AvatarRemoteURL(); ok {
-		if err := user.AvatarRemoteURLValidator(v); err != nil {
-			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_url": %w`, err)}
+	if v, ok := uuo.mutation.AvatarRemoteURI(); ok {
+		if err := user.AvatarRemoteURIValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_uri", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_uri": %w`, err)}
 		}
 	}
 	if v, ok := uuo.mutation.AvatarLocalFile(); ok {
@@ -1850,11 +1850,11 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.AvatarRemoteURL(); ok {
-		_spec.SetField(user.FieldAvatarRemoteURL, field.TypeString, value)
+	if value, ok := uuo.mutation.AvatarRemoteURI(); ok {
+		_spec.SetField(user.FieldAvatarRemoteURI, field.TypeString, value)
 	}
-	if uuo.mutation.AvatarRemoteURLCleared() {
-		_spec.ClearField(user.FieldAvatarRemoteURL, field.TypeString)
+	if uuo.mutation.AvatarRemoteURICleared() {
+		_spec.ClearField(user.FieldAvatarRemoteURI, field.TypeString)
 	}
 	if value, ok := uuo.mutation.AvatarLocalFile(); ok {
 		_spec.SetField(user.FieldAvatarLocalFile, field.TypeString, value)

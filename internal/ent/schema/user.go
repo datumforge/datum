@@ -71,6 +71,7 @@ func (User) Fields() []ent.Field {
 			Comment("The user's displayed 'friendly' name").
 			MaxLen(nameMaxLen).
 			NotEmpty().
+			Default("").
 			Annotations(
 				entgql.OrderField("display_name"),
 			).
@@ -82,7 +83,7 @@ func (User) Fields() []ent.Field {
 					return nil
 				},
 			),
-		field.String("avatar_remote_url").
+		field.String("avatar_remote_uri").
 			Comment("URL of the user's remote avatar").
 			MaxLen(urlMaxLen).
 			Validate(func(s string) error {

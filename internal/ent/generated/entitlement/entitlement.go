@@ -107,7 +107,7 @@ var (
 	DefaultID func() string
 )
 
-const DefaultTier enums.Tier = "FREE"
+const DefaultTier enums.Tier = "PRO"
 
 // TierValidator is a validator for the "tier" field enum values. It is called by the builders before save.
 func TierValidator(t enums.Tier) error {

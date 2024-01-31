@@ -631,7 +631,7 @@ type ComplexityRoot struct {
 
 	User struct {
 		AvatarLocalFile      func(childComplexity int) int
-		AvatarRemoteURL      func(childComplexity int) int
+		AvatarRemoteURI      func(childComplexity int) int
 		AvatarUpdatedAt      func(childComplexity int) int
 		CreatedAt            func(childComplexity int) int
 		CreatedBy            func(childComplexity int) int
@@ -3651,12 +3651,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.AvatarLocalFile(childComplexity), true
 
-	case "User.avatarRemoteURL":
-		if e.complexity.User.AvatarRemoteURL == nil {
+	case "User.avatarRemoteURI":
+		if e.complexity.User.AvatarRemoteURI == nil {
 			break
 		}
 
-		return e.complexity.User.AvatarRemoteURL(childComplexity), true
+		return e.complexity.User.AvatarRemoteURI(childComplexity), true
 
 	case "User.avatarUpdatedAt":
 		if e.complexity.User.AvatarUpdatedAt == nil {
@@ -4520,11 +4520,11 @@ input CreateUserInput {
   """
   The user's displayed 'friendly' name
   """
-  displayName: String!
+  displayName: String
   """
   URL of the user's remote avatar
   """
-  avatarRemoteURL: String
+  avatarRemoteURI: String
   """
   The user's local avatar file
   """
@@ -8348,8 +8348,8 @@ input UpdateUserInput {
   """
   URL of the user's remote avatar
   """
-  avatarRemoteURL: String
-  clearAvatarRemoteURL: Boolean
+  avatarRemoteURI: String
+  clearAvatarRemoteURI: Boolean
   """
   The user's local avatar file
   """
@@ -8456,7 +8456,7 @@ type User implements Node {
   """
   URL of the user's remote avatar
   """
-  avatarRemoteURL: String
+  avatarRemoteURI: String
   """
   The user's local avatar file
   """
@@ -8958,23 +8958,23 @@ input UserWhereInput {
   displayNameEqualFold: String
   displayNameContainsFold: String
   """
-  avatar_remote_url field predicates
+  avatar_remote_uri field predicates
   """
-  avatarRemoteURL: String
-  avatarRemoteURLNEQ: String
-  avatarRemoteURLIn: [String!]
-  avatarRemoteURLNotIn: [String!]
-  avatarRemoteURLGT: String
-  avatarRemoteURLGTE: String
-  avatarRemoteURLLT: String
-  avatarRemoteURLLTE: String
-  avatarRemoteURLContains: String
-  avatarRemoteURLHasPrefix: String
-  avatarRemoteURLHasSuffix: String
-  avatarRemoteURLIsNil: Boolean
-  avatarRemoteURLNotNil: Boolean
-  avatarRemoteURLEqualFold: String
-  avatarRemoteURLContainsFold: String
+  avatarRemoteURI: String
+  avatarRemoteURINEQ: String
+  avatarRemoteURIIn: [String!]
+  avatarRemoteURINotIn: [String!]
+  avatarRemoteURIGT: String
+  avatarRemoteURIGTE: String
+  avatarRemoteURILT: String
+  avatarRemoteURILTE: String
+  avatarRemoteURIContains: String
+  avatarRemoteURIHasPrefix: String
+  avatarRemoteURIHasSuffix: String
+  avatarRemoteURIIsNil: Boolean
+  avatarRemoteURINotNil: Boolean
+  avatarRemoteURIEqualFold: String
+  avatarRemoteURIContainsFold: String
   """
   avatar_local_file field predicates
   """
@@ -13832,8 +13832,8 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -14883,8 +14883,8 @@ func (ec *executionContext) fieldContext_GroupMembership_user(ctx context.Contex
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -23871,8 +23871,8 @@ func (ec *executionContext) fieldContext_OrgMembership_user(ctx context.Context,
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -25386,8 +25386,8 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -28054,8 +28054,8 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_owner(ctx context.C
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -30615,8 +30615,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -31345,8 +31345,8 @@ func (ec *executionContext) fieldContext_User_displayName(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _User_avatarRemoteURL(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_avatarRemoteURL(ctx, field)
+func (ec *executionContext) _User_avatarRemoteURI(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_avatarRemoteURI(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -31359,7 +31359,7 @@ func (ec *executionContext) _User_avatarRemoteURL(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AvatarRemoteURL, nil
+		return obj.AvatarRemoteURI, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -31373,7 +31373,7 @@ func (ec *executionContext) _User_avatarRemoteURL(ctx context.Context, field gra
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_avatarRemoteURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_avatarRemoteURI(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -32239,8 +32239,8 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -32372,8 +32372,8 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -33100,8 +33100,8 @@ func (ec *executionContext) fieldContext_UserSetting_user(ctx context.Context, f
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -33650,8 +33650,8 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarRemoteURI":
+				return ec.fieldContext_User_avatarRemoteURI(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
@@ -36666,7 +36666,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURI", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36724,18 +36724,18 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 			it.LastName = data
 		case "displayName":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DisplayName = data
-		case "avatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURL = data
+			it.DisplayName = data
+		case "avatarRemoteURI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURI"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURI = data
 		case "avatarLocalFile":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarLocalFile"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49688,7 +49688,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURI", "clearAvatarRemoteURI", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -49744,20 +49744,20 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.DisplayName = data
-		case "avatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
+		case "avatarRemoteURI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURI"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURL = data
-		case "clearAvatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAvatarRemoteURL"))
+			it.AvatarRemoteURI = data
+		case "clearAvatarRemoteURI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAvatarRemoteURI"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearAvatarRemoteURL = data
+			it.ClearAvatarRemoteURI = data
 		case "avatarLocalFile":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarLocalFile"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -51067,7 +51067,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURI", "avatarRemoteURINEQ", "avatarRemoteURIIn", "avatarRemoteURINotIn", "avatarRemoteURIGT", "avatarRemoteURIGTE", "avatarRemoteURILT", "avatarRemoteURILTE", "avatarRemoteURIContains", "avatarRemoteURIHasPrefix", "avatarRemoteURIHasSuffix", "avatarRemoteURIIsNil", "avatarRemoteURINotNil", "avatarRemoteURIEqualFold", "avatarRemoteURIContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -52026,111 +52026,111 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.DisplayNameContainsFold = data
-		case "avatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
+		case "avatarRemoteURI":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURI"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURL = data
-		case "avatarRemoteURLNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNEQ"))
+			it.AvatarRemoteURI = data
+		case "avatarRemoteURINEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURINEQ"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLNEQ = data
-		case "avatarRemoteURLIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLIn"))
+			it.AvatarRemoteURINEQ = data
+		case "avatarRemoteURIIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLIn = data
-		case "avatarRemoteURLNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNotIn"))
+			it.AvatarRemoteURIIn = data
+		case "avatarRemoteURINotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURINotIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLNotIn = data
-		case "avatarRemoteURLGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLGT"))
+			it.AvatarRemoteURINotIn = data
+		case "avatarRemoteURIGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIGT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLGT = data
-		case "avatarRemoteURLGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLGTE"))
+			it.AvatarRemoteURIGT = data
+		case "avatarRemoteURIGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIGTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLGTE = data
-		case "avatarRemoteURLLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLLT"))
+			it.AvatarRemoteURIGTE = data
+		case "avatarRemoteURILT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURILT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLLT = data
-		case "avatarRemoteURLLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLLTE"))
+			it.AvatarRemoteURILT = data
+		case "avatarRemoteURILTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURILTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLLTE = data
-		case "avatarRemoteURLContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLContains"))
+			it.AvatarRemoteURILTE = data
+		case "avatarRemoteURIContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIContains"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLContains = data
-		case "avatarRemoteURLHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLHasPrefix"))
+			it.AvatarRemoteURIContains = data
+		case "avatarRemoteURIHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIHasPrefix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLHasPrefix = data
-		case "avatarRemoteURLHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLHasSuffix"))
+			it.AvatarRemoteURIHasPrefix = data
+		case "avatarRemoteURIHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIHasSuffix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLHasSuffix = data
-		case "avatarRemoteURLIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLIsNil"))
+			it.AvatarRemoteURIHasSuffix = data
+		case "avatarRemoteURIIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLIsNil = data
-		case "avatarRemoteURLNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNotNil"))
+			it.AvatarRemoteURIIsNil = data
+		case "avatarRemoteURINotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURINotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLNotNil = data
-		case "avatarRemoteURLEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLEqualFold"))
+			it.AvatarRemoteURINotNil = data
+		case "avatarRemoteURIEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLEqualFold = data
-		case "avatarRemoteURLContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLContainsFold"))
+			it.AvatarRemoteURIEqualFold = data
+		case "avatarRemoteURIContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURIContainsFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AvatarRemoteURLContainsFold = data
+			it.AvatarRemoteURIContainsFold = data
 		case "avatarLocalFile":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarLocalFile"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -58102,8 +58102,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "avatarRemoteURL":
-			out.Values[i] = ec._User_avatarRemoteURL(ctx, field, obj)
+		case "avatarRemoteURI":
+			out.Values[i] = ec._User_avatarRemoteURI(ctx, field, obj)
 		case "avatarLocalFile":
 			out.Values[i] = ec._User_avatarLocalFile(ctx, field, obj)
 		case "avatarUpdatedAt":

@@ -4032,7 +4032,7 @@ type GetUserByID_User struct {
 	Email           string                            "json:\"email\" graphql:\"email\""
 	LastSeen        *time.Time                        "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
 	Sub             *string                           "json:\"sub,omitempty\" graphql:\"sub\""
-	AvatarRemoteURL *string                           "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarRemoteURI *string                           "json:\"avatarRemoteURI,omitempty\" graphql:\"avatarRemoteURI\""
 	AvatarLocalFile *string                           "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Oauth           bool                              "json:\"oauth\" graphql:\"oauth\""
 	Setting         GetUserByID_User_Setting          "json:\"setting\" graphql:\"setting\""
@@ -4085,11 +4085,11 @@ func (t *GetUserByID_User) GetSub() *string {
 	}
 	return t.Sub
 }
-func (t *GetUserByID_User) GetAvatarRemoteURL() *string {
+func (t *GetUserByID_User) GetAvatarRemoteURI() *string {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
-	return t.AvatarRemoteURL
+	return t.AvatarRemoteURI
 }
 func (t *GetUserByID_User) GetAvatarLocalFile() *string {
 	if t == nil {
@@ -4272,7 +4272,7 @@ type GetUserByIDWithOrgs_User struct {
 	Email           string                                     "json:\"email\" graphql:\"email\""
 	LastSeen        *time.Time                                 "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
 	Sub             *string                                    "json:\"sub,omitempty\" graphql:\"sub\""
-	AvatarRemoteURL *string                                    "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarRemoteURI *string                                    "json:\"avatarRemoteURI,omitempty\" graphql:\"avatarRemoteURI\""
 	AvatarLocalFile *string                                    "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Oauth           bool                                       "json:\"oauth\" graphql:\"oauth\""
 	Setting         GetUserByIDWithOrgs_User_Setting           "json:\"setting\" graphql:\"setting\""
@@ -4325,11 +4325,11 @@ func (t *GetUserByIDWithOrgs_User) GetSub() *string {
 	}
 	return t.Sub
 }
-func (t *GetUserByIDWithOrgs_User) GetAvatarRemoteURL() *string {
+func (t *GetUserByIDWithOrgs_User) GetAvatarRemoteURI() *string {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
-	return t.AvatarRemoteURL
+	return t.AvatarRemoteURI
 }
 func (t *GetUserByIDWithOrgs_User) GetAvatarLocalFile() *string {
 	if t == nil {
@@ -4469,7 +4469,7 @@ type GetAllUsers_Users_Edges_Node struct {
 	Email           string                               "json:\"email\" graphql:\"email\""
 	LastSeen        *time.Time                           "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
 	Sub             *string                              "json:\"sub,omitempty\" graphql:\"sub\""
-	AvatarRemoteURL *string                              "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarRemoteURI *string                              "json:\"avatarRemoteURI,omitempty\" graphql:\"avatarRemoteURI\""
 	AvatarLocalFile *string                              "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Oauth           bool                                 "json:\"oauth\" graphql:\"oauth\""
 	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
@@ -4521,11 +4521,11 @@ func (t *GetAllUsers_Users_Edges_Node) GetSub() *string {
 	}
 	return t.Sub
 }
-func (t *GetAllUsers_Users_Edges_Node) GetAvatarRemoteURL() *string {
+func (t *GetAllUsers_Users_Edges_Node) GetAvatarRemoteURI() *string {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
-	return t.AvatarRemoteURL
+	return t.AvatarRemoteURI
 }
 func (t *GetAllUsers_Users_Edges_Node) GetAvatarLocalFile() *string {
 	if t == nil {
@@ -4715,7 +4715,7 @@ type CreateUser_CreateUser_User struct {
 	FirstName        string                                         "json:\"firstName\" graphql:\"firstName\""
 	LastName         string                                         "json:\"lastName\" graphql:\"lastName\""
 	DisplayName      string                                         "json:\"displayName\" graphql:\"displayName\""
-	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarRemoteURI  *string                                        "json:\"avatarRemoteURI,omitempty\" graphql:\"avatarRemoteURI\""
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
 	Oauth            bool                                           "json:\"oauth\" graphql:\"oauth\""
@@ -4754,11 +4754,11 @@ func (t *CreateUser_CreateUser_User) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *CreateUser_CreateUser_User) GetAvatarRemoteURL() *string {
+func (t *CreateUser_CreateUser_User) GetAvatarRemoteURI() *string {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
-	return t.AvatarRemoteURL
+	return t.AvatarRemoteURI
 }
 func (t *CreateUser_CreateUser_User) GetAvatarLocalFile() *string {
 	if t == nil {
@@ -4928,7 +4928,7 @@ type UpdateUser_UpdateUser_User struct {
 	FirstName            string                                             "json:\"firstName\" graphql:\"firstName\""
 	LastName             string                                             "json:\"lastName\" graphql:\"lastName\""
 	DisplayName          string                                             "json:\"displayName\" graphql:\"displayName\""
-	AvatarRemoteURL      *string                                            "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarRemoteURI      *string                                            "json:\"avatarRemoteURI,omitempty\" graphql:\"avatarRemoteURI\""
 	AvatarLocalFile      *string                                            "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub                  *string                                            "json:\"sub,omitempty\" graphql:\"sub\""
 	Oauth                bool                                               "json:\"oauth\" graphql:\"oauth\""
@@ -4968,11 +4968,11 @@ func (t *UpdateUser_UpdateUser_User) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *UpdateUser_UpdateUser_User) GetAvatarRemoteURL() *string {
+func (t *UpdateUser_UpdateUser_User) GetAvatarRemoteURI() *string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
-	return t.AvatarRemoteURL
+	return t.AvatarRemoteURI
 }
 func (t *UpdateUser_UpdateUser_User) GetAvatarLocalFile() *string {
 	if t == nil {
@@ -6768,7 +6768,7 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 		email
 		lastSeen
 		sub
-		avatarRemoteURL
+		avatarRemoteURI
 		avatarLocalFile
 		oauth
 		setting {
@@ -6827,7 +6827,7 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 		email
 		lastSeen
 		sub
-		avatarRemoteURL
+		avatarRemoteURI
 		avatarLocalFile
 		oauth
 		setting {
@@ -6887,7 +6887,7 @@ const GetAllUsersDocument = `query GetAllUsers {
 				email
 				lastSeen
 				sub
-				avatarRemoteURL
+				avatarRemoteURI
 				avatarLocalFile
 				oauth
 				setting {
@@ -6936,7 +6936,7 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			firstName
 			lastName
 			displayName
-			avatarRemoteURL
+			avatarRemoteURI
 			avatarLocalFile
 			sub
 			oauth
@@ -6991,7 +6991,7 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 			firstName
 			lastName
 			displayName
-			avatarRemoteURL
+			avatarRemoteURI
 			avatarLocalFile
 			sub
 			oauth

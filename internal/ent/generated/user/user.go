@@ -35,8 +35,8 @@ const (
 	FieldLastName = "last_name"
 	// FieldDisplayName holds the string denoting the display_name field in the database.
 	FieldDisplayName = "display_name"
-	// FieldAvatarRemoteURL holds the string denoting the avatar_remote_url field in the database.
-	FieldAvatarRemoteURL = "avatar_remote_url"
+	// FieldAvatarRemoteURI holds the string denoting the avatar_remote_uri field in the database.
+	FieldAvatarRemoteURI = "avatar_remote_uri"
 	// FieldAvatarLocalFile holds the string denoting the avatar_local_file field in the database.
 	FieldAvatarLocalFile = "avatar_local_file"
 	// FieldAvatarUpdatedAt holds the string denoting the avatar_updated_at field in the database.
@@ -134,7 +134,7 @@ var Columns = []string{
 	FieldFirstName,
 	FieldLastName,
 	FieldDisplayName,
-	FieldAvatarRemoteURL,
+	FieldAvatarRemoteURI,
 	FieldAvatarLocalFile,
 	FieldAvatarUpdatedAt,
 	FieldLastSeen,
@@ -183,10 +183,12 @@ var (
 	FirstNameValidator func(string) error
 	// LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
 	LastNameValidator func(string) error
+	// DefaultDisplayName holds the default value on creation for the "display_name" field.
+	DefaultDisplayName string
 	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	DisplayNameValidator func(string) error
-	// AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
-	AvatarRemoteURLValidator func(string) error
+	// AvatarRemoteURIValidator is a validator for the "avatar_remote_uri" field. It is called by the builders before save.
+	AvatarRemoteURIValidator func(string) error
 	// AvatarLocalFileValidator is a validator for the "avatar_local_file" field. It is called by the builders before save.
 	AvatarLocalFileValidator func(string) error
 	// UpdateDefaultAvatarUpdatedAt holds the default value on update for the "avatar_updated_at" field.
@@ -257,9 +259,9 @@ func ByDisplayName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDisplayName, opts...).ToFunc()
 }
 
-// ByAvatarRemoteURL orders the results by the avatar_remote_url field.
-func ByAvatarRemoteURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAvatarRemoteURL, opts...).ToFunc()
+// ByAvatarRemoteURI orders the results by the avatar_remote_uri field.
+func ByAvatarRemoteURI(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAvatarRemoteURI, opts...).ToFunc()
 }
 
 // ByAvatarLocalFile orders the results by the avatar_local_file field.

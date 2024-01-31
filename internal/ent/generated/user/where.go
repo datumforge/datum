@@ -117,9 +117,9 @@ func DisplayName(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldDisplayName, v))
 }
 
-// AvatarRemoteURL applies equality check predicate on the "avatar_remote_url" field. It's identical to AvatarRemoteURLEQ.
-func AvatarRemoteURL(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldAvatarRemoteURL, v))
+// AvatarRemoteURI applies equality check predicate on the "avatar_remote_uri" field. It's identical to AvatarRemoteURIEQ.
+func AvatarRemoteURI(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAvatarRemoteURI, v))
 }
 
 // AvatarLocalFile applies equality check predicate on the "avatar_local_file" field. It's identical to AvatarLocalFileEQ.
@@ -767,79 +767,79 @@ func DisplayNameContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldDisplayName, v))
 }
 
-// AvatarRemoteURLEQ applies the EQ predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLEQ(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIEQ applies the EQ predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLNEQ applies the NEQ predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLNEQ(v string) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldAvatarRemoteURL, v))
+// AvatarRemoteURINEQ applies the NEQ predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURINEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLIn applies the In predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldIn(FieldAvatarRemoteURL, vs...))
+// AvatarRemoteURIIn applies the In predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldAvatarRemoteURI, vs...))
 }
 
-// AvatarRemoteURLNotIn applies the NotIn predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLNotIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldAvatarRemoteURL, vs...))
+// AvatarRemoteURINotIn applies the NotIn predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURINotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldAvatarRemoteURI, vs...))
 }
 
-// AvatarRemoteURLGT applies the GT predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLGT(v string) predicate.User {
-	return predicate.User(sql.FieldGT(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIGT applies the GT predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLGTE applies the GTE predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLGTE(v string) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIGTE applies the GTE predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLLT applies the LT predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLLT(v string) predicate.User {
-	return predicate.User(sql.FieldLT(FieldAvatarRemoteURL, v))
+// AvatarRemoteURILT applies the LT predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURILT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLLTE applies the LTE predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLLTE(v string) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldAvatarRemoteURL, v))
+// AvatarRemoteURILTE applies the LTE predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURILTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLContains applies the Contains predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLContains(v string) predicate.User {
-	return predicate.User(sql.FieldContains(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIContains applies the Contains predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLHasPrefix applies the HasPrefix predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLHasPrefix(v string) predicate.User {
-	return predicate.User(sql.FieldHasPrefix(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIHasPrefix applies the HasPrefix predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLHasSuffix applies the HasSuffix predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLHasSuffix(v string) predicate.User {
-	return predicate.User(sql.FieldHasSuffix(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIHasSuffix applies the HasSuffix predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLIsNil applies the IsNil predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldAvatarRemoteURL))
+// AvatarRemoteURIIsNil applies the IsNil predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldAvatarRemoteURI))
 }
 
-// AvatarRemoteURLNotNil applies the NotNil predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldAvatarRemoteURL))
+// AvatarRemoteURINotNil applies the NotNil predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURINotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldAvatarRemoteURI))
 }
 
-// AvatarRemoteURLEqualFold applies the EqualFold predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLEqualFold(v string) predicate.User {
-	return predicate.User(sql.FieldEqualFold(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIEqualFold applies the EqualFold predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldAvatarRemoteURI, v))
 }
 
-// AvatarRemoteURLContainsFold applies the ContainsFold predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLContainsFold(v string) predicate.User {
-	return predicate.User(sql.FieldContainsFold(FieldAvatarRemoteURL, v))
+// AvatarRemoteURIContainsFold applies the ContainsFold predicate on the "avatar_remote_uri" field.
+func AvatarRemoteURIContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldAvatarRemoteURI, v))
 }
 
 // AvatarLocalFileEQ applies the EQ predicate on the "avatar_local_file" field.

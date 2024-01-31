@@ -475,7 +475,7 @@
                       "PRO",
                       "ENTERPRISE"
                     ],
-                    "default": "FREE"
+                    "default": "PRO"
                   },
                   "external_customer_id": {
                     "type": "string"
@@ -663,7 +663,7 @@
                       "PRO",
                       "ENTERPRISE"
                     ],
-                    "default": "FREE"
+                    "default": "PRO"
                   },
                   "external_customer_id": {
                     "type": "string"
@@ -6817,7 +6817,7 @@
                   "display_name": {
                     "type": "string"
                   },
-                  "avatar_remote_url": {
+                  "avatar_remote_uri": {
                     "type": "string"
                   },
                   "avatar_local_file": {
@@ -7055,7 +7055,7 @@
                   "display_name": {
                     "type": "string"
                   },
-                  "avatar_remote_url": {
+                  "avatar_remote_uri": {
                     "type": "string"
                   },
                   "avatar_local_file": {
@@ -7964,7 +7964,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -8033,7 +8033,7 @@
               "PRO",
               "ENTERPRISE"
             ],
-            "default": "FREE"
+            "default": "PRO"
           },
           "external_customer_id": {
             "type": "string"
@@ -8103,7 +8103,7 @@
               "PRO",
               "ENTERPRISE"
             ],
-            "default": "FREE"
+            "default": "PRO"
           },
           "external_customer_id": {
             "type": "string"
@@ -8169,7 +8169,7 @@
               "PRO",
               "ENTERPRISE"
             ],
-            "default": "FREE"
+            "default": "PRO"
           },
           "external_customer_id": {
             "type": "string"
@@ -8235,7 +8235,7 @@
               "PRO",
               "ENTERPRISE"
             ],
-            "default": "FREE"
+            "default": "PRO"
           },
           "external_customer_id": {
             "type": "string"
@@ -8301,7 +8301,7 @@
               "PRO",
               "ENTERPRISE"
             ],
-            "default": "FREE"
+            "default": "PRO"
           },
           "external_customer_id": {
             "type": "string"
@@ -8924,7 +8924,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -9680,7 +9680,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -11555,7 +11555,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -12395,7 +12395,7 @@
               "PRO",
               "ENTERPRISE"
             ],
-            "default": "FREE"
+            "default": "PRO"
           },
           "external_customer_id": {
             "type": "string"
@@ -12888,7 +12888,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -13233,7 +13233,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -13607,7 +13607,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -13678,7 +13678,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -13798,7 +13798,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -13869,7 +13869,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -13940,7 +13940,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -14372,7 +14372,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {
@@ -14443,7 +14443,7 @@
           "display_name": {
             "type": "string"
           },
-          "avatar_remote_url": {
+          "avatar_remote_uri": {
             "type": "string"
           },
           "avatar_local_file": {

@@ -43,7 +43,7 @@ func HookUser() ent.Hook {
 
 			if email, ok := mutation.Email(); ok {
 				url := gravatar.New(email, nil)
-				mutation.SetAvatarRemoteURL(url)
+				mutation.SetAvatarRemoteURI(url)
 
 				// use the email as the display name, if not provided on creation
 				if mutation.Op().Is(ent.OpCreate) {

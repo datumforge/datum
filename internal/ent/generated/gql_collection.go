@@ -2045,10 +2045,10 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, user.FieldDisplayName)
 				fieldSeen[user.FieldDisplayName] = struct{}{}
 			}
-		case "avatarRemoteURL":
-			if _, ok := fieldSeen[user.FieldAvatarRemoteURL]; !ok {
-				selectedFields = append(selectedFields, user.FieldAvatarRemoteURL)
-				fieldSeen[user.FieldAvatarRemoteURL] = struct{}{}
+		case "avatarRemoteURI":
+			if _, ok := fieldSeen[user.FieldAvatarRemoteURI]; !ok {
+				selectedFields = append(selectedFields, user.FieldAvatarRemoteURI)
+				fieldSeen[user.FieldAvatarRemoteURI] = struct{}{}
 			}
 		case "avatarLocalFile":
 			if _, ok := fieldSeen[user.FieldAvatarLocalFile]; !ok {

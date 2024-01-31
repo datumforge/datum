@@ -16563,7 +16563,7 @@ type UserMutation struct {
 	first_name                       *string
 	last_name                        *string
 	display_name                     *string
-	avatar_remote_url                *string
+	avatar_remote_uri                *string
 	avatar_local_file                *string
 	avatar_updated_at                *time.Time
 	last_seen                        *time.Time
@@ -17115,53 +17115,53 @@ func (m *UserMutation) ResetDisplayName() {
 	m.display_name = nil
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (m *UserMutation) SetAvatarRemoteURL(s string) {
-	m.avatar_remote_url = &s
+// SetAvatarRemoteURI sets the "avatar_remote_uri" field.
+func (m *UserMutation) SetAvatarRemoteURI(s string) {
+	m.avatar_remote_uri = &s
 }
 
-// AvatarRemoteURL returns the value of the "avatar_remote_url" field in the mutation.
-func (m *UserMutation) AvatarRemoteURL() (r string, exists bool) {
-	v := m.avatar_remote_url
+// AvatarRemoteURI returns the value of the "avatar_remote_uri" field in the mutation.
+func (m *UserMutation) AvatarRemoteURI() (r string, exists bool) {
+	v := m.avatar_remote_uri
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAvatarRemoteURL returns the old "avatar_remote_url" field's value of the User entity.
+// OldAvatarRemoteURI returns the old "avatar_remote_uri" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldAvatarRemoteURL(ctx context.Context) (v *string, err error) {
+func (m *UserMutation) OldAvatarRemoteURI(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAvatarRemoteURL is only allowed on UpdateOne operations")
+		return v, errors.New("OldAvatarRemoteURI is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAvatarRemoteURL requires an ID field in the mutation")
+		return v, errors.New("OldAvatarRemoteURI requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAvatarRemoteURL: %w", err)
+		return v, fmt.Errorf("querying old value for OldAvatarRemoteURI: %w", err)
 	}
-	return oldValue.AvatarRemoteURL, nil
+	return oldValue.AvatarRemoteURI, nil
 }
 
-// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
-func (m *UserMutation) ClearAvatarRemoteURL() {
-	m.avatar_remote_url = nil
-	m.clearedFields[user.FieldAvatarRemoteURL] = struct{}{}
+// ClearAvatarRemoteURI clears the value of the "avatar_remote_uri" field.
+func (m *UserMutation) ClearAvatarRemoteURI() {
+	m.avatar_remote_uri = nil
+	m.clearedFields[user.FieldAvatarRemoteURI] = struct{}{}
 }
 
-// AvatarRemoteURLCleared returns if the "avatar_remote_url" field was cleared in this mutation.
-func (m *UserMutation) AvatarRemoteURLCleared() bool {
-	_, ok := m.clearedFields[user.FieldAvatarRemoteURL]
+// AvatarRemoteURICleared returns if the "avatar_remote_uri" field was cleared in this mutation.
+func (m *UserMutation) AvatarRemoteURICleared() bool {
+	_, ok := m.clearedFields[user.FieldAvatarRemoteURI]
 	return ok
 }
 
-// ResetAvatarRemoteURL resets all changes to the "avatar_remote_url" field.
-func (m *UserMutation) ResetAvatarRemoteURL() {
-	m.avatar_remote_url = nil
-	delete(m.clearedFields, user.FieldAvatarRemoteURL)
+// ResetAvatarRemoteURI resets all changes to the "avatar_remote_uri" field.
+func (m *UserMutation) ResetAvatarRemoteURI() {
+	m.avatar_remote_uri = nil
+	delete(m.clearedFields, user.FieldAvatarRemoteURI)
 }
 
 // SetAvatarLocalFile sets the "avatar_local_file" field.
@@ -17927,8 +17927,8 @@ func (m *UserMutation) Fields() []string {
 	if m.display_name != nil {
 		fields = append(fields, user.FieldDisplayName)
 	}
-	if m.avatar_remote_url != nil {
-		fields = append(fields, user.FieldAvatarRemoteURL)
+	if m.avatar_remote_uri != nil {
+		fields = append(fields, user.FieldAvatarRemoteURI)
 	}
 	if m.avatar_local_file != nil {
 		fields = append(fields, user.FieldAvatarLocalFile)
@@ -17976,8 +17976,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.LastName()
 	case user.FieldDisplayName:
 		return m.DisplayName()
-	case user.FieldAvatarRemoteURL:
-		return m.AvatarRemoteURL()
+	case user.FieldAvatarRemoteURI:
+		return m.AvatarRemoteURI()
 	case user.FieldAvatarLocalFile:
 		return m.AvatarLocalFile()
 	case user.FieldAvatarUpdatedAt:
@@ -18019,8 +18019,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldLastName(ctx)
 	case user.FieldDisplayName:
 		return m.OldDisplayName(ctx)
-	case user.FieldAvatarRemoteURL:
-		return m.OldAvatarRemoteURL(ctx)
+	case user.FieldAvatarRemoteURI:
+		return m.OldAvatarRemoteURI(ctx)
 	case user.FieldAvatarLocalFile:
 		return m.OldAvatarLocalFile(ctx)
 	case user.FieldAvatarUpdatedAt:
@@ -18112,12 +18112,12 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDisplayName(v)
 		return nil
-	case user.FieldAvatarRemoteURL:
+	case user.FieldAvatarRemoteURI:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAvatarRemoteURL(v)
+		m.SetAvatarRemoteURI(v)
 		return nil
 	case user.FieldAvatarLocalFile:
 		v, ok := value.(string)
@@ -18203,8 +18203,8 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldDeletedBy) {
 		fields = append(fields, user.FieldDeletedBy)
 	}
-	if m.FieldCleared(user.FieldAvatarRemoteURL) {
-		fields = append(fields, user.FieldAvatarRemoteURL)
+	if m.FieldCleared(user.FieldAvatarRemoteURI) {
+		fields = append(fields, user.FieldAvatarRemoteURI)
 	}
 	if m.FieldCleared(user.FieldAvatarLocalFile) {
 		fields = append(fields, user.FieldAvatarLocalFile)
@@ -18247,8 +18247,8 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
-	case user.FieldAvatarRemoteURL:
-		m.ClearAvatarRemoteURL()
+	case user.FieldAvatarRemoteURI:
+		m.ClearAvatarRemoteURI()
 		return nil
 	case user.FieldAvatarLocalFile:
 		m.ClearAvatarLocalFile()
@@ -18303,8 +18303,8 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldDisplayName:
 		m.ResetDisplayName()
 		return nil
-	case user.FieldAvatarRemoteURL:
-		m.ResetAvatarRemoteURL()
+	case user.FieldAvatarRemoteURI:
+		m.ResetAvatarRemoteURI()
 		return nil
 	case user.FieldAvatarLocalFile:
 		m.ResetAvatarLocalFile()

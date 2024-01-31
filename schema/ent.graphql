@@ -345,11 +345,11 @@ input CreateUserInput {
   """
   The user's displayed 'friendly' name
   """
-  displayName: String!
+  displayName: String
   """
   URL of the user's remote avatar
   """
-  avatarRemoteURL: String
+  avatarRemoteURI: String
   """
   The user's local avatar file
   """
@@ -4173,8 +4173,8 @@ input UpdateUserInput {
   """
   URL of the user's remote avatar
   """
-  avatarRemoteURL: String
-  clearAvatarRemoteURL: Boolean
+  avatarRemoteURI: String
+  clearAvatarRemoteURI: Boolean
   """
   The user's local avatar file
   """
@@ -4281,7 +4281,7 @@ type User implements Node {
   """
   URL of the user's remote avatar
   """
-  avatarRemoteURL: String
+  avatarRemoteURI: String
   """
   The user's local avatar file
   """
@@ -4783,23 +4783,23 @@ input UserWhereInput {
   displayNameEqualFold: String
   displayNameContainsFold: String
   """
-  avatar_remote_url field predicates
+  avatar_remote_uri field predicates
   """
-  avatarRemoteURL: String
-  avatarRemoteURLNEQ: String
-  avatarRemoteURLIn: [String!]
-  avatarRemoteURLNotIn: [String!]
-  avatarRemoteURLGT: String
-  avatarRemoteURLGTE: String
-  avatarRemoteURLLT: String
-  avatarRemoteURLLTE: String
-  avatarRemoteURLContains: String
-  avatarRemoteURLHasPrefix: String
-  avatarRemoteURLHasSuffix: String
-  avatarRemoteURLIsNil: Boolean
-  avatarRemoteURLNotNil: Boolean
-  avatarRemoteURLEqualFold: String
-  avatarRemoteURLContainsFold: String
+  avatarRemoteURI: String
+  avatarRemoteURINEQ: String
+  avatarRemoteURIIn: [String!]
+  avatarRemoteURINotIn: [String!]
+  avatarRemoteURIGT: String
+  avatarRemoteURIGTE: String
+  avatarRemoteURILT: String
+  avatarRemoteURILTE: String
+  avatarRemoteURIContains: String
+  avatarRemoteURIHasPrefix: String
+  avatarRemoteURIHasSuffix: String
+  avatarRemoteURIIsNil: Boolean
+  avatarRemoteURINotNil: Boolean
+  avatarRemoteURIEqualFold: String
+  avatarRemoteURIContainsFold: String
   """
   avatar_local_file field predicates
   """

@@ -260,9 +260,9 @@ type CreateUserInput struct {
 	FirstName string     `json:"firstName"`
 	LastName  string     `json:"lastName"`
 	// The user's displayed 'friendly' name
-	DisplayName string `json:"displayName"`
+	DisplayName *string `json:"displayName,omitempty"`
 	// URL of the user's remote avatar
-	AvatarRemoteURL *string `json:"avatarRemoteURL,omitempty"`
+	AvatarRemoteURI *string `json:"avatarRemoteURI,omitempty"`
 	// The user's local avatar file
 	AvatarLocalFile *string `json:"avatarLocalFile,omitempty"`
 	// The time the user's (local) avatar was last updated
@@ -3109,8 +3109,8 @@ type UpdateUserInput struct {
 	// The user's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// URL of the user's remote avatar
-	AvatarRemoteURL      *string `json:"avatarRemoteURL,omitempty"`
-	ClearAvatarRemoteURL *bool   `json:"clearAvatarRemoteURL,omitempty"`
+	AvatarRemoteURI      *string `json:"avatarRemoteURI,omitempty"`
+	ClearAvatarRemoteURI *bool   `json:"clearAvatarRemoteURI,omitempty"`
 	// The user's local avatar file
 	AvatarLocalFile      *string `json:"avatarLocalFile,omitempty"`
 	ClearAvatarLocalFile *bool   `json:"clearAvatarLocalFile,omitempty"`
@@ -3189,7 +3189,7 @@ type User struct {
 	// The user's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
 	// URL of the user's remote avatar
-	AvatarRemoteURL *string `json:"avatarRemoteURL,omitempty"`
+	AvatarRemoteURI *string `json:"avatarRemoteURI,omitempty"`
 	// The user's local avatar file
 	AvatarLocalFile *string `json:"avatarLocalFile,omitempty"`
 	// The time the user's (local) avatar was last updated
@@ -3613,22 +3613,22 @@ type UserWhereInput struct {
 	DisplayNameHasSuffix    *string  `json:"displayNameHasSuffix,omitempty"`
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
-	// avatar_remote_url field predicates
-	AvatarRemoteURL             *string  `json:"avatarRemoteURL,omitempty"`
-	AvatarRemoteURLNeq          *string  `json:"avatarRemoteURLNEQ,omitempty"`
-	AvatarRemoteURLIn           []string `json:"avatarRemoteURLIn,omitempty"`
-	AvatarRemoteURLNotIn        []string `json:"avatarRemoteURLNotIn,omitempty"`
-	AvatarRemoteURLGt           *string  `json:"avatarRemoteURLGT,omitempty"`
-	AvatarRemoteURLGte          *string  `json:"avatarRemoteURLGTE,omitempty"`
-	AvatarRemoteURLLt           *string  `json:"avatarRemoteURLLT,omitempty"`
-	AvatarRemoteURLLte          *string  `json:"avatarRemoteURLLTE,omitempty"`
-	AvatarRemoteURLContains     *string  `json:"avatarRemoteURLContains,omitempty"`
-	AvatarRemoteURLHasPrefix    *string  `json:"avatarRemoteURLHasPrefix,omitempty"`
-	AvatarRemoteURLHasSuffix    *string  `json:"avatarRemoteURLHasSuffix,omitempty"`
-	AvatarRemoteURLIsNil        *bool    `json:"avatarRemoteURLIsNil,omitempty"`
-	AvatarRemoteURLNotNil       *bool    `json:"avatarRemoteURLNotNil,omitempty"`
-	AvatarRemoteURLEqualFold    *string  `json:"avatarRemoteURLEqualFold,omitempty"`
-	AvatarRemoteURLContainsFold *string  `json:"avatarRemoteURLContainsFold,omitempty"`
+	// avatar_remote_uri field predicates
+	AvatarRemoteURI             *string  `json:"avatarRemoteURI,omitempty"`
+	AvatarRemoteURINeq          *string  `json:"avatarRemoteURINEQ,omitempty"`
+	AvatarRemoteURIIn           []string `json:"avatarRemoteURIIn,omitempty"`
+	AvatarRemoteURINotIn        []string `json:"avatarRemoteURINotIn,omitempty"`
+	AvatarRemoteURIGt           *string  `json:"avatarRemoteURIGT,omitempty"`
+	AvatarRemoteURIGte          *string  `json:"avatarRemoteURIGTE,omitempty"`
+	AvatarRemoteURILt           *string  `json:"avatarRemoteURILT,omitempty"`
+	AvatarRemoteURILte          *string  `json:"avatarRemoteURILTE,omitempty"`
+	AvatarRemoteURIContains     *string  `json:"avatarRemoteURIContains,omitempty"`
+	AvatarRemoteURIHasPrefix    *string  `json:"avatarRemoteURIHasPrefix,omitempty"`
+	AvatarRemoteURIHasSuffix    *string  `json:"avatarRemoteURIHasSuffix,omitempty"`
+	AvatarRemoteURIIsNil        *bool    `json:"avatarRemoteURIIsNil,omitempty"`
+	AvatarRemoteURINotNil       *bool    `json:"avatarRemoteURINotNil,omitempty"`
+	AvatarRemoteURIEqualFold    *string  `json:"avatarRemoteURIEqualFold,omitempty"`
+	AvatarRemoteURIContainsFold *string  `json:"avatarRemoteURIContainsFold,omitempty"`
 	// avatar_local_file field predicates
 	AvatarLocalFile             *string  `json:"avatarLocalFile,omitempty"`
 	AvatarLocalFileNeq          *string  `json:"avatarLocalFileNEQ,omitempty"`

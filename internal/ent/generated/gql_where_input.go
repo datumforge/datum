@@ -8273,22 +8273,22 @@ type UserWhereInput struct {
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
 
-	// "avatar_remote_url" field predicates.
-	AvatarRemoteURL             *string  `json:"avatarRemoteURL,omitempty"`
-	AvatarRemoteURLNEQ          *string  `json:"avatarRemoteURLNEQ,omitempty"`
-	AvatarRemoteURLIn           []string `json:"avatarRemoteURLIn,omitempty"`
-	AvatarRemoteURLNotIn        []string `json:"avatarRemoteURLNotIn,omitempty"`
-	AvatarRemoteURLGT           *string  `json:"avatarRemoteURLGT,omitempty"`
-	AvatarRemoteURLGTE          *string  `json:"avatarRemoteURLGTE,omitempty"`
-	AvatarRemoteURLLT           *string  `json:"avatarRemoteURLLT,omitempty"`
-	AvatarRemoteURLLTE          *string  `json:"avatarRemoteURLLTE,omitempty"`
-	AvatarRemoteURLContains     *string  `json:"avatarRemoteURLContains,omitempty"`
-	AvatarRemoteURLHasPrefix    *string  `json:"avatarRemoteURLHasPrefix,omitempty"`
-	AvatarRemoteURLHasSuffix    *string  `json:"avatarRemoteURLHasSuffix,omitempty"`
-	AvatarRemoteURLIsNil        bool     `json:"avatarRemoteURLIsNil,omitempty"`
-	AvatarRemoteURLNotNil       bool     `json:"avatarRemoteURLNotNil,omitempty"`
-	AvatarRemoteURLEqualFold    *string  `json:"avatarRemoteURLEqualFold,omitempty"`
-	AvatarRemoteURLContainsFold *string  `json:"avatarRemoteURLContainsFold,omitempty"`
+	// "avatar_remote_uri" field predicates.
+	AvatarRemoteURI             *string  `json:"avatarRemoteURI,omitempty"`
+	AvatarRemoteURINEQ          *string  `json:"avatarRemoteURINEQ,omitempty"`
+	AvatarRemoteURIIn           []string `json:"avatarRemoteURIIn,omitempty"`
+	AvatarRemoteURINotIn        []string `json:"avatarRemoteURINotIn,omitempty"`
+	AvatarRemoteURIGT           *string  `json:"avatarRemoteURIGT,omitempty"`
+	AvatarRemoteURIGTE          *string  `json:"avatarRemoteURIGTE,omitempty"`
+	AvatarRemoteURILT           *string  `json:"avatarRemoteURILT,omitempty"`
+	AvatarRemoteURILTE          *string  `json:"avatarRemoteURILTE,omitempty"`
+	AvatarRemoteURIContains     *string  `json:"avatarRemoteURIContains,omitempty"`
+	AvatarRemoteURIHasPrefix    *string  `json:"avatarRemoteURIHasPrefix,omitempty"`
+	AvatarRemoteURIHasSuffix    *string  `json:"avatarRemoteURIHasSuffix,omitempty"`
+	AvatarRemoteURIIsNil        bool     `json:"avatarRemoteURIIsNil,omitempty"`
+	AvatarRemoteURINotNil       bool     `json:"avatarRemoteURINotNil,omitempty"`
+	AvatarRemoteURIEqualFold    *string  `json:"avatarRemoteURIEqualFold,omitempty"`
+	AvatarRemoteURIContainsFold *string  `json:"avatarRemoteURIContainsFold,omitempty"`
 
 	// "avatar_local_file" field predicates.
 	AvatarLocalFile             *string  `json:"avatarLocalFile,omitempty"`
@@ -8864,50 +8864,50 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if i.DisplayNameContainsFold != nil {
 		predicates = append(predicates, user.DisplayNameContainsFold(*i.DisplayNameContainsFold))
 	}
-	if i.AvatarRemoteURL != nil {
-		predicates = append(predicates, user.AvatarRemoteURLEQ(*i.AvatarRemoteURL))
+	if i.AvatarRemoteURI != nil {
+		predicates = append(predicates, user.AvatarRemoteURIEQ(*i.AvatarRemoteURI))
 	}
-	if i.AvatarRemoteURLNEQ != nil {
-		predicates = append(predicates, user.AvatarRemoteURLNEQ(*i.AvatarRemoteURLNEQ))
+	if i.AvatarRemoteURINEQ != nil {
+		predicates = append(predicates, user.AvatarRemoteURINEQ(*i.AvatarRemoteURINEQ))
 	}
-	if len(i.AvatarRemoteURLIn) > 0 {
-		predicates = append(predicates, user.AvatarRemoteURLIn(i.AvatarRemoteURLIn...))
+	if len(i.AvatarRemoteURIIn) > 0 {
+		predicates = append(predicates, user.AvatarRemoteURIIn(i.AvatarRemoteURIIn...))
 	}
-	if len(i.AvatarRemoteURLNotIn) > 0 {
-		predicates = append(predicates, user.AvatarRemoteURLNotIn(i.AvatarRemoteURLNotIn...))
+	if len(i.AvatarRemoteURINotIn) > 0 {
+		predicates = append(predicates, user.AvatarRemoteURINotIn(i.AvatarRemoteURINotIn...))
 	}
-	if i.AvatarRemoteURLGT != nil {
-		predicates = append(predicates, user.AvatarRemoteURLGT(*i.AvatarRemoteURLGT))
+	if i.AvatarRemoteURIGT != nil {
+		predicates = append(predicates, user.AvatarRemoteURIGT(*i.AvatarRemoteURIGT))
 	}
-	if i.AvatarRemoteURLGTE != nil {
-		predicates = append(predicates, user.AvatarRemoteURLGTE(*i.AvatarRemoteURLGTE))
+	if i.AvatarRemoteURIGTE != nil {
+		predicates = append(predicates, user.AvatarRemoteURIGTE(*i.AvatarRemoteURIGTE))
 	}
-	if i.AvatarRemoteURLLT != nil {
-		predicates = append(predicates, user.AvatarRemoteURLLT(*i.AvatarRemoteURLLT))
+	if i.AvatarRemoteURILT != nil {
+		predicates = append(predicates, user.AvatarRemoteURILT(*i.AvatarRemoteURILT))
 	}
-	if i.AvatarRemoteURLLTE != nil {
-		predicates = append(predicates, user.AvatarRemoteURLLTE(*i.AvatarRemoteURLLTE))
+	if i.AvatarRemoteURILTE != nil {
+		predicates = append(predicates, user.AvatarRemoteURILTE(*i.AvatarRemoteURILTE))
 	}
-	if i.AvatarRemoteURLContains != nil {
-		predicates = append(predicates, user.AvatarRemoteURLContains(*i.AvatarRemoteURLContains))
+	if i.AvatarRemoteURIContains != nil {
+		predicates = append(predicates, user.AvatarRemoteURIContains(*i.AvatarRemoteURIContains))
 	}
-	if i.AvatarRemoteURLHasPrefix != nil {
-		predicates = append(predicates, user.AvatarRemoteURLHasPrefix(*i.AvatarRemoteURLHasPrefix))
+	if i.AvatarRemoteURIHasPrefix != nil {
+		predicates = append(predicates, user.AvatarRemoteURIHasPrefix(*i.AvatarRemoteURIHasPrefix))
 	}
-	if i.AvatarRemoteURLHasSuffix != nil {
-		predicates = append(predicates, user.AvatarRemoteURLHasSuffix(*i.AvatarRemoteURLHasSuffix))
+	if i.AvatarRemoteURIHasSuffix != nil {
+		predicates = append(predicates, user.AvatarRemoteURIHasSuffix(*i.AvatarRemoteURIHasSuffix))
 	}
-	if i.AvatarRemoteURLIsNil {
-		predicates = append(predicates, user.AvatarRemoteURLIsNil())
+	if i.AvatarRemoteURIIsNil {
+		predicates = append(predicates, user.AvatarRemoteURIIsNil())
 	}
-	if i.AvatarRemoteURLNotNil {
-		predicates = append(predicates, user.AvatarRemoteURLNotNil())
+	if i.AvatarRemoteURINotNil {
+		predicates = append(predicates, user.AvatarRemoteURINotNil())
 	}
-	if i.AvatarRemoteURLEqualFold != nil {
-		predicates = append(predicates, user.AvatarRemoteURLEqualFold(*i.AvatarRemoteURLEqualFold))
+	if i.AvatarRemoteURIEqualFold != nil {
+		predicates = append(predicates, user.AvatarRemoteURIEqualFold(*i.AvatarRemoteURIEqualFold))
 	}
-	if i.AvatarRemoteURLContainsFold != nil {
-		predicates = append(predicates, user.AvatarRemoteURLContainsFold(*i.AvatarRemoteURLContainsFold))
+	if i.AvatarRemoteURIContainsFold != nil {
+		predicates = append(predicates, user.AvatarRemoteURIContainsFold(*i.AvatarRemoteURIContainsFold))
 	}
 	if i.AvatarLocalFile != nil {
 		predicates = append(predicates, user.AvatarLocalFileEQ(*i.AvatarLocalFile))

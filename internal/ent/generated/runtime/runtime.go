@@ -749,6 +749,8 @@ func init() {
 	}()
 	// userDescDisplayName is the schema descriptor for display_name field.
 	userDescDisplayName := userFields[3].Descriptor()
+	// user.DefaultDisplayName holds the default value on creation for the display_name field.
+	user.DefaultDisplayName = userDescDisplayName.Default.(string)
 	// user.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	user.DisplayNameValidator = func() func(string) error {
 		validators := userDescDisplayName.Validators
@@ -766,18 +768,18 @@ func init() {
 			return nil
 		}
 	}()
-	// userDescAvatarRemoteURL is the schema descriptor for avatar_remote_url field.
-	userDescAvatarRemoteURL := userFields[4].Descriptor()
-	// user.AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
-	user.AvatarRemoteURLValidator = func() func(string) error {
-		validators := userDescAvatarRemoteURL.Validators
+	// userDescAvatarRemoteURI is the schema descriptor for avatar_remote_uri field.
+	userDescAvatarRemoteURI := userFields[4].Descriptor()
+	// user.AvatarRemoteURIValidator is a validator for the "avatar_remote_uri" field. It is called by the builders before save.
+	user.AvatarRemoteURIValidator = func() func(string) error {
+		validators := userDescAvatarRemoteURI.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
 		}
-		return func(avatar_remote_url string) error {
+		return func(avatar_remote_uri string) error {
 			for _, fn := range fns {
-				if err := fn(avatar_remote_url); err != nil {
+				if err := fn(avatar_remote_uri); err != nil {
 					return err
 				}
 			}

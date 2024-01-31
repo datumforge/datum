@@ -401,7 +401,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
 			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
 			user.FieldDisplayName:     {Type: field.TypeString, Column: user.FieldDisplayName},
-			user.FieldAvatarRemoteURL: {Type: field.TypeString, Column: user.FieldAvatarRemoteURL},
+			user.FieldAvatarRemoteURI: {Type: field.TypeString, Column: user.FieldAvatarRemoteURI},
 			user.FieldAvatarLocalFile: {Type: field.TypeString, Column: user.FieldAvatarLocalFile},
 			user.FieldAvatarUpdatedAt: {Type: field.TypeTime, Column: user.FieldAvatarUpdatedAt},
 			user.FieldLastSeen:        {Type: field.TypeTime, Column: user.FieldLastSeen},
@@ -2746,9 +2746,9 @@ func (f *UserFilter) WhereDisplayName(p entql.StringP) {
 	f.Where(p.Field(user.FieldDisplayName))
 }
 
-// WhereAvatarRemoteURL applies the entql string predicate on the avatar_remote_url field.
-func (f *UserFilter) WhereAvatarRemoteURL(p entql.StringP) {
-	f.Where(p.Field(user.FieldAvatarRemoteURL))
+// WhereAvatarRemoteURI applies the entql string predicate on the avatar_remote_uri field.
+func (f *UserFilter) WhereAvatarRemoteURI(p entql.StringP) {
+	f.Where(p.Field(user.FieldAvatarRemoteURI))
 }
 
 // WhereAvatarLocalFile applies the entql string predicate on the avatar_local_file field.

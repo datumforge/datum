@@ -260,7 +260,7 @@ type CreateUserInput struct {
 	FirstName string     `json:"firstName"`
 	LastName  string     `json:"lastName"`
 	// The user's displayed 'friendly' name
-	DisplayName *string `json:"displayName,omitempty"`
+	DisplayName string `json:"displayName"`
 	// URL of the user's remote avatar
 	AvatarRemoteURL *string `json:"avatarRemoteURL,omitempty"`
 	// The user's local avatar file

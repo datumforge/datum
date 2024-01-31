@@ -526,7 +526,7 @@ var (
 		{Name: "email", Type: field.TypeString},
 		{Name: "first_name", Type: field.TypeString, Size: 64},
 		{Name: "last_name", Type: field.TypeString, Size: 64},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "display_name", Type: field.TypeString, Size: 64},
 		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_local_file", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_updated_at", Type: field.TypeTime, Nullable: true},

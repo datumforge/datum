@@ -749,8 +749,6 @@ func init() {
 	}()
 	// userDescDisplayName is the schema descriptor for display_name field.
 	userDescDisplayName := userFields[3].Descriptor()
-	// user.DefaultDisplayName holds the default value on creation for the display_name field.
-	user.DefaultDisplayName = userDescDisplayName.Default.(string)
 	// user.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	user.DisplayNameValidator = func() func(string) error {
 		validators := userDescDisplayName.Validators

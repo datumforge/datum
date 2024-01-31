@@ -62,9 +62,9 @@ func addOrgMember(ctx context.Context) error {
 	}
 
 	input := datumclient.CreateOrgMembershipInput{
-		OrgID:  oID,
-		UserID: uID,
-		Role:   &r,
+		OrganizationID: oID,
+		UserID:         uID,
+		Role:           &r,
 	}
 
 	var s []byte

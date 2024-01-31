@@ -3,9 +3,10 @@ package rule
 import (
 	"context"
 
+	"github.com/datumforge/fgax"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -15,7 +16,7 @@ func HasInviteEditAccess() privacy.InviteMutationRuleFunc {
 	return privacy.InviteMutationRuleFunc(func(ctx context.Context, m *generated.InviteMutation) error {
 		m.Logger.Debugw("checking mutation access")
 
-		relation := fga.CanEdit
+		relation := fgax.CanEdit
 
 		userID, err := auth.GetUserIDFromContext(ctx)
 		if err != nil {

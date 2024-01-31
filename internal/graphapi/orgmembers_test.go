@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/hooks"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func TestQuery_OrgMembers(t *testing.T) {
@@ -49,7 +49,7 @@ func TestQuery_OrgMembers(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			orgID := tc.queryID
 			whereInput := datumclient.OrgMembershipWhereInput{
-				OrgID: &orgID,
+				OrganizationID: &orgID,
 			}
 
 			resp, err := client.datum.GetOrgMembersByOrgID(reqCtx, &whereInput)
@@ -170,9 +170,9 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 
 			role := tc.role
 			input := datumclient.CreateOrgMembershipInput{
-				OrgID:  tc.orgID,
-				UserID: tc.userID,
-				Role:   &role,
+				OrganizationID: tc.orgID,
+				UserID:         tc.userID,
+				Role:           &role,
 			}
 
 			resp, err := client.datum.AddUserToOrgWithRole(reqCtx, input)
@@ -188,7 +188,7 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.CreateOrgMembership)
 			assert.Equal(t, tc.userID, resp.CreateOrgMembership.OrgMembership.UserID)
-			assert.Equal(t, tc.orgID, resp.CreateOrgMembership.OrgMembership.OrgID)
+			assert.Equal(t, tc.orgID, resp.CreateOrgMembership.OrgMembership.OrganizationID)
 			assert.Equal(t, tc.role, resp.CreateOrgMembership.OrgMembership.Role)
 		})
 	}

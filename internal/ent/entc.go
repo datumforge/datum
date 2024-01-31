@@ -15,13 +15,14 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
+	"github.com/datumforge/fgax"
+	"github.com/datumforge/fgax/entfga"
 	"github.com/ogen-go/ogen"
 	"github.com/stoewer/go-strcase"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
 	"github.com/datumforge/datum/internal/entx"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
@@ -170,7 +171,7 @@ func main() {
 		),
 		entc.Dependency(
 			entc.DependencyName("Authz"),
-			entc.DependencyType(fga.Client{}),
+			entc.DependencyType(fgax.Client{}),
 		),
 		entc.Dependency(
 			entc.DependencyName("Logger"),
@@ -191,6 +192,9 @@ func main() {
 		entc.Extensions(
 			gqlExt,
 			oas,
+			entfga.NewFGAExtension(
+				entfga.WithSoftDeletes(),
+			),
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

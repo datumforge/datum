@@ -155,6 +155,9 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 
 	client := ent.NewClient(cOpts...)
 
+	// add authz hooks
+	client.WithAuthz()
+
 	client.Intercept(interceptors.QueryLogger(c.logger))
 
 	return client, nil

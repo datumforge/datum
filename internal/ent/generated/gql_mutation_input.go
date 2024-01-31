@@ -948,13 +948,13 @@ func (c *OhAuthTooTokenUpdateOne) SetInput(i UpdateOhAuthTooTokenInput) *OhAuthT
 
 // CreateOrgMembershipInput represents a mutation input for creating orgmemberships.
 type CreateOrgMembershipInput struct {
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
-	CreatedBy *string
-	UpdatedBy *string
-	Role      *enums.Role
-	OrgID     string
-	UserID    string
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Role           *enums.Role
+	OrganizationID string
+	UserID         string
 }
 
 // Mutate applies the CreateOrgMembershipInput on the OrgMembershipMutation builder.
@@ -974,7 +974,7 @@ func (i *CreateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
 	if v := i.Role; v != nil {
 		m.SetRole(*v)
 	}
-	m.SetOrgID(i.OrgID)
+	m.SetOrganizationID(i.OrganizationID)
 	m.SetUserID(i.UserID)
 }
 

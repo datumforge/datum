@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
-	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -61,7 +61,7 @@ func HookGroupAuthz() ent.Hook {
 			if m.Op().Is(ent.OpCreate) {
 				// create the group member admin and relationship tuple for parent org
 				err = groupCreateHook(ctx, m)
-			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
+			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || entx.CheckIsSoftDelete(ctx) {
 				// delete all relationship tuples on delete, or soft delete (Update Op)
 				err = groupDeleteHook(ctx, m)
 			}
@@ -86,14 +86,14 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 	org, orgexists := m.OwnerID()
 
 	if exists && orgexists {
-		m.Logger.Debugw("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
+		m.Logger.Debugw("creating parent relationship tuples", "relation", fgax.ParentRelation, "org", org, "object", object)
 
-		orgTuple, err := getTupleKey(org, "organization", objID, objType, fga.ParentRelation)
+		orgTuple, err := getTupleKey(org, "organization", objID, objType, fgax.ParentRelation)
 		if err != nil {
 			return err
 		}
 
-		if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{orgTuple}, nil); err != nil {
+		if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{orgTuple}, nil); err != nil {
 			m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 			return ErrInternalServerError

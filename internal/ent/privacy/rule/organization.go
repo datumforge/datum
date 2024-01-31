@@ -5,11 +5,11 @@ import (
 
 	"entgo.io/ent"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -31,15 +31,15 @@ func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 				return err
 			}
 
-			q.Logger.Infow("checking relationship tuples", "relation", fga.CanView, "organization_id", oID)
+			q.Logger.Infow("checking relationship tuples", "relation", fgax.CanView, "organization_id", oID)
 
-			access, err := q.Authz.CheckOrgAccess(ctx, userID, oID, fga.CanView)
+			access, err := q.Authz.CheckOrgAccess(ctx, userID, oID, fgax.CanView)
 			if err != nil {
 				return privacy.Skipf("unable to check access, %s", err.Error())
 			}
 
 			if access {
-				q.Logger.Infow("access allowed", "relation", fga.CanView, "organization_id", oID)
+				q.Logger.Infow("access allowed", "relation", fgax.CanView, "organization_id", oID)
 
 				return privacy.Allow
 			}
@@ -55,9 +55,9 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 	return privacy.OrganizationMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationMutation) error {
 		m.Logger.Debugw("checking mutation access")
 
-		relation := fga.CanEdit
+		relation := fgax.CanEdit
 		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
-			relation = fga.CanDelete
+			relation = fgax.CanDelete
 		}
 
 		userID, err := auth.GetUserIDFromContext(ctx)

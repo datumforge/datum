@@ -17,14 +17,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/fgax"
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
 	"github.com/datumforge/datum/internal/cookies"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/fga"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/sessions"
@@ -96,7 +96,7 @@ func setupTest(t *testing.T) *client {
 	}
 
 	// create mock FGA client
-	fc := fga.NewMockFGAClient(t, c.fga)
+	fc := fgax.NewMockFGAClient(t, c.fga)
 
 	// setup logger
 	logger := zap.NewNop().Sugar()

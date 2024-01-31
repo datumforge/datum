@@ -5,11 +5,11 @@ import (
 
 	"entgo.io/ent"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -31,15 +31,15 @@ func HasGroupReadAccess() privacy.GroupQueryRuleFunc {
 				return err
 			}
 
-			q.Logger.Infow("checking relationship tuples", "relation", fga.CanView, "group_id", gID)
+			q.Logger.Infow("checking relationship tuples", "relation", fgax.CanView, "group_id", gID)
 
-			access, err := q.Authz.CheckGroupAccess(ctx, userID, gID, fga.CanView)
+			access, err := q.Authz.CheckGroupAccess(ctx, userID, gID, fgax.CanView)
 			if err != nil {
 				return privacy.Skipf("unable to check access, %s", err.Error())
 			}
 
 			if access {
-				q.Logger.Infow("access allowed", "relation", fga.CanView, "group_id", gID)
+				q.Logger.Infow("access allowed", "relation", fgax.CanView, "group_id", gID)
 
 				return privacy.Allow
 			}
@@ -61,9 +61,9 @@ func HasGroupMutationAccess() privacy.GroupMutationRuleFunc {
 		}
 		m.Logger.Debugw("checking mutation access")
 
-		relation := fga.CanEdit
+		relation := fgax.CanEdit
 		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
-			relation = fga.CanDelete
+			relation = fgax.CanDelete
 		}
 
 		view := viewer.FromContext(ctx)
@@ -104,9 +104,9 @@ func CanCreateGroupsInOrg() privacy.GroupMutationRuleFunc {
 
 		m.Logger.Debugw("checking mutation access")
 
-		relation := fga.CanEdit
+		relation := fgax.CanEdit
 		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
-			relation = fga.CanDelete
+			relation = fgax.CanDelete
 		}
 
 		userID, err := auth.GetUserIDFromContext(ctx)

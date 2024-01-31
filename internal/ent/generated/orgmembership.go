@@ -34,8 +34,8 @@ type OrgMembership struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// Role holds the value of the "role" field.
 	Role enums.Role `json:"role,omitempty"`
-	// OrgID holds the value of the "org_id" field.
-	OrgID string `json:"org_id,omitempty"`
+	// OrganizationID holds the value of the "organization_id" field.
+	OrganizationID string `json:"organization_id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID string `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -46,8 +46,8 @@ type OrgMembership struct {
 
 // OrgMembershipEdges holds the relations/edges for other nodes in the graph.
 type OrgMembershipEdges struct {
-	// Org holds the value of the org edge.
-	Org *Organization `json:"org,omitempty"`
+	// Organization holds the value of the organization edge.
+	Organization *Organization `json:"organization,omitempty"`
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -57,17 +57,17 @@ type OrgMembershipEdges struct {
 	totalCount [2]map[string]int
 }
 
-// OrgOrErr returns the Org value or an error if the edge
+// OrganizationOrErr returns the Organization value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e OrgMembershipEdges) OrgOrErr() (*Organization, error) {
+func (e OrgMembershipEdges) OrganizationOrErr() (*Organization, error) {
 	if e.loadedTypes[0] {
-		if e.Org == nil {
+		if e.Organization == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: organization.Label}
 		}
-		return e.Org, nil
+		return e.Organization, nil
 	}
-	return nil, &NotLoadedError{edge: "org"}
+	return nil, &NotLoadedError{edge: "organization"}
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -88,7 +88,7 @@ func (*OrgMembership) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orgmembership.FieldID, orgmembership.FieldCreatedBy, orgmembership.FieldUpdatedBy, orgmembership.FieldDeletedBy, orgmembership.FieldRole, orgmembership.FieldOrgID, orgmembership.FieldUserID:
+		case orgmembership.FieldID, orgmembership.FieldCreatedBy, orgmembership.FieldUpdatedBy, orgmembership.FieldDeletedBy, orgmembership.FieldRole, orgmembership.FieldOrganizationID, orgmembership.FieldUserID:
 			values[i] = new(sql.NullString)
 		case orgmembership.FieldCreatedAt, orgmembership.FieldUpdatedAt, orgmembership.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -155,11 +155,11 @@ func (om *OrgMembership) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				om.Role = enums.Role(value.String)
 			}
-		case orgmembership.FieldOrgID:
+		case orgmembership.FieldOrganizationID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field org_id", values[i])
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {
-				om.OrgID = value.String
+				om.OrganizationID = value.String
 			}
 		case orgmembership.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -180,9 +180,9 @@ func (om *OrgMembership) Value(name string) (ent.Value, error) {
 	return om.selectValues.Get(name)
 }
 
-// QueryOrg queries the "org" edge of the OrgMembership entity.
-func (om *OrgMembership) QueryOrg() *OrganizationQuery {
-	return NewOrgMembershipClient(om.config).QueryOrg(om)
+// QueryOrganization queries the "organization" edge of the OrgMembership entity.
+func (om *OrgMembership) QueryOrganization() *OrganizationQuery {
+	return NewOrgMembershipClient(om.config).QueryOrganization(om)
 }
 
 // QueryUser queries the "user" edge of the OrgMembership entity.
@@ -234,8 +234,8 @@ func (om *OrgMembership) String() string {
 	builder.WriteString("role=")
 	builder.WriteString(fmt.Sprintf("%v", om.Role))
 	builder.WriteString(", ")
-	builder.WriteString("org_id=")
-	builder.WriteString(om.OrgID)
+	builder.WriteString("organization_id=")
+	builder.WriteString(om.OrganizationID)
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(om.UserID)

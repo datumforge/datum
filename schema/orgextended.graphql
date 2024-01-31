@@ -8,6 +8,6 @@ extend input UpdateOrganizationInput {
 }
 
 extend input OrgMembershipWhereInput {
-  orgID: String
+  organizationID: String
   userID: String
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/gravatar"
@@ -107,7 +107,7 @@ func HookUser() ent.Hook {
 func HookDeleteUser() ent.Hook {
 	return func(next ent.Mutator) ent.Mutator {
 		return hook.UserFunc(func(ctx context.Context, mutation *generated.UserMutation) (generated.Value, error) {
-			if mutation.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
+			if mutation.Op().Is(ent.OpDelete|ent.OpDeleteOne) || entx.CheckIsSoftDelete(ctx) {
 				userID, _ := mutation.ID()
 				// get the personal org id
 				user, err := mutation.Client().User.Get(ctx, userID)
@@ -184,9 +184,9 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 
 	// Create Role as owner for user in the personal org
 	input := generated.CreateOrgMembershipInput{
-		OrgID:  org.ID,
-		UserID: user.ID,
-		Role:   &enums.RoleOwner,
+		OrganizationID: org.ID,
+		UserID:         user.ID,
+		Role:           &enums.RoleOwner,
 	}
 
 	if _, err := dbClient.OrgMembership.Create().

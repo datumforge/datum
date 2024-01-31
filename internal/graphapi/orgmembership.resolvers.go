@@ -17,7 +17,7 @@ import (
 func (r *mutationResolver) CreateOrgMembership(ctx context.Context, input generated.CreateOrgMembershipInput) (*OrgMembershipCreatePayload, error) {
 	// setup view context
 	v := viewer.UserViewer{
-		OrgID: input.OrgID,
+		OrgID: input.OrganizationID,
 	}
 
 	ctx = viewer.NewContext(ctx, v)

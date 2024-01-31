@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -59,7 +59,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 	}
 
 	// See all orgs user has view access
-	orgList, err := q.Authz.ListObjectsRequest(ctx, userID, "organization", fga.CanView)
+	orgList, err := q.Authz.ListObjectsRequest(ctx, userID, "organization", fgax.CanView)
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +72,8 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 		entityType := strings.ToLower(o.Update().Mutation().Type())
 
 		// check root org
-		if !fga.ListContains(entityType, userOrgs, o.ID) {
-			q.Logger.Infow("access denied to organization", "relation", fga.CanView, "organization_id", o.ID, "type", entityType)
+		if !fgax.ListContains(entityType, userOrgs, o.ID) {
+			q.Logger.Infow("access denied to organization", "relation", fgax.CanView, "organization_id", o.ID, "type", entityType)
 
 			// go to next org, no need to check parent
 			continue
@@ -83,8 +83,8 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 		if o.ParentOrganizationID != "" {
 			q.Logger.Debugw("checking parent organization access", "parent_organization_id", o.ParentOrganizationID)
 
-			if !fga.ListContains(entityType, userOrgs, o.ParentOrganizationID) {
-				q.Logger.Infow("access denied to parent organization", "relation", fga.CanView, "parent_organization_id", o.ParentOrganizationID)
+			if !fgax.ListContains(entityType, userOrgs, o.ParentOrganizationID) {
+				q.Logger.Infow("access denied to parent organization", "relation", fgax.CanView, "parent_organization_id", o.ParentOrganizationID)
 			}
 		}
 

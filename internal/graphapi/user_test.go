@@ -6,14 +6,14 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/mixin"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
+	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/graphapi"
 	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
@@ -312,13 +312,13 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 			// mocks to check for org access
-			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrgID)}
+			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrganizationID)}
 			mock_fga.ListAny(t, client.fga, listObjects)
 
 			// Bypass auth checks to ensure input checks for now
 			reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
-			personalOrg, err := client.datum.GetOrganizationByID(reqCtx, orgs[0].OrgID)
+			personalOrg, err := client.datum.GetOrganizationByID(reqCtx, orgs[0].OrganizationID)
 			require.NoError(t, err)
 
 			assert.True(t, personalOrg.Organization.PersonalOrg)
@@ -764,7 +764,7 @@ func TestMutation_UserCascadeDelete(t *testing.T) {
 	require.Nil(t, g)
 	assert.ErrorContains(t, err, "not found")
 
-	ctx = mixin.SkipSoftDelete(reqCtx)
+	ctx = entx.SkipSoftDelete(reqCtx)
 
 	// skip checks because tuples will be deleted at this point
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
@@ -846,7 +846,7 @@ func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
 	assert.ErrorContains(t, err, "not found")
 
 	// Ensure user is soft deleted
-	ctx = mixin.SkipSoftDelete(userCtx.Request().Context())
+	ctx = entx.SkipSoftDelete(userCtx.Request().Context())
 
 	o, err = client.datum.GetUserByID(ctx, resp.CreateUser.User.ID)
 	require.NoError(t, err)

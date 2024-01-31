@@ -165,8 +165,8 @@ func (omu *OrgMembershipUpdate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "OrgMembership.role": %w`, err)}
 		}
 	}
-	if _, ok := omu.mutation.OrgID(); omu.mutation.OrgCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "OrgMembership.org"`)
+	if _, ok := omu.mutation.OrganizationID(); omu.mutation.OrganizationCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "OrgMembership.organization"`)
 	}
 	if _, ok := omu.mutation.UserID(); omu.mutation.UserCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "OrgMembership.user"`)
@@ -382,8 +382,8 @@ func (omuo *OrgMembershipUpdateOne) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "OrgMembership.role": %w`, err)}
 		}
 	}
-	if _, ok := omuo.mutation.OrgID(); omuo.mutation.OrgCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "OrgMembership.org"`)
+	if _, ok := omuo.mutation.OrganizationID(); omuo.mutation.OrganizationCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "OrgMembership.organization"`)
 	}
 	if _, ok := omuo.mutation.UserID(); omuo.mutation.UserCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "OrgMembership.user"`)

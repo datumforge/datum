@@ -8,9 +8,9 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -52,6 +52,9 @@ func (GroupMembership) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType: "group",
+		},
 	}
 }
 
@@ -74,7 +77,5 @@ func (GroupMembership) Mixin() []ent.Mixin {
 
 // Hooks of the GroupMembership
 func (GroupMembership) Hooks() []ent.Hook {
-	return []ent.Hook{
-		hooks.HookGroupMembersAuthz(),
-	}
+	return []ent.Hook{}
 }

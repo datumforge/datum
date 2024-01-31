@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	mock_fga "github.com/datumforge/fgax/mockery"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"

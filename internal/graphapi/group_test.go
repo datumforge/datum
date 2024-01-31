@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 func TestQuery_Group(t *testing.T) {

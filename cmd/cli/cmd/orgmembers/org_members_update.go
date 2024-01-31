@@ -66,8 +66,8 @@ func updateOrgMember(ctx context.Context) error {
 
 	// get the id of the org member
 	where := datumclient.OrgMembershipWhereInput{
-		OrgID:  &oID,
-		UserID: &uID,
+		OrganizationID: &oID,
+		UserID:         &uID,
 	}
 
 	orgMembers, err := cli.Client.GetOrgMembersByOrgID(ctx, &where, cli.Interceptor)

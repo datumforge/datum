@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
+	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -13,8 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/mixin"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
+	"github.com/datumforge/datum/internal/entx"
 )
 
 const (
@@ -546,7 +546,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			require.Error(t, err)
 			assert.ErrorContains(t, err, "not found")
 
-			ctx := mixin.SkipSoftDelete(reqCtx)
+			ctx := entx.SkipSoftDelete(reqCtx)
 
 			o, err = client.datum.GetOrganizationByID(ctx, tc.orgID)
 
@@ -607,7 +607,7 @@ func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 	// allow after tuples have been deleted
 	ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
-	ctx = mixin.SkipSoftDelete(ctx)
+	ctx = entx.SkipSoftDelete(ctx)
 
 	o, err = client.datum.GetOrganizationByID(ctx, org.ID)
 

@@ -1181,7 +1181,7 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "org":
+		case "organization":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -1190,10 +1190,10 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			om.withOrg = query
-			if _, ok := fieldSeen[orgmembership.FieldOrgID]; !ok {
-				selectedFields = append(selectedFields, orgmembership.FieldOrgID)
-				fieldSeen[orgmembership.FieldOrgID] = struct{}{}
+			om.withOrganization = query
+			if _, ok := fieldSeen[orgmembership.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldOrganizationID)
+				fieldSeen[orgmembership.FieldOrganizationID] = struct{}{}
 			}
 		case "user":
 			var (
@@ -1244,10 +1244,10 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 				selectedFields = append(selectedFields, orgmembership.FieldRole)
 				fieldSeen[orgmembership.FieldRole] = struct{}{}
 			}
-		case "orgID":
-			if _, ok := fieldSeen[orgmembership.FieldOrgID]; !ok {
-				selectedFields = append(selectedFields, orgmembership.FieldOrgID)
-				fieldSeen[orgmembership.FieldOrgID] = struct{}{}
+		case "organizationID":
+			if _, ok := fieldSeen[orgmembership.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldOrganizationID)
+				fieldSeen[orgmembership.FieldOrganizationID] = struct{}{}
 			}
 		case "userID":
 			if _, ok := fieldSeen[orgmembership.FieldUserID]; !ok {

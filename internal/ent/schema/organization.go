@@ -113,7 +113,7 @@ func (Organization) Annotations() []schema.Annotation {
 		entx.CascadeThroughAnnotationField(
 			[]entx.ThroughCleanup{
 				{
-					Field:   "Org",
+					Field:   "Organization",
 					Through: "OrgMembership",
 				},
 			},

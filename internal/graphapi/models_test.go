@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
+	mock_fga "github.com/datumforge/fgax/mockery"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	mock_fga "github.com/datumforge/datum/internal/fga/mockery"
 )
 
 type OrganizationBuilder struct {
@@ -247,7 +247,7 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 
 	orgMembers := om.client.db.OrgMembership.Create().
 		SetUserID(om.UserID).
-		SetOrgID(om.OrgID).
+		SetOrganizationID(om.OrgID).
 		SetRole(role).
 		SaveX(ctx)
 

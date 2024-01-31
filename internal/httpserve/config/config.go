@@ -91,7 +91,7 @@ type (
 		CORS CORS `yaml:"cors"`
 		// Routes contains the handler functions
 		Routes []http.Handler `yaml:"routes"`
-		// Middleware to enable on the echo server
+		// Middleware to enable on the echo server used on graph requests
 		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
 		// Handler contains the required settings for REST handlers including ready checks and JWT keys
 		Handler handlers.Handler `yaml:"checks"`

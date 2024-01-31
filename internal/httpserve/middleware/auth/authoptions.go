@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/datumforge/echox/middleware"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 
 	"github.com/datumforge/datum/internal/tokens"
@@ -45,6 +46,11 @@ type AuthOptions struct {
 	validator tokens.Validator
 	// reauth constructed by the auth options (can be directly supplied by the user).
 	reauth Reauthenticator
+
+	// Skipper defines a function to skip middleware
+	Skipper middleware.Skipper
+	// BeforeFunc  defines a function which is executed just before the middleware
+	BeforeFunc middleware.BeforeFunc
 }
 
 // Reauthenticator generates new access and refresh pair given a valid refresh token.
@@ -71,6 +77,7 @@ func NewAuthOptions(opts ...AuthOption) (conf AuthOptions) {
 		Audience:           DefaultAudience,
 		Issuer:             DefaultIssuer,
 		MinRefreshInterval: DefaultMinRefreshInterval,
+		Skipper:            middleware.DefaultSkipper,
 	}
 
 	for _, opt := range opts {
@@ -184,5 +191,19 @@ func WithValidator(validator tokens.Validator) AuthOption {
 func WithReauthenticator(reauth Reauthenticator) AuthOption {
 	return func(opts *AuthOptions) {
 		opts.reauth = reauth
+	}
+}
+
+// WithSkipperFunc allows the user to specify a skipper function for the middleware
+func WithSkipperFunc(skipper middleware.Skipper) AuthOption {
+	return func(opts *AuthOptions) {
+		opts.Skipper = skipper
+	}
+}
+
+// WithBeforeFunc allows the user to specify a function to happen before the auth middleware
+func WithBeforeFunc(before middleware.BeforeFunc) AuthOption {
+	return func(opts *AuthOptions) {
+		opts.BeforeFunc = before
 	}
 }

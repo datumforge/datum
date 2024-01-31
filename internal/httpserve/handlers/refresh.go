@@ -67,9 +67,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	auth.SetAuthCookies(ctx, accessToken, refreshToken)
 
 	// set sessions in response
-	sc := sessions.NewSessionConfig(h.SM, h.RedisClient, h.Logger)
-
-	if err := sc.SaveAndStoreSession(ctx, sessions.DefaultCookieName, user.ID); err != nil {
+	if err := h.SessionConfig.SaveAndStoreSession(ctx, sessions.DefaultCookieName, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
 		return err

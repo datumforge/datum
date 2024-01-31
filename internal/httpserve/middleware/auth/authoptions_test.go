@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -51,9 +52,16 @@ func TestAuthOptionsOverride(t *testing.T) {
 		Context:            ctx,
 	}
 
-	conf := auth.NewAuthOptions(auth.WithAuthOptions(opts))
+	conf := auth.NewAuthOptions(
+		auth.WithAuthOptions(opts),
+	)
+
 	require.NotSame(t, opts, conf, "expected a new configuration object to be created")
-	require.Equal(t, opts, conf, "expected the opts to override the configuration defaults")
+	assert.Equal(t, opts.KeysURL, conf.KeysURL)
+	assert.Equal(t, opts.Audience, conf.Audience)
+	assert.Equal(t, opts.Issuer, conf.Issuer)
+	assert.Equal(t, opts.MinRefreshInterval, conf.MinRefreshInterval)
+	assert.Equal(t, opts.Context, conf.Context)
 
 	// Ensure the context is the same on the configuration
 	cancel()

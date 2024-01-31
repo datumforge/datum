@@ -112,11 +112,9 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		return err
 	}
 
-	// Registers additional routes for the graph endpoints
-	// to pass middleware only to graph routes, append here
-	graphMw := []echo.MiddlewareFunc{}
+	// Registers additional routes for the graph endpoints with middleware defined
 	for _, handler := range s.handlers {
-		handler.Routes(srv.Group("", graphMw...))
+		handler.Routes(srv.Group("", s.config.Middleware...))
 	}
 
 	// Print routes on startup

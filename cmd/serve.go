@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
-	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/analytics"
@@ -18,11 +17,9 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/config"
-	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
 	"github.com/datumforge/datum/internal/otelx"
-	"github.com/datumforge/datum/internal/sessions"
 )
 
 var serveCmd = &cobra.Command{
@@ -43,7 +40,6 @@ func serve(ctx context.Context) error {
 		entdbClient *ent.Client
 		fgaClient   *fgax.Client
 		err         error
-		mw          []echo.MiddlewareFunc
 	)
 
 	// create ent dependency injection
@@ -62,7 +58,6 @@ func serve(ctx context.Context) error {
 		serveropts.WithTracer(),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
-		serveropts.WithSessionManager(),
 	)
 
 	so := serveropts.NewServerOptions(serverOpts)
@@ -80,25 +75,9 @@ func serve(ctx context.Context) error {
 	// setup Authz connection
 	// this must come before the database setup because the FGA Client
 	// is used as an ent dependency
-	if so.Config.Authz.Enabled {
-		fgaClient, err = fgax.CreateFGAClientWithStore(ctx, so.Config.Authz)
-		if err != nil {
-			return err
-		}
-
-		// add client as ent dependency
-		entOpts = append(entOpts, ent.Authz(*fgaClient))
-
-		// add auth middleware
-		conf := authmw.NewAuthOptions(
-			authmw.WithAudience(so.Config.Server.Token.Audience),
-			authmw.WithIssuer(so.Config.Server.Token.Issuer),
-			authmw.WithJWKSEndpoint(so.Config.Server.Token.JWKSEndpoint),
-		)
-
-		authMiddleware := authmw.Authenticate(conf)
-
-		mw = append(mw, authMiddleware)
+	fgaClient, err = fgax.CreateFGAClientWithStore(ctx, so.Config.Authz)
+	if err != nil {
+		return err
 	}
 
 	phclient := posthog.Init()
@@ -108,6 +87,7 @@ func serve(ctx context.Context) error {
 	// add additional ent dependencies
 	entOpts = append(
 		entOpts,
+		ent.Authz(*fgaClient),
 		ent.Emails(so.Config.Server.Handler.EmailManager),
 		ent.Marionette(so.Config.Server.Handler.TaskMan),
 		ent.Analytics(&analytics),
@@ -127,9 +107,6 @@ func serve(ctx context.Context) error {
 	redisClient := cache.New(so.Config.RedisConfig)
 	defer redisClient.Close()
 
-	// add ready checks
-	so.AddServerOptions(serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient))
-
 	// Add Driver to the Handlers Config
 	so.Config.Server.Handler.DBClient = entdbClient
 
@@ -138,17 +115,18 @@ func serve(ctx context.Context) error {
 
 	srv := server.NewServer(so.Config.Server, so.Config.Logger)
 
-	// add session middleware, this has to be added after the authMiddleware so we have the user id
-	// when we get to the session. this is also added here so its only added to the graph routes
-	// REST routes are expected to add the session middleware, as required
-	mw = append(mw, sessions.LoadAndSave(
-		so.Config.Server.SM,
-		redisClient,
-		so.Config.Logger,
-	))
+	// add ready checks
+	so.AddServerOptions(
+		serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient),
+	)
+
+	// add session manager
+	so.AddServerOptions(
+		serveropts.WithSessionManager(redisClient),
+	)
 
 	// Setup Graph API Handlers
-	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient, mw))
+	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient))
 
 	if err := srv.StartEchoServer(ctx); err != nil {
 		logger.Error("failed to run server", zap.Error(err))

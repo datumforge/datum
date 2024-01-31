@@ -26,6 +26,8 @@ type Handler struct {
 	ReadyChecks Checks
 	// JWTKeys contains the set of valid JWT authentication key
 	JWTKeys jwk.Set
+	// SessionConfig to handle sessions
+	SessionConfig *sessions.SessionConfig
 	// EmailManager to handle sending emails
 	EmailManager *emails.EmailManager
 	// TaskMan manages tasks in a separate goroutine to allow for non blocking operations

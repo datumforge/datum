@@ -29,6 +29,16 @@ type ContextKey struct {
 func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			// if skipper function returns true, skip this middleware
+			if conf.Skipper(c) {
+				return next(c)
+			}
+
+			// execute any before functions
+			if conf.BeforeFunc != nil {
+				conf.BeforeFunc(c)
+			}
+
 			validator, err := conf.Validator()
 			if err != nil {
 				return err

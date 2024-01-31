@@ -61,7 +61,7 @@ type Handler struct {
 }
 
 // Handler returns an http handler for a graph resolver
-func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFunc) *Handler {
+func (r *Resolver) Handler(withPlayground bool) *Handler {
 	srv := handler.NewDefaultServer(
 		NewExecutableSchema(
 			Config{
@@ -78,7 +78,6 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 
 	h := &Handler{
 		r:              r,
-		middleware:     middleware,
 		graphqlHandler: srv,
 	}
 

@@ -11,7 +11,7 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
 	"github.com/kelseyhightower/envconfig"
-	goredis "github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/cache"
@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/sessions"
@@ -208,17 +209,17 @@ func WithAuth() ServerOption {
 		googleProvider := &handlers.GoogleConfig{}
 		githubProvider := &handlers.GithubConfig{}
 
-		// load defaults and env vars
+		// load defaults and env vars for GitHub provider
 		if err := envconfig.Process("datum_auth_provider_github", githubProvider); err != nil {
 			panic(err)
 		}
 
-		// load defaults and env vars
+		// load defaults and env vars for Google Provider
 		if err := envconfig.Process("datum_auth_provider_google", googleProvider); err != nil {
 			panic(err)
 		}
 
-		// load defaults and env vars
+		// load defaults and env vars Oauth setup
 		if err := envconfig.Process("datum_auth_provider", authProviderConfig); err != nil {
 			panic(err)
 		}
@@ -227,11 +228,20 @@ func WithAuth() ServerOption {
 		authProviderConfig.GoogleConfig = *googleProvider
 
 		s.Config.Server.Handler.OauthProvider = *authProviderConfig
+
+		// add auth middleware
+		conf := authmw.NewAuthOptions(
+			authmw.WithAudience(s.Config.Server.Token.Audience),
+			authmw.WithIssuer(s.Config.Server.Token.Issuer),
+			authmw.WithJWKSEndpoint(s.Config.Server.Token.JWKSEndpoint),
+		)
+
+		s.Config.Server.Middleware = append(s.Config.Server.Middleware, authmw.Authenticate(conf))
 	})
 }
 
 // WithReadyChecks adds readiness checks to the server
-func WithReadyChecks(c *entdb.EntClientConfig, f *fgax.Client, r *goredis.Client) ServerOption {
+func WithReadyChecks(c *entdb.EntClientConfig, f *fgax.Client, r *redis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Always add a check to the primary db connection
 		s.Config.Server.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
@@ -254,13 +264,13 @@ func WithReadyChecks(c *entdb.EntClientConfig, f *fgax.Client, r *goredis.Client
 }
 
 // WithGraphRoute adds the graph handler to the server
-func WithGraphRoute(srv *server.Server, c *generated.Client, mw []echo.MiddlewareFunc) ServerOption {
+func WithGraphRoute(srv *server.Server, c *generated.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Setup Graph API Handlers
 		r := graphapi.NewResolver(c).
 			WithLogger(s.Config.Logger.Named("resolvers"))
 
-		handler := r.Handler(s.Config.Server.Dev, mw...)
+		handler := r.Handler(s.Config.Server.Dev)
 
 		// Add Graph Handler
 		srv.AddHandler(handler)
@@ -342,7 +352,8 @@ func WithRedisCache() ServerOption {
 }
 
 // WithSessionManager sets up the default session manager with a 10 minute ttl
-func WithSessionManager() ServerOption {
+// with persistence to redis
+func WithSessionManager(rc *redis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		config := &sessions.Config{}
 
@@ -368,5 +379,21 @@ func WithSessionManager() ServerOption {
 		// to graph and REST endpoints
 		s.Config.Server.Handler.SM = sm
 		s.Config.Server.SM = sm
+
+		// add session middleware, this has to be added after the authMiddleware so we have the user id
+		// when we get to the session. this is also added here so its only added to the graph routes
+		// REST routes are expected to add the session middleware, as required
+		sessionConfig := sessions.NewSessionConfig(
+			sm,
+			sessions.WithPersistence(rc),
+			sessions.WithLogger(s.Config.Logger),
+		)
+
+		// add to handler to be able to create new sessions on login
+		s.Config.Server.Handler.SessionConfig = &sessionConfig
+
+		s.Config.Server.Middleware = append(s.Config.Server.Middleware,
+			sessions.LoadAndSaveWithConfig(sessionConfig),
+		)
 	})
 }

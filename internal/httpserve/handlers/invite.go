@@ -175,7 +175,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	// set sessions in response
 	sc := sessions.NewSessionConfig(h.SM, h.RedisClient, h.Logger)
 
-	if err := sc.SaveAndStoreSession(ctx, createdUser.ID); err != nil {
+	if err := sc.SaveAndStoreSession(ctx, sessions.DefaultCookieName, createdUser.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
 		return err

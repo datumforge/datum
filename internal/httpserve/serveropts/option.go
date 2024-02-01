@@ -283,6 +283,17 @@ func WithEmailManager() ServerOption {
 			panic(err)
 		}
 
+		urlConfig := &emails.URLConfig{}
+		if err := envconfig.Process("datum_email_url", urlConfig); err != nil {
+			panic(err)
+		}
+
+		if err := urlConfig.Validate(); err != nil {
+			panic(err)
+		}
+
+		em.URLConfig = *urlConfig
+
 		s.Config.Server.Handler.EmailManager = em
 	})
 }

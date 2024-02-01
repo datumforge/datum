@@ -16,6 +16,7 @@ func WithAuthorization(accessToken string, session string) clientv2.RequestInter
 		ctx context.Context,
 		req *http.Request,
 		gqlInfo *clientv2.GQLRequestInfo,
+		w http.ResponseWriter,
 		res interface{},
 		next clientv2.RequestInterceptorFunc,
 	) error {
@@ -25,8 +26,11 @@ func WithAuthorization(accessToken string, session string) clientv2.RequestInter
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 		}
 
+		session := sessions.New("datum")
+		session.Set()
+
 		// add session cookie
-		req.AddCookie(sessions.NewSessionCookie(session))
+		req.AddCookie(sessions.n
 
 		return next(ctx, req, gqlInfo, res)
 	}

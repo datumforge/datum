@@ -58,7 +58,7 @@ var DebugOnlyCookieConfig = CookieConfig{
 }
 
 // NewCookie returns a new http.Cookie with the given value and CookieConfig properties
-func NewCookie(config CookieConfig, value string) *http.Cookie {
+func NewCookie(config *CookieConfig, value string) *http.Cookie {
 	cookie := &http.Cookie{
 		Name:     config.Name,
 		Value:    value,

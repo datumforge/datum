@@ -8,12 +8,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-func Test_New(t *testing.T) {
+func TestNew(t *testing.T) {
 	tests := []struct {
 		name         string
 		sessionName  string
@@ -27,13 +26,13 @@ func Test_New(t *testing.T) {
 		{
 			name:         "empty name, use default",
 			sessionName:  "",
-			expectedName: sessions.DefaultSessionName,
+			expectedName: "",
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cs := sessions.NewCookieStore(&cookies.DebugOnlyCookieConfig,
+			cs := sessions.NewCookieStore[string](sessions.DefaultCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
 			session := cs.New(tc.sessionName)
@@ -43,7 +42,7 @@ func Test_New(t *testing.T) {
 	}
 }
 
-func Test_NewSessionCookie(t *testing.T) {
+func TestNewSessionCookie(t *testing.T) {
 	tests := []struct {
 		name    string
 		session string
@@ -60,16 +59,24 @@ func Test_NewSessionCookie(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cooky := sessions.NewSessionCookie(tc.session)
+			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
+				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
-			assert.Equal(t, sessions.DefaultSessionName, cooky.Name)
-			assert.Equal(t, tc.session, cooky.Value)
-			assert.Equal(t, true, cooky.Secure)
+			cooky := cs.New(tc.name)
+
+			cooky.Set("name", tc.name)
+			cooky.Set("session", tc.session)
+
+			name := cooky.Get("name")
+			session := cooky.Get("session")
+
+			assert.Equal(t, tc.name, name)
+			assert.Equal(t, tc.session, session)
 		})
 	}
 }
 
-func Test_NewDebugSessionCookie(t *testing.T) {
+func TestNewDebugSessionCookie(t *testing.T) {
 	tests := []struct {
 		name    string
 		session string
@@ -86,16 +93,19 @@ func Test_NewDebugSessionCookie(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cooky := sessions.NewDebugSessionCookie(tc.session)
 
-			assert.Equal(t, sessions.DefaultSessionName, cooky.Name)
-			assert.Equal(t, tc.session, cooky.Value)
-			assert.Equal(t, false, cooky.Secure) // debug cookies should have secure off
+			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
+				[]byte("my-signing-secret"), []byte("encryptionsecret"))
+
+			cooky := cs.New(tc.name)
+
+			assert.Equal(t, tc.name, cooky.Name)
+			assert.Equal(t, tc.session, cooky.Get(tc.name))
 		})
 	}
 }
 
-func Test_SaveGet(t *testing.T) {
+func TestSaveGet(t *testing.T) {
 	tests := []struct {
 		name    string
 		session string
@@ -110,14 +120,16 @@ func Test_SaveGet(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cs := sessions.NewCookieStore(&cookies.DebugOnlyCookieConfig,
+			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			session := cs.New(sessions.DefaultSessionName)
-			session.Set(tc.userID, tc.session)
+			session := cs.New(tc.name)
+			session.Set("name", tc.name)
+			session.Set("userID", tc.userID)
+			session.Set("session", tc.session)
 
 			err := cs.Save(recorder, session)
 			require.NoError(t, err)
@@ -129,15 +141,15 @@ func Test_SaveGet(t *testing.T) {
 			cooky := res.Header["Set-Cookie"]
 			request := &http.Request{Header: http.Header{"Cookie": cooky}}
 
-			sess, err := cs.Get(request, sessions.DefaultSessionName)
+			sess, err := cs.Get(request, tc.name)
 			require.NoError(t, err)
 
-			assert.Equal(t, tc.session, sess.Get(tc.userID))
+			assert.Equal(t, tc.name, sess.Name)
 		})
 	}
 }
 
-func Test_GetUserFromSession(t *testing.T) {
+func TestGetUserFromSession(t *testing.T) {
 	tests := []struct {
 		name    string
 		session string
@@ -152,14 +164,16 @@ func Test_GetUserFromSession(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cs := sessions.NewCookieStore(&cookies.DebugOnlyCookieConfig,
+			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			session := cs.New(sessions.DefaultSessionName)
-			session.Set(tc.userID, tc.session)
+			session := cs.New(tc.name)
+			session.Set("name", tc.name)
+			session.Set("userID", tc.userID)
+			session.Set("session", tc.session)
 
 			err := cs.Save(recorder, session)
 			require.NoError(t, err)
@@ -171,7 +185,7 @@ func Test_GetUserFromSession(t *testing.T) {
 			cooky := res.Header["Set-Cookie"]
 			request := &http.Request{Header: http.Header{"Cookie": cooky}}
 
-			userID, err := cs.GetUserFromSession(request, sessions.DefaultSessionName)
+			userID, err := sessions.UserIDFromContext(request.Context())
 			require.NoError(t, err)
 
 			require.Equal(t, tc.userID, userID)

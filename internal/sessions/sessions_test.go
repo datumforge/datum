@@ -5,12 +5,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-func Test_Set(t *testing.T) {
+func TestSet(t *testing.T) {
 	tests := []struct {
 		name    string
 		userID  string
@@ -25,10 +24,10 @@ func Test_Set(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cs := sessions.NewCookieStore(&cookies.DebugOnlyCookieConfig,
+			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
-			session := sessions.New(cs)
+			session := cs.New(tc.name)
 
 			// Set sessions
 			session.Set(tc.userID, tc.session)
@@ -38,7 +37,7 @@ func Test_Set(t *testing.T) {
 	}
 }
 
-func Test_GetOk(t *testing.T) {
+func TestGetOk(t *testing.T) {
 	tests := []struct {
 		name    string
 		userID  string
@@ -54,21 +53,21 @@ func Test_GetOk(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cs := sessions.NewCookieStore(&cookies.DebugOnlyCookieConfig,
+			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
-			s := sessions.New(cs)
+			s := cs.New(tc.name)
 
-			// Set sessions
 			if tc.exists {
-				s.Set(tc.userID, tc.session)
+				s.Set("userID", tc.userID)
+				s.Set("session", tc.session)
 			}
 
-			session, ok := s.GetOk(tc.userID)
+			session, ok := s.GetOk("userID")
 			assert.Equal(t, tc.exists, ok)
 
 			if tc.exists {
-				assert.Equal(t, tc.session, session)
+				assert.Equal(t, tc.userID, session)
 			}
 		})
 	}

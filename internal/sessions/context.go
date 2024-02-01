@@ -33,15 +33,28 @@ func ContextWithToken(ctx context.Context, token *oauth2.Token) context.Context 
 }
 
 // UserIDFromContext returns the user ID from the ctx
-func UserIDFromContext(ctx context.Context) (userID any, err error) {
+// this function assumes the session data is stored in a string map
+func UserIDFromContext(ctx context.Context) (string, error) {
 	sessionDetails, ok := ctx.Value(SessionContextKey).(*Session[any])
 	if !ok {
-		return nil, err
+		return "", ErrInvalidSession
 	}
 
-	userID, ok = sessionDetails.GetOk("userID")
+	sessionID := sessionDetails.GetKey()
+
+	sessionData, ok := sessionDetails.GetOk(sessionID)
 	if !ok {
-		return nil, err
+		return "", ErrInvalidSession
+	}
+
+	sd, ok := sessionData.(map[string]string)
+	if !ok {
+		return "", ErrInvalidSession
+	}
+
+	userID, ok := sd["userID"]
+	if !ok {
+		return "", ErrInvalidSession
 	}
 
 	return userID, nil

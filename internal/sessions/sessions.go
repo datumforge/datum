@@ -50,6 +50,15 @@ func (s *Session[T]) Get(key string) T {
 	return s.values[key]
 }
 
+// GetKey returns the first key
+func (s *Session[T]) GetKey() string {
+	for k := range s.values {
+		return k
+	}
+
+	return ""
+}
+
 // GetOk returns the state value for the given key and whether they key exists.
 func (s *Session[T]) GetOk(key string) (T, bool) {
 	value, ok := s.values[key]

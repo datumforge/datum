@@ -14,10 +14,10 @@ const (
 
 // PersistentStore is defining an interface for session store
 type PersistentStore interface {
-	Exists(ctx context.Context, userID string) (int64, error)
-	GetSession(ctx context.Context, userID string) (string, error)
-	StoreSession(ctx context.Context, sessionID string, userID string) error
-	DeleteSession(ctx context.Context, userID string) error
+	Exists(ctx context.Context, key string) (int64, error)
+	GetSession(ctx context.Context, key string) (string, error)
+	StoreSession(ctx context.Context, key, value string) error
+	DeleteSession(ctx context.Context, key string) error
 }
 
 var _ PersistentStore = &persistentStore{}
@@ -36,27 +36,27 @@ func NewStore(client *redis.Client) PersistentStore {
 }
 
 // Exists checks to see if there is an existing session for the user
-func (s *persistentStore) Exists(ctx context.Context, userID string) (int64, error) {
+func (s *persistentStore) Exists(ctx context.Context, key string) (int64, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	return s.client.Exists(ctx, userID).Result()
+	return s.client.Exists(ctx, key).Result()
 }
 
 // GetSession checks to see if there is an existing session for the user
-func (s *persistentStore) GetSession(ctx context.Context, userID string) (string, error) {
+func (s *persistentStore) GetSession(ctx context.Context, key string) (string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	return s.client.Get(ctx, userID).Result()
+	return s.client.Get(ctx, key).Result()
 }
 
 // StoreSession is used to store a session in the store
-func (s *persistentStore) StoreSession(ctx context.Context, sessionID string, userID string) error {
+func (s *persistentStore) StoreSession(ctx context.Context, key, value string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	return s.client.Set(ctx, userID, sessionID, defaultExpiration).Err()
+	return s.client.Set(ctx, key, value, defaultExpiration).Err()
 }
 
 // DeleteSession is used to delete a session from the store

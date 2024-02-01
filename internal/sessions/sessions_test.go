@@ -11,65 +11,98 @@ import (
 
 func TestSet(t *testing.T) {
 	tests := []struct {
-		name    string
+		name        string
+		sessionName string
+
 		userID  string
 		session string
 	}{
 		{
-			name:    "happy path",
-			userID:  "01HMDBSNBGH4DTEP0SR8118Y96",
-			session: ulids.New().String(),
+			name:        "happy path",
+			sessionName: "__Host-datum",
+			userID:      "01HMDBSNBGH4DTEP0SR8118Y96",
+			session:     ulids.New().String(),
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			// with a string first
 			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
-			session := cs.New(tc.name)
+			session := cs.New(tc.sessionName)
 
 			// Set sessions
 			session.Set(tc.userID, tc.session)
 
 			assert.Equal(t, tc.session, session.Get(tc.userID))
+
+			// Again, with a string map
+			csMap := sessions.NewCookieStore[map[string]string](sessions.DebugCookieConfig,
+				[]byte("my-signing-secret"), []byte("encryptionsecret"))
+
+			sessionMap := csMap.New(tc.sessionName)
+
+			// Set sessions
+			sessionMap.Set(tc.session, map[string]string{"userID": tc.userID})
+
+			assert.Equal(t, tc.userID, sessionMap.Get(tc.session)["userID"])
 		})
 	}
 }
 
 func TestGetOk(t *testing.T) {
 	tests := []struct {
-		name    string
-		userID  string
-		session string
+		name        string
+		sessionName string
+		userID      string
+		session     string
 	}{
 		{
-			name:    "happy path",
-			userID:  "01HMDBSNBGH4DTEP0SR8118Y96",
-			session: ulids.New().String(),
+			name:        "happy path",
+			sessionName: "__Host-datum",
+			userID:      "01HMDBSNBGH4DTEP0SR8118Y96",
+			session:     ulids.New().String(),
 		},
 		{
-			name:    "MeOWzErZ!",
-			userID:  ulids.New().String(),
-			session: "01HMDBSNBGH4DTEP0SR8118Y96",
+			name:        "another session name",
+			sessionName: "MeOWzErZ!",
+			userID:      ulids.New().String(),
+			session:     "01HMDBSNBGH4DTEP0SR8118Y96",
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			// test with a string
 			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
-			s := cs.New(tc.name)
+			s := cs.New(tc.sessionName)
 
 			s.Set("userID", tc.userID)
 			s.Set("session", tc.session)
 
-			uID, _ := s.GetOk("userID")
-			sess, _ := s.GetOk("session")
+			uID, ok := s.GetOk("userID")
+			assert.True(t, ok)
+
+			sess, ok := s.GetOk("session")
+			assert.True(t, ok)
 
 			assert.Equal(t, tc.userID, uID)
 			assert.Equal(t, tc.session, sess)
+
+			// Again, but with a string map this time
+			csMap := sessions.NewCookieStore[map[string]string](sessions.DebugCookieConfig,
+				[]byte("my-signing-secret"), []byte("encryptionsecret"))
+
+			sMap := csMap.New(tc.sessionName)
+			sMap.Set(tc.session, map[string]string{"userID": tc.userID})
+
+			sessMap, ok := sMap.GetOk(tc.session)
+			assert.True(t, ok)
+			assert.Equal(t, tc.userID, sessMap["userID"])
 		})
 	}
 }

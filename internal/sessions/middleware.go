@@ -88,23 +88,23 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 			}
 
 			// get session from request cookies
-			session, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
+			cookieSession, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)
 
 				return err
 			}
 
-			// get the user id from the session
-			userID, err := config.SessionManager.GetUserFromSession(c.Request(), DefaultCookieName)
+			// get the session id from the session data
+			sessionID, err := config.SessionManager.GetSessionIDFromCookie(c.Request(), DefaultCookieName)
 			if err != nil {
 				config.Logger.Errorw("unable to get user from session", "error", err)
 
 				return err
 			}
 
-			// lookup session in cache to ensure tokens match
-			token, err := config.RedisStore.GetSession(c.Request().Context(), userID)
+			// lookup userID in cache to ensure tokens match
+			userID, err := config.RedisStore.GetSession(c.Request().Context(), sessionID)
 			if err != nil {
 				config.Logger.Errorw("unable to get session from store", "error", err)
 
@@ -112,29 +112,19 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 			}
 
 			// check session token on request matches cache
-			storedSession, ok := session.GetOk("store")
-			if !ok {
-				return err
-			}
+			userIDFromCookie := cookieSession.Get(sessionID)["userID"]
 
-			for k := range storedSession {
-				if k == "session" {
-					mappedSession := storedSession[k]
-					if token != mappedSession {
-						config.Logger.Errorw("sessions do not match", "cookie", token, "store", storedSession)
-
-						return ErrInvalidSession
-					}
-				}
+			if userIDFromCookie != userID {
+				config.Logger.Errorw("sessions do not match", "cookie", userIDFromCookie, "store", userID)
 			}
 
 			// Add session to context to be used in request paths
-			ctx := session.addSessionDataToContext(c.Request().Context())
+			ctx := cookieSession.addSessionDataToContext(c.Request().Context())
 			c.SetRequest(c.Request().WithContext(ctx))
 
 			c.Response().Before(func() {
 				// refresh and save session cookie
-				if err := config.SaveAndStoreSession(c, DefaultCookieName, userID); err != nil {
+				if err := config.SaveAndStoreSession(c, DefaultCookieName, sessionID); err != nil {
 					config.Logger.Errorw("unable to create and store new session", "error", err)
 
 					panic(err)

@@ -16,7 +16,7 @@ type Store[T any] interface {
 	// Destroy removes (expires) a named Session
 	Destroy(w http.ResponseWriter, name string)
 	// GetUserFromSession with the provided cookie name
-	GetUserFromSession(req *http.Request, name string) (string, error)
+	GetSessionIDFromCookie(req *http.Request, name string) (string, error)
 }
 
 var _ Store[any] = &cookieStore[any]{}
@@ -59,8 +59,8 @@ func (s *cookieStore[T]) Get(req *http.Request, name string) (session *Session[T
 	return session, err
 }
 
-// GetUserFromSession gets the cookies from the http.Request and gets the key (user ID) from the values
-func (s *cookieStore[T]) GetUserFromSession(req *http.Request, name string) (string, error) {
+// GetSessionIDFromCookie gets the cookies from the http.Request and gets the key (session ID) from the values
+func (s *cookieStore[T]) GetSessionIDFromCookie(req *http.Request, name string) (string, error) {
 	cookie, err := req.Cookie(name)
 	if err != nil {
 		return "", err

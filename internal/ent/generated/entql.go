@@ -5,21 +5,32 @@ package generated
 import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -29,7 +40,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 16)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 27)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -82,6 +93,35 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   entitlementhistory.Table,
+			Columns: entitlementhistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: entitlementhistory.FieldID,
+			},
+		},
+		Type: "EntitlementHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			entitlementhistory.FieldHistoryTime:            {Type: field.TypeTime, Column: entitlementhistory.FieldHistoryTime},
+			entitlementhistory.FieldOperation:              {Type: field.TypeEnum, Column: entitlementhistory.FieldOperation},
+			entitlementhistory.FieldRef:                    {Type: field.TypeString, Column: entitlementhistory.FieldRef},
+			entitlementhistory.FieldCreatedAt:              {Type: field.TypeTime, Column: entitlementhistory.FieldCreatedAt},
+			entitlementhistory.FieldUpdatedAt:              {Type: field.TypeTime, Column: entitlementhistory.FieldUpdatedAt},
+			entitlementhistory.FieldCreatedBy:              {Type: field.TypeString, Column: entitlementhistory.FieldCreatedBy},
+			entitlementhistory.FieldUpdatedBy:              {Type: field.TypeString, Column: entitlementhistory.FieldUpdatedBy},
+			entitlementhistory.FieldDeletedAt:              {Type: field.TypeTime, Column: entitlementhistory.FieldDeletedAt},
+			entitlementhistory.FieldDeletedBy:              {Type: field.TypeString, Column: entitlementhistory.FieldDeletedBy},
+			entitlementhistory.FieldOwnerID:                {Type: field.TypeString, Column: entitlementhistory.FieldOwnerID},
+			entitlementhistory.FieldTier:                   {Type: field.TypeEnum, Column: entitlementhistory.FieldTier},
+			entitlementhistory.FieldExternalCustomerID:     {Type: field.TypeString, Column: entitlementhistory.FieldExternalCustomerID},
+			entitlementhistory.FieldExternalSubscriptionID: {Type: field.TypeString, Column: entitlementhistory.FieldExternalSubscriptionID},
+			entitlementhistory.FieldExpires:                {Type: field.TypeBool, Column: entitlementhistory.FieldExpires},
+			entitlementhistory.FieldExpiresAt:              {Type: field.TypeTime, Column: entitlementhistory.FieldExpiresAt},
+			entitlementhistory.FieldCancelled:              {Type: field.TypeBool, Column: entitlementhistory.FieldCancelled},
+		},
+	}
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
 			Columns: group.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -105,7 +145,35 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldDisplayName:     {Type: field.TypeString, Column: group.FieldDisplayName},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   grouphistory.Table,
+			Columns: grouphistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: grouphistory.FieldID,
+			},
+		},
+		Type: "GroupHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			grouphistory.FieldHistoryTime:     {Type: field.TypeTime, Column: grouphistory.FieldHistoryTime},
+			grouphistory.FieldOperation:       {Type: field.TypeEnum, Column: grouphistory.FieldOperation},
+			grouphistory.FieldRef:             {Type: field.TypeString, Column: grouphistory.FieldRef},
+			grouphistory.FieldCreatedAt:       {Type: field.TypeTime, Column: grouphistory.FieldCreatedAt},
+			grouphistory.FieldUpdatedAt:       {Type: field.TypeTime, Column: grouphistory.FieldUpdatedAt},
+			grouphistory.FieldCreatedBy:       {Type: field.TypeString, Column: grouphistory.FieldCreatedBy},
+			grouphistory.FieldUpdatedBy:       {Type: field.TypeString, Column: grouphistory.FieldUpdatedBy},
+			grouphistory.FieldDeletedAt:       {Type: field.TypeTime, Column: grouphistory.FieldDeletedAt},
+			grouphistory.FieldDeletedBy:       {Type: field.TypeString, Column: grouphistory.FieldDeletedBy},
+			grouphistory.FieldOwnerID:         {Type: field.TypeString, Column: grouphistory.FieldOwnerID},
+			grouphistory.FieldName:            {Type: field.TypeString, Column: grouphistory.FieldName},
+			grouphistory.FieldDescription:     {Type: field.TypeString, Column: grouphistory.FieldDescription},
+			grouphistory.FieldGravatarLogoURL: {Type: field.TypeString, Column: grouphistory.FieldGravatarLogoURL},
+			grouphistory.FieldLogoURL:         {Type: field.TypeString, Column: grouphistory.FieldLogoURL},
+			grouphistory.FieldDisplayName:     {Type: field.TypeString, Column: grouphistory.FieldDisplayName},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   groupmembership.Table,
 			Columns: groupmembership.Columns,
@@ -127,7 +195,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 			groupmembership.FieldUserID:    {Type: field.TypeString, Column: groupmembership.FieldUserID},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   groupmembershiphistory.Table,
+			Columns: groupmembershiphistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: groupmembershiphistory.FieldID,
+			},
+		},
+		Type: "GroupMembershipHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			groupmembershiphistory.FieldHistoryTime: {Type: field.TypeTime, Column: groupmembershiphistory.FieldHistoryTime},
+			groupmembershiphistory.FieldOperation:   {Type: field.TypeEnum, Column: groupmembershiphistory.FieldOperation},
+			groupmembershiphistory.FieldRef:         {Type: field.TypeString, Column: groupmembershiphistory.FieldRef},
+			groupmembershiphistory.FieldCreatedAt:   {Type: field.TypeTime, Column: groupmembershiphistory.FieldCreatedAt},
+			groupmembershiphistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: groupmembershiphistory.FieldUpdatedAt},
+			groupmembershiphistory.FieldCreatedBy:   {Type: field.TypeString, Column: groupmembershiphistory.FieldCreatedBy},
+			groupmembershiphistory.FieldUpdatedBy:   {Type: field.TypeString, Column: groupmembershiphistory.FieldUpdatedBy},
+			groupmembershiphistory.FieldDeletedAt:   {Type: field.TypeTime, Column: groupmembershiphistory.FieldDeletedAt},
+			groupmembershiphistory.FieldDeletedBy:   {Type: field.TypeString, Column: groupmembershiphistory.FieldDeletedBy},
+			groupmembershiphistory.FieldRole:        {Type: field.TypeEnum, Column: groupmembershiphistory.FieldRole},
+			groupmembershiphistory.FieldGroupID:     {Type: field.TypeString, Column: groupmembershiphistory.FieldGroupID},
+			groupmembershiphistory.FieldUserID:      {Type: field.TypeString, Column: groupmembershiphistory.FieldUserID},
+		},
+	}
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   groupsetting.Table,
 			Columns: groupsetting.Columns,
@@ -151,7 +244,34 @@ var schemaGraph = func() *sqlgraph.Schema {
 			groupsetting.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsetting.FieldSyncToGithub},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   groupsettinghistory.Table,
+			Columns: groupsettinghistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: groupsettinghistory.FieldID,
+			},
+		},
+		Type: "GroupSettingHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			groupsettinghistory.FieldHistoryTime:  {Type: field.TypeTime, Column: groupsettinghistory.FieldHistoryTime},
+			groupsettinghistory.FieldOperation:    {Type: field.TypeEnum, Column: groupsettinghistory.FieldOperation},
+			groupsettinghistory.FieldRef:          {Type: field.TypeString, Column: groupsettinghistory.FieldRef},
+			groupsettinghistory.FieldCreatedAt:    {Type: field.TypeTime, Column: groupsettinghistory.FieldCreatedAt},
+			groupsettinghistory.FieldUpdatedAt:    {Type: field.TypeTime, Column: groupsettinghistory.FieldUpdatedAt},
+			groupsettinghistory.FieldCreatedBy:    {Type: field.TypeString, Column: groupsettinghistory.FieldCreatedBy},
+			groupsettinghistory.FieldUpdatedBy:    {Type: field.TypeString, Column: groupsettinghistory.FieldUpdatedBy},
+			groupsettinghistory.FieldDeletedAt:    {Type: field.TypeTime, Column: groupsettinghistory.FieldDeletedAt},
+			groupsettinghistory.FieldDeletedBy:    {Type: field.TypeString, Column: groupsettinghistory.FieldDeletedBy},
+			groupsettinghistory.FieldVisibility:   {Type: field.TypeEnum, Column: groupsettinghistory.FieldVisibility},
+			groupsettinghistory.FieldJoinPolicy:   {Type: field.TypeEnum, Column: groupsettinghistory.FieldJoinPolicy},
+			groupsettinghistory.FieldTags:         {Type: field.TypeJSON, Column: groupsettinghistory.FieldTags},
+			groupsettinghistory.FieldSyncToSlack:  {Type: field.TypeBool, Column: groupsettinghistory.FieldSyncToSlack},
+			groupsettinghistory.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsettinghistory.FieldSyncToGithub},
+		},
+	}
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   integration.Table,
 			Columns: integration.Columns,
@@ -174,7 +294,33 @@ var schemaGraph = func() *sqlgraph.Schema {
 			integration.FieldSecretName:  {Type: field.TypeString, Column: integration.FieldSecretName},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   integrationhistory.Table,
+			Columns: integrationhistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: integrationhistory.FieldID,
+			},
+		},
+		Type: "IntegrationHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			integrationhistory.FieldHistoryTime: {Type: field.TypeTime, Column: integrationhistory.FieldHistoryTime},
+			integrationhistory.FieldOperation:   {Type: field.TypeEnum, Column: integrationhistory.FieldOperation},
+			integrationhistory.FieldRef:         {Type: field.TypeString, Column: integrationhistory.FieldRef},
+			integrationhistory.FieldCreatedAt:   {Type: field.TypeTime, Column: integrationhistory.FieldCreatedAt},
+			integrationhistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: integrationhistory.FieldUpdatedAt},
+			integrationhistory.FieldCreatedBy:   {Type: field.TypeString, Column: integrationhistory.FieldCreatedBy},
+			integrationhistory.FieldUpdatedBy:   {Type: field.TypeString, Column: integrationhistory.FieldUpdatedBy},
+			integrationhistory.FieldDeletedAt:   {Type: field.TypeTime, Column: integrationhistory.FieldDeletedAt},
+			integrationhistory.FieldDeletedBy:   {Type: field.TypeString, Column: integrationhistory.FieldDeletedBy},
+			integrationhistory.FieldName:        {Type: field.TypeString, Column: integrationhistory.FieldName},
+			integrationhistory.FieldDescription: {Type: field.TypeString, Column: integrationhistory.FieldDescription},
+			integrationhistory.FieldKind:        {Type: field.TypeString, Column: integrationhistory.FieldKind},
+			integrationhistory.FieldSecretName:  {Type: field.TypeString, Column: integrationhistory.FieldSecretName},
+		},
+	}
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   invite.Table,
 			Columns: invite.Columns,
@@ -202,7 +348,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			invite.FieldSecret:       {Type: field.TypeBytes, Column: invite.FieldSecret},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   oauthprovider.Table,
 			Columns: oauthprovider.Columns,
@@ -230,7 +376,38 @@ var schemaGraph = func() *sqlgraph.Schema {
 			oauthprovider.FieldInfoURL:      {Type: field.TypeString, Column: oauthprovider.FieldInfoURL},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[13] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   oauthproviderhistory.Table,
+			Columns: oauthproviderhistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: oauthproviderhistory.FieldID,
+			},
+		},
+		Type: "OauthProviderHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			oauthproviderhistory.FieldHistoryTime:  {Type: field.TypeTime, Column: oauthproviderhistory.FieldHistoryTime},
+			oauthproviderhistory.FieldOperation:    {Type: field.TypeEnum, Column: oauthproviderhistory.FieldOperation},
+			oauthproviderhistory.FieldRef:          {Type: field.TypeString, Column: oauthproviderhistory.FieldRef},
+			oauthproviderhistory.FieldCreatedAt:    {Type: field.TypeTime, Column: oauthproviderhistory.FieldCreatedAt},
+			oauthproviderhistory.FieldUpdatedAt:    {Type: field.TypeTime, Column: oauthproviderhistory.FieldUpdatedAt},
+			oauthproviderhistory.FieldCreatedBy:    {Type: field.TypeString, Column: oauthproviderhistory.FieldCreatedBy},
+			oauthproviderhistory.FieldUpdatedBy:    {Type: field.TypeString, Column: oauthproviderhistory.FieldUpdatedBy},
+			oauthproviderhistory.FieldDeletedAt:    {Type: field.TypeTime, Column: oauthproviderhistory.FieldDeletedAt},
+			oauthproviderhistory.FieldDeletedBy:    {Type: field.TypeString, Column: oauthproviderhistory.FieldDeletedBy},
+			oauthproviderhistory.FieldName:         {Type: field.TypeString, Column: oauthproviderhistory.FieldName},
+			oauthproviderhistory.FieldClientID:     {Type: field.TypeString, Column: oauthproviderhistory.FieldClientID},
+			oauthproviderhistory.FieldClientSecret: {Type: field.TypeString, Column: oauthproviderhistory.FieldClientSecret},
+			oauthproviderhistory.FieldRedirectURL:  {Type: field.TypeString, Column: oauthproviderhistory.FieldRedirectURL},
+			oauthproviderhistory.FieldScopes:       {Type: field.TypeString, Column: oauthproviderhistory.FieldScopes},
+			oauthproviderhistory.FieldAuthURL:      {Type: field.TypeString, Column: oauthproviderhistory.FieldAuthURL},
+			oauthproviderhistory.FieldTokenURL:     {Type: field.TypeString, Column: oauthproviderhistory.FieldTokenURL},
+			oauthproviderhistory.FieldAuthStyle:    {Type: field.TypeUint8, Column: oauthproviderhistory.FieldAuthStyle},
+			oauthproviderhistory.FieldInfoURL:      {Type: field.TypeString, Column: oauthproviderhistory.FieldInfoURL},
+		},
+	}
+	graph.Nodes[14] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   ohauthtootoken.Table,
 			Columns: ohauthtootoken.Columns,
@@ -255,7 +432,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			ohauthtootoken.FieldLastUsed:                {Type: field.TypeTime, Column: ohauthtootoken.FieldLastUsed},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[15] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   orgmembership.Table,
 			Columns: orgmembership.Columns,
@@ -277,7 +454,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orgmembership.FieldUserID:         {Type: field.TypeString, Column: orgmembership.FieldUserID},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[16] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   orgmembershiphistory.Table,
+			Columns: orgmembershiphistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: orgmembershiphistory.FieldID,
+			},
+		},
+		Type: "OrgMembershipHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			orgmembershiphistory.FieldHistoryTime:    {Type: field.TypeTime, Column: orgmembershiphistory.FieldHistoryTime},
+			orgmembershiphistory.FieldOperation:      {Type: field.TypeEnum, Column: orgmembershiphistory.FieldOperation},
+			orgmembershiphistory.FieldRef:            {Type: field.TypeString, Column: orgmembershiphistory.FieldRef},
+			orgmembershiphistory.FieldCreatedAt:      {Type: field.TypeTime, Column: orgmembershiphistory.FieldCreatedAt},
+			orgmembershiphistory.FieldUpdatedAt:      {Type: field.TypeTime, Column: orgmembershiphistory.FieldUpdatedAt},
+			orgmembershiphistory.FieldCreatedBy:      {Type: field.TypeString, Column: orgmembershiphistory.FieldCreatedBy},
+			orgmembershiphistory.FieldUpdatedBy:      {Type: field.TypeString, Column: orgmembershiphistory.FieldUpdatedBy},
+			orgmembershiphistory.FieldDeletedAt:      {Type: field.TypeTime, Column: orgmembershiphistory.FieldDeletedAt},
+			orgmembershiphistory.FieldDeletedBy:      {Type: field.TypeString, Column: orgmembershiphistory.FieldDeletedBy},
+			orgmembershiphistory.FieldRole:           {Type: field.TypeEnum, Column: orgmembershiphistory.FieldRole},
+			orgmembershiphistory.FieldOrganizationID: {Type: field.TypeString, Column: orgmembershiphistory.FieldOrganizationID},
+			orgmembershiphistory.FieldUserID:         {Type: field.TypeString, Column: orgmembershiphistory.FieldUserID},
+		},
+	}
+	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   organization.Table,
 			Columns: organization.Columns,
@@ -301,7 +503,34 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldPersonalOrg:          {Type: field.TypeBool, Column: organization.FieldPersonalOrg},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[18] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   organizationhistory.Table,
+			Columns: organizationhistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: organizationhistory.FieldID,
+			},
+		},
+		Type: "OrganizationHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			organizationhistory.FieldHistoryTime:          {Type: field.TypeTime, Column: organizationhistory.FieldHistoryTime},
+			organizationhistory.FieldOperation:            {Type: field.TypeEnum, Column: organizationhistory.FieldOperation},
+			organizationhistory.FieldRef:                  {Type: field.TypeString, Column: organizationhistory.FieldRef},
+			organizationhistory.FieldCreatedAt:            {Type: field.TypeTime, Column: organizationhistory.FieldCreatedAt},
+			organizationhistory.FieldUpdatedAt:            {Type: field.TypeTime, Column: organizationhistory.FieldUpdatedAt},
+			organizationhistory.FieldCreatedBy:            {Type: field.TypeString, Column: organizationhistory.FieldCreatedBy},
+			organizationhistory.FieldUpdatedBy:            {Type: field.TypeString, Column: organizationhistory.FieldUpdatedBy},
+			organizationhistory.FieldDeletedAt:            {Type: field.TypeTime, Column: organizationhistory.FieldDeletedAt},
+			organizationhistory.FieldDeletedBy:            {Type: field.TypeString, Column: organizationhistory.FieldDeletedBy},
+			organizationhistory.FieldName:                 {Type: field.TypeString, Column: organizationhistory.FieldName},
+			organizationhistory.FieldDisplayName:          {Type: field.TypeString, Column: organizationhistory.FieldDisplayName},
+			organizationhistory.FieldDescription:          {Type: field.TypeString, Column: organizationhistory.FieldDescription},
+			organizationhistory.FieldParentOrganizationID: {Type: field.TypeString, Column: organizationhistory.FieldParentOrganizationID},
+			organizationhistory.FieldPersonalOrg:          {Type: field.TypeBool, Column: organizationhistory.FieldPersonalOrg},
+		},
+	}
+	graph.Nodes[19] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   organizationsetting.Table,
 			Columns: organizationsetting.Columns,
@@ -330,7 +559,39 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
 		},
 	}
-	graph.Nodes[12] = &sqlgraph.Node{
+	graph.Nodes[20] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   organizationsettinghistory.Table,
+			Columns: organizationsettinghistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: organizationsettinghistory.FieldID,
+			},
+		},
+		Type: "OrganizationSettingHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			organizationsettinghistory.FieldHistoryTime:    {Type: field.TypeTime, Column: organizationsettinghistory.FieldHistoryTime},
+			organizationsettinghistory.FieldOperation:      {Type: field.TypeEnum, Column: organizationsettinghistory.FieldOperation},
+			organizationsettinghistory.FieldRef:            {Type: field.TypeString, Column: organizationsettinghistory.FieldRef},
+			organizationsettinghistory.FieldCreatedAt:      {Type: field.TypeTime, Column: organizationsettinghistory.FieldCreatedAt},
+			organizationsettinghistory.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsettinghistory.FieldUpdatedAt},
+			organizationsettinghistory.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsettinghistory.FieldCreatedBy},
+			organizationsettinghistory.FieldUpdatedBy:      {Type: field.TypeString, Column: organizationsettinghistory.FieldUpdatedBy},
+			organizationsettinghistory.FieldDeletedAt:      {Type: field.TypeTime, Column: organizationsettinghistory.FieldDeletedAt},
+			organizationsettinghistory.FieldDeletedBy:      {Type: field.TypeString, Column: organizationsettinghistory.FieldDeletedBy},
+			organizationsettinghistory.FieldDomains:        {Type: field.TypeJSON, Column: organizationsettinghistory.FieldDomains},
+			organizationsettinghistory.FieldSSOCert:        {Type: field.TypeString, Column: organizationsettinghistory.FieldSSOCert},
+			organizationsettinghistory.FieldSSOEntrypoint:  {Type: field.TypeString, Column: organizationsettinghistory.FieldSSOEntrypoint},
+			organizationsettinghistory.FieldSSOIssuer:      {Type: field.TypeString, Column: organizationsettinghistory.FieldSSOIssuer},
+			organizationsettinghistory.FieldBillingContact: {Type: field.TypeString, Column: organizationsettinghistory.FieldBillingContact},
+			organizationsettinghistory.FieldBillingEmail:   {Type: field.TypeString, Column: organizationsettinghistory.FieldBillingEmail},
+			organizationsettinghistory.FieldBillingPhone:   {Type: field.TypeString, Column: organizationsettinghistory.FieldBillingPhone},
+			organizationsettinghistory.FieldBillingAddress: {Type: field.TypeString, Column: organizationsettinghistory.FieldBillingAddress},
+			organizationsettinghistory.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsettinghistory.FieldTaxIdentifier},
+			organizationsettinghistory.FieldTags:           {Type: field.TypeJSON, Column: organizationsettinghistory.FieldTags},
+		},
+	}
+	graph.Nodes[21] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   passwordresettoken.Table,
 			Columns: passwordresettoken.Columns,
@@ -354,7 +615,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			passwordresettoken.FieldSecret:    {Type: field.TypeBytes, Column: passwordresettoken.FieldSecret},
 		},
 	}
-	graph.Nodes[13] = &sqlgraph.Node{
+	graph.Nodes[22] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   personalaccesstoken.Table,
 			Columns: personalaccesstoken.Columns,
@@ -380,7 +641,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldLastUsedAt:  {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
 		},
 	}
-	graph.Nodes[14] = &sqlgraph.Node{
+	graph.Nodes[23] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -410,7 +671,40 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
 		},
 	}
-	graph.Nodes[15] = &sqlgraph.Node{
+	graph.Nodes[24] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   userhistory.Table,
+			Columns: userhistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: userhistory.FieldID,
+			},
+		},
+		Type: "UserHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			userhistory.FieldHistoryTime:     {Type: field.TypeTime, Column: userhistory.FieldHistoryTime},
+			userhistory.FieldOperation:       {Type: field.TypeEnum, Column: userhistory.FieldOperation},
+			userhistory.FieldRef:             {Type: field.TypeString, Column: userhistory.FieldRef},
+			userhistory.FieldCreatedAt:       {Type: field.TypeTime, Column: userhistory.FieldCreatedAt},
+			userhistory.FieldUpdatedAt:       {Type: field.TypeTime, Column: userhistory.FieldUpdatedAt},
+			userhistory.FieldCreatedBy:       {Type: field.TypeString, Column: userhistory.FieldCreatedBy},
+			userhistory.FieldUpdatedBy:       {Type: field.TypeString, Column: userhistory.FieldUpdatedBy},
+			userhistory.FieldDeletedAt:       {Type: field.TypeTime, Column: userhistory.FieldDeletedAt},
+			userhistory.FieldDeletedBy:       {Type: field.TypeString, Column: userhistory.FieldDeletedBy},
+			userhistory.FieldEmail:           {Type: field.TypeString, Column: userhistory.FieldEmail},
+			userhistory.FieldFirstName:       {Type: field.TypeString, Column: userhistory.FieldFirstName},
+			userhistory.FieldLastName:        {Type: field.TypeString, Column: userhistory.FieldLastName},
+			userhistory.FieldDisplayName:     {Type: field.TypeString, Column: userhistory.FieldDisplayName},
+			userhistory.FieldAvatarRemoteURL: {Type: field.TypeString, Column: userhistory.FieldAvatarRemoteURL},
+			userhistory.FieldAvatarLocalFile: {Type: field.TypeString, Column: userhistory.FieldAvatarLocalFile},
+			userhistory.FieldAvatarUpdatedAt: {Type: field.TypeTime, Column: userhistory.FieldAvatarUpdatedAt},
+			userhistory.FieldLastSeen:        {Type: field.TypeTime, Column: userhistory.FieldLastSeen},
+			userhistory.FieldPassword:        {Type: field.TypeString, Column: userhistory.FieldPassword},
+			userhistory.FieldSub:             {Type: field.TypeString, Column: userhistory.FieldSub},
+			userhistory.FieldOauth:           {Type: field.TypeBool, Column: userhistory.FieldOauth},
+		},
+	}
+	graph.Nodes[25] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -435,6 +729,36 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldDefaultOrg:     {Type: field.TypeString, Column: usersetting.FieldDefaultOrg},
 			usersetting.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
 			usersetting.FieldTags:           {Type: field.TypeJSON, Column: usersetting.FieldTags},
+		},
+	}
+	graph.Nodes[26] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   usersettinghistory.Table,
+			Columns: usersettinghistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: usersettinghistory.FieldID,
+			},
+		},
+		Type: "UserSettingHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			usersettinghistory.FieldHistoryTime:    {Type: field.TypeTime, Column: usersettinghistory.FieldHistoryTime},
+			usersettinghistory.FieldOperation:      {Type: field.TypeEnum, Column: usersettinghistory.FieldOperation},
+			usersettinghistory.FieldRef:            {Type: field.TypeString, Column: usersettinghistory.FieldRef},
+			usersettinghistory.FieldCreatedAt:      {Type: field.TypeTime, Column: usersettinghistory.FieldCreatedAt},
+			usersettinghistory.FieldUpdatedAt:      {Type: field.TypeTime, Column: usersettinghistory.FieldUpdatedAt},
+			usersettinghistory.FieldCreatedBy:      {Type: field.TypeString, Column: usersettinghistory.FieldCreatedBy},
+			usersettinghistory.FieldUpdatedBy:      {Type: field.TypeString, Column: usersettinghistory.FieldUpdatedBy},
+			usersettinghistory.FieldDeletedAt:      {Type: field.TypeTime, Column: usersettinghistory.FieldDeletedAt},
+			usersettinghistory.FieldDeletedBy:      {Type: field.TypeString, Column: usersettinghistory.FieldDeletedBy},
+			usersettinghistory.FieldLocked:         {Type: field.TypeBool, Column: usersettinghistory.FieldLocked},
+			usersettinghistory.FieldSilencedAt:     {Type: field.TypeTime, Column: usersettinghistory.FieldSilencedAt},
+			usersettinghistory.FieldSuspendedAt:    {Type: field.TypeTime, Column: usersettinghistory.FieldSuspendedAt},
+			usersettinghistory.FieldRecoveryCode:   {Type: field.TypeString, Column: usersettinghistory.FieldRecoveryCode},
+			usersettinghistory.FieldStatus:         {Type: field.TypeEnum, Column: usersettinghistory.FieldStatus},
+			usersettinghistory.FieldDefaultOrg:     {Type: field.TypeString, Column: usersettinghistory.FieldDefaultOrg},
+			usersettinghistory.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersettinghistory.FieldEmailConfirmed},
+			usersettinghistory.FieldTags:           {Type: field.TypeJSON, Column: usersettinghistory.FieldTags},
 		},
 	}
 	graph.MustAddE(
@@ -1107,6 +1431,126 @@ func (f *EntitlementFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (ehq *EntitlementHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	ehq.predicates = append(ehq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the EntitlementHistoryQuery builder.
+func (ehq *EntitlementHistoryQuery) Filter() *EntitlementHistoryFilter {
+	return &EntitlementHistoryFilter{config: ehq.config, predicateAdder: ehq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *EntitlementHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the EntitlementHistoryMutation builder.
+func (m *EntitlementHistoryMutation) Filter() *EntitlementHistoryFilter {
+	return &EntitlementHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// EntitlementHistoryFilter provides a generic filtering capability at runtime for EntitlementHistoryQuery.
+type EntitlementHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *EntitlementHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *EntitlementHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *EntitlementHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(entitlementhistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *EntitlementHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *EntitlementHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *EntitlementHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlementhistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *EntitlementHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlementhistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *EntitlementHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *EntitlementHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *EntitlementHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlementhistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *EntitlementHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *EntitlementHistoryFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldOwnerID))
+}
+
+// WhereTier applies the entql string predicate on the tier field.
+func (f *EntitlementHistoryFilter) WhereTier(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldTier))
+}
+
+// WhereExternalCustomerID applies the entql string predicate on the external_customer_id field.
+func (f *EntitlementHistoryFilter) WhereExternalCustomerID(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldExternalCustomerID))
+}
+
+// WhereExternalSubscriptionID applies the entql string predicate on the external_subscription_id field.
+func (f *EntitlementHistoryFilter) WhereExternalSubscriptionID(p entql.StringP) {
+	f.Where(p.Field(entitlementhistory.FieldExternalSubscriptionID))
+}
+
+// WhereExpires applies the entql bool predicate on the expires field.
+func (f *EntitlementHistoryFilter) WhereExpires(p entql.BoolP) {
+	f.Where(p.Field(entitlementhistory.FieldExpires))
+}
+
+// WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
+func (f *EntitlementHistoryFilter) WhereExpiresAt(p entql.TimeP) {
+	f.Where(p.Field(entitlementhistory.FieldExpiresAt))
+}
+
+// WhereCancelled applies the entql bool predicate on the cancelled field.
+func (f *EntitlementHistoryFilter) WhereCancelled(p entql.BoolP) {
+	f.Where(p.Field(entitlementhistory.FieldCancelled))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (gq *GroupQuery) addPredicate(pred func(s *sql.Selector)) {
 	gq.predicates = append(gq.predicates, pred)
 }
@@ -1135,7 +1579,7 @@ type GroupFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GroupFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1263,6 +1707,121 @@ func (f *GroupFilter) WhereHasMembersWith(preds ...predicate.GroupMembership) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (ghq *GroupHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	ghq.predicates = append(ghq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the GroupHistoryQuery builder.
+func (ghq *GroupHistoryQuery) Filter() *GroupHistoryFilter {
+	return &GroupHistoryFilter{config: ghq.config, predicateAdder: ghq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *GroupHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the GroupHistoryMutation builder.
+func (m *GroupHistoryMutation) Filter() *GroupHistoryFilter {
+	return &GroupHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// GroupHistoryFilter provides a generic filtering capability at runtime for GroupHistoryQuery.
+type GroupHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *GroupHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *GroupHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *GroupHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(grouphistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *GroupHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *GroupHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *GroupHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(grouphistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *GroupHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(grouphistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *GroupHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *GroupHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *GroupHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(grouphistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *GroupHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *GroupHistoryFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldOwnerID))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *GroupHistoryFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *GroupHistoryFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldDescription))
+}
+
+// WhereGravatarLogoURL applies the entql string predicate on the gravatar_logo_url field.
+func (f *GroupHistoryFilter) WhereGravatarLogoURL(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldGravatarLogoURL))
+}
+
+// WhereLogoURL applies the entql string predicate on the logo_url field.
+func (f *GroupHistoryFilter) WhereLogoURL(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldLogoURL))
+}
+
+// WhereDisplayName applies the entql string predicate on the display_name field.
+func (f *GroupHistoryFilter) WhereDisplayName(p entql.StringP) {
+	f.Where(p.Field(grouphistory.FieldDisplayName))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (gmq *GroupMembershipQuery) addPredicate(pred func(s *sql.Selector)) {
 	gmq.predicates = append(gmq.predicates, pred)
 }
@@ -1291,7 +1850,7 @@ type GroupMembershipFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GroupMembershipFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1376,6 +1935,106 @@ func (f *GroupMembershipFilter) WhereHasUserWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (gmhq *GroupMembershipHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	gmhq.predicates = append(gmhq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the GroupMembershipHistoryQuery builder.
+func (gmhq *GroupMembershipHistoryQuery) Filter() *GroupMembershipHistoryFilter {
+	return &GroupMembershipHistoryFilter{config: gmhq.config, predicateAdder: gmhq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *GroupMembershipHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the GroupMembershipHistoryMutation builder.
+func (m *GroupMembershipHistoryMutation) Filter() *GroupMembershipHistoryFilter {
+	return &GroupMembershipHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// GroupMembershipHistoryFilter provides a generic filtering capability at runtime for GroupMembershipHistoryQuery.
+type GroupMembershipHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *GroupMembershipHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *GroupMembershipHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *GroupMembershipHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(groupmembershiphistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *GroupMembershipHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *GroupMembershipHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *GroupMembershipHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(groupmembershiphistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *GroupMembershipHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(groupmembershiphistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *GroupMembershipHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *GroupMembershipHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *GroupMembershipHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(groupmembershiphistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *GroupMembershipHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldDeletedBy))
+}
+
+// WhereRole applies the entql string predicate on the role field.
+func (f *GroupMembershipHistoryFilter) WhereRole(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldRole))
+}
+
+// WhereGroupID applies the entql string predicate on the group_id field.
+func (f *GroupMembershipHistoryFilter) WhereGroupID(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldGroupID))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *GroupMembershipHistoryFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(groupmembershiphistory.FieldUserID))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (gsq *GroupSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	gsq.predicates = append(gsq.predicates, pred)
 }
@@ -1404,7 +2063,7 @@ type GroupSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GroupSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1485,6 +2144,116 @@ func (f *GroupSettingFilter) WhereHasGroupWith(preds ...predicate.Group) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (gshq *GroupSettingHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	gshq.predicates = append(gshq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the GroupSettingHistoryQuery builder.
+func (gshq *GroupSettingHistoryQuery) Filter() *GroupSettingHistoryFilter {
+	return &GroupSettingHistoryFilter{config: gshq.config, predicateAdder: gshq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *GroupSettingHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the GroupSettingHistoryMutation builder.
+func (m *GroupSettingHistoryMutation) Filter() *GroupSettingHistoryFilter {
+	return &GroupSettingHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// GroupSettingHistoryFilter provides a generic filtering capability at runtime for GroupSettingHistoryQuery.
+type GroupSettingHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *GroupSettingHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *GroupSettingHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *GroupSettingHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(groupsettinghistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *GroupSettingHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *GroupSettingHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *GroupSettingHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(groupsettinghistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *GroupSettingHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(groupsettinghistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *GroupSettingHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *GroupSettingHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *GroupSettingHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(groupsettinghistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *GroupSettingHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldDeletedBy))
+}
+
+// WhereVisibility applies the entql string predicate on the visibility field.
+func (f *GroupSettingHistoryFilter) WhereVisibility(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldVisibility))
+}
+
+// WhereJoinPolicy applies the entql string predicate on the join_policy field.
+func (f *GroupSettingHistoryFilter) WhereJoinPolicy(p entql.StringP) {
+	f.Where(p.Field(groupsettinghistory.FieldJoinPolicy))
+}
+
+// WhereTags applies the entql json.RawMessage predicate on the tags field.
+func (f *GroupSettingHistoryFilter) WhereTags(p entql.BytesP) {
+	f.Where(p.Field(groupsettinghistory.FieldTags))
+}
+
+// WhereSyncToSlack applies the entql bool predicate on the sync_to_slack field.
+func (f *GroupSettingHistoryFilter) WhereSyncToSlack(p entql.BoolP) {
+	f.Where(p.Field(groupsettinghistory.FieldSyncToSlack))
+}
+
+// WhereSyncToGithub applies the entql bool predicate on the sync_to_github field.
+func (f *GroupSettingHistoryFilter) WhereSyncToGithub(p entql.BoolP) {
+	f.Where(p.Field(groupsettinghistory.FieldSyncToGithub))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (iq *IntegrationQuery) addPredicate(pred func(s *sql.Selector)) {
 	iq.predicates = append(iq.predicates, pred)
 }
@@ -1513,7 +2282,7 @@ type IntegrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *IntegrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1589,6 +2358,111 @@ func (f *IntegrationFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (ihq *IntegrationHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	ihq.predicates = append(ihq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the IntegrationHistoryQuery builder.
+func (ihq *IntegrationHistoryQuery) Filter() *IntegrationHistoryFilter {
+	return &IntegrationHistoryFilter{config: ihq.config, predicateAdder: ihq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *IntegrationHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the IntegrationHistoryMutation builder.
+func (m *IntegrationHistoryMutation) Filter() *IntegrationHistoryFilter {
+	return &IntegrationHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// IntegrationHistoryFilter provides a generic filtering capability at runtime for IntegrationHistoryQuery.
+type IntegrationHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *IntegrationHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *IntegrationHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *IntegrationHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(integrationhistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *IntegrationHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *IntegrationHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *IntegrationHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(integrationhistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *IntegrationHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(integrationhistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *IntegrationHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *IntegrationHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *IntegrationHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(integrationhistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *IntegrationHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldDeletedBy))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *IntegrationHistoryFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *IntegrationHistoryFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldDescription))
+}
+
+// WhereKind applies the entql string predicate on the kind field.
+func (f *IntegrationHistoryFilter) WhereKind(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldKind))
+}
+
+// WhereSecretName applies the entql string predicate on the secret_name field.
+func (f *IntegrationHistoryFilter) WhereSecretName(p entql.StringP) {
+	f.Where(p.Field(integrationhistory.FieldSecretName))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (iq *InviteQuery) addPredicate(pred func(s *sql.Selector)) {
 	iq.predicates = append(iq.predicates, pred)
 }
@@ -1617,7 +2491,7 @@ type InviteFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InviteFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1746,7 +2620,7 @@ type OauthProviderFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OauthProviderFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1847,6 +2721,136 @@ func (f *OauthProviderFilter) WhereHasOwnerWith(preds ...predicate.Organization)
 }
 
 // addPredicate implements the predicateAdder interface.
+func (ophq *OauthProviderHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	ophq.predicates = append(ophq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OauthProviderHistoryQuery builder.
+func (ophq *OauthProviderHistoryQuery) Filter() *OauthProviderHistoryFilter {
+	return &OauthProviderHistoryFilter{config: ophq.config, predicateAdder: ophq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OauthProviderHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OauthProviderHistoryMutation builder.
+func (m *OauthProviderHistoryMutation) Filter() *OauthProviderHistoryFilter {
+	return &OauthProviderHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// OauthProviderHistoryFilter provides a generic filtering capability at runtime for OauthProviderHistoryQuery.
+type OauthProviderHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OauthProviderHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *OauthProviderHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *OauthProviderHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(oauthproviderhistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OauthProviderHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *OauthProviderHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *OauthProviderHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(oauthproviderhistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *OauthProviderHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(oauthproviderhistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *OauthProviderHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *OauthProviderHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *OauthProviderHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(oauthproviderhistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *OauthProviderHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldDeletedBy))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *OauthProviderHistoryFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldName))
+}
+
+// WhereClientID applies the entql string predicate on the client_id field.
+func (f *OauthProviderHistoryFilter) WhereClientID(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldClientID))
+}
+
+// WhereClientSecret applies the entql string predicate on the client_secret field.
+func (f *OauthProviderHistoryFilter) WhereClientSecret(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldClientSecret))
+}
+
+// WhereRedirectURL applies the entql string predicate on the redirect_url field.
+func (f *OauthProviderHistoryFilter) WhereRedirectURL(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldRedirectURL))
+}
+
+// WhereScopes applies the entql string predicate on the scopes field.
+func (f *OauthProviderHistoryFilter) WhereScopes(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldScopes))
+}
+
+// WhereAuthURL applies the entql string predicate on the auth_url field.
+func (f *OauthProviderHistoryFilter) WhereAuthURL(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldAuthURL))
+}
+
+// WhereTokenURL applies the entql string predicate on the token_url field.
+func (f *OauthProviderHistoryFilter) WhereTokenURL(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldTokenURL))
+}
+
+// WhereAuthStyle applies the entql uint8 predicate on the auth_style field.
+func (f *OauthProviderHistoryFilter) WhereAuthStyle(p entql.Uint8P) {
+	f.Where(p.Field(oauthproviderhistory.FieldAuthStyle))
+}
+
+// WhereInfoURL applies the entql string predicate on the info_url field.
+func (f *OauthProviderHistoryFilter) WhereInfoURL(p entql.StringP) {
+	f.Where(p.Field(oauthproviderhistory.FieldInfoURL))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (oattq *OhAuthTooTokenQuery) addPredicate(pred func(s *sql.Selector)) {
 	oattq.predicates = append(oattq.predicates, pred)
 }
@@ -1875,7 +2879,7 @@ type OhAuthTooTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OhAuthTooTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1975,7 +2979,7 @@ type OrgMembershipFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrgMembershipFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2060,6 +3064,106 @@ func (f *OrgMembershipFilter) WhereHasUserWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (omhq *OrgMembershipHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	omhq.predicates = append(omhq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrgMembershipHistoryQuery builder.
+func (omhq *OrgMembershipHistoryQuery) Filter() *OrgMembershipHistoryFilter {
+	return &OrgMembershipHistoryFilter{config: omhq.config, predicateAdder: omhq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrgMembershipHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrgMembershipHistoryMutation builder.
+func (m *OrgMembershipHistoryMutation) Filter() *OrgMembershipHistoryFilter {
+	return &OrgMembershipHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// OrgMembershipHistoryFilter provides a generic filtering capability at runtime for OrgMembershipHistoryQuery.
+type OrgMembershipHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrgMembershipHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *OrgMembershipHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *OrgMembershipHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(orgmembershiphistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OrgMembershipHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *OrgMembershipHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *OrgMembershipHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(orgmembershiphistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *OrgMembershipHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(orgmembershiphistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *OrgMembershipHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *OrgMembershipHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *OrgMembershipHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(orgmembershiphistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *OrgMembershipHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldDeletedBy))
+}
+
+// WhereRole applies the entql string predicate on the role field.
+func (f *OrgMembershipHistoryFilter) WhereRole(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldRole))
+}
+
+// WhereOrganizationID applies the entql string predicate on the organization_id field.
+func (f *OrgMembershipHistoryFilter) WhereOrganizationID(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldOrganizationID))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *OrgMembershipHistoryFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(orgmembershiphistory.FieldUserID))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (oq *OrganizationQuery) addPredicate(pred func(s *sql.Selector)) {
 	oq.predicates = append(oq.predicates, pred)
 }
@@ -2088,7 +3192,7 @@ type OrganizationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrganizationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2295,6 +3399,116 @@ func (f *OrganizationFilter) WhereHasMembersWith(preds ...predicate.OrgMembershi
 }
 
 // addPredicate implements the predicateAdder interface.
+func (ohq *OrganizationHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	ohq.predicates = append(ohq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrganizationHistoryQuery builder.
+func (ohq *OrganizationHistoryQuery) Filter() *OrganizationHistoryFilter {
+	return &OrganizationHistoryFilter{config: ohq.config, predicateAdder: ohq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrganizationHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrganizationHistoryMutation builder.
+func (m *OrganizationHistoryMutation) Filter() *OrganizationHistoryFilter {
+	return &OrganizationHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// OrganizationHistoryFilter provides a generic filtering capability at runtime for OrganizationHistoryQuery.
+type OrganizationHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrganizationHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *OrganizationHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *OrganizationHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(organizationhistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OrganizationHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *OrganizationHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *OrganizationHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationhistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *OrganizationHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationhistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *OrganizationHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *OrganizationHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *OrganizationHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationhistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *OrganizationHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldDeletedBy))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *OrganizationHistoryFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldName))
+}
+
+// WhereDisplayName applies the entql string predicate on the display_name field.
+func (f *OrganizationHistoryFilter) WhereDisplayName(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldDisplayName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *OrganizationHistoryFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldDescription))
+}
+
+// WhereParentOrganizationID applies the entql string predicate on the parent_organization_id field.
+func (f *OrganizationHistoryFilter) WhereParentOrganizationID(p entql.StringP) {
+	f.Where(p.Field(organizationhistory.FieldParentOrganizationID))
+}
+
+// WherePersonalOrg applies the entql bool predicate on the personal_org field.
+func (f *OrganizationHistoryFilter) WherePersonalOrg(p entql.BoolP) {
+	f.Where(p.Field(organizationhistory.FieldPersonalOrg))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (osq *OrganizationSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	osq.predicates = append(osq.predicates, pred)
 }
@@ -2323,7 +3537,7 @@ type OrganizationSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrganizationSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2429,6 +3643,141 @@ func (f *OrganizationSettingFilter) WhereHasOrganizationWith(preds ...predicate.
 }
 
 // addPredicate implements the predicateAdder interface.
+func (oshq *OrganizationSettingHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	oshq.predicates = append(oshq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrganizationSettingHistoryQuery builder.
+func (oshq *OrganizationSettingHistoryQuery) Filter() *OrganizationSettingHistoryFilter {
+	return &OrganizationSettingHistoryFilter{config: oshq.config, predicateAdder: oshq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrganizationSettingHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrganizationSettingHistoryMutation builder.
+func (m *OrganizationSettingHistoryMutation) Filter() *OrganizationSettingHistoryFilter {
+	return &OrganizationSettingHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// OrganizationSettingHistoryFilter provides a generic filtering capability at runtime for OrganizationSettingHistoryQuery.
+type OrganizationSettingHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrganizationSettingHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[20].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *OrganizationSettingHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *OrganizationSettingHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(organizationsettinghistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *OrganizationSettingHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *OrganizationSettingHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *OrganizationSettingHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsettinghistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *OrganizationSettingHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsettinghistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *OrganizationSettingHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *OrganizationSettingHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *OrganizationSettingHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsettinghistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *OrganizationSettingHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldDeletedBy))
+}
+
+// WhereDomains applies the entql json.RawMessage predicate on the domains field.
+func (f *OrganizationSettingHistoryFilter) WhereDomains(p entql.BytesP) {
+	f.Where(p.Field(organizationsettinghistory.FieldDomains))
+}
+
+// WhereSSOCert applies the entql string predicate on the sso_cert field.
+func (f *OrganizationSettingHistoryFilter) WhereSSOCert(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldSSOCert))
+}
+
+// WhereSSOEntrypoint applies the entql string predicate on the sso_entrypoint field.
+func (f *OrganizationSettingHistoryFilter) WhereSSOEntrypoint(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldSSOEntrypoint))
+}
+
+// WhereSSOIssuer applies the entql string predicate on the sso_issuer field.
+func (f *OrganizationSettingHistoryFilter) WhereSSOIssuer(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldSSOIssuer))
+}
+
+// WhereBillingContact applies the entql string predicate on the billing_contact field.
+func (f *OrganizationSettingHistoryFilter) WhereBillingContact(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldBillingContact))
+}
+
+// WhereBillingEmail applies the entql string predicate on the billing_email field.
+func (f *OrganizationSettingHistoryFilter) WhereBillingEmail(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldBillingEmail))
+}
+
+// WhereBillingPhone applies the entql string predicate on the billing_phone field.
+func (f *OrganizationSettingHistoryFilter) WhereBillingPhone(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldBillingPhone))
+}
+
+// WhereBillingAddress applies the entql string predicate on the billing_address field.
+func (f *OrganizationSettingHistoryFilter) WhereBillingAddress(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldBillingAddress))
+}
+
+// WhereTaxIdentifier applies the entql string predicate on the tax_identifier field.
+func (f *OrganizationSettingHistoryFilter) WhereTaxIdentifier(p entql.StringP) {
+	f.Where(p.Field(organizationsettinghistory.FieldTaxIdentifier))
+}
+
+// WhereTags applies the entql json.RawMessage predicate on the tags field.
+func (f *OrganizationSettingHistoryFilter) WhereTags(p entql.BytesP) {
+	f.Where(p.Field(organizationsettinghistory.FieldTags))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (prtq *PasswordResetTokenQuery) addPredicate(pred func(s *sql.Selector)) {
 	prtq.predicates = append(prtq.predicates, pred)
 }
@@ -2457,7 +3806,7 @@ type PasswordResetTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PasswordResetTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[21].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2566,7 +3915,7 @@ type PersonalAccessTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PersonalAccessTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[22].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2685,7 +4034,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[23].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2894,6 +4243,146 @@ func (f *UserFilter) WhereHasOrgMembershipsWith(preds ...predicate.OrgMembership
 }
 
 // addPredicate implements the predicateAdder interface.
+func (uhq *UserHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	uhq.predicates = append(uhq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserHistoryQuery builder.
+func (uhq *UserHistoryQuery) Filter() *UserHistoryFilter {
+	return &UserHistoryFilter{config: uhq.config, predicateAdder: uhq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserHistoryMutation builder.
+func (m *UserHistoryMutation) Filter() *UserHistoryFilter {
+	return &UserHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// UserHistoryFilter provides a generic filtering capability at runtime for UserHistoryQuery.
+type UserHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[24].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *UserHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *UserHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *UserHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *UserHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *UserHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *UserHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *UserHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *UserHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *UserHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *UserHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldDeletedBy))
+}
+
+// WhereEmail applies the entql string predicate on the email field.
+func (f *UserHistoryFilter) WhereEmail(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldEmail))
+}
+
+// WhereFirstName applies the entql string predicate on the first_name field.
+func (f *UserHistoryFilter) WhereFirstName(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldFirstName))
+}
+
+// WhereLastName applies the entql string predicate on the last_name field.
+func (f *UserHistoryFilter) WhereLastName(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldLastName))
+}
+
+// WhereDisplayName applies the entql string predicate on the display_name field.
+func (f *UserHistoryFilter) WhereDisplayName(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldDisplayName))
+}
+
+// WhereAvatarRemoteURL applies the entql string predicate on the avatar_remote_url field.
+func (f *UserHistoryFilter) WhereAvatarRemoteURL(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldAvatarRemoteURL))
+}
+
+// WhereAvatarLocalFile applies the entql string predicate on the avatar_local_file field.
+func (f *UserHistoryFilter) WhereAvatarLocalFile(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldAvatarLocalFile))
+}
+
+// WhereAvatarUpdatedAt applies the entql time.Time predicate on the avatar_updated_at field.
+func (f *UserHistoryFilter) WhereAvatarUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldAvatarUpdatedAt))
+}
+
+// WhereLastSeen applies the entql time.Time predicate on the last_seen field.
+func (f *UserHistoryFilter) WhereLastSeen(p entql.TimeP) {
+	f.Where(p.Field(userhistory.FieldLastSeen))
+}
+
+// WherePassword applies the entql string predicate on the password field.
+func (f *UserHistoryFilter) WherePassword(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldPassword))
+}
+
+// WhereSub applies the entql string predicate on the sub field.
+func (f *UserHistoryFilter) WhereSub(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldSub))
+}
+
+// WhereOauth applies the entql bool predicate on the oauth field.
+func (f *UserHistoryFilter) WhereOauth(p entql.BoolP) {
+	f.Where(p.Field(userhistory.FieldOauth))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (usq *UserSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	usq.predicates = append(usq.predicates, pred)
 }
@@ -2922,7 +4411,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[25].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -3015,4 +4504,129 @@ func (f *UserSettingFilter) WhereHasUserWith(preds ...predicate.User) {
 			p(s)
 		}
 	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (ushq *UserSettingHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	ushq.predicates = append(ushq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserSettingHistoryQuery builder.
+func (ushq *UserSettingHistoryQuery) Filter() *UserSettingHistoryFilter {
+	return &UserSettingHistoryFilter{config: ushq.config, predicateAdder: ushq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserSettingHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserSettingHistoryMutation builder.
+func (m *UserSettingHistoryMutation) Filter() *UserSettingHistoryFilter {
+	return &UserSettingHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// UserSettingHistoryFilter provides a generic filtering capability at runtime for UserSettingHistoryQuery.
+type UserSettingHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserSettingHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[26].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *UserSettingHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *UserSettingHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(usersettinghistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *UserSettingHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *UserSettingHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *UserSettingHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(usersettinghistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *UserSettingHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(usersettinghistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *UserSettingHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *UserSettingHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *UserSettingHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(usersettinghistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *UserSettingHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldDeletedBy))
+}
+
+// WhereLocked applies the entql bool predicate on the locked field.
+func (f *UserSettingHistoryFilter) WhereLocked(p entql.BoolP) {
+	f.Where(p.Field(usersettinghistory.FieldLocked))
+}
+
+// WhereSilencedAt applies the entql time.Time predicate on the silenced_at field.
+func (f *UserSettingHistoryFilter) WhereSilencedAt(p entql.TimeP) {
+	f.Where(p.Field(usersettinghistory.FieldSilencedAt))
+}
+
+// WhereSuspendedAt applies the entql time.Time predicate on the suspended_at field.
+func (f *UserSettingHistoryFilter) WhereSuspendedAt(p entql.TimeP) {
+	f.Where(p.Field(usersettinghistory.FieldSuspendedAt))
+}
+
+// WhereRecoveryCode applies the entql string predicate on the recovery_code field.
+func (f *UserSettingHistoryFilter) WhereRecoveryCode(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldRecoveryCode))
+}
+
+// WhereStatus applies the entql string predicate on the status field.
+func (f *UserSettingHistoryFilter) WhereStatus(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldStatus))
+}
+
+// WhereDefaultOrg applies the entql string predicate on the default_org field.
+func (f *UserSettingHistoryFilter) WhereDefaultOrg(p entql.StringP) {
+	f.Where(p.Field(usersettinghistory.FieldDefaultOrg))
+}
+
+// WhereEmailConfirmed applies the entql bool predicate on the email_confirmed field.
+func (f *UserSettingHistoryFilter) WhereEmailConfirmed(p entql.BoolP) {
+	f.Where(p.Field(usersettinghistory.FieldEmailConfirmed))
+}
+
+// WhereTags applies the entql json.RawMessage predicate on the tags field.
+func (f *UserSettingHistoryFilter) WhereTags(p entql.BytesP) {
+	f.Where(p.Field(usersettinghistory.FieldTags))
 }

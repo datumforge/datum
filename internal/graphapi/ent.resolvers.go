@@ -18,6 +18,11 @@ func (r *oauthProviderResolver) AuthStyle(ctx context.Context, obj *generated.Oa
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
 }
 
+// AuthStyle is the resolver for the authStyle field.
+func (r *oauthProviderHistoryResolver) AuthStyle(ctx context.Context, obj *generated.OauthProviderHistory) (int, error) {
+	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
+}
+
 // Node is the resolver for the node field.
 func (r *queryResolver) Node(ctx context.Context, id string) (generated.Noder, error) {
 	panic(fmt.Errorf("not implemented: Node - node"))
@@ -106,6 +111,46 @@ func (r *createOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *g
 }
 
 // AuthStyle is the resolver for the authStyle field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyle(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data *int) error {
+	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
+}
+
+// AuthStyleNeq is the resolver for the authStyleNEQ field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyleNeq(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data *int) error {
+	panic(fmt.Errorf("not implemented: AuthStyleNeq - authStyleNEQ"))
+}
+
+// AuthStyleIn is the resolver for the authStyleIn field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyleIn(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data []int) error {
+	panic(fmt.Errorf("not implemented: AuthStyleIn - authStyleIn"))
+}
+
+// AuthStyleNotIn is the resolver for the authStyleNotIn field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyleNotIn(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data []int) error {
+	panic(fmt.Errorf("not implemented: AuthStyleNotIn - authStyleNotIn"))
+}
+
+// AuthStyleGt is the resolver for the authStyleGT field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyleGt(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data *int) error {
+	panic(fmt.Errorf("not implemented: AuthStyleGt - authStyleGT"))
+}
+
+// AuthStyleGte is the resolver for the authStyleGTE field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyleGte(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data *int) error {
+	panic(fmt.Errorf("not implemented: AuthStyleGte - authStyleGTE"))
+}
+
+// AuthStyleLt is the resolver for the authStyleLT field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyleLt(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data *int) error {
+	panic(fmt.Errorf("not implemented: AuthStyleLt - authStyleLT"))
+}
+
+// AuthStyleLte is the resolver for the authStyleLTE field.
+func (r *oauthProviderHistoryWhereInputResolver) AuthStyleLte(ctx context.Context, obj *generated.OauthProviderHistoryWhereInput, data *int) error {
+	panic(fmt.Errorf("not implemented: AuthStyleLte - authStyleLTE"))
+}
+
+// AuthStyle is the resolver for the authStyle field.
 func (r *oauthProviderWhereInputResolver) AuthStyle(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error {
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
 }
@@ -153,6 +198,11 @@ func (r *updateOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *g
 // OauthProvider returns OauthProviderResolver implementation.
 func (r *Resolver) OauthProvider() OauthProviderResolver { return &oauthProviderResolver{r} }
 
+// OauthProviderHistory returns OauthProviderHistoryResolver implementation.
+func (r *Resolver) OauthProviderHistory() OauthProviderHistoryResolver {
+	return &oauthProviderHistoryResolver{r}
+}
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
@@ -167,6 +217,11 @@ func (r *Resolver) CreateOauthProviderInput() CreateOauthProviderInputResolver {
 // CreateOrganizationInput returns CreateOrganizationInputResolver implementation.
 func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
 	return &createOrganizationInputResolver{r}
+}
+
+// OauthProviderHistoryWhereInput returns OauthProviderHistoryWhereInputResolver implementation.
+func (r *Resolver) OauthProviderHistoryWhereInput() OauthProviderHistoryWhereInputResolver {
+	return &oauthProviderHistoryWhereInputResolver{r}
 }
 
 // OauthProviderWhereInput returns OauthProviderWhereInputResolver implementation.
@@ -188,10 +243,12 @@ func (r *Resolver) UpdateOrganizationInput() UpdateOrganizationInputResolver {
 }
 
 type oauthProviderResolver struct{ *Resolver }
+type oauthProviderHistoryResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type createGroupInputResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
+type oauthProviderHistoryWhereInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }

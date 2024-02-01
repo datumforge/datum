@@ -10,7 +10,7 @@ import (
 
 	"github.com/datumforge/enthistory"
 
-    "github.com/datumforge/datum/internal/entx"
+	"github.com/datumforge/datum/internal/entx"
 
 	"time"
 )
@@ -23,50 +23,50 @@ type IntegrationHistory struct {
 // Annotations of the IntegrationHistory.
 func (IntegrationHistory) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-        entx.SchemaGenSkip(true),
+		entx.SchemaGenSkip(true),
 		entsql.Annotation{
 			Table: "integration_history",
 		},
-        enthistory.Annotations{
-            IsHistory: true,
-            Exclude: true,
-        },
+		enthistory.Annotations{
+			IsHistory: true,
+			Exclude:   true,
+		},
 	}
 }
 
 // Fields of the IntegrationHistory.
 func (IntegrationHistory) Fields() []ent.Field {
 	historyFields := []ent.Field{
-        field.Time("history_time").
-            Default(time.Now).
-            Immutable(),
-        field.String("ref").
-            Immutable().
-            Optional(),
-        field.Enum("operation").
-            GoType(enthistory.OpType("")).
-            Immutable(),
-    }
+		field.Time("history_time").
+			Default(time.Now).
+			Immutable(),
+		field.String("ref").
+			Immutable().
+			Optional(),
+		field.Enum("operation").
+			GoType(enthistory.OpType("")).
+			Immutable(),
+	}
 
-    // get the fields from the mixins
-    // we only want to include mixin fields, not edges
-    // so this prevents FKs back to the main tables
-    mixins := Integration{}.Mixin()
-    for _, mixin  := range mixins {
-        for _, field := range mixin.Fields() {
-            historyFields = append(historyFields, field)
-        }
-    }
+	// get the fields from the mixins
+	// we only want to include mixin fields, not edges
+	// so this prevents FKs back to the main tables
+	mixins := Integration{}.Mixin()
+	for _, mixin := range mixins {
+		for _, field := range mixin.Fields() {
+			historyFields = append(historyFields, field)
+		}
+	}
 
-    original := Integration{}
-    for _, field := range original.Fields() {
-        historyFields = append(historyFields, field)
-    }
+	original := Integration{}
+	for _, field := range original.Fields() {
+		historyFields = append(historyFields, field)
+	}
 
-    return historyFields
+	return historyFields
 }
 func (IntegrationHistory) Indexes() []ent.Index {
 	return []ent.Index{
-        index.Fields("history_time"),
+		index.Fields("history_time"),
 	}
 }

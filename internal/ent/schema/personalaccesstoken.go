@@ -8,11 +8,11 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/datumforge/enthistory"
 
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/keygen"
-	"github.com/datumforge/enthistory"
 )
 
 // PersonalAccessToken holds the schema definition for the PersonalAccessToken entity.

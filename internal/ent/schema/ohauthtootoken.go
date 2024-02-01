@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/enthistory"
 )
 
 // OhAuthTooToken holds the schema definition for the OhAuthTooToken entity
@@ -62,5 +63,8 @@ func (OhAuthTooToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }

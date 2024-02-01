@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/keygen"
+	"github.com/datumforge/enthistory"
 )
 
 // PersonalAccessToken holds the schema definition for the PersonalAccessToken entity.
@@ -82,6 +83,9 @@ func (PersonalAccessToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }
 

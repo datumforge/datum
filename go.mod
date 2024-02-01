@@ -1,5 +1,7 @@
 module github.com/datumforge/datum
 
+replace github.com/datumforge/enthistory => /Users/sarahfunkhouser/go/src/github.com/golanglemonade/enthistory
+
 go 1.21.6
 
 require (
@@ -14,6 +16,7 @@ require (
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
+	github.com/datumforge/enthistory v0.0.1
 	github.com/datumforge/fgax v0.0.2
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2

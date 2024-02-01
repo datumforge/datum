@@ -25,7 +25,7 @@ type ThroughCleanup struct {
 }
 
 type SchemaGenAnnotation struct {
-	Skip bool
+	Skip bool `json:"skip,omitempty"`
 }
 
 // Name returns the name of the CascadeAnnotation

@@ -5,6 +5,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +16,7 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
+	"github.com/datumforge/enthistory"
 	"github.com/datumforge/fgax"
 	"github.com/datumforge/fgax/entfga"
 	"github.com/ogen-go/ogen"
@@ -190,6 +192,13 @@ func main() {
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
+			enthistory.NewHistoryExtension(
+				enthistory.WithAuditing(),
+				enthistory.WithImmutableFields(),
+				enthistory.WithHistoryTimeIndex(),
+				enthistory.WithNillableFields(),
+				enthistory.WithSchemaPath("./internal/ent/schema"),
+			),
 			gqlExt,
 			oas,
 			entfga.NewFGAExtension(
@@ -205,11 +214,18 @@ func GenSchema() gen.Hook {
 	return func(next gen.Generator) gen.Generator {
 		return gen.GenerateFunc(func(g *gen.Graph) error {
 			for _, node := range g.Nodes {
-				if sg, ok := node.Annotations[entx.SchemaGenAnnotationName]; ok {
-					val, _ := sg.(map[string]interface{})["Skip"]
+				fmt.Println("checking", node.Name)
 
-					if val.(bool) {
-						continue
+				if sg, ok := node.Annotations[entx.SchemaGenAnnotationName]; ok {
+					fmt.Println(sg)
+					val, ok := sg.(map[string]interface{})["skip"]
+					if ok {
+
+						fmt.Println(val)
+						if val.(bool) {
+							fmt.Println("skipping")
+							continue
+						}
 					}
 				}
 
@@ -221,6 +237,8 @@ func GenSchema() gen.Hook {
 				if err != nil {
 					log.Fatalf("Unable to parse template: %v", err)
 				}
+
+				fmt.Println("creating", node.Name)
 
 				file, err := os.Create(graphSchemaDir + strings.ToLower(node.Name) + ".graphql")
 				if err != nil {

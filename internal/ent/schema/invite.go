@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/enthistory"
 )
 
 // Invite holds the schema definition for the Invite entity
@@ -99,6 +100,9 @@ func (Invite) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }
 

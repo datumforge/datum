@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/entx"
+	"github.com/datumforge/enthistory"
 )
 
 // PasswordResetToken holds the schema definition for the PasswordResetToken entity
@@ -80,6 +81,9 @@ func (PasswordResetToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }
 

@@ -6,6 +6,11 @@ import (
 	"github.com/gorilla/securecookie"
 )
 
+const (
+	UserIDKey      = "userID"
+	SessionNameKey = "name"
+)
+
 type Store[T any] interface {
 	// New returns a new named Session
 	New(name string) *Session[T]
@@ -15,8 +20,10 @@ type Store[T any] interface {
 	Save(w http.ResponseWriter, session *Session[T]) error
 	// Destroy removes (expires) a named Session
 	Destroy(w http.ResponseWriter, name string)
-	// GetUserFromSession with the provided cookie name
-	GetSessionIDFromCookie(req *http.Request, name string) (string, error)
+	// GetUserFromSession returns the key, which should be the sessionID, in the map
+	GetSessionIDFromCookie(sess *Session[T]) string
+	// GetSessionDataFromCookie returns the valuestored map
+	GetSessionDataFromCookie(sess *Session[T]) any
 }
 
 var _ Store[any] = &cookieStore[any]{}
@@ -60,22 +67,21 @@ func (s *cookieStore[T]) Get(req *http.Request, name string) (session *Session[T
 }
 
 // GetSessionIDFromCookie gets the cookies from the http.Request and gets the key (session ID) from the values
-func (s *cookieStore[T]) GetSessionIDFromCookie(req *http.Request, name string) (string, error) {
-	cookie, err := req.Cookie(name)
-	if err != nil {
-		return "", err
+func (s *cookieStore[T]) GetSessionIDFromCookie(sess *Session[T]) string {
+	for k := range sess.values {
+		return k
 	}
 
-	session := s.New(name)
-	if err = securecookie.DecodeMulti(name, cookie.Value, &session.values, s.codecs...); err != nil {
-		return "", err
+	return ""
+}
+
+// GetSessionDataFromCookie gets the cookies from the http.Request and gets session values
+func (s *cookieStore[T]) GetSessionDataFromCookie(sess *Session[T]) any {
+	for _, v := range sess.values {
+		return v
 	}
 
-	for k := range session.values {
-		return k, nil
-	}
-
-	return "", err
+	return ""
 }
 
 // Save adds or updates the Session on the response via a signed and optionally

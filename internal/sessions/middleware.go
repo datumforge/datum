@@ -87,8 +87,8 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			// get session from request cookies
-			cookieSession, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
+			// get sessionData from request cookies
+			session, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)
 
@@ -96,12 +96,11 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 			}
 
 			// get the session id from the session data
-			sessionID, err := config.SessionManager.GetSessionIDFromCookie(c.Request(), DefaultCookieName)
-			if err != nil {
-				config.Logger.Errorw("unable to get user from session", "error", err)
+			sessionID := config.SessionManager.GetSessionIDFromCookie(session)
+			sessionData := config.SessionManager.GetSessionDataFromCookie(session)
 
-				return err
-			}
+			// check session token on request matches cache
+			userIDFromCookie := sessionData.(map[string]string)[UserIDKey]
 
 			// lookup userID in cache to ensure tokens match
 			userID, err := config.RedisStore.GetSession(c.Request().Context(), sessionID)
@@ -111,15 +110,12 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return err
 			}
 
-			// check session token on request matches cache
-			userIDFromCookie := cookieSession.Get(sessionID)["userID"]
-
 			if userIDFromCookie != userID {
 				config.Logger.Errorw("sessions do not match", "cookie", userIDFromCookie, "store", userID)
 			}
 
 			// Add session to context to be used in request paths
-			ctx := cookieSession.addSessionDataToContext(c.Request().Context())
+			ctx := session.addSessionDataToContext(c.Request().Context())
 			c.SetRequest(c.Request().WithContext(ctx))
 
 			c.Response().Before(func() {

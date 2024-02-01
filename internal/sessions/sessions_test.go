@@ -45,9 +45,9 @@ func TestSet(t *testing.T) {
 			sessionMap := csMap.New(tc.sessionName)
 
 			// Set sessions
-			sessionMap.Set(tc.session, map[string]string{"userID": tc.userID})
+			sessionMap.Set(tc.session, map[string]string{sessions.UserIDKey: tc.userID})
 
-			assert.Equal(t, tc.userID, sessionMap.Get(tc.session)["userID"])
+			assert.Equal(t, tc.userID, sessionMap.Get(tc.session)[sessions.UserIDKey])
 		})
 	}
 }
@@ -81,10 +81,10 @@ func TestGetOk(t *testing.T) {
 
 			s := cs.New(tc.sessionName)
 
-			s.Set("userID", tc.userID)
+			s.Set(sessions.UserIDKey, tc.userID)
 			s.Set("session", tc.session)
 
-			uID, ok := s.GetOk("userID")
+			uID, ok := s.GetOk(sessions.UserIDKey)
 			assert.True(t, ok)
 
 			sess, ok := s.GetOk("session")
@@ -98,11 +98,11 @@ func TestGetOk(t *testing.T) {
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
 			sMap := csMap.New(tc.sessionName)
-			sMap.Set(tc.session, map[string]string{"userID": tc.userID})
+			sMap.Set(tc.session, map[string]string{sessions.UserIDKey: tc.userID})
 
 			sessMap, ok := sMap.GetOk(tc.session)
 			assert.True(t, ok)
-			assert.Equal(t, tc.userID, sessMap["userID"])
+			assert.Equal(t, tc.userID, sessMap[sessions.UserIDKey])
 		})
 	}
 }

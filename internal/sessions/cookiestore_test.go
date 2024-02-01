@@ -86,10 +86,10 @@ func TestNewSessionCookie(t *testing.T) {
 
 			cooky := cs.New(tc.name)
 
-			cooky.Set("name", tc.name)
+			cooky.Set(sessions.SessionNameKey, tc.name)
 			cooky.Set("session", tc.session)
 
-			name := cooky.Get("name")
+			name := cooky.Get(sessions.SessionNameKey)
 			session := cooky.Get("session")
 
 			assert.Equal(t, tc.name, name)
@@ -101,10 +101,15 @@ func TestNewSessionCookie(t *testing.T) {
 
 			cookyMap := csMap.New(tc.sessionName)
 
-			cookyMap.Set(tc.session, map[string]string{"name": tc.sessionName, "userID": tc.userID})
+			cookyMap.Set(tc.session,
+				map[string]string{
+					sessions.SessionNameKey: tc.sessionName,
+					sessions.UserIDKey:      tc.userID,
+				},
+			)
 
-			assert.Equal(t, tc.sessionName, cookyMap.Get(tc.session)["name"])
-			assert.Equal(t, tc.userID, cookyMap.Get(tc.session)["userID"])
+			assert.Equal(t, tc.sessionName, cookyMap.Get(tc.session)[sessions.SessionNameKey])
+			assert.Equal(t, tc.userID, cookyMap.Get(tc.session)[sessions.UserIDKey])
 		})
 	}
 }
@@ -135,8 +140,8 @@ func TestSaveGet(t *testing.T) {
 			session := sessions.NewSession(cs, tc.sessionName)
 
 			setSessionMap := map[string]string{}
-			setSessionMap["userID"] = tc.userID
-			setSessionMap["name"] = tc.sessionName
+			setSessionMap[sessions.UserIDKey] = tc.userID
+			setSessionMap[sessions.SessionNameKey] = tc.sessionName
 
 			session.Set(tc.session, setSessionMap)
 
@@ -153,12 +158,12 @@ func TestSaveGet(t *testing.T) {
 			sess, err := cs.Get(request, tc.sessionName)
 			require.NoError(t, err)
 			assert.Equal(t, tc.session, sess.GetKey())
-			assert.Equal(t, tc.sessionName, sess.Get(sess.GetKey())["name"])
+			assert.Equal(t, tc.sessionName, sess.Get(sess.GetKey())[sessions.SessionNameKey])
 		})
 	}
 }
 
-func TestGetUserFromSession(t *testing.T) {
+func TestGetSessionIDFromCookie(t *testing.T) {
 	tests := []struct {
 		name        string
 		sessionName string
@@ -183,8 +188,8 @@ func TestGetUserFromSession(t *testing.T) {
 			sessionID := sessions.GenerateSessionID()
 
 			setSessionMap := map[string]string{}
-			setSessionMap["userID"] = tc.userID
-			setSessionMap["name"] = tc.sessionName
+			setSessionMap[sessions.UserIDKey] = tc.userID
+			setSessionMap[sessions.SessionNameKey] = tc.sessionName
 
 			session.Set(sessionID, setSessionMap)
 
@@ -198,10 +203,62 @@ func TestGetUserFromSession(t *testing.T) {
 			cooky := res.Header["Set-Cookie"]
 			request := &http.Request{Header: http.Header{"Cookie": cooky}}
 
-			id, err := cs.GetSessionIDFromCookie(request, tc.sessionName)
+			session, err = cs.Get(request, tc.sessionName)
 			require.NoError(t, err)
 
+			id := cs.GetSessionIDFromCookie(session)
+
 			require.Equal(t, sessionID, id)
+		})
+	}
+}
+
+func TestGetSessionDataFromCookie(t *testing.T) {
+	tests := []struct {
+		name        string
+		sessionName string
+		userID      string
+	}{
+		{
+			name:        "happy path",
+			sessionName: "__Host-meow",
+			userID:      "mitb",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cs := sessions.NewCookieStore[map[string]string](sessions.DebugCookieConfig,
+				[]byte("my-signing-secret"), []byte("encryptionsecret"))
+
+			// Set writer for tests that write on the response
+			recorder := httptest.NewRecorder()
+
+			session := cs.New(tc.sessionName)
+			sessionID := sessions.GenerateSessionID()
+
+			setSessionMap := map[string]string{}
+			setSessionMap[sessions.UserIDKey] = tc.userID
+			setSessionMap[sessions.SessionNameKey] = tc.sessionName
+
+			session.Set(sessionID, setSessionMap)
+
+			err := cs.Save(recorder, session)
+			require.NoError(t, err)
+
+			// Copy the Cookie over to a new Request
+			res := recorder.Result()
+			defer res.Body.Close()
+
+			cooky := res.Header["Set-Cookie"]
+			request := &http.Request{Header: http.Header{"Cookie": cooky}}
+
+			session, err = cs.Get(request, tc.sessionName)
+			require.NoError(t, err)
+
+			sd := cs.GetSessionDataFromCookie(session)
+
+			require.Equal(t, setSessionMap, sd)
 		})
 	}
 }

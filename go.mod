@@ -108,7 +108,7 @@ require (
 	github.com/mtibben/percent v0.2.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc5 // indirect
-	github.com/opencontainers/runc v1.1.7 // indirect
+	github.com/opencontainers/runc v1.1.12 // indirect
 	github.com/openfga/api/proto v0.0.0-20231222042535-3037910c90c0 // indirect
 	github.com/openfga/go-sdk v0.3.4 // indirect
 	github.com/openfga/language/pkg/go v0.0.0-20240129121047-c40760ddde79 // indirect

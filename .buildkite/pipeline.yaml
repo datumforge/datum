@@ -30,6 +30,7 @@ steps:
           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
           environment: 
             - "GOTOOLCHAIN=auto"
+
   - label: ":golang: go test - sqlite"
     key: "go_test_sqlite"
     env:
@@ -39,6 +40,7 @@ steps:
           image: golang:1.21.6
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
+
   - label: ":golang: go test - {{matrix}}"
     key: "go_test"
     env:
@@ -51,7 +53,6 @@ steps:
           image: golang:1.21.6
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
-
 
   - label: ":auth0: fga model test"
     key: "fga_test"
@@ -122,7 +123,6 @@ steps:
             - GOOS=linux
           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/$APP_NAME"]
     
-
   - label: ":terminal: build cli"
     key: "gobuild-cli"
     artifact_paths: "bin/${APP_NAME}-cli"
@@ -133,6 +133,30 @@ steps:
             - GOOS=darwin
             - GOARCH=arm64
           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
+
+- group: ":database: atlas migrate"
+  key: "database"
+  depends_on: ["tests", "go-builds"]
+  steps:
+  - label: ":sqlite: atlas lint"
+    key: "atlas_lint"
+    plugins:
+      - datumforge/atlas#8f237e24aa257b64d11306e60cde2bfda9819659:
+          project: datum
+          dev-url: "sqlite://dev?mode=memory&_fk=1"
+          dir: "file://db/migrations"
+          step: lint
+
+  - label: ":rocket: atlas push"
+    depends_on: [atlas_lint]
+    if: build.branch == "main"
+    key: "atlas_migrate"
+    plugins:
+      - datumforge/atlas#8f237e24aa257b64d11306e60cde2bfda9819659:
+          project: datum
+          dev-url: "sqlite://dev?mode=memory&_fk=1"
+          dir: "file://db/migrations"
+          step: migrate
 
 - group: ":docker: Image Build"
   depends_on: "go-builds"

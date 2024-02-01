@@ -9,7 +9,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// ContextUserClaims is the context key for the user claims
+// SessionContextKey is the context key for the user claims
 var SessionContextKey = &ContextKey{"SessionContextKey"}
 
 // ContextKey is the key name for the additional context
@@ -17,23 +17,23 @@ type ContextKey struct {
 	name string
 }
 
-// TokenFromContext returns the Token from the ctx.
+// OhAuthTokenFromContext returns the Token from the ctx
 func OhAuthTokenFromContext(ctx context.Context) (*oauth2.Token, error) {
 	token, ok := ctx.Value(SessionContextKey).(*oauth2.Token)
 	if !ok {
 		return nil, errors.New("context missing Token")
 	}
+
 	return token, nil
 }
 
-// ContextWithToken returns a copy of ctx that stores the Token.
+// ContextWithToken returns a copy of ctx that stores the Token
 func ContextWithToken(ctx context.Context, token *oauth2.Token) context.Context {
 	return context.WithValue(ctx, SessionContextKey, token)
 }
 
 // UserIDFromContext returns the user ID from the ctx
 func UserIDFromContext(ctx context.Context) (userID any, err error) {
-
 	sessionDetails, ok := ctx.Value(SessionContextKey).(*Session[any])
 	if !ok {
 		return nil, err
@@ -47,15 +47,16 @@ func UserIDFromContext(ctx context.Context) (userID any, err error) {
 	return userID, nil
 }
 
-// ContextWithUserID returns a copy of ctx that stores the user ID.
+// ContextWithUserID returns a copy of ctx that stores the user ID
 func ContextWithUserID(ctx context.Context, userID string) context.Context {
 	if strings.TrimSpace(userID) == "" {
 		return ctx
 	}
+
 	return context.WithValue(ctx, SessionContextKey, userID)
 }
 
-// Token returns the session token from the context
+// SessionToken returns the session token from the context maybe, unclear if this works
 func SessionToken(ctx context.Context) map[string]any {
 	sd := getSessionDataFromContext(ctx)
 

@@ -42,12 +42,16 @@ func TestGetOk(t *testing.T) {
 		name    string
 		userID  string
 		session string
-		exists  bool
 	}{
 		{
 			name:    "happy path",
 			userID:  "01HMDBSNBGH4DTEP0SR8118Y96",
 			session: ulids.New().String(),
+		},
+		{
+			name:    "MeOWzErZ!",
+			userID:  ulids.New().String(),
+			session: "01HMDBSNBGH4DTEP0SR8118Y96",
 		},
 	}
 
@@ -58,17 +62,14 @@ func TestGetOk(t *testing.T) {
 
 			s := cs.New(tc.name)
 
-			if tc.exists {
-				s.Set("userID", tc.userID)
-				s.Set("session", tc.session)
-			}
+			s.Set("userID", tc.userID)
+			s.Set("session", tc.session)
 
-			session, ok := s.GetOk("userID")
-			assert.Equal(t, tc.exists, ok)
+			uID, _ := s.GetOk("userID")
+			sess, _ := s.GetOk("session")
 
-			if tc.exists {
-				assert.Equal(t, tc.userID, session)
-			}
+			assert.Equal(t, tc.userID, uID)
+			assert.Equal(t, tc.session, sess)
 		})
 	}
 }

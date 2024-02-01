@@ -98,7 +98,7 @@ type (
 		// Token contains the token config settings
 		Token tokens.Config `yaml:"token"`
 		// SM manages sessions for users
-		SM sessions.CookieStore
+		SM sessions.Store[map[string]string]
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together

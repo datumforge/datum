@@ -15,7 +15,7 @@ type SessionConfig struct {
 	Skipper middleware.Skipper
 	// SessionManager is responsible for managing the session cookies. It handles the creation, retrieval, and deletion of
 	// session cookies for each user session
-	SessionManager Store[string]
+	SessionManager Store[map[string]string]
 	// RedisStore is used to store and retrieve session data in a persistent manner such as to a redis backend
 	RedisStore PersistentStore
 	// RedisClient establishes a connection to a Redis server and perform operations such as storing and retrieving data
@@ -29,7 +29,7 @@ var DefaultSessionConfig = SessionConfig{
 }
 
 // NewSessionConfig creates a new session config
-func NewSessionConfig(sm Store[string], rc *redis.Client, logger *zap.SugaredLogger) *SessionConfig {
+func NewSessionConfig(sm Store[map[string]string], rc *redis.Client, logger *zap.SugaredLogger) *SessionConfig {
 	c := &DefaultSessionConfig
 	c.SessionManager = sm
 	c.RedisClient = rc
@@ -44,8 +44,10 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, name string, user
 	session := sc.SessionManager.New(name)
 	sessionID := GenerateSessionID()
 
-	session.Set("userID", userID)
-	session.Set("sessionID", sessionID)
+	setSessionMap := map[string]string{}
+	setSessionMap["userID"] = userID
+
+	session.Set(sessionID, setSessionMap)
 
 	// Add session to context
 	c := session.addSessionDataToContext(ctx.Request().Context())
@@ -65,7 +67,7 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, name string, user
 // LoadAndSave is a middleware function that loads and saves session data using a
 // provided session manager. It takes a `SessionManager` as input and returns a middleware function
 // that can be used with an Echo framework application
-func LoadAndSave(sessionManager Store[string], client *redis.Client, logger *zap.SugaredLogger) echo.MiddlewareFunc {
+func LoadAndSave(sessionManager Store[map[string]string], client *redis.Client, logger *zap.SugaredLogger) echo.MiddlewareFunc {
 	c := NewSessionConfig(sessionManager, client, logger)
 
 	return LoadAndSaveWithConfig(c)
@@ -85,25 +87,24 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			sessData := getSessionDataFromContext(c.Request().Context())
-
-			//			userID := sessData.values["userID"].(string)
-
-			userID, present := sessData.GetOk("userID")
-			if !present {
-				return ErrInvalidSession
-			}
-
 			// get session from request cookies
-			session, err := config.SessionManager.Get(c.Request(), sessData.name)
+			session, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)
 
 				return err
 			}
 
+			// get the user id from the session
+			userID, err := config.SessionManager.GetUserFromSession(c.Request(), DefaultCookieName)
+			if err != nil {
+				config.Logger.Errorw("unable to get user from session", "error", err)
+
+				return err
+			}
+
 			// lookup session in cache to ensure tokens match
-			token, err := config.RedisStore.GetSession(c.Request().Context(), userID.(string))
+			token, err := config.RedisStore.GetSession(c.Request().Context(), userID)
 			if err != nil {
 				config.Logger.Errorw("unable to get session from store", "error", err)
 
@@ -111,11 +112,20 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 			}
 
 			// check session token on request matches cache
-			storedSession := session.Get(token)
-			if token != storedSession {
-				config.Logger.Errorw("sessions do not match", "cookie", token, "store", storedSession)
+			storedSession, ok := session.GetOk("store")
+			if !ok {
+				return err
+			}
 
-				return ErrInvalidSession
+			for k := range storedSession {
+				if k == "session" {
+					mappedSession := storedSession[k]
+					if token != mappedSession {
+						config.Logger.Errorw("sessions do not match", "cookie", token, "store", storedSession)
+
+						return ErrInvalidSession
+					}
+				}
 			}
 
 			// Add session to context to be used in request paths
@@ -124,7 +134,7 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 
 			c.Response().Before(func() {
 				// refresh and save session cookie
-				if err := config.SaveAndStoreSession(c, sessData.name, userID.(string)); err != nil {
+				if err := config.SaveAndStoreSession(c, DefaultCookieName, userID); err != nil {
 					config.Logger.Errorw("unable to create and store new session", "error", err)
 
 					panic(err)

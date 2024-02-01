@@ -8,122 +8,82 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-// registerGithubLoginHandler
+// registerGithubLoginHandler registers the github login handler
 func registerGithubLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/github/login",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
-			return h.GithubLoginHandler(c)
-		},
+		Method:  http.MethodGet,
+		Path:    "/github/login",
+		Handler: githubLogin(h),
 	}.ForGroup(unversioned, mw))
 
 	return
 }
 
-// registerGithubCallbackHandler
+// registerGithubCallbackHandler registers the github callback handler
 func registerGithubCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/github/callback",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
-			return h.GithubCallbackHandler(c)
-		},
+		Method:  http.MethodGet,
+		Path:    "/github/callback",
+		Handler: githubCallback(h),
 	}.ForGroup(unversioned, mw))
 
 	return
 }
 
-// registerGithubLoginHandler
+// registerGoogleLoginHandler registers the google login handler
 func registerGoogleLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/google/login",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
-			return h.GoogleLoginHandler(c)
-		},
+		Method:  http.MethodGet,
+		Path:    "/google/login",
+		Handler: googleLogin(h),
 	}.ForGroup(unversioned, mw))
 
 	return
 }
 
-// registerGithubCallbackHandler
+// registerGoogleCallbackHandler registers the google callback handler
 func registerGoogleCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/google/callback",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
-			return h.GoogleCallbackHandler(c)
-		},
+		Method:  http.MethodGet,
+		Path:    "/google/callback",
+		Handler: googleCallback(h),
 	}.ForGroup(unversioned, mw))
 
 	return
 }
 
-// registerGithubCallbackHandler
-func registerDeviceAuthorizationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/device/authorization",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+// githubLogin wraps getloginhandlers
+func githubLogin(h *handlers.Handler) echo.HandlerFunc {
+	login, _ := h.GetGitHubLoginHandlers()
 
-			return h.DeviceAuthorizationHandler(c)
-		},
-	}.ForGroup(unversioned, mw))
+	meow := echo.WrapHandler(login)
 
-	return
+	return meow
 }
 
-// registerGithubCallbackHandler
-func registerOAuth2AuthorizeHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/oauth2/authorize",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+// googleLogin wraps getloginhandlers
+func googleLogin(h *handlers.Handler) echo.HandlerFunc {
+	login, _ := h.GetGoogleLoginHandlers()
 
-			return h.OAuth2AuthorizeHandler(c)
-		},
-	}.ForGroup(unversioned, mw))
+	meow := echo.WrapHandler(login)
 
-	return
+	return meow
 }
 
-// registerGithubCallbackHandler
-func registerOAuth2TokenHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/oauth2/token",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+// githubCallback wraps getloginhandlers
+func githubCallback(h *handlers.Handler) echo.HandlerFunc {
+	_, callback := h.GetGitHubLoginHandlers()
 
-			return h.OAuth2TokenHandler(c)
-		},
-	}.ForGroup(unversioned, mw))
+	meow := echo.WrapHandler(callback)
 
-	return
+	return meow
 }
 
-// registerGithubCallbackHandler
-func registerOAuth2RedirectHandler(router *echo.Echo, h *handlers.Handler) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
-		Path:   "/oauth2/redirect",
-		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+// googleCallback wraps getloginhandlers
+func googleCallback(h *handlers.Handler) echo.HandlerFunc {
+	_, callback := h.GetGoogleLoginHandlers()
 
-			return h.OAuth2RedirectHandler(c)
-		},
-	}.ForGroup(unversioned, mw))
+	meow := echo.WrapHandler(callback)
 
-	return
+	return meow
 }

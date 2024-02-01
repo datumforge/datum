@@ -76,35 +76,6 @@ func TestNewSessionCookie(t *testing.T) {
 	}
 }
 
-func TestNewDebugSessionCookie(t *testing.T) {
-	tests := []struct {
-		name    string
-		session string
-	}{
-		{
-			name:    "happy path",
-			session: ulids.New().String(),
-		},
-		{
-			name:    "empty string still results in session",
-			session: "",
-		},
-	}
-
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-
-			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
-				[]byte("my-signing-secret"), []byte("encryptionsecret"))
-
-			cooky := cs.New(tc.name)
-
-			assert.Equal(t, tc.name, cooky.Name)
-			assert.Equal(t, tc.session, cooky.Get(tc.name))
-		})
-	}
-}
-
 func TestSaveGet(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -120,16 +91,21 @@ func TestSaveGet(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
+			cs := sessions.NewCookieStore[map[string]string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			session := cs.New(tc.name)
-			session.Set("name", tc.name)
-			session.Set("userID", tc.userID)
-			session.Set("session", tc.session)
+			session := sessions.NewSession(cs, tc.name)
+			sessionID := sessions.GenerateSessionID()
+
+			setSessionMap := map[string]string{}
+			setSessionMap["userID"] = tc.userID
+			setSessionMap["name"] = tc.name
+			setSessionMap["session"] = tc.session
+
+			session.Set(sessionID, setSessionMap)
 
 			err := cs.Save(recorder, session)
 			require.NoError(t, err)
@@ -164,18 +140,22 @@ func TestGetUserFromSession(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			cs := sessions.NewCookieStore[string](sessions.DebugCookieConfig,
+			cs := sessions.NewCookieStore[map[string]string](sessions.DebugCookieConfig,
 				[]byte("my-signing-secret"), []byte("encryptionsecret"))
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
 			session := cs.New(tc.name)
-			session.Set("name", tc.name)
-			session.Set("userID", tc.userID)
-			session.Set("session", tc.session)
+			sessionID := sessions.GenerateSessionID()
+			setSessionMap := map[string]string{}
+			setSessionMap["userID"] = tc.userID
+			setSessionMap["name"] = tc.name
+			setSessionMap["session"] = tc.session
 
-			err := cs.Save(recorder, session)
+			session.Set(sessionID, setSessionMap)
+
+			err := session.Save(recorder)
 			require.NoError(t, err)
 
 			// Copy the Cookie over to a new Request

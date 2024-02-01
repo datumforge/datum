@@ -11,8 +11,6 @@ go run main.go -client-id=xx -client-secret=yy
 2015/09/25 23:09:13 Starting Server listening on localhost:8080
 ```
 
-go run main.go -client-id="692352861178-8gqs4oebvvsl5bmmb85kju5bl5739tdq.apps.googleusercontent.com" -client-secret="GOCSPX-8VCan8btrPHCi7qO
-
 ## User
 
 /*

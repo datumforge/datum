@@ -15,6 +15,8 @@ type Store[T any] interface {
 	Save(w http.ResponseWriter, session *Session[T]) error
 	// Destroy removes (expires) a named Session
 	Destroy(w http.ResponseWriter, name string)
+	// GetUserFromSession with the provided cookie name
+	GetUserFromSession(req *http.Request, name string) (string, error)
 }
 
 var _ Store[any] = &cookieStore[any]{}
@@ -94,4 +96,9 @@ func (s *cookieStore[T]) Save(w http.ResponseWriter, session *Session[T]) error 
 // session cookie with the same name.
 func (s *cookieStore[T]) Destroy(w http.ResponseWriter, name string) {
 	http.SetCookie(w, NewCookie(name, "", &CookieConfig{MaxAge: -1, Path: s.config.Path}))
+}
+
+// NewSessionCookie creates a cookie from a session id
+func NewSessionCookie(session string) *http.Cookie {
+	return NewCookie(DefaultCookieName, session, DefaultCookieConfig)
 }

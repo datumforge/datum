@@ -86,7 +86,7 @@ func GetSessionFromCookies(resp *http.Response) (sessionID string) {
 	cookies := resp.Cookies()
 
 	for _, c := range cookies {
-		if c.Name == sessions.DefaultSessionName {
+		if c.Name == sessions.DefaultCookieName {
 			return c.Value
 		}
 	}
@@ -104,7 +104,7 @@ func GetSessionFromCookieJar(c *Client) (sessionID string, err error) {
 	cookies := c.Client.Client.Jar.Cookies(u)
 
 	for _, c := range cookies {
-		if c.Name == sessions.DefaultSessionName {
+		if c.Name == sessions.DefaultCookieName {
 			return c.Value, nil
 		}
 	}

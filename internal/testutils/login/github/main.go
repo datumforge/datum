@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/datumforge/datum/internal/providers/github"
-	"github.com/datumforge/datum/internal/sessions"
 	"golang.org/x/oauth2"
 	githubOAuth2 "golang.org/x/oauth2/github"
+
+	"github.com/datumforge/datum/internal/providers/github"
+	"github.com/datumforge/datum/internal/sessions"
 )
 
 const (

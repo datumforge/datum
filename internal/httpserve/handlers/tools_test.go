@@ -22,7 +22,6 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
-	"github.com/datumforge/datum/internal/cookies"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -160,12 +159,13 @@ func newRedisClient() *redis.Client {
 	return client
 }
 
-func createSessionManager() sessions.CookieStore {
+func createSessionManager() sessions.Store[map[string]string] {
 	hashKey := randomString(32)  //nolint:gomnd
 	blockKey := randomString(32) //nolint:gomnd
 
-	sm := sessions.NewCookieStore(&cookies.DebugOnlyCookieConfig,
-		hashKey, blockKey)
+	sm := sessions.NewCookieStore[map[string]string](sessions.DebugCookieConfig,
+		hashKey, blockKey,
+	)
 
 	return sm
 }

@@ -15,7 +15,6 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/cache"
-	"github.com/datumforge/datum/internal/cookies"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/graphapi"
@@ -338,15 +337,15 @@ func WithSessionManager() ServerOption {
 			panic(err)
 		}
 
-		cc := cookies.DefaultCookieConfig
+		cc := sessions.DefaultCookieConfig
 
 		// In order for things to work in dev mode with localhost
 		// we need to se the debug cookie config
 		if s.Config.Server.Dev {
-			cc = cookies.DebugOnlyCookieConfig
+			cc = &sessions.DebugOnlyCookieConfig
 		}
 
-		sm := sessions.NewCookieStore(&cc,
+		sm := sessions.NewCookieStore[map[string]string](cc,
 			[]byte(config.SigningKey),
 			[]byte(config.EncryptionKey),
 		)

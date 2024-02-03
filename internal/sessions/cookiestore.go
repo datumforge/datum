@@ -7,8 +7,12 @@ import (
 )
 
 const (
-	UserIDKey      = "userID"
-	SessionNameKey = "name"
+	UserIDKey         = "userID"
+	ExternalUserIDKey = "externalUserID"
+	SessionNameKey    = "name"
+	UserTypeKey       = "userType"
+	UsernameKey       = "username"
+	EmailKey          = "email"
 )
 
 type Store[T any] interface {

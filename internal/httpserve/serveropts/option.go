@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/sessions"
@@ -203,16 +204,29 @@ func WithAuth() ServerOption {
 
 		s.Config.Auth = *authConfig
 
-		// TODO: currently not used, this needs to be updated
-		// to allow for an array to be provided in envconfig
-		authProviderConfig := &config.AuthProvider{}
+		authProviderConfig := &handlers.OauthProviderConfig{}
+		googleProvider := &handlers.GoogleConfig{}
+		githubProvider := &handlers.GithubConfig{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_auth_provider_github", githubProvider); err != nil {
+			panic(err)
+		}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_auth_provider_github", googleProvider); err != nil {
+			panic(err)
+		}
 
 		// load defaults and env vars
 		if err := envconfig.Process("datum_auth_provider", authProviderConfig); err != nil {
 			panic(err)
 		}
 
-		s.Config.Auth.Providers = []config.AuthProvider{*authProviderConfig}
+		authProviderConfig.GithubConfig = *githubProvider
+		authProviderConfig.GoogleConfig = *googleProvider
+
+		s.Config.Server.Handler.OauthProvider = *authProviderConfig
 	})
 }
 

@@ -105,8 +105,6 @@ type (
 	Auth struct {
 		// Enabled - checks this first before reading your provider config
 		Enabled bool `yaml:"enabled" split_words:"true" default:"true"`
-		// A list of auth providers. Currently enables only the first provider in the list.
-		Providers []AuthProvider `yaml:"providers"`
 	}
 
 	// CORS settings
@@ -132,29 +130,6 @@ type (
 		CertKey string `yaml:"certKey" split_words:"true" default:"server.key"`
 		// AutoCert generates the cert with letsencrypt, this does not work on localhost
 		AutoCert bool `yaml:"autoCert" split_words:"true" default:"false"`
-	}
-
-	// AuthProvider settings
-	// TODO: This is currently unused, when enabled these settings should be added to the config/.env.example
-	AuthProvider struct {
-		// Label for the provider (optional)
-		Label string `yaml:"label" split_words:"true" default:"default"`
-		// Type of the auth provider, currently only OIDC is supported
-		Type string `yaml:"type" split_words:"true" default:"oidc"`
-		// OIDC .well-known/openid-configuration URL, ex. https://accounts.google.com/
-		ProviderURL string `yaml:"providerUrl" split_words:"true" default:"https://accounts.google.com/"`
-		// IssuerURL is only needed when it differs from the ProviderURL (optional)
-		IssuerURL string `yaml:"issuerUrl" split_words:"true" default:""`
-		// ClientID of the oauth2 provider
-		ClientID string `yaml:"clientId" split_words:"true" default:""`
-		// ClientSecret is the private key that authenticates your integration when requesting an OAuth token (optional when using PKCE)
-		ClientSecret string `yaml:"clientSecret" split_words:"true" default:""`
-		// Scopes for authentication, typically [openid, profile, email]
-		Scopes []string `yaml:"scopes" split_words:"true" default:"openid,profile,email"`
-		// CallbackURL after a successful auth, e.g. https://localhost:8080/oauth/callback
-		CallbackURL string `yaml:"callbackUrl" split_words:"true" default:"https://auth.datum.net/oauth/callback"`
-		// Options added as URL query params when redirecting to auth provider. Can be used to configure custom auth flows such as Auth0 invitation flow.
-		Options map[string]interface{} `yaml:"options"`
 	}
 )
 

@@ -24,7 +24,7 @@ type OauthProviderConfig struct {
 type GithubConfig struct {
 	ClientID       string   `yaml:"clientId" split_words:"true"`
 	ClientSecret   string   `yaml:"clientSecret" split_words:"true"`
-	ClientEndpoint string   `yaml:"clientEndpoint" split_words:"true"`
+	ClientEndpoint string   `yaml:"clientEndpoint" split_words:"true" default:"http://localhost:17608"`
 	Scopes         []string `yaml:"scopes" split_words:"true" default:"user:email,read:user"`
 	RedirectURL    string   `yaml:"redirectURL" split_words:"true" default:"/github/callback"`
 	Orgs           []string `yaml:"orgs" split_words:"true"`
@@ -34,7 +34,7 @@ type GithubConfig struct {
 type GoogleConfig struct {
 	ClientID       string   `yaml:"clientId" split_words:"true"`
 	ClientSecret   string   `yaml:"clientSecret" split_words:"true"`
-	ClientEndpoint string   `yaml:"clientEndpoint" split_words:"true"`
+	ClientEndpoint string   `yaml:"clientEndpoint" split_words:"true" default:"http://localhost:17608"`
 	RedirectURL    string   `yaml:"redirectURL" split_words:"true" default:"/google/callback"`
 	Scopes         []string `yaml:"scopes" split_words:"true" default:"email"`
 }

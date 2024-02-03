@@ -15,6 +15,7 @@ Datum's core server operates with the following utilities:
 1. [atlas](https://atlasgo.io/) - Schema generation and migration
 1. [gqlgen](https://gqlgen.com/) - Code generation from schema definitions
 1. [openfga](https://openfga.dev/) - Authorization
+1. [echo](https://echo.labstack.com/) - High performance, extensible, minimalist Go web framework
 
 ### Dependencies
 

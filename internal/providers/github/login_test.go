@@ -23,8 +23,15 @@ const (
 
 func TestGithubHandler(t *testing.T) {
 	jsonData := `{"id": 917408, "name": "Sarah Funkytown"}`
-	expectedUser := &github.User{ID: github.Int64(917408), Name: github.String("Sarah Funkytown")}
-	proxyClient, server := newGithubTestServer("", jsonData)
+	emailJSONData := `[{"primary": true, "email": "sfunk@meow.net"}, {"primary": false, "email": "sfunk@woof.net"}]`
+
+	expectedUser := &github.User{
+		ID:    github.Int64(917408),
+		Name:  github.String("Sarah Funkytown"),
+		Email: github.String("sfunk@meow.net"),
+	}
+
+	proxyClient, server := newGithubTestServer("", jsonData, emailJSONData)
 
 	defer server.Close()
 
@@ -112,8 +119,14 @@ func TestErrorGettingUser(t *testing.T) {
 
 func TestGithubEnterprise(t *testing.T) {
 	jsonData := `{"id": 917408, "name": "Sarah Funkytown"}`
-	expectedUser := &github.User{ID: github.Int64(917408), Name: github.String("Sarah Funkytown")}
-	proxyClient, server := newGithubTestServer("/api/v3", jsonData)
+	emailJSONData := `[{"primary": true, "email": "sfunk@meow.net"}, {"primary": false, "email": "sfunk@woof.net"}]`
+	expectedUser := &github.User{
+		ID:    github.Int64(917408),
+		Name:  github.String("Sarah Funkytown"),
+		Email: github.String("sfunk@meow.net"),
+	}
+
+	proxyClient, server := newGithubTestServer("/api/v3", jsonData, emailJSONData)
 
 	defer server.Close()
 

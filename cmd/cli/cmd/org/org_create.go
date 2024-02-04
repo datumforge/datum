@@ -8,7 +8,10 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
+	"github.com/datumforge/datum/internal/analytics"
+	ph "github.com/datumforge/datum/internal/analytics/posthog"
 	"github.com/datumforge/datum/internal/datumclient"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
 var orgCreateCmd = &cobra.Command{
@@ -82,6 +85,23 @@ func createOrg(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	userID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	set := ph.PostHog{
+		Identifier: userID,
+	}
+
+	properties := map[string]string{
+		"name":       o.CreateOrganization.Organization.Name,
+		"created_by": userID,
+	}
+
+	set.NewOrganization(o.CreateOrganization.Organization.ID, properties)
+	analytics.Event("create-organization")
 
 	return datum.JSONPrint(s)
 }

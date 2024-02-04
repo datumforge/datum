@@ -6,4 +6,12 @@ tasks:
     aliases: [createorg]
     cmds:
       - go run main.go org create -n your_new_org -d "my new org again"
+  verifyuser:
+    dir: '{{.USER_WORKING_DIR}}'
+    desc: a task to register a user, parse out the token respoonse, and submit it to the verify endpoint
+    cmds:
+      - curl http://localhost:17608/v1/verify?token={{.VERIFY_TOKEN}}
+    vars:
+      VERIFY_TOKEN:
+        sh: ./datum-cli register --email="mitb@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token
 

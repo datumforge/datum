@@ -155,6 +155,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/datumforge/echox v0.0.0-20231205221251-eb30d6bad77a
+	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -177,6 +178,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
+	github.com/posthog/posthog-go v0.0.0-20240202122501-d793288ce2c9
 	github.com/ravilushqa/otelgqlgen v0.15.0
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect

@@ -84,6 +84,24 @@ func githubHandler(config *oauth2.Config, isEnterprise bool, success, failure ht
 			return
 		}
 
+		// Make a request to `user/emails` if the email was not returned (due to privacy)
+		if user.Email == nil {
+			emails, _, err := githubClient.Users.ListEmails(ctx, nil)
+			if err != nil {
+				ctx = WithError(ctx, err)
+				failure.ServeHTTP(w, req.WithContext(ctx))
+
+				return
+			}
+
+			// Get the primary email
+			for _, em := range emails {
+				if em.GetPrimary() {
+					user.Email = em.Email
+				}
+			}
+		}
+
 		ctx = WithUser(ctx, user)
 		success.ServeHTTP(w, req.WithContext(ctx))
 	}

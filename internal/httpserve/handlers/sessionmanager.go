@@ -152,6 +152,7 @@ func (h *Handler) issueGitHubSession() http.Handler {
 		setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", githubUser.ID)
 		setSessionMap[sessions.UsernameKey] = *githubUser.Login
 		setSessionMap[sessions.UserTypeKey] = githubProvider
+		setSessionMap[sessions.EmailKey] = *githubUser.Email
 		session.Set(sessionID, setSessionMap)
 
 		if err := session.Save(w); err != nil {

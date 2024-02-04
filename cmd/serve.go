@@ -12,6 +12,8 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
 
+	"github.com/datumforge/datum/internal/analytics"
+	"github.com/datumforge/datum/internal/analytics/posthog"
 	"github.com/datumforge/datum/internal/cache"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
@@ -99,11 +101,16 @@ func serve(ctx context.Context) error {
 		mw = append(mw, authMiddleware)
 	}
 
+	phclient := posthog.Init()
+	analytics := analytics.EventManager{}
+	analytics.EM = phclient
+
 	// add additional ent dependencies
 	entOpts = append(
 		entOpts,
 		ent.Emails(so.Config.Server.Handler.EmailManager),
 		ent.Marionette(so.Config.Server.Handler.TaskMan),
+		ent.Analytics(&analytics),
 	)
 
 	// Setup DB connection

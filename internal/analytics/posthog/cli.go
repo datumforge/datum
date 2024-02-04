@@ -21,14 +21,17 @@ func Capture(command *cobra.Command, userID string) {
 	}
 	defer ph.Close()
 
-	properties := ToPosthogProperties()
+	orgName := "mitb"
+	properties := ToPosthogProperties(orgName)
 	properties["command"] = commandName(command)
 	flags := []string{}
+
 	command.Flags().VisitAll(func(flag *pflag.Flag) {
 		if flag.Changed {
 			flags = append(flags, flag.Name)
 		}
 	})
+
 	properties["flags"] = strings.Join(flags, " ")
 
 	err = ph.Enqueue(posthog.Capture{
@@ -50,8 +53,8 @@ func commandName(command *cobra.Command) string {
 	}
 }
 
-func ToPosthogProperties() map[string]interface{} {
+func ToPosthogProperties(orgName string) map[string]interface{} {
 	return map[string]interface{}{
-		"organization": "",
+		"organization": orgName,
 	}
 }

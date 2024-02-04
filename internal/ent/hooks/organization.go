@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"entgo.io/ent"
+	ph "github.com/posthog/posthog-go"
 
+	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -59,6 +61,12 @@ func HookOrganization() ent.Hook {
 				if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
 					return v, err
 				}
+
+				props := ph.NewProperties().
+					Set("organization_name", orgCreated.Name)
+
+				analytics.NewOrganization(orgCreated.ID, orgCreated.CreatedBy, props)
+				analytics.OrganizationProperties(orgCreated.ID, props)
 			}
 
 			return v, err

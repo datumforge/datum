@@ -18,6 +18,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -149,6 +150,7 @@ type (
 		HTTPClient    *http.Client
 		Emails        *emails.EmailManager
 		Marionette    *marionette.TaskManager
+		Analytics     *analytics.EventManager
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -233,6 +235,13 @@ func Emails(v *emails.EmailManager) Option {
 func Marionette(v *marionette.TaskManager) Option {
 	return func(c *config) {
 		c.Marionette = v
+	}
+}
+
+// Analytics configures the Analytics.
+func Analytics(v *analytics.EventManager) Option {
+	return func(c *config) {
+		c.Analytics = v
 	}
 }
 

@@ -45,33 +45,29 @@ func Init() *PostHog {
 }
 
 // Event is used to send an event to PostHog
-func (p *PostHog) Event(eventName string, properties map[string]string) {
-	if PosthogAPIKey == "" {
-		return
-	}
-
-	c := posthog.Capture{
+func (p *PostHog) Event(eventName string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.Capture{
 		DistinctId: p.Identifier,
 		Event:      eventName,
 		Timestamp:  time.Now(),
-	}
+		Properties: properties,
+	})
+}
 
-	if len(properties) > 0 {
-		props := posthog.NewProperties()
-		for k, v := range properties {
-			props.Set(k, v)
-		}
-
-		c.Properties = props
-	}
-
-	_ = p.client.Enqueue(c)
+// UserEvent captures user properties
+func (p *PostHog) UserEvent(userID, eventName string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.Capture{
+		DistinctId: userID,
+		Event:      eventName,
+		Timestamp:  time.Now(),
+		Properties: properties,
+	})
 }
 
 // AssociateUser function is used to associate a user with an organization in PostHog
 func (p *PostHog) AssociateUser(userID string, organizationID string) {
 	_ = p.client.Enqueue(posthog.Capture{
-		DistinctId: p.Identifier,
+		DistinctId: userID,
 		Event:      "authentication",
 		Timestamp:  time.Now(),
 		Properties: map[string]interface{}{
@@ -84,45 +80,69 @@ func (p *PostHog) AssociateUser(userID string, organizationID string) {
 }
 
 // OrganizationEvent creates an event associated with the organization, where the eventName can be passed in generically and associated with the org ID if provided
-func (p *PostHog) OrganizationEvent(organizationID, eventName string) {
+func (p *PostHog) OrganizationEvent(organizationID, userID, eventName string, properties posthog.Properties) {
 	_ = p.client.Enqueue(posthog.Capture{
-		DistinctId: p.Identifier,
+		DistinctId: userID,
 		Event:      eventName,
 		Timestamp:  time.Now(),
+		Properties: properties,
 		Groups: posthog.NewGroups().
 			Set("organization", organizationID),
 	})
 }
 
 // NewOrganization uses the NewGroups reference to create a new organization in the organization groups category, and also sets attributes for the organization
-func (p *PostHog) NewOrganization(organizationID string, properties map[string]string) {
+func (p *PostHog) NewOrganization(organizationID, userID string, properties posthog.Properties) {
+	// this event is creating the organization and associating it with our internal organization ID
 	_ = p.client.Enqueue(posthog.Capture{
-		DistinctId: p.Identifier,
+		DistinctId: userID,
 		Event:      "organization_created",
 		Timestamp:  time.Now(),
 		Groups: posthog.NewGroups().
 			Set("organization", organizationID),
 	})
 
-	c := posthog.GroupIdentify{
-		Type:      "organization",
-		Key:       organizationID,
-		Timestamp: time.Now(),
-	}
-
-	if len(properties) > 0 {
-		props := posthog.NewProperties()
-		for k, v := range properties {
-			props.Set(k, v)
-		}
-
-		c.Properties = props
-	}
-
-	_ = p.client.Enqueue(c)
-
+	// this is attempting to set
+	_ = p.client.Enqueue(posthog.GroupIdentify{
+		Type:       "organization",
+		Key:        organizationID,
+		Timestamp:  time.Now(),
+		Properties: properties,
+	})
 }
 
+// OrganizationProperties sets org properties
+func (p *PostHog) OrganizationProperties(organizationID string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.GroupIdentify{
+		Type:       "organization",
+		Key:        organizationID,
+		Timestamp:  time.Now(),
+		Properties: properties,
+	})
+}
+
+// UserProperties is to expand the properties of the user in the user group
+func (p *PostHog) UserProperties(userID string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.GroupIdentify{
+		Type:       "user",
+		Key:        userID,
+		Timestamp:  time.Now(),
+		Properties: properties,
+	})
+}
+
+// NewUser maps the userID to the user group
+func (p *PostHog) NewUser(userID string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.Capture{
+		DistinctId: userID,
+		Event:      "user_created",
+		Timestamp:  time.Now(),
+		Groups: posthog.NewGroups().
+			Set("user", userID),
+	})
+}
+
+// Cleanup cleans up the cleanup
 func (p *PostHog) Cleanup() {
 	_ = p.client.Close()
 }

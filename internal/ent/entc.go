@@ -191,7 +191,7 @@ func main() {
 		),
 		entc.Dependency(
 			entc.DependencyName("Analytics"),
-			entc.DependencyType(&analytics.Handler{}),
+			entc.DependencyType(&analytics.EventManager{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

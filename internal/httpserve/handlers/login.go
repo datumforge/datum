@@ -60,10 +60,6 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 
 	analytics.AssociateUser(user.ID, claims.OrgID)
 
-	analytics.Event("login", map[string]string{
-		"kind": "cli-login",
-	})
-
 	return ctx.JSON(http.StatusOK, Response{Message: "success"})
 }
 

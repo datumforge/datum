@@ -4557,6 +4557,9 @@ input CreateUserInput {
   whether the user uses oauth for login or not
   """
   oauth: Boolean
+  """
+  auth provider used to register the account
+  """
   authProvider: UserAuthProvider
   personalAccessTokenIDs: [ID!]
   settingID: ID!
@@ -8388,6 +8391,9 @@ input UpdateUserInput {
   whether the user uses oauth for login or not
   """
   oauth: Boolean
+  """
+  auth provider used to register the account
+  """
   authProvider: UserAuthProvider
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
@@ -8487,6 +8493,9 @@ type User implements Node {
   whether the user uses oauth for login or not
   """
   oauth: Boolean!
+  """
+  auth provider used to register the account
+  """
   authProvider: UserAuthProvider!
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSetting!

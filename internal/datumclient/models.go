@@ -274,7 +274,8 @@ type CreateUserInput struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                     *bool               `json:"oauth,omitempty"`
+	Oauth *bool `json:"oauth,omitempty"`
+	// auth provider used to register the account
 	AuthProvider              *enums.AuthProvider `json:"authProvider,omitempty"`
 	PersonalAccessTokenIDs    []string            `json:"personalAccessTokenIDs,omitempty"`
 	SettingID                 string              `json:"settingID"`
@@ -3128,7 +3129,8 @@ type UpdateUserInput struct {
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                           *bool               `json:"oauth,omitempty"`
+	Oauth *bool `json:"oauth,omitempty"`
+	// auth provider used to register the account
 	AuthProvider                    *enums.AuthProvider `json:"authProvider,omitempty"`
 	AddPersonalAccessTokenIDs       []string            `json:"addPersonalAccessTokenIDs,omitempty"`
 	RemovePersonalAccessTokenIDs    []string            `json:"removePersonalAccessTokenIDs,omitempty"`
@@ -3201,7 +3203,8 @@ type User struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                bool                   `json:"oauth"`
+	Oauth bool `json:"oauth"`
+	// auth provider used to register the account
 	AuthProvider         enums.AuthProvider     `json:"authProvider"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
 	Setting              UserSetting            `json:"setting"`

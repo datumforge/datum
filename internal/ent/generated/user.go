@@ -53,7 +53,7 @@ type User struct {
 	Sub string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth bool `json:"oauth,omitempty"`
-	// AuthProvider holds the value of the "auth_provider" field.
+	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"auth_provider,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.

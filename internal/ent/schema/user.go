@@ -121,6 +121,7 @@ func (User) Fields() []ent.Field {
 			Default(false),
 		field.Enum("auth_provider").
 			GoType(enums.AuthProvider("")).
+			Comment("auth provider used to register the account").
 			Default(string(enums.Credentials)),
 	}
 }

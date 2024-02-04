@@ -22,6 +22,7 @@ import (
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
+	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
@@ -187,6 +188,10 @@ func main() {
 		entc.Dependency(
 			entc.DependencyName("Marionette"),
 			entc.DependencyType(&marionette.TaskManager{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("Analytics"),
+			entc.DependencyType(&analytics.Handler{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

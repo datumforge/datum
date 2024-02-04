@@ -19,7 +19,8 @@ func GetPackageToPosthogProperties(header *http.Header) posthog.Properties {
 		Set("publisher", header.Get("publisher")).
 		Set("release", header.Get("release")).
 		Set("sdk_runtime", header.Get("sdk_runtime")).
-		Set("system", header.Get("system"))
+		Set("system", header.Get("system")).
+		Set("login_method", header.Get("user_agent"))
 
 	return properties
 }

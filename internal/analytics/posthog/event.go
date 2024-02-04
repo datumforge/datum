@@ -4,8 +4,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/datumforge/datum/internal/analytics/machine"
 	"github.com/posthog/posthog-go"
+
+	"github.com/datumforge/datum/internal/analytics/machine"
 )
 
 var (

@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/datumclient"
+	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/entx"
@@ -191,6 +192,8 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 	weakPassword := "notsecure"
 	strongPassword := "my&supers3cr3tpassw0rd!"
 
+	email := gofakeit.Email()
+
 	testCases := []struct {
 		name      string
 		userInput datumclient.CreateUserInput
@@ -199,11 +202,36 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 		{
 			name: "happy path user",
 			userInput: datumclient.CreateUserInput{
-				FirstName:   gofakeit.FirstName(),
-				LastName:    gofakeit.LastName(),
-				DisplayName: gofakeit.LetterN(50),
-				Email:       gofakeit.Email(),
-				Password:    &strongPassword,
+				FirstName:    gofakeit.FirstName(),
+				LastName:     gofakeit.LastName(),
+				DisplayName:  gofakeit.LetterN(50),
+				Email:        email,
+				AuthProvider: &enums.Credentials,
+				Password:     &strongPassword,
+			},
+			errorMsg: "",
+		},
+		{
+			name: "same email, same auth provider",
+			userInput: datumclient.CreateUserInput{
+				FirstName:    gofakeit.FirstName(),
+				LastName:     gofakeit.LastName(),
+				DisplayName:  gofakeit.LetterN(50),
+				Email:        email,
+				AuthProvider: &enums.Credentials,
+				Password:     &strongPassword,
+			},
+			errorMsg: "UNIQUE constraint failed: users.email",
+		},
+		{
+			name: "same email, different auth provider",
+			userInput: datumclient.CreateUserInput{
+				FirstName:    gofakeit.FirstName(),
+				LastName:     gofakeit.LastName(),
+				DisplayName:  gofakeit.LetterN(50),
+				Email:        email,
+				AuthProvider: &enums.GitHub,
+				Password:     &strongPassword,
 			},
 			errorMsg: "",
 		},

@@ -16570,6 +16570,7 @@ type UserMutation struct {
 	password                         *string
 	sub                              *string
 	oauth                            *bool
+	auth_provider                    *enums.AuthProvider
 	clearedFields                    map[string]struct{}
 	personal_access_tokens           map[string]struct{}
 	removedpersonal_access_tokens    map[string]struct{}
@@ -17445,6 +17446,42 @@ func (m *UserMutation) ResetOauth() {
 	m.oauth = nil
 }
 
+// SetAuthProvider sets the "auth_provider" field.
+func (m *UserMutation) SetAuthProvider(ep enums.AuthProvider) {
+	m.auth_provider = &ep
+}
+
+// AuthProvider returns the value of the "auth_provider" field in the mutation.
+func (m *UserMutation) AuthProvider() (r enums.AuthProvider, exists bool) {
+	v := m.auth_provider
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthProvider returns the old "auth_provider" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAuthProvider(ctx context.Context) (v enums.AuthProvider, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthProvider is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthProvider requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthProvider: %w", err)
+	}
+	return oldValue.AuthProvider, nil
+}
+
+// ResetAuthProvider resets all changes to the "auth_provider" field.
+func (m *UserMutation) ResetAuthProvider() {
+	m.auth_provider = nil
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by ids.
 func (m *UserMutation) AddPersonalAccessTokenIDs(ids ...string) {
 	if m.personal_access_tokens == nil {
@@ -17896,7 +17933,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -17948,6 +17985,9 @@ func (m *UserMutation) Fields() []string {
 	if m.oauth != nil {
 		fields = append(fields, user.FieldOauth)
 	}
+	if m.auth_provider != nil {
+		fields = append(fields, user.FieldAuthProvider)
+	}
 	return fields
 }
 
@@ -17990,6 +18030,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Sub()
 	case user.FieldOauth:
 		return m.Oauth()
+	case user.FieldAuthProvider:
+		return m.AuthProvider()
 	}
 	return nil, false
 }
@@ -18033,6 +18075,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldSub(ctx)
 	case user.FieldOauth:
 		return m.OldOauth(ctx)
+	case user.FieldAuthProvider:
+		return m.OldAuthProvider(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -18160,6 +18204,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOauth(v)
+		return nil
+	case user.FieldAuthProvider:
+		v, ok := value.(enums.AuthProvider)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthProvider(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -18323,6 +18374,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldOauth:
 		m.ResetOauth()
+		return nil
+	case user.FieldAuthProvider:
+		m.ResetAuthProvider()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

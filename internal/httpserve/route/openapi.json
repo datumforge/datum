@@ -6840,6 +6840,15 @@
                   "oauth": {
                     "type": "boolean"
                   },
+                  "auth_provider": {
+                    "type": "string",
+                    "enum": [
+                      "CREDENTIALS",
+                      "GOOGLE",
+                      "GITHUB"
+                    ],
+                    "default": "CREDENTIALS"
+                  },
                   "personal_access_tokens": {
                     "type": "array",
                     "items": {
@@ -6894,6 +6903,7 @@
                   "last_name",
                   "display_name",
                   "oauth",
+                  "auth_provider",
                   "setting"
                 ]
               }
@@ -7077,6 +7087,15 @@
                   },
                   "oauth": {
                     "type": "boolean"
+                  },
+                  "auth_provider": {
+                    "type": "string",
+                    "enum": [
+                      "CREDENTIALS",
+                      "GOOGLE",
+                      "GITHUB"
+                    ],
+                    "default": "CREDENTIALS"
                   },
                   "personal_access_tokens": {
                     "type": "array",
@@ -7983,6 +8002,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -7993,7 +8021,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "Entitlement": {
@@ -8943,6 +8972,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -8953,7 +8991,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "GroupRead": {
@@ -9699,6 +9738,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -9709,7 +9757,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "Integration": {
@@ -11574,6 +11623,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -11584,7 +11642,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "Organization": {
@@ -12907,6 +12966,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -12917,7 +12985,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "PasswordResetToken": {
@@ -13252,6 +13321,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -13262,7 +13340,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "PersonalAccessToken": {
@@ -13626,6 +13705,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -13636,7 +13724,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "User": {
@@ -13701,6 +13790,15 @@
           "oauth": {
             "type": "boolean"
           },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
+          },
           "personal_access_tokens": {
             "type": "array",
             "items": {
@@ -13756,6 +13854,7 @@
           "last_name",
           "display_name",
           "oauth",
+          "auth_provider",
           "setting"
         ]
       },
@@ -13817,6 +13916,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -13827,7 +13935,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "UserList": {
@@ -13888,6 +13997,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -13898,7 +14016,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "UserRead": {
@@ -13959,6 +14078,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -13969,7 +14097,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "UserSetting": {
@@ -14391,6 +14520,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -14401,7 +14539,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "UserUpdate": {
@@ -14462,6 +14601,15 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
           }
         },
         "required": [
@@ -14472,7 +14620,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "auth_provider"
         ]
       },
       "User_EmailVerificationTokensList": {

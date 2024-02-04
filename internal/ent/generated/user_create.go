@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -234,6 +235,20 @@ func (uc *UserCreate) SetNillableOauth(b *bool) *UserCreate {
 	return uc
 }
 
+// SetAuthProvider sets the "auth_provider" field.
+func (uc *UserCreate) SetAuthProvider(ep enums.AuthProvider) *UserCreate {
+	uc.mutation.SetAuthProvider(ep)
+	return uc
+}
+
+// SetNillableAuthProvider sets the "auth_provider" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAuthProvider(ep *enums.AuthProvider) *UserCreate {
+	if ep != nil {
+		uc.SetAuthProvider(*ep)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -419,6 +434,10 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultOauth
 		uc.mutation.SetOauth(v)
 	}
+	if _, ok := uc.mutation.AuthProvider(); !ok {
+		v := user.DefaultAuthProvider
+		uc.mutation.SetAuthProvider(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		if user.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized user.DefaultID (forgotten import generated/runtime?)")
@@ -481,6 +500,14 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Oauth(); !ok {
 		return &ValidationError{Name: "oauth", err: errors.New(`generated: missing required field "User.oauth"`)}
+	}
+	if _, ok := uc.mutation.AuthProvider(); !ok {
+		return &ValidationError{Name: "auth_provider", err: errors.New(`generated: missing required field "User.auth_provider"`)}
+	}
+	if v, ok := uc.mutation.AuthProvider(); ok {
+		if err := user.AuthProviderValidator(v); err != nil {
+			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "User.auth_provider": %w`, err)}
+		}
 	}
 	if _, ok := uc.mutation.SettingID(); !ok {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "User.setting"`)}
@@ -588,6 +615,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
 		_node.Oauth = value
+	}
+	if value, ok := uc.mutation.AuthProvider(); ok {
+		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
+		_node.AuthProvider = value
 	}
 	if nodes := uc.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

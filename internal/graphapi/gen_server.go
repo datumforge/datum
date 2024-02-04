@@ -630,6 +630,7 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
+		AuthProvider         func(childComplexity int) int
 		AvatarLocalFile      func(childComplexity int) int
 		AvatarRemoteURL      func(childComplexity int) int
 		AvatarUpdatedAt      func(childComplexity int) int
@@ -3644,6 +3645,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Users(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.UserOrder), args["where"].(*generated.UserWhereInput)), true
 
+	case "User.authProvider":
+		if e.complexity.User.AuthProvider == nil {
+			break
+		}
+
+		return e.complexity.User.AuthProvider(childComplexity), true
+
 	case "User.avatarLocalFile":
 		if e.complexity.User.AvatarLocalFile == nil {
 			break
@@ -4549,6 +4557,10 @@ input CreateUserInput {
   whether the user uses oauth for login or not
   """
   oauth: Boolean
+  """
+  auth provider used to register the account
+  """
+  authProvider: UserAuthProvider
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   emailVerificationTokenIDs: [ID!]
@@ -8379,6 +8391,10 @@ input UpdateUserInput {
   whether the user uses oauth for login or not
   """
   oauth: Boolean
+  """
+  auth provider used to register the account
+  """
+  authProvider: UserAuthProvider
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
@@ -8477,12 +8493,24 @@ type User implements Node {
   whether the user uses oauth for login or not
   """
   oauth: Boolean!
+  """
+  auth provider used to register the account
+  """
+  authProvider: UserAuthProvider!
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSetting!
   groups: [Group!]
   organizations: [Organization!]
   groupMemberships: [GroupMembership!]
   orgMemberships: [OrgMembership!]
+}
+"""
+UserAuthProvider is enum for the field auth_provider
+"""
+enum UserAuthProvider @goModel(model: "github.com/datumforge/datum/internal/ent/enums.AuthProvider") {
+  CREDENTIALS
+  GOOGLE
+  GITHUB
 }
 """
 A connection to a list of items.
@@ -9042,6 +9070,13 @@ input UserWhereInput {
   """
   oauth: Boolean
   oauthNEQ: Boolean
+  """
+  auth_provider field predicates
+  """
+  authProvider: UserAuthProvider
+  authProviderNEQ: UserAuthProvider
+  authProviderIn: [UserAuthProvider!]
+  authProviderNotIn: [UserAuthProvider!]
   """
   personal_access_tokens edge predicates
   """
@@ -13844,6 +13879,8 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -14895,6 +14932,8 @@ func (ec *executionContext) fieldContext_GroupMembership_user(ctx context.Contex
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -23883,6 +23922,8 @@ func (ec *executionContext) fieldContext_OrgMembership_user(ctx context.Context,
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -25398,6 +25439,8 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -28066,6 +28109,8 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_owner(ctx context.C
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -30627,6 +30672,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -31594,6 +31641,50 @@ func (ec *executionContext) fieldContext_User_oauth(ctx context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _User_authProvider(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_authProvider(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthProvider, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(enums.AuthProvider)
+	fc.Result = res
+	return ec.marshalNUserAuthProvider2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_authProvider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UserAuthProvider does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_personalAccessTokens(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_personalAccessTokens(ctx, field)
 	if err != nil {
@@ -32251,6 +32342,8 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -32384,6 +32477,8 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -33112,6 +33207,8 @@ func (ec *executionContext) fieldContext_UserSetting_user(ctx context.Context, f
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -33662,6 +33759,8 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
@@ -36666,7 +36765,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "authProvider", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36778,6 +36877,13 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Oauth = data
+		case "authProvider":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authProvider"))
+			data, err := ec.unmarshalOUserAuthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthProvider = data
 		case "personalAccessTokenIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalAccessTokenIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -49688,7 +49794,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "authProvider", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -49835,6 +49941,13 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Oauth = data
+		case "authProvider":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authProvider"))
+			data, err := ec.unmarshalOUserAuthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthProvider = data
 		case "addPersonalAccessTokenIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addPersonalAccessTokenIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -51067,7 +51180,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "authProvider", "authProviderNEQ", "authProviderIn", "authProviderNotIn", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -52495,6 +52608,34 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.OauthNEQ = data
+		case "authProvider":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authProvider"))
+			data, err := ec.unmarshalOUserAuthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthProvider = data
+		case "authProviderNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authProviderNEQ"))
+			data, err := ec.unmarshalOUserAuthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthProviderNEQ = data
+		case "authProviderIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authProviderIn"))
+			data, err := ec.unmarshalOUserAuthProvider2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProviderᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthProviderIn = data
+		case "authProviderNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authProviderNotIn"))
+			data, err := ec.unmarshalOUserAuthProvider2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProviderᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthProviderNotIn = data
 		case "hasPersonalAccessTokens":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPersonalAccessTokens"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -58117,6 +58258,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "authProvider":
+			out.Values[i] = ec._User_authProvider(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "personalAccessTokens":
 			field := field
 
@@ -60593,6 +60739,16 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋ
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUserAuthProvider2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx context.Context, v interface{}) (enums.AuthProvider, error) {
+	var res enums.AuthProvider
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUserAuthProvider2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx context.Context, sel ast.SelectionSet, v enums.AuthProvider) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNUserConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserConnection(ctx context.Context, sel ast.SelectionSet, v generated.UserConnection) graphql.Marshaler {
@@ -63443,6 +63599,89 @@ func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋ
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUserAuthProvider2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProviderᚄ(ctx context.Context, v interface{}) ([]enums.AuthProvider, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]enums.AuthProvider, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUserAuthProvider2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOUserAuthProvider2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProviderᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.AuthProvider) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserAuthProvider2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOUserAuthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx context.Context, v interface{}) (*enums.AuthProvider, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(enums.AuthProvider)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUserAuthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProvider(ctx context.Context, sel ast.SelectionSet, v *enums.AuthProvider) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOUserEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.UserEdge) graphql.Marshaler {

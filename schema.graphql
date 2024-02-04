@@ -376,6 +376,10 @@ input CreateUserInput {
 	whether the user uses oauth for login or not
 	"""
 	oauth: Boolean
+	"""
+	auth provider used to register the account
+	"""
+	authProvider: UserAuthProvider
 	personalAccessTokenIDs: [ID!]
 	settingID: ID!
 	emailVerificationTokenIDs: [ID!]
@@ -5114,6 +5118,10 @@ input UpdateUserInput {
 	whether the user uses oauth for login or not
 	"""
 	oauth: Boolean
+	"""
+	auth provider used to register the account
+	"""
+	authProvider: UserAuthProvider
 	addPersonalAccessTokenIDs: [ID!]
 	removePersonalAccessTokenIDs: [ID!]
 	clearPersonalAccessTokens: Boolean
@@ -5212,12 +5220,24 @@ type User implements Node {
 	whether the user uses oauth for login or not
 	"""
 	oauth: Boolean!
+	"""
+	auth provider used to register the account
+	"""
+	authProvider: UserAuthProvider!
 	personalAccessTokens: [PersonalAccessToken!]
 	setting: UserSetting!
 	groups: [Group!]
 	organizations: [Organization!]
 	groupMemberships: [GroupMembership!]
 	orgMemberships: [OrgMembership!]
+}
+"""
+UserAuthProvider is enum for the field auth_provider
+"""
+enum UserAuthProvider @goModel(model: "github.com/datumforge/datum/internal/ent/enums.AuthProvider") {
+	CREDENTIALS
+	GOOGLE
+	GITHUB
 }
 """
 A connection to a list of items.
@@ -5831,6 +5851,13 @@ input UserWhereInput {
 	"""
 	oauth: Boolean
 	oauthNEQ: Boolean
+	"""
+	auth_provider field predicates
+	"""
+	authProvider: UserAuthProvider
+	authProviderNEQ: UserAuthProvider
+	authProviderIn: [UserAuthProvider!]
+	authProviderNotIn: [UserAuthProvider!]
 	"""
 	personal_access_tokens edge predicates
 	"""

@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -52,6 +53,8 @@ type User struct {
 	Sub string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth bool `json:"oauth,omitempty"`
+	// auth provider used to register the account
+	AuthProvider enums.AuthProvider `json:"auth_provider,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -174,7 +177,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldOauth:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub, user.FieldAuthProvider:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -305,6 +308,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field oauth", values[i])
 			} else if value.Valid {
 				u.Oauth = value.Bool
+			}
+		case user.FieldAuthProvider:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field auth_provider", values[i])
+			} else if value.Valid {
+				u.AuthProvider = enums.AuthProvider(value.String)
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -439,6 +448,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("oauth=")
 	builder.WriteString(fmt.Sprintf("%v", u.Oauth))
+	builder.WriteString(", ")
+	builder.WriteString("auth_provider=")
+	builder.WriteString(fmt.Sprintf("%v", u.AuthProvider))
 	builder.WriteByte(')')
 	return builder.String()
 }

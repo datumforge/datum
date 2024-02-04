@@ -408,6 +408,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldPassword:        {Type: field.TypeString, Column: user.FieldPassword},
 			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
+			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
 		},
 	}
 	graph.Nodes[15] = &sqlgraph.Node{
@@ -2779,6 +2780,11 @@ func (f *UserFilter) WhereSub(p entql.StringP) {
 // WhereOauth applies the entql bool predicate on the oauth field.
 func (f *UserFilter) WhereOauth(p entql.BoolP) {
 	f.Where(p.Field(user.FieldOauth))
+}
+
+// WhereAuthProvider applies the entql string predicate on the auth_provider field.
+func (f *UserFilter) WhereAuthProvider(p entql.StringP) {
+	f.Where(p.Field(user.FieldAuthProvider))
 }
 
 // WhereHasPersonalAccessTokens applies a predicate to check if query has an edge personal_access_tokens.

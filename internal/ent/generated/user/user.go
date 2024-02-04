@@ -3,11 +3,14 @@
 package user
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 const (
@@ -49,6 +52,8 @@ const (
 	FieldSub = "sub"
 	// FieldOauth holds the string denoting the oauth field in the database.
 	FieldOauth = "oauth"
+	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
+	FieldAuthProvider = "auth_provider"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
@@ -141,6 +146,7 @@ var Columns = []string{
 	FieldPassword,
 	FieldSub,
 	FieldOauth,
+	FieldAuthProvider,
 }
 
 var (
@@ -198,6 +204,18 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
+
+const DefaultAuthProvider enums.AuthProvider = "CREDENTIALS"
+
+// AuthProviderValidator is a validator for the "auth_provider" field enum values. It is called by the builders before save.
+func AuthProviderValidator(ap enums.AuthProvider) error {
+	switch ap.String() {
+	case "CREDENTIALS", "GOOGLE", "GITHUB":
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for auth_provider field: %q", ap)
+	}
+}
 
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
@@ -290,6 +308,11 @@ func BySub(opts ...sql.OrderTermOption) OrderOption {
 // ByOauth orders the results by the oauth field.
 func ByOauth(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOauth, opts...).ToFunc()
+}
+
+// ByAuthProvider orders the results by the auth_provider field.
+func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
 }
 
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
@@ -452,3 +475,10 @@ func newOrgMembershipsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, true, OrgMembershipsTable, OrgMembershipsColumn),
 	)
 }
+
+var (
+	// enums.AuthProvider must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.AuthProvider)(nil)
+	// enums.AuthProvider must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.AuthProvider)(nil)
+)

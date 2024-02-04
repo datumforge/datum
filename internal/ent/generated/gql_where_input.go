@@ -8369,6 +8369,12 @@ type UserWhereInput struct {
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNEQ *bool `json:"oauthNEQ,omitempty"`
 
+	// "auth_provider" field predicates.
+	AuthProvider      *enums.AuthProvider  `json:"authProvider,omitempty"`
+	AuthProviderNEQ   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`
+	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
+	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
+
 	// "personal_access_tokens" edge predicates.
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
@@ -9109,6 +9115,18 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.OauthNEQ != nil {
 		predicates = append(predicates, user.OauthNEQ(*i.OauthNEQ))
+	}
+	if i.AuthProvider != nil {
+		predicates = append(predicates, user.AuthProviderEQ(*i.AuthProvider))
+	}
+	if i.AuthProviderNEQ != nil {
+		predicates = append(predicates, user.AuthProviderNEQ(*i.AuthProviderNEQ))
+	}
+	if len(i.AuthProviderIn) > 0 {
+		predicates = append(predicates, user.AuthProviderIn(i.AuthProviderIn...))
+	}
+	if len(i.AuthProviderNotIn) > 0 {
+		predicates = append(predicates, user.AuthProviderNotIn(i.AuthProviderNotIn...))
 	}
 
 	if i.HasPersonalAccessTokens != nil {

@@ -242,7 +242,7 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 	}
 
 	// mock writes
-	mock_fga.ListOnce(t, om.client.fga, []string{fmt.Sprintf("organization:%s", om.OrgID)}, nil)
+	mock_fga.ListAny(t, om.client.fga, []string{fmt.Sprintf("organization:%s", om.OrgID)})
 	mock_fga.WriteOnce(t, om.client.fga)
 
 	orgMembers := om.client.db.OrgMembership.Create().

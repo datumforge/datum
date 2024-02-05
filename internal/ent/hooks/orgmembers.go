@@ -37,6 +37,8 @@ func HookOrgMembers() ent.Hook {
 				}
 			}
 
+			retValue, err := next.Mutate(ctx, mutation)
+
 			if userID, ok := mutation.UserID(); ok {
 				role, _ := mutation.Role()
 				org, err := mutation.Client().Organization.Get(ctx, orgID)
@@ -62,7 +64,7 @@ func HookOrgMembers() ent.Hook {
 				analytics.UserEvent(userID, "organization_membership", props)
 			}
 
-			return next.Mutate(ctx, mutation)
+			return retValue, err
 		})
 	}, ent.OpCreate)
 }

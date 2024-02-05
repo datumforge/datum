@@ -41,6 +41,10 @@ func NewSessionConfig(sm Store[map[string]string], opts ...Option) (c SessionCon
 		opt(&c)
 	}
 
+	if c.RedisClient != nil {
+		c.RedisStore = NewStore(c.RedisClient)
+	}
+
 	return c
 }
 

@@ -214,7 +214,7 @@ func WithAuth() ServerOption {
 		}
 
 		// load defaults and env vars
-		if err := envconfig.Process("datum_auth_provider_github", googleProvider); err != nil {
+		if err := envconfig.Process("datum_auth_provider_google", googleProvider); err != nil {
 			panic(err)
 		}
 

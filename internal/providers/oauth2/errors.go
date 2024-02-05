@@ -7,20 +7,23 @@ import (
 )
 
 var (
-	// ErrContextMissingToken
-	ErrContextMissingToken = errors.New("oauth2: Context missing Token")
+	// ErrContextMissingToken is returned when the context is missing the token value
+	ErrContextMissingToken = errors.New("oauth2: context missing token")
 
-	// ErrContextMissingStateValue
-	ErrContextMissingStateValue = errors.New("oauth2: Context missing state value")
+	// ErrContextMissingStateValue is returned when the context is missing the state value
+	ErrContextMissingStateValue = errors.New("oauth2: context missing state value")
 
-	// ErrInvalidState
-	ErrInvalidState = errors.New("oauth2: Invalid OAuth2 state parameter")
+	// ErrInvalidState is returned when the state parameter is invalid
+	ErrInvalidState = errors.New("oauth2: invalid oauth2 state parameter")
 
-	// ErrFailedToGeneerateToken
-	ErrFailedToGeneerateToken = errors.New("failed to generate token")
+	// ErrFailedToGenerateToken is returned when a token cannot be generated
+	ErrFailedToGenerateToken = errors.New("failed to generate token")
 
-	// ErrMissingCodeOrState
-	ErrMissingCodeOrState = errors.New("oauth2: Request missing code or state")
+	// ErrMissingCodeOrState is returned when the request is missing the code or state query string parameter
+	ErrMissingCodeOrState = errors.New("oauth2: request missing code or state")
+
+	// ErrContextMissingErrorValue is returned when the context does not have an error value
+	ErrContextMissingErrorValue = fmt.Errorf("context missing error value")
 )
 
 // DefaultFailureHandler responds with a 400 status code and message parsed from the context
@@ -37,11 +40,3 @@ func failureHandler(w http.ResponseWriter, req *http.Request) {
 	// ErrorFromContext always returns some non-nil error
 	http.Error(w, "", http.StatusBadRequest)
 }
-
-var (
-	// ErrContextMissingErrorValue is returned when the context does not have an error value
-	ErrContextMissingErrorValue = fmt.Errorf("context missing error value")
-
-	// ErrTheMagicalNonError is an error which exists, for reasons of existing
-	ErrTheMagicalNonError = fmt.Errorf("some error")
-)

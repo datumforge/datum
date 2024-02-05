@@ -1,6 +1,7 @@
 package github
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -86,19 +87,12 @@ func githubHandler(config *oauth2.Config, isEnterprise bool, success, failure ht
 
 		// Make a request to `user/emails` if the email was not returned (due to privacy)
 		if user.Email == nil {
-			emails, _, err := githubClient.Users.ListEmails(ctx, nil)
+			user.Email, err = getUserEmails(ctx, githubClient)
 			if err != nil {
 				ctx = WithError(ctx, err)
 				failure.ServeHTTP(w, req.WithContext(ctx))
 
 				return
-			}
-
-			// Get the primary email
-			for _, em := range emails {
-				if em.GetPrimary() {
-					user.Email = em.Email
-				}
 			}
 		}
 
@@ -136,4 +130,21 @@ func enterpriseGithubClientFromAuthURL(authURL string, httpClient *http.Client) 
 	client.UploadURL = baseURL
 
 	return client, nil
+}
+
+// getUserEmails from `user/emails` and return the user's primary email address
+func getUserEmails(ctx context.Context, githubClient *github.Client) (*string, error) {
+	emails, _, err := githubClient.Users.ListEmails(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the primary email
+	for _, em := range emails {
+		if em.GetPrimary() {
+			return em.Email, nil
+		}
+	}
+
+	return nil, ErrPrimaryEmailNotFound
 }

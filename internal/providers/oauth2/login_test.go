@@ -52,7 +52,7 @@ func TestLoginState(t *testing.T) {
 		err := ErrorFromContext(ctx)
 
 		if assert.NotNil(t, err) {
-			assert.Equal(t, "oauth2: Context missing state value", err.Error())
+			assert.Equal(t, "oauth2: context missing state value", err.Error())
 		}
 
 		fmt.Fprint(w, FailureHandlerCalled)
@@ -115,7 +115,7 @@ func TestParseCallback(t *testing.T) {
 		err := ErrorFromContext(ctx)
 
 		if assert.NotNil(t, err) {
-			assert.Equal(t, "oauth2: Request missing code or state", err.Error())
+			assert.Equal(t, "oauth2: request missing code or state", err.Error())
 		}
 
 		fmt.Fprint(w, FailureHandlerCalled)
@@ -141,7 +141,7 @@ func TestStateHandler(t *testing.T) {
 		err := ErrorFromContext(ctx)
 
 		if assert.NotNil(t, err) {
-			assert.Equal(t, "oauth2: Context missing state value", err.Error())
+			assert.Equal(t, "oauth2: context missing state value", err.Error())
 		}
 
 		fmt.Fprint(w, FailureHandlerCalled)
@@ -162,7 +162,7 @@ func TestStateFromContext(t *testing.T) {
 		err := ErrorFromContext(ctx)
 
 		if assert.NotNil(t, err) {
-			assert.Equal(t, "oauth2: Invalid OAuth2 state parameter", err.Error())
+			assert.Equal(t, "oauth2: invalid oauth2 state parameter", err.Error())
 		}
 
 		fmt.Fprint(w, FailureHandlerCalled)

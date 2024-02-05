@@ -14,7 +14,7 @@ func registerGithubLoginHandler(router *echo.Echo, h *handlers.Handler) (err err
 		Method:  http.MethodGet,
 		Path:    "/github/login",
 		Handler: githubLogin(h),
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(V1Version, mw))
 
 	return
 }
@@ -25,7 +25,7 @@ func registerGithubCallbackHandler(router *echo.Echo, h *handlers.Handler) (err 
 		Method:  http.MethodGet,
 		Path:    "/github/callback",
 		Handler: githubCallback(h),
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(V1Version, mw))
 
 	return
 }
@@ -36,7 +36,7 @@ func registerGoogleLoginHandler(router *echo.Echo, h *handlers.Handler) (err err
 		Method:  http.MethodGet,
 		Path:    "/google/login",
 		Handler: googleLogin(h),
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(V1Version, mw))
 
 	return
 }
@@ -47,7 +47,7 @@ func registerGoogleCallbackHandler(router *echo.Echo, h *handlers.Handler) (err 
 		Method:  http.MethodGet,
 		Path:    "/google/callback",
 		Handler: googleCallback(h),
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(V1Version, mw))
 
 	return
 }

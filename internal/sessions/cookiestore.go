@@ -26,7 +26,7 @@ type Store[T any] interface {
 	Destroy(w http.ResponseWriter, name string)
 	// GetUserFromSession returns the key, which should be the sessionID, in the map
 	GetSessionIDFromCookie(sess *Session[T]) string
-	// GetSessionDataFromCookie returns the valuestored map
+	// GetSessionDataFromCookie returns the value stored map
 	GetSessionDataFromCookie(sess *Session[T]) any
 }
 

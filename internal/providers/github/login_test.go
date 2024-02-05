@@ -70,7 +70,7 @@ func TestMissingCtxToken(t *testing.T) {
 		err := ErrorFromContext(ctx)
 
 		if assert.NotNil(t, err) {
-			assert.Equal(t, "oauth2: Context missing Token", err.Error())
+			assert.Equal(t, "oauth2: context missing token", err.Error())
 		}
 
 		fmt.Fprint(w, FailureHandlerCalled)

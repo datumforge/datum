@@ -44,3 +44,38 @@ func NewTestContextWithValidUser(subject string) (echo.Context, error) {
 
 	return ec, nil
 }
+
+// newValidClaims returns claims with a fake subject for testing purposes ONLY
+func newValidClaimsOrgID(orgID string) *tokens.Claims {
+	iat := time.Now()
+	nbf := iat
+	exp := time.Now().Add(time.Hour)
+
+	claims := &tokens.Claims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   "nano_id_of_user",
+			Issuer:    "test suite",
+			IssuedAt:  jwt.NewNumericDate(iat),
+			NotBefore: jwt.NewNumericDate(nbf),
+			ExpiresAt: jwt.NewNumericDate(exp),
+		},
+		UserID:      "nano_id_of_user",
+		Email:       "rustys@datum.net",
+		OrgID:       orgID,
+		ParentOrgID: "nano_id_of_parent_org",
+		Tier:        "premium",
+	}
+
+	return claims
+}
+
+// NewTestContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
+func NewTestContextWithOrgID(orgID string) (echo.Context, error) {
+	ec := echocontext.NewTestEchoContext()
+
+	claims := newValidClaimsOrgID(orgID)
+
+	ec.Set(ContextUserClaims.name, claims)
+
+	return ec, nil
+}

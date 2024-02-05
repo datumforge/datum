@@ -21,7 +21,7 @@ func init() {
 
 // EventManager isn't your normal party planner
 type EventManager struct {
-	EM Handler
+	Handler Handler
 }
 
 // Handler is an interface which can be used to call various event / event association parameters provided by the posthog API

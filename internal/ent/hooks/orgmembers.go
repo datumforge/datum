@@ -38,6 +38,9 @@ func HookOrgMembers() ent.Hook {
 			}
 
 			retValue, err := next.Mutate(ctx, mutation)
+			if err != nil {
+				return nil, err
+			}
 
 			if userID, ok := mutation.UserID(); ok {
 				role, _ := mutation.Role()

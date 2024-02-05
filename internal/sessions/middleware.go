@@ -15,9 +15,9 @@ type SessionConfig struct {
 	Skipper middleware.Skipper
 	// SessionManager is responsible for managing the session cookies. It handles the creation, retrieval, and deletion of
 	// session cookies for each user session
-	SessionManager CookieStore
-	// Store is used to store and retrieve session data in a persistent manner such as to a redis backend
-	Store PersistentStore
+	SessionManager Store[map[string]string]
+	// RedisStore is used to store and retrieve session data in a persistent manner such as to a redis backend
+	RedisStore PersistentStore
 	// RedisClient establishes a connection to a Redis server and perform operations such as storing and retrieving data
 	RedisClient *redis.Client
 	// Logger is used to log errors in the middleware
@@ -29,22 +29,25 @@ var DefaultSessionConfig = SessionConfig{
 }
 
 // NewSessionConfig creates a new session config
-func NewSessionConfig(sm CookieStore, rc *redis.Client, logger *zap.SugaredLogger) *SessionConfig {
+func NewSessionConfig(sm Store[map[string]string], rc *redis.Client, logger *zap.SugaredLogger) *SessionConfig {
 	c := &DefaultSessionConfig
 	c.SessionManager = sm
 	c.RedisClient = rc
 	c.Logger = logger
-	c.Store = NewStore(rc)
+	c.RedisStore = NewStore(rc)
 
 	return c
 }
 
 // SaveAndStoreSession saves the session to the cookie and to the persistent store (redis)
-func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, userID string) error {
-	session := New(sc.SessionManager)
+func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, name string, userID string) error {
+	session := sc.SessionManager.New(name)
 	sessionID := GenerateSessionID()
 
-	session.Set(userID, sessionID)
+	setSessionMap := map[string]string{}
+	setSessionMap["userID"] = userID
+
+	session.Set(sessionID, setSessionMap)
 
 	// Add session to context
 	c := session.addSessionDataToContext(ctx.Request().Context())
@@ -54,7 +57,7 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, userID string) er
 		return err
 	}
 
-	if err := sc.Store.StoreSession(ctx.Request().Context(), sessionID, userID); err != nil {
+	if err := sc.RedisStore.StoreSession(ctx.Request().Context(), sessionID, userID); err != nil {
 		return err
 	}
 
@@ -64,7 +67,7 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, userID string) er
 // LoadAndSave is a middleware function that loads and saves session data using a
 // provided session manager. It takes a `SessionManager` as input and returns a middleware function
 // that can be used with an Echo framework application
-func LoadAndSave(sessionManager CookieStore, client *redis.Client, logger *zap.SugaredLogger) echo.MiddlewareFunc {
+func LoadAndSave(sessionManager Store[map[string]string], client *redis.Client, logger *zap.SugaredLogger) echo.MiddlewareFunc {
 	c := NewSessionConfig(sessionManager, client, logger)
 
 	return LoadAndSaveWithConfig(c)
@@ -84,36 +87,31 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			// get session from request cookies
-			session, err := config.SessionManager.Get(c.Request(), DefaultSessionName)
+			// get sessionData from request cookies
+			session, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)
 
 				return err
 			}
 
-			// get the user id from the session
-			userID, err := config.SessionManager.GetUserFromSession(c.Request(), DefaultSessionName)
-			if err != nil {
-				config.Logger.Errorw("unable to get user from session", "error", err)
+			// get the session id from the session data
+			sessionID := config.SessionManager.GetSessionIDFromCookie(session)
+			sessionData := config.SessionManager.GetSessionDataFromCookie(session)
 
-				return err
-			}
+			// check session token on request matches cache
+			userIDFromCookie := sessionData.(map[string]string)[UserIDKey]
 
-			// lookup session in cache to ensure tokens match
-			token, err := config.Store.GetSession(c.Request().Context(), userID)
+			// lookup userID in cache to ensure tokens match
+			userID, err := config.RedisStore.GetSession(c.Request().Context(), sessionID)
 			if err != nil {
 				config.Logger.Errorw("unable to get session from store", "error", err)
 
 				return err
 			}
 
-			// check session token on request matches cache
-			storedSession := session.Get(userID)
-			if token != storedSession {
-				config.Logger.Errorw("sessions do not match", "cookie", token, "store", storedSession)
-
-				return ErrInvalidSession
+			if userIDFromCookie != userID {
+				config.Logger.Errorw("sessions do not match", "cookie", userIDFromCookie, "store", userID)
 			}
 
 			// Add session to context to be used in request paths
@@ -122,7 +120,7 @@ func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
 
 			c.Response().Before(func() {
 				// refresh and save session cookie
-				if err := config.SaveAndStoreSession(c, userID); err != nil {
+				if err := config.SaveAndStoreSession(c, DefaultCookieName, sessionID); err != nil {
 					config.Logger.Errorw("unable to create and store new session", "error", err)
 
 					panic(err)

@@ -8,7 +8,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/cookies"
+	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -193,15 +193,15 @@ func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
 // accessed by client-side scripts) and it expires when the refresh token expires. Both
 // cookies require https and will not be set (silently) over http connections.
 func SetAuthCookies(c echo.Context, accessToken, refreshToken string) {
-	cookies.SetCookie(c.Response().Writer, accessToken, AccessTokenCookie, cookies.DefaultCookieConfig)
-	cookies.SetCookie(c.Response().Writer, refreshToken, RefreshTokenCookie, cookies.DefaultCookieConfig)
+	sessions.SetCookie(c.Response().Writer, accessToken, AccessTokenCookie, *sessions.DefaultCookieConfig)
+	sessions.SetCookie(c.Response().Writer, refreshToken, RefreshTokenCookie, *sessions.DefaultCookieConfig)
 }
 
 // ClearAuthCookies is a helper function to clear authentication cookies on a echo
 // request to effectively logger out a user.
 func ClearAuthCookies(c echo.Context) {
-	cookies.RemoveCookie(c.Response().Writer, AccessTokenCookie, cookies.DefaultCookieConfig)
-	cookies.RemoveCookie(c.Response().Writer, RefreshTokenCookie, cookies.DefaultCookieConfig)
+	sessions.RemoveCookie(c.Response().Writer, AccessTokenCookie, *sessions.DefaultCookieConfig)
+	sessions.RemoveCookie(c.Response().Writer, RefreshTokenCookie, *sessions.DefaultCookieConfig)
 }
 
 // CookieExpired checks to see if a cookie is expired

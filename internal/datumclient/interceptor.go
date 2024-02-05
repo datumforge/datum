@@ -24,7 +24,6 @@ func WithAuthorization(accessToken string, session string) clientv2.RequestInter
 		if h == "" {
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 		}
-
 		// add session cookie
 		req.AddCookie(sessions.NewSessionCookie(session))
 

@@ -115,6 +115,22 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
+	if err := registerGithubLoginHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerGithubCallbackHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerGoogleLoginHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerGoogleCallbackHandler(router, h); err != nil {
+		return err
+	}
+
 	return nil
 }
 

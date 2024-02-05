@@ -56,34 +56,26 @@ func registerGoogleCallbackHandler(router *echo.Echo, h *handlers.Handler) (err 
 func githubLogin(h *handlers.Handler) echo.HandlerFunc {
 	login, _ := h.GetGitHubLoginHandlers()
 
-	meow := echo.WrapHandler(login)
-
-	return meow
+	return echo.WrapHandler(login)
 }
 
 // googleLogin wraps getloginhandlers
 func googleLogin(h *handlers.Handler) echo.HandlerFunc {
 	login, _ := h.GetGoogleLoginHandlers()
 
-	meow := echo.WrapHandler(login)
-
-	return meow
+	return echo.WrapHandler(login)
 }
 
 // githubCallback wraps getloginhandlers
 func githubCallback(h *handlers.Handler) echo.HandlerFunc {
 	_, callback := h.GetGitHubLoginHandlers()
 
-	meow := echo.WrapHandler(callback)
-
-	return meow
+	return echo.WrapHandler(callback)
 }
 
 // googleCallback wraps getloginhandlers
 func googleCallback(h *handlers.Handler) echo.HandlerFunc {
 	_, callback := h.GetGoogleLoginHandlers()
 
-	meow := echo.WrapHandler(callback)
-
-	return meow
+	return echo.WrapHandler(callback)
 }

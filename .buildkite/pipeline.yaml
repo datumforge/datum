@@ -80,9 +80,9 @@ steps:
     if: build.pull_request.id != null
     depends_on: ["gosec", "go_test_sqlite"]
     plugins:
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: "results.txt"
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: "coverage.out"
           step: "go_test_sqlite"    
       - docker#v5.9.0:
@@ -97,9 +97,9 @@ steps:
     if: build.branch == "main"
     depends_on: ["gosec", "go_test_sqlite"]
     plugins:
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: results.txt
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: coverage.out
           step: "go_test_sqlite"
       - docker#v5.9.0:
@@ -141,7 +141,7 @@ steps:
   - label: ":sqlite: atlas lint"
     key: "atlas_lint"
     plugins:
-      - datumforge/atlas#8f237e24aa257b64d11306e60cde2bfda9819659:
+      - datumforge/atlas#v0.0.2:
           project: datum
           dev-url: "sqlite://dev?mode=memory&_fk=1"
           dir: "file://db/migrations"
@@ -152,7 +152,7 @@ steps:
     if: build.branch == "main"
     key: "atlas_migrate"
     plugins:
-      - datumforge/atlas#8f237e24aa257b64d11306e60cde2bfda9819659:
+      - datumforge/atlas#v0.0.2:
           project: datum
           dev-url: "sqlite://dev?mode=memory&_fk=1"
           dir: "file://db/migrations"

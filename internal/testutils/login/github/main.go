@@ -26,8 +26,8 @@ var sessionStore = sessions.NewCookieStore[any](sessions.DebugCookieConfig, []by
 
 // Config configures the main ServeMux.
 type Config struct {
-	GithubClientID     string
-	GithubClientSecret string
+	ClientID     string
+	ClientSecret string
 }
 
 var DebugOnlyCookieConfig = sessions.CookieConfig{
@@ -46,16 +46,16 @@ func New(config *Config) *http.ServeMux {
 	mux.HandleFunc("/logout", logoutHandler)
 	// 1. Register LoginHandler and CallbackHandler
 	oauth2Config := &oauth2.Config{
-		ClientID:     config.GithubClientID,
-		ClientSecret: config.GithubClientSecret,
-		RedirectURL:  "http://localhost:8000/github/callback",
+		ClientID:     config.ClientID,
+		ClientSecret: config.ClientSecret,
+		RedirectURL:  "http://localhost:8000/v1/github/callback",
 		Endpoint:     githubOAuth2.Endpoint,
 	}
 	// state param cookies require HTTPS by default; disable for localhost development
 	stateConfig := DebugOnlyCookieConfig
 
-	mux.Handle("/github/login", github.StateHandler(stateConfig, github.LoginHandler(oauth2Config, nil)))
-	mux.Handle("/github/callback", github.StateHandler(stateConfig, github.CallbackHandler(oauth2Config, issueSession(), nil)))
+	mux.Handle("/v1/github/login", github.StateHandler(stateConfig, github.LoginHandler(oauth2Config, nil)))
+	mux.Handle("/v1/github/callback", github.StateHandler(stateConfig, github.CallbackHandler(oauth2Config, issueSession(), nil)))
 	return mux
 }
 
@@ -107,23 +107,23 @@ func main() {
 	const address = "localhost:8000"
 	// read credentials from environment variables if available
 	config := &Config{
-		GithubClientID:     "",
-		GithubClientSecret: "",
+		ClientID:     os.Getenv("GITHUB_CLIENT_ID"),
+		ClientSecret: os.Getenv("GITHUB_CLIENT_SECRET"),
 	}
 	// allow consumer credential flags to override config fields
 	clientID := flag.String("client-id", "", "GitHub Client ID")
 	clientSecret := flag.String("client-secret", "", "GitHub Client Secret")
 	flag.Parse()
 	if *clientID != "" {
-		config.GithubClientID = *clientID
+		config.ClientID = *clientID
 	}
 	if *clientSecret != "" {
-		config.GithubClientSecret = *clientSecret
+		config.ClientSecret = *clientSecret
 	}
-	if config.GithubClientID == "" {
+	if config.ClientID == "" {
 		log.Fatal("Missing GitHub Client ID")
 	}
-	if config.GithubClientSecret == "" {
+	if config.ClientSecret == "" {
 		log.Fatal("Missing GitHub Client Secret")
 	}
 

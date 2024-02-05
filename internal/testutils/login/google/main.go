@@ -48,14 +48,14 @@ func New(config *Config) *http.ServeMux {
 	oauth2Config := &oauth2.Config{
 		ClientID:     config.ClientID,
 		ClientSecret: config.ClientSecret,
-		RedirectURL:  "http://localhost:8000/google/callback",
+		RedirectURL:  "http://localhost:8000/v1/google/callback",
 		Endpoint:     googleOAuth2.Endpoint,
 		Scopes:       []string{"profile", "email"},
 	}
 	// state param cookies require HTTPS by default; disable for localhost development
 	stateConfig := DebugOnlyCookieConfig
-	mux.Handle("/google/login", google.StateHandler(stateConfig, google.LoginHandler(oauth2Config, nil)))
-	mux.Handle("/google/callback", google.StateHandler(stateConfig, google.CallbackHandler(oauth2Config, issueSession(), nil)))
+	mux.Handle("/v1/google/login", google.StateHandler(stateConfig, google.LoginHandler(oauth2Config, nil)))
+	mux.Handle("/v1/google/callback", google.StateHandler(stateConfig, google.CallbackHandler(oauth2Config, issueSession(), nil)))
 	return mux
 }
 
@@ -107,8 +107,8 @@ func main() {
 	const address = "localhost:8000"
 	// read credentials from environment variables if available
 	config := &Config{
-		ClientID:     "692352861178-8gqs4oebvvsl5bmmb85kju5bl5739tdq.apps.googleusercontent.com",
-		ClientSecret: "",
+		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
 	}
 	// allow consumer credential flags to override config fields
 	clientID := flag.String("client-id", "", "Google Client ID")

@@ -136,7 +136,6 @@ steps:
 
 - group: ":database: atlas migrate"
   key: "database"
-  depends_on: ["tests", "go-builds"]
   steps:
   - label: ":sqlite: atlas lint"
     key: "atlas_lint"
@@ -149,7 +148,7 @@ steps:
 
   - label: ":rocket: atlas push"
     depends_on: [atlas_lint]
-    if: build.branch == "main"
+    if: build.branch == "test-atlas-2"
     key: "atlas_migrate"
     plugins:
       - datumforge/atlas#1a7af953eb02c62e1f40e614956e793394cd129e:

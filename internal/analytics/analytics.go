@@ -19,10 +19,12 @@ func init() {
 	}
 }
 
+// EventManager isn't your normal party planner
 type EventManager struct {
 	EM Handler
 }
 
+// Handler is an interface which can be used to call various event / event association parameters provided by the posthog API
 type Handler interface {
 	Event(eventName string, properties ph.Properties)
 	AssociateUser(userID string, organizationID string)
@@ -55,30 +57,35 @@ func AssociateUser(userID string, organizationID string) {
 	}
 }
 
+// NewOrganization is a wrapper for the new organization event
 func NewOrganization(organizationID, userID string, properties ph.Properties) {
 	if handler != nil {
 		handler.NewOrganization(organizationID, userID, properties)
 	}
 }
 
+// OrganizationProperties is a wrapper to set organization properties
 func OrganizationProperties(organizationID string, properties ph.Properties) {
 	if handler != nil {
 		handler.OrganizationProperties(organizationID, properties)
 	}
 }
 
+// OrganizationEvent is a generic wrapper for an event you can name which occurs within an organization (e.g. membership)
 func OrganizationEvent(organizationID, userID, eventName string, properties ph.Properties) {
 	if handler != nil {
 		handler.OrganizationEvent(organizationID, userID, eventName, properties)
 	}
 }
 
+// NewUser is a wrapper for creation of a new user and associating the user with the user group type
 func NewUser(userID string, properties ph.Properties) {
 	if handler != nil {
 		handler.NewUser(userID, properties)
 	}
 }
 
+// UserProperties is a wrapper to expand the metadata properties associated with a user
 func UserProperties(userID string, properties ph.Properties) {
 	if handler != nil {
 		handler.UserProperties(userID, properties)

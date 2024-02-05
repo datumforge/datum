@@ -31,6 +31,7 @@ func Capture(command *cobra.Command, userID string) {
 			flags = append(flags, flag.Name)
 		}
 	})
+
 	properties["flags"] = strings.Join(flags, " ")
 
 	err = ph.Enqueue(posthog.Capture{

@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -1175,6 +1176,36 @@ func OauthEQ(v bool) predicate.User {
 // OauthNEQ applies the NEQ predicate on the "oauth" field.
 func OauthNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldOauth, v))
+}
+
+// AuthProviderEQ applies the EQ predicate on the "auth_provider" field.
+func AuthProviderEQ(v enums.AuthProvider) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldEQ(FieldAuthProvider, vc))
+}
+
+// AuthProviderNEQ applies the NEQ predicate on the "auth_provider" field.
+func AuthProviderNEQ(v enums.AuthProvider) predicate.User {
+	vc := v
+	return predicate.User(sql.FieldNEQ(FieldAuthProvider, vc))
+}
+
+// AuthProviderIn applies the In predicate on the "auth_provider" field.
+func AuthProviderIn(vs ...enums.AuthProvider) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldIn(FieldAuthProvider, v...))
+}
+
+// AuthProviderNotIn applies the NotIn predicate on the "auth_provider" field.
+func AuthProviderNotIn(vs ...enums.AuthProvider) predicate.User {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(sql.FieldNotIn(FieldAuthProvider, v...))
 }
 
 // HasPersonalAccessTokens applies the HasEdge predicate on the "personal_access_tokens" edge.

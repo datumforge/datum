@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -118,6 +119,10 @@ func (User) Fields() []ent.Field {
 		field.Bool("oauth").
 			Comment("whether the user uses oauth for login or not").
 			Default(false),
+		field.Enum("auth_provider").
+			GoType(enums.AuthProvider("")).
+			Comment("auth provider used to register the account").
+			Default(string(enums.Credentials)),
 	}
 }
 
@@ -126,7 +131,7 @@ func (User) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("id").
 			Unique(), // enforce globally unique ids
-		index.Fields("email").
+		index.Fields("email", "auth_provider").
 			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
 	}
 }

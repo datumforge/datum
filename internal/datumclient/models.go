@@ -274,13 +274,15 @@ type CreateUserInput struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                     *bool    `json:"oauth,omitempty"`
-	PersonalAccessTokenIDs    []string `json:"personalAccessTokenIDs,omitempty"`
-	SettingID                 string   `json:"settingID"`
-	EmailVerificationTokenIDs []string `json:"emailVerificationTokenIDs,omitempty"`
-	PasswordResetTokenIDs     []string `json:"passwordResetTokenIDs,omitempty"`
-	GroupIDs                  []string `json:"groupIDs,omitempty"`
-	OrganizationIDs           []string `json:"organizationIDs,omitempty"`
+	Oauth *bool `json:"oauth,omitempty"`
+	// auth provider used to register the account
+	AuthProvider              *enums.AuthProvider `json:"authProvider,omitempty"`
+	PersonalAccessTokenIDs    []string            `json:"personalAccessTokenIDs,omitempty"`
+	SettingID                 string              `json:"settingID"`
+	EmailVerificationTokenIDs []string            `json:"emailVerificationTokenIDs,omitempty"`
+	PasswordResetTokenIDs     []string            `json:"passwordResetTokenIDs,omitempty"`
+	GroupIDs                  []string            `json:"groupIDs,omitempty"`
+	OrganizationIDs           []string            `json:"organizationIDs,omitempty"`
 }
 
 // CreateUserSettingInput is used for create UserSetting object.
@@ -3127,23 +3129,25 @@ type UpdateUserInput struct {
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                           *bool    `json:"oauth,omitempty"`
-	AddPersonalAccessTokenIDs       []string `json:"addPersonalAccessTokenIDs,omitempty"`
-	RemovePersonalAccessTokenIDs    []string `json:"removePersonalAccessTokenIDs,omitempty"`
-	ClearPersonalAccessTokens       *bool    `json:"clearPersonalAccessTokens,omitempty"`
-	SettingID                       *string  `json:"settingID,omitempty"`
-	AddEmailVerificationTokenIDs    []string `json:"addEmailVerificationTokenIDs,omitempty"`
-	RemoveEmailVerificationTokenIDs []string `json:"removeEmailVerificationTokenIDs,omitempty"`
-	ClearEmailVerificationTokens    *bool    `json:"clearEmailVerificationTokens,omitempty"`
-	AddPasswordResetTokenIDs        []string `json:"addPasswordResetTokenIDs,omitempty"`
-	RemovePasswordResetTokenIDs     []string `json:"removePasswordResetTokenIDs,omitempty"`
-	ClearPasswordResetTokens        *bool    `json:"clearPasswordResetTokens,omitempty"`
-	AddGroupIDs                     []string `json:"addGroupIDs,omitempty"`
-	RemoveGroupIDs                  []string `json:"removeGroupIDs,omitempty"`
-	ClearGroups                     *bool    `json:"clearGroups,omitempty"`
-	AddOrganizationIDs              []string `json:"addOrganizationIDs,omitempty"`
-	RemoveOrganizationIDs           []string `json:"removeOrganizationIDs,omitempty"`
-	ClearOrganizations              *bool    `json:"clearOrganizations,omitempty"`
+	Oauth *bool `json:"oauth,omitempty"`
+	// auth provider used to register the account
+	AuthProvider                    *enums.AuthProvider `json:"authProvider,omitempty"`
+	AddPersonalAccessTokenIDs       []string            `json:"addPersonalAccessTokenIDs,omitempty"`
+	RemovePersonalAccessTokenIDs    []string            `json:"removePersonalAccessTokenIDs,omitempty"`
+	ClearPersonalAccessTokens       *bool               `json:"clearPersonalAccessTokens,omitempty"`
+	SettingID                       *string             `json:"settingID,omitempty"`
+	AddEmailVerificationTokenIDs    []string            `json:"addEmailVerificationTokenIDs,omitempty"`
+	RemoveEmailVerificationTokenIDs []string            `json:"removeEmailVerificationTokenIDs,omitempty"`
+	ClearEmailVerificationTokens    *bool               `json:"clearEmailVerificationTokens,omitempty"`
+	AddPasswordResetTokenIDs        []string            `json:"addPasswordResetTokenIDs,omitempty"`
+	RemovePasswordResetTokenIDs     []string            `json:"removePasswordResetTokenIDs,omitempty"`
+	ClearPasswordResetTokens        *bool               `json:"clearPasswordResetTokens,omitempty"`
+	AddGroupIDs                     []string            `json:"addGroupIDs,omitempty"`
+	RemoveGroupIDs                  []string            `json:"removeGroupIDs,omitempty"`
+	ClearGroups                     *bool               `json:"clearGroups,omitempty"`
+	AddOrganizationIDs              []string            `json:"addOrganizationIDs,omitempty"`
+	RemoveOrganizationIDs           []string            `json:"removeOrganizationIDs,omitempty"`
+	ClearOrganizations              *bool               `json:"clearOrganizations,omitempty"`
 }
 
 // UpdateUserSettingInput is used for update UserSetting object.
@@ -3199,7 +3203,9 @@ type User struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                bool                   `json:"oauth"`
+	Oauth bool `json:"oauth"`
+	// auth provider used to register the account
+	AuthProvider         enums.AuthProvider     `json:"authProvider"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
 	Setting              UserSetting            `json:"setting"`
 	Groups               []*Group               `json:"groups,omitempty"`
@@ -3686,6 +3692,11 @@ type UserWhereInput struct {
 	// oauth field predicates
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNeq *bool `json:"oauthNEQ,omitempty"`
+	// auth_provider field predicates
+	AuthProvider      *enums.AuthProvider  `json:"authProvider,omitempty"`
+	AuthProviderNeq   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`
+	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
+	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
 	// personal_access_tokens edge predicates
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`

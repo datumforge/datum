@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -274,6 +275,20 @@ func (uu *UserUpdate) SetOauth(b bool) *UserUpdate {
 func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
 	if b != nil {
 		uu.SetOauth(*b)
+	}
+	return uu
+}
+
+// SetAuthProvider sets the "auth_provider" field.
+func (uu *UserUpdate) SetAuthProvider(ep enums.AuthProvider) *UserUpdate {
+	uu.mutation.SetAuthProvider(ep)
+	return uu
+}
+
+// SetNillableAuthProvider sets the "auth_provider" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAuthProvider(ep *enums.AuthProvider) *UserUpdate {
+	if ep != nil {
+		uu.SetAuthProvider(*ep)
 	}
 	return uu
 }
@@ -640,6 +655,11 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.AuthProvider(); ok {
+		if err := user.AuthProviderValidator(v); err != nil {
+			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "User.auth_provider": %w`, err)}
+		}
+	}
 	if _, ok := uu.mutation.SettingID(); uu.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
@@ -732,6 +752,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.AuthProvider(); ok {
+		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
 	}
 	if uu.mutation.PersonalAccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1404,6 +1427,20 @@ func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
 	return uuo
 }
 
+// SetAuthProvider sets the "auth_provider" field.
+func (uuo *UserUpdateOne) SetAuthProvider(ep enums.AuthProvider) *UserUpdateOne {
+	uuo.mutation.SetAuthProvider(ep)
+	return uuo
+}
+
+// SetNillableAuthProvider sets the "auth_provider" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAuthProvider(ep *enums.AuthProvider) *UserUpdateOne {
+	if ep != nil {
+		uuo.SetAuthProvider(*ep)
+	}
+	return uuo
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
 func (uuo *UserUpdateOne) AddPersonalAccessTokenIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddPersonalAccessTokenIDs(ids...)
@@ -1779,6 +1816,11 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.AuthProvider(); ok {
+		if err := user.AuthProviderValidator(v); err != nil {
+			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "User.auth_provider": %w`, err)}
+		}
+	}
 	if _, ok := uuo.mutation.SettingID(); uuo.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
@@ -1888,6 +1930,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.AuthProvider(); ok {
+		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
 	}
 	if uuo.mutation.PersonalAccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{

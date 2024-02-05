@@ -534,6 +534,7 @@ var (
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Default: false},
+		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB"}, Default: "CREDENTIALS"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -547,9 +548,9 @@ var (
 				Columns: []*schema.Column{UsersColumns[0]},
 			},
 			{
-				Name:    "user_email",
+				Name:    "user_email_auth_provider",
 				Unique:  true,
-				Columns: []*schema.Column{UsersColumns[7]},
+				Columns: []*schema.Column{UsersColumns[7], UsersColumns[18]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},

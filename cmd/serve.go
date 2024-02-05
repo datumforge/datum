@@ -103,7 +103,7 @@ func serve(ctx context.Context) error {
 
 	phclient := posthog.Init()
 	analytics := analytics.EventManager{}
-	analytics.EM = phclient
+	analytics.Handler = phclient
 
 	// add additional ent dependencies
 	entOpts = append(

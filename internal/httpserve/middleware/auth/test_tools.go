@@ -45,7 +45,7 @@ func NewTestContextWithValidUser(subject string) (echo.Context, error) {
 	return ec, nil
 }
 
-// newValidClaims returns claims with a fake subject for testing purposes ONLY
+// newValidClaims returns claims with a fake orgID for testing purposes ONLY
 func newValidClaimsOrgID(orgID string) *tokens.Claims {
 	iat := time.Now()
 	nbf := iat
@@ -69,7 +69,7 @@ func newValidClaimsOrgID(orgID string) *tokens.Claims {
 	return claims
 }
 
-// NewTestContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
+// NewTestContextWithOrgID creates an echo context with a fake orgID for testing purposes ONLY
 func NewTestContextWithOrgID(orgID string) (echo.Context, error) {
 	ec := echocontext.NewTestEchoContext()
 

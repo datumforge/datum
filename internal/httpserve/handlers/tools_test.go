@@ -72,16 +72,24 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 		t.Fatal("error creating token manager")
 	}
 
+	sm := createSessionManager()
 	rc := newRedisClient()
+	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
+
+	sessionConfig := sessions.NewSessionConfig(
+		sm,
+		sessions.WithPersistence(rc),
+		sessions.WithLogger(logger),
+	)
 
 	h := &handlers.Handler{
-		TM:           tm,
-		DBClient:     ent,
-		RedisClient:  rc,
-		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
-		SM:           createSessionManager(),
-		EmailManager: em,
-		TaskMan:      taskMan,
+		TM:            tm,
+		DBClient:      ent,
+		RedisClient:   rc,
+		Logger:        logger,
+		SessionConfig: &sessionConfig,
+		EmailManager:  em,
+		TaskMan:       taskMan,
 	}
 
 	return h

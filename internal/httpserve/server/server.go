@@ -3,19 +3,11 @@ package server
 import (
 	"context"
 
-	echoprometheus "github.com/datumforge/echo-prometheus/v5"
 	echo "github.com/datumforge/echox"
-	"github.com/datumforge/echox/middleware"
-	"github.com/datumforge/echozap"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/middleware/cachecontrol"
-	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
 	echodebug "github.com/datumforge/datum/internal/httpserve/middleware/debug"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
-	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -62,33 +54,11 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 
 	srv.Debug = s.config.Debug
 
-	// default middleware
-	defaultMW := []echo.MiddlewareFunc{}
-	defaultMW = append(defaultMW,
-		middleware.RequestID(), // add request id
-		middleware.Recover(),   // recover server from any panic/fatal error gracefully
-		middleware.LoggerWithConfig(middleware.LoggerConfig{
-			Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, auth=${header:Authorization}\n",
-		}),
-		echoprometheus.MetricsMiddleware(),           // add prometheus metrics
-		echozap.ZapLogger(s.logger.Desugar()),        // add zap logger, middleware requires the "regular" zap logger
-		echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
-		cors.New(),                     // add cors middleware
-		mime.New(),                     // add mime middleware
-		cachecontrol.New(),             // add cache control middleware
-		ratelimit.DefaultRateLimiter(), // add ratelimit middleware
-		middleware.Secure(),            // add XSS middleware
-	)
-
 	if srv.Debug {
-		defaultMW = append(defaultMW, echodebug.BodyDump(s.logger))
+		srv.Use(echodebug.BodyDump(s.logger))
 	}
 
-	for _, m := range defaultMW {
-		srv.Use(m)
-	}
-	// add all configured middleware
-	for _, m := range s.config.Middleware {
+	for _, m := range s.config.DefaultMiddleware {
 		srv.Use(m)
 	}
 
@@ -112,11 +82,9 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		return err
 	}
 
-	// Registers additional routes for the graph endpoints
-	// to pass middleware only to graph routes, append here
-	graphMw := []echo.MiddlewareFunc{}
+	// Registers additional routes for the graph endpoints with middleware defined
 	for _, handler := range s.handlers {
-		handler.Routes(srv.Group("", graphMw...))
+		handler.Routes(srv.Group("", s.config.GraphMiddleware...))
 	}
 
 	// Print routes on startup

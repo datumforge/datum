@@ -13,6 +13,8 @@ import (
 type SessionConfig struct {
 	// Skipper is a function that determines whether a particular request should be skipped or not
 	Skipper middleware.Skipper
+	// BeforeFunc  defines a function which is executed just before the middleware
+	BeforeFunc middleware.BeforeFunc
 	// SessionManager is responsible for managing the session cookies. It handles the creation, retrieval, and deletion of
 	// session cookies for each user session
 	SessionManager Store[map[string]string]
@@ -24,19 +26,54 @@ type SessionConfig struct {
 	Logger *zap.SugaredLogger
 }
 
-var DefaultSessionConfig = SessionConfig{
-	Skipper: middleware.DefaultSkipper,
-}
+// Option allows users to optionally supply configuration to the session middleware.
+type Option func(opts *SessionConfig)
 
-// NewSessionConfig creates a new session config
-func NewSessionConfig(sm Store[map[string]string], rc *redis.Client, logger *zap.SugaredLogger) *SessionConfig {
-	c := &DefaultSessionConfig
-	c.SessionManager = sm
-	c.RedisClient = rc
-	c.Logger = logger
-	c.RedisStore = NewStore(rc)
+// NewSessionConfig creates a new session config with options
+func NewSessionConfig(sm Store[map[string]string], opts ...Option) (c SessionConfig) {
+	c = SessionConfig{
+		Skipper:        middleware.DefaultSkipper, // default skipper always returns false
+		Logger:         zap.NewNop().Sugar(),      // default logger if none is provided is a no-op
+		SessionManager: sm,                        // session manager should always be provided
+	}
+
+	for _, opt := range opts {
+		opt(&c)
+	}
+
+	if c.RedisClient != nil {
+		c.RedisStore = NewStore(c.RedisClient)
+	}
 
 	return c
+}
+
+// WithPersistence allows the user to specify a redis client for the middleware to persist sessions
+func WithPersistence(client *redis.Client) Option {
+	return func(opts *SessionConfig) {
+		opts.RedisClient = client
+	}
+}
+
+// WithLogger allows the user to specify a zap logger for the middleware
+func WithLogger(l *zap.SugaredLogger) Option {
+	return func(opts *SessionConfig) {
+		opts.Logger = l
+	}
+}
+
+// WithSkipperFunc allows the user to specify a skipper function for the middleware
+func WithSkipperFunc(skipper middleware.Skipper) Option {
+	return func(opts *SessionConfig) {
+		opts.Skipper = skipper
+	}
+}
+
+// WithBeforeFunc allows the user to specify a function to happen before the middleware
+func WithBeforeFunc(before middleware.BeforeFunc) Option {
+	return func(opts *SessionConfig) {
+		opts.BeforeFunc = before
+	}
 }
 
 // SaveAndStoreSession saves the session to the cookie and to the persistent store (redis)
@@ -67,27 +104,33 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, name string, user
 // LoadAndSave is a middleware function that loads and saves session data using a
 // provided session manager. It takes a `SessionManager` as input and returns a middleware function
 // that can be used with an Echo framework application
-func LoadAndSave(sessionManager Store[map[string]string], client *redis.Client, logger *zap.SugaredLogger) echo.MiddlewareFunc {
-	c := NewSessionConfig(sessionManager, client, logger)
+func LoadAndSave(sm Store[map[string]string], opts ...Option) echo.MiddlewareFunc {
+	c := NewSessionConfig(sm, opts...)
 
 	return LoadAndSaveWithConfig(c)
 }
 
 // LoadAndSaveWithConfig is a middleware that loads and saves session data
-// using a provided session manager configuration. It takes a `SessionConfig` struct as input, which
-// contains the skipper function and the session manager
-func LoadAndSaveWithConfig(config *SessionConfig) echo.MiddlewareFunc {
+// using a provided session manager configuration
+// It takes a `SessionConfig` struct as input, which contains the skipper function and the session manager
+func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 	if config.Skipper == nil {
-		config.Skipper = DefaultSessionConfig.Skipper
+		config.Skipper = middleware.DefaultSkipper
 	}
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			// if skipper function returns true, skip this middleware
 			if config.Skipper(c) {
 				return next(c)
 			}
 
-			// get sessionData from request cookies
+			// execute any before functions
+			if config.BeforeFunc != nil {
+				config.BeforeFunc(c)
+			}
+
+			// get session from request cookies
 			session, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)

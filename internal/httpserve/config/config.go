@@ -91,14 +91,16 @@ type (
 		CORS CORS `yaml:"cors"`
 		// Routes contains the handler functions
 		Routes []http.Handler `yaml:"routes"`
-		// Middleware to enable on the echo server
-		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
+		// DefaultMiddleware to enable on the echo server used on all requests
+		DefaultMiddleware []echo.MiddlewareFunc `yaml:"middleware"`
+		// GraphMiddleware to enable on the echo server used on graph requests
+		GraphMiddleware []echo.MiddlewareFunc `yaml:"middleware"`
 		// Handler contains the required settings for REST handlers including ready checks and JWT keys
 		Handler handlers.Handler `yaml:"checks"`
 		// Token contains the token config settings
 		Token tokens.Config `yaml:"token"`
-		// SM manages sessions for users
-		SM sessions.Store[map[string]string]
+		// SessionConfig manages sessions for users
+		SessionConfig *sessions.SessionConfig
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together

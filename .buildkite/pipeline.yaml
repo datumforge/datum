@@ -80,9 +80,9 @@ steps:
     if: build.pull_request.id != null
     depends_on: ["gosec", "go_test_sqlite"]
     plugins:
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: "results.txt"
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: "coverage.out"
           step: "go_test_sqlite"    
       - docker#v5.9.0:
@@ -97,9 +97,9 @@ steps:
     if: build.branch == "main"
     depends_on: ["gosec", "go_test_sqlite"]
     plugins:
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: results.txt
-      - artifacts#v1.9.2:
+      - artifacts#v1.9.3:
           download: coverage.out
           step: "go_test_sqlite"
       - docker#v5.9.0:

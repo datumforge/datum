@@ -227,7 +227,7 @@ func WithAuth() ServerOption {
 			panic(err)
 		}
 
-		// load defaults and env vars Oauth setup
+		// load defaults and env vars for Oauth setup
 		if err := envconfig.Process("datum_auth_provider", authProviderConfig); err != nil {
 			panic(err)
 		}

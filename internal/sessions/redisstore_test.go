@@ -37,12 +37,13 @@ func Test_Exists(t *testing.T) {
 			rc := newRedisClient()
 			ps := sessions.NewStore(rc)
 
+			sessionID := sessions.GenerateSessionID()
 			if tc.exists == int64(1) {
-				err := ps.StoreSession(context.Background(), ulids.New().String(), tc.userID)
+				err := ps.StoreSession(context.Background(), sessionID, tc.userID)
 				require.NoError(t, err)
 			}
 
-			exists, err := ps.Exists(context.Background(), tc.userID)
+			exists, err := ps.Exists(context.Background(), sessionID)
 			require.NoError(t, err)
 			assert.Equal(t, tc.exists, exists)
 		})
@@ -75,15 +76,17 @@ func Test_GetSession(t *testing.T) {
 			ps := sessions.NewStore(rc)
 
 			if tc.exists {
+				// store session in redis if the test expects it
 				err := ps.StoreSession(context.Background(), tc.session, tc.userID)
 				require.NoError(t, err)
 			}
 
-			sessionID, err := ps.GetSession(context.Background(), tc.userID)
+			// get stored value from redis
+			value, err := ps.GetSession(context.Background(), tc.session)
 
 			if tc.exists {
 				require.NoError(t, err)
-				assert.Equal(t, tc.session, sessionID)
+				assert.Equal(t, tc.userID, value)
 			} else {
 				assert.Error(t, err)
 			}

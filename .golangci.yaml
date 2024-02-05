@@ -11,6 +11,7 @@ linters-settings:
 run:
   skip-files:
     - internal/entclean/main.go
+    - internal/testutils
 
 linters:
   enable:

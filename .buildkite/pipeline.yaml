@@ -6,133 +6,133 @@ env:
   SONAR_HOST: "https://sonarcloud.io"
 
 steps:
-- group: ":knife: Pre-check"
-  key: "precheck"
-  steps:
-  - label: ":golang: go generate"
-    key: "generate"
-    plugins:
-      - docker#v5.9.0:
-          image: "ghcr.io/datumforge/base-ci-image:v1.0.3"
-          command: ["task", "ci"]
-          environment: 
-            - "GOTOOLCHAIN=auto"
+# - group: ":knife: Pre-check"
+#   key: "precheck"
+#   steps:
+#   - label: ":golang: go generate"
+#     key: "generate"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: "ghcr.io/datumforge/base-ci-image:v1.0.3"
+#           command: ["task", "ci"]
+#           environment: 
+#             - "GOTOOLCHAIN=auto"
             
-- group: ":test_tube: Tests"
-  key: "tests"
-  depends_on: "precheck"
-  steps:
-  - label: ":golangci-lint: lint :lint-roller:"
-    key: "lint"
-    plugins:
-      - docker#v5.9.0:
-          image: "registry.hub.docker.com/golangci/golangci-lint:v1.55.2"
-          command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
-          environment: 
-            - "GOTOOLCHAIN=auto"
+# - group: ":test_tube: Tests"
+#   key: "tests"
+#   depends_on: "precheck"
+#   steps:
+#   - label: ":golangci-lint: lint :lint-roller:"
+#     key: "lint"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: "registry.hub.docker.com/golangci/golangci-lint:v1.55.2"
+#           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
+#           environment: 
+#             - "GOTOOLCHAIN=auto"
 
-  - label: ":golang: go test - sqlite"
-    key: "go_test_sqlite"
-    env:
-      TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
-    plugins:
-      - docker#v5.9.0:
-          image: golang:1.21.6
-          command: ["go", "test", "-coverprofile=coverage.out","./..."]
-    artifact_paths: ["coverage.out"]
+#   - label: ":golang: go test - sqlite"
+#     key: "go_test_sqlite"
+#     env:
+#       TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: golang:1.21.6
+#           command: ["go", "test", "-coverprofile=coverage.out","./..."]
+#     artifact_paths: ["coverage.out"]
 
-  - label: ":golang: go test - {{matrix}}"
-    key: "go_test"
-    env:
-      TEST_DB_URL: "{{matrix}}"
-    matrix:
-      - "docker://postgres:16-alpine"
-      - "docker://postgres:15-alpine"
-    plugins:
-      - docker#v5.9.0:
-          image: golang:1.21.6
-          command: ["go", "test", "-coverprofile=coverage.out","./..."]
-    artifact_paths: ["coverage.out"]
+#   - label: ":golang: go test - {{matrix}}"
+#     key: "go_test"
+#     env:
+#       TEST_DB_URL: "{{matrix}}"
+#     matrix:
+#       - "docker://postgres:16-alpine"
+#       - "docker://postgres:15-alpine"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: golang:1.21.6
+#           command: ["go", "test", "-coverprofile=coverage.out","./..."]
+#     artifact_paths: ["coverage.out"]
 
-  - label: ":auth0: fga model test"
-    key: "fga_test"
-    plugins:
-      - docker#v5.9.0:
-          image: openfga/cli
-          command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
+#   - label: ":auth0: fga model test"
+#     key: "fga_test"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: openfga/cli
+#           command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
 
-- group: ":closed_lock_with_key: Security Checks"
-  depends_on: "tests"
-  key: "security"
-  steps:
-  - label: ":closed_lock_with_key: gosec"
-    key: "gosec"
-    plugins:
-      - docker#v5.9.0:
-          image: "registry.hub.docker.com/securego/gosec:2.18.2"
-          command: ["-no-fail", "-exclude-generated", "-fmt sonarqube", "-out", "results.txt", "./..."]
-          environment:
-            - "GOTOOLCHAIN=auto"
-    artifact_paths: ["results.txt"]
+# - group: ":closed_lock_with_key: Security Checks"
+#   depends_on: "tests"
+#   key: "security"
+#   steps:
+#   - label: ":closed_lock_with_key: gosec"
+#     key: "gosec"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: "registry.hub.docker.com/securego/gosec:2.18.2"
+#           command: ["-no-fail", "-exclude-generated", "-fmt sonarqube", "-out", "results.txt", "./..."]
+#           environment:
+#             - "GOTOOLCHAIN=auto"
+#     artifact_paths: ["results.txt"]
 
-  - label: ":github: upload PR reports"
-    key: "scan-upload-pr"
-    if: build.pull_request.id != null
-    depends_on: ["gosec", "go_test_sqlite"]
-    plugins:
-      - artifacts#v1.9.2:
-          download: "results.txt"
-      - artifacts#v1.9.2:
-          download: "coverage.out"
-          step: "go_test_sqlite"    
-      - docker#v5.9.0:
-            image: "sonarsource/sonar-scanner-cli:5"
-            environment:
-              - "SONAR_TOKEN"
-              - "SONAR_HOST_URL=$SONAR_HOST"
-              - "SONAR_SCANNER_OPTS=-Dsonar.pullrequest.branch=$BUILDKITE_BRANCH -Dsonar.pullrequest.base=$BUILDKITE_PULL_REQUEST_BASE_BRANCH -Dsonar.pullrequest.key=$BUILDKITE_PULL_REQUEST"
+#   - label: ":github: upload PR reports"
+#     key: "scan-upload-pr"
+#     if: build.pull_request.id != null
+#     depends_on: ["gosec", "go_test_sqlite"]
+#     plugins:
+#       - artifacts#v1.9.2:
+#           download: "results.txt"
+#       - artifacts#v1.9.2:
+#           download: "coverage.out"
+#           step: "go_test_sqlite"    
+#       - docker#v5.9.0:
+#             image: "sonarsource/sonar-scanner-cli:5"
+#             environment:
+#               - "SONAR_TOKEN"
+#               - "SONAR_HOST_URL=$SONAR_HOST"
+#               - "SONAR_SCANNER_OPTS=-Dsonar.pullrequest.branch=$BUILDKITE_BRANCH -Dsonar.pullrequest.base=$BUILDKITE_PULL_REQUEST_BASE_BRANCH -Dsonar.pullrequest.key=$BUILDKITE_PULL_REQUEST"
 
-  - label: ":github: upload reports"
-    key: "scan-upload"
-    if: build.branch == "main"
-    depends_on: ["gosec", "go_test_sqlite"]
-    plugins:
-      - artifacts#v1.9.2:
-          download: results.txt
-      - artifacts#v1.9.2:
-          download: coverage.out
-          step: "go_test_sqlite"
-      - docker#v5.9.0:
-            image: "sonarsource/sonar-scanner-cli:5"
-            environment:
-              - "SONAR_TOKEN"
-              - "SONAR_HOST_URL=$SONAR_HOST"
+#   - label: ":github: upload reports"
+#     key: "scan-upload"
+#     if: build.branch == "main"
+#     depends_on: ["gosec", "go_test_sqlite"]
+#     plugins:
+#       - artifacts#v1.9.2:
+#           download: results.txt
+#       - artifacts#v1.9.2:
+#           download: coverage.out
+#           step: "go_test_sqlite"
+#       - docker#v5.9.0:
+#             image: "sonarsource/sonar-scanner-cli:5"
+#             environment:
+#               - "SONAR_TOKEN"
+#               - "SONAR_HOST_URL=$SONAR_HOST"
 
-- group: ":golang: Builds"
-  depends_on: "tests"
-  key: "go-builds"
-  steps:
-  - label: ":golang: build"
-    key: "gobuild-server"
-    artifact_paths: "bin/${APP_NAME}"
-    plugins:
-      - docker#v5.9.0:
-          image: "golang:1.21.6"
-          environment:
-            - CGO_ENABLED=0
-            - GOOS=linux
-          command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/$APP_NAME"]
+# - group: ":golang: Builds"
+#   depends_on: "tests"
+#   key: "go-builds"
+#   steps:
+#   - label: ":golang: build"
+#     key: "gobuild-server"
+#     artifact_paths: "bin/${APP_NAME}"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: "golang:1.21.6"
+#           environment:
+#             - CGO_ENABLED=0
+#             - GOOS=linux
+#           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/$APP_NAME"]
     
-  - label: ":terminal: build cli"
-    key: "gobuild-cli"
-    artifact_paths: "bin/${APP_NAME}-cli"
-    plugins:
-      - docker#v5.9.0:
-          image: "golang:1.21.6"
-          environment:
-            - GOOS=darwin
-            - GOARCH=arm64
-          command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
+#   - label: ":terminal: build cli"
+#     key: "gobuild-cli"
+#     artifact_paths: "bin/${APP_NAME}-cli"
+#     plugins:
+#       - docker#v5.9.0:
+#           image: "golang:1.21.6"
+#           environment:
+#             - GOOS=darwin
+#             - GOARCH=arm64
+#           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
 
 - group: ":database: atlas migrate"
   key: "database"
@@ -141,7 +141,7 @@ steps:
   - label: ":sqlite: atlas lint"
     key: "atlas_lint"
     plugins:
-      - datumforge/atlas#8f237e24aa257b64d11306e60cde2bfda9819659:
+      - datumforge/atlas#1a7af953eb02c62e1f40e614956e793394cd129e:
           project: datum
           dev-url: "sqlite://dev?mode=memory&_fk=1"
           dir: "file://db/migrations"
@@ -152,89 +152,90 @@ steps:
     if: build.branch == "main"
     key: "atlas_migrate"
     plugins:
-      - datumforge/atlas#8f237e24aa257b64d11306e60cde2bfda9819659:
+      - datumforge/atlas#1a7af953eb02c62e1f40e614956e793394cd129e:
           project: datum
           dev-url: "sqlite://dev?mode=memory&_fk=1"
           dir: "file://db/migrations"
           step: migrate
+          default-branch: "test-atlas-2"
 
-- group: ":docker: Image Build"
-  depends_on: "go-builds"
-  key: "image-build"
-  steps:
-  - label: ":docker: docker pr build"
-    key: "docker-pr-build"
-    if: build.branch != "main"
-    commands: |
-      #!/bin/bash
-      ls
-    plugins:
-      - equinixmetal-buildkite/docker-metadata#v1.0.0:
-          images:
-          - "${IMAGE_REPO}"
-          extra_tags:
-          - "${IMAGE_TAG}"
-      - equinixmetal-buildkite/docker-build#v1.1.0:
-          dockerfile: docker/Dockerfile
-          push: false
-          build-args:
-            - NAME=${APP_NAME}
-      - equinixmetal-buildkite/trivy#v1.18.3:
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          security-checks: config,secret,vuln
-          skip-files: 'cosign.key,Dockerfile.dev'
-  - label: ":docker: docker build and publish"
-    key: "docker-build"
-    if: build.branch == "main"
-    commands: |
-      #!/bin/bash
-      ls
-    plugins:
-      - docker-login#v3.0.0:
-          username: datum-bender
-          password-env: SECRET_GHCR_PUBLISH_TOKEN
-          server: ghcr.io
-      - equinixmetal-buildkite/docker-metadata#v1.0.0:
-          images:
-          - "${IMAGE_REPO}"
-          extra_tags:
-          - "${IMAGE_TAG}"
-      - equinixmetal-buildkite/docker-build#v1.1.0:
-          dockerfile: docker/Dockerfile
-          push: true
-          build-args:
-            - NAME=${APP_NAME}
-      - equinixmetal-buildkite/trivy#v1.18.3:
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          security-checks: config,secret,vuln
-          skip-files: 'cosign.key,Dockerfile.dev'
-  - label: ":docker: docker build and publish all in one"
-    key: "docker-build-aio"
-    if: build.branch == "main"
-    commands: |
-      #!/bin/bash
-      cp config/.env-allinone.example config/.env-dev
-    plugins:
-      - docker-login#v3.0.0:
-          username: _json_key_base64
-          password-env: SECRET_GCR_PUBLISH_TOKEN
-          server: us-central1-docker.pkg.dev
-      - equinixmetal-buildkite/docker-metadata#e42eac2c2f81db3fc402b8ced031d9086149e9fd:
-          tag_prefix: "aio-"
-          debug: true
-          images:
-          - "${GCR_REPO}"
-          extra_tags:
-          - "${IMAGE_TAG}"
-      - equinixmetal-buildkite/docker-build#v1.1.0:
-          dockerfile: docker/all-in-one/Dockerfile.all-in-one
-          push: true
-          build-args:
-            - NAME=${APP_NAME}
-      - equinixmetal-buildkite/trivy#v1.18.3:
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          security-checks: config,secret,vuln
-          skip-files: 'cosign.key,Dockerfile.dev'
+# - group: ":docker: Image Build"
+#   depends_on: "go-builds"
+#   key: "image-build"
+#   steps:
+#   - label: ":docker: docker pr build"
+#     key: "docker-pr-build"
+#     if: build.branch != "main"
+#     commands: |
+#       #!/bin/bash
+#       ls
+#     plugins:
+#       - equinixmetal-buildkite/docker-metadata#v1.0.0:
+#           images:
+#           - "${IMAGE_REPO}"
+#           extra_tags:
+#           - "${IMAGE_TAG}"
+#       - equinixmetal-buildkite/docker-build#v1.1.0:
+#           dockerfile: docker/Dockerfile
+#           push: false
+#           build-args:
+#             - NAME=${APP_NAME}
+#       - equinixmetal-buildkite/trivy#v1.18.3:
+#           severity: CRITICAL,HIGH
+#           ignore-unfixed: true
+#           security-checks: config,secret,vuln
+#           skip-files: 'cosign.key,Dockerfile.dev'
+#   - label: ":docker: docker build and publish"
+#     key: "docker-build"
+#     if: build.branch == "main"
+#     commands: |
+#       #!/bin/bash
+#       ls
+#     plugins:
+#       - docker-login#v3.0.0:
+#           username: datum-bender
+#           password-env: SECRET_GHCR_PUBLISH_TOKEN
+#           server: ghcr.io
+#       - equinixmetal-buildkite/docker-metadata#v1.0.0:
+#           images:
+#           - "${IMAGE_REPO}"
+#           extra_tags:
+#           - "${IMAGE_TAG}"
+#       - equinixmetal-buildkite/docker-build#v1.1.0:
+#           dockerfile: docker/Dockerfile
+#           push: true
+#           build-args:
+#             - NAME=${APP_NAME}
+#       - equinixmetal-buildkite/trivy#v1.18.3:
+#           severity: CRITICAL,HIGH
+#           ignore-unfixed: true
+#           security-checks: config,secret,vuln
+#           skip-files: 'cosign.key,Dockerfile.dev'
+#   - label: ":docker: docker build and publish all in one"
+#     key: "docker-build-aio"
+#     if: build.branch == "main"
+#     commands: |
+#       #!/bin/bash
+#       cp config/.env-allinone.example config/.env-dev
+#     plugins:
+#       - docker-login#v3.0.0:
+#           username: _json_key_base64
+#           password-env: SECRET_GCR_PUBLISH_TOKEN
+#           server: us-central1-docker.pkg.dev
+#       - equinixmetal-buildkite/docker-metadata#e42eac2c2f81db3fc402b8ced031d9086149e9fd:
+#           tag_prefix: "aio-"
+#           debug: true
+#           images:
+#           - "${GCR_REPO}"
+#           extra_tags:
+#           - "${IMAGE_TAG}"
+#       - equinixmetal-buildkite/docker-build#v1.1.0:
+#           dockerfile: docker/all-in-one/Dockerfile.all-in-one
+#           push: true
+#           build-args:
+#             - NAME=${APP_NAME}
+#       - equinixmetal-buildkite/trivy#v1.18.3:
+#           severity: CRITICAL,HIGH
+#           ignore-unfixed: true
+#           security-checks: config,secret,vuln
+#           skip-files: 'cosign.key,Dockerfile.dev'

@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"entgo.io/ent"
+	ph "github.com/posthog/posthog-go"
 
+	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -35,7 +37,37 @@ func HookOrgMembers() ent.Hook {
 				}
 			}
 
-			return next.Mutate(ctx, mutation)
+			retValue, err := next.Mutate(ctx, mutation)
+			if err != nil {
+				return nil, err
+			}
+
+			if userID, ok := mutation.UserID(); ok {
+				role, _ := mutation.Role()
+				org, err := mutation.Client().Organization.Get(ctx, orgID)
+				if err != nil {
+					mutation.Logger.Errorw("error getting organization", "error", err)
+
+					return nil, err
+				}
+
+				user, err := mutation.Client().User.Get(ctx, userID)
+				if err != nil {
+					mutation.Logger.Errorw("error getting user", "error", err)
+
+					return nil, err
+				}
+
+				props := ph.NewProperties().
+					Set("organization_name", org.Name).
+					Set("user_name", user.FirstName+user.LastName).
+					Set("join_role", role.String())
+
+				analytics.OrganizationEvent(orgID, userID, "organization_membership", props)
+				analytics.UserEvent(userID, "organization_membership", props)
+			}
+
+			return retValue, err
 		})
 	}, ent.OpCreate)
 }

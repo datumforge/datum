@@ -34,3 +34,29 @@ func GetUserIDFromContext(ctx context.Context) (string, error) {
 
 	return GetActorUserID(*ec)
 }
+
+// GetOrganizationID returns the organization ID from the echo.Context
+func GetOrganizationID(c echo.Context) (string, error) {
+	claims, err := GetClaims(c)
+	if err != nil {
+		return "", err
+	}
+
+	// check for null ulid
+	orgID := claims.ParseOrgID()
+	if ulids.IsZero(orgID) {
+		return "", ErrNoUserInfo
+	}
+
+	return claims.ParseOrgID().String(), nil
+}
+
+// GetOrganizationIDFromContext returns the organization ID from context from context
+func GetOrganizationIDFromContext(ctx context.Context) (string, error) {
+	ec, err := echocontext.EchoContextFromContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return GetOrganizationID(*ec)
+}

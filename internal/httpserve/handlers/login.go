@@ -7,6 +7,7 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 
+	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -56,6 +57,8 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
+
+	analytics.AssociateUser(user.ID, claims.OrgID)
 
 	return ctx.JSON(http.StatusOK, Response{Message: "success"})
 }

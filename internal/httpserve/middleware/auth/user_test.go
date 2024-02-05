@@ -75,3 +75,67 @@ func Test_GetActorUserID(t *testing.T) {
 		})
 	}
 }
+
+func Test_GetOrganizationID(t *testing.T) {
+	// context with no user set
+	basicContext := echocontext.NewTestEchoContext()
+
+	missingSubCtx := echocontext.NewTestEchoContext()
+	jBasic := jwt.New(jwt.SigningMethodHS256)
+	missingSubCtx.Set("user", jBasic)
+
+	orgID := ulids.New().String()
+
+	validCtx, err := auth.NewTestContextWithOrgID(orgID)
+	if err != nil {
+		t.Fatal()
+	}
+
+	invalidUserCtx, err := auth.NewTestContextWithValidUser(ulids.Null.String())
+	if err != nil {
+		t.Fatal()
+	}
+
+	testCases := []struct {
+		name string
+		e    echo.Context
+		err  error
+	}{
+		{
+			name: "happy path",
+			e:    validCtx,
+			err:  nil,
+		},
+		{
+			name: "no user",
+			e:    basicContext,
+			err:  auth.ErrNoClaims,
+		},
+		{
+			name: "no user",
+			e:    missingSubCtx,
+			err:  auth.ErrNoClaims,
+		},
+		{
+			name: "null user",
+			e:    invalidUserCtx,
+			err:  auth.ErrNoUserInfo,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			got, err := auth.GetOrganizationID(tc.e)
+			if tc.err != nil {
+				assert.Error(t, err)
+				assert.Empty(t, got)
+				assert.ErrorContains(t, err, tc.err.Error())
+
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, orgID, got)
+		})
+	}
+}

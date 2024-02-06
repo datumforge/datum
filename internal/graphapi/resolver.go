@@ -108,7 +108,14 @@ func (h *Handler) Handler() http.HandlerFunc {
 func (h *Handler) Routes(e *echo.Group) {
 	e.Use(h.middleware...)
 
+	// Create the default POST graph endpoint
 	e.POST("/"+graphPath, func(c echo.Context) error {
+		h.graphqlHandler.ServeHTTP(c.Response(), c.Request())
+		return nil
+	})
+
+	// Create a GET query endpoint in order to create short queries with a query string
+	e.GET("/"+graphPath, func(c echo.Context) error {
 		h.graphqlHandler.ServeHTTP(c.Response(), c.Request())
 		return nil
 	})

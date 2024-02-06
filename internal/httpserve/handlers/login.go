@@ -8,11 +8,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/datumforge/datum/internal/analytics"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
-	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -41,10 +41,10 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	}
 
 	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx, access, refresh)
+	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
 	// set sessions in response
-	if err := h.SessionConfig.SaveAndStoreSession(ctx, sessions.DefaultCookieName, user.ID); err != nil {
+	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
 		return err
@@ -88,7 +88,7 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 	}
 
 	// check user in the database, username == email and ensure only one record is returned
-	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username)
+	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username, enums.Credentials)
 	if err != nil {
 		return nil, ErrNoAuthUser
 	}

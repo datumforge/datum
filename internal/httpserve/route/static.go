@@ -39,7 +39,7 @@ func registerRobotsHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 
 // registerJwksWellKnownHandler supplies the JWKS endpoint.
 // This endpoint will contain the JWK used to verify all Datum JWTs
-func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Handler) (err error) { //nolint:unused
+func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,
 		Path:   "/.well-known/jwks.json",
@@ -47,6 +47,21 @@ func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Handler) (err e
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 
 			return h.JWKSWellKnownHandler(c)
+		},
+	}.ForGroup(unversioned, mw))
+
+	return
+}
+
+// registerOIDCHandler supplies the open-configuration endpoint
+func registerOIDCHandler(router *echo.Echo, h *handlers.Handler) (err error) {
+	_, err = router.AddRoute(echo.Route{
+		Method: http.MethodGet,
+		Path:   "/.well-known/openid-configuration",
+		Handler: func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
+			return h.OpenIDConfiguration(c)
 		},
 	}.ForGroup(unversioned, mw))
 

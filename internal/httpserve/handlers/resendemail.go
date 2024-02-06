@@ -6,6 +6,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
@@ -44,7 +45,8 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	// set viewer context
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), in.Email)
 
-	entUser, err := h.getUserByEmail(ctxWithToken, in.Email)
+	// email verifications only come to users that were created with username/password logins
+	entUser, err := h.getUserByEmail(ctxWithToken, in.Email, enums.Credentials)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid

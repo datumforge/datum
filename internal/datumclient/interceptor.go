@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
 
@@ -24,8 +25,13 @@ func WithAuthorization(accessToken string, session string) clientv2.RequestInter
 		if h == "" {
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 		}
+
 		// add session cookie
-		req.AddCookie(sessions.NewSessionCookie(session))
+		if strings.Contains(req.Host, "localhost") {
+			req.AddCookie(sessions.NewDevSessionCookie(session))
+		} else {
+			req.AddCookie(sessions.NewSessionCookie(session))
+		}
 
 		return next(ctx, req, gqlInfo, res)
 	}

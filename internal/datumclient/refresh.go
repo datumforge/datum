@@ -55,5 +55,5 @@ func Refresh(c *Client, ctx context.Context, r handlers.RefreshRequest) (*oauth2
 		return nil, newAuthenticationError(resp.StatusCode, out.Message)
 	}
 
-	return getTokensFromCookies(resp), nil
+	return getTokensFromCookiesFromResponse(resp), nil
 }

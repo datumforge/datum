@@ -99,6 +99,10 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
+	if err := registerOIDCHandler(router, h); err != nil {
+		return err
+	}
+
 	if err := registerSecurityTxtHandler(router, h); err != nil {
 		return err
 	}

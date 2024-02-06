@@ -40,7 +40,9 @@ func HookInvite() ent.Hook {
 
 			// check if user exists
 			email, _ := m.Recipient()
-			inviteUser, err := getUserByEmail(ctx, m, email)
+
+			// TODO: allow invites to not require username/password auth and update this
+			inviteUser, err := getUserByEmail(ctx, m, email, enums.Credentials)
 			if err != nil {
 				// if error is anything other than not found, return now
 				if !generated.IsNotFound(err) {
@@ -146,7 +148,8 @@ func HookInviteAccepted() ent.Hook {
 				recipient = invite.Recipient
 			}
 
-			user, err := getUserByEmail(ctx, m, recipient)
+			// TODO: allow invites to not require username/password auth and update this
+			user, err := getUserByEmail(ctx, m, recipient, enums.Credentials)
 			if err != nil {
 				m.Logger.Errorw("unable to get user", "error", err)
 
@@ -208,8 +211,12 @@ func HookInviteAccepted() ent.Hook {
 
 // getUserByEmail checks to see if there is an existing user in the system based on the provided email,
 // and returns the user if they do exist or nil if they don't
-func getUserByEmail(ctx context.Context, m *generated.InviteMutation, email string) (*generated.User, error) {
-	user, err := m.Client().User.Query().Where(user.Email(email)).Only(ctx)
+func getUserByEmail(ctx context.Context, m *generated.InviteMutation, email string, authProvider enums.AuthProvider) (*generated.User, error) {
+	user, err := m.Client().User.
+		Query().
+		Where(user.Email(email)).
+		Where(user.AuthProviderEQ(authProvider)).
+		Only(ctx)
 	if err != nil {
 		m.Logger.Errorw("could not find user by email", "error", err)
 

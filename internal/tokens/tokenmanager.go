@@ -305,6 +305,11 @@ func (tm *TokenManager) RefreshAudience() string {
 	return tm.refreshAudience
 }
 
+// Config returns the token manager config
+func (tm *TokenManager) Config() Config {
+	return tm.conf
+}
+
 // CurrentKey returns the ulid of the current key being used to sign tokens - this is just the identifier of the key, not the key itself
 func (tm *TokenManager) CurrentKey() ulid.ULID {
 	return tm.currentKeyID

@@ -3,6 +3,12 @@ package datumclient
 import (
 	"fmt"
 	"strings"
+
+	"github.com/pkg/errors"
+)
+
+var (
+	errFailedToGetOauthToken = errors.New("failed to get oauth2 token")
 )
 
 // AuthenticationError is returned when a user cannot be authenticated

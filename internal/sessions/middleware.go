@@ -1,6 +1,7 @@
 package sessions
 
 import (
+	"context"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
@@ -18,6 +19,8 @@ type SessionConfig struct {
 	// SessionManager is responsible for managing the session cookies. It handles the creation, retrieval, and deletion of
 	// session cookies for each user session
 	SessionManager Store[map[string]string]
+	// CookieConfig contains the cookie settings for sessions
+	CookieConfig *CookieConfig
 	// RedisStore is used to store and retrieve session data in a persistent manner such as to a redis backend
 	RedisStore PersistentStore
 	// RedisClient establishes a connection to a Redis server and perform operations such as storing and retrieving data
@@ -76,25 +79,30 @@ func WithBeforeFunc(before middleware.BeforeFunc) Option {
 	}
 }
 
-// SaveAndStoreSession saves the session to the cookie and to the persistent store (redis)
-func (sc *SessionConfig) SaveAndStoreSession(ctx echo.Context, name string, userID string) error {
-	session := sc.SessionManager.New(name)
+// CreateAndStoreSession creates the session values with user ID and sets the cookie stores the session in
+// the persistent store (redis)
+func (sc *SessionConfig) CreateAndStoreSession(ctx echo.Context, userID string) error {
+	setSessionMap := map[string]string{}
+	setSessionMap[UserIDKey] = userID
+
+	return sc.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, userID)
+}
+
+// SaveAndStoreSession saves the session to the cookie and to the persistent store (redis) with the provided map of values
+func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.ResponseWriter, sessionMap map[string]string, userID string) error {
+	session := sc.SessionManager.New(sc.CookieConfig.Name)
 	sessionID := GenerateSessionID()
 
-	setSessionMap := map[string]string{}
-	setSessionMap["userID"] = userID
-
-	session.Set(sessionID, setSessionMap)
+	session.Set(sessionID, sessionMap)
 
 	// Add session to context
-	c := session.addSessionDataToContext(ctx.Request().Context())
-	ctx.SetRequest(ctx.Request().WithContext(c))
+	c := session.addSessionDataToContext(ctx)
 
-	if err := session.Save(ctx.Response().Writer); err != nil {
+	if err := session.Save(w); err != nil {
 		return err
 	}
 
-	if err := sc.RedisStore.StoreSession(ctx.Request().Context(), sessionID, userID); err != nil {
+	if err := sc.RedisStore.StoreSession(c, sessionID, userID); err != nil {
 		return err
 	}
 
@@ -131,7 +139,7 @@ func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 			}
 
 			// get session from request cookies
-			session, err := config.SessionManager.Get(c.Request(), DefaultCookieName)
+			session, err := config.SessionManager.Get(c.Request(), config.CookieConfig.Name)
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)
 
@@ -155,6 +163,8 @@ func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 
 			if userIDFromCookie != userID {
 				config.Logger.Errorw("sessions do not match", "cookie", userIDFromCookie, "store", userID)
+
+				return err
 			}
 
 			// Add session to context to be used in request paths
@@ -163,7 +173,7 @@ func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 
 			c.Response().Before(func() {
 				// refresh and save session cookie
-				if err := config.SaveAndStoreSession(c, DefaultCookieName, sessionID); err != nil {
+				if err := config.CreateAndStoreSession(c, sessionID); err != nil {
 					config.Logger.Errorw("unable to create and store new session", "error", err)
 
 					panic(err)

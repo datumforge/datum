@@ -14,6 +14,9 @@ var (
 
 	// ErrInvalidInviteStatus is returned when an invalid status is provided for an invite
 	ErrInvalidInviteStatus = errors.New("invalid status, only sent, required, accepted, expired are allowed")
+
+	// ErrUnsupportedProvider is returned when an invalid provider is specified during login
+	ErrUnsupportedProvider = errors.New("invalid provider, only Github and Google are supported")
 )
 
 // RequiredFieldMissingError is returned when a field is required but not provided

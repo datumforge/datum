@@ -104,7 +104,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	}
 
 	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx, access, refresh)
+	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
 	return ctx.NoContent(http.StatusNoContent)
 }

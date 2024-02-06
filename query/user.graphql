@@ -10,6 +10,7 @@ query GetUserByID($userId: ID!) {
     avatarRemoteURL
     avatarLocalFile
     oauth
+    authProvider
     setting {
       emailConfirmed
       defaultOrg
@@ -51,6 +52,7 @@ query GetUserByIDWithOrgs($userId: ID!) {
     avatarRemoteURL
     avatarLocalFile
     oauth
+    authProvider
     setting {
       emailConfirmed
       defaultOrg
@@ -93,6 +95,7 @@ query GetAllUsers {
         avatarRemoteURL
         avatarLocalFile
         oauth
+        authProvider
         setting {
           emailConfirmed
           defaultOrg 
@@ -127,6 +130,7 @@ mutation CreateUser($input: CreateUserInput!) {
       avatarLocalFile
       sub
       oauth
+      authProvider
       orgMemberships {
         id
         organizationID
@@ -164,6 +168,7 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
       avatarLocalFile
       sub
       oauth
+      authProvider
       groupMemberships {
         id
       }

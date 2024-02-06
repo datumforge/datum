@@ -80,16 +80,14 @@ func HookUser() ent.Hook {
 			}
 
 			if mutation.Op().Is(ent.OpCreate) {
-				// if using password auth, set subject to user ID
-				if userCreated.Password != nil {
-					userCreated.Sub = userCreated.ID
+				userCreated.Sub = userCreated.ID
 
-					if _, err := mutation.Client().User.
-						UpdateOneID(userCreated.ID).
-						SetSub(userCreated.Sub).
-						Save(ctx); err != nil {
-						return nil, err
-					}
+				// set the subject to the user id
+				if _, err := mutation.Client().User.
+					UpdateOneID(userCreated.ID).
+					SetSub(userCreated.Sub).
+					Save(ctx); err != nil {
+					return nil, err
 				}
 
 				// when a user is created, we create a personal user org

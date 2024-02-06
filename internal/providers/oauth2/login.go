@@ -15,14 +15,28 @@ import (
 func StateHandler(config sessions.CookieConfig, success http.Handler) http.Handler {
 	funk := func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
-		cookie, err := req.Cookie(config.Name)
 
+		cookie, err := req.Cookie(config.Name)
 		if err == nil {
 			ctx = WithState(ctx, cookie.Value)
 		} else {
 			val := keygen.GenerateRandomString(32) // nolint: gomnd
 			http.SetCookie(w, sessions.NewCookie(config.Name, val, &config))
 			ctx = WithState(ctx, val)
+		}
+
+		// set redirect
+		redirect, err := req.Cookie("redirect_to")
+		if err == nil && redirect.Value != "" {
+			ctx = WithRedirectURL(ctx, redirect.Value)
+		} else {
+			_ = req.ParseForm() //nolint: errcheck
+
+			redirect := req.Form.Get("redirect_uri")
+			if redirect != "" {
+				http.SetCookie(w, sessions.NewCookie("redirect_to", redirect, &config))
+				ctx = WithRedirectURL(ctx, redirect)
+			}
 		}
 
 		success.ServeHTTP(w, req.WithContext(ctx))
@@ -106,14 +120,11 @@ func CallbackHandler(config *oauth2.Config, success, failure http.Handler) http.
 
 // parseCallback parses code and state parameters from the http.Request and returns them
 func parseCallback(req *http.Request) (authCode, state string, err error) {
-	err = req.ParseForm()
-
-	if err != nil {
+	if err = req.ParseForm(); err != nil {
 		return "", "", err
 	}
 
 	authCode = req.Form.Get("code")
-
 	state = req.Form.Get("state")
 
 	if authCode == "" || state == "" {

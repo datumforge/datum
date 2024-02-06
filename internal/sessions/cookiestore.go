@@ -112,3 +112,8 @@ func (s *cookieStore[T]) Destroy(w http.ResponseWriter, name string) {
 func NewSessionCookie(session string) *http.Cookie {
 	return NewCookie(DefaultCookieName, session, DefaultCookieConfig)
 }
+
+// NewDevSessionCookie creates a cookie from a session id using the dev cookie name
+func NewDevSessionCookie(session string) *http.Cookie {
+	return NewCookie(DevCookieName, session, DefaultCookieConfig)
+}

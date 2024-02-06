@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"golang.org/x/oauth2"
 
@@ -57,15 +58,12 @@ func Login(c *Client, ctx context.Context, login handlers.LoginRequest) (*oauth2
 		return nil, newAuthenticationError(resp.StatusCode, out.Message)
 	}
 
-	return getTokensFromCookies(resp), nil
+	return getTokensFromCookiesFromResponse(resp), nil
 }
 
-// getTokensFromCookies parses the HTTP Response for cookies and returns the access and refresh tokens
-func getTokensFromCookies(resp *http.Response) (token *oauth2.Token) {
+// getTokensFromCookies returns the access and refresh tokens from the http cookies
+func getTokensFromCookies(cookies []*http.Cookie) (token *oauth2.Token) {
 	token = &oauth2.Token{}
-
-	// parse cookies
-	cookies := resp.Cookies()
 
 	for _, c := range cookies {
 		if c.Name == auth.AccessTokenCookie {
@@ -80,18 +78,32 @@ func getTokensFromCookies(resp *http.Response) (token *oauth2.Token) {
 	return token
 }
 
-// GetSessionFromCookies parses the HTTP Response for cookies and returns session
-func GetSessionFromCookies(resp *http.Response) (sessionID string) {
+// getTokensFromCookiesFromResponse parses the HTTP Response for cookies and returns the access and refresh tokens
+func getTokensFromCookiesFromResponse(resp *http.Response) (token *oauth2.Token) {
 	// parse cookies
 	cookies := resp.Cookies()
 
+	return getTokensFromCookies(cookies)
+}
+
+// getTokensFromCookies parses the HTTP Request for cookies and returns the session and access and refresh tokens
+func getTokensFromCookieRequest(r *http.Request, isDev bool) (token *oauth2.Token, session string) {
+	// parse cookies
+	cookies := r.Cookies()
+	cookieName := sessions.DefaultCookieName
+
+	// Use the dev cookie when running on localhost
+	if isDev {
+		cookieName = sessions.DevCookieName
+	}
+
 	for _, c := range cookies {
-		if c.Name == sessions.DefaultCookieName {
-			return c.Value
+		if c.Name == cookieName {
+			session = c.Value
 		}
 	}
 
-	return ""
+	return getTokensFromCookies(cookies), session
 }
 
 // GetSessionFromCookieJar parses the cookie jar for the session cookie
@@ -102,9 +114,15 @@ func GetSessionFromCookieJar(c *Client) (sessionID string, err error) {
 	}
 
 	cookies := c.Client.Client.Jar.Cookies(u)
+	cookieName := sessions.DefaultCookieName
+
+	// Use the dev cookie when running on localhost
+	if strings.Contains(u.Host, "localhost") {
+		cookieName = sessions.DevCookieName
+	}
 
 	for _, c := range cookies {
-		if c.Name == sessions.DefaultCookieName {
+		if c.Name == cookieName {
 			return c.Value, nil
 		}
 	}

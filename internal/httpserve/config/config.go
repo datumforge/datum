@@ -107,6 +107,8 @@ type (
 	Auth struct {
 		// Enabled - checks this first before reading your provider config
 		Enabled bool `yaml:"enabled" split_words:"true" default:"true"`
+		// SupportedProviders are the supported oauth providers that have been configured
+		SupportedProviders []string `yaml:"supportedProviders" split_words:"true"`
 	}
 
 	// CORS settings

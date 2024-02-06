@@ -186,6 +186,7 @@ func (User) Policy() ent.Policy {
 				privacy.MutationPolicy{
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.OauthTooToken{}),
 					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
 					// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users

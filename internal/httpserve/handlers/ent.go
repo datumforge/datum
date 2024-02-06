@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -130,10 +131,11 @@ func (h *Handler) getUserByResetToken(ctx context.Context, token string) (*ent.U
 	return user, nil
 }
 
-// getUserByEmail returns the ent user with the user settings based on the email in the request
-func (h *Handler) getUserByEmail(ctx context.Context, email string) (*ent.User, error) {
+// getUserByEmail returns the ent user with the user settings based on the email and auth provider in the request
+func (h *Handler) getUserByEmail(ctx context.Context, email string, authProvider enums.AuthProvider) (*ent.User, error) {
 	user, err := transaction.FromContext(ctx).User.Query().WithSetting().
 		Where(user.Email(email)).
+		Where(user.AuthProviderEQ(authProvider)).
 		Only(ctx)
 	if err != nil {
 		h.Logger.Errorw("error obtaining user from email", "error", err)

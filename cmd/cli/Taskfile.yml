@@ -6,12 +6,37 @@ tasks:
     aliases: [createorg]
     cmds:
       - go run main.go org create -n your_new_org -d "my new org again"
-  verifyuser:
-    dir: '{{.USER_WORKING_DIR}}'
-    desc: a task to register a user, parse out the token respoonse, and submit it to the verify endpoint
+
+  user:verify:
+    desc: a task to register a user, parse out the token response, and submit it to the verify endpoint
+    aliases: [verifyuser]
     cmds:
       - curl http://localhost:17608/v1/verify?token={{.VERIFY_TOKEN}}
     vars:
       VERIFY_TOKEN:
-        sh: ./datum-cli register --email="mitb@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token
+        sh: go run main.go register --email="mitb@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token
 
+  login:creds: 
+    desc: a task to login the verified user
+    aliases: [login]
+    cmds:
+      - export DATUM_PASSWORD=mattisthebest1234
+      - go run main.go login -u mitb@datum.net
+
+  user:all:
+    desc: a task to register, verify, and login a new user
+    cmds: 
+      - task: verifyuser
+      - task: login
+
+  login:google: 
+    desc: a task to login with google oauth
+    aliases: [google]
+    cmds:
+      - go run main.go login -o google
+
+  login:github: 
+    desc: a task to login with google oauth
+    aliases: [github]
+    cmds:
+      - go run main.go login -o github

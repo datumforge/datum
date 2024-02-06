@@ -82,6 +82,8 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 		sessions.WithLogger(logger),
 	)
 
+	sessionConfig.CookieConfig = &sessions.DebugOnlyCookieConfig
+
 	h := &handlers.Handler{
 		TM:            tm,
 		DBClient:      ent,

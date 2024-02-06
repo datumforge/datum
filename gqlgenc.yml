@@ -20,3 +20,5 @@ query: ["query/*.graphql"]
 generate:
   clientV2: true
   clientInterfaceName: "DatumClient"
+  query: false
+  mutation: false

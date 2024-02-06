@@ -1477,6 +1477,9 @@ type InviteWhereInput struct {
 	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
+type Mutation struct {
+}
+
 type OauthProvider struct {
 	ID        string     `json:"id"`
 	CreatedAt time.Time  `json:"createdAt"`
@@ -2828,6 +2831,9 @@ type PersonalAccessTokenWhereInput struct {
 	// owner edge predicates
 	HasOwner     *bool             `json:"hasOwner,omitempty"`
 	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
+}
+
+type Query struct {
 }
 
 // UpdateEntitlementInput is used for update Entitlement object.

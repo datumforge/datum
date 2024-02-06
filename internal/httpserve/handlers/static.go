@@ -2,8 +2,11 @@ package handlers
 
 import (
 	"net/http"
+	"net/url"
 
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 // SecurityHandler hosts the /security.txt endpoint https://securitytxt.org/, signed with our GPG key
@@ -37,4 +40,29 @@ func (h *Handler) RobotsHandler(ctx echo.Context) error {
 // JWKSWellKnownHandler provides the JWK used to verify all Datum-issued JWTs
 func (h *Handler) JWKSWellKnownHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, h.JWTKeys)
+}
+
+// OpenIDConfiguration returns a JSON document with the OpenID configuration as defined by the OpenID
+// Connect standard: https://connect2id.com/learn/openid-connect. This document helps
+// clients understand how to authenticate with Datum.
+func (h *Handler) OpenIDConfiguration(ctx echo.Context) error {
+	// Parse the token issuer for the OpenID configuration
+	base, err := url.Parse(h.TM.Config().Issuer)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse("openid is not configured correctly"))
+	}
+
+	openid := &tokens.DiscoveryJSON{
+		Issuer:                base.ResolveReference(&url.URL{Path: "/"}).String(),
+		JwksURI:               base.ResolveReference(&url.URL{Path: "/.well-known/jwks.json"}).String(),
+		AuthorizationEndpoint: base.ResolveReference(&url.URL{Path: "/authorize"}).String(),
+		TokenEndpoint:         base.ResolveReference(&url.URL{Path: "/token"}).String(),
+		// TODO: add querystring for user query
+		UserinfoEndpoint:                  base.ResolveReference(&url.URL{Path: "/query"}).String(),
+		ScopesSupported:                   []string{"openid", "profile", "email"},
+		ResponseTypesSupported:            []string{"code", "token", "id_token"},
+		TokenEndpointAuthMethodsSupported: []string{"client_secret_basic", "client_secret_post"},
+	}
+
+	return ctx.JSON(http.StatusOK, openid)
 }

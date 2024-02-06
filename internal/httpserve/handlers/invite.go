@@ -20,14 +20,13 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/passwd"
-	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
 // OrganizationInviteAccept is responsible for handling the invitation of a user to an organization.
 // It receives a request with the user's invitation details, validates the request,
-// and creates a new user and organization membership for the user
-// On success, it returns a response with the user's details and organization information
+// and creates organization membership for the user
+// On success, it returns a response with the organization information
 func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	// parse the token out of the context
 	inv := &Invite{
@@ -142,7 +141,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 
 	// if the user was created, use that user as the createdUser
 	if IsUniqueConstraintError(err) {
-		createdUser, err = h.getUserByEmail(ctxWithToken, invitedUser.Recipient)
+		createdUser, err = h.getUserByEmail(ctxWithToken, invitedUser.Recipient, enums.Credentials)
 		if err != nil {
 			return err
 		}
@@ -170,10 +169,10 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 	}
 
 	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx, access, refresh)
+	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
 	// set sessions in response
-	if err := h.SessionConfig.SaveAndStoreSession(ctx, sessions.DefaultCookieName, createdUser.ID); err != nil {
+	if err := h.SessionConfig.CreateAndStoreSession(ctx, createdUser.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
 		return err

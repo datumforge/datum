@@ -12,6 +12,10 @@ import (
 	"github.com/datumforge/datum/internal/sessions"
 )
 
+const (
+	ProviderName = "GITHUB"
+)
+
 // StateHandler checks for a state cookie, if found, adds to context; if missing, a
 // random generated value is added to the context and to a (short-lived) state cookie
 // issued to the requester - this implements OAuth 2 RFC 6749 10.12 CSRF Protection

@@ -4035,6 +4035,7 @@ type GetUserByID_User struct {
 	AvatarRemoteURL *string                           "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                           "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Oauth           bool                              "json:\"oauth\" graphql:\"oauth\""
+	AuthProvider    enums.AuthProvider                "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetUserByID_User_Setting          "json:\"setting\" graphql:\"setting\""
 	Organizations   []*GetUserByID_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
 	UpdatedAt       time.Time                         "json:\"updatedAt\" graphql:\"updatedAt\""
@@ -4102,6 +4103,12 @@ func (t *GetUserByID_User) GetOauth() bool {
 		t = &GetUserByID_User{}
 	}
 	return t.Oauth
+}
+func (t *GetUserByID_User) GetAuthProvider() *enums.AuthProvider {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return &t.AuthProvider
 }
 func (t *GetUserByID_User) GetSetting() *GetUserByID_User_Setting {
 	if t == nil {
@@ -4275,6 +4282,7 @@ type GetUserByIDWithOrgs_User struct {
 	AvatarRemoteURL *string                                    "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                                    "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Oauth           bool                                       "json:\"oauth\" graphql:\"oauth\""
+	AuthProvider    enums.AuthProvider                         "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetUserByIDWithOrgs_User_Setting           "json:\"setting\" graphql:\"setting\""
 	UpdatedAt       time.Time                                  "json:\"updatedAt\" graphql:\"updatedAt\""
 	UpdatedBy       *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -4342,6 +4350,12 @@ func (t *GetUserByIDWithOrgs_User) GetOauth() bool {
 		t = &GetUserByIDWithOrgs_User{}
 	}
 	return t.Oauth
+}
+func (t *GetUserByIDWithOrgs_User) GetAuthProvider() *enums.AuthProvider {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return &t.AuthProvider
 }
 func (t *GetUserByIDWithOrgs_User) GetSetting() *GetUserByIDWithOrgs_User_Setting {
 	if t == nil {
@@ -4472,6 +4486,7 @@ type GetAllUsers_Users_Edges_Node struct {
 	AvatarRemoteURL *string                              "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                              "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Oauth           bool                                 "json:\"oauth\" graphql:\"oauth\""
+	AuthProvider    enums.AuthProvider                   "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
 	UpdatedAt       time.Time                            "json:\"updatedAt\" graphql:\"updatedAt\""
 	UpdatedBy       *string                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -4538,6 +4553,12 @@ func (t *GetAllUsers_Users_Edges_Node) GetOauth() bool {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
 	return t.Oauth
+}
+func (t *GetAllUsers_Users_Edges_Node) GetAuthProvider() *enums.AuthProvider {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return &t.AuthProvider
 }
 func (t *GetAllUsers_Users_Edges_Node) GetSetting() *GetAllUsers_Users_Edges_Node_Setting {
 	if t == nil {
@@ -4719,6 +4740,7 @@ type CreateUser_CreateUser_User struct {
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
 	Oauth            bool                                           "json:\"oauth\" graphql:\"oauth\""
+	AuthProvider     enums.AuthProvider                             "json:\"authProvider\" graphql:\"authProvider\""
 	OrgMemberships   []*CreateUser_CreateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 	GroupMemberships []*CreateUser_CreateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
 	Setting          CreateUser_CreateUser_User_Setting             "json:\"setting\" graphql:\"setting\""
@@ -4777,6 +4799,12 @@ func (t *CreateUser_CreateUser_User) GetOauth() bool {
 		t = &CreateUser_CreateUser_User{}
 	}
 	return t.Oauth
+}
+func (t *CreateUser_CreateUser_User) GetAuthProvider() *enums.AuthProvider {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return &t.AuthProvider
 }
 func (t *CreateUser_CreateUser_User) GetOrgMemberships() []*CreateUser_CreateUser_User_OrgMemberships {
 	if t == nil {
@@ -4932,6 +4960,7 @@ type UpdateUser_UpdateUser_User struct {
 	AvatarLocalFile      *string                                            "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub                  *string                                            "json:\"sub,omitempty\" graphql:\"sub\""
 	Oauth                bool                                               "json:\"oauth\" graphql:\"oauth\""
+	AuthProvider         enums.AuthProvider                                 "json:\"authProvider\" graphql:\"authProvider\""
 	GroupMemberships     []*UpdateUser_UpdateUser_User_GroupMemberships     "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
 	OrgMemberships       []*UpdateUser_UpdateUser_User_OrgMemberships       "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 	PersonalAccessTokens []*UpdateUser_UpdateUser_User_PersonalAccessTokens "json:\"personalAccessTokens,omitempty\" graphql:\"personalAccessTokens\""
@@ -4991,6 +5020,12 @@ func (t *UpdateUser_UpdateUser_User) GetOauth() bool {
 		t = &UpdateUser_UpdateUser_User{}
 	}
 	return t.Oauth
+}
+func (t *UpdateUser_UpdateUser_User) GetAuthProvider() *enums.AuthProvider {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return &t.AuthProvider
 }
 func (t *UpdateUser_UpdateUser_User) GetGroupMemberships() []*UpdateUser_UpdateUser_User_GroupMemberships {
 	if t == nil {
@@ -6771,6 +6806,7 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 		avatarRemoteURL
 		avatarLocalFile
 		oauth
+		authProvider
 		setting {
 			emailConfirmed
 			defaultOrg
@@ -6830,6 +6866,7 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 		avatarRemoteURL
 		avatarLocalFile
 		oauth
+		authProvider
 		setting {
 			emailConfirmed
 			defaultOrg
@@ -6890,6 +6927,7 @@ const GetAllUsersDocument = `query GetAllUsers {
 				avatarRemoteURL
 				avatarLocalFile
 				oauth
+				authProvider
 				setting {
 					emailConfirmed
 					defaultOrg
@@ -6940,6 +6978,7 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			avatarLocalFile
 			sub
 			oauth
+			authProvider
 			orgMemberships {
 				id
 				organizationID
@@ -6995,6 +7034,7 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 			avatarLocalFile
 			sub
 			oauth
+			authProvider
 			groupMemberships {
 				id
 			}

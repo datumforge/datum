@@ -8,6 +8,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/utils/marionette"
@@ -34,7 +35,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email)
+	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email, enums.Credentials)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 204 response even if user is not found to avoid

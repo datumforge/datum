@@ -31,6 +31,8 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
+	"github.com/datumforge/datum/internal/providers/github"
+	"github.com/datumforge/datum/internal/providers/google"
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
@@ -232,9 +234,16 @@ func WithAuth() ServerOption {
 			panic(err)
 		}
 
+		// add supported providers if not set
+		if len(s.Config.Auth.SupportedProviders) == 0 {
+			s.Config.Auth.SupportedProviders = []string{github.ProviderName, google.ProviderName}
+		}
+
+		// add external providers
 		authProviderConfig.GithubConfig = *githubProvider
 		authProviderConfig.GoogleConfig = *googleProvider
 
+		// add our oauth2 provider
 		s.Config.Server.Handler.OauthProvider = *authProviderConfig
 
 		// add auth middleware
@@ -391,6 +400,8 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 		// we need to se the debug cookie config
 		if s.Config.Server.Dev {
 			cc = &sessions.DebugOnlyCookieConfig
+		} else {
+			cc.Name = sessions.DefaultCookieName
 		}
 
 		sm := sessions.NewCookieStore[map[string]string](cc,
@@ -406,6 +417,9 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 			sessions.WithPersistence(rc),
 			sessions.WithLogger(s.Config.Logger),
 		)
+
+		// set cookie config to be used
+		sessionConfig.CookieConfig = cc
 
 		// Make the cookie session store available
 		// to graph and REST endpoints

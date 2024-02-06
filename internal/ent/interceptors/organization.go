@@ -73,7 +73,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 
 		// check root org
 		if !fgax.ListContains(entityType, userOrgs, o.ID) {
-			q.Logger.Infow("access denied to organization", "relation", fgax.CanView, "organization_id", o.ID, "type", entityType)
+			q.Logger.Debugw("access denied to organization", "relation", fgax.CanView, "organization_id", o.ID, "type", entityType)
 
 			// go to next org, no need to check parent
 			continue

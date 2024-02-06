@@ -10,9 +10,10 @@ import (
 type key int
 
 const (
-	tokenKey key = iota
-	stateKey key = iota
-	errorKey key = iota
+	tokenKey    key = iota
+	stateKey    key = iota
+	errorKey    key = iota
+	redirectKey key = iota
 )
 
 // WithState returns a copy of ctx that stores the state value
@@ -61,4 +62,20 @@ func ErrorFromContext(ctx context.Context) error {
 	}
 
 	return err
+}
+
+// WithRedirectURL returns a copy of ctx that stores the redirect value
+func WithRedirectURL(ctx context.Context, redirect string) context.Context {
+	return context.WithValue(ctx, redirectKey, redirect)
+}
+
+// RedirectFromContext returns the redirect value from the ctx
+func RedirectFromContext(ctx context.Context) string {
+	redirect, ok := ctx.Value(redirectKey).(string)
+
+	if !ok {
+		return ""
+	}
+
+	return redirect
 }

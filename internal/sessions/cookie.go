@@ -10,7 +10,10 @@ const (
 	defaultMaxAge = 3600 * 24 * 7 // 1 week
 )
 
-var DefaultCookieName = "__Host-datum"
+var (
+	DefaultCookieName = "__Host-datum"
+	DevCookieName     = "temporary-cookie"
+)
 
 // DefaultCookieConfig configures http.Cookie creation for production (AKA default secure valutes are set)
 var DefaultCookieConfig = &CookieConfig{
@@ -33,7 +36,7 @@ var DebugCookieConfig = &CookieConfig{
 
 // DebugOnlyCookieConfig is different in that it's not a receiver and the name is set, so it can be called directly
 var DebugOnlyCookieConfig = CookieConfig{
-	Name:     "temporary-cookie",
+	Name:     DevCookieName,
 	Path:     "/",
 	MaxAge:   600, // nolint: gomnd
 	HTTPOnly: true,

@@ -8,7 +8,6 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
-	"github.com/datumforge/datum/internal/sessions"
 )
 
 type RefreshRequest struct {
@@ -64,10 +63,10 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx, accessToken, refreshToken)
+	auth.SetAuthCookies(ctx.Response().Writer, accessToken, refreshToken)
 
 	// set sessions in response
-	if err := h.SessionConfig.SaveAndStoreSession(ctx, sessions.DefaultCookieName, user.ID); err != nil {
+	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
 		return err

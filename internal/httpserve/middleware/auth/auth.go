@@ -108,7 +108,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 		}
 
 		// Set the new access and refresh cookies
-		SetAuthCookies(c, reply.AccessToken, reply.RefreshToken)
+		SetAuthCookies(c.Response().Writer, reply.AccessToken, reply.RefreshToken)
 
 		return reply.AccessToken, nil
 	}
@@ -202,16 +202,16 @@ func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
 // access token expires. The refresh token cookie is not an http only cookie (it can be
 // accessed by client-side scripts) and it expires when the refresh token expires. Both
 // cookies require https and will not be set (silently) over http connections.
-func SetAuthCookies(c echo.Context, accessToken, refreshToken string) {
-	sessions.SetCookie(c.Response().Writer, accessToken, AccessTokenCookie, *sessions.DefaultCookieConfig)
-	sessions.SetCookie(c.Response().Writer, refreshToken, RefreshTokenCookie, *sessions.DefaultCookieConfig)
+func SetAuthCookies(w http.ResponseWriter, accessToken, refreshToken string) {
+	sessions.SetCookie(w, accessToken, AccessTokenCookie, *sessions.DefaultCookieConfig)
+	sessions.SetCookie(w, refreshToken, RefreshTokenCookie, *sessions.DefaultCookieConfig)
 }
 
 // ClearAuthCookies is a helper function to clear authentication cookies on a echo
 // request to effectively logger out a user.
-func ClearAuthCookies(c echo.Context) {
-	sessions.RemoveCookie(c.Response().Writer, AccessTokenCookie, *sessions.DefaultCookieConfig)
-	sessions.RemoveCookie(c.Response().Writer, RefreshTokenCookie, *sessions.DefaultCookieConfig)
+func ClearAuthCookies(w http.ResponseWriter) {
+	sessions.RemoveCookie(w, AccessTokenCookie, *sessions.DefaultCookieConfig)
+	sessions.RemoveCookie(w, RefreshTokenCookie, *sessions.DefaultCookieConfig)
 }
 
 // CookieExpired checks to see if a cookie is expired

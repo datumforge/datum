@@ -231,7 +231,6 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
 				AuthProvider: &enums.GitHub,
-				Password:     &strongPassword,
 			},
 			errorMsg: "",
 		},
@@ -314,12 +313,21 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			assert.Equal(t, tc.userInput.LastName, resp.CreateUser.User.LastName)
 			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
 
+			if tc.userInput.AuthProvider != nil {
+				assert.Equal(t, tc.userInput.AuthProvider, &resp.CreateUser.User.AuthProvider)
+			} else {
+				// default is credentials if not provided
+				assert.Equal(t, enums.Credentials, resp.CreateUser.User.AuthProvider)
+			}
 			// display name defaults to email if not provided
 			if tc.userInput.DisplayName == "" {
 				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
 			} else {
 				assert.Equal(t, tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
 			}
+
+			// subject should always be set
+			assert.Equal(t, resp.CreateUser.User.ID, *resp.CreateUser.User.Sub)
 
 			// ensure a user setting was created
 			assert.NotNil(t, resp.CreateUser.User.Setting)

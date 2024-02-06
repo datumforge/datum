@@ -55,5 +55,5 @@ func OrgInvite(c *Client, ctx context.Context, r handlers.Invite) (*handlers.Inv
 		return nil, nil, newRequestError(resp.StatusCode, out.Message)
 	}
 
-	return &out, getTokensFromCookies(resp), err
+	return &out, getTokensFromCookiesFromResponse(resp), err
 }

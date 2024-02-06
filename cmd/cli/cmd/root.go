@@ -149,10 +149,14 @@ func ViperBindFlag(name string, flag *pflag.Flag) {
 func StoreSessionCookies(client *datumclient.Client) {
 	session, err := datumclient.GetSessionFromCookieJar(client)
 	if err != nil {
+		fmt.Println("unable to get session from cookie jar")
+
 		return
 	}
 
 	if err := StoreSession(session); err != nil {
+		fmt.Println("unable to store session in keychain")
+
 		return
 	}
 }

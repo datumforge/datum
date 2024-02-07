@@ -752,6 +752,16 @@ func CredentialIDHasSuffix(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldHasSuffix(FieldCredentialID, v))
 }
 
+// CredentialIDIsNil applies the IsNil predicate on the "credential_id" field.
+func CredentialIDIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldCredentialID))
+}
+
+// CredentialIDNotNil applies the NotNil predicate on the "credential_id" field.
+func CredentialIDNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldCredentialID))
+}
+
 // CredentialIDEqualFold applies the EqualFold predicate on the "credential_id" field.
 func CredentialIDEqualFold(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEqualFold(FieldCredentialID, v))
@@ -800,6 +810,16 @@ func PublicKeyLT(v []byte) predicate.Webauthn {
 // PublicKeyLTE applies the LTE predicate on the "public_key" field.
 func PublicKeyLTE(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLTE(FieldPublicKey, v))
+}
+
+// PublicKeyIsNil applies the IsNil predicate on the "public_key" field.
+func PublicKeyIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldPublicKey))
+}
+
+// PublicKeyNotNil applies the NotNil predicate on the "public_key" field.
+func PublicKeyNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldPublicKey))
 }
 
 // AttestationTypeEQ applies the EQ predicate on the "attestation_type" field.
@@ -855,6 +875,16 @@ func AttestationTypeHasPrefix(v string) predicate.Webauthn {
 // AttestationTypeHasSuffix applies the HasSuffix predicate on the "attestation_type" field.
 func AttestationTypeHasSuffix(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldHasSuffix(FieldAttestationType, v))
+}
+
+// AttestationTypeIsNil applies the IsNil predicate on the "attestation_type" field.
+func AttestationTypeIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldAttestationType))
+}
+
+// AttestationTypeNotNil applies the NotNil predicate on the "attestation_type" field.
+func AttestationTypeNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldAttestationType))
 }
 
 // AttestationTypeEqualFold applies the EqualFold predicate on the "attestation_type" field.
@@ -922,6 +952,16 @@ func AaguidHasSuffix(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldHasSuffix(FieldAaguid, v))
 }
 
+// AaguidIsNil applies the IsNil predicate on the "aaguid" field.
+func AaguidIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldAaguid))
+}
+
+// AaguidNotNil applies the NotNil predicate on the "aaguid" field.
+func AaguidNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldAaguid))
+}
+
 // AaguidEqualFold applies the EqualFold predicate on the "aaguid" field.
 func AaguidEqualFold(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEqualFold(FieldAaguid, v))
@@ -972,6 +1012,46 @@ func SignCountLTE(v int) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLTE(FieldSignCount, v))
 }
 
+// SignCountIsNil applies the IsNil predicate on the "sign_count" field.
+func SignCountIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldSignCount))
+}
+
+// SignCountNotNil applies the NotNil predicate on the "sign_count" field.
+func SignCountNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldSignCount))
+}
+
+// TransportsIsNil applies the IsNil predicate on the "transports" field.
+func TransportsIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldTransports))
+}
+
+// TransportsNotNil applies the NotNil predicate on the "transports" field.
+func TransportsNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldTransports))
+}
+
+// FlagsIsNil applies the IsNil predicate on the "flags" field.
+func FlagsIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldFlags))
+}
+
+// FlagsNotNil applies the NotNil predicate on the "flags" field.
+func FlagsNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldFlags))
+}
+
+// AuthenticatorIsNil applies the IsNil predicate on the "authenticator" field.
+func AuthenticatorIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldAuthenticator))
+}
+
+// AuthenticatorNotNil applies the NotNil predicate on the "authenticator" field.
+func AuthenticatorNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldAuthenticator))
+}
+
 // BackupEligibleEQ applies the EQ predicate on the "backup_eligible" field.
 func BackupEligibleEQ(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldBackupEligible, v))
@@ -982,6 +1062,16 @@ func BackupEligibleNEQ(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNEQ(FieldBackupEligible, v))
 }
 
+// BackupEligibleIsNil applies the IsNil predicate on the "backup_eligible" field.
+func BackupEligibleIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldBackupEligible))
+}
+
+// BackupEligibleNotNil applies the NotNil predicate on the "backup_eligible" field.
+func BackupEligibleNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldBackupEligible))
+}
+
 // BackupStateEQ applies the EQ predicate on the "backup_state" field.
 func BackupStateEQ(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldBackupState, v))
@@ -990,6 +1080,16 @@ func BackupStateEQ(v bool) predicate.Webauthn {
 // BackupStateNEQ applies the NEQ predicate on the "backup_state" field.
 func BackupStateNEQ(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNEQ(FieldBackupState, v))
+}
+
+// BackupStateIsNil applies the IsNil predicate on the "backup_state" field.
+func BackupStateIsNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldIsNull(FieldBackupState))
+}
+
+// BackupStateNotNil applies the NotNil predicate on the "backup_state" field.
+func BackupStateNotNil() predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNotNull(FieldBackupState))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

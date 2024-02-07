@@ -116,8 +116,6 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	UserIDValidator func(string) error
-	// CredentialIDValidator is a validator for the "credential_id" field. It is called by the builders before save.
-	CredentialIDValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )

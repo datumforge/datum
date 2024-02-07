@@ -154,9 +154,21 @@ func (wu *WebauthnUpdate) SetNillableCredentialID(s *string) *WebauthnUpdate {
 	return wu
 }
 
+// ClearCredentialID clears the value of the "credential_id" field.
+func (wu *WebauthnUpdate) ClearCredentialID() *WebauthnUpdate {
+	wu.mutation.ClearCredentialID()
+	return wu
+}
+
 // SetPublicKey sets the "public_key" field.
 func (wu *WebauthnUpdate) SetPublicKey(b []byte) *WebauthnUpdate {
 	wu.mutation.SetPublicKey(b)
+	return wu
+}
+
+// ClearPublicKey clears the value of the "public_key" field.
+func (wu *WebauthnUpdate) ClearPublicKey() *WebauthnUpdate {
+	wu.mutation.ClearPublicKey()
 	return wu
 }
 
@@ -174,6 +186,12 @@ func (wu *WebauthnUpdate) SetNillableAttestationType(s *string) *WebauthnUpdate 
 	return wu
 }
 
+// ClearAttestationType clears the value of the "attestation_type" field.
+func (wu *WebauthnUpdate) ClearAttestationType() *WebauthnUpdate {
+	wu.mutation.ClearAttestationType()
+	return wu
+}
+
 // SetAaguid sets the "aaguid" field.
 func (wu *WebauthnUpdate) SetAaguid(s string) *WebauthnUpdate {
 	wu.mutation.SetAaguid(s)
@@ -185,6 +203,12 @@ func (wu *WebauthnUpdate) SetNillableAaguid(s *string) *WebauthnUpdate {
 	if s != nil {
 		wu.SetAaguid(*s)
 	}
+	return wu
+}
+
+// ClearAaguid clears the value of the "aaguid" field.
+func (wu *WebauthnUpdate) ClearAaguid() *WebauthnUpdate {
+	wu.mutation.ClearAaguid()
 	return wu
 }
 
@@ -209,6 +233,12 @@ func (wu *WebauthnUpdate) AddSignCount(i int) *WebauthnUpdate {
 	return wu
 }
 
+// ClearSignCount clears the value of the "sign_count" field.
+func (wu *WebauthnUpdate) ClearSignCount() *WebauthnUpdate {
+	wu.mutation.ClearSignCount()
+	return wu
+}
+
 // SetTransports sets the "transports" field.
 func (wu *WebauthnUpdate) SetTransports(s []string) *WebauthnUpdate {
 	wu.mutation.SetTransports(s)
@@ -218,6 +248,12 @@ func (wu *WebauthnUpdate) SetTransports(s []string) *WebauthnUpdate {
 // AppendTransports appends s to the "transports" field.
 func (wu *WebauthnUpdate) AppendTransports(s []string) *WebauthnUpdate {
 	wu.mutation.AppendTransports(s)
+	return wu
+}
+
+// ClearTransports clears the value of the "transports" field.
+func (wu *WebauthnUpdate) ClearTransports() *WebauthnUpdate {
+	wu.mutation.ClearTransports()
 	return wu
 }
 
@@ -233,6 +269,12 @@ func (wu *WebauthnUpdate) AppendFlags(s []string) *WebauthnUpdate {
 	return wu
 }
 
+// ClearFlags clears the value of the "flags" field.
+func (wu *WebauthnUpdate) ClearFlags() *WebauthnUpdate {
+	wu.mutation.ClearFlags()
+	return wu
+}
+
 // SetAuthenticator sets the "authenticator" field.
 func (wu *WebauthnUpdate) SetAuthenticator(s []string) *WebauthnUpdate {
 	wu.mutation.SetAuthenticator(s)
@@ -242,6 +284,12 @@ func (wu *WebauthnUpdate) SetAuthenticator(s []string) *WebauthnUpdate {
 // AppendAuthenticator appends s to the "authenticator" field.
 func (wu *WebauthnUpdate) AppendAuthenticator(s []string) *WebauthnUpdate {
 	wu.mutation.AppendAuthenticator(s)
+	return wu
+}
+
+// ClearAuthenticator clears the value of the "authenticator" field.
+func (wu *WebauthnUpdate) ClearAuthenticator() *WebauthnUpdate {
+	wu.mutation.ClearAuthenticator()
 	return wu
 }
 
@@ -259,6 +307,12 @@ func (wu *WebauthnUpdate) SetNillableBackupEligible(b *bool) *WebauthnUpdate {
 	return wu
 }
 
+// ClearBackupEligible clears the value of the "backup_eligible" field.
+func (wu *WebauthnUpdate) ClearBackupEligible() *WebauthnUpdate {
+	wu.mutation.ClearBackupEligible()
+	return wu
+}
+
 // SetBackupState sets the "backup_state" field.
 func (wu *WebauthnUpdate) SetBackupState(b bool) *WebauthnUpdate {
 	wu.mutation.SetBackupState(b)
@@ -270,6 +324,12 @@ func (wu *WebauthnUpdate) SetNillableBackupState(b *bool) *WebauthnUpdate {
 	if b != nil {
 		wu.SetBackupState(*b)
 	}
+	return wu
+}
+
+// ClearBackupState clears the value of the "backup_state" field.
+func (wu *WebauthnUpdate) ClearBackupState() *WebauthnUpdate {
+	wu.mutation.ClearBackupState()
 	return wu
 }
 
@@ -338,11 +398,6 @@ func (wu *WebauthnUpdate) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`generated: validator failed for field "Webauthn.user_id": %w`, err)}
 		}
 	}
-	if v, ok := wu.mutation.CredentialID(); ok {
-		if err := webauthn.CredentialIDValidator(v); err != nil {
-			return &ValidationError{Name: "credential_id", err: fmt.Errorf(`generated: validator failed for field "Webauthn.credential_id": %w`, err)}
-		}
-	}
 	if _, ok := wu.mutation.OwnerID(); wu.mutation.OwnerCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Webauthn.owner"`)
 	}
@@ -394,20 +449,35 @@ func (wu *WebauthnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := wu.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeString, value)
 	}
+	if wu.mutation.CredentialIDCleared() {
+		_spec.ClearField(webauthn.FieldCredentialID, field.TypeString)
+	}
 	if value, ok := wu.mutation.PublicKey(); ok {
 		_spec.SetField(webauthn.FieldPublicKey, field.TypeBytes, value)
+	}
+	if wu.mutation.PublicKeyCleared() {
+		_spec.ClearField(webauthn.FieldPublicKey, field.TypeBytes)
 	}
 	if value, ok := wu.mutation.AttestationType(); ok {
 		_spec.SetField(webauthn.FieldAttestationType, field.TypeString, value)
 	}
+	if wu.mutation.AttestationTypeCleared() {
+		_spec.ClearField(webauthn.FieldAttestationType, field.TypeString)
+	}
 	if value, ok := wu.mutation.Aaguid(); ok {
 		_spec.SetField(webauthn.FieldAaguid, field.TypeString, value)
+	}
+	if wu.mutation.AaguidCleared() {
+		_spec.ClearField(webauthn.FieldAaguid, field.TypeString)
 	}
 	if value, ok := wu.mutation.SignCount(); ok {
 		_spec.SetField(webauthn.FieldSignCount, field.TypeInt, value)
 	}
 	if value, ok := wu.mutation.AddedSignCount(); ok {
 		_spec.AddField(webauthn.FieldSignCount, field.TypeInt, value)
+	}
+	if wu.mutation.SignCountCleared() {
+		_spec.ClearField(webauthn.FieldSignCount, field.TypeInt)
 	}
 	if value, ok := wu.mutation.Transports(); ok {
 		_spec.SetField(webauthn.FieldTransports, field.TypeJSON, value)
@@ -417,6 +487,9 @@ func (wu *WebauthnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			sqljson.Append(u, webauthn.FieldTransports, value)
 		})
 	}
+	if wu.mutation.TransportsCleared() {
+		_spec.ClearField(webauthn.FieldTransports, field.TypeJSON)
+	}
 	if value, ok := wu.mutation.Flags(); ok {
 		_spec.SetField(webauthn.FieldFlags, field.TypeJSON, value)
 	}
@@ -424,6 +497,9 @@ func (wu *WebauthnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, webauthn.FieldFlags, value)
 		})
+	}
+	if wu.mutation.FlagsCleared() {
+		_spec.ClearField(webauthn.FieldFlags, field.TypeJSON)
 	}
 	if value, ok := wu.mutation.Authenticator(); ok {
 		_spec.SetField(webauthn.FieldAuthenticator, field.TypeJSON, value)
@@ -433,11 +509,20 @@ func (wu *WebauthnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			sqljson.Append(u, webauthn.FieldAuthenticator, value)
 		})
 	}
+	if wu.mutation.AuthenticatorCleared() {
+		_spec.ClearField(webauthn.FieldAuthenticator, field.TypeJSON)
+	}
 	if value, ok := wu.mutation.BackupEligible(); ok {
 		_spec.SetField(webauthn.FieldBackupEligible, field.TypeBool, value)
 	}
+	if wu.mutation.BackupEligibleCleared() {
+		_spec.ClearField(webauthn.FieldBackupEligible, field.TypeBool)
+	}
 	if value, ok := wu.mutation.BackupState(); ok {
 		_spec.SetField(webauthn.FieldBackupState, field.TypeBool, value)
+	}
+	if wu.mutation.BackupStateCleared() {
+		_spec.ClearField(webauthn.FieldBackupState, field.TypeBool)
 	}
 	if wu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -614,9 +699,21 @@ func (wuo *WebauthnUpdateOne) SetNillableCredentialID(s *string) *WebauthnUpdate
 	return wuo
 }
 
+// ClearCredentialID clears the value of the "credential_id" field.
+func (wuo *WebauthnUpdateOne) ClearCredentialID() *WebauthnUpdateOne {
+	wuo.mutation.ClearCredentialID()
+	return wuo
+}
+
 // SetPublicKey sets the "public_key" field.
 func (wuo *WebauthnUpdateOne) SetPublicKey(b []byte) *WebauthnUpdateOne {
 	wuo.mutation.SetPublicKey(b)
+	return wuo
+}
+
+// ClearPublicKey clears the value of the "public_key" field.
+func (wuo *WebauthnUpdateOne) ClearPublicKey() *WebauthnUpdateOne {
+	wuo.mutation.ClearPublicKey()
 	return wuo
 }
 
@@ -634,6 +731,12 @@ func (wuo *WebauthnUpdateOne) SetNillableAttestationType(s *string) *WebauthnUpd
 	return wuo
 }
 
+// ClearAttestationType clears the value of the "attestation_type" field.
+func (wuo *WebauthnUpdateOne) ClearAttestationType() *WebauthnUpdateOne {
+	wuo.mutation.ClearAttestationType()
+	return wuo
+}
+
 // SetAaguid sets the "aaguid" field.
 func (wuo *WebauthnUpdateOne) SetAaguid(s string) *WebauthnUpdateOne {
 	wuo.mutation.SetAaguid(s)
@@ -645,6 +748,12 @@ func (wuo *WebauthnUpdateOne) SetNillableAaguid(s *string) *WebauthnUpdateOne {
 	if s != nil {
 		wuo.SetAaguid(*s)
 	}
+	return wuo
+}
+
+// ClearAaguid clears the value of the "aaguid" field.
+func (wuo *WebauthnUpdateOne) ClearAaguid() *WebauthnUpdateOne {
+	wuo.mutation.ClearAaguid()
 	return wuo
 }
 
@@ -669,6 +778,12 @@ func (wuo *WebauthnUpdateOne) AddSignCount(i int) *WebauthnUpdateOne {
 	return wuo
 }
 
+// ClearSignCount clears the value of the "sign_count" field.
+func (wuo *WebauthnUpdateOne) ClearSignCount() *WebauthnUpdateOne {
+	wuo.mutation.ClearSignCount()
+	return wuo
+}
+
 // SetTransports sets the "transports" field.
 func (wuo *WebauthnUpdateOne) SetTransports(s []string) *WebauthnUpdateOne {
 	wuo.mutation.SetTransports(s)
@@ -678,6 +793,12 @@ func (wuo *WebauthnUpdateOne) SetTransports(s []string) *WebauthnUpdateOne {
 // AppendTransports appends s to the "transports" field.
 func (wuo *WebauthnUpdateOne) AppendTransports(s []string) *WebauthnUpdateOne {
 	wuo.mutation.AppendTransports(s)
+	return wuo
+}
+
+// ClearTransports clears the value of the "transports" field.
+func (wuo *WebauthnUpdateOne) ClearTransports() *WebauthnUpdateOne {
+	wuo.mutation.ClearTransports()
 	return wuo
 }
 
@@ -693,6 +814,12 @@ func (wuo *WebauthnUpdateOne) AppendFlags(s []string) *WebauthnUpdateOne {
 	return wuo
 }
 
+// ClearFlags clears the value of the "flags" field.
+func (wuo *WebauthnUpdateOne) ClearFlags() *WebauthnUpdateOne {
+	wuo.mutation.ClearFlags()
+	return wuo
+}
+
 // SetAuthenticator sets the "authenticator" field.
 func (wuo *WebauthnUpdateOne) SetAuthenticator(s []string) *WebauthnUpdateOne {
 	wuo.mutation.SetAuthenticator(s)
@@ -702,6 +829,12 @@ func (wuo *WebauthnUpdateOne) SetAuthenticator(s []string) *WebauthnUpdateOne {
 // AppendAuthenticator appends s to the "authenticator" field.
 func (wuo *WebauthnUpdateOne) AppendAuthenticator(s []string) *WebauthnUpdateOne {
 	wuo.mutation.AppendAuthenticator(s)
+	return wuo
+}
+
+// ClearAuthenticator clears the value of the "authenticator" field.
+func (wuo *WebauthnUpdateOne) ClearAuthenticator() *WebauthnUpdateOne {
+	wuo.mutation.ClearAuthenticator()
 	return wuo
 }
 
@@ -719,6 +852,12 @@ func (wuo *WebauthnUpdateOne) SetNillableBackupEligible(b *bool) *WebauthnUpdate
 	return wuo
 }
 
+// ClearBackupEligible clears the value of the "backup_eligible" field.
+func (wuo *WebauthnUpdateOne) ClearBackupEligible() *WebauthnUpdateOne {
+	wuo.mutation.ClearBackupEligible()
+	return wuo
+}
+
 // SetBackupState sets the "backup_state" field.
 func (wuo *WebauthnUpdateOne) SetBackupState(b bool) *WebauthnUpdateOne {
 	wuo.mutation.SetBackupState(b)
@@ -730,6 +869,12 @@ func (wuo *WebauthnUpdateOne) SetNillableBackupState(b *bool) *WebauthnUpdateOne
 	if b != nil {
 		wuo.SetBackupState(*b)
 	}
+	return wuo
+}
+
+// ClearBackupState clears the value of the "backup_state" field.
+func (wuo *WebauthnUpdateOne) ClearBackupState() *WebauthnUpdateOne {
+	wuo.mutation.ClearBackupState()
 	return wuo
 }
 
@@ -811,11 +956,6 @@ func (wuo *WebauthnUpdateOne) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`generated: validator failed for field "Webauthn.user_id": %w`, err)}
 		}
 	}
-	if v, ok := wuo.mutation.CredentialID(); ok {
-		if err := webauthn.CredentialIDValidator(v); err != nil {
-			return &ValidationError{Name: "credential_id", err: fmt.Errorf(`generated: validator failed for field "Webauthn.credential_id": %w`, err)}
-		}
-	}
 	if _, ok := wuo.mutation.OwnerID(); wuo.mutation.OwnerCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Webauthn.owner"`)
 	}
@@ -884,20 +1024,35 @@ func (wuo *WebauthnUpdateOne) sqlSave(ctx context.Context) (_node *Webauthn, err
 	if value, ok := wuo.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeString, value)
 	}
+	if wuo.mutation.CredentialIDCleared() {
+		_spec.ClearField(webauthn.FieldCredentialID, field.TypeString)
+	}
 	if value, ok := wuo.mutation.PublicKey(); ok {
 		_spec.SetField(webauthn.FieldPublicKey, field.TypeBytes, value)
+	}
+	if wuo.mutation.PublicKeyCleared() {
+		_spec.ClearField(webauthn.FieldPublicKey, field.TypeBytes)
 	}
 	if value, ok := wuo.mutation.AttestationType(); ok {
 		_spec.SetField(webauthn.FieldAttestationType, field.TypeString, value)
 	}
+	if wuo.mutation.AttestationTypeCleared() {
+		_spec.ClearField(webauthn.FieldAttestationType, field.TypeString)
+	}
 	if value, ok := wuo.mutation.Aaguid(); ok {
 		_spec.SetField(webauthn.FieldAaguid, field.TypeString, value)
+	}
+	if wuo.mutation.AaguidCleared() {
+		_spec.ClearField(webauthn.FieldAaguid, field.TypeString)
 	}
 	if value, ok := wuo.mutation.SignCount(); ok {
 		_spec.SetField(webauthn.FieldSignCount, field.TypeInt, value)
 	}
 	if value, ok := wuo.mutation.AddedSignCount(); ok {
 		_spec.AddField(webauthn.FieldSignCount, field.TypeInt, value)
+	}
+	if wuo.mutation.SignCountCleared() {
+		_spec.ClearField(webauthn.FieldSignCount, field.TypeInt)
 	}
 	if value, ok := wuo.mutation.Transports(); ok {
 		_spec.SetField(webauthn.FieldTransports, field.TypeJSON, value)
@@ -907,6 +1062,9 @@ func (wuo *WebauthnUpdateOne) sqlSave(ctx context.Context) (_node *Webauthn, err
 			sqljson.Append(u, webauthn.FieldTransports, value)
 		})
 	}
+	if wuo.mutation.TransportsCleared() {
+		_spec.ClearField(webauthn.FieldTransports, field.TypeJSON)
+	}
 	if value, ok := wuo.mutation.Flags(); ok {
 		_spec.SetField(webauthn.FieldFlags, field.TypeJSON, value)
 	}
@@ -914,6 +1072,9 @@ func (wuo *WebauthnUpdateOne) sqlSave(ctx context.Context) (_node *Webauthn, err
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, webauthn.FieldFlags, value)
 		})
+	}
+	if wuo.mutation.FlagsCleared() {
+		_spec.ClearField(webauthn.FieldFlags, field.TypeJSON)
 	}
 	if value, ok := wuo.mutation.Authenticator(); ok {
 		_spec.SetField(webauthn.FieldAuthenticator, field.TypeJSON, value)
@@ -923,11 +1084,20 @@ func (wuo *WebauthnUpdateOne) sqlSave(ctx context.Context) (_node *Webauthn, err
 			sqljson.Append(u, webauthn.FieldAuthenticator, value)
 		})
 	}
+	if wuo.mutation.AuthenticatorCleared() {
+		_spec.ClearField(webauthn.FieldAuthenticator, field.TypeJSON)
+	}
 	if value, ok := wuo.mutation.BackupEligible(); ok {
 		_spec.SetField(webauthn.FieldBackupEligible, field.TypeBool, value)
 	}
+	if wuo.mutation.BackupEligibleCleared() {
+		_spec.ClearField(webauthn.FieldBackupEligible, field.TypeBool)
+	}
 	if value, ok := wuo.mutation.BackupState(); ok {
 		_spec.SetField(webauthn.FieldBackupState, field.TypeBool, value)
+	}
+	if wuo.mutation.BackupStateCleared() {
+		_spec.ClearField(webauthn.FieldBackupState, field.TypeBool)
 	}
 	if wuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

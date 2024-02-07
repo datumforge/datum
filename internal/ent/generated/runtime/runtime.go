@@ -891,10 +891,6 @@ func init() {
 	webauthnDescUserID := webauthnFields[1].Descriptor()
 	// webauthn.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	webauthn.UserIDValidator = webauthnDescUserID.Validators[0].(func(string) error)
-	// webauthnDescCredentialID is the schema descriptor for credential_id field.
-	webauthnDescCredentialID := webauthnFields[2].Descriptor()
-	// webauthn.CredentialIDValidator is a validator for the "credential_id" field. It is called by the builders before save.
-	webauthn.CredentialIDValidator = webauthnDescCredentialID.Validators[0].(func(string) error)
 	// webauthnDescID is the schema descriptor for id field.
 	webauthnDescID := webauthnMixinFields1[0].Descriptor()
 	// webauthn.DefaultID holds the default value on creation for the id field.

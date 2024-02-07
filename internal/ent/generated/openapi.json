@@ -7930,16 +7930,6 @@
                   "owner_id",
                   "name",
                   "user_id",
-                  "credential_id",
-                  "public_key",
-                  "attestation_type",
-                  "aaguid",
-                  "sign_count",
-                  "transports",
-                  "flags",
-                  "authenticator",
-                  "backup_eligible",
-                  "backup_state",
                   "owner"
                 ]
               }
@@ -15910,17 +15900,7 @@
           "updated_at",
           "owner_id",
           "name",
-          "user_id",
-          "credential_id",
-          "public_key",
-          "attestation_type",
-          "aaguid",
-          "sign_count",
-          "transports",
-          "flags",
-          "authenticator",
-          "backup_eligible",
-          "backup_state"
+          "user_id"
         ]
       },
       "Webauthn": {
@@ -16010,16 +15990,6 @@
           "owner_id",
           "name",
           "user_id",
-          "credential_id",
-          "public_key",
-          "attestation_type",
-          "aaguid",
-          "sign_count",
-          "transports",
-          "flags",
-          "authenticator",
-          "backup_eligible",
-          "backup_state",
           "owner"
         ]
       },
@@ -16106,17 +16076,7 @@
           "updated_at",
           "owner_id",
           "name",
-          "user_id",
-          "credential_id",
-          "public_key",
-          "attestation_type",
-          "aaguid",
-          "sign_count",
-          "transports",
-          "flags",
-          "authenticator",
-          "backup_eligible",
-          "backup_state"
+          "user_id"
         ]
       },
       "WebauthnList": {
@@ -16202,17 +16162,7 @@
           "updated_at",
           "owner_id",
           "name",
-          "user_id",
-          "credential_id",
-          "public_key",
-          "attestation_type",
-          "aaguid",
-          "sign_count",
-          "transports",
-          "flags",
-          "authenticator",
-          "backup_eligible",
-          "backup_state"
+          "user_id"
         ]
       },
       "WebauthnRead": {
@@ -16298,17 +16248,7 @@
           "updated_at",
           "owner_id",
           "name",
-          "user_id",
-          "credential_id",
-          "public_key",
-          "attestation_type",
-          "aaguid",
-          "sign_count",
-          "transports",
-          "flags",
-          "authenticator",
-          "backup_eligible",
-          "backup_state"
+          "user_id"
         ]
       },
       "WebauthnUpdate": {
@@ -16394,17 +16334,7 @@
           "updated_at",
           "owner_id",
           "name",
-          "user_id",
-          "credential_id",
-          "public_key",
-          "attestation_type",
-          "aaguid",
-          "sign_count",
-          "transports",
-          "flags",
-          "authenticator",
-          "backup_eligible",
-          "backup_state"
+          "user_id"
         ]
       },
       "Webauthn_OwnerRead": {

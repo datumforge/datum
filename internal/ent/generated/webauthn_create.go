@@ -129,6 +129,14 @@ func (wc *WebauthnCreate) SetCredentialID(s string) *WebauthnCreate {
 	return wc
 }
 
+// SetNillableCredentialID sets the "credential_id" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableCredentialID(s *string) *WebauthnCreate {
+	if s != nil {
+		wc.SetCredentialID(*s)
+	}
+	return wc
+}
+
 // SetPublicKey sets the "public_key" field.
 func (wc *WebauthnCreate) SetPublicKey(b []byte) *WebauthnCreate {
 	wc.mutation.SetPublicKey(b)
@@ -141,15 +149,39 @@ func (wc *WebauthnCreate) SetAttestationType(s string) *WebauthnCreate {
 	return wc
 }
 
+// SetNillableAttestationType sets the "attestation_type" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableAttestationType(s *string) *WebauthnCreate {
+	if s != nil {
+		wc.SetAttestationType(*s)
+	}
+	return wc
+}
+
 // SetAaguid sets the "aaguid" field.
 func (wc *WebauthnCreate) SetAaguid(s string) *WebauthnCreate {
 	wc.mutation.SetAaguid(s)
 	return wc
 }
 
+// SetNillableAaguid sets the "aaguid" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableAaguid(s *string) *WebauthnCreate {
+	if s != nil {
+		wc.SetAaguid(*s)
+	}
+	return wc
+}
+
 // SetSignCount sets the "sign_count" field.
 func (wc *WebauthnCreate) SetSignCount(i int) *WebauthnCreate {
 	wc.mutation.SetSignCount(i)
+	return wc
+}
+
+// SetNillableSignCount sets the "sign_count" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableSignCount(i *int) *WebauthnCreate {
+	if i != nil {
+		wc.SetSignCount(*i)
+	}
 	return wc
 }
 
@@ -177,9 +209,25 @@ func (wc *WebauthnCreate) SetBackupEligible(b bool) *WebauthnCreate {
 	return wc
 }
 
+// SetNillableBackupEligible sets the "backup_eligible" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableBackupEligible(b *bool) *WebauthnCreate {
+	if b != nil {
+		wc.SetBackupEligible(*b)
+	}
+	return wc
+}
+
 // SetBackupState sets the "backup_state" field.
 func (wc *WebauthnCreate) SetBackupState(b bool) *WebauthnCreate {
 	wc.mutation.SetBackupState(b)
+	return wc
+}
+
+// SetNillableBackupState sets the "backup_state" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableBackupState(b *bool) *WebauthnCreate {
+	if b != nil {
+		wc.SetBackupState(*b)
+	}
 	return wc
 }
 
@@ -284,41 +332,6 @@ func (wc *WebauthnCreate) check() error {
 		if err := webauthn.UserIDValidator(v); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`generated: validator failed for field "Webauthn.user_id": %w`, err)}
 		}
-	}
-	if _, ok := wc.mutation.CredentialID(); !ok {
-		return &ValidationError{Name: "credential_id", err: errors.New(`generated: missing required field "Webauthn.credential_id"`)}
-	}
-	if v, ok := wc.mutation.CredentialID(); ok {
-		if err := webauthn.CredentialIDValidator(v); err != nil {
-			return &ValidationError{Name: "credential_id", err: fmt.Errorf(`generated: validator failed for field "Webauthn.credential_id": %w`, err)}
-		}
-	}
-	if _, ok := wc.mutation.PublicKey(); !ok {
-		return &ValidationError{Name: "public_key", err: errors.New(`generated: missing required field "Webauthn.public_key"`)}
-	}
-	if _, ok := wc.mutation.AttestationType(); !ok {
-		return &ValidationError{Name: "attestation_type", err: errors.New(`generated: missing required field "Webauthn.attestation_type"`)}
-	}
-	if _, ok := wc.mutation.Aaguid(); !ok {
-		return &ValidationError{Name: "aaguid", err: errors.New(`generated: missing required field "Webauthn.aaguid"`)}
-	}
-	if _, ok := wc.mutation.SignCount(); !ok {
-		return &ValidationError{Name: "sign_count", err: errors.New(`generated: missing required field "Webauthn.sign_count"`)}
-	}
-	if _, ok := wc.mutation.Transports(); !ok {
-		return &ValidationError{Name: "transports", err: errors.New(`generated: missing required field "Webauthn.transports"`)}
-	}
-	if _, ok := wc.mutation.Flags(); !ok {
-		return &ValidationError{Name: "flags", err: errors.New(`generated: missing required field "Webauthn.flags"`)}
-	}
-	if _, ok := wc.mutation.Authenticator(); !ok {
-		return &ValidationError{Name: "authenticator", err: errors.New(`generated: missing required field "Webauthn.authenticator"`)}
-	}
-	if _, ok := wc.mutation.BackupEligible(); !ok {
-		return &ValidationError{Name: "backup_eligible", err: errors.New(`generated: missing required field "Webauthn.backup_eligible"`)}
-	}
-	if _, ok := wc.mutation.BackupState(); !ok {
-		return &ValidationError{Name: "backup_state", err: errors.New(`generated: missing required field "Webauthn.backup_state"`)}
 	}
 	if _, ok := wc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Webauthn.owner"`)}

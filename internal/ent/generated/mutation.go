@@ -20982,9 +20982,22 @@ func (m *WebauthnMutation) OldCredentialID(ctx context.Context) (v string, err e
 	return oldValue.CredentialID, nil
 }
 
+// ClearCredentialID clears the value of the "credential_id" field.
+func (m *WebauthnMutation) ClearCredentialID() {
+	m.credential_id = nil
+	m.clearedFields[webauthn.FieldCredentialID] = struct{}{}
+}
+
+// CredentialIDCleared returns if the "credential_id" field was cleared in this mutation.
+func (m *WebauthnMutation) CredentialIDCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldCredentialID]
+	return ok
+}
+
 // ResetCredentialID resets all changes to the "credential_id" field.
 func (m *WebauthnMutation) ResetCredentialID() {
 	m.credential_id = nil
+	delete(m.clearedFields, webauthn.FieldCredentialID)
 }
 
 // SetPublicKey sets the "public_key" field.
@@ -21018,9 +21031,22 @@ func (m *WebauthnMutation) OldPublicKey(ctx context.Context) (v []byte, err erro
 	return oldValue.PublicKey, nil
 }
 
+// ClearPublicKey clears the value of the "public_key" field.
+func (m *WebauthnMutation) ClearPublicKey() {
+	m.public_key = nil
+	m.clearedFields[webauthn.FieldPublicKey] = struct{}{}
+}
+
+// PublicKeyCleared returns if the "public_key" field was cleared in this mutation.
+func (m *WebauthnMutation) PublicKeyCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldPublicKey]
+	return ok
+}
+
 // ResetPublicKey resets all changes to the "public_key" field.
 func (m *WebauthnMutation) ResetPublicKey() {
 	m.public_key = nil
+	delete(m.clearedFields, webauthn.FieldPublicKey)
 }
 
 // SetAttestationType sets the "attestation_type" field.
@@ -21054,9 +21080,22 @@ func (m *WebauthnMutation) OldAttestationType(ctx context.Context) (v string, er
 	return oldValue.AttestationType, nil
 }
 
+// ClearAttestationType clears the value of the "attestation_type" field.
+func (m *WebauthnMutation) ClearAttestationType() {
+	m.attestation_type = nil
+	m.clearedFields[webauthn.FieldAttestationType] = struct{}{}
+}
+
+// AttestationTypeCleared returns if the "attestation_type" field was cleared in this mutation.
+func (m *WebauthnMutation) AttestationTypeCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldAttestationType]
+	return ok
+}
+
 // ResetAttestationType resets all changes to the "attestation_type" field.
 func (m *WebauthnMutation) ResetAttestationType() {
 	m.attestation_type = nil
+	delete(m.clearedFields, webauthn.FieldAttestationType)
 }
 
 // SetAaguid sets the "aaguid" field.
@@ -21090,9 +21129,22 @@ func (m *WebauthnMutation) OldAaguid(ctx context.Context) (v string, err error) 
 	return oldValue.Aaguid, nil
 }
 
+// ClearAaguid clears the value of the "aaguid" field.
+func (m *WebauthnMutation) ClearAaguid() {
+	m.aaguid = nil
+	m.clearedFields[webauthn.FieldAaguid] = struct{}{}
+}
+
+// AaguidCleared returns if the "aaguid" field was cleared in this mutation.
+func (m *WebauthnMutation) AaguidCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldAaguid]
+	return ok
+}
+
 // ResetAaguid resets all changes to the "aaguid" field.
 func (m *WebauthnMutation) ResetAaguid() {
 	m.aaguid = nil
+	delete(m.clearedFields, webauthn.FieldAaguid)
 }
 
 // SetSignCount sets the "sign_count" field.
@@ -21145,10 +21197,24 @@ func (m *WebauthnMutation) AddedSignCount() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearSignCount clears the value of the "sign_count" field.
+func (m *WebauthnMutation) ClearSignCount() {
+	m.sign_count = nil
+	m.addsign_count = nil
+	m.clearedFields[webauthn.FieldSignCount] = struct{}{}
+}
+
+// SignCountCleared returns if the "sign_count" field was cleared in this mutation.
+func (m *WebauthnMutation) SignCountCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldSignCount]
+	return ok
+}
+
 // ResetSignCount resets all changes to the "sign_count" field.
 func (m *WebauthnMutation) ResetSignCount() {
 	m.sign_count = nil
 	m.addsign_count = nil
+	delete(m.clearedFields, webauthn.FieldSignCount)
 }
 
 // SetTransports sets the "transports" field.
@@ -21196,10 +21262,24 @@ func (m *WebauthnMutation) AppendedTransports() ([]string, bool) {
 	return m.appendtransports, true
 }
 
+// ClearTransports clears the value of the "transports" field.
+func (m *WebauthnMutation) ClearTransports() {
+	m.transports = nil
+	m.appendtransports = nil
+	m.clearedFields[webauthn.FieldTransports] = struct{}{}
+}
+
+// TransportsCleared returns if the "transports" field was cleared in this mutation.
+func (m *WebauthnMutation) TransportsCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldTransports]
+	return ok
+}
+
 // ResetTransports resets all changes to the "transports" field.
 func (m *WebauthnMutation) ResetTransports() {
 	m.transports = nil
 	m.appendtransports = nil
+	delete(m.clearedFields, webauthn.FieldTransports)
 }
 
 // SetFlags sets the "flags" field.
@@ -21247,10 +21327,24 @@ func (m *WebauthnMutation) AppendedFlags() ([]string, bool) {
 	return m.appendflags, true
 }
 
+// ClearFlags clears the value of the "flags" field.
+func (m *WebauthnMutation) ClearFlags() {
+	m.flags = nil
+	m.appendflags = nil
+	m.clearedFields[webauthn.FieldFlags] = struct{}{}
+}
+
+// FlagsCleared returns if the "flags" field was cleared in this mutation.
+func (m *WebauthnMutation) FlagsCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldFlags]
+	return ok
+}
+
 // ResetFlags resets all changes to the "flags" field.
 func (m *WebauthnMutation) ResetFlags() {
 	m.flags = nil
 	m.appendflags = nil
+	delete(m.clearedFields, webauthn.FieldFlags)
 }
 
 // SetAuthenticator sets the "authenticator" field.
@@ -21298,10 +21392,24 @@ func (m *WebauthnMutation) AppendedAuthenticator() ([]string, bool) {
 	return m.appendauthenticator, true
 }
 
+// ClearAuthenticator clears the value of the "authenticator" field.
+func (m *WebauthnMutation) ClearAuthenticator() {
+	m.authenticator = nil
+	m.appendauthenticator = nil
+	m.clearedFields[webauthn.FieldAuthenticator] = struct{}{}
+}
+
+// AuthenticatorCleared returns if the "authenticator" field was cleared in this mutation.
+func (m *WebauthnMutation) AuthenticatorCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldAuthenticator]
+	return ok
+}
+
 // ResetAuthenticator resets all changes to the "authenticator" field.
 func (m *WebauthnMutation) ResetAuthenticator() {
 	m.authenticator = nil
 	m.appendauthenticator = nil
+	delete(m.clearedFields, webauthn.FieldAuthenticator)
 }
 
 // SetBackupEligible sets the "backup_eligible" field.
@@ -21335,9 +21443,22 @@ func (m *WebauthnMutation) OldBackupEligible(ctx context.Context) (v bool, err e
 	return oldValue.BackupEligible, nil
 }
 
+// ClearBackupEligible clears the value of the "backup_eligible" field.
+func (m *WebauthnMutation) ClearBackupEligible() {
+	m.backup_eligible = nil
+	m.clearedFields[webauthn.FieldBackupEligible] = struct{}{}
+}
+
+// BackupEligibleCleared returns if the "backup_eligible" field was cleared in this mutation.
+func (m *WebauthnMutation) BackupEligibleCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldBackupEligible]
+	return ok
+}
+
 // ResetBackupEligible resets all changes to the "backup_eligible" field.
 func (m *WebauthnMutation) ResetBackupEligible() {
 	m.backup_eligible = nil
+	delete(m.clearedFields, webauthn.FieldBackupEligible)
 }
 
 // SetBackupState sets the "backup_state" field.
@@ -21371,9 +21492,22 @@ func (m *WebauthnMutation) OldBackupState(ctx context.Context) (v bool, err erro
 	return oldValue.BackupState, nil
 }
 
+// ClearBackupState clears the value of the "backup_state" field.
+func (m *WebauthnMutation) ClearBackupState() {
+	m.backup_state = nil
+	m.clearedFields[webauthn.FieldBackupState] = struct{}{}
+}
+
+// BackupStateCleared returns if the "backup_state" field was cleared in this mutation.
+func (m *WebauthnMutation) BackupStateCleared() bool {
+	_, ok := m.clearedFields[webauthn.FieldBackupState]
+	return ok
+}
+
 // ResetBackupState resets all changes to the "backup_state" field.
 func (m *WebauthnMutation) ResetBackupState() {
 	m.backup_state = nil
+	delete(m.clearedFields, webauthn.FieldBackupState)
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
@@ -21787,6 +21921,36 @@ func (m *WebauthnMutation) ClearedFields() []string {
 	if m.FieldCleared(webauthn.FieldDeletedBy) {
 		fields = append(fields, webauthn.FieldDeletedBy)
 	}
+	if m.FieldCleared(webauthn.FieldCredentialID) {
+		fields = append(fields, webauthn.FieldCredentialID)
+	}
+	if m.FieldCleared(webauthn.FieldPublicKey) {
+		fields = append(fields, webauthn.FieldPublicKey)
+	}
+	if m.FieldCleared(webauthn.FieldAttestationType) {
+		fields = append(fields, webauthn.FieldAttestationType)
+	}
+	if m.FieldCleared(webauthn.FieldAaguid) {
+		fields = append(fields, webauthn.FieldAaguid)
+	}
+	if m.FieldCleared(webauthn.FieldSignCount) {
+		fields = append(fields, webauthn.FieldSignCount)
+	}
+	if m.FieldCleared(webauthn.FieldTransports) {
+		fields = append(fields, webauthn.FieldTransports)
+	}
+	if m.FieldCleared(webauthn.FieldFlags) {
+		fields = append(fields, webauthn.FieldFlags)
+	}
+	if m.FieldCleared(webauthn.FieldAuthenticator) {
+		fields = append(fields, webauthn.FieldAuthenticator)
+	}
+	if m.FieldCleared(webauthn.FieldBackupEligible) {
+		fields = append(fields, webauthn.FieldBackupEligible)
+	}
+	if m.FieldCleared(webauthn.FieldBackupState) {
+		fields = append(fields, webauthn.FieldBackupState)
+	}
 	return fields
 }
 
@@ -21812,6 +21976,36 @@ func (m *WebauthnMutation) ClearField(name string) error {
 		return nil
 	case webauthn.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case webauthn.FieldCredentialID:
+		m.ClearCredentialID()
+		return nil
+	case webauthn.FieldPublicKey:
+		m.ClearPublicKey()
+		return nil
+	case webauthn.FieldAttestationType:
+		m.ClearAttestationType()
+		return nil
+	case webauthn.FieldAaguid:
+		m.ClearAaguid()
+		return nil
+	case webauthn.FieldSignCount:
+		m.ClearSignCount()
+		return nil
+	case webauthn.FieldTransports:
+		m.ClearTransports()
+		return nil
+	case webauthn.FieldFlags:
+		m.ClearFlags()
+		return nil
+	case webauthn.FieldAuthenticator:
+		m.ClearAuthenticator()
+		return nil
+	case webauthn.FieldBackupEligible:
+		m.ClearBackupEligible()
+		return nil
+	case webauthn.FieldBackupState:
+		m.ClearBackupState()
 		return nil
 	}
 	return fmt.Errorf("unknown Webauthn nullable field %s", name)

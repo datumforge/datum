@@ -12,11 +12,11 @@ run:
   skip-files:
     - internal/entclean/main.go
     - internal/testutils
-    - db/**
-    - .buildkite/**
-    - .github/**
-    - docker/**
-    - schema/**
+    - db/backup/*
+    - .buildkite/*
+    - .github/*
+    - docker/*
+    - schema/*
 
 linters:
   enable:

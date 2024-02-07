@@ -50,105 +50,49 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	restrictedEndpointsMW = append(restrictedEndpointsMW, mw...)
 	restrictedEndpointsMW = append(restrictedEndpointsMW, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
 
-	// register handlers
-	if err := registerLivenessHandler(router); err != nil {
-		return err
+	// routeHandlers that take the router and handler as input
+	routeHandlers := []interface{}{
+		registerReadinessHandler,
+		registerLoginHandler,
+		registerForgotPasswordHandler,
+		registerVerifyHandler,
+		registerResetPasswordHandler,
+		registerResendEmailHandler,
+		registerRegisterHandler,
+		registerRefreshHandler,
+		registerAuthenticateHandler,
+		registerJwksWellKnownHandler,
+		registerOIDCHandler,
+		registerSecurityTxtHandler,
+		registerRobotsHandler,
+		registerInviteHandler,
+		registerGithubLoginHandler,
+		registerGithubCallbackHandler,
+		registerGoogleLoginHandler,
+		registerGoogleCallbackHandler,
+		registerWebauthnRegistrationHandler,
+		registerWebauthnVerificationsHandler,
+		registerWebauthnAuthenticationHandler,
+		registerWebauthnAuthVerificationHandler,
 	}
 
-	if err := registerReadinessHandler(router, h); err != nil {
-		return err
+	for _, route := range routeHandlers {
+		if err := route.(func(*echo.Echo, *handlers.Handler) error)(router, h); err != nil {
+			return err
+		}
 	}
 
-	if err := registerMetricsHandler(router); err != nil {
-		return err
+	// register additional handlers that only require router input
+	additionalHandlers := []interface{}{
+		registerLivenessHandler,
+		registerOpenAPISpecHandler,
+		registerMetricsHandler,
 	}
 
-	if err := registerLoginHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerForgotPasswordHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerVerifyHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerResetPasswordHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerResendEmailHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerRegisterHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerRefreshHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerAuthenticateHandler(router); err != nil {
-		return err
-	}
-
-	if err := registerJwksWellKnownHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerOIDCHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerSecurityTxtHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerRobotsHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerOpenAPISpecHandler(router); err != nil {
-		return err
-	}
-
-	if err := registerInviteHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerGithubLoginHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerGithubCallbackHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerGoogleLoginHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerGoogleCallbackHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerWebauthnRegistrationHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerWebauthnVerificationsHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerWebauthnAuthenticationHandler(router, h); err != nil {
-		return err
-	}
-
-	if err := registerWebauthnAuthVerificationHandler(router, h); err != nil {
-		return err
+	for _, route := range additionalHandlers {
+		if err := route.(func(*echo.Echo) error)(router); err != nil {
+			return err
+		}
 	}
 
 	return nil

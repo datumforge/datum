@@ -3,6 +3,7 @@ package route
 import (
 	"net/http"
 
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	echo "github.com/datumforge/echox"
 )
 
@@ -17,7 +18,7 @@ import (
 // be used to fetch a new key pair without having to transmit a secret again.
 
 // TODO: implement authenticate handler
-func registerAuthenticateHandler(router *echo.Echo) (err error) { //nolint:unused
+func registerAuthenticateHandler(router *echo.Echo, h *handlers.Handler) (err error) { //nolint:unused
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,
 		Path:   "/authenticate",

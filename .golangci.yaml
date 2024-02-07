@@ -12,7 +12,6 @@ run:
   skip-files:
     - internal/entclean/main.go
     - internal/testutils
-    - db/backup/*
     - .buildkite/*
     - .github/*
     - docker/*

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/datumforge/datum/config/config",
+  "$ref": "#/$defs/Config",
+  "$defs": {
+    "Config": {
+      "properties": {
+        "Webauthn": {
+          "$ref": "#/$defs/WebauthnSettings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "Webauthn"
+      ]
+    },
+    "RelyingParty": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "default": "localhost"
+        },
+        "display_name": {
+          "type": "string",
+          "default": "Datum Authentication Service"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "origins": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "minItems": 1,
+          "default": [
+            "http://localhost:17608"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "WebauthnSettings": {
+      "properties": {
+        "relying_party": {
+          "$ref": "#/$defs/RelyingParty"
+        },
+        "timeout": {
+          "type": "integer",
+          "default": 60000
+        },
+        "user_verification": {
+          "type": "string",
+          "enum": [
+            "required",
+            "preferred",
+            "discouraged"
+          ],
+          "default": "preferred"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}

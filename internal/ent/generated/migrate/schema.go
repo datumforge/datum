@@ -535,6 +535,12 @@ var (
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Default: false},
 		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB"}, Default: "CREDENTIALS"},
+		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
+		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -590,6 +596,43 @@ var (
 			},
 		},
 	}
+	// WebauthnsColumns holds the columns for the "webauthns" table.
+	WebauthnsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString, Unique: true},
+		{Name: "credential_id", Type: field.TypeString, Unique: true},
+		{Name: "public_key", Type: field.TypeBytes},
+		{Name: "attestation_type", Type: field.TypeString},
+		{Name: "aaguid", Type: field.TypeString},
+		{Name: "sign_count", Type: field.TypeInt},
+		{Name: "transports", Type: field.TypeJSON},
+		{Name: "flags", Type: field.TypeJSON},
+		{Name: "authenticator", Type: field.TypeJSON},
+		{Name: "backup_eligible", Type: field.TypeBool},
+		{Name: "backup_state", Type: field.TypeBool},
+		{Name: "owner_id", Type: field.TypeString},
+	}
+	// WebauthnsTable holds the schema information for the "webauthns" table.
+	WebauthnsTable = &schema.Table{
+		Name:       "webauthns",
+		Columns:    WebauthnsColumns,
+		PrimaryKey: []*schema.Column{WebauthnsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "webauthns_users_webauthn",
+				Columns:    []*schema.Column{WebauthnsColumns[19]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EmailVerificationTokensTable,
@@ -608,6 +651,7 @@ var (
 		PersonalAccessTokensTable,
 		UsersTable,
 		UserSettingsTable,
+		WebauthnsTable,
 	}
 )
 
@@ -628,4 +672,5 @@ func init() {
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
+	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable
 }

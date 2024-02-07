@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -39,6 +40,7 @@ type UserQuery struct {
 	withPasswordResetTokens          *PasswordResetTokenQuery
 	withGroups                       *GroupQuery
 	withOrganizations                *OrganizationQuery
+	withWebauthn                     *WebauthnQuery
 	withGroupMemberships             *GroupMembershipQuery
 	withOrgMemberships               *OrgMembershipQuery
 	modifiers                        []func(*sql.Selector)
@@ -48,6 +50,7 @@ type UserQuery struct {
 	withNamedPasswordResetTokens     map[string]*PasswordResetTokenQuery
 	withNamedGroups                  map[string]*GroupQuery
 	withNamedOrganizations           map[string]*OrganizationQuery
+	withNamedWebauthn                map[string]*WebauthnQuery
 	withNamedGroupMemberships        map[string]*GroupMembershipQuery
 	withNamedOrgMemberships          map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
@@ -230,6 +233,31 @@ func (uq *UserQuery) QueryOrganizations() *OrganizationQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OrgMembership
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryWebauthn chains the current query on the "webauthn" edge.
+func (uq *UserQuery) QueryWebauthn() *WebauthnQuery {
+	query := (&WebauthnClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(webauthn.Table, webauthn.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.WebauthnTable, user.WebauthnColumn),
+		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.Webauthn
+		step.Edge.Schema = schemaConfig.Webauthn
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -484,6 +512,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withPasswordResetTokens:     uq.withPasswordResetTokens.Clone(),
 		withGroups:                  uq.withGroups.Clone(),
 		withOrganizations:           uq.withOrganizations.Clone(),
+		withWebauthn:                uq.withWebauthn.Clone(),
 		withGroupMemberships:        uq.withGroupMemberships.Clone(),
 		withOrgMemberships:          uq.withOrgMemberships.Clone(),
 		// clone intermediate query.
@@ -555,6 +584,17 @@ func (uq *UserQuery) WithOrganizations(opts ...func(*OrganizationQuery)) *UserQu
 		opt(query)
 	}
 	uq.withOrganizations = query
+	return uq
+}
+
+// WithWebauthn tells the query-builder to eager-load the nodes that are connected to
+// the "webauthn" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithWebauthn(opts ...func(*WebauthnQuery)) *UserQuery {
+	query := (&WebauthnClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withWebauthn = query
 	return uq
 }
 
@@ -664,13 +704,14 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [9]bool{
 			uq.withPersonalAccessTokens != nil,
 			uq.withSetting != nil,
 			uq.withEmailVerificationTokens != nil,
 			uq.withPasswordResetTokens != nil,
 			uq.withGroups != nil,
 			uq.withOrganizations != nil,
+			uq.withWebauthn != nil,
 			uq.withGroupMemberships != nil,
 			uq.withOrgMemberships != nil,
 		}
@@ -745,6 +786,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	if query := uq.withWebauthn; query != nil {
+		if err := uq.loadWebauthn(ctx, query, nodes,
+			func(n *User) { n.Edges.Webauthn = []*Webauthn{} },
+			func(n *User, e *Webauthn) { n.Edges.Webauthn = append(n.Edges.Webauthn, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := uq.withGroupMemberships; query != nil {
 		if err := uq.loadGroupMemberships(ctx, query, nodes,
 			func(n *User) { n.Edges.GroupMemberships = []*GroupMembership{} },
@@ -791,6 +839,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadOrganizations(ctx, query, nodes,
 			func(n *User) { n.appendNamedOrganizations(name) },
 			func(n *User, e *Organization) { n.appendNamedOrganizations(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedWebauthn {
+		if err := uq.loadWebauthn(ctx, query, nodes,
+			func(n *User) { n.appendNamedWebauthn(name) },
+			func(n *User, e *Webauthn) { n.appendNamedWebauthn(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1058,6 +1113,36 @@ func (uq *UserQuery) loadOrganizations(ctx context.Context, query *OrganizationQ
 	}
 	return nil
 }
+func (uq *UserQuery) loadWebauthn(ctx context.Context, query *WebauthnQuery, nodes []*User, init func(*User), assign func(*User, *Webauthn)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(webauthn.FieldOwnerID)
+	}
+	query.Where(predicate.Webauthn(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.WebauthnColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 func (uq *UserQuery) loadGroupMemberships(ctx context.Context, query *GroupMembershipQuery, nodes []*User, init func(*User), assign func(*User, *GroupMembership)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
@@ -1275,6 +1360,20 @@ func (uq *UserQuery) WithNamedOrganizations(name string, opts ...func(*Organizat
 		uq.withNamedOrganizations = make(map[string]*OrganizationQuery)
 	}
 	uq.withNamedOrganizations[name] = query
+	return uq
+}
+
+// WithNamedWebauthn tells the query-builder to eager-load the nodes that are connected to the "webauthn"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedWebauthn(name string, opts ...func(*WebauthnQuery)) *UserQuery {
+	query := (&WebauthnClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedWebauthn == nil {
+		uq.withNamedWebauthn = make(map[string]*WebauthnQuery)
+	}
+	uq.withNamedWebauthn[name] = query
 	return uq
 }
 

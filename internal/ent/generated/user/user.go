@@ -54,6 +54,18 @@ const (
 	FieldOauth = "oauth"
 	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
 	FieldAuthProvider = "auth_provider"
+	// FieldTfaSecret holds the string denoting the tfa_secret field in the database.
+	FieldTfaSecret = "tfa_secret"
+	// FieldIsPhoneOtpAllowed holds the string denoting the is_phone_otp_allowed field in the database.
+	FieldIsPhoneOtpAllowed = "is_phone_otp_allowed"
+	// FieldIsEmailOtpAllowed holds the string denoting the is_email_otp_allowed field in the database.
+	FieldIsEmailOtpAllowed = "is_email_otp_allowed"
+	// FieldIsTotpAllowed holds the string denoting the is_totp_allowed field in the database.
+	FieldIsTotpAllowed = "is_totp_allowed"
+	// FieldIsWebauthnAllowed holds the string denoting the is_webauthn_allowed field in the database.
+	FieldIsWebauthnAllowed = "is_webauthn_allowed"
+	// FieldIsTfaEnabled holds the string denoting the is_tfa_enabled field in the database.
+	FieldIsTfaEnabled = "is_tfa_enabled"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
@@ -66,6 +78,8 @@ const (
 	EdgeGroups = "groups"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
+	// EdgeWebauthn holds the string denoting the webauthn edge name in mutations.
+	EdgeWebauthn = "webauthn"
 	// EdgeGroupMemberships holds the string denoting the group_memberships edge name in mutations.
 	EdgeGroupMemberships = "group_memberships"
 	// EdgeOrgMemberships holds the string denoting the org_memberships edge name in mutations.
@@ -110,6 +124,13 @@ const (
 	// OrganizationsInverseTable is the table name for the Organization entity.
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
 	OrganizationsInverseTable = "organizations"
+	// WebauthnTable is the table that holds the webauthn relation/edge.
+	WebauthnTable = "webauthns"
+	// WebauthnInverseTable is the table name for the Webauthn entity.
+	// It exists in this package in order to avoid circular dependency with the "webauthn" package.
+	WebauthnInverseTable = "webauthns"
+	// WebauthnColumn is the table column denoting the webauthn relation/edge.
+	WebauthnColumn = "owner_id"
 	// GroupMembershipsTable is the table that holds the group_memberships relation/edge.
 	GroupMembershipsTable = "group_memberships"
 	// GroupMembershipsInverseTable is the table name for the GroupMembership entity.
@@ -147,6 +168,12 @@ var Columns = []string{
 	FieldSub,
 	FieldOauth,
 	FieldAuthProvider,
+	FieldTfaSecret,
+	FieldIsPhoneOtpAllowed,
+	FieldIsEmailOtpAllowed,
+	FieldIsTotpAllowed,
+	FieldIsWebauthnAllowed,
+	FieldIsTfaEnabled,
 }
 
 var (
@@ -201,6 +228,16 @@ var (
 	UpdateDefaultLastSeen func() time.Time
 	// DefaultOauth holds the default value on creation for the "oauth" field.
 	DefaultOauth bool
+	// DefaultIsPhoneOtpAllowed holds the default value on creation for the "is_phone_otp_allowed" field.
+	DefaultIsPhoneOtpAllowed bool
+	// DefaultIsEmailOtpAllowed holds the default value on creation for the "is_email_otp_allowed" field.
+	DefaultIsEmailOtpAllowed bool
+	// DefaultIsTotpAllowed holds the default value on creation for the "is_totp_allowed" field.
+	DefaultIsTotpAllowed bool
+	// DefaultIsWebauthnAllowed holds the default value on creation for the "is_webauthn_allowed" field.
+	DefaultIsWebauthnAllowed bool
+	// DefaultIsTfaEnabled holds the default value on creation for the "is_tfa_enabled" field.
+	DefaultIsTfaEnabled bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -315,6 +352,36 @@ func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
 }
 
+// ByTfaSecret orders the results by the tfa_secret field.
+func ByTfaSecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTfaSecret, opts...).ToFunc()
+}
+
+// ByIsPhoneOtpAllowed orders the results by the is_phone_otp_allowed field.
+func ByIsPhoneOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsPhoneOtpAllowed, opts...).ToFunc()
+}
+
+// ByIsEmailOtpAllowed orders the results by the is_email_otp_allowed field.
+func ByIsEmailOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsEmailOtpAllowed, opts...).ToFunc()
+}
+
+// ByIsTotpAllowed orders the results by the is_totp_allowed field.
+func ByIsTotpAllowed(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsTotpAllowed, opts...).ToFunc()
+}
+
+// ByIsWebauthnAllowed orders the results by the is_webauthn_allowed field.
+func ByIsWebauthnAllowed(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsWebauthnAllowed, opts...).ToFunc()
+}
+
+// ByIsTfaEnabled orders the results by the is_tfa_enabled field.
+func ByIsTfaEnabled(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsTfaEnabled, opts...).ToFunc()
+}
+
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
 func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -392,6 +459,20 @@ func ByOrganizations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByWebauthnCount orders the results by webauthn count.
+func ByWebauthnCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newWebauthnStep(), opts...)
+	}
+}
+
+// ByWebauthn orders the results by webauthn terms.
+func ByWebauthn(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWebauthnStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByGroupMembershipsCount orders the results by group_memberships count.
 func ByGroupMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -459,6 +540,13 @@ func newOrganizationsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OrganizationsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, OrganizationsTable, OrganizationsPrimaryKey...),
+	)
+}
+func newWebauthnStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WebauthnInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, WebauthnTable, WebauthnColumn),
 	)
 }
 func newGroupMembershipsStep() *sqlgraph.Step {

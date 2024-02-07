@@ -135,6 +135,22 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
+	if err := registerWebauthnRegistrationHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerWebauthnVerificationsHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerWebauthnAuthenticationHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerWebauthnAuthVerificationHandler(router, h); err != nil {
+		return err
+	}
+
 	return nil
 }
 

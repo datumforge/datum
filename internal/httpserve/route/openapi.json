@@ -6849,6 +6849,24 @@
                     ],
                     "default": "CREDENTIALS"
                   },
+                  "tfa_secret": {
+                    "type": "string"
+                  },
+                  "is_phone_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_email_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_totp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_webauthn_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_tfa_enabled": {
+                    "type": "boolean"
+                  },
                   "personal_access_tokens": {
                     "type": "array",
                     "items": {
@@ -6877,6 +6895,12 @@
                     }
                   },
                   "organizations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "webauthn": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -7097,6 +7121,24 @@
                     ],
                     "default": "CREDENTIALS"
                   },
+                  "tfa_secret": {
+                    "type": "string"
+                  },
+                  "is_phone_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_email_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_totp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_webauthn_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_tfa_enabled": {
+                    "type": "boolean"
+                  },
                   "personal_access_tokens": {
                     "type": "array",
                     "items": {
@@ -7125,6 +7167,12 @@
                     }
                   },
                   "organizations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "webauthn": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -7666,6 +7714,509 @@
           }
         }
       }
+    },
+    "/users/{id}/webauthn": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached Webauthns",
+        "description": "List attached Webauthns.",
+        "operationId": "listUserWebauthn",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_WebauthnList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/webauthns": {
+      "get": {
+        "tags": [
+          "Webauthn"
+        ],
+        "summary": "List Webauthns",
+        "description": "List Webauthns.",
+        "operationId": "listWebauthn",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Webauthn list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WebauthnList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Webauthn"
+        ],
+        "summary": "Create a new Webauthn",
+        "description": "Creates a new Webauthn and persists it to storage.",
+        "operationId": "createWebauthn",
+        "requestBody": {
+          "description": "Webauthn to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "credential_id": {
+                    "type": "string"
+                  },
+                  "public_key": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "attestation_type": {
+                    "type": "string"
+                  },
+                  "aaguid": {
+                    "type": "string"
+                  },
+                  "sign_count": {
+                    "type": "integer"
+                  },
+                  "transports": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "authenticator": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "backup_eligible": {
+                    "type": "boolean"
+                  },
+                  "backup_state": {
+                    "type": "boolean"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "owner_id",
+                  "name",
+                  "user_id",
+                  "credential_id",
+                  "public_key",
+                  "attestation_type",
+                  "aaguid",
+                  "sign_count",
+                  "transports",
+                  "flags",
+                  "authenticator",
+                  "backup_eligible",
+                  "backup_state",
+                  "owner"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Webauthn created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebauthnCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/webauthns/{id}": {
+      "get": {
+        "tags": [
+          "Webauthn"
+        ],
+        "summary": "Find a Webauthn by ID",
+        "description": "Finds the Webauthn with the requested ID and returns it.",
+        "operationId": "readWebauthn",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Webauthn",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webauthn with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebauthnRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Webauthn"
+        ],
+        "summary": "Deletes a Webauthn by ID",
+        "description": "Deletes the Webauthn with the requested ID.",
+        "operationId": "deleteWebauthn",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Webauthn",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Webauthn with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Webauthn"
+        ],
+        "summary": "Updates a Webauthn",
+        "description": "Updates a Webauthn and persists changes to storage.",
+        "operationId": "updateWebauthn",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Webauthn",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Webauthn properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "credential_id": {
+                    "type": "string"
+                  },
+                  "public_key": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "attestation_type": {
+                    "type": "string"
+                  },
+                  "aaguid": {
+                    "type": "string"
+                  },
+                  "sign_count": {
+                    "type": "integer"
+                  },
+                  "transports": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "authenticator": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "backup_eligible": {
+                    "type": "boolean"
+                  },
+                  "backup_state": {
+                    "type": "boolean"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Webauthn updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebauthnUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/webauthns/{id}/owner": {
+      "get": {
+        "tags": [
+          "Webauthn"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the Webauthn with the given ID",
+        "operationId": "readWebauthnOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Webauthn",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to Webauthn with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Webauthn_OwnerRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -8011,6 +8562,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -8981,6 +9547,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9747,6 +10328,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -11632,6 +12228,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -12975,6 +13586,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -13330,6 +13956,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -13714,6 +14355,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -13799,6 +14455,24 @@
             ],
             "default": "CREDENTIALS"
           },
+          "tfa_secret": {
+            "type": "string"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
+          },
           "personal_access_tokens": {
             "type": "array",
             "items": {
@@ -13830,6 +14504,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Organization"
+            }
+          },
+          "webauthn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Webauthn"
             }
           },
           "group_memberships": {
@@ -13925,6 +14605,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -14006,6 +14701,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -14087,6 +14797,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -14529,6 +15254,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -14610,6 +15350,21 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -15070,6 +15825,682 @@
           "status",
           "email_confirmed",
           "tags"
+        ]
+      },
+      "User_WebauthnList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "public_key": {
+            "type": "string",
+            "format": "byte"
+          },
+          "attestation_type": {
+            "type": "string"
+          },
+          "aaguid": {
+            "type": "string"
+          },
+          "sign_count": {
+            "type": "integer"
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authenticator": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backup_eligible": {
+            "type": "boolean"
+          },
+          "backup_state": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "user_id",
+          "credential_id",
+          "public_key",
+          "attestation_type",
+          "aaguid",
+          "sign_count",
+          "transports",
+          "flags",
+          "authenticator",
+          "backup_eligible",
+          "backup_state"
+        ]
+      },
+      "Webauthn": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "public_key": {
+            "type": "string",
+            "format": "byte"
+          },
+          "attestation_type": {
+            "type": "string"
+          },
+          "aaguid": {
+            "type": "string"
+          },
+          "sign_count": {
+            "type": "integer"
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authenticator": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backup_eligible": {
+            "type": "boolean"
+          },
+          "backup_state": {
+            "type": "boolean"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "user_id",
+          "credential_id",
+          "public_key",
+          "attestation_type",
+          "aaguid",
+          "sign_count",
+          "transports",
+          "flags",
+          "authenticator",
+          "backup_eligible",
+          "backup_state",
+          "owner"
+        ]
+      },
+      "WebauthnCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "public_key": {
+            "type": "string",
+            "format": "byte"
+          },
+          "attestation_type": {
+            "type": "string"
+          },
+          "aaguid": {
+            "type": "string"
+          },
+          "sign_count": {
+            "type": "integer"
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authenticator": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backup_eligible": {
+            "type": "boolean"
+          },
+          "backup_state": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "user_id",
+          "credential_id",
+          "public_key",
+          "attestation_type",
+          "aaguid",
+          "sign_count",
+          "transports",
+          "flags",
+          "authenticator",
+          "backup_eligible",
+          "backup_state"
+        ]
+      },
+      "WebauthnList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "public_key": {
+            "type": "string",
+            "format": "byte"
+          },
+          "attestation_type": {
+            "type": "string"
+          },
+          "aaguid": {
+            "type": "string"
+          },
+          "sign_count": {
+            "type": "integer"
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authenticator": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backup_eligible": {
+            "type": "boolean"
+          },
+          "backup_state": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "user_id",
+          "credential_id",
+          "public_key",
+          "attestation_type",
+          "aaguid",
+          "sign_count",
+          "transports",
+          "flags",
+          "authenticator",
+          "backup_eligible",
+          "backup_state"
+        ]
+      },
+      "WebauthnRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "public_key": {
+            "type": "string",
+            "format": "byte"
+          },
+          "attestation_type": {
+            "type": "string"
+          },
+          "aaguid": {
+            "type": "string"
+          },
+          "sign_count": {
+            "type": "integer"
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authenticator": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backup_eligible": {
+            "type": "boolean"
+          },
+          "backup_state": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "user_id",
+          "credential_id",
+          "public_key",
+          "attestation_type",
+          "aaguid",
+          "sign_count",
+          "transports",
+          "flags",
+          "authenticator",
+          "backup_eligible",
+          "backup_state"
+        ]
+      },
+      "WebauthnUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "public_key": {
+            "type": "string",
+            "format": "byte"
+          },
+          "attestation_type": {
+            "type": "string"
+          },
+          "aaguid": {
+            "type": "string"
+          },
+          "sign_count": {
+            "type": "integer"
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authenticator": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "backup_eligible": {
+            "type": "boolean"
+          },
+          "backup_state": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "user_id",
+          "credential_id",
+          "public_key",
+          "attestation_type",
+          "aaguid",
+          "sign_count",
+          "transports",
+          "flags",
+          "authenticator",
+          "backup_eligible",
+          "backup_state"
+        ]
+      },
+      "Webauthn_OwnerRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
+          },
+          "auth_provider": {
+            "type": "string",
+            "enum": [
+              "CREDENTIALS",
+              "GOOGLE",
+              "GITHUB"
+            ],
+            "default": "CREDENTIALS"
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name",
+          "oauth",
+          "auth_provider"
         ]
       }
     },

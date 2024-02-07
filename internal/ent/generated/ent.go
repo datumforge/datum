@@ -28,6 +28,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -104,6 +105,7 @@ func checkColumn(table, column string) error {
 			personalaccesstoken.Table:    personalaccesstoken.ValidColumn,
 			user.Table:                   user.ValidColumn,
 			usersetting.Table:            usersetting.ValidColumn,
+			webauthn.Table:               webauthn.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

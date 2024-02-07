@@ -3,8 +3,9 @@ package route
 import (
 	"net/http"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // Authenticate is oriented to machine users/ programmatic access that have an API key with a client ID and

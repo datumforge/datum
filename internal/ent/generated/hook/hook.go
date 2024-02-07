@@ -201,6 +201,18 @@ func (f UserSettingFunc) Mutate(ctx context.Context, m generated.Mutation) (gene
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserSettingMutation", m)
 }
 
+// The WebauthnFunc type is an adapter to allow the use of ordinary
+// function as Webauthn mutator.
+type WebauthnFunc func(context.Context, *generated.WebauthnMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WebauthnFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.WebauthnMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.WebauthnMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, generated.Mutation) bool
 

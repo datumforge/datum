@@ -495,6 +495,30 @@ func (f UserSettingMutationRuleFunc) EvalMutation(ctx context.Context, m generat
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserSettingMutation", m)
 }
 
+// The WebauthnQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type WebauthnQueryRuleFunc func(context.Context, *generated.WebauthnQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f WebauthnQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.WebauthnQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.WebauthnQuery", q)
+}
+
+// The WebauthnMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type WebauthnMutationRuleFunc func(context.Context, *generated.WebauthnMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f WebauthnMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.WebauthnMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.WebauthnMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -562,6 +586,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.UserSettingQuery:
 		return q.Filter(), nil
+	case *generated.WebauthnQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected query type %T for query filter", q)
 	}
@@ -600,6 +626,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.UserMutation:
 		return m.Filter(), nil
 	case *generated.UserSettingMutation:
+		return m.Filter(), nil
+	case *generated.WebauthnMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected mutation type %T for mutation filter", m)

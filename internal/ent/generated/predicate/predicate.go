@@ -53,3 +53,6 @@ type User func(*sql.Selector)
 
 // UserSetting is the predicate function for usersetting builders.
 type UserSetting func(*sql.Selector)
+
+// Webauthn is the predicate function for webauthn builders.
+type Webauthn func(*sql.Selector)

@@ -12,6 +12,10 @@ run:
   skip-files:
     - internal/entclean/main.go
     - internal/testutils
+    - .buildkite/*
+    - .github/*
+    - docker/*
+    - schema/*
 
 linters:
   enable:
@@ -26,8 +30,6 @@ linters:
     - gosec
     - bodyclose
     - noctx
-
-    # additional linters
     - gocritic
     - gocyclo
     - goerr113

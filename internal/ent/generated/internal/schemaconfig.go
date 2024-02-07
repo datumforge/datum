@@ -23,6 +23,7 @@ type SchemaConfig struct {
 	PersonalAccessToken    string // PersonalAccessToken table.
 	User                   string // User table.
 	UserSetting            string // UserSetting table.
+	Webauthn               string // Webauthn table.
 }
 
 type schemaCtxKey struct{}

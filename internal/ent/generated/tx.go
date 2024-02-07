@@ -44,6 +44,8 @@ type Tx struct {
 	User *UserClient
 	// UserSetting is the client for interacting with the UserSetting builders.
 	UserSetting *UserSettingClient
+	// Webauthn is the client for interacting with the Webauthn builders.
+	Webauthn *WebauthnClient
 
 	// lazily loaded.
 	client     *Client
@@ -191,6 +193,7 @@ func (tx *Tx) init() {
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)
+	tx.Webauthn = NewWebauthnClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

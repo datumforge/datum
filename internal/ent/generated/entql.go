@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -29,7 +30,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 16)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 17)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -391,24 +392,30 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "User",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			user.FieldCreatedAt:       {Type: field.TypeTime, Column: user.FieldCreatedAt},
-			user.FieldUpdatedAt:       {Type: field.TypeTime, Column: user.FieldUpdatedAt},
-			user.FieldCreatedBy:       {Type: field.TypeString, Column: user.FieldCreatedBy},
-			user.FieldUpdatedBy:       {Type: field.TypeString, Column: user.FieldUpdatedBy},
-			user.FieldDeletedAt:       {Type: field.TypeTime, Column: user.FieldDeletedAt},
-			user.FieldDeletedBy:       {Type: field.TypeString, Column: user.FieldDeletedBy},
-			user.FieldEmail:           {Type: field.TypeString, Column: user.FieldEmail},
-			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
-			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
-			user.FieldDisplayName:     {Type: field.TypeString, Column: user.FieldDisplayName},
-			user.FieldAvatarRemoteURL: {Type: field.TypeString, Column: user.FieldAvatarRemoteURL},
-			user.FieldAvatarLocalFile: {Type: field.TypeString, Column: user.FieldAvatarLocalFile},
-			user.FieldAvatarUpdatedAt: {Type: field.TypeTime, Column: user.FieldAvatarUpdatedAt},
-			user.FieldLastSeen:        {Type: field.TypeTime, Column: user.FieldLastSeen},
-			user.FieldPassword:        {Type: field.TypeString, Column: user.FieldPassword},
-			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
-			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
-			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
+			user.FieldCreatedAt:         {Type: field.TypeTime, Column: user.FieldCreatedAt},
+			user.FieldUpdatedAt:         {Type: field.TypeTime, Column: user.FieldUpdatedAt},
+			user.FieldCreatedBy:         {Type: field.TypeString, Column: user.FieldCreatedBy},
+			user.FieldUpdatedBy:         {Type: field.TypeString, Column: user.FieldUpdatedBy},
+			user.FieldDeletedAt:         {Type: field.TypeTime, Column: user.FieldDeletedAt},
+			user.FieldDeletedBy:         {Type: field.TypeString, Column: user.FieldDeletedBy},
+			user.FieldEmail:             {Type: field.TypeString, Column: user.FieldEmail},
+			user.FieldFirstName:         {Type: field.TypeString, Column: user.FieldFirstName},
+			user.FieldLastName:          {Type: field.TypeString, Column: user.FieldLastName},
+			user.FieldDisplayName:       {Type: field.TypeString, Column: user.FieldDisplayName},
+			user.FieldAvatarRemoteURL:   {Type: field.TypeString, Column: user.FieldAvatarRemoteURL},
+			user.FieldAvatarLocalFile:   {Type: field.TypeString, Column: user.FieldAvatarLocalFile},
+			user.FieldAvatarUpdatedAt:   {Type: field.TypeTime, Column: user.FieldAvatarUpdatedAt},
+			user.FieldLastSeen:          {Type: field.TypeTime, Column: user.FieldLastSeen},
+			user.FieldPassword:          {Type: field.TypeString, Column: user.FieldPassword},
+			user.FieldSub:               {Type: field.TypeString, Column: user.FieldSub},
+			user.FieldOauth:             {Type: field.TypeBool, Column: user.FieldOauth},
+			user.FieldAuthProvider:      {Type: field.TypeEnum, Column: user.FieldAuthProvider},
+			user.FieldTfaSecret:         {Type: field.TypeString, Column: user.FieldTfaSecret},
+			user.FieldIsPhoneOtpAllowed: {Type: field.TypeBool, Column: user.FieldIsPhoneOtpAllowed},
+			user.FieldIsEmailOtpAllowed: {Type: field.TypeBool, Column: user.FieldIsEmailOtpAllowed},
+			user.FieldIsTotpAllowed:     {Type: field.TypeBool, Column: user.FieldIsTotpAllowed},
+			user.FieldIsWebauthnAllowed: {Type: field.TypeBool, Column: user.FieldIsWebauthnAllowed},
+			user.FieldIsTfaEnabled:      {Type: field.TypeBool, Column: user.FieldIsTfaEnabled},
 		},
 	}
 	graph.Nodes[15] = &sqlgraph.Node{
@@ -436,6 +443,38 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldDefaultOrg:     {Type: field.TypeString, Column: usersetting.FieldDefaultOrg},
 			usersetting.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
 			usersetting.FieldTags:           {Type: field.TypeJSON, Column: usersetting.FieldTags},
+		},
+	}
+	graph.Nodes[16] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   webauthn.Table,
+			Columns: webauthn.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: webauthn.FieldID,
+			},
+		},
+		Type: "Webauthn",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			webauthn.FieldCreatedAt:       {Type: field.TypeTime, Column: webauthn.FieldCreatedAt},
+			webauthn.FieldUpdatedAt:       {Type: field.TypeTime, Column: webauthn.FieldUpdatedAt},
+			webauthn.FieldCreatedBy:       {Type: field.TypeString, Column: webauthn.FieldCreatedBy},
+			webauthn.FieldUpdatedBy:       {Type: field.TypeString, Column: webauthn.FieldUpdatedBy},
+			webauthn.FieldDeletedAt:       {Type: field.TypeTime, Column: webauthn.FieldDeletedAt},
+			webauthn.FieldDeletedBy:       {Type: field.TypeString, Column: webauthn.FieldDeletedBy},
+			webauthn.FieldOwnerID:         {Type: field.TypeString, Column: webauthn.FieldOwnerID},
+			webauthn.FieldName:            {Type: field.TypeString, Column: webauthn.FieldName},
+			webauthn.FieldUserID:          {Type: field.TypeString, Column: webauthn.FieldUserID},
+			webauthn.FieldCredentialID:    {Type: field.TypeString, Column: webauthn.FieldCredentialID},
+			webauthn.FieldPublicKey:       {Type: field.TypeBytes, Column: webauthn.FieldPublicKey},
+			webauthn.FieldAttestationType: {Type: field.TypeString, Column: webauthn.FieldAttestationType},
+			webauthn.FieldAaguid:          {Type: field.TypeString, Column: webauthn.FieldAaguid},
+			webauthn.FieldSignCount:       {Type: field.TypeInt, Column: webauthn.FieldSignCount},
+			webauthn.FieldTransports:      {Type: field.TypeJSON, Column: webauthn.FieldTransports},
+			webauthn.FieldFlags:           {Type: field.TypeJSON, Column: webauthn.FieldFlags},
+			webauthn.FieldAuthenticator:   {Type: field.TypeJSON, Column: webauthn.FieldAuthenticator},
+			webauthn.FieldBackupEligible:  {Type: field.TypeBool, Column: webauthn.FieldBackupEligible},
+			webauthn.FieldBackupState:     {Type: field.TypeBool, Column: webauthn.FieldBackupState},
 		},
 	}
 	graph.MustAddE(
@@ -835,6 +874,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Organization",
 	)
 	graph.MustAddE(
+		"webauthn",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WebauthnTable,
+			Columns: []string{user.WebauthnColumn},
+			Bidi:    false,
+		},
+		"User",
+		"Webauthn",
+	)
+	graph.MustAddE(
 		"group_memberships",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -868,6 +919,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"UserSetting",
+		"User",
+	)
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   webauthn.OwnerTable,
+			Columns: []string{webauthn.OwnerColumn},
+			Bidi:    false,
+		},
+		"Webauthn",
 		"User",
 	)
 	return graph
@@ -2787,6 +2850,36 @@ func (f *UserFilter) WhereAuthProvider(p entql.StringP) {
 	f.Where(p.Field(user.FieldAuthProvider))
 }
 
+// WhereTfaSecret applies the entql string predicate on the tfa_secret field.
+func (f *UserFilter) WhereTfaSecret(p entql.StringP) {
+	f.Where(p.Field(user.FieldTfaSecret))
+}
+
+// WhereIsPhoneOtpAllowed applies the entql bool predicate on the is_phone_otp_allowed field.
+func (f *UserFilter) WhereIsPhoneOtpAllowed(p entql.BoolP) {
+	f.Where(p.Field(user.FieldIsPhoneOtpAllowed))
+}
+
+// WhereIsEmailOtpAllowed applies the entql bool predicate on the is_email_otp_allowed field.
+func (f *UserFilter) WhereIsEmailOtpAllowed(p entql.BoolP) {
+	f.Where(p.Field(user.FieldIsEmailOtpAllowed))
+}
+
+// WhereIsTotpAllowed applies the entql bool predicate on the is_totp_allowed field.
+func (f *UserFilter) WhereIsTotpAllowed(p entql.BoolP) {
+	f.Where(p.Field(user.FieldIsTotpAllowed))
+}
+
+// WhereIsWebauthnAllowed applies the entql bool predicate on the is_webauthn_allowed field.
+func (f *UserFilter) WhereIsWebauthnAllowed(p entql.BoolP) {
+	f.Where(p.Field(user.FieldIsWebauthnAllowed))
+}
+
+// WhereIsTfaEnabled applies the entql bool predicate on the is_tfa_enabled field.
+func (f *UserFilter) WhereIsTfaEnabled(p entql.BoolP) {
+	f.Where(p.Field(user.FieldIsTfaEnabled))
+}
+
 // WhereHasPersonalAccessTokens applies a predicate to check if query has an edge personal_access_tokens.
 func (f *UserFilter) WhereHasPersonalAccessTokens() {
 	f.Where(entql.HasEdge("personal_access_tokens"))
@@ -2865,6 +2958,20 @@ func (f *UserFilter) WhereHasOrganizations() {
 // WhereHasOrganizationsWith applies a predicate to check if query has an edge organizations with a given conditions (other predicates).
 func (f *UserFilter) WhereHasOrganizationsWith(preds ...predicate.Organization) {
 	f.Where(entql.HasEdgeWith("organizations", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasWebauthn applies a predicate to check if query has an edge webauthn.
+func (f *UserFilter) WhereHasWebauthn() {
+	f.Where(entql.HasEdge("webauthn"))
+}
+
+// WhereHasWebauthnWith applies a predicate to check if query has an edge webauthn with a given conditions (other predicates).
+func (f *UserFilter) WhereHasWebauthnWith(preds ...predicate.Webauthn) {
+	f.Where(entql.HasEdgeWith("webauthn", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -3017,6 +3124,155 @@ func (f *UserSettingFilter) WhereHasUser() {
 // WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
 func (f *UserSettingFilter) WhereHasUserWith(preds ...predicate.User) {
 	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (wq *WebauthnQuery) addPredicate(pred func(s *sql.Selector)) {
+	wq.predicates = append(wq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the WebauthnQuery builder.
+func (wq *WebauthnQuery) Filter() *WebauthnFilter {
+	return &WebauthnFilter{config: wq.config, predicateAdder: wq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *WebauthnMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the WebauthnMutation builder.
+func (m *WebauthnMutation) Filter() *WebauthnFilter {
+	return &WebauthnFilter{config: m.config, predicateAdder: m}
+}
+
+// WebauthnFilter provides a generic filtering capability at runtime for WebauthnQuery.
+type WebauthnFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *WebauthnFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *WebauthnFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *WebauthnFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(webauthn.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *WebauthnFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(webauthn.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *WebauthnFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *WebauthnFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *WebauthnFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(webauthn.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *WebauthnFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *WebauthnFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldOwnerID))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *WebauthnFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldName))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *WebauthnFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldUserID))
+}
+
+// WhereCredentialID applies the entql string predicate on the credential_id field.
+func (f *WebauthnFilter) WhereCredentialID(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldCredentialID))
+}
+
+// WherePublicKey applies the entql []byte predicate on the public_key field.
+func (f *WebauthnFilter) WherePublicKey(p entql.BytesP) {
+	f.Where(p.Field(webauthn.FieldPublicKey))
+}
+
+// WhereAttestationType applies the entql string predicate on the attestation_type field.
+func (f *WebauthnFilter) WhereAttestationType(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldAttestationType))
+}
+
+// WhereAaguid applies the entql string predicate on the aaguid field.
+func (f *WebauthnFilter) WhereAaguid(p entql.StringP) {
+	f.Where(p.Field(webauthn.FieldAaguid))
+}
+
+// WhereSignCount applies the entql int predicate on the sign_count field.
+func (f *WebauthnFilter) WhereSignCount(p entql.IntP) {
+	f.Where(p.Field(webauthn.FieldSignCount))
+}
+
+// WhereTransports applies the entql json.RawMessage predicate on the transports field.
+func (f *WebauthnFilter) WhereTransports(p entql.BytesP) {
+	f.Where(p.Field(webauthn.FieldTransports))
+}
+
+// WhereFlags applies the entql json.RawMessage predicate on the flags field.
+func (f *WebauthnFilter) WhereFlags(p entql.BytesP) {
+	f.Where(p.Field(webauthn.FieldFlags))
+}
+
+// WhereAuthenticator applies the entql json.RawMessage predicate on the authenticator field.
+func (f *WebauthnFilter) WhereAuthenticator(p entql.BytesP) {
+	f.Where(p.Field(webauthn.FieldAuthenticator))
+}
+
+// WhereBackupEligible applies the entql bool predicate on the backup_eligible field.
+func (f *WebauthnFilter) WhereBackupEligible(p entql.BoolP) {
+	f.Where(p.Field(webauthn.FieldBackupEligible))
+}
+
+// WhereBackupState applies the entql bool predicate on the backup_state field.
+func (f *WebauthnFilter) WhereBackupState(p entql.BoolP) {
+	f.Where(p.Field(webauthn.FieldBackupState))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *WebauthnFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *WebauthnFilter) WhereHasOwnerWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

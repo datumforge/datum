@@ -123,6 +123,31 @@ func (User) Fields() []ent.Field {
 			GoType(enums.AuthProvider("")).
 			Comment("auth provider used to register the account").
 			Default(string(enums.Credentials)),
+		field.String("tfa_secret").
+			Comment("TFA secret for the user").
+			Sensitive().
+			Optional().
+			Nillable(),
+		field.Bool("is_phone_otp_allowed").
+			Comment("specifies a user may complete authentication by verifying an OTP code delivered through SMS").
+			Optional().
+			Default(true),
+		field.Bool("is_email_otp_allowed").
+			Comment("specifies a user may complete authentication by verifying an OTP code delivered through email").
+			Optional().
+			Default(true),
+		field.Bool("is_totp_allowed").
+			Comment("specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app").
+			Optional().
+			Default(true),
+		field.Bool("is_webauthn_allowed").
+			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
+			Optional().
+			Default(true),
+		field.Bool("is_tfa_enabled").
+			Comment("whether the user has two factor authentication enabled").
+			Optional().
+			Default(false),
 	}
 }
 
@@ -153,6 +178,8 @@ func (User) Edges() []ent.Edge {
 			Through("group_memberships", GroupMembership.Type),
 		edge.To("organizations", Organization.Type).
 			Through("org_memberships", OrgMembership.Type),
+		edge.To("webauthn", Webauthn.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 

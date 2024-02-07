@@ -276,13 +276,26 @@ type CreateUserInput struct {
 	// whether the user uses oauth for login or not
 	Oauth *bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
-	AuthProvider              *enums.AuthProvider `json:"authProvider,omitempty"`
-	PersonalAccessTokenIDs    []string            `json:"personalAccessTokenIDs,omitempty"`
-	SettingID                 string              `json:"settingID"`
-	EmailVerificationTokenIDs []string            `json:"emailVerificationTokenIDs,omitempty"`
-	PasswordResetTokenIDs     []string            `json:"passwordResetTokenIDs,omitempty"`
-	GroupIDs                  []string            `json:"groupIDs,omitempty"`
-	OrganizationIDs           []string            `json:"organizationIDs,omitempty"`
+	AuthProvider *enums.AuthProvider `json:"authProvider,omitempty"`
+	// TFA secret for the user
+	TfaSecret *string `json:"tfaSecret,omitempty"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
+	IsPhoneOtpAllowed *bool `json:"isPhoneOtpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through email
+	IsEmailOtpAllowed *bool `json:"isEmailOtpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+	IsTotpAllowed *bool `json:"isTotpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying a WebAuthn capable device
+	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
+	// whether the user has two factor authentication enabled
+	IsTfaEnabled              *bool    `json:"isTfaEnabled,omitempty"`
+	PersonalAccessTokenIDs    []string `json:"personalAccessTokenIDs,omitempty"`
+	SettingID                 string   `json:"settingID"`
+	EmailVerificationTokenIDs []string `json:"emailVerificationTokenIDs,omitempty"`
+	PasswordResetTokenIDs     []string `json:"passwordResetTokenIDs,omitempty"`
+	GroupIDs                  []string `json:"groupIDs,omitempty"`
+	OrganizationIDs           []string `json:"organizationIDs,omitempty"`
+	WebauthnIDs               []string `json:"webauthnIDs,omitempty"`
 }
 
 // CreateUserSettingInput is used for create UserSetting object.
@@ -3137,23 +3150,44 @@ type UpdateUserInput struct {
 	// whether the user uses oauth for login or not
 	Oauth *bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
-	AuthProvider                    *enums.AuthProvider `json:"authProvider,omitempty"`
-	AddPersonalAccessTokenIDs       []string            `json:"addPersonalAccessTokenIDs,omitempty"`
-	RemovePersonalAccessTokenIDs    []string            `json:"removePersonalAccessTokenIDs,omitempty"`
-	ClearPersonalAccessTokens       *bool               `json:"clearPersonalAccessTokens,omitempty"`
-	SettingID                       *string             `json:"settingID,omitempty"`
-	AddEmailVerificationTokenIDs    []string            `json:"addEmailVerificationTokenIDs,omitempty"`
-	RemoveEmailVerificationTokenIDs []string            `json:"removeEmailVerificationTokenIDs,omitempty"`
-	ClearEmailVerificationTokens    *bool               `json:"clearEmailVerificationTokens,omitempty"`
-	AddPasswordResetTokenIDs        []string            `json:"addPasswordResetTokenIDs,omitempty"`
-	RemovePasswordResetTokenIDs     []string            `json:"removePasswordResetTokenIDs,omitempty"`
-	ClearPasswordResetTokens        *bool               `json:"clearPasswordResetTokens,omitempty"`
-	AddGroupIDs                     []string            `json:"addGroupIDs,omitempty"`
-	RemoveGroupIDs                  []string            `json:"removeGroupIDs,omitempty"`
-	ClearGroups                     *bool               `json:"clearGroups,omitempty"`
-	AddOrganizationIDs              []string            `json:"addOrganizationIDs,omitempty"`
-	RemoveOrganizationIDs           []string            `json:"removeOrganizationIDs,omitempty"`
-	ClearOrganizations              *bool               `json:"clearOrganizations,omitempty"`
+	AuthProvider *enums.AuthProvider `json:"authProvider,omitempty"`
+	// TFA secret for the user
+	TfaSecret      *string `json:"tfaSecret,omitempty"`
+	ClearTfaSecret *bool   `json:"clearTfaSecret,omitempty"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
+	IsPhoneOtpAllowed      *bool `json:"isPhoneOtpAllowed,omitempty"`
+	ClearIsPhoneOtpAllowed *bool `json:"clearIsPhoneOtpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through email
+	IsEmailOtpAllowed      *bool `json:"isEmailOtpAllowed,omitempty"`
+	ClearIsEmailOtpAllowed *bool `json:"clearIsEmailOtpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+	IsTotpAllowed      *bool `json:"isTotpAllowed,omitempty"`
+	ClearIsTotpAllowed *bool `json:"clearIsTotpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying a WebAuthn capable device
+	IsWebauthnAllowed      *bool `json:"isWebauthnAllowed,omitempty"`
+	ClearIsWebauthnAllowed *bool `json:"clearIsWebauthnAllowed,omitempty"`
+	// whether the user has two factor authentication enabled
+	IsTfaEnabled                    *bool    `json:"isTfaEnabled,omitempty"`
+	ClearIsTfaEnabled               *bool    `json:"clearIsTfaEnabled,omitempty"`
+	AddPersonalAccessTokenIDs       []string `json:"addPersonalAccessTokenIDs,omitempty"`
+	RemovePersonalAccessTokenIDs    []string `json:"removePersonalAccessTokenIDs,omitempty"`
+	ClearPersonalAccessTokens       *bool    `json:"clearPersonalAccessTokens,omitempty"`
+	SettingID                       *string  `json:"settingID,omitempty"`
+	AddEmailVerificationTokenIDs    []string `json:"addEmailVerificationTokenIDs,omitempty"`
+	RemoveEmailVerificationTokenIDs []string `json:"removeEmailVerificationTokenIDs,omitempty"`
+	ClearEmailVerificationTokens    *bool    `json:"clearEmailVerificationTokens,omitempty"`
+	AddPasswordResetTokenIDs        []string `json:"addPasswordResetTokenIDs,omitempty"`
+	RemovePasswordResetTokenIDs     []string `json:"removePasswordResetTokenIDs,omitempty"`
+	ClearPasswordResetTokens        *bool    `json:"clearPasswordResetTokens,omitempty"`
+	AddGroupIDs                     []string `json:"addGroupIDs,omitempty"`
+	RemoveGroupIDs                  []string `json:"removeGroupIDs,omitempty"`
+	ClearGroups                     *bool    `json:"clearGroups,omitempty"`
+	AddOrganizationIDs              []string `json:"addOrganizationIDs,omitempty"`
+	RemoveOrganizationIDs           []string `json:"removeOrganizationIDs,omitempty"`
+	ClearOrganizations              *bool    `json:"clearOrganizations,omitempty"`
+	AddWebauthnIDs                  []string `json:"addWebauthnIDs,omitempty"`
+	RemoveWebauthnIDs               []string `json:"removeWebauthnIDs,omitempty"`
+	ClearWebauthn                   *bool    `json:"clearWebauthn,omitempty"`
 }
 
 // UpdateUserSettingInput is used for update UserSetting object.
@@ -3211,7 +3245,17 @@ type User struct {
 	// whether the user uses oauth for login or not
 	Oauth bool `json:"oauth"`
 	// auth provider used to register the account
-	AuthProvider         enums.AuthProvider     `json:"authProvider"`
+	AuthProvider enums.AuthProvider `json:"authProvider"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
+	IsPhoneOtpAllowed *bool `json:"isPhoneOtpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through email
+	IsEmailOtpAllowed *bool `json:"isEmailOtpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+	IsTotpAllowed *bool `json:"isTotpAllowed,omitempty"`
+	// specifies a user may complete authentication by verifying a WebAuthn capable device
+	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
+	// whether the user has two factor authentication enabled
+	IsTfaEnabled         *bool                  `json:"isTfaEnabled,omitempty"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
 	Setting              UserSetting            `json:"setting"`
 	Groups               []*Group               `json:"groups,omitempty"`
@@ -3703,6 +3747,31 @@ type UserWhereInput struct {
 	AuthProviderNeq   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`
 	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
 	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
+	// is_phone_otp_allowed field predicates
+	IsPhoneOtpAllowed       *bool `json:"isPhoneOtpAllowed,omitempty"`
+	IsPhoneOtpAllowedNeq    *bool `json:"isPhoneOtpAllowedNEQ,omitempty"`
+	IsPhoneOtpAllowedIsNil  *bool `json:"isPhoneOtpAllowedIsNil,omitempty"`
+	IsPhoneOtpAllowedNotNil *bool `json:"isPhoneOtpAllowedNotNil,omitempty"`
+	// is_email_otp_allowed field predicates
+	IsEmailOtpAllowed       *bool `json:"isEmailOtpAllowed,omitempty"`
+	IsEmailOtpAllowedNeq    *bool `json:"isEmailOtpAllowedNEQ,omitempty"`
+	IsEmailOtpAllowedIsNil  *bool `json:"isEmailOtpAllowedIsNil,omitempty"`
+	IsEmailOtpAllowedNotNil *bool `json:"isEmailOtpAllowedNotNil,omitempty"`
+	// is_totp_allowed field predicates
+	IsTotpAllowed       *bool `json:"isTotpAllowed,omitempty"`
+	IsTotpAllowedNeq    *bool `json:"isTotpAllowedNEQ,omitempty"`
+	IsTotpAllowedIsNil  *bool `json:"isTotpAllowedIsNil,omitempty"`
+	IsTotpAllowedNotNil *bool `json:"isTotpAllowedNotNil,omitempty"`
+	// is_webauthn_allowed field predicates
+	IsWebauthnAllowed       *bool `json:"isWebauthnAllowed,omitempty"`
+	IsWebauthnAllowedNeq    *bool `json:"isWebauthnAllowedNEQ,omitempty"`
+	IsWebauthnAllowedIsNil  *bool `json:"isWebauthnAllowedIsNil,omitempty"`
+	IsWebauthnAllowedNotNil *bool `json:"isWebauthnAllowedNotNil,omitempty"`
+	// is_tfa_enabled field predicates
+	IsTfaEnabled       *bool `json:"isTfaEnabled,omitempty"`
+	IsTfaEnabledNeq    *bool `json:"isTfaEnabledNEQ,omitempty"`
+	IsTfaEnabledIsNil  *bool `json:"isTfaEnabledIsNil,omitempty"`
+	IsTfaEnabledNotNil *bool `json:"isTfaEnabledNotNil,omitempty"`
 	// personal_access_tokens edge predicates
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`

@@ -8375,6 +8375,53 @@ type UserWhereInput struct {
 	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
 	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
 
+	// "tfa_secret" field predicates.
+	TfaSecret             *string  `json:"tfaSecret,omitempty"`
+	TfaSecretNEQ          *string  `json:"tfaSecretNEQ,omitempty"`
+	TfaSecretIn           []string `json:"tfaSecretIn,omitempty"`
+	TfaSecretNotIn        []string `json:"tfaSecretNotIn,omitempty"`
+	TfaSecretGT           *string  `json:"tfaSecretGT,omitempty"`
+	TfaSecretGTE          *string  `json:"tfaSecretGTE,omitempty"`
+	TfaSecretLT           *string  `json:"tfaSecretLT,omitempty"`
+	TfaSecretLTE          *string  `json:"tfaSecretLTE,omitempty"`
+	TfaSecretContains     *string  `json:"tfaSecretContains,omitempty"`
+	TfaSecretHasPrefix    *string  `json:"tfaSecretHasPrefix,omitempty"`
+	TfaSecretHasSuffix    *string  `json:"tfaSecretHasSuffix,omitempty"`
+	TfaSecretIsNil        bool     `json:"tfaSecretIsNil,omitempty"`
+	TfaSecretNotNil       bool     `json:"tfaSecretNotNil,omitempty"`
+	TfaSecretEqualFold    *string  `json:"tfaSecretEqualFold,omitempty"`
+	TfaSecretContainsFold *string  `json:"tfaSecretContainsFold,omitempty"`
+
+	// "is_phone_otp_allowed" field predicates.
+	IsPhoneOtpAllowed       *bool `json:"isPhoneOtpAllowed,omitempty"`
+	IsPhoneOtpAllowedNEQ    *bool `json:"isPhoneOtpAllowedNEQ,omitempty"`
+	IsPhoneOtpAllowedIsNil  bool  `json:"isPhoneOtpAllowedIsNil,omitempty"`
+	IsPhoneOtpAllowedNotNil bool  `json:"isPhoneOtpAllowedNotNil,omitempty"`
+
+	// "is_email_otp_allowed" field predicates.
+	IsEmailOtpAllowed       *bool `json:"isEmailOtpAllowed,omitempty"`
+	IsEmailOtpAllowedNEQ    *bool `json:"isEmailOtpAllowedNEQ,omitempty"`
+	IsEmailOtpAllowedIsNil  bool  `json:"isEmailOtpAllowedIsNil,omitempty"`
+	IsEmailOtpAllowedNotNil bool  `json:"isEmailOtpAllowedNotNil,omitempty"`
+
+	// "is_totp_allowed" field predicates.
+	IsTotpAllowed       *bool `json:"isTotpAllowed,omitempty"`
+	IsTotpAllowedNEQ    *bool `json:"isTotpAllowedNEQ,omitempty"`
+	IsTotpAllowedIsNil  bool  `json:"isTotpAllowedIsNil,omitempty"`
+	IsTotpAllowedNotNil bool  `json:"isTotpAllowedNotNil,omitempty"`
+
+	// "is_webauthn_allowed" field predicates.
+	IsWebauthnAllowed       *bool `json:"isWebauthnAllowed,omitempty"`
+	IsWebauthnAllowedNEQ    *bool `json:"isWebauthnAllowedNEQ,omitempty"`
+	IsWebauthnAllowedIsNil  bool  `json:"isWebauthnAllowedIsNil,omitempty"`
+	IsWebauthnAllowedNotNil bool  `json:"isWebauthnAllowedNotNil,omitempty"`
+
+	// "is_tfa_enabled" field predicates.
+	IsTfaEnabled       *bool `json:"isTfaEnabled,omitempty"`
+	IsTfaEnabledNEQ    *bool `json:"isTfaEnabledNEQ,omitempty"`
+	IsTfaEnabledIsNil  bool  `json:"isTfaEnabledIsNil,omitempty"`
+	IsTfaEnabledNotNil bool  `json:"isTfaEnabledNotNil,omitempty"`
+
 	// "personal_access_tokens" edge predicates.
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
@@ -9127,6 +9174,111 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if len(i.AuthProviderNotIn) > 0 {
 		predicates = append(predicates, user.AuthProviderNotIn(i.AuthProviderNotIn...))
+	}
+	if i.TfaSecret != nil {
+		predicates = append(predicates, user.TfaSecretEQ(*i.TfaSecret))
+	}
+	if i.TfaSecretNEQ != nil {
+		predicates = append(predicates, user.TfaSecretNEQ(*i.TfaSecretNEQ))
+	}
+	if len(i.TfaSecretIn) > 0 {
+		predicates = append(predicates, user.TfaSecretIn(i.TfaSecretIn...))
+	}
+	if len(i.TfaSecretNotIn) > 0 {
+		predicates = append(predicates, user.TfaSecretNotIn(i.TfaSecretNotIn...))
+	}
+	if i.TfaSecretGT != nil {
+		predicates = append(predicates, user.TfaSecretGT(*i.TfaSecretGT))
+	}
+	if i.TfaSecretGTE != nil {
+		predicates = append(predicates, user.TfaSecretGTE(*i.TfaSecretGTE))
+	}
+	if i.TfaSecretLT != nil {
+		predicates = append(predicates, user.TfaSecretLT(*i.TfaSecretLT))
+	}
+	if i.TfaSecretLTE != nil {
+		predicates = append(predicates, user.TfaSecretLTE(*i.TfaSecretLTE))
+	}
+	if i.TfaSecretContains != nil {
+		predicates = append(predicates, user.TfaSecretContains(*i.TfaSecretContains))
+	}
+	if i.TfaSecretHasPrefix != nil {
+		predicates = append(predicates, user.TfaSecretHasPrefix(*i.TfaSecretHasPrefix))
+	}
+	if i.TfaSecretHasSuffix != nil {
+		predicates = append(predicates, user.TfaSecretHasSuffix(*i.TfaSecretHasSuffix))
+	}
+	if i.TfaSecretIsNil {
+		predicates = append(predicates, user.TfaSecretIsNil())
+	}
+	if i.TfaSecretNotNil {
+		predicates = append(predicates, user.TfaSecretNotNil())
+	}
+	if i.TfaSecretEqualFold != nil {
+		predicates = append(predicates, user.TfaSecretEqualFold(*i.TfaSecretEqualFold))
+	}
+	if i.TfaSecretContainsFold != nil {
+		predicates = append(predicates, user.TfaSecretContainsFold(*i.TfaSecretContainsFold))
+	}
+	if i.IsPhoneOtpAllowed != nil {
+		predicates = append(predicates, user.IsPhoneOtpAllowedEQ(*i.IsPhoneOtpAllowed))
+	}
+	if i.IsPhoneOtpAllowedNEQ != nil {
+		predicates = append(predicates, user.IsPhoneOtpAllowedNEQ(*i.IsPhoneOtpAllowedNEQ))
+	}
+	if i.IsPhoneOtpAllowedIsNil {
+		predicates = append(predicates, user.IsPhoneOtpAllowedIsNil())
+	}
+	if i.IsPhoneOtpAllowedNotNil {
+		predicates = append(predicates, user.IsPhoneOtpAllowedNotNil())
+	}
+	if i.IsEmailOtpAllowed != nil {
+		predicates = append(predicates, user.IsEmailOtpAllowedEQ(*i.IsEmailOtpAllowed))
+	}
+	if i.IsEmailOtpAllowedNEQ != nil {
+		predicates = append(predicates, user.IsEmailOtpAllowedNEQ(*i.IsEmailOtpAllowedNEQ))
+	}
+	if i.IsEmailOtpAllowedIsNil {
+		predicates = append(predicates, user.IsEmailOtpAllowedIsNil())
+	}
+	if i.IsEmailOtpAllowedNotNil {
+		predicates = append(predicates, user.IsEmailOtpAllowedNotNil())
+	}
+	if i.IsTotpAllowed != nil {
+		predicates = append(predicates, user.IsTotpAllowedEQ(*i.IsTotpAllowed))
+	}
+	if i.IsTotpAllowedNEQ != nil {
+		predicates = append(predicates, user.IsTotpAllowedNEQ(*i.IsTotpAllowedNEQ))
+	}
+	if i.IsTotpAllowedIsNil {
+		predicates = append(predicates, user.IsTotpAllowedIsNil())
+	}
+	if i.IsTotpAllowedNotNil {
+		predicates = append(predicates, user.IsTotpAllowedNotNil())
+	}
+	if i.IsWebauthnAllowed != nil {
+		predicates = append(predicates, user.IsWebauthnAllowedEQ(*i.IsWebauthnAllowed))
+	}
+	if i.IsWebauthnAllowedNEQ != nil {
+		predicates = append(predicates, user.IsWebauthnAllowedNEQ(*i.IsWebauthnAllowedNEQ))
+	}
+	if i.IsWebauthnAllowedIsNil {
+		predicates = append(predicates, user.IsWebauthnAllowedIsNil())
+	}
+	if i.IsWebauthnAllowedNotNil {
+		predicates = append(predicates, user.IsWebauthnAllowedNotNil())
+	}
+	if i.IsTfaEnabled != nil {
+		predicates = append(predicates, user.IsTfaEnabledEQ(*i.IsTfaEnabled))
+	}
+	if i.IsTfaEnabledNEQ != nil {
+		predicates = append(predicates, user.IsTfaEnabledNEQ(*i.IsTfaEnabledNEQ))
+	}
+	if i.IsTfaEnabledIsNil {
+		predicates = append(predicates, user.IsTfaEnabledIsNil())
+	}
+	if i.IsTfaEnabledNotNil {
+		predicates = append(predicates, user.IsTfaEnabledNotNil())
 	}
 
 	if i.HasPersonalAccessTokens != nil {

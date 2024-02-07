@@ -55,6 +55,18 @@ type User struct {
 	Oauth bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"auth_provider,omitempty"`
+	// TFA secret for the user
+	TfaSecret *string `json:"-"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
+	IsPhoneOtpAllowed bool `json:"is_phone_otp_allowed,omitempty"`
+	// specifies a user may complete authentication by verifying an OTP code delivered through email
+	IsEmailOtpAllowed bool `json:"is_email_otp_allowed,omitempty"`
+	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+	IsTotpAllowed bool `json:"is_totp_allowed,omitempty"`
+	// specifies a user may complete authentication by verifying a WebAuthn capable device
+	IsWebauthnAllowed bool `json:"is_webauthn_allowed,omitempty"`
+	// whether the user has two factor authentication enabled
+	IsTfaEnabled bool `json:"is_tfa_enabled,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -75,13 +87,15 @@ type UserEdges struct {
 	Groups []*Group `json:"groups,omitempty"`
 	// Organizations holds the value of the organizations edge.
 	Organizations []*Organization `json:"organizations,omitempty"`
+	// Webauthn holds the value of the webauthn edge.
+	Webauthn []*Webauthn `json:"webauthn,omitempty"`
 	// GroupMemberships holds the value of the group_memberships edge.
 	GroupMemberships []*GroupMembership `json:"group_memberships,omitempty"`
 	// OrgMemberships holds the value of the org_memberships edge.
 	OrgMemberships []*OrgMembership `json:"org_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 	// totalCount holds the count of the edges above.
 	totalCount [6]map[string]int
 
@@ -90,6 +104,7 @@ type UserEdges struct {
 	namedPasswordResetTokens     map[string][]*PasswordResetToken
 	namedGroups                  map[string][]*Group
 	namedOrganizations           map[string][]*Organization
+	namedWebauthn                map[string][]*Webauthn
 	namedGroupMemberships        map[string][]*GroupMembership
 	namedOrgMemberships          map[string][]*OrgMembership
 }
@@ -152,10 +167,19 @@ func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
 	return nil, &NotLoadedError{edge: "organizations"}
 }
 
+// WebauthnOrErr returns the Webauthn value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) WebauthnOrErr() ([]*Webauthn, error) {
+	if e.loadedTypes[6] {
+		return e.Webauthn, nil
+	}
+	return nil, &NotLoadedError{edge: "webauthn"}
+}
+
 // GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.GroupMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "group_memberships"}
@@ -164,7 +188,7 @@ func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
 // OrgMembershipsOrErr returns the OrgMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OrgMembershipsOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.OrgMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "org_memberships"}
@@ -175,9 +199,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldOauth:
+		case user.FieldOauth, user.FieldIsPhoneOtpAllowed, user.FieldIsEmailOtpAllowed, user.FieldIsTotpAllowed, user.FieldIsWebauthnAllowed, user.FieldIsTfaEnabled:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub, user.FieldAuthProvider:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub, user.FieldAuthProvider, user.FieldTfaSecret:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -315,6 +339,43 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.AuthProvider = enums.AuthProvider(value.String)
 			}
+		case user.FieldTfaSecret:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field tfa_secret", values[i])
+			} else if value.Valid {
+				u.TfaSecret = new(string)
+				*u.TfaSecret = value.String
+			}
+		case user.FieldIsPhoneOtpAllowed:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_phone_otp_allowed", values[i])
+			} else if value.Valid {
+				u.IsPhoneOtpAllowed = value.Bool
+			}
+		case user.FieldIsEmailOtpAllowed:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_email_otp_allowed", values[i])
+			} else if value.Valid {
+				u.IsEmailOtpAllowed = value.Bool
+			}
+		case user.FieldIsTotpAllowed:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_totp_allowed", values[i])
+			} else if value.Valid {
+				u.IsTotpAllowed = value.Bool
+			}
+		case user.FieldIsWebauthnAllowed:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_webauthn_allowed", values[i])
+			} else if value.Valid {
+				u.IsWebauthnAllowed = value.Bool
+			}
+		case user.FieldIsTfaEnabled:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_tfa_enabled", values[i])
+			} else if value.Valid {
+				u.IsTfaEnabled = value.Bool
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -356,6 +417,11 @@ func (u *User) QueryGroups() *GroupQuery {
 // QueryOrganizations queries the "organizations" edge of the User entity.
 func (u *User) QueryOrganizations() *OrganizationQuery {
 	return NewUserClient(u.config).QueryOrganizations(u)
+}
+
+// QueryWebauthn queries the "webauthn" edge of the User entity.
+func (u *User) QueryWebauthn() *WebauthnQuery {
+	return NewUserClient(u.config).QueryWebauthn(u)
 }
 
 // QueryGroupMemberships queries the "group_memberships" edge of the User entity.
@@ -451,6 +517,23 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("auth_provider=")
 	builder.WriteString(fmt.Sprintf("%v", u.AuthProvider))
+	builder.WriteString(", ")
+	builder.WriteString("tfa_secret=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("is_phone_otp_allowed=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsPhoneOtpAllowed))
+	builder.WriteString(", ")
+	builder.WriteString("is_email_otp_allowed=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsEmailOtpAllowed))
+	builder.WriteString(", ")
+	builder.WriteString("is_totp_allowed=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsTotpAllowed))
+	builder.WriteString(", ")
+	builder.WriteString("is_webauthn_allowed=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsWebauthnAllowed))
+	builder.WriteString(", ")
+	builder.WriteString("is_tfa_enabled=")
+	builder.WriteString(fmt.Sprintf("%v", u.IsTfaEnabled))
 	builder.WriteByte(')')
 	return builder.String()
 }
@@ -572,6 +655,30 @@ func (u *User) appendNamedOrganizations(name string, edges ...*Organization) {
 		u.Edges.namedOrganizations[name] = []*Organization{}
 	} else {
 		u.Edges.namedOrganizations[name] = append(u.Edges.namedOrganizations[name], edges...)
+	}
+}
+
+// NamedWebauthn returns the Webauthn named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedWebauthn(name string) ([]*Webauthn, error) {
+	if u.Edges.namedWebauthn == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedWebauthn[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedWebauthn(name string, edges ...*Webauthn) {
+	if u.Edges.namedWebauthn == nil {
+		u.Edges.namedWebauthn = make(map[string][]*Webauthn)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedWebauthn[name] = []*Webauthn{}
+	} else {
+		u.Edges.namedWebauthn[name] = append(u.Edges.namedWebauthn[name], edges...)
 	}
 }
 

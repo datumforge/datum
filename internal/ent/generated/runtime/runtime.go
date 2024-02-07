@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 	"github.com/datumforge/datum/internal/ent/schema"
 
 	"entgo.io/ent"
@@ -800,6 +801,26 @@ func init() {
 	userDescOauth := userFields[10].Descriptor()
 	// user.DefaultOauth holds the default value on creation for the oauth field.
 	user.DefaultOauth = userDescOauth.Default.(bool)
+	// userDescIsPhoneOtpAllowed is the schema descriptor for is_phone_otp_allowed field.
+	userDescIsPhoneOtpAllowed := userFields[13].Descriptor()
+	// user.DefaultIsPhoneOtpAllowed holds the default value on creation for the is_phone_otp_allowed field.
+	user.DefaultIsPhoneOtpAllowed = userDescIsPhoneOtpAllowed.Default.(bool)
+	// userDescIsEmailOtpAllowed is the schema descriptor for is_email_otp_allowed field.
+	userDescIsEmailOtpAllowed := userFields[14].Descriptor()
+	// user.DefaultIsEmailOtpAllowed holds the default value on creation for the is_email_otp_allowed field.
+	user.DefaultIsEmailOtpAllowed = userDescIsEmailOtpAllowed.Default.(bool)
+	// userDescIsTotpAllowed is the schema descriptor for is_totp_allowed field.
+	userDescIsTotpAllowed := userFields[15].Descriptor()
+	// user.DefaultIsTotpAllowed holds the default value on creation for the is_totp_allowed field.
+	user.DefaultIsTotpAllowed = userDescIsTotpAllowed.Default.(bool)
+	// userDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
+	userDescIsWebauthnAllowed := userFields[16].Descriptor()
+	// user.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.
+	user.DefaultIsWebauthnAllowed = userDescIsWebauthnAllowed.Default.(bool)
+	// userDescIsTfaEnabled is the schema descriptor for is_tfa_enabled field.
+	userDescIsTfaEnabled := userFields[17].Descriptor()
+	// user.DefaultIsTfaEnabled holds the default value on creation for the is_tfa_enabled field.
+	user.DefaultIsTfaEnabled = userDescIsTfaEnabled.Default.(bool)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
@@ -843,6 +864,37 @@ func init() {
 	usersettingDescID := usersettingMixinFields1[0].Descriptor()
 	// usersetting.DefaultID holds the default value on creation for the id field.
 	usersetting.DefaultID = usersettingDescID.Default.(func() string)
+	webauthnMixin := schema.Webauthn{}.Mixin()
+	webauthnMixinHooks0 := webauthnMixin[0].Hooks()
+	webauthnMixinHooks2 := webauthnMixin[2].Hooks()
+	webauthn.Hooks[0] = webauthnMixinHooks0[0]
+	webauthn.Hooks[1] = webauthnMixinHooks2[0]
+	webauthnMixinInters2 := webauthnMixin[2].Interceptors()
+	webauthn.Interceptors[0] = webauthnMixinInters2[0]
+	webauthnMixinFields0 := webauthnMixin[0].Fields()
+	_ = webauthnMixinFields0
+	webauthnMixinFields1 := webauthnMixin[1].Fields()
+	_ = webauthnMixinFields1
+	webauthnFields := schema.Webauthn{}.Fields()
+	_ = webauthnFields
+	// webauthnDescCreatedAt is the schema descriptor for created_at field.
+	webauthnDescCreatedAt := webauthnMixinFields0[0].Descriptor()
+	// webauthn.DefaultCreatedAt holds the default value on creation for the created_at field.
+	webauthn.DefaultCreatedAt = webauthnDescCreatedAt.Default.(func() time.Time)
+	// webauthnDescUpdatedAt is the schema descriptor for updated_at field.
+	webauthnDescUpdatedAt := webauthnMixinFields0[1].Descriptor()
+	// webauthn.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	webauthn.DefaultUpdatedAt = webauthnDescUpdatedAt.Default.(func() time.Time)
+	// webauthn.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	webauthn.UpdateDefaultUpdatedAt = webauthnDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// webauthnDescUserID is the schema descriptor for user_id field.
+	webauthnDescUserID := webauthnFields[1].Descriptor()
+	// webauthn.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	webauthn.UserIDValidator = webauthnDescUserID.Validators[0].(func(string) error)
+	// webauthnDescID is the schema descriptor for id field.
+	webauthnDescID := webauthnMixinFields1[0].Descriptor()
+	// webauthn.DefaultID holds the default value on creation for the id field.
+	webauthn.DefaultID = webauthnDescID.Default.(func() string)
 }
 
 const (

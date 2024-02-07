@@ -1568,12 +1568,19 @@ type CreateUserInput struct {
 	Sub                       *string
 	Oauth                     *bool
 	AuthProvider              *enums.AuthProvider
+	TfaSecret                 *string
+	IsPhoneOtpAllowed         *bool
+	IsEmailOtpAllowed         *bool
+	IsTotpAllowed             *bool
+	IsWebauthnAllowed         *bool
+	IsTfaEnabled              *bool
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
 	EmailVerificationTokenIDs []string
 	PasswordResetTokenIDs     []string
 	GroupIDs                  []string
 	OrganizationIDs           []string
+	WebauthnIDs               []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1618,6 +1625,24 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
 	}
+	if v := i.TfaSecret; v != nil {
+		m.SetTfaSecret(*v)
+	}
+	if v := i.IsPhoneOtpAllowed; v != nil {
+		m.SetIsPhoneOtpAllowed(*v)
+	}
+	if v := i.IsEmailOtpAllowed; v != nil {
+		m.SetIsEmailOtpAllowed(*v)
+	}
+	if v := i.IsTotpAllowed; v != nil {
+		m.SetIsTotpAllowed(*v)
+	}
+	if v := i.IsWebauthnAllowed; v != nil {
+		m.SetIsWebauthnAllowed(*v)
+	}
+	if v := i.IsTfaEnabled; v != nil {
+		m.SetIsTfaEnabled(*v)
+	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
@@ -1633,6 +1658,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.OrganizationIDs; len(v) > 0 {
 		m.AddOrganizationIDs(v...)
+	}
+	if v := i.WebauthnIDs; len(v) > 0 {
+		m.AddWebauthnIDs(v...)
 	}
 }
 
@@ -1665,6 +1693,18 @@ type UpdateUserInput struct {
 	Sub                             *string
 	Oauth                           *bool
 	AuthProvider                    *enums.AuthProvider
+	ClearTfaSecret                  bool
+	TfaSecret                       *string
+	ClearIsPhoneOtpAllowed          bool
+	IsPhoneOtpAllowed               *bool
+	ClearIsEmailOtpAllowed          bool
+	IsEmailOtpAllowed               *bool
+	ClearIsTotpAllowed              bool
+	IsTotpAllowed                   *bool
+	ClearIsWebauthnAllowed          bool
+	IsWebauthnAllowed               *bool
+	ClearIsTfaEnabled               bool
+	IsTfaEnabled                    *bool
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
@@ -1681,6 +1721,9 @@ type UpdateUserInput struct {
 	ClearOrganizations              bool
 	AddOrganizationIDs              []string
 	RemoveOrganizationIDs           []string
+	ClearWebauthn                   bool
+	AddWebauthnIDs                  []string
+	RemoveWebauthnIDs               []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1748,6 +1791,42 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
 	}
+	if i.ClearTfaSecret {
+		m.ClearTfaSecret()
+	}
+	if v := i.TfaSecret; v != nil {
+		m.SetTfaSecret(*v)
+	}
+	if i.ClearIsPhoneOtpAllowed {
+		m.ClearIsPhoneOtpAllowed()
+	}
+	if v := i.IsPhoneOtpAllowed; v != nil {
+		m.SetIsPhoneOtpAllowed(*v)
+	}
+	if i.ClearIsEmailOtpAllowed {
+		m.ClearIsEmailOtpAllowed()
+	}
+	if v := i.IsEmailOtpAllowed; v != nil {
+		m.SetIsEmailOtpAllowed(*v)
+	}
+	if i.ClearIsTotpAllowed {
+		m.ClearIsTotpAllowed()
+	}
+	if v := i.IsTotpAllowed; v != nil {
+		m.SetIsTotpAllowed(*v)
+	}
+	if i.ClearIsWebauthnAllowed {
+		m.ClearIsWebauthnAllowed()
+	}
+	if v := i.IsWebauthnAllowed; v != nil {
+		m.SetIsWebauthnAllowed(*v)
+	}
+	if i.ClearIsTfaEnabled {
+		m.ClearIsTfaEnabled()
+	}
+	if v := i.IsTfaEnabled; v != nil {
+		m.SetIsTfaEnabled(*v)
+	}
 	if i.ClearPersonalAccessTokens {
 		m.ClearPersonalAccessTokens()
 	}
@@ -1795,6 +1874,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveOrganizationIDs; len(v) > 0 {
 		m.RemoveOrganizationIDs(v...)
+	}
+	if i.ClearWebauthn {
+		m.ClearWebauthn()
+	}
+	if v := i.AddWebauthnIDs; len(v) > 0 {
+		m.AddWebauthnIDs(v...)
+	}
+	if v := i.RemoveWebauthnIDs; len(v) > 0 {
+		m.RemoveWebauthnIDs(v...)
 	}
 }
 

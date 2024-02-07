@@ -25,6 +25,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 )
 
 // The Query interface represents an operation that queries a graph.
@@ -515,6 +516,33 @@ func (f TraverseUserSetting) Traverse(ctx context.Context, q generated.Query) er
 	return fmt.Errorf("unexpected query type %T. expect *generated.UserSettingQuery", q)
 }
 
+// The WebauthnFunc type is an adapter to allow the use of ordinary function as a Querier.
+type WebauthnFunc func(context.Context, *generated.WebauthnQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f WebauthnFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.WebauthnQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.WebauthnQuery", q)
+}
+
+// The TraverseWebauthn type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseWebauthn func(context.Context, *generated.WebauthnQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseWebauthn) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseWebauthn) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.WebauthnQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.WebauthnQuery", q)
+}
+
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
@@ -550,6 +578,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
 	case *generated.UserSettingQuery:
 		return &query[*generated.UserSettingQuery, predicate.UserSetting, usersetting.OrderOption]{typ: generated.TypeUserSetting, tq: q}, nil
+	case *generated.WebauthnQuery:
+		return &query[*generated.WebauthnQuery, predicate.Webauthn, webauthn.OrderOption]{typ: generated.TypeWebauthn, tq: q}, nil
 	default:
 		return nil, fmt.Errorf("unknown query type %T", q)
 	}

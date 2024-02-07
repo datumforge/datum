@@ -378,12 +378,37 @@ input CreateUserInput {
   auth provider used to register the account
   """
   authProvider: UserAuthProvider
+  """
+  TFA secret for the user
+  """
+  tfaSecret: String
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through SMS
+  """
+  isPhoneOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through email
+  """
+  isEmailOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+  """
+  isTotpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a WebAuthn capable device
+  """
+  isWebauthnAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   emailVerificationTokenIDs: [ID!]
   passwordResetTokenIDs: [ID!]
   groupIDs: [ID!]
   organizationIDs: [ID!]
+  webauthnIDs: [ID!]
 }
 """
 CreateUserSettingInput is used for create UserSetting object.
@@ -4212,6 +4237,36 @@ input UpdateUserInput {
   auth provider used to register the account
   """
   authProvider: UserAuthProvider
+  """
+  TFA secret for the user
+  """
+  tfaSecret: String
+  clearTfaSecret: Boolean
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through SMS
+  """
+  isPhoneOtpAllowed: Boolean
+  clearIsPhoneOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through email
+  """
+  isEmailOtpAllowed: Boolean
+  clearIsEmailOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+  """
+  isTotpAllowed: Boolean
+  clearIsTotpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a WebAuthn capable device
+  """
+  isWebauthnAllowed: Boolean
+  clearIsWebauthnAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
+  clearIsTfaEnabled: Boolean
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
@@ -4228,6 +4283,9 @@ input UpdateUserInput {
   addOrganizationIDs: [ID!]
   removeOrganizationIDs: [ID!]
   clearOrganizations: Boolean
+  addWebauthnIDs: [ID!]
+  removeWebauthnIDs: [ID!]
+  clearWebauthn: Boolean
 }
 """
 UpdateUserSettingInput is used for update UserSetting object.
@@ -4314,6 +4372,26 @@ type User implements Node {
   auth provider used to register the account
   """
   authProvider: UserAuthProvider!
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through SMS
+  """
+  isPhoneOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through email
+  """
+  isEmailOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+  """
+  isTotpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a WebAuthn capable device
+  """
+  isWebauthnAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSetting!
   groups: [Group!]
@@ -4894,6 +4972,41 @@ input UserWhereInput {
   authProviderNEQ: UserAuthProvider
   authProviderIn: [UserAuthProvider!]
   authProviderNotIn: [UserAuthProvider!]
+  """
+  is_phone_otp_allowed field predicates
+  """
+  isPhoneOtpAllowed: Boolean
+  isPhoneOtpAllowedNEQ: Boolean
+  isPhoneOtpAllowedIsNil: Boolean
+  isPhoneOtpAllowedNotNil: Boolean
+  """
+  is_email_otp_allowed field predicates
+  """
+  isEmailOtpAllowed: Boolean
+  isEmailOtpAllowedNEQ: Boolean
+  isEmailOtpAllowedIsNil: Boolean
+  isEmailOtpAllowedNotNil: Boolean
+  """
+  is_totp_allowed field predicates
+  """
+  isTotpAllowed: Boolean
+  isTotpAllowedNEQ: Boolean
+  isTotpAllowedIsNil: Boolean
+  isTotpAllowedNotNil: Boolean
+  """
+  is_webauthn_allowed field predicates
+  """
+  isWebauthnAllowed: Boolean
+  isWebauthnAllowedNEQ: Boolean
+  isWebauthnAllowedIsNil: Boolean
+  isWebauthnAllowedNotNil: Boolean
+  """
+  is_tfa_enabled field predicates
+  """
+  isTfaEnabled: Boolean
+  isTfaEnabledNEQ: Boolean
+  isTfaEnabledIsNil: Boolean
+  isTfaEnabledNotNil: Boolean
   """
   personal_access_tokens edge predicates
   """

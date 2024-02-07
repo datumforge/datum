@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // Authenticate is oriented to machine users/ programmatic access that have an API key with a client ID and
@@ -17,7 +19,7 @@ import (
 // be used to fetch a new key pair without having to transmit a secret again.
 
 // TODO: implement authenticate handler
-func registerAuthenticateHandler(router *echo.Echo) (err error) { //nolint:unused
+func registerAuthenticateHandler(router *echo.Echo, h *handlers.Handler) (err error) { //nolint:unused
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,
 		Path:   "/authenticate",

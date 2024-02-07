@@ -9,7 +9,7 @@ require (
 	github.com/99designs/gqlgen v0.17.43
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
-	github.com/Yamashou/gqlgenc v0.18.0
+	github.com/Yamashou/gqlgenc v0.18.1
 	github.com/alicebob/miniredis/v2 v2.31.1
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
@@ -214,7 +214,7 @@ require (
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.27.0
 	github.com/trisacrypto/directory v1.7.5
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.2.3
-	github.com/urfave/cli/v2 v2.26.0 // indirect
+	github.com/urfave/cli/v2 v2.27.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1

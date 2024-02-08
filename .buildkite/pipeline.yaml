@@ -13,7 +13,7 @@ steps:
     key: "generate"
     plugins:
       - docker#v5.10.0:
-          image: "ghcr.io/datumforge/base-ci-image:v1.0.3"
+          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
           command: ["task", "ci"]
           environment: 
             - "GOTOOLCHAIN=auto"
@@ -37,7 +37,7 @@ steps:
       TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
     plugins:
       - docker#v5.10.0:
-          image: golang:1.21.6
+          image: golang:1.22.0
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
 
@@ -50,7 +50,7 @@ steps:
       - "docker://postgres:15-alpine"
     plugins:
       - docker#v5.10.0:
-          image: golang:1.21.6
+          image: golang:1.22.0
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
 
@@ -117,7 +117,7 @@ steps:
     artifact_paths: "bin/${APP_NAME}"
     plugins:
       - docker#v5.10.0:
-          image: "golang:1.21.6"
+          image: "golang:1.22.0"
           environment:
             - CGO_ENABLED=0
             - GOOS=linux
@@ -128,7 +128,7 @@ steps:
     artifact_paths: "bin/${APP_NAME}-cli"
     plugins:
       - docker#v5.10.0:
-          image: "golang:1.21.6"
+          image: "golang:1.22.0"
           environment:
             - GOOS=darwin
             - GOARCH=arm64

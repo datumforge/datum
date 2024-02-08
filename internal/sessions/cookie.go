@@ -15,12 +15,12 @@ var (
 	DevCookieName     = "temporary-cookie"
 )
 
-// DefaultCookieConfig configures http.Cookie creation for production (AKA default secure valutes are set)
+// DefaultCookieConfig configures http.Cookie creation for production (AKA default secure values are set)
 var DefaultCookieConfig = &CookieConfig{
 	Path:     "/",
 	Domain:   "",
 	MaxAge:   defaultMaxAge,
-	HTTPOnly: true,
+	HTTPOnly: false,
 	Secure:   true,
 	SameSite: http.SameSiteStrictMode,
 }

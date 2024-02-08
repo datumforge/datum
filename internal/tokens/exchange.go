@@ -1,9 +1,10 @@
 package tokens
 
-// ExchangeTokenResponse is the request response when exchanging an oauth token from one provider
+// TokenResponse is the request response when exchanging an oauth token from one provider
 // to a Datum issued token
-type ExchangeTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int64  `json:"expires_in"`
+type TokenResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int64  `json:"expires_in"`
 }

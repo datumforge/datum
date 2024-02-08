@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	echo "github.com/datumforge/echox"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -34,6 +35,8 @@ type Handler struct {
 	TaskMan *marionette.TaskManager
 	// OauthProvider contains the configuration settings for all supported Oauth2 providers
 	OauthProvider OauthProviderConfig
+	// AuthMiddleware contains the middleware to be used for authenticated endpoints
+	AuthMiddleware []echo.MiddlewareFunc
 }
 
 type Response struct {

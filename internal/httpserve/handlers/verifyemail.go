@@ -106,7 +106,14 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	// set cookies on request with the access and refresh token
 	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
-	return ctx.NoContent(http.StatusNoContent)
+	return ctx.JSON(http.StatusOK, Response{
+		Message: "success",
+		Data: tokens.TokenResponse{
+			AccessToken:  access,
+			RefreshToken: refresh,
+			TokenType:    "access_token",
+			ExpiresIn:    claims.ExpiresAt.Unix(),
+		}})
 }
 
 // validateVerifyRequest validates the required fields are set in the user request

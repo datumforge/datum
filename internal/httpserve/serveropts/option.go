@@ -254,6 +254,7 @@ func WithAuth() ServerOption {
 		)
 
 		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware, authmw.Authenticate(conf))
+		s.Config.Server.Handler.AuthMiddleware = append(s.Config.Server.Handler.AuthMiddleware, authmw.Authenticate(conf))
 	})
 }
 

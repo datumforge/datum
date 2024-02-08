@@ -92,9 +92,9 @@ type (
 		// Routes contains the handler functions
 		Routes []http.Handler `yaml:"routes"`
 		// DefaultMiddleware to enable on the echo server used on all requests
-		DefaultMiddleware []echo.MiddlewareFunc `yaml:"middleware"`
+		DefaultMiddleware []echo.MiddlewareFunc `yaml:"defaultMiddleware"`
 		// GraphMiddleware to enable on the echo server used on graph requests
-		GraphMiddleware []echo.MiddlewareFunc `yaml:"middleware"`
+		GraphMiddleware []echo.MiddlewareFunc `yaml:"graphMiddleware"`
 		// Handler contains the required settings for REST handlers including ready checks and JWT keys
 		Handler handlers.Handler `yaml:"checks"`
 		// Token contains the token config settings

@@ -58,7 +58,14 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 
 	analytics.AssociateUser(user.ID, claims.OrgID)
 
-	return ctx.JSON(http.StatusOK, Response{Message: "success"})
+	return ctx.JSON(http.StatusOK, Response{
+		Message: "success",
+		Data: tokens.TokenResponse{
+			AccessToken:  access,
+			RefreshToken: refresh,
+			TokenType:    "access_token",
+			ExpiresIn:    claims.ExpiresAt.Unix(),
+		}})
 }
 
 func createClaims(u *generated.User) *tokens.Claims {

@@ -16,6 +16,9 @@ COPY config/.env-dev .env
 # Copy the binary that goreleaser built
 COPY --from=builder /go/bin/datum /bin/datum
 
+# Copy reids binary
+COPY --from=redis:7.2.4 /usr/local/bin/redis-server /bin/redis-server
+
 # Copy FGA binary
 COPY --from=openfga/openfga:v1.4.3 /openfga /bin/openfga
 
@@ -31,10 +34,15 @@ RUN chmod +x /bin/docker_entrypoint.sh
 
 USER 65532:65532
 
+# Expose FGA ports
 EXPOSE 8080
 EXPOSE 8081
 EXPOSE 2112
 
+# Expose redis ports
+EXPOSE 6379
+
+# Expose API port
 EXPOSE 17608
 
 ENTRYPOINT ["docker_entrypoint.sh"]

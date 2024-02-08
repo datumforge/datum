@@ -53,12 +53,11 @@ func (h *Handler) OpenIDConfiguration(ctx echo.Context) error {
 	}
 
 	openid := &tokens.DiscoveryJSON{
-		Issuer:                base.ResolveReference(&url.URL{Path: "/"}).String(),
-		JwksURI:               base.ResolveReference(&url.URL{Path: "/.well-known/jwks.json"}).String(),
-		AuthorizationEndpoint: base.ResolveReference(&url.URL{Path: "/authorize"}).String(),
-		TokenEndpoint:         base.ResolveReference(&url.URL{Path: "/token"}).String(),
-		// TODO: add querystring for user query
-		UserinfoEndpoint:                  base.ResolveReference(&url.URL{Path: "/query"}).String(),
+		Issuer:                            base.ResolveReference(&url.URL{Path: "/"}).String(),
+		JwksURI:                           base.ResolveReference(&url.URL{Path: "/.well-known/jwks.json"}).String(),
+		AuthorizationEndpoint:             base.ResolveReference(&url.URL{Path: "/oauth/authorize"}).String(),
+		TokenEndpoint:                     base.ResolveReference(&url.URL{Path: "/oauth/token"}).String(),
+		UserinfoEndpoint:                  base.ResolveReference(&url.URL{Path: "/oauth/userinfo"}).String(),
 		ScopesSupported:                   []string{"openid", "profile", "email"},
 		ResponseTypesSupported:            []string{"code", "token", "id_token"},
 		TokenEndpointAuthMethodsSupported: []string{"client_secret_basic", "client_secret_post"},

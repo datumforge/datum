@@ -8,6 +8,23 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
+// registerUserInfoHandler registers the userinfo handler
+func registerUserInfoHandler(router *echo.Echo, h *handlers.Handler) (err error) {
+	authMW := mw
+	authMW = append(authMW, h.AuthMiddleware...)
+	_, err = router.AddRoute(echo.Route{
+		Method: http.MethodGet,
+		Path:   "/oauth/userinfo",
+		Handler: func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
+			return h.UserInfo(c)
+		},
+	}.ForGroup(unversioned, authMW))
+
+	return
+}
+
 // registerGithubLoginHandler registers the github login handler
 func registerGithubLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{

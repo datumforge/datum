@@ -5,7 +5,7 @@ go 1.21.6
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.4.5
-	entgo.io/ent v0.12.5
+	entgo.io/ent v0.13.0
 	github.com/99designs/gqlgen v0.17.43
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
@@ -163,7 +163,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.18.0 // indirect
+	ariga.io/atlas v0.19.1-0.20240203083654-5948b60a8e43 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect

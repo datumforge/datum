@@ -40,7 +40,7 @@ require (
 	go.uber.org/zap v1.26.0
 	golang.org/x/oauth2 v0.17.0
 	golang.org/x/term v0.17.0
-	google.golang.org/api v0.162.0
+	google.golang.org/api v0.163.0
 )
 
 require (

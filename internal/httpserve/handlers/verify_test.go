@@ -30,46 +30,46 @@ func TestVerifyHandler(t *testing.T) {
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
 	testCases := []struct {
-		name           string
-		userConfirmed  bool
-		email          string
-		ttl            string
-		tokenSet       bool
-		expectedResp   string
-		expectedStatus int
+		name            string
+		userConfirmed   bool
+		email           string
+		ttl             string
+		tokenSet        bool
+		expectedMessage string
+		expectedStatus  int
 	}{
 		{
-			name:           "happy path, unconfirmed user",
-			userConfirmed:  false,
-			email:          "mitb@datum.net",
-			tokenSet:       true,
-			expectedResp:   emptyResponse,
-			expectedStatus: http.StatusNoContent,
+			name:            "happy path, unconfirmed user",
+			userConfirmed:   false,
+			email:           "mitb@datum.net",
+			tokenSet:        true,
+			expectedMessage: "success",
+			expectedStatus:  http.StatusOK,
 		},
 		{
-			name:           "happy path, already confirmed user",
-			userConfirmed:  true,
-			email:          "sitb@datum.net",
-			tokenSet:       true,
-			expectedResp:   emptyResponse,
-			expectedStatus: http.StatusNoContent,
+			name:            "happy path, already confirmed user",
+			userConfirmed:   true,
+			email:           "sitb@datum.net",
+			tokenSet:        true,
+			expectedMessage: "success",
+			expectedStatus:  http.StatusOK,
 		},
 		{
-			name:           "missing token",
-			userConfirmed:  true,
-			email:          "santa@datum.net",
-			tokenSet:       false,
-			expectedResp:   "token is required",
-			expectedStatus: http.StatusBadRequest,
+			name:            "missing token",
+			userConfirmed:   true,
+			email:           "santa@datum.net",
+			tokenSet:        false,
+			expectedMessage: "token is required",
+			expectedStatus:  http.StatusBadRequest,
 		},
 		{
-			name:           "expired token, but not already confirmed",
-			userConfirmed:  false,
-			email:          "elf@datum.net",
-			tokenSet:       true,
-			ttl:            "1987-08-16T03:04:11.169086-07:00",
-			expectedResp:   "Token expired, a new token has been issued. Please try again",
-			expectedStatus: http.StatusCreated,
+			name:            "expired token, but not already confirmed",
+			userConfirmed:   false,
+			email:           "elf@datum.net",
+			tokenSet:        true,
+			ttl:             "1987-08-16T03:04:11.169086-07:00",
+			expectedMessage: "Token expired, a new token has been issued. Please try again",
+			expectedStatus:  http.StatusCreated,
 		},
 	}
 
@@ -145,16 +145,14 @@ func TestVerifyHandler(t *testing.T) {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus != http.StatusNoContent {
-				var out *handlers.Response
+			var out *handlers.Response
 
-				// parse request body
-				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
-					t.Error("error parsing response", err)
-				}
-
-				assert.Contains(t, out.Message, tc.expectedResp)
+			// parse request body
+			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+				t.Error("error parsing response", err)
 			}
+
+			assert.Contains(t, out.Message, tc.expectedMessage)
 		})
 	}
 }

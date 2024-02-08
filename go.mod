@@ -197,7 +197,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
-	github.com/posthog/posthog-go v0.0.0-20240202122501-d793288ce2c9
+	github.com/posthog/posthog-go v0.0.0-20240208111551-abe6962c309e
 	github.com/ravilushqa/otelgqlgen v0.15.0
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect

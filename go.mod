@@ -35,8 +35,8 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/vektah/gqlparser/v2 v2.5.11
 	github.com/wundergraph/graphql-go-tools v1.67.1
-	go.opentelemetry.io/otel v1.23.0
-	go.opentelemetry.io/otel/sdk v1.23.0
+	go.opentelemetry.io/otel v1.23.1
+	go.opentelemetry.io/otel/sdk v1.23.1
 	go.uber.org/zap v1.26.0
 	golang.org/x/oauth2 v0.16.0
 	golang.org/x/term v0.17.0
@@ -147,8 +147,8 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib v1.21.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.23.0 // indirect
-	go.opentelemetry.io/otel/trace v1.23.0 // indirect
+	go.opentelemetry.io/otel/metric v1.23.1 // indirect
+	go.opentelemetry.io/otel/trace v1.23.1 // indirect
 	go.opentelemetry.io/proto/otlp v1.1.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.4.0 // indirect
@@ -221,10 +221,10 @@ require (
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20231213231151-1d8dd44e695e // indirect
 	github.com/zclconf/go-cty v1.14.1 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.23.0
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.23.0
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.23.0
-	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.23.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.23.1
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.23.1
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.23.1
+	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.23.1
 	gocloud.dev v0.36.0
 	golang.org/x/crypto v0.18.0
 	golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3

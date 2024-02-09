@@ -10,7 +10,7 @@ import (
 	oauth2Login "github.com/datumforge/datum/internal/providers/oauth2"
 	"github.com/datumforge/datum/internal/testutils"
 
-	"github.com/google/go-github/v58/github"
+	"github.com/google/go-github/v59/github"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/oauth2"
 )

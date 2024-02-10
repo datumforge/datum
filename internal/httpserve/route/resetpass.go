@@ -17,8 +17,6 @@ func registerResetPasswordHandler(router *echo.Echo, h *handlers.Handler) (err e
 		Method: http.MethodPost,
 		Path:   "/password-reset",
 		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
 			return h.ResetPassword(c)
 		},
 	}.ForGroup(V1Version, mw))

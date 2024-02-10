@@ -44,8 +44,6 @@ func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Handler) (err e
 		Method: http.MethodGet,
 		Path:   "/.well-known/jwks.json",
 		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
 			return h.JWKSWellKnownHandler(c)
 		},
 	}.ForGroup(unversioned, mw))
@@ -59,8 +57,6 @@ func registerOIDCHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Method: http.MethodGet,
 		Path:   "/.well-known/openid-configuration",
 		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
 			return h.OpenIDConfiguration(c)
 		},
 	}.ForGroup(unversioned, mw))

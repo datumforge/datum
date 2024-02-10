@@ -21,8 +21,6 @@ func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error)
 		Method: http.MethodPost,
 		Path:   "/register",
 		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
 			return h.RegisterHandler(c)
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))

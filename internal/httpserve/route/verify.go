@@ -18,8 +18,6 @@ func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Method: http.MethodGet,
 		Path:   "/verify",
 		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
 			return h.VerifyEmail(c)
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))

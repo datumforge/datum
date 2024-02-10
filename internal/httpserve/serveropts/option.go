@@ -320,8 +320,8 @@ func WithMiddleware() ServerOption {
 			echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
 			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
-			cors.New(),                         // add cors middleware
-			mime.New(),                         // add mime middleware
+			cors.New(), // add cors middleware
+			mime.NewWithConfig(mime.Config{DefaultContentType: echo.MIMEApplicationJSONCharsetUTF8}), // add mime middleware
 			cachecontrol.New(),                 // add cache control middleware
 			ratelimit.DefaultRateLimiter(),     // add ratelimit middleware
 			middleware.Secure(),                // add XSS middleware

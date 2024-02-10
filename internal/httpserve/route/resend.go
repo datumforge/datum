@@ -19,8 +19,6 @@ func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err err
 		Method: http.MethodPost,
 		Path:   "/resend",
 		Handler: func(c echo.Context) error {
-			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
-
 			return h.ResendEmail(c)
 		},
 	}.ForGroup(V1Version, mw))

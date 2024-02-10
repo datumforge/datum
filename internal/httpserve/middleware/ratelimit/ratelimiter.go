@@ -16,7 +16,6 @@ type Config struct {
 }
 
 // DefaultRateLimiter returns a middleware function for rate limiting requests, see https://echo.labstack.com/docs/middleware/rate-limiter
-// TODO: https://github.com/datumforge/datum/issues/287
 func DefaultRateLimiter() echo.MiddlewareFunc {
 	conf := &Config{}
 
@@ -29,7 +28,6 @@ func DefaultRateLimiter() echo.MiddlewareFunc {
 }
 
 // RateLimiterWithConfig returns a middleware function for rate limiting requests with a config supplied, see https://echo.labstack.com/docs/middleware/rate-limiter
-// TODO: https://github.com/datumforge/datum/issues/287
 func RateLimiterWithConfig(conf *Config) echo.MiddlewareFunc {
 	rateLimitConfig := middleware.RateLimiterConfig{
 		Skipper: middleware.DefaultSkipper,

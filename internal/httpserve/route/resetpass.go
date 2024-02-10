@@ -15,7 +15,7 @@ import (
 func registerResetPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
-		Path:   "/reset-password",
+		Path:   "/password-reset",
 		Handler: func(c echo.Context) error {
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
 

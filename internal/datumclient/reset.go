@@ -16,7 +16,7 @@ import (
 // Reset a user password
 func Reset(c *Client, ctx context.Context, r handlers.ResetPassword) (*handlers.ResetPasswordReply, error) {
 	method := http.MethodPost
-	endpoint := "reset-password"
+	endpoint := "password-reset"
 
 	u := fmt.Sprintf("%s%s/%s?token=%s", c.Client.BaseURL, route.V1Version, endpoint, r.Token)
 

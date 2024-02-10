@@ -29,6 +29,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
+	"github.com/datumforge/datum/internal/httpserve/middleware/redirect"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/providers/github"
@@ -303,21 +304,28 @@ func WithMiddleware() ServerOption {
 			s.Config.Server.DefaultMiddleware = []echo.MiddlewareFunc{}
 		}
 
+		redirectMW := redirect.Config{
+			Redirects: map[string]string{
+				"/.well-known/change-password": "/v1/forgot-password",
+			},
+			Code: 302, // nolint: gomnd
+		}
 		// default middleware
 		s.Config.Server.DefaultMiddleware = append(s.Config.Server.DefaultMiddleware,
 			middleware.RequestID(), // add request id
 			middleware.Recover(),   // recover server from any panic/fatal error gracefully
 			middleware.LoggerWithConfig(middleware.LoggerConfig{
-				Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, auth=${header:Authorization}\n",
+				Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, host=${host}, referer=${referer}, user_agent=${user_agent}, route=${route}, path=${path}, auth=${header:Authorization}\n",
 			}),
 			echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
 			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
-			cors.New(),                     // add cors middleware
-			mime.New(),                     // add mime middleware
-			cachecontrol.New(),             // add cache control middleware
-			ratelimit.DefaultRateLimiter(), // add ratelimit middleware
-			middleware.Secure(),            // add XSS middleware
+			cors.New(),                         // add cors middleware
+			mime.New(),                         // add mime middleware
+			cachecontrol.New(),                 // add cache control middleware
+			ratelimit.DefaultRateLimiter(),     // add ratelimit middleware
+			middleware.Secure(),                // add XSS middleware
+			redirect.NewWithConfig(redirectMW), // add redirect middleware
 		)
 	})
 }

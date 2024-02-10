@@ -23,5 +23,24 @@ func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err 
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))
 
+	if err != nil {
+		return err
+	}
+
+	// we need to handle the redirect from /.well-known 302 -> /v1/forgot-password with a 200
+	_, err = router.AddRoute(echo.Route{
+		Method: http.MethodGet,
+		Path:   "/forgot-password",
+		Handler: func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
+			return c.JSON(http.StatusOK, "OK")
+		},
+	}.ForGroup(V1Version, restrictedEndpointsMW))
+
+	if err != nil {
+		return err
+	}
+
 	return
 }

@@ -12,12 +12,14 @@ type Config struct {
 	// Skipper defines a function to skip middleware.
 	Skipper   middleware.Skipper
 	Redirects map[string]string
+	Code      int
 }
 
 // DefaultConfig is the default configuration of the redirect middleware
 var DefaultConfig = Config{
 	Skipper:   middleware.DefaultSkipper,
 	Redirects: map[string]string{},
+	Code:      0,
 }
 
 // New creates a new middleware function with the default config
@@ -37,10 +39,14 @@ func NewWithConfig(config Config) echo.MiddlewareFunc {
 				return next(c)
 			}
 
+			if config.Code == 0 {
+				config.Code = http.StatusMovedPermanently
+			}
+
 			req := c.Request()
 
 			if target, ok := config.Redirects[req.URL.Path]; ok {
-				return c.Redirect(http.StatusMovedPermanently, target)
+				return c.Redirect(config.Code, target)
 			}
 
 			return next(c)

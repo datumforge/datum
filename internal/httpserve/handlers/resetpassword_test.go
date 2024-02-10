@@ -31,7 +31,7 @@ func TestResetPassword(t *testing.T) {
 	defer client.db.Close()
 
 	// setup request request
-	client.e.POST("reset-password", client.h.ResetPassword)
+	client.e.POST("password-reset", client.h.ResetPassword)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -131,7 +131,7 @@ func TestResetPassword(t *testing.T) {
 				require.NoError(t, err)
 			}
 
-			target := "/reset-password"
+			target := "/password-reset"
 			if tc.tokenSet {
 				token := rt.Token
 				if tc.tokenProvided != "" {

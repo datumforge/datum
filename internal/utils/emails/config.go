@@ -28,7 +28,7 @@ type URLConfig struct {
 	Base   string `split_words:"true" default:"https://api.datum.net"`
 	Verify string `split_words:"true" default:"/v1/verify"`
 	Invite string `split_words:"true" default:"/v1/invite"`
-	Reset  string `split_words:"true" default:"/v1/reset-password"`
+	Reset  string `split_words:"true" default:"/v1/password-reset"`
 }
 
 // SetSendGridAPIKey to provided key

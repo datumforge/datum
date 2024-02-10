@@ -11,18 +11,14 @@ import (
 // content type sniffing, clickjacking, insecure connection and other code injection attacks
 func Secure() echo.MiddlewareFunc {
 	secureConfig := middleware.SecureConfig{
-		XSSProtection:      "1; mode=block",
-		ContentTypeNosniff: "nosniff",
-		XFrameOptions:      "SAMEORIGIN",
-		//		HSTSMaxAge:            31536000, // nolint: gomnd
-		//		HSTSExcludeSubdomains: true,
-		//		HSTSPreloadEnabled:    true,
+		XSSProtection:         "1; mode=block",
+		ContentTypeNosniff:    "nosniff",
+		XFrameOptions:         "SAMEORIGIN",
 		ContentSecurityPolicy: "default-src 'self'",
 		Skipper: func(c echo.Context) bool {
 			return strings.Contains(c.Path(), "/api-docs")
 		},
 	}
 
-	// TODO: make this configurable with inputs
 	return middleware.SecureWithConfig(secureConfig)
 }

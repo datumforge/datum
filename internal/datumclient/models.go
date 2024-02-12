@@ -340,8 +340,8 @@ type Entitlement struct {
 	// the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month
 	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
-	Cancelled bool         `json:"cancelled"`
-	Owner     Organization `json:"owner"`
+	Cancelled bool          `json:"cancelled"`
+	Owner     *Organization `json:"owner"`
 }
 
 func (Entitlement) IsNode() {}
@@ -351,7 +351,7 @@ type EntitlementConnection struct {
 	// A list of edges.
 	Edges []*EntitlementEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -359,7 +359,7 @@ type EntitlementConnection struct {
 // Return response for createEntitlement mutation
 type EntitlementCreatePayload struct {
 	// Created entitlement
-	Entitlement Entitlement `json:"entitlement"`
+	Entitlement *Entitlement `json:"entitlement"`
 }
 
 // Return response for deleteEntitlement mutation
@@ -379,7 +379,7 @@ type EntitlementEdge struct {
 // Return response for updateEntitlement mutation
 type EntitlementUpdatePayload struct {
 	// Updated entitlement
-	Entitlement Entitlement `json:"entitlement"`
+	Entitlement *Entitlement `json:"entitlement"`
 }
 
 // EntitlementWhereInput is used for filtering Entitlement objects.
@@ -553,8 +553,8 @@ type Group struct {
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
 	DisplayName string             `json:"displayName"`
-	Owner       Organization       `json:"owner"`
-	Setting     GroupSetting       `json:"setting"`
+	Owner       *Organization      `json:"owner"`
+	Setting     *GroupSetting      `json:"setting"`
 	Users       []*User            `json:"users,omitempty"`
 	Members     []*GroupMembership `json:"members,omitempty"`
 }
@@ -566,7 +566,7 @@ type GroupConnection struct {
 	// A list of edges.
 	Edges []*GroupEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -574,7 +574,7 @@ type GroupConnection struct {
 // Return response for createGroup mutation
 type GroupCreatePayload struct {
 	// Created group
-	Group Group `json:"group"`
+	Group *Group `json:"group"`
 }
 
 // Return response for deleteGroup mutation
@@ -602,8 +602,8 @@ type GroupMembership struct {
 	Role      enums.Role `json:"role"`
 	GroupID   string     `json:"groupID"`
 	UserID    string     `json:"userID"`
-	Group     Group      `json:"group"`
-	User      User       `json:"user"`
+	Group     *Group     `json:"group"`
+	User      *User      `json:"user"`
 }
 
 func (GroupMembership) IsNode() {}
@@ -613,7 +613,7 @@ type GroupMembershipConnection struct {
 	// A list of edges.
 	Edges []*GroupMembershipEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -621,7 +621,7 @@ type GroupMembershipConnection struct {
 // Return response for createGroupMembership mutation
 type GroupMembershipCreatePayload struct {
 	// Created groupMembership
-	GroupMembership GroupMembership `json:"groupMembership"`
+	GroupMembership *GroupMembership `json:"groupMembership"`
 }
 
 // Return response for deleteGroupMembership mutation
@@ -641,7 +641,7 @@ type GroupMembershipEdge struct {
 // Return response for updateGroupMembership mutation
 type GroupMembershipUpdatePayload struct {
 	// Updated groupMembership
-	GroupMembership GroupMembership `json:"groupMembership"`
+	GroupMembership *GroupMembership `json:"groupMembership"`
 }
 
 // GroupMembershipWhereInput is used for filtering GroupMembership objects.
@@ -781,7 +781,7 @@ type GroupSettingConnection struct {
 	// A list of edges.
 	Edges []*GroupSettingEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -789,7 +789,7 @@ type GroupSettingConnection struct {
 // Return response for createGroupSetting mutation
 type GroupSettingCreatePayload struct {
 	// Created groupSetting
-	GroupSetting GroupSetting `json:"groupSetting"`
+	GroupSetting *GroupSetting `json:"groupSetting"`
 }
 
 // Return response for deleteGroupSetting mutation
@@ -809,7 +809,7 @@ type GroupSettingEdge struct {
 // Return response for updateGroupSetting mutation
 type GroupSettingUpdatePayload struct {
 	// Updated groupSetting
-	GroupSetting GroupSetting `json:"groupSetting"`
+	GroupSetting *GroupSetting `json:"groupSetting"`
 }
 
 // GroupSettingWhereInput is used for filtering GroupSetting objects.
@@ -930,7 +930,7 @@ type GroupSettingWhereInput struct {
 // Return response for updateGroup mutation
 type GroupUpdatePayload struct {
 	// Updated group
-	Group Group `json:"group"`
+	Group *Group `json:"group"`
 }
 
 // GroupWhereInput is used for filtering Group objects.
@@ -1093,7 +1093,7 @@ type IntegrationConnection struct {
 	// A list of edges.
 	Edges []*IntegrationEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -1101,7 +1101,7 @@ type IntegrationConnection struct {
 // Return response for createIntegration mutation
 type IntegrationCreatePayload struct {
 	// Created integration
-	Integration Integration `json:"integration"`
+	Integration *Integration `json:"integration"`
 }
 
 // Return response for deleteIntegration mutation
@@ -1129,7 +1129,7 @@ type IntegrationOrder struct {
 // Return response for updateIntegration mutation
 type IntegrationUpdatePayload struct {
 	// Updated integration
-	Integration Integration `json:"integration"`
+	Integration *Integration `json:"integration"`
 }
 
 // IntegrationWhereInput is used for filtering Integration objects.
@@ -1293,8 +1293,8 @@ type Invite struct {
 	// the number of attempts made to perform email send of the invitation, maximum of 5
 	SendAttempts int64 `json:"sendAttempts"`
 	// the user who initiated the invitation
-	RequestorID string       `json:"requestorID"`
-	Owner       Organization `json:"owner"`
+	RequestorID string        `json:"requestorID"`
+	Owner       *Organization `json:"owner"`
 }
 
 func (Invite) IsNode() {}
@@ -1304,7 +1304,7 @@ type InviteConnection struct {
 	// A list of edges.
 	Edges []*InviteEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -1312,7 +1312,7 @@ type InviteConnection struct {
 // Return response for createInvite mutation
 type InviteCreatePayload struct {
 	// Created invite
-	Invite Invite `json:"invite"`
+	Invite *Invite `json:"invite"`
 }
 
 // Return response for deleteInvite mutation
@@ -1332,7 +1332,7 @@ type InviteEdge struct {
 // Return response for updateInvite mutation
 type InviteUpdatePayload struct {
 	// Updated invite
-	Invite Invite `json:"invite"`
+	Invite *Invite `json:"invite"`
 }
 
 // InviteWhereInput is used for filtering Invite objects.
@@ -1529,7 +1529,7 @@ type OauthProviderConnection struct {
 	// A list of edges.
 	Edges []*OauthProviderEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -1537,7 +1537,7 @@ type OauthProviderConnection struct {
 // Return response for createOauthProvider mutation
 type OauthProviderCreatePayload struct {
 	// Created oauthProvider
-	OauthProvider OauthProvider `json:"oauthProvider"`
+	OauthProvider *OauthProvider `json:"oauthProvider"`
 }
 
 // Return response for deleteOauthProvider mutation
@@ -1557,7 +1557,7 @@ type OauthProviderEdge struct {
 // Return response for updateOauthProvider mutation
 type OauthProviderUpdatePayload struct {
 	// Updated oauthProvider
-	OauthProvider OauthProvider `json:"oauthProvider"`
+	OauthProvider *OauthProvider `json:"oauthProvider"`
 }
 
 // OauthProviderWhereInput is used for filtering OauthProvider objects.
@@ -1803,7 +1803,7 @@ type OhAuthTooTokenConnection struct {
 	// A list of edges.
 	Edges []*OhAuthTooTokenEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -1811,7 +1811,7 @@ type OhAuthTooTokenConnection struct {
 // Return response for createOhAuthTooToken mutation
 type OhAuthTooTokenCreatePayload struct {
 	// Created ohAuthTooToken
-	OhAuthTooToken OhAuthTooToken `json:"ohAuthTooToken"`
+	OhAuthTooToken *OhAuthTooToken `json:"ohAuthTooToken"`
 }
 
 // Return response for deleteOhAuthTooToken mutation
@@ -1831,7 +1831,7 @@ type OhAuthTooTokenEdge struct {
 // Return response for updateOhAuthTooToken mutation
 type OhAuthTooTokenUpdatePayload struct {
 	// Updated ohAuthTooToken
-	OhAuthTooToken OhAuthTooToken `json:"ohAuthTooToken"`
+	OhAuthTooToken *OhAuthTooToken `json:"ohAuthTooToken"`
 }
 
 // OhAuthTooTokenWhereInput is used for filtering OhAuthTooToken objects.
@@ -1964,18 +1964,18 @@ type OhAuthTooTokenWhereInput struct {
 }
 
 type OrgMembership struct {
-	ID             string       `json:"id"`
-	CreatedAt      time.Time    `json:"createdAt"`
-	UpdatedAt      time.Time    `json:"updatedAt"`
-	CreatedBy      *string      `json:"createdBy,omitempty"`
-	UpdatedBy      *string      `json:"updatedBy,omitempty"`
-	DeletedAt      *time.Time   `json:"deletedAt,omitempty"`
-	DeletedBy      *string      `json:"deletedBy,omitempty"`
-	Role           enums.Role   `json:"role"`
-	OrganizationID string       `json:"organizationID"`
-	UserID         string       `json:"userID"`
-	Organization   Organization `json:"organization"`
-	User           User         `json:"user"`
+	ID             string        `json:"id"`
+	CreatedAt      time.Time     `json:"createdAt"`
+	UpdatedAt      time.Time     `json:"updatedAt"`
+	CreatedBy      *string       `json:"createdBy,omitempty"`
+	UpdatedBy      *string       `json:"updatedBy,omitempty"`
+	DeletedAt      *time.Time    `json:"deletedAt,omitempty"`
+	DeletedBy      *string       `json:"deletedBy,omitempty"`
+	Role           enums.Role    `json:"role"`
+	OrganizationID string        `json:"organizationID"`
+	UserID         string        `json:"userID"`
+	Organization   *Organization `json:"organization"`
+	User           *User         `json:"user"`
 }
 
 func (OrgMembership) IsNode() {}
@@ -1985,7 +1985,7 @@ type OrgMembershipConnection struct {
 	// A list of edges.
 	Edges []*OrgMembershipEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -1993,7 +1993,7 @@ type OrgMembershipConnection struct {
 // Return response for createOrgMembership mutation
 type OrgMembershipCreatePayload struct {
 	// Created orgMembership
-	OrgMembership OrgMembership `json:"orgMembership"`
+	OrgMembership *OrgMembership `json:"orgMembership"`
 }
 
 // Return response for deleteOrgMembership mutation
@@ -2013,7 +2013,7 @@ type OrgMembershipEdge struct {
 // Return response for updateOrgMembership mutation
 type OrgMembershipUpdatePayload struct {
 	// Updated orgMembership
-	OrgMembership OrgMembership `json:"orgMembership"`
+	OrgMembership *OrgMembership `json:"orgMembership"`
 }
 
 // OrgMembershipWhereInput is used for filtering OrgMembership objects.
@@ -2134,17 +2134,17 @@ type Organization struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg   bool                   `json:"personalOrg"`
-	Parent        *Organization          `json:"parent,omitempty"`
-	Children      OrganizationConnection `json:"children"`
-	Groups        []*Group               `json:"groups,omitempty"`
-	Integrations  []*Integration         `json:"integrations,omitempty"`
-	Setting       *OrganizationSetting   `json:"setting,omitempty"`
-	Entitlements  []*Entitlement         `json:"entitlements,omitempty"`
-	Oauthprovider []*OauthProvider       `json:"oauthprovider,omitempty"`
-	Users         []*User                `json:"users,omitempty"`
-	Invites       []*Invite              `json:"invites,omitempty"`
-	Members       []*OrgMembership       `json:"members,omitempty"`
+	PersonalOrg   bool                    `json:"personalOrg"`
+	Parent        *Organization           `json:"parent,omitempty"`
+	Children      *OrganizationConnection `json:"children"`
+	Groups        []*Group                `json:"groups,omitempty"`
+	Integrations  []*Integration          `json:"integrations,omitempty"`
+	Setting       *OrganizationSetting    `json:"setting,omitempty"`
+	Entitlements  []*Entitlement          `json:"entitlements,omitempty"`
+	Oauthprovider []*OauthProvider        `json:"oauthprovider,omitempty"`
+	Users         []*User                 `json:"users,omitempty"`
+	Invites       []*Invite               `json:"invites,omitempty"`
+	Members       []*OrgMembership        `json:"members,omitempty"`
 }
 
 func (Organization) IsNode() {}
@@ -2154,7 +2154,7 @@ type OrganizationConnection struct {
 	// A list of edges.
 	Edges []*OrganizationEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -2162,7 +2162,7 @@ type OrganizationConnection struct {
 // Return response for createOrganization mutation
 type OrganizationCreatePayload struct {
 	// Created organization
-	Organization Organization `json:"organization"`
+	Organization *Organization `json:"organization"`
 }
 
 // Return response for deleteOrganization mutation
@@ -2219,7 +2219,7 @@ type OrganizationSettingConnection struct {
 	// A list of edges.
 	Edges []*OrganizationSettingEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -2227,7 +2227,7 @@ type OrganizationSettingConnection struct {
 // Return response for createOrganizationSetting mutation
 type OrganizationSettingCreatePayload struct {
 	// Created organizationSetting
-	OrganizationSetting OrganizationSetting `json:"organizationSetting"`
+	OrganizationSetting *OrganizationSetting `json:"organizationSetting"`
 }
 
 // Return response for deleteOrganizationSetting mutation
@@ -2247,7 +2247,7 @@ type OrganizationSettingEdge struct {
 // Return response for updateOrganizationSetting mutation
 type OrganizationSettingUpdatePayload struct {
 	// Updated organizationSetting
-	OrganizationSetting OrganizationSetting `json:"organizationSetting"`
+	OrganizationSetting *OrganizationSetting `json:"organizationSetting"`
 }
 
 // OrganizationSettingWhereInput is used for filtering OrganizationSetting objects.
@@ -2480,7 +2480,7 @@ type OrganizationSettingWhereInput struct {
 // Return response for updateOrganization mutation
 type OrganizationUpdatePayload struct {
 	// Updated organization
-	Organization Organization `json:"organization"`
+	Organization *Organization `json:"organization"`
 }
 
 // OrganizationWhereInput is used for filtering Organization objects.
@@ -2672,7 +2672,7 @@ type PersonalAccessToken struct {
 	// a description of the token's purpose
 	Description *string    `json:"description,omitempty"`
 	LastUsedAt  *time.Time `json:"lastUsedAt,omitempty"`
-	Owner       User       `json:"owner"`
+	Owner       *User      `json:"owner"`
 }
 
 func (PersonalAccessToken) IsNode() {}
@@ -2682,7 +2682,7 @@ type PersonalAccessTokenConnection struct {
 	// A list of edges.
 	Edges []*PersonalAccessTokenEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -2690,7 +2690,7 @@ type PersonalAccessTokenConnection struct {
 // Return response for createPersonalAccessToken mutation
 type PersonalAccessTokenCreatePayload struct {
 	// Created personalAccessToken
-	PersonalAccessToken PersonalAccessToken `json:"personalAccessToken"`
+	PersonalAccessToken *PersonalAccessToken `json:"personalAccessToken"`
 }
 
 // Return response for deletePersonalAccessToken mutation
@@ -2710,7 +2710,7 @@ type PersonalAccessTokenEdge struct {
 // Return response for updatePersonalAccessToken mutation
 type PersonalAccessTokenUpdatePayload struct {
 	// Updated personalAccessToken
-	PersonalAccessToken PersonalAccessToken `json:"personalAccessToken"`
+	PersonalAccessToken *PersonalAccessToken `json:"personalAccessToken"`
 }
 
 // PersonalAccessTokenWhereInput is used for filtering PersonalAccessToken objects.
@@ -3257,7 +3257,7 @@ type User struct {
 	// whether the user has two factor authentication enabled
 	IsTfaEnabled         *bool                  `json:"isTfaEnabled,omitempty"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
-	Setting              UserSetting            `json:"setting"`
+	Setting              *UserSetting           `json:"setting"`
 	Groups               []*Group               `json:"groups,omitempty"`
 	Organizations        []*Organization        `json:"organizations,omitempty"`
 	GroupMemberships     []*GroupMembership     `json:"groupMemberships,omitempty"`
@@ -3271,7 +3271,7 @@ type UserConnection struct {
 	// A list of edges.
 	Edges []*UserEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -3279,7 +3279,7 @@ type UserConnection struct {
 // Return response for createUser mutation
 type UserCreatePayload struct {
 	// Created user
-	User User `json:"user"`
+	User *User `json:"user"`
 }
 
 // Return response for deleteUser mutation
@@ -3334,7 +3334,7 @@ type UserSettingConnection struct {
 	// A list of edges.
 	Edges []*UserSettingEdge `json:"edges,omitempty"`
 	// Information to aid in pagination.
-	PageInfo PageInfo `json:"pageInfo"`
+	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
 }
@@ -3342,7 +3342,7 @@ type UserSettingConnection struct {
 // Return response for createUserSetting mutation
 type UserSettingCreatePayload struct {
 	// Created userSetting
-	UserSetting UserSetting `json:"userSetting"`
+	UserSetting *UserSetting `json:"userSetting"`
 }
 
 // Return response for deleteUserSetting mutation
@@ -3362,7 +3362,7 @@ type UserSettingEdge struct {
 // Return response for updateUserSetting mutation
 type UserSettingUpdatePayload struct {
 	// Updated userSetting
-	UserSetting UserSetting `json:"userSetting"`
+	UserSetting *UserSetting `json:"userSetting"`
 }
 
 // UserSettingWhereInput is used for filtering UserSetting objects.
@@ -3516,7 +3516,7 @@ type UserSettingWhereInput struct {
 // Return response for updateUser mutation
 type UserUpdatePayload struct {
 	// Updated user
-	User User `json:"user"`
+	User *User `json:"user"`
 }
 
 // UserWhereInput is used for filtering User objects.

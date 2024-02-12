@@ -52,6 +52,9 @@ var (
 	// ErrNoEmailFound is returned when using an oauth provider and the email address cannot be determined
 	ErrNoEmailFound = errors.New("no email found from oauth provider")
 
+	// ErrInvalidProvider is returned when registering a user with an unsupported oauth provider
+	ErrInvalidProvider = errors.New("oauth2 provider not supported")
+
 	// ErrNoAuthUser is returned when the user couldn't be identified by the request
 	ErrNoAuthUser = errors.New("could not identify authenticated user in request")
 

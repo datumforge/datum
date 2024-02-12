@@ -1,6 +1,7 @@
 package google
 
 import (
+	"context"
 	"net/http"
 
 	"golang.org/x/oauth2"
@@ -54,8 +55,8 @@ func googleHandler(config *oauth2.Config, success, failure http.Handler) http.Ha
 		}
 
 		httpClient := config.Client(ctx, token)
-		googleService, err := google.NewService(ctx, option.WithHTTPClient(httpClient))
 
+		googleService, err := google.NewService(ctx, option.WithHTTPClient(httpClient))
 		if err != nil {
 			ctx = WithError(ctx, err)
 			failure.ServeHTTP(w, req.WithContext(ctx))
@@ -91,4 +92,26 @@ func validateResponse(user *google.Userinfo, err error) error {
 	}
 
 	return nil
+}
+
+// VerifyClientToken checks the client token and returns an error if it is invalid
+func VerifyClientToken(ctx context.Context, token *oauth2.Token, config *oauth2.Config, email string) (err error) {
+	httpClient := config.Client(ctx, token)
+
+	googleService, err := google.NewService(ctx, option.WithHTTPClient(httpClient))
+	if err != nil {
+		return err
+	}
+
+	userInfoPlus, err := googleService.Userinfo.Get().Do()
+	if err != nil {
+		return err
+	}
+
+	// ensure the emails match
+	if userInfoPlus.Email != email {
+		return ErrUnableToGetGoogleUser
+	}
+
+	return validateResponse(userInfoPlus, err)
 }

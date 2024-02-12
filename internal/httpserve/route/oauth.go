@@ -8,6 +8,20 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
+// registerOAuthReigsterandler registers the oauth register handler used by the UI to register
+// users logging in with an oauth provider
+func registerOAuthReigsterandler(router *echo.Echo, h *handlers.Handler) (err error) {
+	_, err = router.AddRoute(echo.Route{
+		Method: http.MethodPost,
+		Path:   "/oauth/register",
+		Handler: func(c echo.Context) error {
+			return h.OauthRegister(c)
+		},
+	}.ForGroup(unversioned, mw))
+
+	return
+}
+
 // registerUserInfoHandler registers the userinfo handler
 func registerUserInfoHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	authMW := mw

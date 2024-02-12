@@ -53,6 +53,26 @@ const (
 	googleProvider = "google"
 )
 
+func (h *Handler) getGoogleOauth2Config() *oauth2.Config {
+	return &oauth2.Config{
+		ClientID:     h.OauthProvider.GoogleConfig.ClientID,
+		ClientSecret: h.OauthProvider.GoogleConfig.ClientSecret,
+		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.GoogleConfig.ClientEndpoint, h.OauthProvider.GoogleConfig.RedirectURL),
+		Endpoint:     googleOAuth2.Endpoint,
+		Scopes:       h.OauthProvider.GoogleConfig.Scopes,
+	}
+}
+
+func (h *Handler) getGithubOauth2Config() *oauth2.Config {
+	return &oauth2.Config{
+		ClientID:     h.OauthProvider.GithubConfig.ClientID,
+		ClientSecret: h.OauthProvider.GithubConfig.ClientSecret,
+		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.GithubConfig.ClientEndpoint, h.OauthProvider.GithubConfig.RedirectURL),
+		Endpoint:     githubOAuth2.Endpoint,
+		Scopes:       h.OauthProvider.GithubConfig.Scopes,
+	}
+}
+
 // RequireLogin redirects unauthenticated users to the login route
 func (h *Handler) RequireLogin(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
@@ -78,13 +98,7 @@ func (h *Handler) IsAuthenticated(req *http.Request) bool {
 
 // GetGoogleLoginHandlers returns the google login and callback handlers
 func (h *Handler) GetGoogleLoginHandlers() (http.Handler, http.Handler) {
-	oauth2Config := &oauth2.Config{
-		ClientID:     h.OauthProvider.GoogleConfig.ClientID,
-		ClientSecret: h.OauthProvider.GoogleConfig.ClientSecret,
-		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.GoogleConfig.ClientEndpoint, h.OauthProvider.GoogleConfig.RedirectURL),
-		Endpoint:     googleOAuth2.Endpoint,
-		Scopes:       h.OauthProvider.GoogleConfig.Scopes,
-	}
+	oauth2Config := h.getGoogleOauth2Config()
 
 	loginHandler := google.StateHandler(*h.SessionConfig.CookieConfig, google.LoginHandler(oauth2Config, nil))
 	callbackHandler := google.StateHandler(*h.SessionConfig.CookieConfig, google.CallbackHandler(oauth2Config, h.issueGoogleSession(), nil))
@@ -156,13 +170,7 @@ func (h *Handler) issueGoogleSession() http.Handler {
 
 // GetGitHubLoginHandlers returns the github login and callback handlers
 func (h *Handler) GetGitHubLoginHandlers() (http.Handler, http.Handler) {
-	oauth2Config := &oauth2.Config{
-		ClientID:     h.OauthProvider.GithubConfig.ClientID,
-		ClientSecret: h.OauthProvider.GithubConfig.ClientSecret,
-		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.GithubConfig.ClientEndpoint, h.OauthProvider.GithubConfig.RedirectURL),
-		Endpoint:     githubOAuth2.Endpoint,
-		Scopes:       h.OauthProvider.GithubConfig.Scopes,
-	}
+	oauth2Config := h.getGithubOauth2Config()
 
 	loginHandler := github.StateHandler(*h.SessionConfig.CookieConfig, github.LoginHandler(oauth2Config, nil))
 	callbackHandler := github.StateHandler(*h.SessionConfig.CookieConfig, github.CallbackHandler(oauth2Config, h.issueGitHubSession(), nil))

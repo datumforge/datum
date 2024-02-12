@@ -75,6 +75,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerWebauthnAuthenticationHandler,
 		registerWebauthnAuthVerificationHandler,
 		registerUserInfoHandler,
+		registerOAuthReigsterandler,
 	}
 
 	for _, route := range routeHandlers {

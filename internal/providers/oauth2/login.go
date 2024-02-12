@@ -77,8 +77,8 @@ func CallbackHandler(config *oauth2.Config, success, failure http.Handler) http.
 
 	funk := func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
-		authCode, state, err := parseCallback(req)
 
+		authCode, state, err := parseCallback(req)
 		if err != nil {
 			ctx = WithError(ctx, err)
 			failure.ServeHTTP(w, req.WithContext(ctx))
@@ -87,7 +87,6 @@ func CallbackHandler(config *oauth2.Config, success, failure http.Handler) http.
 		}
 
 		ownerState, err := StateFromContext(ctx)
-
 		if err != nil {
 			ctx = WithError(ctx, err)
 			failure.ServeHTTP(w, req.WithContext(ctx))
@@ -103,7 +102,6 @@ func CallbackHandler(config *oauth2.Config, success, failure http.Handler) http.
 		}
 
 		token, err := config.Exchange(ctx, authCode)
-
 		if err != nil {
 			ctx = WithError(ctx, err)
 			failure.ServeHTTP(w, req.WithContext(ctx))

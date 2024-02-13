@@ -15,6 +15,8 @@ import (
 
 // Handler contains configuration options for handlers
 type Handler struct {
+	// IsTest is a flag to determine if the application is running in test mode and will mock external calls
+	IsTest bool
 	// DBClient to interact with the generated ent schema
 	DBClient *ent.Client
 	// RedisClient to interact with redis

@@ -3,7 +3,7 @@
   "info": {
     "title": "Datum API",
     "description": "Programmatic interfaces for interacting with Datum Services",
-    "version": "0.0.1"
+    "version": "1.0.1"
   },
   "paths": {
     "/email-verification-tokens": {
@@ -2893,36 +2893,6 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/livez": {
-      "description": "Check if the server is up",
-      "get": {
-        "summary": "Simple endpoint to check if the server is up",
-        "operationId": "Livez",
-        "responses": {
-          "200": {
-            "description": "Server is reachable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "status"
-                  ]
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Server is not reachable"
           }
         }
       }
@@ -6226,86 +6196,6 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/register": {
-      "description": "Register a new user",
-      "post": {
-        "summary": "Registration form submission for creating and validating a new user",
-        "operationId": "register",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "first_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "last_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "password",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Registration submission successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "user_id": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "message",
-                    "user_id"
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }

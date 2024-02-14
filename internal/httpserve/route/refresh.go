@@ -16,15 +16,15 @@ import (
 // or (especially) long running publishers and subscribers (machine users) that need to
 // stay authenticated semi-permanently.
 
-//	@Summary		Refresh authentication tokens
-//	@Description	Re-authenticates users and API keys using a refresh token
-//	@Tags			Refresh
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	handlers.RefreshReply
-//	@Failure		400	{object}	route.ErrorResponse.BadRequest
-//	@Failure		500	{object}	route.ErrorResponse.InternalServerError
-//	@Router			/refresh [post]
+// @Summary		Refresh authentication tokens
+// @Description	Re-authenticates users and API keys using a refresh token
+// @Tags			Refresh
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	handlers.RefreshReply
+// @Failure		400	{object}	route.ErrorResponse.BadRequest
+// @Failure		500	{object}	route.ErrorResponse.InternalServerError
+// @Router			/refresh [post]
 func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

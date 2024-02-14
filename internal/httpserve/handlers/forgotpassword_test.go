@@ -111,7 +111,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus != http.StatusOK {
+			if tc.expectedStatus != http.StatusNoContent {
 				var out *handlers.ForgotPasswordReply
 
 				// parse request body

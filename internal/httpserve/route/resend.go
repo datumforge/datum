@@ -15,15 +15,15 @@ import (
 // sent. If the post request contains an orgID and the user is invited to that
 // organization but hasn't accepted the invite, then the invite is resent.
 
-//	@Summary		Resend email
-//	@Description	Resends the verification email or invite email
-//	@Tags			Resend
-//	@Accept			json
-//	@Produce		json
-//	@Success		204	{string}	string	"No Content"
-//	@Failure		400	{object}	route.ErrorResponse.BadRequest
-//	@Failure		500	{object}	route.ErrorResponse.InternalServerError
-//	@Router			/resend [post]
+// @Summary		Resend email
+// @Description	Resends the verification email or invite email
+// @Tags			Resend
+// @Accept			json
+// @Produce		json
+// @Success		204	{string}	string	"No Content"
+// @Failure		400	{object}	route.ErrorResponse.BadRequest
+// @Failure		500	{object}	route.ErrorResponse.InternalServerError
+// @Router			/resend [post]
 func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

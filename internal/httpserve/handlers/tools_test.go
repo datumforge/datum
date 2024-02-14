@@ -42,7 +42,7 @@ var (
 
 	// mock email send settings
 	maxWaitInMillis      = 2000
-	pollIntervalInMillis = 50
+	pollIntervalInMillis = 100
 )
 
 type client struct {

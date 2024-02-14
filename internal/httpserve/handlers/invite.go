@@ -2,11 +2,8 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -19,7 +16,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
-	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -28,31 +24,30 @@ import (
 // and creates organization membership for the user
 // On success, it returns a response with the organization information
 func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
+	// setup view context
+	context := ctx.Request().Context()
+	userCtx := viewer.NewContext(context, viewer.NewUserViewerFromSubject(context))
+
+	// get the authenticated user from the context
+	userID, err := auth.GetUserIDFromContext(context)
+	if err != nil {
+		h.Logger.Errorw("unable to get user id from context", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+	}
+
 	// parse the token out of the context
 	inv := &Invite{
 		Token: ctx.QueryParam("token"),
 	}
 
-	var in *InviteRequest
-
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		h.Logger.Errorw("error parsing request", "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
-	}
-
-	// set the received input values on the invite
-	inv.Password = in.Password
-	inv.FirstName = in.FirstName
-	inv.LastName = in.LastName
-
-	// ensure we've collected everything we need to confirm the token and create the user
+	// ensure the user that is logged in, matches the invited user
 	if err := inv.validateInviteRequest(); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	// set the initial context based on the token
-	ctxWithToken := token.NewContextWithOrgInviteToken(ctx.Request().Context(), inv.Token)
+	ctxWithToken := token.NewContextWithOrgInviteToken(userCtx, inv.Token)
 
 	// fetch the recipient and org owner based on token
 	invitedUser, err := h.getUserByInviteToken(ctxWithToken, inv.Token)
@@ -66,17 +61,38 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, nil)
 	}
 
+	// add email to the invite
+	inv.Email = invitedUser.Recipient
+
+	// get user details for logged in user
+	user, err := h.getUserBySub(userCtx, userID)
+	if err != nil {
+		h.Logger.Errorw("unable to get user for request", "error", err)
+
+		return ctx.JSON(http.StatusUnauthorized, ErrorResponse(err))
+	}
+
+	// ensure the user that is logged in, matches the invited user
+	if err := inv.validateUser(user.Email); err != nil {
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+	}
+
 	// string to ulid so we can match the token input
 	oid, err := ulid.Parse(invitedUser.OwnerID)
 	if err != nil {
-		return err
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+	}
+
+	// string to ulid so we can match the token input
+	uid, err := ulid.Parse(userID)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	// construct the invite details but set email to the original recipient, and the joining organization ID as the current owner of the invitation
 	invite := &Invite{
 		Email:     invitedUser.Recipient,
-		FirstName: in.FirstName,
-		LastName:  in.LastName,
+		UserID:    uid,
 		DestOrgID: oid,
 		Role:      invitedUser.Role,
 	}
@@ -118,76 +134,14 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// create the user, but don't allow email to be different than the one listed as the recipient in the original invitation
-	createdUser, err := h.createUser(ctxWithToken, generated.CreateUserInput{
-		Email:     invitedUser.Recipient,
-		FirstName: in.FirstName,
-		LastName:  in.LastName,
-		Password:  &in.Password,
-	})
-	if err != nil {
-		h.Logger.Errorw("error creating new user", "error", err)
-
-		// this would only hit if the user registered normally after having already received an invite
-		if !IsUniqueConstraintError(err) {
-			if generated.IsValidationError(err) {
-				field := err.(*generated.ValidationError).Name
-				return ctx.JSON(http.StatusBadRequest, ErrorResponse(fmt.Sprintf("%s was invalid", field)))
-			}
-
-			return err
-		}
-	}
-
-	// if the user was created, use that user as the createdUser
-	if IsUniqueConstraintError(err) {
-		createdUser, err = h.getUserByEmail(ctxWithToken, invitedUser.Recipient, enums.Credentials)
-		if err != nil {
-			return err
-		}
-	}
-
-	// set new viewer context with user id
-	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(createdUser.ID, true))
-
-	// don't require an additional email verification since the invite was sent to an email
-	if err := h.setEmailConfirmed(viewerCtx, createdUser); err != nil {
+	if err := updateInviteStatusAccepted(ctxWithToken, invitedUser); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
-	}
-
-	if err := updateInviteStatusAccepted(viewerCtx, invitedUser); err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
-	}
-
-	claims := createClaims(createdUser)
-
-	access, refresh, err := h.TM.CreateTokenPair(claims)
-	if err != nil {
-		h.Logger.Errorw("error creating token pair", "error", err)
-
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
-	}
-
-	// set cookies on request with the access and refresh token
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
-
-	// set sessions in response
-	if err := h.SessionConfig.CreateAndStoreSession(ctx, createdUser.ID); err != nil {
-		h.Logger.Errorw("unable to save session", "error", err)
-
-		return err
-	}
-
-	if err := h.updateUserLastSeen(viewerCtx, createdUser.ID); err != nil {
-		h.Logger.Errorw("unable to update last seen", "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// reply with the relevant details
 	out := &InviteReply{
-		ID:          createdUser.ID,
-		Email:       createdUser.Email,
+		ID:          userID,
+		Email:       invitedUser.Recipient,
 		JoinedOrgID: invitedUser.OwnerID,
 		Role:        string(invitedUser.Role),
 		Message:     "Welcome to your new organization!",
@@ -198,21 +152,18 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 
 // validateInviteRequest validates the required fields are set in the user request
 func (i *Invite) validateInviteRequest() error {
-	i.FirstName = strings.TrimSpace(i.FirstName)
-	i.LastName = strings.TrimSpace(i.LastName)
-	i.Password = strings.TrimSpace(i.Password)
-
-	switch {
-	case i.Token == "":
+	// ensure the token is set
+	if i.Token == "" {
 		return newMissingRequiredFieldError("token")
-	case i.FirstName == "":
-		return auth.MissingField("first name")
-	case i.LastName == "":
-		return auth.MissingField("last name")
-	case i.Password == "":
-		return auth.MissingField("password")
-	case passwd.Strength(i.Password) < passwd.Moderate:
-		return auth.ErrPasswordTooWeak
+	}
+
+	return nil
+}
+
+func (i *Invite) validateUser(email string) error {
+	// ensure the logged in user is the same as the invite
+	if i.Email != email {
+		return ErrUnableToVerifyEmail
 	}
 
 	return nil
@@ -227,20 +178,11 @@ type InviteReply struct {
 	Role        string `json:"role"`
 }
 
-// InviteRequest holds the additional input from the user collected during acceptance
-type InviteRequest struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Password  string `json:"password"`
-}
-
 // Invite holds the Token, InviteToken references, and the additional user input to //
 // complete acceptance of the invitation
 type Invite struct {
 	Token     string
-	Password  string `json:"password"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	UserID    ulid.ULID
 	Email     string
 	DestOrgID ulid.ULID
 	Role      enums.Role

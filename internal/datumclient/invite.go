@@ -16,7 +16,7 @@ import (
 )
 
 // OrgInvite a new user within Datum org
-func OrgInvite(c *Client, ctx context.Context, r handlers.Invite) (*handlers.InviteReply, *oauth2.Token, error) {
+func OrgInvite(c *Client, ctx context.Context, r handlers.Invite, accessToken string) (*handlers.InviteReply, *oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "invite"
 
@@ -31,6 +31,8 @@ func OrgInvite(c *Client, ctx context.Context, r handlers.Invite) (*handlers.Inv
 	if err != nil {
 		return nil, nil, err
 	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 
 	b, err := json.Marshal(r)
 	if err != nil {

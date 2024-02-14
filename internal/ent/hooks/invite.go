@@ -10,8 +10,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
@@ -38,53 +36,12 @@ func HookInvite() ent.Hook {
 				return nil, err
 			}
 
-			// check if user exists
-			email, _ := m.Recipient()
-
-			// TODO: allow invites to not require username/password auth and update this
-			inviteUser, err := getUserByEmail(ctx, m, email, enums.Credentials)
-			if err != nil {
-				// if error is anything other than not found, return now
-				if !generated.IsNotFound(err) {
-					return nil, err
-				}
-			}
-
 			// generate token based on recipient + target org ID
 			m, err = setRecipientAndToken(ctx, m)
 			if err != nil {
 				m.Logger.Errorw("error creating verification token", "error", err)
 
 				return nil, err
-			}
-
-			// user exists, so automatically add them to the organization but record the invite in the database
-			if inviteUser != nil {
-				// check to see if user already has membership in the organization (or someone with the provided email)
-				isMember, err := doesUserHaveMembership(ctx, m, inviteUser)
-				if err != nil {
-					m.Logger.Errorw("error checking membership", "error", err)
-
-					return nil, err
-				}
-
-				// already a member, nothing to do here
-				if isMember {
-					m.Logger.Infow("user is already a member of the organization")
-
-					return nil, ErrUserAlreadyOrgMember
-				}
-
-				// set status to accepted
-				m.SetStatus(enums.InvitationAccepted)
-
-				// run the mutation
-				retValue, err := next.Mutate(ctx, m)
-				if err != nil {
-					m.Logger.Errorw("unable to create invitation", "error", err)
-				}
-
-				return retValue, nil
 			}
 
 			// attempt to do the mutation for a new user invite
@@ -148,16 +105,16 @@ func HookInviteAccepted() ent.Hook {
 				recipient = invite.Recipient
 			}
 
-			// TODO: allow invites to not require username/password auth and update this
-			user, err := getUserByEmail(ctx, m, recipient, enums.Credentials)
+			// user must be authenticated to accept an invite, get their id from the context
+			userID, err := auth.GetUserIDFromContext(ctx)
 			if err != nil {
-				m.Logger.Errorw("unable to get user", "error", err)
+				m.Logger.Errorw("unable to get user to add to organization", "error", err)
 
 				return nil, err
 			}
 
 			input := generated.CreateOrgMembershipInput{
-				UserID:         user.ID,
+				UserID:         userID,
 				OrganizationID: ownerID,
 				Role:           &role,
 			}
@@ -207,32 +164,6 @@ func HookInviteAccepted() ent.Hook {
 			return retValue, err
 		})
 	}, ent.OpCreate|ent.OpUpdate|ent.OpUpdateOne)
-}
-
-// getUserByEmail checks to see if there is an existing user in the system based on the provided email,
-// and returns the user if they do exist or nil if they don't
-func getUserByEmail(ctx context.Context, m *generated.InviteMutation, email string, authProvider enums.AuthProvider) (*generated.User, error) {
-	user, err := m.Client().User.
-		Query().
-		Where(user.Email(email)).
-		Where(user.AuthProviderEQ(authProvider)).
-		Only(ctx)
-	if err != nil {
-		m.Logger.Errorw("could not find user by email", "error", err)
-
-		return nil, err
-	}
-
-	return user, nil
-}
-
-// doesUserHaveMembership checks if the user already has membership to the requested organization;
-func doesUserHaveMembership(ctx context.Context, m *generated.InviteMutation, entUser *generated.User) (bool, error) {
-	orgID, _ := m.OwnerID()
-
-	return m.Client().OrgMembership.Query().
-		Where((orgmembership.HasUserWith(user.ID(entUser.ID)))).
-		Where((orgmembership.HasOrganizationWith((organization.ID(orgID))))).Exist(ctx)
 }
 
 // personalOrgNoInvite checks if the mutation is for a personal org and denies if true or

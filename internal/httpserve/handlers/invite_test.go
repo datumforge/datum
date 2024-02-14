@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 	"time"
 
@@ -16,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -39,13 +39,13 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 	mock_fga.WriteAny(t, client.fga)
 
 	// setup test data
-	user := client.db.User.Create().
+	requestor := client.db.User.Create().
 		SetEmail("rocket@datum.net").
 		SetFirstName("Rocket").
 		SetLastName("Racoon").
 		SaveX(ctx)
 
-	ec, err := auth.NewTestContextWithValidUser(user.ID)
+	ec, err := auth.NewTestContextWithValidUser(requestor.ID)
 	require.NoError(t, err)
 
 	newCtx := ec.Request().Context()
@@ -59,12 +59,22 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 		SetName("avengers").
 		SaveX(reqCtx)
 
+	// recipient test data
+	recipient := client.db.User.Create().
+		SetEmail("groot@datum.net").
+		SetFirstName("Groot").
+		SetLastName("JustGroot").
+		SetAuthProvider(enums.Google).
+		SaveX(ctx)
+
+	rc, err := auth.NewTestContextWithValidUser(recipient.ID)
+	require.NoError(t, err)
+
+	userCtx := context.WithValue(rc.Request().Context(), echocontext.EchoContextKey, rc)
+
 	testCases := []struct {
 		name          string
 		email         string
-		firstName     string
-		lastName      string
-		password      string
 		tokenSet      bool
 		emailExpected bool
 		wantErr       bool
@@ -73,48 +83,22 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 		{
 			name:          "happy path",
 			email:         "groot@datum.net",
-			firstName:     "Groot",
-			lastName:      "JustGroot",
-			password:      "IAmGr00t!",
 			emailExpected: true,
 			tokenSet:      true,
 		},
 		{
-			name:      "missing token",
-			email:     "drax@datum.net",
-			firstName: "Drax",
-			lastName:  "TheDestroyer",
-			password:  "IllD0YoU1B3tt3r",
-			tokenSet:  false,
-			wantErr:   true,
-			errMsg:    "token is required",
+			name:     "missing token",
+			email:    "groot@datum.net",
+			tokenSet: false,
+			wantErr:  true,
+			errMsg:   "token is required",
 		},
 		{
-			name:      "missing password",
-			email:     "gamora@datum.net",
-			firstName: "Gamora",
-			lastName:  "Zen Whoberi Ben Titan",
-			tokenSet:  true,
-			wantErr:   true,
-			errMsg:    "missing required field: password",
-		},
-		{
-			name:      "missing last name",
-			email:     "yondu@datum.net",
-			firstName: "Yondu",
-			password:  "RememberB0y!",
-			tokenSet:  true,
-			wantErr:   true,
-			errMsg:    "missing required field: last name",
-		},
-		{
-			name:     "missing first name",
-			email:    "thanos@datum.net",
-			lastName: "Thanos",
-			password: "RealityISOft3n",
+			name:     "emails do not match token",
+			email:    "drax@datum.net",
 			tokenSet: true,
 			wantErr:  true,
-			errMsg:   "missing required field: first name",
+			errMsg:   "could not verify email",
 		},
 	}
 
@@ -127,33 +111,22 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 			// mock auth
 			mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
 
-			acceptInviteJSON := handlers.InviteRequest{
-				FirstName: tc.firstName,
-				LastName:  tc.lastName,
-				Password:  tc.password,
-			}
-
 			invite := client.db.Invite.Create().
 				SetOwnerID(org.ID).
 				SetRecipient(tc.email).SaveX(reqCtx)
-
-			body, err := json.Marshal(acceptInviteJSON)
-			if err != nil {
-				require.NoError(t, err)
-			}
 
 			target := "/invite"
 			if tc.tokenSet {
 				target = fmt.Sprintf("/invite?token=%s", invite.Token)
 			}
 
-			req := httptest.NewRequest(http.MethodPost, target, strings.NewReader(string(body)))
+			req := httptest.NewRequest(http.MethodPost, target, nil)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req)
+			client.e.ServeHTTP(recorder, req.WithContext(userCtx))
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -182,7 +155,7 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 				{
 					To:        tc.email,
 					From:      "mitb@datum.net",
-					Subject:   fmt.Sprintf(emails.InviteRE, user.FirstName),
+					Subject:   fmt.Sprintf(emails.InviteRE, requestor.FirstName),
 					Timestamp: sent,
 				},
 				{

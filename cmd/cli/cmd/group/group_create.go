@@ -36,7 +36,7 @@ func init() {
 }
 
 func createGroup(ctx context.Context) error {
-	cli, err := datum.GetClient(ctx)
+	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
 		return err
 	}

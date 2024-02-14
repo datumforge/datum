@@ -31,32 +31,32 @@ func TestQuery_Invite(t *testing.T) {
 	inviteExistingUser := (&InviteBuilder{client: client, Recipient: user.Email}).MustNew(reqCtx, t)
 
 	testCases := []struct {
-		name     string
-		queryID  string
-		allowed  bool
-		expected *ent.Invite
-		wantErr  bool
+		name        string
+		queryID     string
+		shouldCheck bool
+		expected    *ent.Invite
+		wantErr     bool
 	}{
 		{
-			name:     "happy path",
-			queryID:  invite.ID,
-			allowed:  true,
-			expected: invite,
-			wantErr:  false,
+			name:        "happy path",
+			queryID:     invite.ID,
+			shouldCheck: true,
+			expected:    invite,
+			wantErr:     false,
 		},
 		{
-			name:     "invite accepted, should be deleted and not found",
-			queryID:  inviteExistingUser.ID,
-			allowed:  true,
-			expected: nil,
-			wantErr:  true,
+			name:        "invite accepted, should be deleted and not found",
+			queryID:     inviteExistingUser.ID,
+			shouldCheck: true,
+			expected:    nil,
+			wantErr:     true,
 		},
 		{
-			name:     "invalid id",
-			queryID:  "allthefooandbar",
-			allowed:  true,
-			expected: nil,
-			wantErr:  true,
+			name:        "invalid id",
+			queryID:     "allthefooandbar",
+			shouldCheck: false,
+			expected:    nil,
+			wantErr:     true,
 		},
 	}
 
@@ -64,7 +64,7 @@ func TestQuery_Invite(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 
-			if !tc.wantErr {
+			if tc.shouldCheck {
 				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", invite.OwnerID)})
 			}
 
@@ -119,7 +119,6 @@ func TestQuery_CreateInvite(t *testing.T) {
 
 	testCases := []struct {
 		name             string
-		existingUser     bool
 		recipient        string
 		orgID            string
 		role             enums.Role
@@ -130,7 +129,6 @@ func TestQuery_CreateInvite(t *testing.T) {
 	}{
 		{
 			name:             "happy path, new user as member",
-			existingUser:     false,
 			recipient:        "meow@datum.net",
 			orgID:            org.ID,
 			role:             enums.RoleMember,
@@ -141,7 +139,6 @@ func TestQuery_CreateInvite(t *testing.T) {
 		},
 		{
 			name:             "re-invite new user as member",
-			existingUser:     false,
 			recipient:        "meow@datum.net",
 			orgID:            org.ID,
 			role:             enums.RoleMember,
@@ -152,7 +149,6 @@ func TestQuery_CreateInvite(t *testing.T) {
 		},
 		{
 			name:             "happy path, new user as admin",
-			existingUser:     false,
 			recipient:        "woof@datum.net",
 			orgID:            org.ID,
 			role:             enums.RoleAdmin,
@@ -173,7 +169,6 @@ func TestQuery_CreateInvite(t *testing.T) {
 		// },
 		{
 			name:          "user not allowed to add to org",
-			existingUser:  false,
 			recipient:     "oink@datum.net",
 			orgID:         org.ID,
 			role:          enums.RoleAdmin,
@@ -182,22 +177,23 @@ func TestQuery_CreateInvite(t *testing.T) {
 		},
 		{
 			name:             "happy path, existing user as member",
-			existingUser:     true,
 			recipient:        existingUser.Email,
 			orgID:            org.ID,
 			role:             enums.RoleMember,
 			accessAllowed:    true,
-			expectedStatus:   enums.InvitationAccepted,
+			expectedStatus:   enums.InvitationSent,
 			expectedAttempts: 0,
 			wantErr:          false,
 		},
 		{
-			name:          "user already a member",
-			recipient:     existingUser2.Email,
-			orgID:         org.ID,
-			role:          enums.RoleMember,
-			accessAllowed: true,
-			wantErr:       true,
+			name:             "user already a member, will still send an invite",
+			recipient:        existingUser2.Email,
+			orgID:            org.ID,
+			role:             enums.RoleMember,
+			accessAllowed:    true,
+			expectedStatus:   enums.InvitationSent,
+			expectedAttempts: 0,
+			wantErr:          false,
 		},
 		{
 			name:          "invalid org",
@@ -217,10 +213,6 @@ func TestQuery_CreateInvite(t *testing.T) {
 
 			if tc.accessAllowed {
 				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
-			}
-
-			if tc.existingUser {
-				mock_fga.WriteAny(t, client.fga)
 			}
 
 			role := tc.role

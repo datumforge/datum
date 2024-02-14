@@ -66,7 +66,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		h.Logger.Errorw("error creating new user", "error", err)
 
 		if IsUniqueConstraintError(err) {
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse("user already exists"))
+			return ctx.JSON(http.StatusConflict, ErrorResponse("user already exists"))
 		}
 
 		if generated.IsValidationError(err) {

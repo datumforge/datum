@@ -13,6 +13,18 @@ import (
 // followed the link in the verification email. If the user is not verified and the
 // token is valid then the user is logged in. If the user is already verified then a
 // 204 response is returned.
+
+// @Summary Verify Email
+// @Description Verifies a user's email address by validating the token in the request.
+// @Tags Verify
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "OK"
+// @Failure 400 {string} string "Bad Request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /verify [get]
+
 func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,

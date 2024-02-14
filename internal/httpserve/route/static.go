@@ -1,3 +1,4 @@
+//go:generate swagger generate spec
 package route
 
 import (
@@ -67,13 +68,27 @@ func registerOIDCHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 //go:embed openapi.json
 var embeddedFiles embed.FS
 
+//go:embed doc.json
+var openapifiles embed.FS
+
 // registerOpenAPISpecHandler embeds our generated open api specs and serves it behind /api-docs
 func registerOpenAPISpecHandler(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
 		Path:    "/api-docs",
 		Handler: echo.StaticFileHandler("openapi.json", embeddedFiles),
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(V1Version, mw))
+
+	return
+}
+
+// registerSwaggerStatic embeds our generated open api specs and serves it behind /doc.json
+func registerSwaggerStatic(router *echo.Echo) (err error) {
+	_, err = router.AddRoute(echo.Route{
+		Method:  http.MethodGet,
+		Path:    "/doc.json",
+		Handler: echo.StaticFileHandler("doc.json", openapifiles),
+	}.ForGroup(V1Version, mw))
 
 	return
 }

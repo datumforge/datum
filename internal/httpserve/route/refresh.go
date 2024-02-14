@@ -15,6 +15,14 @@ import (
 // last longer than the duration of an access token; e.g. long sessions on the Datum UI
 // or (especially) long running publishers and subscribers (machine users) that need to
 // stay authenticated semi-permanently.
+// @Summary Refresh authentication tokens
+// @Description Re-authenticates users and API keys using a refresh token
+// @Tags Refresh
+// @Accept json
+// @Produce json
+// @Success 200 {object} YourResponseObject
+// @Router /refresh [post]
+
 func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

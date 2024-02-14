@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
@@ -19,20 +20,29 @@ type ForgotPasswordRequest struct {
 	Email string `json:"email"`
 }
 
+// ForgotPasswordReply contains fields for a forgot password response
+type ForgotPasswordReply struct {
+	Message string `json:"message"`
+}
+
 // ForgotPassword will send an forgot password email if the provided
 // email exists
 func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	var in *ForgotPasswordRequest
 
+	out := &ForgotPasswordReply{
+		Message: "We've received your request to have the password associated with this email reset. Please check your email.",
+	}
+
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
 		h.Logger.Errorw("error parsing request", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
 	if err := validateForgotPasswordRequest(in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email, enums.Credentials)
@@ -45,7 +55,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
 	// create password reset email token
@@ -59,16 +69,16 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	viewerCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(entUser.ID, true))
 
 	if _, err = h.storeAndSendPasswordResetToken(viewerCtx, user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
-	return ctx.NoContent(http.StatusNoContent)
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // validateResendRequest validates the required fields are set in the user request
 func validateForgotPasswordRequest(req *ForgotPasswordRequest) error {
 	if req.Email == "" {
-		return newMissingRequiredFieldError("email")
+		return rout.NewMissingRequiredFieldError("email")
 	}
 
 	return nil

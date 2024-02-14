@@ -9,7 +9,7 @@ import (
 	"github.com/sendgrid/rest"
 	"github.com/sendgrid/sendgrid-go"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/rout"
 )
 
 // constants for working with sendgrid; didn't make them configurable as these are dictated by the vendor and this is a vendor specific package
@@ -73,11 +73,11 @@ func FieldDefinitions(apiKey string) (string, error) {
 func doRequest(req rest.Request) (_ string, err error) {
 	rep, err := sendgrid.MakeRequest(req)
 	if err != nil {
-		return "", auth.ErrorResponse(err)
+		return "", rout.HTTPErrorResponse(err)
 	}
 
 	if rep.StatusCode < 200 || rep.StatusCode >= 300 {
-		return "", auth.ErrorResponse(rep.StatusCode)
+		return "", rout.HTTPErrorResponse(rep.StatusCode)
 	}
 
 	return rep.Body, nil

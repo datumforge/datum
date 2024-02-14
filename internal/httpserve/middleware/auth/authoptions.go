@@ -101,7 +101,7 @@ func (conf *AuthOptions) Validator() (tokens.Validator, error) {
 
 		err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval))
 		if err != nil {
-			return nil, ErrShitWentBad
+			return nil, ErrUnableToConstructValidator
 		}
 
 		conf.validator, err = tokens.NewCachedJWKSValidator(conf.Context, cache, conf.KeysURL, conf.Audience, conf.Issuer)

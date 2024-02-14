@@ -7,6 +7,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/rout"
 )
 
 // UserInfo returns the user information for the authenticated user
@@ -19,7 +20,7 @@ func (h *Handler) UserInfo(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user id from context", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// get user from database by subject
@@ -27,7 +28,7 @@ func (h *Handler) UserInfo(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("unable to get user by subject", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	return ctx.JSON(http.StatusOK, user)

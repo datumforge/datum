@@ -111,7 +111,7 @@ func TestResendHandler(t *testing.T) {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.Response
+			var out *handlers.ResendReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

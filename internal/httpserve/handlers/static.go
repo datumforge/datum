@@ -6,6 +6,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -49,18 +50,24 @@ func (h *Handler) OpenIDConfiguration(ctx echo.Context) error {
 	// Parse the token issuer for the OpenID configuration
 	base, err := url.Parse(h.TM.Config().Issuer)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse("openid is not configured correctly"))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse("openid is not configured correctly"))
 	}
 
 	openid := &tokens.DiscoveryJSON{
-		Issuer:                            base.ResolveReference(&url.URL{Path: "/"}).String(),
-		JwksURI:                           base.ResolveReference(&url.URL{Path: "/.well-known/jwks.json"}).String(),
-		AuthorizationEndpoint:             base.ResolveReference(&url.URL{Path: "/oauth/authorize"}).String(),
-		TokenEndpoint:                     base.ResolveReference(&url.URL{Path: "/oauth/token"}).String(),
-		UserinfoEndpoint:                  base.ResolveReference(&url.URL{Path: "/oauth/userinfo"}).String(),
-		ScopesSupported:                   []string{"openid", "profile", "email"},
-		ResponseTypesSupported:            []string{"code", "token", "id_token"},
-		TokenEndpointAuthMethodsSupported: []string{"client_secret_basic", "client_secret_post"},
+		Issuer:                        base.ResolveReference(&url.URL{Path: "/"}).String(),
+		JWKSURI:                       base.ResolveReference(&url.URL{Path: "/.well-known/jwks.json"}).String(),
+		AuthorizationEP:               base.ResolveReference(&url.URL{Path: "/oauth/authorize"}).String(),
+		TokenEP:                       base.ResolveReference(&url.URL{Path: "/oauth/token"}).String(),
+		UserInfoEP:                    base.ResolveReference(&url.URL{Path: "/oauth/userinfo"}).String(),
+		ScopesSupported:               []string{"openid", "profile", "email"},
+		ResponseTypesSupported:        []string{"code", "token", "id_token"},
+		TokenEndpointAuthMethods:      []string{"client_secret_basic", "client_secret_post"},
+		CodeChallengeMethodsSupported: []string{"S256", "plain"},
+		ResponseModesSupported:        []string{"query", "fragment", "form_post"},
+		SubjectTypesSupported:         []string{"public"},
+		IDTokenSigningAlgValues:       []string{"HS256", "RS256"},
+		ClaimsSupported:               []string{"aud", "email", "exp", "iat", "iss", "sub"},
+		RequestURIParameterSupported:  false,
 	}
 
 	return ctx.JSON(http.StatusOK, openid)

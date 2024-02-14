@@ -15,6 +15,7 @@ import (
 func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 	return middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
 		secretFields := []string{"new_password", "old_password", "password", "access_token", "refresh_token"}
+
 		if len(reqBody) > 0 {
 			var bodymap map[string]interface{}
 			if err := json.Unmarshal(reqBody, &bodymap); err == nil {
@@ -24,8 +25,11 @@ func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 					}
 				}
 				reqBody, _ = json.Marshal(bodymap)
+
 				var reqMethod string
+
 				var methodColor, resetColor string
+
 				req := c.Request()
 				reqMethod = req.Method
 				// for request method
@@ -60,6 +64,7 @@ func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 					req.URL, // request URI (path)
 				)
 			}
+
 			l.Infof("Request Body: %v\n", string(reqBody))
 		}
 
@@ -72,10 +77,13 @@ func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 					}
 				}
 				resBody, _ = json.Marshal(bodymap)
+
 				var resStatus int
+
 				var statusColor, resetColor string
 				res := c.Response()
 				resStatus = res.Status
+
 				switch {
 				case resStatus >= http.StatusOK && resStatus < http.StatusMultipleChoices:
 					statusColor = green
@@ -97,6 +105,7 @@ func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 					res.Header(),
 				)
 			}
+
 			l.Infof("Response Body: %v\n", string(resBody))
 		}
 	})

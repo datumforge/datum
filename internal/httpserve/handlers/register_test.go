@@ -33,6 +33,8 @@ func TestRegisterHandler(t *testing.T) {
 	// add handler
 	client.e.POST("register", client.h.RegisterHandler)
 
+	var bonkers = "b!a!n!a!n!a!s!"
+
 	testCases := []struct {
 		name               string
 		email              string
@@ -49,7 +51,7 @@ func TestRegisterHandler(t *testing.T) {
 			email:          "bananas@datum.net",
 			firstName:      "Princess",
 			lastName:       "Fiona",
-			password:       "b!a!n!a!n!a!s!",
+			password:       bonkers,
 			emailExpected:  true,
 			expectedStatus: http.StatusCreated,
 		},
@@ -58,7 +60,7 @@ func TestRegisterHandler(t *testing.T) {
 			email:              "bananas.net",
 			firstName:          "Princess",
 			lastName:           "Fiona",
-			password:           "b!a!n!a!n!a!s!",
+			password:           bonkers,
 			emailExpected:      false,
 			expectedErrMessage: "email was invalid",
 			expectedStatus:     http.StatusBadRequest,
@@ -67,7 +69,7 @@ func TestRegisterHandler(t *testing.T) {
 			name:               "missing email",
 			firstName:          "Princess",
 			lastName:           "Fiona",
-			password:           "b!a!n!a!n!a!s!",
+			password:           bonkers,
 			emailExpected:      false,
 			expectedErrMessage: "missing required field: email",
 			expectedStatus:     http.StatusBadRequest,
@@ -76,7 +78,7 @@ func TestRegisterHandler(t *testing.T) {
 			name:               "missing first name",
 			email:              "tacos@datum.net",
 			lastName:           "Fiona",
-			password:           "b!a!n!a!n!a!s!",
+			password:           bonkers,
 			emailExpected:      false,
 			expectedErrMessage: "missing required field: first name",
 			expectedStatus:     http.StatusBadRequest,
@@ -85,7 +87,7 @@ func TestRegisterHandler(t *testing.T) {
 			name:               "missing last name",
 			email:              "waffles@datum.net",
 			firstName:          "Princess",
-			password:           "b!a!n!a!n!a!s!",
+			password:           bonkers,
 			emailExpected:      false,
 			expectedErrMessage: "missing required field: last name",
 			expectedStatus:     http.StatusBadRequest,
@@ -106,6 +108,7 @@ func TestRegisterHandler(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 			sent := time.Now()
+
 			mock.ResetEmailMock()
 
 			// setup mock authz writes

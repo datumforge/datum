@@ -121,7 +121,7 @@ func TestRefreshHandler(t *testing.T) {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.Response
+			var out *handlers.RefreshResponse
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

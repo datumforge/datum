@@ -14,6 +14,17 @@ import (
 // address belongs to a user who has not been verified, another verification email is
 // sent. If the post request contains an orgID and the user is invited to that
 // organization but hasn't accepted the invite, then the invite is resent.
+
+// @Summary Resend email
+// @Description Resends the verification email or invite email
+// @Tags Resend
+// @Accept json
+// @Produce json
+// @Param email body string true "Email address"
+// @Param orgID body string false "Organization ID"
+// @Success 204 {string} string "No Content"
+// @Router /resend [post]
+
 func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

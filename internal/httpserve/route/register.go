@@ -16,6 +16,17 @@ import (
 //
 // A "personal" organization is created for the user registering based on the organization data
 // in the register request and the user is assigned the Owner role.
+
+// @Summary Register a new user
+// @Description Creates a new user in the database with the specified password, allowing the user to login to Datum.
+// @Tags Register
+// @Accept json
+// @Produce json
+// @Param registerRequest body RegisterRequest true "Register request object"
+// @Success 200 {string} string "User registered successfully"
+// @Failure 400 {string} string "Invalid request or weak password"
+// @Router /register [post]
+
 func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

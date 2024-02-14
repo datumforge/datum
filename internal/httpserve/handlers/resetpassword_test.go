@@ -35,6 +35,8 @@ func TestResetPassword(t *testing.T) {
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
+	var newPassword = "6z9Fqc-E-9v32NsJzLNU" // nolint: gosec
+
 	testCases := []struct {
 		name                 string
 		email                string
@@ -52,19 +54,19 @@ func TestResetPassword(t *testing.T) {
 			name:                 "happy path",
 			email:                "kelsier@datum.net",
 			tokenSet:             true,
-			newPassword:          "6z9Fqc-E-9v32NsJzLNU",
+			newPassword:          newPassword,
 			from:                 "mitb@datum.net",
 			emailExpected:        true,
 			expectedEmailSubject: emails.PasswordResetSuccessRE,
 			expectedResp:         emptyResponse,
-			expectedStatus:       http.StatusNoContent,
+			expectedStatus:       http.StatusOK,
 		},
 		{
 			name:           "bad token (user not found)",
 			email:          "eventure@datum.net",
 			tokenSet:       true,
 			tokenProvided:  "thisisnotavalidtoken",
-			newPassword:    "6z9Fqc-E-9v32NsJzLNU",
+			newPassword:    "newPassword",
 			emailExpected:  false,
 			from:           "notactuallyanemail",
 			expectedResp:   "password reset token invalid",
@@ -94,7 +96,7 @@ func TestResetPassword(t *testing.T) {
 			name:           "missing token",
 			email:          "dockson@datum.net",
 			tokenSet:       false,
-			newPassword:    "6z9Fqc-E-9v32NsJzLNU",
+			newPassword:    newPassword,
 			emailExpected:  false,
 			from:           "yadayadayada",
 			expectedResp:   "token is required",
@@ -116,6 +118,7 @@ func TestResetPassword(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			sent := time.Now()
+
 			mock.ResetEmailMock()
 
 			// create user in the database
@@ -132,6 +135,7 @@ func TestResetPassword(t *testing.T) {
 			}
 
 			target := "/password-reset"
+
 			if tc.tokenSet {
 				token := rt.Token
 				if tc.tokenProvided != "" {
@@ -157,7 +161,7 @@ func TestResetPassword(t *testing.T) {
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus != http.StatusNoContent {
-				var out *handlers.Response
+				var out *handlers.ResetPasswordReply
 
 				// parse request body
 				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

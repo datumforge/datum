@@ -50,6 +50,8 @@ func TestForgotPasswordHandler(t *testing.T) {
 		SetSetting(userSetting).
 		SaveX(ctx)
 
+	var mitb = "mitb@datum.net"
+
 	testCases := []struct {
 		name               string
 		from               string
@@ -61,20 +63,20 @@ func TestForgotPasswordHandler(t *testing.T) {
 		{
 			name:           "happy path",
 			email:          "asandler@datum.net",
-			from:           "mitb@datum.net",
+			from:           mitb,
 			emailExpected:  true,
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "email does not exist, should still return 204",
 			email:          "asandler1@datum.net",
-			from:           "mitb@datum.net",
+			from:           mitb,
 			emailExpected:  false,
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "email not sent in request",
-			from:           "mitb@datum.net",
+			from:           mitb,
 			emailExpected:  false,
 			expectedStatus: http.StatusBadRequest,
 		},
@@ -83,6 +85,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			sent := time.Now()
+
 			mock.ResetEmailMock()
 
 			resendJSON := handlers.ForgotPasswordRequest{
@@ -108,7 +111,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus != http.StatusNoContent {
-				var out *handlers.Response
+				var out *handlers.ForgotPasswordReply
 
 				// parse request body
 				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {

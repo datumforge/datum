@@ -59,9 +59,11 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 		SetName("avengers").
 		SaveX(reqCtx)
 
+	var groot = "groot@datum.net"
+
 	// recipient test data
 	recipient := client.db.User.Create().
-		SetEmail("groot@datum.net").
+		SetEmail(groot).
 		SetFirstName("Groot").
 		SetLastName("JustGroot").
 		SetAuthProvider(enums.Google).
@@ -82,13 +84,13 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 	}{
 		{
 			name:          "happy path",
-			email:         "groot@datum.net",
+			email:         groot,
 			emailExpected: true,
 			tokenSet:      true,
 		},
 		{
 			name:     "missing token",
-			email:    "groot@datum.net",
+			email:    groot,
 			tokenSet: false,
 			wantErr:  true,
 			errMsg:   "token is required",
@@ -106,6 +108,7 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
 			sent := time.Now()
+
 			mock.ResetEmailMock()
 
 			// mock auth

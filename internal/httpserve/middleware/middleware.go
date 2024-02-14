@@ -37,6 +37,7 @@ func Conditional(middleware MiddlewareFunc, condition func(r *http.Request) bool
 			if condition(r) {
 				handler = middleware(next)
 			}
+
 			handler.ServeHTTP(w, r)
 		})
 	}

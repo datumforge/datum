@@ -31,8 +31,8 @@ brews:
     description: 'datum is the client CLI for interacting with Datum Server'
     folder: Formula
     commit_author:
-      name: datumbot
-      email: info@datum.net
+      name: bender-datum
+      email: bender@datum.net
     repository:
       owner: datumforge
       name: homebrew-tap

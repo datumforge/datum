@@ -28,7 +28,7 @@ func init() {
 
 func deleteOrg(ctx context.Context) error {
 	// setup datum http client
-	cli, err := datum.GetClient(ctx)
+	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
 		return err
 	}

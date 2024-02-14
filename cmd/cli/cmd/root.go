@@ -182,7 +182,7 @@ func JSONPrint(s []byte) error {
 	return nil
 }
 
-func GetClient(ctx context.Context) (*CLI, error) {
+func createClient(ctx context.Context, baseURL string) (*CLI, error) {
 	cli := CLI{}
 
 	// setup datum http client with cookie jar
@@ -235,12 +235,21 @@ func GetClient(ctx context.Context) (*CLI, error) {
 		interceptors = append(interceptors, datumclient.WithLoggingInterceptor())
 	}
 
-	cli.Client = datumclient.NewClient(h, GraphAPIHost, opt, interceptors...)
+	cli.Client = datumclient.NewClient(h, baseURL, opt, interceptors...)
+
 	cli.Interceptor = i
 	cli.AccessToken = accessToken
 
 	// new client with params
 	return &cli, nil
+}
+
+func GetGraphClient(ctx context.Context) (*CLI, error) {
+	return createClient(ctx, GraphAPIHost)
+}
+
+func GetRestClient(ctx context.Context) (*CLI, error) {
+	return createClient(ctx, DatumHost)
 }
 
 // GetTokenFromKeyring will return the oauth token from the keyring

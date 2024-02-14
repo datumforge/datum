@@ -327,9 +327,6 @@ func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
 
 	if rec == "" {
 		rec = gofakeit.Email()
-	} else {
-		// assume this was an existing user and add a mock write
-		mock_fga.WriteAny(t, i.client.fga)
 	}
 
 	// mock check

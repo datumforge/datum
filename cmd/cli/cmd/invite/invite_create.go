@@ -34,7 +34,7 @@ func init() {
 }
 
 func createInvite(ctx context.Context) error {
-	cli, err := datum.GetClient(ctx)
+	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
 		return err
 	}

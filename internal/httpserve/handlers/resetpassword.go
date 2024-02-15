@@ -36,6 +36,7 @@ type ResetPassword struct {
 // ResetPasswordReply is the response returned from a non-successful password reset request
 // on success, no content is returned (204)
 type ResetPasswordReply struct {
+	rout.Reply
 	Message string `json:"message"`
 }
 
@@ -113,11 +114,9 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	// Verify the token is valid with the stored secret
 	if err = token.Verify(user.GetPasswordResetToken(), user.PasswordResetSecret); err != nil {
 		if errors.Is(err, tokens.ErrTokenExpired) {
-			out := &ResetPasswordReply{
-				Message: "reset token is expired, please request a new token using forgot-password",
-			}
+			errMsg := "reset token is expired, please request a new token using forgot-password"
 
-			return ctx.JSON(http.StatusBadRequest, out)
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(errMsg))
 		}
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
@@ -156,6 +155,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	out := &ResetPasswordReply{
+		Reply:   rout.Reply{Success: true},
 		Message: "password has been re-set successfully",
 	}
 

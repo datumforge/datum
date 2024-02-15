@@ -16,7 +16,7 @@ import (
 // @route POST /forgot-password
 // @tags Forgot Password
 // @summary Request a password reset email
-// @response 204 {string} No Content
+// @response 200 {object} ForgotPasswordResponse
 // @response 400 {string} Bad Request
 // @response 500 {string} Internal Server Error
 func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {

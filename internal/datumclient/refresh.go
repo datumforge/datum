@@ -46,7 +46,7 @@ func Refresh(c *Client, ctx context.Context, r handlers.RefreshRequest) (*oauth2
 
 	defer resp.Body.Close()
 
-	out := handlers.RefreshResponse{}
+	out := handlers.RefreshReply{}
 
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err

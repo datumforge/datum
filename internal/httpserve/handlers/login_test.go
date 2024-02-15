@@ -151,8 +151,9 @@ func TestLoginHandler(t *testing.T) {
 
 			if tc.expectedStatus == http.StatusOK {
 				assert.Equal(t, out.Message, "success")
+				assert.True(t, out.Success)
 			} else {
-				assert.Contains(t, out.Message, tc.expectedErr.Error())
+				assert.Contains(t, out.Error, tc.expectedErr.Error())
 			}
 		})
 	}

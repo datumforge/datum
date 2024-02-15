@@ -23,6 +23,7 @@ type VerifyRequest struct {
 
 // VerifyReply holds the fields that are sent on a response to the `/verify` endpoint
 type VerifyReply struct {
+	rout.Reply
 	ID           string `json:"user_id"`
 	Email        string `json:"email"`
 	Token        string `json:"token"`
@@ -126,6 +127,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
 	out := &VerifyReply{
+		Reply:        rout.Reply{Success: true},
 		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,

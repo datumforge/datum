@@ -66,7 +66,7 @@ func TestResetPassword(t *testing.T) {
 			email:          "eventure@datum.net",
 			tokenSet:       true,
 			tokenProvided:  "thisisnotavalidtoken",
-			newPassword:    "newPassword",
+			newPassword:    newPassword,
 			emailExpected:  false,
 			from:           "notactuallyanemail",
 			expectedResp:   "password reset token invalid",
@@ -160,15 +160,15 @@ func TestResetPassword(t *testing.T) {
 			// check status
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus != http.StatusNoContent {
-				var out *handlers.ResetPasswordReply
+			var out *handlers.ResetPasswordReply
 
-				// parse request body
-				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
-					t.Error("error parsing response", err)
-				}
+			// parse request body
+			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+				t.Error("error parsing response", err)
+			}
 
-				assert.Contains(t, out.Message, tc.expectedResp)
+			if tc.expectedStatus != http.StatusOK {
+				assert.Contains(t, out.Error, tc.expectedResp)
 			}
 
 			// Test that one verify email was sent to each user

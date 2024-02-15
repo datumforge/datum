@@ -121,7 +121,7 @@ func TestRefreshHandler(t *testing.T) {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.RefreshResponse
+			var out *handlers.RefreshReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
@@ -133,7 +133,7 @@ func TestRefreshHandler(t *testing.T) {
 			if tc.expectedStatus == http.StatusOK {
 				assert.Equal(t, out.Message, "success")
 			} else {
-				assert.Contains(t, out.Message, tc.expectedErrMessage)
+				assert.Contains(t, out.Error, tc.expectedErrMessage)
 			}
 		})
 	}

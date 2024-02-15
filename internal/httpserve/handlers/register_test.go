@@ -192,7 +192,7 @@ func TestRegisterHandler(t *testing.T) {
 				// delete user
 				client.db.User.DeleteOneID(out.ID).ExecX(ctx)
 			} else {
-				assert.Contains(t, out.Message, tc.expectedErrMessage)
+				assert.Contains(t, out.Error, tc.expectedErrMessage)
 			}
 
 			// Test that one verify email was sent to each user

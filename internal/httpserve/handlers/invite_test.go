@@ -143,7 +143,8 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 
 			if tc.wantErr {
 				assert.Equal(t, http.StatusBadRequest, recorder.Code)
-				assert.Equal(t, tc.errMsg, out.Message)
+
+				assert.Equal(t, tc.errMsg, out.Error)
 
 				return
 			}

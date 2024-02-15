@@ -28,6 +28,7 @@ type RegisterRequest struct {
 
 // RegisterReply holds the fields that are sent on a response to the `/register` endpoint
 type RegisterReply struct {
+	rout.Reply
 	ID      string `json:"user_id"`
 	Email   string `json:"email"`
 	Message string `json:"message"`
@@ -95,6 +96,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	}
 
 	out := &RegisterReply{
+		Reply:   rout.Reply{Success: true},
 		ID:      meowuser.ID,
 		Email:   meowuser.Email,
 		Message: "Welcome to Datum!",

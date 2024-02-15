@@ -26,6 +26,7 @@ type LoginRequest struct {
 
 // LoginReply holds response to successful authentication
 type LoginReply struct {
+	rout.Reply
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token,omitempty"`
 	TokenType    string `json:"token_type"`
@@ -70,6 +71,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	analytics.AssociateUser(user.ID, claims.OrgID)
 
 	out := LoginReply{
+		Reply:        rout.Reply{Success: true},
 		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,

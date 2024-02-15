@@ -23,6 +23,7 @@ import (
 // InviteReply holds the fields that are sent on a response to an accepted invitation
 // Note: there is no InviteRequest as this is handled via our graph interfaces
 type InviteReply struct {
+	rout.Reply
 	ID          string `json:"user_id"`
 	Email       string `json:"email"`
 	Message     string `json:"message"`
@@ -169,6 +170,7 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 
 	// reply with the relevant details
 	out := &InviteReply{
+		Reply:       rout.Reply{Success: true},
 		ID:          userID,
 		Email:       invitedUser.Recipient,
 		JoinedOrgID: invitedUser.OwnerID,

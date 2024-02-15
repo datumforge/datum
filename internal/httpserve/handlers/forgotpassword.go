@@ -22,7 +22,8 @@ type ForgotPasswordRequest struct {
 
 // ForgotPasswordReply contains fields for a forgot password response
 type ForgotPasswordReply struct {
-	Message string `json:"message"`
+	rout.Reply
+	Message string `json:"message,omitempty"`
 }
 
 // ForgotPassword will send an forgot password email if the provided
@@ -31,6 +32,9 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	var in *ForgotPasswordRequest
 
 	out := &ForgotPasswordReply{
+		Reply: rout.Reply{
+			Success: true,
+		},
 		Message: "We've received your request to have the password associated with this email reset. Please check your email.",
 	}
 
@@ -48,9 +52,9 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email, enums.Credentials)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			// return a 204 response even if user is not found to avoid
+			// return a 200 response even if user is not found to avoid
 			// exposing confidential information
-			return ctx.NoContent(http.StatusNoContent)
+			return ctx.JSON(http.StatusOK, out)
 		}
 
 		h.Logger.Errorf("error retrieving user email", "error", err)

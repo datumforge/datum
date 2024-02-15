@@ -20,6 +20,7 @@ type ResendRequest struct {
 
 // ResendReply holds the fields that are sent on a response to the `/resend` endpoint
 type ResendReply struct {
+	rout.Reply
 	Message string `json:"message"`
 }
 
@@ -29,6 +30,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	var in *ResendRequest
 
 	out := &ResendReply{
+		Reply:   rout.Reply{Success: true},
 		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
 	}
 

@@ -120,11 +120,11 @@ func TestResendHandler(t *testing.T) {
 
 			require.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus == http.StatusNoContent {
+			if tc.expectedStatus == http.StatusOK {
 				require.NotEmpty(t, out)
 				assert.NotEmpty(t, out.Message)
 			} else {
-				assert.Contains(t, out.Message, tc.expectedMessage)
+				assert.Contains(t, out.Error, tc.expectedMessage)
 			}
 		})
 	}

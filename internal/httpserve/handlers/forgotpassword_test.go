@@ -65,20 +65,21 @@ func TestForgotPasswordHandler(t *testing.T) {
 			email:          "asandler@datum.net",
 			from:           mitb,
 			emailExpected:  true,
-			expectedStatus: http.StatusNoContent,
+			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "email does not exist, should still return 204",
+			name:           "email does not exist, should still return 200",
 			email:          "asandler1@datum.net",
 			from:           mitb,
 			emailExpected:  false,
-			expectedStatus: http.StatusNoContent,
+			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "email not sent in request",
-			from:           mitb,
-			emailExpected:  false,
-			expectedStatus: http.StatusBadRequest,
+			name:               "email not sent in request",
+			from:               mitb,
+			emailExpected:      false,
+			expectedStatus:     http.StatusBadRequest,
+			expectedErrMessage: "email is required",
 		},
 	}
 
@@ -110,7 +111,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus != http.StatusNoContent {
+			if tc.expectedStatus != http.StatusOK {
 				var out *handlers.ForgotPasswordReply
 
 				// parse request body
@@ -118,7 +119,8 @@ func TestForgotPasswordHandler(t *testing.T) {
 					t.Error("error parsing response", err)
 				}
 
-				assert.Contains(t, out.Message, tc.expectedErrMessage)
+				assert.Contains(t, out.Error, tc.expectedErrMessage)
+				assert.False(t, out.Success)
 			}
 
 			// Test that one verify email was sent to each user

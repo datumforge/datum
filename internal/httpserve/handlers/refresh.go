@@ -16,8 +16,9 @@ type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-// RefreshResponse holds the fields that are sent on a response to the `/refresh` endpoint
-type RefreshResponse struct {
+// RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
+type RefreshReply struct {
+	rout.Reply
 	Message string `json:"message"`
 }
 
@@ -79,7 +80,8 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return err
 	}
 
-	out := &RefreshResponse{
+	out := &RefreshReply{
+		Reply:   rout.Reply{Success: true},
 		Message: "success",
 	}
 

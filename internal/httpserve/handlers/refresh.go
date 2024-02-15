@@ -19,7 +19,7 @@ type RefreshRequest struct {
 // RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
 type RefreshReply struct {
 	rout.Reply
-	Message string `json:"message"`
+	Message string `json:"message,omitempty"`
 }
 
 // RefreshHandler allows users to refresh their access token using their refresh token.
@@ -82,7 +82,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 
 	out := &RefreshReply{
 		Reply:   rout.Reply{Success: true},
-		Message: "success",
+		Message: "token pair refreshed",
 	}
 
 	return ctx.JSON(http.StatusOK, out)

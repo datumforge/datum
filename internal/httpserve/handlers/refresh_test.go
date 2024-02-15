@@ -131,9 +131,10 @@ func TestRefreshHandler(t *testing.T) {
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusOK {
-				assert.Equal(t, out.Message, "success")
+				assert.True(t, out.Success)
 			} else {
 				assert.Contains(t, out.Error, tc.expectedErrMessage)
+				assert.False(t, out.Success)
 			}
 		})
 	}

@@ -152,10 +152,13 @@ func TestVerifyHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			if tc.expectedStatus >= http.StatusOK && tc.expectedStatus <= http.StatusCreated {
-				assert.Contains(t, out.Message, tc.expectedMessage)
+			if tc.expectedStatus == http.StatusOK {
+				assert.True(t, out.Success)
+			} else if tc.expectedStatus == http.StatusCreated {
+				assert.False(t, out.Success)
 			} else {
 				assert.Contains(t, out.Error, tc.expectedMessage)
+				assert.False(t, out.Success)
 			}
 		})
 	}

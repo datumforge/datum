@@ -31,7 +31,7 @@ type VerifyReply struct {
 	RefreshToken string `json:"refresh_token,omitempty"`
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int64  `json:"expires_in"`
-	Message      string `json:"message"`
+	Message      string `json:"message,omitempty"`
 }
 
 // VerifyEmail is the handler for the email verification endpoint
@@ -97,6 +97,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				}
 
 				out := &VerifyReply{
+					Reply:   rout.Reply{Success: false},
 					ID:      meowtoken.ID,
 					Email:   user.Email,
 					Message: "Token expired, a new token has been issued. Please try again.",
@@ -128,7 +129,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	out := &VerifyReply{
 		Reply:        rout.Reply{Success: true},
-		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
 		TokenType:    "access_token",

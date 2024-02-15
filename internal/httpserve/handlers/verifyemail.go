@@ -130,6 +130,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	out := &VerifyReply{
 		Reply:        rout.Reply{Success: true},
+		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
 		TokenType:    "access_token",

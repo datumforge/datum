@@ -157,7 +157,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 
 	out := &ResetPasswordReply{
 		Reply:   rout.Reply{Success: true},
-		Message: "password has been reset successfully",
+		Message: "password has been re-set successfully",
 	}
 
 	return ctx.JSON(http.StatusOK, out)

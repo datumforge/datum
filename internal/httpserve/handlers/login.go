@@ -74,6 +74,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 
 	out := LoginReply{
 		Reply:        rout.Reply{Success: true},
+		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
 		TokenType:    "access_token",

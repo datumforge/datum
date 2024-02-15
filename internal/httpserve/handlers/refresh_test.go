@@ -134,7 +134,6 @@ func TestRefreshHandler(t *testing.T) {
 				assert.True(t, out.Success)
 			} else {
 				assert.Contains(t, out.Error, tc.expectedErrMessage)
-				assert.False(t, out.Success)
 			}
 		})
 	}

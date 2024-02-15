@@ -83,7 +83,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 
 	out := &RefreshReply{
 		Reply:   rout.Reply{Success: true},
-		Message: "token pair refreshed",
+		Message: "success",
 	}
 
 	return ctx.JSON(http.StatusOK, out)

@@ -17,6 +17,7 @@ type RefreshRequest struct {
 }
 
 // RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
+// swagger:response refreshReply
 type RefreshReply struct {
 	rout.Reply
 	Message string `json:"message,omitempty"`

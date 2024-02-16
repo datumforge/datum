@@ -19,12 +19,11 @@ import (
 // @Tags Verify
 // @Accept json
 // @Produce json
-// @Success 200 {string} string "OK"
-// @Failure 400 {string} string "Bad Request"
-// @Failure 401 {string} string "Unauthorized"
-// @Failure 500 {string} string "Internal Server Error"
+// @Success 200 {object} handlers.VerifyReply
+// @Success 201 {object} handlers.VerifyReply
+// @Failure 400 {object} handlers.StatusError "Status error object"
+// @Failure 500 {object} handlers.StatusError "Status error object"
 // @Router /verify [get]
-
 func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,

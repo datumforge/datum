@@ -194,7 +194,7 @@ func (e *MissingRequiredFieldError) Error() string {
 	return fmt.Sprintf("%s is required", e.RequiredField)
 }
 
-// newMissingRequiredField returns an error for a missing required field
+// NewMissingRequiredFieldError returns an error for a missing required field
 func NewMissingRequiredFieldError(field string) *MissingRequiredFieldError {
 	return &MissingRequiredFieldError{
 		RequiredField: field,

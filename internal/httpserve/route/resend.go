@@ -20,9 +20,10 @@ import (
 // @Tags Resend
 // @Accept json
 // @Produce json
-// @Param email body string true "Email address"
-// @Param orgID body string false "Organization ID"
+// @Param resend-email body ResendEmailRequest true "Resend email request"
 // @Success 204 {string} string "No Content"
+// @Failure 400 {object} handlers.StatusError "Status error object"
+// @Failure 500 {object} handlers.StatusError "Status error object"
 // @Router /resend [post]
 
 func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err error) {

@@ -63,8 +63,6 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerAuthenticateHandler,
 		registerJwksWellKnownHandler,
 		registerOIDCHandler,
-		registerSecurityTxtHandler,
-		registerRobotsHandler,
 		registerInviteHandler,
 		registerGithubLoginHandler,
 		registerGithubCallbackHandler,
@@ -90,6 +88,8 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerOpenAPISpecHandler,
 		registerMetricsHandler,
 		registerSwaggerStatic,
+		registerSecurityTxtHandler,
+		registerRobotsHandler,
 	}
 
 	for _, route := range additionalHandlers {

@@ -23,8 +23,9 @@ import (
 // @Accept json
 // @Produce json
 // @Param registerRequest body RegisterRequest true "Register request object"
-// @Success 200 {string} string "User registered successfully"
-// @Failure 400 {string} string "Invalid request or weak password"
+// @Success 201 {string} string "User registered successfully"
+// @Failure 400 {object} handlers.StatusError "Status error object"
+// @Failure 500 {object} handlers.StatusError "Status error object"
 // @Router /register [post]
 
 func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {

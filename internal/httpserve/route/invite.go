@@ -13,10 +13,9 @@ import (
 // @Tags Invite
 // @Accept json
 // @Produce json
-// @Success 200 {object} InviteResponse
-// @Failure 400 {object} BadRequestResponse
-// @Failure 401 {object} UnauthorizedResponse
-// @Failure 500 {object} InternalServerErrorResponse
+// @Success 200 {object} handlers.InviteReply
+// @Failure 400 {object} handlers.StatusError "Status error object"
+// @Failure 500 {object} handlers.StatusError "Status error object"
 // @Router /invite [post]
 
 func registerInviteHandler(router *echo.Echo, h *handlers.Handler) (err error) {

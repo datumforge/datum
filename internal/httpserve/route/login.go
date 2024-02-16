@@ -26,10 +26,9 @@ import (
 // @Accept json
 // @Produce json
 // @Param loginRequest body LoginRequest true "Login request object"
-// @Success 200 {object} LoginResponse
-// @Failure 400 {object} ErrorResponse
-// @Failure 401 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
+// @Success 200 {object} handlers.LoginResponse
+// @Failure 400 {object} handlers.StatusError "Status error object"
+// @Failure 500 {object} handlers.StatusError "Status error object"
 // @Router /login [post]
 
 func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {

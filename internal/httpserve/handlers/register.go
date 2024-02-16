@@ -27,6 +27,7 @@ type RegisterRequest struct {
 }
 
 // RegisterReply holds the fields that are sent on a response to the `/register` endpoint
+// swagger:response RegisterReply
 type RegisterReply struct {
 	rout.Reply
 	ID      string `json:"user_id"`

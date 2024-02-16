@@ -1,7 +1,5 @@
-package responses
+package route
 
-// String errors intended to pass back from the server up to
-// a human user so these need to make sense to our customers!
 var (
 	ErrTryLoginAgain             = response("Unable to login with those details - please try again!")
 	ErrTryRegisterAgain          = response("Unable to register with those details - please try again!")
@@ -35,4 +33,17 @@ func response(msg string) string {
 	AllResponses[msg] = struct{}{}
 
 	return msg
+}
+
+// StatusError decodes an error response from datum.
+type StatusError struct {
+	StatusCode int
+	Reply      Reply
+}
+
+// Reply contains standard fields that are used for generic API responses and errors.
+type Reply struct {
+	Success    bool   `json:"success"`
+	Error      string `json:"error,omitempty"`
+	Unverified bool   `json:"unverified,omitempty"`
 }

@@ -25,6 +25,7 @@ type LoginRequest struct {
 }
 
 // LoginReply holds response to successful authentication
+// swagger:response LoginReply
 type LoginReply struct {
 	rout.Reply
 	AccessToken  string `json:"access_token"`

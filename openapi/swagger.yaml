@@ -1,0 +1,136 @@
+basePath: /v1
+definitions:
+  handlers.RefreshReply:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      success:
+        type: boolean
+      unverified:
+        type: boolean
+    type: object
+  handlers.Reply:
+    properties:
+      error:
+        type: string
+      success:
+        type: boolean
+      unverified:
+        type: boolean
+    type: object
+  handlers.StatusError:
+    properties:
+      reply:
+        $ref: '#/definitions/handlers.Reply'
+      statusCode:
+        type: integer
+    type: object
+  handlers.VerifyReply:
+    properties:
+      access_token:
+        type: string
+      email:
+        type: string
+      error:
+        type: string
+      expires_in:
+        type: integer
+      message:
+        type: string
+      refresh_token:
+        type: string
+      success:
+        type: boolean
+      token:
+        type: string
+      token_type:
+        type: string
+      unverified:
+        type: boolean
+      user_id:
+        type: string
+    type: object
+host: datum.net
+info:
+  contact:
+    email: support@datum.net
+    name: API Support
+    url: http://datum.net/support
+  description: API Specifications for Datum Services
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://datum.net/terms/
+  title: Datum API
+  version: "1.0"
+paths:
+  /metrics:
+    get:
+      description: Handles metrics request
+      operationId: metrics-handler
+      produces:
+      - application/json
+      responses: {}
+      summary: Metrics Handler
+  /ready:
+    get:
+      description: Handles readiness check
+      operationId: readiness-handler
+      produces:
+      - application/json
+      responses: {}
+      summary: Readiness Handler
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: Re-authenticates users and API keys using a refresh token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Refresh reply object
+          schema:
+            $ref: '#/definitions/handlers.RefreshReply'
+        "400":
+          description: Status error object
+          schema:
+            $ref: '#/definitions/handlers.StatusError'
+        "500":
+          description: Status error object
+          schema:
+            $ref: '#/definitions/handlers.StatusError'
+      summary: Refresh authentication tokens
+      tags:
+      - Refresh
+  /verify:
+    get:
+      consumes:
+      - application/json
+      description: Verifies a user's email address by validating the token in the
+        request.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.VerifyReply'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.VerifyReply'
+        "400":
+          description: Status error object
+          schema:
+            $ref: '#/definitions/handlers.StatusError'
+        "500":
+          description: Status error object
+          schema:
+            $ref: '#/definitions/handlers.StatusError'
+      summary: Verify Email
+      tags:
+      - Verify
+swagger: "2.0"

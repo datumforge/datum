@@ -8,17 +8,16 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-// ForgotPassword is a service for users to request a password reset email. The email
-// address must be provided in the POST request and the user must exist in the
-// database. This endpoint always returns 204 regardless of whether the user exists or
-// not to avoid leaking information about users in the database.
-//
-// @route POST /forgot-password
-// @tags Forgot Password
-// @summary Request a password reset email
-// @response 200 {object} ForgotPasswordResponse
-// @response 400 {string} Bad Request
-// @response 500 {string} Internal Server Error
+// @Summary Forgot Password
+// @Description Allows the user to request a password reset email
+// @Tags Forgot Password
+// @Accept json
+// @Produce json
+// @Success 200 {string} handlers.ForgotPasswordReply
+// @Failure 400 {object} handlers.StatusError "Status error object"
+// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Router /forgot-password [get]
+
 func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

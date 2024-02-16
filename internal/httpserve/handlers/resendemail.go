@@ -19,6 +19,7 @@ type ResendRequest struct {
 }
 
 // ResendReply holds the fields that are sent on a response to the `/resend` endpoint
+// swagger:response ResendReply
 type ResendReply struct {
 	rout.Reply
 	Message string `json:"message"`

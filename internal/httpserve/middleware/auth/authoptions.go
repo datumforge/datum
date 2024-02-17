@@ -8,6 +8,7 @@ import (
 	"github.com/datumforge/echox/middleware"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 
+	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -51,6 +52,9 @@ type AuthOptions struct {
 	Skipper middleware.Skipper
 	// BeforeFunc  defines a function which is executed just before the middleware
 	BeforeFunc middleware.BeforeFunc
+
+	// Used to check other auth types like personal access tokens
+	DBClient *ent.Client
 }
 
 // Reauthenticator generates new access and refresh pair given a valid refresh token.
@@ -205,5 +209,13 @@ func WithSkipperFunc(skipper middleware.Skipper) AuthOption {
 func WithBeforeFunc(before middleware.BeforeFunc) AuthOption {
 	return func(opts *AuthOptions) {
 		opts.BeforeFunc = before
+	}
+}
+
+// WithDBClient is a function that returns an AuthOption function which sets the DBClient field of AuthOptions.
+// The DBClient field is used to specify the database client to be to check authentication with personal access tokens.
+func WithDBClient(client *ent.Client) AuthOption {
+	return func(opts *AuthOptions) {
+		opts.DBClient = client
 	}
 }

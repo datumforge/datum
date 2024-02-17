@@ -8,24 +8,12 @@ import (
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
-
-// ContextUserClaims is the context key for the user claims
-var ContextUserClaims = &ContextKey{"user_claims"}
-
-// ContextAccessToken is the context key for the access token
-var ContextAccessToken = &ContextKey{"access_token"}
-
-// ContextRequestID is the context key for the request ID
-var ContextRequestID = &ContextKey{"request_id"}
-
-// ContextKey is the key name for the additional context
-type ContextKey struct {
-	name string
-}
 
 // Authenticate is a middleware function that is used to authenticate requests - it is not applied to all routes so be cognizant of that
 func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
@@ -64,13 +52,28 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 			}
 
 			// Verify the access token is authorized for use with datum and extract claims.
+			authType := JWTAuthentication
+
 			claims, err := validator.Verify(accessToken)
 			if err != nil {
-				return rout.HTTPErrorResponse(err)
+				// if its not a JWT, check to see if its a PAT
+				if conf.DBClient == nil {
+					return rout.HTTPErrorResponse(err)
+				}
+
+				claims, err = checkToken(c.Request().Context(), conf, accessToken)
+				if err != nil {
+					return rout.HTTPErrorResponse(err)
+				}
+
+				authType = PATAuthentication
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers
 			c.Set(ContextUserClaims.name, claims)
+
+			// Set auth type in context
+			c.Set(ContextAuthType.name, authType)
 
 			return next(c)
 		}
@@ -160,6 +163,32 @@ func GetRefreshToken(c echo.Context) (string, error) {
 	}
 
 	return cookie.Value, nil
+}
+
+// checkToken checks the bearer authorization token against the database to see if the provided
+// token is an active personal access token. If the token is valid, the claims are returned
+func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Claims, error) {
+	// allow check to bypass privacy rules
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	pat, err := conf.DBClient.PersonalAccessToken.Query().Where(personalaccesstoken.Token(token)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if pat.ExpiresAt.Before(time.Now()) {
+		return nil, ErrExpiredCredentials
+	}
+
+	claims := &tokens.Claims{
+		UserID: pat.OwnerID,
+	}
+
+	if pat.OrganizationID != nil {
+		claims.OrgID = *pat.OrganizationID
+	}
+
+	return claims, nil
 }
 
 // GetClaims fetches and parses datum claims from the echo context. Returns an

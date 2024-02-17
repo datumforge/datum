@@ -143,7 +143,7 @@ func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 			if err != nil {
 				config.Logger.Errorw("unable to get session", "error", err)
 
-				return err
+				return ErrInvalidSession
 			}
 
 			// get the session id from the session data

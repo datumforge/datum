@@ -21,9 +21,9 @@ import (
 // @Tags Refresh
 // @Accept json
 // @Produce json
-// @Success 200 {object} handlers.RefreshReply "Refresh reply object"
-// @Failure 400 {object} handlers.StatusError "Status error object"
-// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Success 200 {object} handlers.RefreshReply
+// @Failure 400 {object} route.ErrorResponse.BadRequest
+// @Failure 500 {object} route.ErrorResponse.InternalServerError
 // @Router /refresh [post]
 func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{

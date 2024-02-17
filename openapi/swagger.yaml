@@ -1,39 +1,29 @@
-basePath: /v1
 definitions:
-  handlers.RefreshReply:
+  handlers.ForgotPasswordReply:
     properties:
-      error:
+      message:
+        type: string
+      reply:
+        $ref: '#/definitions/rout.Reply'
+    type: object
+  handlers.InviteReply:
+    properties:
+      email:
+        type: string
+      joined_org_id:
         type: string
       message:
         type: string
-      success:
-        type: boolean
-      unverified:
-        type: boolean
-    type: object
-  handlers.Reply:
-    properties:
-      error:
-        type: string
-      success:
-        type: boolean
-      unverified:
-        type: boolean
-    type: object
-  handlers.StatusError:
-    properties:
       reply:
-        $ref: '#/definitions/handlers.Reply'
-      statusCode:
-        type: integer
+        $ref: '#/definitions/rout.Reply'
+      role:
+        type: string
+      user_id:
+        type: string
     type: object
-  handlers.VerifyReply:
+  handlers.LoginReply:
     properties:
       access_token:
-        type: string
-      email:
-        type: string
-      error:
         type: string
       expires_in:
         type: integer
@@ -41,31 +31,157 @@ definitions:
         type: string
       refresh_token:
         type: string
+      reply:
+        $ref: '#/definitions/rout.Reply'
+      token_type:
+        type: string
+    type: object
+  handlers.RefreshReply:
+    properties:
+      message:
+        type: string
+      reply:
+        $ref: '#/definitions/rout.Reply'
+    type: object
+  handlers.RegisterReply:
+    properties:
+      email:
+        type: string
+      error:
+        description: error message if the request was not successful
+        type: string
+      message:
+        type: string
       success:
+        description: indicates if the request was successful
         type: boolean
       token:
         type: string
-      token_type:
-        type: string
       unverified:
+        description: indicates if the user has not verified their email address
         type: boolean
       user_id:
         type: string
     type: object
-host: datum.net
+  handlers.VerifyReply:
+    properties:
+      access_token:
+        type: string
+      email:
+        type: string
+      expires_in:
+        type: integer
+      message:
+        type: string
+      refresh_token:
+        type: string
+      reply:
+        $ref: '#/definitions/rout.Reply'
+      token:
+        type: string
+      token_type:
+        type: string
+      user_id:
+        type: string
+    type: object
+  rout.Reply:
+    description: Fields used in construction of API responses
+    properties:
+      error:
+        description: error message if the request was not successful
+        type: string
+      success:
+        description: indicates if the request was successful
+        type: boolean
+      unverified:
+        description: indicates if the user has not verified their email address
+        type: boolean
+    type: object
+  route.ErrorResponse:
+    properties:
+      code:
+        description: the HTTP status code
+        type: integer
+      reply:
+        allOf:
+        - $ref: '#/definitions/rout.Reply'
+        description: an object containing whether the request was successful or not,
+          and if not the error message
+    type: object
 info:
-  contact:
-    email: support@datum.net
-    name: API Support
-    url: http://datum.net/support
-  description: API Specifications for Datum Services
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://datum.net/terms/
-  title: Datum API
-  version: "1.0"
+  contact: {}
 paths:
+  /forgot-password:
+    get:
+      consumes:
+      - application/json
+      description: Allows the user to request a password reset email
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ForgotPasswordReply'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+      summary: Forgot Password
+      tags:
+      - Forgot Password
+  /invite:
+    post:
+      consumes:
+      - application/json
+      description: Registers the invite handler used by the UI to accept an invitation
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.InviteReply'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+      summary: Register Invite Handler
+      tags:
+      - Invite
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the password submitted for the user is correct by looking
+        up the user by email and using the argon2 derived key verification process
+        to confirm the password matches
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.LoginReply'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+      summary: Login
+      tags:
+      - Login
   /metrics:
     get:
       description: Handles metrics request
@@ -91,26 +207,77 @@ paths:
       - application/json
       responses:
         "200":
-          description: Refresh reply object
+          description: OK
           schema:
             $ref: '#/definitions/handlers.RefreshReply'
         "400":
-          description: Status error object
+          description: Bad Request
           schema:
-            $ref: '#/definitions/handlers.StatusError'
+            $ref: '#/definitions/route.ErrorResponse'
         "500":
-          description: Status error object
+          description: Internal Server Error
           schema:
-            $ref: '#/definitions/handlers.StatusError'
+            $ref: '#/definitions/route.ErrorResponse'
       summary: Refresh authentication tokens
       tags:
       - Refresh
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the database with the specified password,
+        allowing the user to login to Datum
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.RegisterReply'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - Register
+  /resend:
+    post:
+      consumes:
+      - application/json
+      description: Resends the verification email or invite email
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+      summary: Resend email
+      tags:
+      - Resend
   /verify:
     get:
       consumes:
       - application/json
       description: Verifies a user's email address by validating the token in the
-        request.
+        request
       produces:
       - application/json
       responses:
@@ -123,13 +290,13 @@ paths:
           schema:
             $ref: '#/definitions/handlers.VerifyReply'
         "400":
-          description: Status error object
+          description: Bad Request
           schema:
-            $ref: '#/definitions/handlers.StatusError'
+            $ref: '#/definitions/route.ErrorResponse'
         "500":
-          description: Status error object
+          description: Internal Server Error
           schema:
-            $ref: '#/definitions/handlers.StatusError'
+            $ref: '#/definitions/route.ErrorResponse'
       summary: Verify Email
       tags:
       - Verify

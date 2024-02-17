@@ -6,6 +6,7 @@ import (
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/rout"
 )
 
 // @Summary Forgot Password
@@ -13,11 +14,10 @@ import (
 // @Tags Forgot Password
 // @Accept json
 // @Produce json
-// @Success 200 {string} handlers.ForgotPasswordReply
-// @Failure 400 {object} handlers.StatusError "Status error object"
-// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Success 200 {object} handlers.ForgotPasswordReply
+// @Failure 400 {object} route.ErrorResponse.BadRequest
+// @Failure 500 {object} route.ErrorResponse.InternalServerError
 // @Router /forgot-password [get]
-
 func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
@@ -47,4 +47,44 @@ func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err 
 	}
 
 	return
+}
+
+type ErrorResponse struct {
+	rout.StatusError
+}
+
+func (e *ErrorResponse) BadRequest() *ErrorResponse {
+	out := &ErrorResponse{
+		rout.StatusError{
+			StatusCode: http.StatusBadRequest,
+			Reply:      rout.Reply{Success: false, Error: "bad request"},
+		}}
+	return out
+}
+
+func (e *ErrorResponse) InternalServerError() *ErrorResponse {
+	out := &ErrorResponse{
+		rout.StatusError{
+			StatusCode: http.StatusInternalServerError,
+			Reply:      rout.Reply{Success: false, Error: "internal server error"},
+		}}
+	return out
+}
+
+func (e *ErrorResponse) Conflict() *ErrorResponse {
+	out := &ErrorResponse{
+		rout.StatusError{
+			StatusCode: http.StatusConflict,
+			Reply:      rout.Reply{Success: false, Error: "conflict"},
+		}}
+	return out
+}
+
+func (e *ErrorResponse) Unauthorized() *ErrorResponse {
+	out := &ErrorResponse{
+		rout.StatusError{
+			StatusCode: http.StatusUnauthorized,
+			Reply:      rout.Reply{Success: false, Error: "unauthorized"},
+		}}
+	return out
 }

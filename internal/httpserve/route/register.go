@@ -18,16 +18,15 @@ import (
 // in the register request and the user is assigned the Owner role.
 
 // @Summary Register a new user
-// @Description Creates a new user in the database with the specified password, allowing the user to login to Datum.
+// @Description Creates a new user in the database with the specified password, allowing the user to login to Datum
 // @Tags Register
 // @Accept json
 // @Produce json
-// @Param registerRequest body RegisterRequest true "Register request object"
-// @Success 201 {string} string "User registered successfully"
-// @Failure 400 {object} handlers.StatusError "Status error object"
-// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Success 201 {object} handlers.RegisterReply
+// @Failure 400 {object} route.ErrorResponse.BadRequest
+// @Failure 409 {object} route.ErrorResponse.Conflict
+// @Failure 500 {object} route.ErrorResponse.InternalServerError
 // @Router /register [post]
-
 func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

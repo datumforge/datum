@@ -18,10 +18,9 @@ import (
 // @Tags Password Reset
 // @Accept json
 // @Produce json
-// @Param password-reset body PasswordResetRequest true "Password reset request"
-// @Success 200 {string} handlers.ResetPasswordReply
-// @Failure 400 {object} handlers.StatusError "Status error object"
-// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Success 200 {object} handlers.ResetPasswordReply
+// @Failure 400 {object} route.ErrorResponse.BadRequest
+// @Failure 500 {object} route.ErrorResponse.InternalServerError
 // @Router /password-reset [post]
 
 func registerResetPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {

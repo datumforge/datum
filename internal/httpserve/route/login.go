@@ -21,16 +21,14 @@ import (
 // access token so long as the refresh token is valid.
 
 // @Summary Login
-// @Description Verifies the password submitted for the user is correct by looking up the user by email and using the argon2 derived key verification process to confirm the password matches.
+// @Description Verifies the password submitted for the user is correct by looking up the user by email and using the argon2 derived key verification process to confirm the password matches
 // @Tags Login
 // @Accept json
 // @Produce json
-// @Param loginRequest body LoginRequest true "Login request object"
-// @Success 200 {object} handlers.LoginResponse
-// @Failure 400 {object} handlers.StatusError "Status error object"
-// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Success 200 {object} handlers.LoginReply
+// @Failure 400 {object} route.ErrorResponse.BadRequest
+// @Failure 500 {object} route.ErrorResponse.InternalServerError
 // @Router /login [post]
-
 func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

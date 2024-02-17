@@ -23,8 +23,8 @@ type ForgotPasswordRequest struct {
 // ForgotPasswordReply contains fields for a forgot password response
 // swagger:response ForgotPasswordReply
 type ForgotPasswordReply struct {
-	rout.Reply
-	Message string `json:"message,omitempty"`
+	rout.Reply `json:"reply"`
+	Message    string `json:"message,omitempty"`
 }
 
 // ForgotPassword will send an forgot password email if the provided

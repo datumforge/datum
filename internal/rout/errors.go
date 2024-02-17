@@ -8,38 +8,94 @@ import (
 	"strings"
 
 	echo "github.com/datumforge/echox"
-
-	"github.com/datumforge/datum/internal/utils/responses"
 )
 
 var (
-	unsuccessful = Reply{Success: false}
-	notFound     = Reply{Success: false, Error: "resource not found"}
-	notAllowed   = Reply{Success: false, Error: "method not allowed"}
-	unverified   = Reply{Success: false, Unverified: true, Error: responses.ErrVerifyEmail}
-)
+	ErrInvalidCredentials        = errors.New("datum credentials are missing or invalid")
+	ErrExpiredCredentials        = errors.New("datum credentials have expired")
+	ErrPasswordMismatch          = errors.New("passwords do not match")
+	ErrPasswordTooWeak           = errors.New("password is too weak: use a combination of upper and lower case letters, numbers, and special characters")
+	ErrMissingID                 = errors.New("missing required id")
+	ErrMissingField              = errors.New("missing required field")
+	ErrInvalidField              = errors.New("invalid or unparsable field")
+	ErrRestrictedField           = errors.New("field restricted for request")
+	ErrConflictingFields         = errors.New("only one field can be set")
+	ErrModelIDMismatch           = errors.New("resource id does not match id of endpoint")
+	ErrUserExists                = errors.New("user or organization already exists")
+	ErrInvalidUserClaims         = errors.New("user claims invalid or unavailable")
+	ErrUnparsable                = errors.New("could not parse request")
+	ErrUnknownUserRole           = errors.New("unknown user role")
+	ErrTryLoginAgain             = response("Unable to login with those details - please try again!")
+	ErrTryRegisterAgain          = response("Unable to register with those details - please try again!")
+	ErrTryOrganizationAgain      = response("Unable to create or access that organization - please try again!")
+	ErrTryProfileAgain           = response("Unable to create or access user profile - please try again!")
+	ErrTryResendAgain            = response("Unable to resend email - please try again!")
+	ErrMemberNotFound            = response("Team member with the specified ID was not found.")
+	ErrMissingOrganizationName   = response("Organization name is required.")
+	ErrMissingOrganizationDomain = response("Organization domain is required.")
+	ErrOrganizationNotFound      = response("Organization with the specified ID was not found.")
+	ErrLogBackIn                 = response("Logged out of your account - please log back in!")
+	ErrVerifyEmail               = response("Please verify your email address and try again!")
+	ErrInvalidEmail              = response("Please enter a valid email address.")
+	ErrVerificationFailed        = response("Email verification failed. Please contact support@datum.net for assistance.")
+	ErrSendPasswordResetFailed   = response("Unable to send password reset email. Please contact support@datum.net for assistance.")
+	ErrPasswordResetFailed       = response("Unable to reset your password. Please contact support@datum.net for assistance.")
+	ErrRequestNewInvite          = response("Invalid invitation link - please request a new one!")
+	ErrSomethingWentWrong        = response("Oops - something went wrong!")
+	ErrBadResendRequest          = response("Unable to resend email - please update request and try again.")
+	ErrRequestNewReset           = response("Unable to reset your password - please request a new password reset.")
 
-var (
+	AllResponses = map[string]struct{}{}
+
+	unsuccessful     = Reply{Success: false}
+	notFound         = Reply{Success: false, Error: "resource not found"}
+	notAllowed       = Reply{Success: false, Error: "method not allowed"}
+	unverified       = Reply{Success: false, Unverified: true, Error: ErrVerifyEmail}
 	httpunsuccessful = echo.HTTPError{}
-	unauthorized     = echo.HTTPError{Code: http.StatusUnauthorized, Message: responses.ErrTryLoginAgain}
+	unauthorized     = echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrTryLoginAgain}
 )
 
-var (
-	ErrInvalidCredentials = errors.New("datum credentials are missing or invalid")
-	ErrExpiredCredentials = errors.New("datum credentials have expired")
-	ErrPasswordMismatch   = errors.New("passwords do not match")
-	ErrPasswordTooWeak    = errors.New("password is too weak: use a combination of upper and lower case letters, numbers, and special characters")
-	ErrMissingID          = errors.New("missing required id")
-	ErrMissingField       = errors.New("missing required field")
-	ErrInvalidField       = errors.New("invalid or unparsable field")
-	ErrRestrictedField    = errors.New("field restricted for request")
-	ErrConflictingFields  = errors.New("only one field can be set")
-	ErrModelIDMismatch    = errors.New("resource id does not match id of endpoint")
-	ErrUserExists         = errors.New("user or organization already exists")
-	ErrInvalidUserClaims  = errors.New("user claims invalid or unavailable")
-	ErrUnparsable         = errors.New("could not parse request")
-	ErrUnknownUserRole    = errors.New("unknown user role")
-)
+// response creates a standard error message to ensure uniqueness and testability for external packages
+func response(msg string) string {
+	if _, ok := AllResponses[msg]; ok {
+		panic("duplicate error response defined: " + msg)
+	}
+
+	AllResponses[msg] = struct{}{}
+
+	return msg
+}
+
+// FieldError provides a general mechanism for specifying errors with specific API
+// object fields such as missing required field or invalid field and giving some
+// feedback about which fields are the problem
+type FieldError struct {
+	Field string `json:"field"`
+	Err   error  `json:"error"`
+}
+
+// StatusError decodes an error response from datum
+// @Description Status code and response messages when surfacing API errors
+// swagger:response StatusError
+type StatusError struct {
+	StatusCode int   `json:"code"`  // the HTTP status code
+	Reply      Reply `json:"reply"` // an object containing whether the request was successful or not, and if not the error message
+}
+
+// Reply contains standard fields that are used for generic API responses and errors
+// @Description Fields used in construction of API responses
+// swagger:response Reply
+type Reply struct {
+	Success    bool   `json:"success"`              // indicates if the request was successful
+	Error      string `json:"error,omitempty"`      // error message if the request was not successful
+	Unverified bool   `json:"unverified,omitempty"` // indicates if the user has not verified their email address
+}
+
+// MissingRequiredFieldError is returned when a required field was not provided in a request
+type MissingRequiredFieldError struct {
+	// RequiredField that is missing
+	RequiredField string `json:"required_field"`
+}
 
 // ErrorResponse constructs a new response for an error or simply returns unsuccessful
 func ErrorResponse(err interface{}) Reply {
@@ -60,12 +116,27 @@ func ErrorResponse(err interface{}) Reply {
 		if e != nil {
 			panic(err)
 		}
+
 		rep.Error = string(data)
 	default:
 		rep.Error = "unhandled error response"
 	}
 
 	return rep
+}
+
+// ErrorStatus returns the HTTP status code from an error or 500 if the error is not a
+// StatusError.
+func ErrorStatus(err error) int {
+	if err == nil {
+		return http.StatusOK
+	}
+
+	if e, ok := err.(*StatusError); !ok || e.StatusCode < 100 || e.StatusCode >= 600 {
+		return http.StatusInternalServerError
+	} else {
+		return e.StatusCode
+	}
 }
 
 // HTTPErrorResponse constructs a new response for an error or simply returns unsuccessful
@@ -116,14 +187,6 @@ func Unauthorized(c echo.Context) error {
 	return c.JSON(http.StatusUnauthorized, unauthorized) //nolint:errcheck
 }
 
-// FieldError provides a general mechanism for specifying errors with specific API
-// object fields such as missing required field or invalid field and giving some
-// feedback about which fields are the problem
-type FieldError struct {
-	Field string `json:"field"`
-	Err   error  `json:"error"`
-}
-
 func (e *FieldError) Error() string {
 	return fmt.Sprintf("%s: %s", e.Err, e.Field)
 }
@@ -152,41 +215,8 @@ func ConflictingFields(fields ...string) error {
 	return &FieldError{Field: strings.Join(fields, ", "), Err: ErrConflictingFields}
 }
 
-// StatusError decodes an error response from datum.
-type StatusError struct {
-	StatusCode int
-	Reply      Reply
-}
-
-// Reply contains standard fields that are used for generic API responses and errors.
-type Reply struct {
-	Success    bool   `json:"success"`
-	Error      string `json:"error,omitempty"`
-	Unverified bool   `json:"unverified,omitempty"`
-}
-
 func (e *StatusError) Error() string {
 	return fmt.Sprintf("[%d] %s", e.StatusCode, e.Reply.Error)
-}
-
-// ErrorStatus returns the HTTP status code from an error or 500 if the error is not a
-// StatusError.
-func ErrorStatus(err error) int {
-	if err == nil {
-		return http.StatusOK
-	}
-
-	if e, ok := err.(*StatusError); !ok || e.StatusCode < 100 || e.StatusCode >= 600 {
-		return http.StatusInternalServerError
-	} else {
-		return e.StatusCode
-	}
-}
-
-// MissingRequiredFieldError is returned when a required field was not provided in a request
-type MissingRequiredFieldError struct {
-	// RequiredField that is missing
-	RequiredField string
 }
 
 // Error returns the InvalidEmailConfigError in string format

@@ -24,7 +24,7 @@ type VerifyRequest struct {
 // VerifyReply holds the fields that are sent on a response to the `/verify` endpoint
 // swagger:response VerifyReply
 type VerifyReply struct {
-	rout.Reply
+	rout.Reply   `json:"reply"`
 	ID           string `json:"user_id"`
 	Email        string `json:"email"`
 	Token        string `json:"token"`

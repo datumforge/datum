@@ -20,12 +20,10 @@ import (
 // @Tags Resend
 // @Accept json
 // @Produce json
-// @Param resend-email body ResendEmailRequest true "Resend email request"
 // @Success 204 {string} string "No Content"
-// @Failure 400 {object} handlers.StatusError "Status error object"
-// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Failure 400 {object} route.ErrorResponse.BadRequest
+// @Failure 500 {object} route.ErrorResponse.InternalServerError
 // @Router /resend [post]
-
 func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

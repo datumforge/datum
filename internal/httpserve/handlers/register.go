@@ -39,6 +39,7 @@ type RegisterReply struct {
 // RegisterHandler handles the registration of a new datum user, creating the user, personal organization
 // and sending an email verification to the email address in the request
 // the user will not be able to authenticate until the email is verified
+// [MermaidChart: 5a357443-f959-4f16-a07f-ec504f67f0eb]
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	var in *RegisterRequest
 

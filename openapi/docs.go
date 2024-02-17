@@ -4,26 +4,136 @@ package openapi
 import "github.com/swaggo/swag"
 
 const docTemplate = `{
-    "schemes": {{ marshal .Schemes }},
-    "swagger": "2.0",
+    "openapi": "3.1.0",
     "info": {
-        "description": "{{escape .Description}}",
-        "title": "{{.Title}}",
-        "termsOfService": "http://datum.net/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://datum.net/support",
-            "email": "support@datum.net"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "{{.Version}}"
+      "title": "Datum OpenAPI 3.1.0 Specifications",
+      "description": "Documentation for Datum's API services",
+      "termsOfService": "https://datum.net/terms",
+      "contact": {
+        "name": "Datum Support",
+        "url": "https://datum.net/support",
+        "email": "support@datum.net"
+      },
+      "license": {
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+      },
+      "version": "1.0.1"
     },
-    "host": "{{.Host}}",
-    "basePath": "{{.BasePath}}",
+    "servers": [
+      {
+        "url": "http://localhost:17608/v1"
+      },
+      {
+        "url": "https://api.datum.net/v1"
+      }
+    ],
     "paths": {
+        "/forgot-password": {
+            "get": {
+                "description": "Allows the user to request a password reset email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Forgot Password"
+                ],
+                "summary": "Forgot Password",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ForgotPasswordReply"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/invite": {
+            "post": {
+                "description": "Registers the invite handler used by the UI to accept an invitation",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invite"
+                ],
+                "summary": "Register Invite Handler",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.InviteReply"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Verifies the password submitted for the user is correct by looking up the user by email and using the argon2 derived key verification process to confirm the password matches",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Login",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.LoginReply"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/metrics": {
             "get": {
                 "description": "Handles metrics request",
@@ -61,21 +171,97 @@ const docTemplate = `{
                 "summary": "Refresh authentication tokens",
                 "responses": {
                     "200": {
-                        "description": "Refresh reply object",
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/handlers.RefreshReply"
                         }
                     },
                     "400": {
-                        "description": "Status error object",
+                        "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/handlers.StatusError"
+                            "$ref": "#/definitions/route.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Status error object",
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/handlers.StatusError"
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Creates a new user in the database with the specified password, allowing the user to login to Datum",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Register"
+                ],
+                "summary": "Register a new user",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.RegisterReply"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/resend": {
+            "post": {
+                "description": "Resends the verification email or invite email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resend"
+                ],
+                "summary": "Resend email",
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/route.ErrorResponse"
                         }
                     }
                 }
@@ -83,7 +269,7 @@ const docTemplate = `{
         },
         "/verify": {
             "get": {
-                "description": "Verifies a user's email address by validating the token in the request.",
+                "description": "Verifies a user's email address by validating the token in the request",
                 "consumes": [
                     "application/json"
                 ],
@@ -108,15 +294,15 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Status error object",
+                        "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/handlers.StatusError"
+                            "$ref": "#/definitions/route.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Status error object",
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/handlers.StatusError"
+                            "$ref": "#/definitions/route.ErrorResponse"
                         }
                     }
                 }
@@ -124,45 +310,100 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handlers.ForgotPasswordReply": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "reply": {
+                    "$ref": "#/definitions/rout.Reply"
+                }
+            }
+        },
+        "handlers.InviteReply": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "joined_org_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "reply": {
+                    "$ref": "#/definitions/rout.Reply"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.LoginReply": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "reply": {
+                    "$ref": "#/definitions/rout.Reply"
+                },
+                "token_type": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.RefreshReply": {
             "type": "object",
             "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "reply": {
+                    "$ref": "#/definitions/rout.Reply"
+                }
+            }
+        },
+        "handlers.RegisterReply": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
                 "error": {
+                    "description": "error message if the request was not successful",
                     "type": "string"
                 },
                 "message": {
                     "type": "string"
                 },
                 "success": {
+                    "description": "indicates if the request was successful",
                     "type": "boolean"
                 },
-                "unverified": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "handlers.Reply": {
-            "type": "object",
-            "properties": {
-                "error": {
+                "token": {
                     "type": "string"
                 },
-                "success": {
-                    "type": "boolean"
-                },
                 "unverified": {
+                    "description": "indicates if the user has not verified their email address",
                     "type": "boolean"
-                }
-            }
-        },
-        "handlers.StatusError": {
-            "type": "object",
-            "properties": {
-                "reply": {
-                    "$ref": "#/definitions/handlers.Reply"
                 },
-                "statusCode": {
-                    "type": "integer"
+                "user_id": {
+                    "type": "string"
                 }
             }
         },
@@ -175,9 +416,6 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
-                "error": {
-                    "type": "string"
-                },
                 "expires_in": {
                     "type": "integer"
                 },
@@ -187,8 +425,8 @@ const docTemplate = `{
                 "refresh_token": {
                     "type": "string"
                 },
-                "success": {
-                    "type": "boolean"
+                "reply": {
+                    "$ref": "#/definitions/rout.Reply"
                 },
                 "token": {
                     "type": "string"
@@ -196,11 +434,43 @@ const docTemplate = `{
                 "token_type": {
                     "type": "string"
                 },
-                "unverified": {
-                    "type": "boolean"
-                },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "rout.Reply": {
+            "description": "Fields used in construction of API responses",
+            "type": "object",
+            "properties": {
+                "error": {
+                    "description": "error message if the request was not successful",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "indicates if the request was successful",
+                    "type": "boolean"
+                },
+                "unverified": {
+                    "description": "indicates if the user has not verified their email address",
+                    "type": "boolean"
+                }
+            }
+        },
+        "route.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "the HTTP status code",
+                    "type": "integer"
+                },
+                "reply": {
+                    "description": "an object containing whether the request was successful or not, and if not the error message",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/rout.Reply"
+                        }
+                    ]
                 }
             }
         }
@@ -210,12 +480,6 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "datum.net",
-	BasePath:         "/v1",
-	Schemes:          []string{},
-	Title:            "Datum API",
-	Description:      "API Specifications for Datum Services",
-	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
 	RightDelim:       "}}",

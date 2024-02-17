@@ -14,10 +14,9 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {object} handlers.InviteReply
-// @Failure 400 {object} handlers.StatusError "Status error object"
-// @Failure 500 {object} handlers.StatusError "Status error object"
+// @Failure 400 {object} route.ErrorResponse.BadRequest
+// @Failure 500 {object} route.ErrorResponse.InternalServerError
 // @Router /invite [post]
-
 func registerInviteHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	// require authentication to accept an invitation
 	authMW := mw

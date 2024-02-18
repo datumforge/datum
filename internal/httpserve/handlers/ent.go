@@ -177,6 +177,21 @@ func (h *Handler) getUserByInviteToken(ctx context.Context, token string) (*ent.
 	return recipient, err
 }
 
+// countVerificationTokensUserByEmail counts number of existing email verification attempts before issuing a new one
+func (h *Handler) countVerificationTokensUserByEmail(ctx context.Context, email string) (int, error) {
+	attempts, err := transaction.FromContext(ctx).EmailVerificationToken.Query().WithOwner().Where(
+		emailverificationtoken.And(
+			emailverificationtoken.Email(email),
+		)).Count(ctx)
+	if err != nil {
+		h.Logger.Errorw("error counting verification reset tokens", "error", err)
+
+		return 0, err
+	}
+
+	return attempts, nil
+}
+
 // expireAllVerificationTokensUserByEmail expires all existing email verification tokens before issuing a new one
 func (h *Handler) expireAllVerificationTokensUserByEmail(ctx context.Context, email string) error {
 	prs, err := transaction.FromContext(ctx).EmailVerificationToken.Query().WithOwner().Where(

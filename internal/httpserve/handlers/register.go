@@ -18,6 +18,10 @@ import (
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
+const (
+	maxEmailAttempts = 5
+)
+
 // RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
 type RegisterRequest struct {
 	FirstName string `json:"first_name"`
@@ -106,12 +110,26 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 }
 
 func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *User) (*generated.EmailVerificationToken, error) {
+	// expire all existing tokens
 	if err := h.expireAllVerificationTokensUserByEmail(ctx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
 		return nil, err
 	}
 
+	// check if the user has attempted to verify their email too many times
+	attempts, err := h.countVerificationTokensUserByEmail(ctx, user.Email)
+	if err != nil {
+		h.Logger.Errorw("error getting existing tokens", "error", err)
+
+		return nil, err
+	}
+
+	if attempts >= maxEmailAttempts {
+		return nil, ErrMaxAttempts
+	}
+
+	// create a new token and store it in the database
 	if err := user.CreateVerificationToken(); err != nil {
 		h.Logger.Errorw("unable to create verification token", "error", err)
 

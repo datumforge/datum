@@ -9,15 +9,15 @@ import (
 	"github.com/datumforge/datum/internal/rout"
 )
 
-// @Summary Forgot Password
-// @Description Allows the user to request a password reset email
-// @Tags Forgot Password
-// @Accept json
-// @Produce json
-// @Success 200 {object} handlers.ForgotPasswordReply
-// @Failure 400 {object} route.ErrorResponse.BadRequest
-// @Failure 500 {object} route.ErrorResponse.InternalServerError
-// @Router /forgot-password [get]
+//	@Summary		Forgot Password
+//	@Description	Allows the user to request a password reset email
+//	@Tags			Forgot Password
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	handlers.ForgotPasswordReply
+//	@Failure		400	{object}	route.ErrorResponse.BadRequest
+//	@Failure		500	{object}	route.ErrorResponse.InternalServerError
+//	@Router			/forgot-password [get]
 func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

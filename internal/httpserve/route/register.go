@@ -17,16 +17,16 @@ import (
 // A "personal" organization is created for the user registering based on the organization data
 // in the register request and the user is assigned the Owner role.
 
-// @Summary Register a new user
-// @Description Creates a new user in the database with the specified password, allowing the user to login to Datum
-// @Tags Register
-// @Accept json
-// @Produce json
-// @Success 201 {object} handlers.RegisterReply
-// @Failure 400 {object} route.ErrorResponse.BadRequest
-// @Failure 409 {object} route.ErrorResponse.Conflict
-// @Failure 500 {object} route.ErrorResponse.InternalServerError
-// @Router /register [post]
+//	@Summary		Register a new user
+//	@Description	Creates a new user in the database with the specified password
+//	@Tags			Register
+//	@Accept			json
+//	@Produce		json
+//	@Success		201	{object}	handlers.RegisterReply
+//	@Failure		400	{object}	route.ErrorResponse.BadRequest
+//	@Failure		409	{object}	route.ErrorResponse.Conflict
+//	@Failure		500	{object}	route.ErrorResponse.InternalServerError
+//	@Router			/register [post]
 func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

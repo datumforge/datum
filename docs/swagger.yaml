@@ -63,6 +63,13 @@ definitions:
       user_id:
         type: string
     type: object
+  handlers.ResetPasswordReply:
+    properties:
+      message:
+        type: string
+      reply:
+        $ref: '#/definitions/rout.Reply'
+    type: object
   handlers.VerifyReply:
     properties:
       access_token:
@@ -109,7 +116,17 @@ definitions:
           and if not the error message
     type: object
 info:
-  contact: {}
+  contact:
+    email: support@datum.net
+    name: API Support
+    url: http://datum.net/support
+  description: API Key Authentication
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://datum.net/terms/
+  title: Datum API
+  version: "1.0"
 paths:
   /forgot-password:
     get:
@@ -157,13 +174,21 @@ paths:
       summary: Register Invite Handler
       tags:
       - Invite
+  /livez:
+    get:
+      description: Handles liveness check
+      operationId: liveness-handler
+      produces:
+      - application/json
+      responses: {}
+      summary: Liveness Handler
   /login:
     post:
       consumes:
       - application/json
-      description: Verifies the password submitted for the user is correct by looking
-        up the user by email and using the argon2 derived key verification process
-        to confirm the password matches
+      description: |-
+        Verifies the password submitted for the user is correct by looking up the user by email
+        and using the argon2 derived key verification process to confirm the password matches
       produces:
       - application/json
       responses:
@@ -190,6 +215,29 @@ paths:
       - application/json
       responses: {}
       summary: Metrics Handler
+  /password-reset:
+    post:
+      consumes:
+      - application/json
+      description: Allows the user to reset their password
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.ResetPasswordReply'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/route.ErrorResponse'
+      summary: Reset Password
+      tags:
+      - Password Reset
   /ready:
     get:
       description: Handles readiness check
@@ -225,8 +273,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Creates a new user in the database with the specified password,
-        allowing the user to login to Datum
+      description: Creates a new user in the database with the specified password
       produces:
       - application/json
       responses:

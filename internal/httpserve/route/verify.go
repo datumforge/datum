@@ -14,16 +14,16 @@ import (
 // token is valid then the user is logged in. If the user is already verified then a
 // 204 response is returned.
 
-// @Summary Verify Email
-// @Description Verifies a user's email address by validating the token in the request
-// @Tags Verify
-// @Accept json
-// @Produce json
-// @Success 200 {object} handlers.VerifyReply
-// @Success 201 {object} handlers.VerifyReply
-// @Failure 400 {object} route.ErrorResponse.BadRequest
-// @Failure 500 {object} route.ErrorResponse.InternalServerError
-// @Router /verify [get]
+//	@Summary		Verify Email
+//	@Description	Verifies a user's email address by validating the token in the request
+//	@Tags			Verify
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	handlers.VerifyReply
+//	@Success		201	{object}	handlers.VerifyReply
+//	@Failure		400	{object}	route.ErrorResponse.BadRequest
+//	@Failure		500	{object}	route.ErrorResponse.InternalServerError
+//	@Router			/verify [get]
 func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,

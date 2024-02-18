@@ -20,15 +20,16 @@ import (
 // token to provide a seamless authentication experience and the user can refresh their
 // access token so long as the refresh token is valid.
 
-// @Summary Login
-// @Description Verifies the password submitted for the user is correct by looking up the user by email and using the argon2 derived key verification process to confirm the password matches
-// @Tags Login
-// @Accept json
-// @Produce json
-// @Success 200 {object} handlers.LoginReply
-// @Failure 400 {object} route.ErrorResponse.BadRequest
-// @Failure 500 {object} route.ErrorResponse.InternalServerError
-// @Router /login [post]
+//	@Summary		Login
+//	@Description	Verifies the password submitted for the user is correct by looking up the user by email
+//	@Description	and using the argon2 derived key verification process to confirm the password matches
+//	@Tags			Login
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	handlers.LoginReply
+//	@Failure		400	{object}	route.ErrorResponse.BadRequest
+//	@Failure		500	{object}	route.ErrorResponse.InternalServerError
+//	@Router			/login [post]
 func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,

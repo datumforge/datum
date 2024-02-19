@@ -21,6 +21,7 @@ func TestDumper(t *testing.T) {
 		defer func() {
 			require.Equal(t, respDumper.GetResponse(), responseString)
 		}()
+
 		return c.String(http.StatusOK, responseString)
 	})
 

@@ -56,7 +56,7 @@ func (s *MiddlewareTestSuite) SetupTest() {
 }
 
 func (s *MiddlewareTestSuite) TestMiddlewareWithConfig() {
-	s.e.Use(MiddlewareWithConfig(SentryConfig{
+	s.e.Use(NewWithConfig(Config{
 		AreHeadersDump: true,
 		IsBodyDump:     true,
 	}))

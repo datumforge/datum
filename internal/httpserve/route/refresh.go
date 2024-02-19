@@ -4,10 +4,8 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-	"github.com/getsentry/sentry-go"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	sentryecho "github.com/datumforge/datum/internal/utils/sentry"
 )
 
 // registerRefreshHandler re-authenticates users and api keys using a refresh token rather than
@@ -22,13 +20,6 @@ func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) 
 		Method: http.MethodPost,
 		Path:   "/refresh",
 		Handler: func(c echo.Context) error {
-
-			if hub := sentryecho.GetHubFromContext(c); hub != nil {
-				hub.WithScope(func(scope *sentry.Scope) {
-					hub.CaptureMessage("refresh")
-				})
-			}
-
 			return h.RefreshHandler(c)
 		},
 	}.ForGroup(V1Version, mw))

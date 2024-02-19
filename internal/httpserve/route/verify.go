@@ -4,10 +4,8 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-	"github.com/getsentry/sentry-go"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	sentryecho "github.com/datumforge/datum/internal/utils/sentry"
 )
 
 // VerifyEmail verifies a user's email address by validating the token in the request.
@@ -20,11 +18,6 @@ func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Method: http.MethodGet,
 		Path:   "/verify",
 		Handler: func(c echo.Context) error {
-			if hub := sentryecho.GetHubFromContext(c); hub != nil {
-				hub.WithScope(func(scope *sentry.Scope) {
-					hub.CaptureMessage("verify handler")
-				})
-			}
 			return h.VerifyEmail(c)
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))

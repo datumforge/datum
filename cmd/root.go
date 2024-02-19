@@ -82,6 +82,7 @@ func viperBindFlag(name string, flag *pflag.Flag) {
 	}
 }
 
+// newLogger creates a new zap logger with the appropriate configuration based on the viper settings for pretty and debug
 func newLogger() *zap.SugaredLogger {
 	cfg := zap.NewProductionConfig()
 	if viper.GetBool("pretty") {
@@ -105,6 +106,7 @@ func newLogger() *zap.SugaredLogger {
 	return logger.Sugar()
 }
 
+// zapLevelToSentryLevel converts a zap log level to a sentry log level
 func zapLevelToSentryLevel(level zapcore.Level) sentry.Level {
 	switch level {
 	case zapcore.DebugLevel:
@@ -126,30 +128,36 @@ func zapLevelToSentryLevel(level zapcore.Level) sentry.Level {
 	}
 }
 
+// SentryZapCore is a zap core that sends logs to sentry
 type SentryZapCore struct {
 	enabledLevel zapcore.Level
 	fields       map[string]interface{}
 }
 
+// Enabled returns true if the log level is enabled
 func (s *SentryZapCore) Enabled(level zapcore.Level) bool {
 	return s.enabledLevel <= level
 }
 
+// With returns a new core with the fields added
 func (s *SentryZapCore) With(fields []zapcore.Field) zapcore.Core {
 	copied := make(map[string]interface{}, len(s.fields))
 	for k, v := range s.fields {
 		copied[k] = v
 	}
+
 	encoder := zapcore.NewMapObjectEncoder()
 	for _, f := range fields {
 		f.AddTo(encoder)
 	}
+
 	for k, v := range encoder.Fields {
 		copied[k] = v
 	}
 	return &SentryZapCore{fields: copied, enabledLevel: s.enabledLevel}
 }
 
+// Check returns a checked entry if the log level is enabled for the core
 func (s *SentryZapCore) Check(entry zapcore.Entry, checkedEntry *zapcore.CheckedEntry) *zapcore.CheckedEntry {
 	if s.Enabled(entry.Level) {
 		checkedEntry.AddCore(entry, s)
@@ -157,6 +165,7 @@ func (s *SentryZapCore) Check(entry zapcore.Entry, checkedEntry *zapcore.Checked
 	return checkedEntry
 }
 
+// Write sends the log entry to sentry
 func (s *SentryZapCore) Write(entry zapcore.Entry, fields []zapcore.Field) error {
 	event := sentry.NewEvent()
 	event.Message = entry.Message
@@ -164,10 +173,13 @@ func (s *SentryZapCore) Write(entry zapcore.Entry, fields []zapcore.Field) error
 	event.Level = zapLevelToSentryLevel(entry.Level)
 	event.Platform = "Golang"
 	exceptions := make([]sentry.Exception, 0)
+
 	for _, f := range fields {
 		if f.Type == zapcore.ErrorType {
 			err := f.Interface.(error)
+
 			trace := sentry.ExtractStacktrace(err)
+
 			if trace == nil {
 				trace = sentry.NewStacktrace()
 			}
@@ -179,17 +191,21 @@ func (s *SentryZapCore) Write(entry zapcore.Entry, fields []zapcore.Field) error
 			})
 		}
 	}
+
 	event.Exception = exceptions
 
 	sentry.CaptureEvent(event)
 
 	err := s.Sync()
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
+// Sync flushes the sentry event
 func (s *SentryZapCore) Sync() error {
 	sentry.Flush(2 * time.Second) // nolint:gomnd
 	return nil

@@ -35,6 +35,7 @@ func (t *TransportMock) Flush(_ time.Duration) bool {
 func (t *TransportMock) Events() []*sentry.Event {
 	t.lock.Lock()
 	defer t.lock.Unlock()
+
 	return t.events
 }
 
@@ -46,7 +47,9 @@ type MiddlewareTestSuite struct {
 
 func (s *MiddlewareTestSuite) SetupTest() {
 	var err error
+
 	s.transport = &TransportMock{}
+
 	err = sentry.Init(sentry.ClientOptions{
 		EnableTracing: true,
 		Transport:     s.transport,
@@ -68,20 +71,26 @@ func (s *MiddlewareTestSuite) TestMiddlewareWithConfig() {
 			span = sentry.TransactionFromContext(c.Request().Context())
 			s.NotNil(span)
 			s.NotEmpty(span.SpanID)
+
 			s.NotEmpty(span.Tags["client_ip"])
+
 			s.Equal(echo.MIMEApplicationJSON, span.Tags["req.header.Content-Type"])
 			s.Equal("test", span.Tags["req.header.Testheader"])
+
 			return c.String(http.StatusOK, "test")
 		})
 
 		req := httptest.NewRequest(http.MethodGet, "/", nil)
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 		req.Header.Set("testHeader", "test")
+
 		rec := httptest.NewRecorder()
 		s.e.ServeHTTP(rec, req)
 		s.Equal(http.StatusOK, rec.Code)
 		body, err := io.ReadAll(rec.Body)
+
 		s.NoError(err)
+
 		s.Equal("test", string(body))
 		s.Equal(sentry.HTTPtoSpanStatus(http.StatusOK), span.Status)
 		s.Equal(strconv.Itoa(http.StatusOK), span.Tags["resp.status"])
@@ -94,19 +103,24 @@ func (s *MiddlewareTestSuite) TestMiddlewareWithConfig() {
 		s.e.POST("/", func(c echo.Context) error {
 			span = sentry.TransactionFromContext(c.Request().Context())
 			s.NotNil(span)
+
 			s.NotEmpty(span.SpanID)
+
 			s.NotEmpty(span.Tags["client_ip"])
 			s.Equal(echo.MIMETextPlain, span.Tags["req.header.Content-Type"])
 			s.Equal("test", span.Tags["req.header.Testheader"])
 			s.Equal("testBody", span.Tags["req.body"])
+
 			return c.String(http.StatusOK, "test")
 		})
 
 		req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader("testBody"))
 		req.Header.Set(echo.HeaderContentType, echo.MIMETextPlain)
 		req.Header.Set("testHeader", "test")
+
 		rec := httptest.NewRecorder()
 		s.e.ServeHTTP(rec, req)
+
 		s.Equal(http.StatusOK, rec.Code)
 		body, err := io.ReadAll(rec.Body)
 		s.NoError(err)

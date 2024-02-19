@@ -85,6 +85,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 	} else {
 		var session string
 		tokens, session, err = providerAuth(ctx, dc, provider)
+
 		if err != nil {
 			return nil, err
 		}

@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	sentryecho "github.com/datumforge/datum/internal/utils/sentry"
 )
 
 // ForgotPassword is a service for users to request a password reset email. The email
@@ -17,6 +19,11 @@ func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err 
 		Method: http.MethodPost,
 		Path:   "/forgot-password",
 		Handler: func(c echo.Context) error {
+			if hub := sentryecho.GetHubFromContext(c); hub != nil {
+				hub.WithScope(func(scope *sentry.Scope) {
+					hub.CaptureMessage("forgot-ass handler")
+				})
+			}
 			return h.ForgotPassword(c)
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))

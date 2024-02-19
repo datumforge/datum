@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	sentryecho "github.com/datumforge/datum/internal/utils/sentry"
 )
 
 // registerOAuthReigsterandler registers the oauth register handler used by the UI to register
@@ -15,6 +17,11 @@ func registerOAuthReigsterandler(router *echo.Echo, h *handlers.Handler) (err er
 		Method: http.MethodPost,
 		Path:   "/oauth/register",
 		Handler: func(c echo.Context) error {
+			if hub := sentryecho.GetHubFromContext(c); hub != nil {
+				hub.WithScope(func(scope *sentry.Scope) {
+					hub.CaptureMessage("oauth handler")
+				})
+			}
 			return h.OauthRegister(c)
 		},
 	}.ForGroup(unversioned, mw))
@@ -31,6 +38,12 @@ func registerUserInfoHandler(router *echo.Echo, h *handlers.Handler) (err error)
 		Path:   "/oauth/userinfo",
 		Handler: func(c echo.Context) error {
 			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
+			if hub := sentryecho.GetHubFromContext(c); hub != nil {
+				hub.WithScope(func(scope *sentry.Scope) {
+					hub.CaptureMessage("userinfo handler")
+				})
+			}
 
 			return h.UserInfo(c)
 		},

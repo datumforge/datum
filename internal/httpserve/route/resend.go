@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	sentryecho "github.com/datumforge/datum/internal/utils/sentry"
 )
 
 // ResendEmail accepts an email address via a POST request and always returns a 204
@@ -19,6 +21,11 @@ func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err err
 		Method: http.MethodPost,
 		Path:   "/resend",
 		Handler: func(c echo.Context) error {
+			if hub := sentryecho.GetHubFromContext(c); hub != nil {
+				hub.WithScope(func(scope *sentry.Scope) {
+					hub.CaptureMessage("resend handler")
+				})
+			}
 			return h.ResendEmail(c)
 		},
 	}.ForGroup(V1Version, mw))

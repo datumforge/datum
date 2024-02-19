@@ -2,8 +2,11 @@ package server
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getsentry/sentry-go"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
@@ -42,6 +45,34 @@ func NewServer(c config.Server, l *zap.SugaredLogger) *Server {
 
 // StartEchoServer creates and starts the echo server with configured middleware and handlers
 func (s *Server) StartEchoServer(ctx context.Context) error {
+
+	_ = sentry.Init(sentry.ClientOptions{
+		Dsn: "https://ef8e1bfef167795d2a00426e83e19b9a@o4506757924454400.ingest.sentry.io/4506757936840704",
+		BeforeSend: func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+			if hint.Context != nil {
+				if req, ok := hint.Context.Value(sentry.RequestContextKey).(*http.Request); ok {
+					// You have access to the original Request
+					fmt.Println(req)
+				}
+			}
+			fmt.Println(event)
+			return event
+		},
+		Debug:         true,
+		EnableTracing: true,
+		TracesSampler: sentry.TracesSampler(func(ctx sentry.SamplingContext) float64 {
+			// if the request is for the health check, don't sample it
+			if ctx.Span.Name == "GET /health" {
+				return 0.0
+			}
+
+			return 1.0
+		}),
+		AttachStacktrace:   true,
+		TracesSampleRate:   1.0,
+		ProfilesSampleRate: 1.0,
+	})
+
 	srv := echo.New()
 
 	sc := echo.StartConfig{

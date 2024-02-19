@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	sentryecho "github.com/datumforge/datum/internal/utils/sentry"
 )
 
 // Login is oriented towards human users who use their email and password for
@@ -25,6 +27,12 @@ func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Method: http.MethodPost,
 		Path:   "/login",
 		Handler: func(c echo.Context) error {
+
+			if hub := sentryecho.GetHubFromContext(c); hub != nil {
+				hub.WithScope(func(scope *sentry.Scope) {
+					hub.CaptureMessage("login handler")
+				})
+			}
 			return h.LoginHandler(c)
 		},
 	}.ForGroup(V1Version, mw))

@@ -30,6 +30,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 	"github.com/datumforge/datum/internal/httpserve/middleware/redirect"
+	"github.com/datumforge/datum/internal/httpserve/middleware/sentry"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/providers/github"
@@ -317,6 +318,7 @@ func WithMiddleware() ServerOption {
 			middleware.LoggerWithConfig(middleware.LoggerConfig{
 				Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, host=${host}, referer=${referer}, user_agent=${user_agent}, route=${route}, path=${path}, auth=${header:Authorization}\n",
 			}),
+			sentry.MiddlewareWithConfig(sentry.DefaultSentryConfig),
 			echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
 			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent

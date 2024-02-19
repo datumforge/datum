@@ -3,7 +3,9 @@ package route
 import (
 	"net/http"
 
+	sentryecho "github.com/datumforge/datum/internal/utils/sentry"
 	echo "github.com/datumforge/echox"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
@@ -21,6 +23,13 @@ func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error)
 		Method: http.MethodPost,
 		Path:   "/register",
 		Handler: func(c echo.Context) error {
+
+			if hub := sentryecho.GetHubFromContext(c); hub != nil {
+				hub.WithScope(func(scope *sentry.Scope) {
+					hub.CaptureMessage("register handler")
+				})
+			}
+
 			return h.RegisterHandler(c)
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))

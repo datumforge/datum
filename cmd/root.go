@@ -155,6 +155,7 @@ func (s *SentryZapCore) With(fields []zapcore.Field) zapcore.Core {
 	for k, v := range encoder.Fields {
 		copied[k] = v
 	}
+
 	return &SentryZapCore{fields: copied, enabledLevel: s.enabledLevel}
 }
 
@@ -163,6 +164,7 @@ func (s *SentryZapCore) Check(entry zapcore.Entry, checkedEntry *zapcore.Checked
 	if s.Enabled(entry.Level) {
 		checkedEntry.AddCore(entry, s)
 	}
+
 	return checkedEntry
 }
 

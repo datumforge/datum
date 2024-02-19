@@ -58,6 +58,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithTracer(),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
+		serveropts.WithSentry(),
 		serveropts.WithMiddleware(),
 	)
 

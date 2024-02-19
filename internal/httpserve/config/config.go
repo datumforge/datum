@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/sentry"
 )
 
 var (
@@ -101,6 +102,8 @@ type (
 		Token tokens.Config `yaml:"token"`
 		// SessionConfig manages sessions for users
 		SessionConfig *sessions.SessionConfig
+		// Sentry contains the sentry configuration
+		Sentry sentry.Config `yaml:"sentry"`
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together

@@ -39,6 +39,7 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
+	sentryOps "github.com/datumforge/datum/internal/utils/sentry"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
@@ -440,5 +441,25 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware,
 			sessions.LoadAndSaveWithConfig(sessionConfig),
 		)
+	})
+}
+
+// WithSentry sets up the sentry middleware for error tracking
+func WithSentry() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		config := &sentryOps.Config{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_sentry", config); err != nil {
+			panic(err)
+		}
+
+		s.Config.Server.Sentry = *config
+
+		// add sentry middleware
+		s.Config.Server.DefaultMiddleware = append(s.Config.Server.DefaultMiddleware, sentry.New())
+
+		// add sentry middleware to graph routes
+		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware, sentry.New())
 	})
 }

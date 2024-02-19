@@ -103,6 +103,7 @@ func newLogger() *zap.SugaredLogger {
 	logger = logger.WithOptions(zap.WrapCore(func(core zapcore.Core) zapcore.Core {
 		return zapcore.NewTee(core, &SentryZapCore{enabledLevel: zapcore.DebugLevel})
 	}))
+
 	return logger.Sugar()
 }
 

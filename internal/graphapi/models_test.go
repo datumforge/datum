@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/brianvoe/gofakeit/v6"
+	"github.com/brianvoe/gofakeit/v7"
 	mock_fga "github.com/datumforge/fgax/mockery"
 
 	"github.com/datumforge/datum/internal/ent/enums"

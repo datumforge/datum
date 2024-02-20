@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/brianvoe/gofakeit/v6"
+	"github.com/brianvoe/gofakeit/v7"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/rShetty/asyncwait"
@@ -83,6 +83,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			sent := time.Now()
+
 			mock.ResetEmailMock()
 
 			resendJSON := handlers.ForgotPasswordRequest{

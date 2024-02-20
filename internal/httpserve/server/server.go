@@ -4,6 +4,7 @@ import (
 	"context"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getsentry/sentry-go"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
@@ -42,6 +43,10 @@ func NewServer(c config.Server, l *zap.SugaredLogger) *Server {
 
 // StartEchoServer creates and starts the echo server with configured middleware and handlers
 func (s *Server) StartEchoServer(ctx context.Context) error {
+	if err := sentry.Init(s.config.Sentry.ClientOptions()); err != nil {
+		return err
+	}
+
 	srv := echo.New()
 
 	sc := echo.StartConfig{

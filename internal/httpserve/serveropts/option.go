@@ -30,6 +30,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 	"github.com/datumforge/datum/internal/httpserve/middleware/redirect"
+	"github.com/datumforge/datum/internal/httpserve/middleware/sentry"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/providers/github"
@@ -38,6 +39,7 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
+	sentryOps "github.com/datumforge/datum/internal/utils/sentry"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
@@ -318,6 +320,7 @@ func WithMiddleware() ServerOption {
 			middleware.LoggerWithConfig(middleware.LoggerConfig{
 				Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, host=${host}, referer=${referer}, user_agent=${user_agent}, route=${route}, path=${path}, auth=${header:Authorization}\n",
 			}),
+			sentry.New(),
 			echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
 			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
@@ -439,5 +442,22 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware,
 			sessions.LoadAndSaveWithConfig(sessionConfig),
 		)
+	})
+}
+
+// WithSentry sets up the sentry middleware for error tracking
+func WithSentry() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		config := &sentryOps.Config{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_sentry", config); err != nil {
+			panic(err)
+		}
+
+		s.Config.Server.Sentry = *config
+
+		// add sentry middleware
+		s.Config.Server.DefaultMiddleware = append(s.Config.Server.DefaultMiddleware, sentry.New())
 	})
 }

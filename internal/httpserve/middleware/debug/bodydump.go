@@ -24,6 +24,7 @@ func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 						bodymap[secretFields[i]] = "********"
 					}
 				}
+
 				reqBody, _ = json.Marshal(bodymap)
 
 				var reqMethod string
@@ -76,11 +77,13 @@ func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 						bodymap[secretFields[i]] = "********"
 					}
 				}
+
 				resBody, _ = json.Marshal(bodymap)
 
 				var resStatus int
 
 				var statusColor, resetColor string
+
 				res := c.Response()
 				resStatus = res.Status
 

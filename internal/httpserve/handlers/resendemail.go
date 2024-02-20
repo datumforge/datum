@@ -84,11 +84,11 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		h.Logger.Errorw("error storing token", "error", err)
 
 		if errors.Is(err, ErrMaxAttempts) {
+      
 			return ctx.JSON(http.StatusTooManyRequests, rout.ErrorResponse(err))
 		}
 
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
-	}
 
 	return ctx.JSON(http.StatusOK, out)
 }

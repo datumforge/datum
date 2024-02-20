@@ -1,6 +1,7 @@
 package graphapi_test
 
 import (
+	"fmt"
 	"testing"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
@@ -10,9 +11,10 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
-func TestQuery_GroupMembers(t *testing.T) {
+func TestQueryGroupMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -22,35 +24,61 @@ func TestQuery_GroupMembers(t *testing.T) {
 
 	group := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
 
-	groupMember, err := group.Members(reqCtx)
+	// allow access to group
+	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	groupMember, err := group.Members(checkCtx)
 	require.NoError(t, err)
 	require.Len(t, groupMember, 1)
 
 	testCases := []struct {
-		name     string
-		queryID  string
-		expected *ent.GroupMembership
+		name        string
+		queryID     string
+		allowed     bool
+		expected    *ent.GroupMembership
+		errExpected bool
 	}{
 		{
 			name:     "happy path, get group member by group id",
 			queryID:  group.ID,
+			allowed:  true,
 			expected: groupMember[0],
+		},
+		{
+			name:        "get group member by group id, no access",
+			queryID:     group.ID,
+			allowed:     false,
+			expected:    nil,
+			errExpected: true,
 		},
 		{
 			name:     "invalid-id",
 			queryID:  "tacos-for-dinner",
+			allowed:  true,
 			expected: nil,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
 			groupID := tc.queryID
 			whereInput := datumclient.GroupMembershipWhereInput{
 				GroupID: &groupID,
 			}
 
+			mock_fga.CheckAny(t, client.fga, tc.allowed)
+
 			resp, err := client.datum.GetGroupMembersByGroupID(reqCtx, &whereInput)
+
+			if tc.errExpected {
+				require.Error(t, err)
+				assert.ErrorContains(t, err, "deny rule")
+
+				return
+			}
+
 			require.NoError(t, err)
 
 			if tc.expected == nil {
@@ -70,7 +98,7 @@ func TestQuery_GroupMembers(t *testing.T) {
 	(&GroupCleanup{client: client, GroupID: group.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_CreateGroupMembers(t *testing.T) {
+func TestQueryCreateGroupMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -80,7 +108,10 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 
 	group1 := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
 
-	groupMember, err := group1.Members(reqCtx)
+	// allow access to group
+	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	groupMember, err := group1.Members(checkCtx)
 	require.NoError(t, err)
 	require.Len(t, groupMember, 1)
 
@@ -92,6 +123,9 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 		groupID string
 		userID  string
 		role    enums.Role
+		allowed bool
+		check   bool
+		list    bool
 		errMsg  string
 	}{
 		{
@@ -99,18 +133,37 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 			groupID: group1.ID,
 			userID:  testUser1.ID,
 			role:    enums.RoleAdmin,
+			allowed: true,
+			check:   true,
+			list:    true,
 		},
 		{
 			name:    "happy path, add member",
 			groupID: group1.ID,
 			userID:  testUser2.ID,
 			role:    enums.RoleMember,
+			allowed: true,
+			check:   true,
+			list:    true,
+		},
+		{
+			name:    "add member, no access",
+			groupID: group1.ID,
+			userID:  testUser2.ID,
+			role:    enums.RoleMember,
+			allowed: false,
+			check:   true,
+			list:    false,
+			errMsg:  "you are not authorized to perform this action",
 		},
 		{
 			name:    "owner relation not valid for groups",
 			groupID: group1.ID,
 			userID:  testUser2.ID,
 			role:    enums.RoleOwner,
+			allowed: true,
+			check:   false,
+			list:    false,
 			errMsg:  "OWNER is not a valid GroupMembershipRole",
 		},
 		{
@@ -118,6 +171,9 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 			groupID: group1.ID,
 			userID:  testUser1.ID,
 			role:    enums.RoleMember,
+			allowed: true,
+			check:   true,
+			list:    true,
 			errMsg:  "constraint failed",
 		},
 		{
@@ -125,6 +181,9 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 			groupID: group1.ID,
 			userID:  "not-a-valid-user-id",
 			role:    enums.RoleMember,
+			allowed: true,
+			check:   true,
+			list:    true,
 			errMsg:  "constraint failed",
 		},
 		{
@@ -132,6 +191,9 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 			groupID: "not-a-valid-group-id",
 			userID:  testUser1.ID,
 			role:    enums.RoleMember,
+			allowed: true,
+			check:   true,
+			list:    true,
 			errMsg:  "constraint failed",
 		},
 		{
@@ -139,6 +201,9 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 			groupID: group1.ID,
 			userID:  testUser1.ID,
 			role:    enums.Invalid,
+			allowed: true,
+			check:   false,
+			list:    false,
 			errMsg:  "not a valid GroupMembershipRole",
 		},
 	}
@@ -149,6 +214,14 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 
 			if tc.errMsg == "" {
 				mock_fga.WriteAny(t, client.fga)
+			}
+
+			if tc.check {
+				mock_fga.CheckAny(t, client.fga, tc.allowed)
+			}
+
+			if tc.list {
+				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", group1.OwnerID)})
 			}
 
 			role := tc.role
@@ -182,7 +255,7 @@ func TestQuery_CreateGroupMembers(t *testing.T) {
 	(&UserCleanup{client: client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_UpdateGroupMembers(t *testing.T) {
+func TestQueryUpdateGroupMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -190,25 +263,40 @@ func TestQuery_UpdateGroupMembers(t *testing.T) {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&GroupMemberBuilder{client: client}).MustNew(reqCtx, t)
+	gm := (&GroupMemberBuilder{client: client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
-		name   string
-		role   enums.Role
-		errMsg string
+		name    string
+		role    enums.Role
+		allowed bool
+		check   bool
+		errMsg  string
 	}{
 		{
-			name: "happy path, update to admin from member",
-			role: enums.RoleAdmin,
+			name:    "happy path, update to admin from member",
+			role:    enums.RoleAdmin,
+			allowed: true,
+			check:   true,
 		},
 		{
-			name: "happy path, update to member from admin",
-			role: enums.RoleMember,
+			name:    "happy path, update to member from admin",
+			role:    enums.RoleMember,
+			allowed: true,
+			check:   true,
 		},
 		{
-			name:   "invalid role",
-			role:   enums.Invalid,
-			errMsg: "not a valid GroupMembershipRole",
+			name:    "invalid role",
+			role:    enums.Invalid,
+			errMsg:  "not a valid GroupMembershipRole",
+			allowed: true,
+			check:   false,
+		},
+		{
+			name:    "no access",
+			role:    enums.RoleMember,
+			errMsg:  "you are not authorized to perform this action",
+			allowed: false,
+			check:   true,
 		},
 	}
 
@@ -220,12 +308,16 @@ func TestQuery_UpdateGroupMembers(t *testing.T) {
 				mock_fga.WriteAny(t, client.fga)
 			}
 
+			if tc.check {
+				mock_fga.CheckAny(t, client.fga, tc.allowed)
+			}
+
 			role := tc.role
 			input := datumclient.UpdateGroupMembershipInput{
 				Role: &role,
 			}
 
-			resp, err := client.datum.UpdateUserRoleInGroup(reqCtx, om.ID, input)
+			resp, err := client.datum.UpdateUserRoleInGroup(reqCtx, gm.ID, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -242,10 +334,10 @@ func TestQuery_UpdateGroupMembers(t *testing.T) {
 	}
 
 	// delete created group
-	(&GroupMemberCleanup{client: client, ID: om.ID}).MustDelete(reqCtx, t)
+	(&GroupMemberCleanup{client: client, ID: gm.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_DeleteGroupMembers(t *testing.T) {
+func TestQueryDeleteGroupMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -256,6 +348,7 @@ func TestQuery_DeleteGroupMembers(t *testing.T) {
 	om := (&GroupMemberBuilder{client: client}).MustNew(reqCtx, t)
 
 	mock_fga.WriteAny(t, client.fga)
+	mock_fga.CheckAny(t, client.fga, true)
 
 	resp, err := client.datum.RemoveUserFromGroup(reqCtx, om.ID)
 

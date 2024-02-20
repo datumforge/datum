@@ -12,7 +12,23 @@ import (
 	"github.com/datumforge/fgax/entfga"
 )
 
+func (m *GroupMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *GroupMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *GroupMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
 func (m *GroupMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
 	// Get fields for tuple creation
 	userID, _ := m.UserID()
 	objectID, _ := m.GroupID()
@@ -33,6 +49,7 @@ func (m *GroupMembershipMutation) CreateTuplesFromCreate(ctx context.Context) er
 }
 
 func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
 	// check for soft delete operation and delete instead
 	if entx.CheckIsSoftDelete(ctx) {
 		return m.CreateTuplesFromDelete(ctx)
@@ -97,6 +114,7 @@ func (m *GroupMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) er
 }
 
 func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
 	// check for soft delete operation and skip so it happens on update
 	if entx.CheckIsSoftDelete(ctx) {
 		return nil
@@ -137,6 +155,7 @@ func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) er
 }
 
 func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
 	// Get fields for tuple creation
 	userID, _ := m.UserID()
 	objectID, _ := m.OrganizationID()
@@ -157,6 +176,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) erro
 }
 
 func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
 	// check for soft delete operation and delete instead
 	if entx.CheckIsSoftDelete(ctx) {
 		return m.CreateTuplesFromDelete(ctx)
@@ -221,6 +241,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) erro
 }
 
 func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
 	// check for soft delete operation and skip so it happens on update
 	if entx.CheckIsSoftDelete(ctx) {
 		return nil
@@ -256,6 +277,21 @@ func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) erro
 
 		m.Logger.Debugw("deleted relationship tuples")
 	}
+
+	return nil
+}
+
+func (m *OrganizationMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }

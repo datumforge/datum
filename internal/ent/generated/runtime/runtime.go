@@ -191,10 +191,24 @@ func init() {
 	// group.DefaultID holds the default value on creation for the id field.
 	group.DefaultID = groupDescID.Default.(func() string)
 	groupmembershipMixin := schema.GroupMembership{}.Mixin()
+	groupmembership.Policy = privacy.NewPolicies(schema.GroupMembership{})
+	groupmembership.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := groupmembership.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	groupmembershipMixinHooks0 := groupmembershipMixin[0].Hooks()
 	groupmembershipMixinHooks2 := groupmembershipMixin[2].Hooks()
-	groupmembership.Hooks[0] = groupmembershipMixinHooks0[0]
-	groupmembership.Hooks[1] = groupmembershipMixinHooks2[0]
+	groupmembershipHooks := schema.GroupMembership{}.Hooks()
+
+	groupmembership.Hooks[1] = groupmembershipMixinHooks0[0]
+
+	groupmembership.Hooks[2] = groupmembershipMixinHooks2[0]
+
+	groupmembership.Hooks[3] = groupmembershipHooks[0]
 	groupmembershipMixinInters2 := groupmembershipMixin[2].Interceptors()
 	groupmembership.Interceptors[0] = groupmembershipMixinInters2[0]
 	groupmembershipMixinFields0 := groupmembershipMixin[0].Fields()
@@ -429,12 +443,24 @@ func init() {
 	// ohauthtootoken.DefaultID holds the default value on creation for the id field.
 	ohauthtootoken.DefaultID = ohauthtootokenDescID.Default.(func() string)
 	orgmembershipMixin := schema.OrgMembership{}.Mixin()
+	orgmembership.Policy = privacy.NewPolicies(schema.OrgMembership{})
+	orgmembership.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orgmembership.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	orgmembershipMixinHooks0 := orgmembershipMixin[0].Hooks()
 	orgmembershipMixinHooks2 := orgmembershipMixin[2].Hooks()
 	orgmembershipHooks := schema.OrgMembership{}.Hooks()
-	orgmembership.Hooks[0] = orgmembershipMixinHooks0[0]
-	orgmembership.Hooks[1] = orgmembershipMixinHooks2[0]
-	orgmembership.Hooks[2] = orgmembershipHooks[0]
+
+	orgmembership.Hooks[1] = orgmembershipMixinHooks0[0]
+
+	orgmembership.Hooks[2] = orgmembershipMixinHooks2[0]
+
+	orgmembership.Hooks[3] = orgmembershipHooks[0]
 	orgmembershipMixinInters2 := orgmembershipMixin[2].Interceptors()
 	orgmembership.Interceptors[0] = orgmembershipMixinInters2[0]
 	orgmembershipMixinFields0 := orgmembershipMixin[0].Fields()

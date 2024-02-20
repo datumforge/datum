@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -9,12 +11,14 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/entx"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // Group holds the schema definition for the Group entity
@@ -108,7 +112,12 @@ func (Group) Annotations() []schema.Annotation {
 					Through: "GroupMembership",
 				},
 			},
-		)}
+		),
+		entfga.Annotations{
+			ObjectType:   "group",
+			IncludeHooks: false,
+		},
+	}
 }
 
 // Policy of the group
@@ -121,13 +130,23 @@ func (Group) Policy() ent.Policy {
 				ent.OpCreate,
 			),
 			privacy.OnMutationOperation(
-				rule.HasGroupMutationAccess(),
-				ent.OpUpdate|ent.OpUpdateOne|ent.OpDelete|ent.OpDeleteOne,
+				privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
+					return m.CheckAccessForEdit(ctx)
+				}),
+				ent.OpUpdate|ent.OpUpdateOne,
+			),
+			privacy.OnMutationOperation(
+				privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
+					return m.CheckAccessForDelete(ctx)
+				}),
+				ent.OpDelete|ent.OpDeleteOne,
 			),
 			privacy.AlwaysDenyRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.HasGroupReadAccess(),
+			privacy.GroupQueryRuleFunc(func(ctx context.Context, q *generated.GroupQuery) error {
+				return q.CheckAccess(ctx)
+			}),
 			privacy.AlwaysDenyRule(),
 		},
 	}

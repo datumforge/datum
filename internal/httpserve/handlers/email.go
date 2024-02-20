@@ -5,6 +5,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
+// SendVerificationEmail sends an email to a user to verify their email address
 func (h *Handler) SendVerificationEmail(user *User) error {
 	contact := &sendgrid.Contact{
 		Email:     user.Email,

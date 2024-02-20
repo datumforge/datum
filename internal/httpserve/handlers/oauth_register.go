@@ -15,8 +15,8 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/providers/github"
 	"github.com/datumforge/datum/internal/providers/google"
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/sessions"
-	"github.com/datumforge/datum/internal/tokens"
 )
 
 // OauthTokenRequest to authenticate an oauth user with the Datum Server
@@ -35,7 +35,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&r); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), r.Email)
@@ -47,13 +47,13 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	// verify the token provided to ensure the user is valid
 	if err := h.verifyClientToken(ctxWithToken, r.AuthProvider, tok, r.Email); err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// check if users exists and create if not, updates last seen of existing user
 	user, err := h.CheckAndCreateUser(ctxWithToken, r.Name, r.Email, enums.AuthProvider(strings.ToUpper(r.AuthProvider)))
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	// create claims for verified user
@@ -61,7 +61,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	// set cokies for the user
@@ -75,16 +75,19 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	setSessionMap[sessions.UserIDKey] = user.ID
 
 	if err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	// Return the access token
-	return ctx.JSON(http.StatusOK, tokens.TokenResponse{
+	out := LoginReply{
+		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
 		TokenType:    "Bearer",
 		ExpiresIn:    claims.ExpiresAt.Unix(),
-	})
+	}
+
+	// Return the access token
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // verifyClientToken verifies the provided access token from an external oauth2 provider is valid and matches the user's email

@@ -16,8 +16,13 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
+var happy = "happy path"
+
 func TestGetAccessToken(t *testing.T) {
 	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.oXIjG4PauoHXEmZRDKRE018bkMv9rdZTjn563ujUh6o" //nolint:gosec
+
+	var bear = "Bearer %s"
+
 	tests := []struct {
 		name        string
 		headerKey   string
@@ -30,7 +35,7 @@ func TestGetAccessToken(t *testing.T) {
 		{
 			name:        "happy path from header",
 			headerKey:   auth.Authorization,
-			headerValue: fmt.Sprintf("Bearer %s", testAccessToken),
+			headerValue: fmt.Sprintf(bear, testAccessToken),
 			wantTks:     testAccessToken,
 			wantErr:     false,
 			err:         nil,
@@ -50,7 +55,7 @@ func TestGetAccessToken(t *testing.T) {
 		{
 			name:        "happy path cookie and header set",
 			headerKey:   auth.Authorization,
-			headerValue: fmt.Sprintf("Bearer %s", testAccessToken),
+			headerValue: fmt.Sprintf(bear, testAccessToken),
 			cookie: &http.Cookie{
 				Name:  auth.AccessTokenCookie,
 				Value: "access_token_from_cookie", // to confirm we get the one from the header, this will be a different value
@@ -62,7 +67,7 @@ func TestGetAccessToken(t *testing.T) {
 		{
 			name:        "no authorization header",
 			headerKey:   "Hackorz",
-			headerValue: fmt.Sprintf("Bearer %s", testAccessToken),
+			headerValue: fmt.Sprintf(bear, testAccessToken),
 			wantTks:     "",
 			wantErr:     true,
 			err:         auth.ErrNoAuthorization,
@@ -107,6 +112,7 @@ func TestGetAccessToken(t *testing.T) {
 
 			// Add header/cookies
 			req.Header.Add(tc.headerKey, tc.headerValue)
+
 			if tc.cookie != nil {
 				req.AddCookie(tc.cookie)
 			}
@@ -214,6 +220,7 @@ func TestSetAuthCookies(t *testing.T) {
 
 	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE3MDE5ODc2NDYsImV4cCI6MzMyNTg4OTY0NDZ9.y51S2D9qMHLRixj230YZbvQZyhWzDOQ2RPbyJmnEYXA"  //nolint:gosec
 	testRefreshToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE3MDE5ODc2NDYsImV4cCI6MzMyNTg4OTY0NDZ9.y51S2D9qMHLRixj230YZbvQZyhWzDOQ2RPbyJmnEYXA" //nolint:gosec
+
 	tests := []struct {
 		name         string
 		ctx          echo.Context
@@ -222,7 +229,7 @@ func TestSetAuthCookies(t *testing.T) {
 	}{
 
 		{
-			name:         "happy path",
+			name:         happy,
 			ctx:          validCtx,
 			accessToken:  testAccessToken,
 			refreshToken: testRefreshToken,
@@ -252,7 +259,7 @@ func TestClearAuthCookies(t *testing.T) {
 	}{
 
 		{
-			name: "happy path",
+			name: happy,
 			ctx:  validCtx,
 		},
 	}
@@ -333,7 +340,7 @@ func TestGetClaims(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "happy path",
+			name: happy,
 			e:    validCtx,
 			err:  nil,
 		},

@@ -12,14 +12,34 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
+// VerifyRequest holds the fields that should be included on a request to the `/verify` endpoint
+type VerifyRequest struct {
+	Token string `json:"token"`
+}
+
+// VerifyReply holds the fields that are sent on a response to the `/verify` endpoint
+type VerifyReply struct {
+	rout.Reply
+	ID           string `json:"user_id"`
+	Email        string `json:"email"`
+	Token        string `json:"token"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int64  `json:"expires_in"`
+	Message      string `json:"message,omitempty"`
+}
+
+// VerifyEmail is the handler for the email verification endpoint
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	reqToken := ctx.QueryParam("token")
 
 	if err := validateVerifyRequest(reqToken); err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// setup viewer context
@@ -28,12 +48,12 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	entUser, err := h.getUserByEVToken(ctxWithToken, reqToken)
 	if err != nil {
 		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 		}
 
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrUnableToVerifyEmail))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
 	}
 
 	// create email verification
@@ -50,7 +70,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		if err := user.setUserTokens(entUser, reqToken); err != nil {
 			h.Logger.Errorw("unable to set user tokens for request", "error", err)
 
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 		}
 
 		// Construct the user token from the database fields
@@ -76,7 +96,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 					return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
 				}
 
-				out := &RegisterReply{
+				out := &VerifyReply{
+					Reply:   rout.Reply{Success: false},
 					ID:      meowtoken.ID,
 					Email:   user.Email,
 					Message: "Token expired, a new token has been issued. Please try again.",
@@ -86,11 +107,11 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				return ctx.JSON(http.StatusCreated, out)
 			}
 
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 		}
 
 		if err := h.setEmailConfirmed(viewerCtx, entUser); err != nil {
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 		}
 	}
 
@@ -100,26 +121,28 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("error creating token pair", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// set cookies on request with the access and refresh token
 	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
-	return ctx.JSON(http.StatusOK, Response{
-		Message: "success",
-		Data: tokens.TokenResponse{
-			AccessToken:  access,
-			RefreshToken: refresh,
-			TokenType:    "access_token",
-			ExpiresIn:    claims.ExpiresAt.Unix(),
-		}})
+	out := &VerifyReply{
+		Reply:        rout.Reply{Success: true},
+		Message:      "success",
+		AccessToken:  access,
+		RefreshToken: refresh,
+		TokenType:    "access_token",
+		ExpiresIn:    claims.ExpiresAt.Unix(),
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // validateVerifyRequest validates the required fields are set in the user request
 func validateVerifyRequest(token string) error {
 	if token == "" {
-		return newMissingRequiredFieldError("token")
+		return rout.NewMissingRequiredFieldError("token")
 	}
 
 	return nil

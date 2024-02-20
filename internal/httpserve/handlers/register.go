@@ -13,8 +13,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
@@ -32,26 +32,27 @@ type RegisterRequest struct {
 
 // RegisterReply holds the fields that are sent on a response to the `/register` endpoint
 type RegisterReply struct {
+	rout.Reply
 	ID      string `json:"user_id"`
 	Email   string `json:"email"`
 	Message string `json:"message"`
-	// TODO: remove this before go live, we shouldn't actually return the token here
-	Token string `json:"token"`
+	Token   string `json:"token"`
 }
 
 // RegisterHandler handles the registration of a new datum user, creating the user, personal organization
 // and sending an email verification to the email address in the request
 // the user will not be able to authenticate until the email is verified
+// [MermaidChart: 5a357443-f959-4f16-a07f-ec504f67f0eb]
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	var in *RegisterRequest
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// create user
@@ -70,12 +71,12 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		h.Logger.Errorw("error creating new user", "error", err)
 
 		if IsUniqueConstraintError(err) {
-			return ctx.JSON(http.StatusConflict, ErrorResponse("user already exists"))
+			return ctx.JSON(http.StatusConflict, rout.ErrorResponse("user already exists"))
 		}
 
 		if generated.IsValidationError(err) {
 			field := err.(*generated.ValidationError).Name
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(fmt.Sprintf("%s was invalid", field)))
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(fmt.Sprintf("%s was invalid", field)))
 		}
 
 		return err
@@ -96,10 +97,11 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	if err != nil {
 		h.Logger.Errorw("error storing token", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	out := &RegisterReply{
+		Reply:   rout.Reply{Success: true},
 		ID:      meowuser.ID,
 		Email:   meowuser.Email,
 		Message: "Welcome to Datum!",
@@ -166,15 +168,15 @@ func (r *RegisterRequest) Validate() error {
 	// Required for all requests
 	switch {
 	case r.Email == "":
-		return auth.MissingField("email")
+		return rout.MissingField("email")
 	case r.FirstName == "":
-		return auth.MissingField("first name")
+		return rout.MissingField("first name")
 	case r.LastName == "":
-		return auth.MissingField("last name")
+		return rout.MissingField("last name")
 	case r.Password == "":
-		return auth.MissingField("password")
+		return rout.MissingField("password")
 	case passwd.Strength(r.Password) < passwd.Moderate:
-		return auth.ErrPasswordTooWeak
+		return rout.ErrPasswordTooWeak
 	}
 
 	return nil

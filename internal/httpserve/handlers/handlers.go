@@ -40,9 +40,3 @@ type Handler struct {
 	// AuthMiddleware contains the middleware to be used for authenticated endpoints
 	AuthMiddleware []echo.MiddlewareFunc
 }
-
-type Response struct {
-	StatusCode int         `json:"status,omitempty"`
-	Message    string      `json:"message,omitempty"`
-	Data       interface{} `json:"data,omitempty"`
-}

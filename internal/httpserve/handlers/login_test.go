@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/rout"
 )
 
 func TestLoginHandler(t *testing.T) {
@@ -91,7 +92,7 @@ func TestLoginHandler(t *testing.T) {
 			username:       validConfirmedUser,
 			password:       "thisisnottherightone",
 			expectedStatus: http.StatusBadRequest,
-			expectedErr:    auth.ErrInvalidCredentials,
+			expectedErr:    rout.ErrInvalidCredentials,
 		},
 		{
 			name:           "user not found",
@@ -139,7 +140,7 @@ func TestLoginHandler(t *testing.T) {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.Response
+			var out *handlers.LoginReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
@@ -149,9 +150,9 @@ func TestLoginHandler(t *testing.T) {
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusOK {
-				assert.Equal(t, out.Message, "success")
+				assert.True(t, out.Success)
 			} else {
-				assert.Contains(t, out.Message, tc.expectedErr.Error())
+				assert.Contains(t, out.Error, tc.expectedErr.Error())
 			}
 		})
 	}

@@ -49,7 +49,7 @@ func Login(c *Client, ctx context.Context, login handlers.LoginRequest) (*oauth2
 
 	defer resp.Body.Close()
 
-	out := handlers.Response{}
+	out := handlers.LoginReply{}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}

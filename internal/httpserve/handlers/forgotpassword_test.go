@@ -50,6 +50,8 @@ func TestForgotPasswordHandler(t *testing.T) {
 		SetSetting(userSetting).
 		SaveX(ctx)
 
+	var mitb = "mitb@datum.net"
+
 	testCases := []struct {
 		name               string
 		from               string
@@ -61,22 +63,23 @@ func TestForgotPasswordHandler(t *testing.T) {
 		{
 			name:           "happy path",
 			email:          "asandler@datum.net",
-			from:           "mitb@datum.net",
+			from:           mitb,
 			emailExpected:  true,
-			expectedStatus: http.StatusNoContent,
+			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "email does not exist, should still return 204",
+			name:           "email does not exist, should still return 200",
 			email:          "asandler1@datum.net",
-			from:           "mitb@datum.net",
+			from:           mitb,
 			emailExpected:  false,
-			expectedStatus: http.StatusNoContent,
+			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "email not sent in request",
-			from:           "mitb@datum.net",
-			emailExpected:  false,
-			expectedStatus: http.StatusBadRequest,
+			name:               "email not sent in request",
+			from:               mitb,
+			emailExpected:      false,
+			expectedStatus:     http.StatusBadRequest,
+			expectedErrMessage: "email is required",
 		},
 	}
 
@@ -108,15 +111,16 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus != http.StatusNoContent {
-				var out *handlers.Response
+			if tc.expectedStatus != http.StatusOK {
+				var out *handlers.ForgotPasswordReply
 
 				// parse request body
 				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
 					t.Error("error parsing response", err)
 				}
 
-				assert.Contains(t, out.Message, tc.expectedErrMessage)
+				assert.Contains(t, out.Error, tc.expectedErrMessage)
+				assert.False(t, out.Success)
 			}
 
 			// Test that one verify email was sent to each user

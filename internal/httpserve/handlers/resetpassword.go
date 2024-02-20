@@ -16,8 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
@@ -36,6 +36,7 @@ type ResetPassword struct {
 // ResetPasswordReply is the response returned from a non-successful password reset request
 // on success, no content is returned (204)
 type ResetPasswordReply struct {
+	rout.Reply
 	Message string `json:"message"`
 }
 
@@ -54,14 +55,14 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
 		h.Logger.Errorw("error parsing request", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
 	// Add to the full request to be validated
 	rp.Password = in.Password
 
 	if err := rp.validateResetRequest(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// setup viewer context
@@ -73,10 +74,10 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
 		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(ErrPassWordResetTokenInvalid))
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrPassWordResetTokenInvalid))
 		}
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrUnableToVerifyEmail))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
 	}
 
 	// ent user to &User for funcs
@@ -89,7 +90,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	if err := user.setResetTokens(entUser, rp.Token); err != nil {
 		h.Logger.Errorw("unable to set reset tokens for request", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// Construct the user token from the database fields
@@ -113,20 +114,18 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	// Verify the token is valid with the stored secret
 	if err = token.Verify(user.GetPasswordResetToken(), user.PasswordResetSecret); err != nil {
 		if errors.Is(err, tokens.ErrTokenExpired) {
-			out := &Response{
-				Message: "reset token is expired, please request a new token using forgot-password",
-			}
+			errMsg := "reset token is expired, please request a new token using forgot-password"
 
-			return ctx.JSON(http.StatusBadRequest, out)
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(errMsg))
 		}
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// make sure its not the same password as current
 	valid, err := passwd.VerifyDerivedKey(*entUser.Password, rp.Password)
 	if err != nil || valid {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(auth.ErrNonUniquePassword))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNonUniquePassword))
 	}
 
 	// set context for remaining request based on logged in user
@@ -135,13 +134,13 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	if err := h.updateUserPassword(userCtx, entUser.ID, rp.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	if err := h.expireAllResetTokensUserByEmail(userCtx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
@@ -152,10 +151,15 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	); err != nil {
 		h.Logger.Errorw("error sending confirmation email", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
-	return ctx.NoContent(http.StatusNoContent)
+	out := &ResetPasswordReply{
+		Reply:   rout.Reply{Success: true},
+		Message: "password has been re-set successfully",
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // validateVerifyRequest validates the required fields are set in the user request
@@ -164,11 +168,11 @@ func (r *ResetPassword) validateResetRequest() error {
 
 	switch {
 	case r.Token == "":
-		return newMissingRequiredFieldError("token")
+		return rout.NewMissingRequiredFieldError("token")
 	case r.Password == "":
-		return newMissingRequiredFieldError("password")
+		return rout.NewMissingRequiredFieldError("password")
 	case passwd.Strength(r.Password) < passwd.Moderate:
-		return auth.ErrPasswordTooWeak
+		return ErrPasswordTooWeak
 	}
 
 	return nil

@@ -11,6 +11,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/internal/rout"
 )
 
 // ResendRequest contains fields for a resend email verification request
@@ -20,6 +21,7 @@ type ResendRequest struct {
 
 // ResendReply holds the fields that are sent on a response to the `/resend` endpoint
 type ResendReply struct {
+	rout.Reply
 	Message string `json:"message"`
 }
 
@@ -29,18 +31,19 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	var in *ResendRequest
 
 	out := &ResendReply{
-		Message: "We've received your request to be resend an email to complete verification. If your email exists in our system, you should receive it shortly",
+		Reply:   rout.Reply{Success: true},
+		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
 	}
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
 	if err := validateResendRequest(in); err != nil {
 		h.Logger.Errorw("error validating request", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// set viewer context
@@ -57,7 +60,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
 	// check to see if user is already confirmed
@@ -81,10 +84,10 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		h.Logger.Errorw("error storing token", "error", err)
 
 		if errors.Is(err, ErrMaxAttempts) {
-			return ctx.JSON(http.StatusTooManyRequests, ErrorResponse(err))
+			return ctx.JSON(http.StatusTooManyRequests, rout.ErrorResponse(err))
 		}
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
 	}
 
 	return ctx.JSON(http.StatusOK, out)
@@ -93,7 +96,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 // validateResendRequest validates the required fields are set in the user request
 func validateResendRequest(req *ResendRequest) error {
 	if req.Email == "" {
-		return newMissingRequiredFieldError("email")
+		return rout.NewMissingRequiredFieldError("email")
 	}
 
 	return nil

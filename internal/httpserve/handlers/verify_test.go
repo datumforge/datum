@@ -145,14 +145,18 @@ func TestVerifyHandler(t *testing.T) {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			var out *handlers.Response
+			var out *handlers.VerifyReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Contains(t, out.Message, tc.expectedMessage)
+			if tc.expectedStatus >= http.StatusOK && tc.expectedStatus <= http.StatusCreated {
+				assert.Contains(t, out.Message, tc.expectedMessage)
+			} else {
+				assert.Contains(t, out.Error, tc.expectedMessage)
+			}
 		})
 	}
 }

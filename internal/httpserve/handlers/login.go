@@ -13,13 +13,25 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
 // LoginRequest to authenticate with the Datum Sever
 type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	InviteToken string `json:"invite_token,omitempty"`
+}
+
+// LoginReply holds response to successful authentication
+type LoginReply struct {
+	rout.Reply
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int64  `json:"expires_in"`
+	Message      string `json:"message"`
 }
 
 // LoginHandler validates the user credentials and returns a valid cookie
@@ -27,7 +39,7 @@ type LoginRequest struct {
 func (h *Handler) LoginHandler(ctx echo.Context) error {
 	user, err := h.verifyUserPassword(ctx)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// set context for remaining request based on logged in user
@@ -37,7 +49,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	// set cookies on request with the access and refresh token
@@ -53,19 +65,21 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	if err := h.updateUserLastSeen(userCtx, user.ID); err != nil {
 		h.Logger.Errorw("unable to update last seen", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	analytics.AssociateUser(user.ID, claims.OrgID)
 
-	return ctx.JSON(http.StatusOK, Response{
-		Message: "success",
-		Data: tokens.TokenResponse{
-			AccessToken:  access,
-			RefreshToken: refresh,
-			TokenType:    "access_token",
-			ExpiresIn:    claims.ExpiresAt.Unix(),
-		}})
+	out := LoginReply{
+		Reply:        rout.Reply{Success: true},
+		Message:      "success",
+		AccessToken:  access,
+		RefreshToken: refresh,
+		TokenType:    "access_token",
+		ExpiresIn:    claims.ExpiresAt.Unix(),
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 func createClaims(u *generated.User) *tokens.Claims {

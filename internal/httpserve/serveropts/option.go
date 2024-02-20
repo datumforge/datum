@@ -309,6 +309,7 @@ func WithMiddleware() ServerOption {
 		redirectMW := redirect.Config{
 			Redirects: map[string]string{
 				"/.well-known/change-password": "/v1/forgot-password",
+				"/security.txt":                "/.well-known/security.txt",
 			},
 			Code: 302, // nolint: gomnd
 		}

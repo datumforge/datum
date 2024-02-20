@@ -7,6 +7,11 @@ import (
 	echo "github.com/datumforge/echox"
 )
 
+// StatusReply returns server status
+type StatusReply struct {
+	Status map[string]string `json:"status"`
+}
+
 // CheckFunc is a function that can be used to check the status of a service
 type CheckFunc func(ctx context.Context) error
 
@@ -44,5 +49,9 @@ func (c *Checks) ReadyHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusServiceUnavailable, status)
 	}
 
-	return ctx.JSON(http.StatusOK, status)
+	out := &StatusReply{
+		Status: status,
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }

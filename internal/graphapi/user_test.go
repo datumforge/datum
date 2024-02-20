@@ -156,22 +156,6 @@ func TestQueryUsers(t *testing.T) {
 		if user2Found {
 			t.Errorf("user 2 was not expected to be found but was returned")
 		}
-
-		// TODO: Add admin test that should be able to do a `GET` on all users
-		// user1Found := false
-		// user2Found := false
-		// for _, o := range resp.Users.Edges {
-		// 	if o.Node.ID == user1.ID {
-		// 		user1Found = true
-		// 	} else if o.Node.ID == user2.ID {
-		// 		user2Found = true
-		// 	}
-		// }
-
-		// // if one of the users isn't found, fail the test
-		// if !user1Found || !user2Found {
-		// 	t.Fail()
-		// }
 	})
 }
 

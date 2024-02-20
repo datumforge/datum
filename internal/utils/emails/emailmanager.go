@@ -5,7 +5,7 @@ import (
 	sg "github.com/sendgrid/sendgrid-go"
 	sgmail "github.com/sendgrid/sendgrid-go/helpers/mail"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/utils/emails/mock"
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
@@ -55,7 +55,7 @@ func (m *EmailManager) Send(message *sgmail.SGMailV3) (err error) {
 	}
 
 	if rep.StatusCode < 200 || rep.StatusCode >= 300 {
-		return auth.ErrorResponse(rep.Body)
+		return rout.HTTPErrorResponse(rep.Body)
 	}
 
 	return nil

@@ -8,6 +8,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -26,6 +27,7 @@ type ContextKey struct {
 	name string
 }
 
+// Authenticate is a middleware function that is used to authenticate requests - it is not applied to all routes so be cognizant of that
 func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -54,17 +56,17 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 				switch {
 				case errors.Is(err, ErrNoAuthorization):
 					if accessToken, err = reauthenticate(c); err != nil {
-						return ErrorResponse(err)
+						return rout.HTTPErrorResponse(err)
 					}
 				default:
-					return ErrorResponse(err)
+					return rout.HTTPErrorResponse(err)
 				}
 			}
 
 			// Verify the access token is authorized for use with datum and extract claims.
 			claims, err := validator.Verify(accessToken)
 			if err != nil {
-				return ErrorResponse(err)
+				return rout.HTTPErrorResponse(err)
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers

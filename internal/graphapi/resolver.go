@@ -3,10 +3,12 @@ package graphapi
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	echo "github.com/datumforge/echox"
 	"github.com/ravilushqa/otelgqlgen"
 	"github.com/wundergraph/graphql-go-tools/pkg/playground"
@@ -75,6 +77,10 @@ func (r *Resolver) Handler(withPlayground bool) *Handler {
 
 	srv.Use(otelgqlgen.Middleware())
 	srv.Use(extension.Introspection{})
+
+	srv.AddTransport(transport.Websocket{
+		KeepAlivePingInterval: 10 * time.Second, // nolint:gomnd
+	})
 
 	h := &Handler{
 		r:              r,

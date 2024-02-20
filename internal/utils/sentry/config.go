@@ -25,7 +25,7 @@ type Config struct {
 
 // UseSentry true if Sentry is enabled (e.g. a DSN is configured)
 func (c Config) UseSentry() bool {
-	return c.DSN != ""
+	return c.DSN != "" && c.Enabled
 }
 
 // UsePerformanceTracking tracking is enabled if Sentry is enabled and track performance is explicitly set

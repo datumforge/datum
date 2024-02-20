@@ -43,7 +43,9 @@ func NewServer(c config.Server, l *zap.SugaredLogger) *Server {
 
 // StartEchoServer creates and starts the echo server with configured middleware and handlers
 func (s *Server) StartEchoServer(ctx context.Context) error {
-	_ = sentry.Init(s.config.Sentry.ClientOptions())
+	if err := sentry.Init(s.config.Sentry.ClientOptions()); err != nil {
+		return err
+	}
 
 	srv := echo.New()
 

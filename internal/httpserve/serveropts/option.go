@@ -458,8 +458,5 @@ func WithSentry() ServerOption {
 
 		// add sentry middleware
 		s.Config.Server.DefaultMiddleware = append(s.Config.Server.DefaultMiddleware, sentry.New())
-
-		// add sentry middleware to graph routes
-		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware, sentry.New())
 	})
 }

@@ -53,16 +53,17 @@ type Config struct {
 // New returns a new redis client based on the configuration settings
 func New(c Config) *redis.Client {
 	opts := &redis.Options{
-		Addr:           c.Address,
-		ClientName:     c.Name,
-		DB:             c.DB,
-		DialTimeout:    c.DialTimeout,
-		ReadTimeout:    c.ReadTimeout,
-		WriteTimeout:   c.WriteTimeout,
-		MaxRetries:     c.MaxRetries,
-		MinIdleConns:   c.MinIdleConns,
-		MaxIdleConns:   c.MaxIdleConns,
-		MaxActiveConns: c.MaxActiveConns,
+		Addr:             c.Address,
+		ClientName:       c.Name,
+		DB:               c.DB,
+		DialTimeout:      c.DialTimeout,
+		ReadTimeout:      c.ReadTimeout,
+		WriteTimeout:     c.WriteTimeout,
+		MaxRetries:       c.MaxRetries,
+		MinIdleConns:     c.MinIdleConns,
+		MaxIdleConns:     c.MaxIdleConns,
+		MaxActiveConns:   c.MaxActiveConns,
+		DisableIndentity: true,
 	}
 
 	if c.Username != "" {

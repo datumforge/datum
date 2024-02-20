@@ -14,7 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-func Test_Exists(t *testing.T) {
+func TestExists(t *testing.T) {
 	tests := []struct {
 		name   string
 		userID string
@@ -50,7 +50,7 @@ func Test_Exists(t *testing.T) {
 	}
 }
 
-func Test_GetSession(t *testing.T) {
+func TestGetSession(t *testing.T) {
 	tests := []struct {
 		name    string
 		userID  string
@@ -94,7 +94,7 @@ func Test_GetSession(t *testing.T) {
 	}
 }
 
-func Test_DeleteSession(t *testing.T) {
+func TestDeleteSession(t *testing.T) {
 	tests := []struct {
 		name    string
 		userID  string
@@ -137,7 +137,8 @@ func newRedisClient() *redis.Client {
 	}
 
 	client := redis.NewClient(&redis.Options{
-		Addr: mr.Addr(),
+		Addr:             mr.Addr(),
+		DisableIndentity: true,
 	})
 
 	return client

@@ -3,7 +3,7 @@ package entx_test
 import (
 	"testing"
 
-	"github.com/brianvoe/gofakeit/v6"
+	"github.com/brianvoe/gofakeit/v7"
 
 	"github.com/datumforge/datum/internal/entx"
 

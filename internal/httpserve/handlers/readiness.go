@@ -8,7 +8,6 @@ import (
 )
 
 // StatusReply returns server status
-// swagger:response StatusReply
 type StatusReply struct {
 	Status map[string]string `json:"status"`
 }

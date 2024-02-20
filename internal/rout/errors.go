@@ -75,16 +75,12 @@ type FieldError struct {
 }
 
 // StatusError decodes an error response from datum
-// @Description Status code and response messages when surfacing API errors
-// swagger:response StatusError
 type StatusError struct {
 	StatusCode int   `json:"code"`  // the HTTP status code
 	Reply      Reply `json:"reply"` // an object containing whether the request was successful or not, and if not the error message
 }
 
 // Reply contains standard fields that are used for generic API responses and errors
-// @Description Fields used in construction of API responses
-// swagger:response Reply
 type Reply struct {
 	Success    bool   `json:"success"`              // indicates if the request was successful
 	Error      string `json:"error,omitempty"`      // error message if the request was not successful

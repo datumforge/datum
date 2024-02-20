@@ -18,7 +18,6 @@ import (
 )
 
 // LoginRequest to authenticate with the Datum Sever
-// swagger:parameters LoginRequest
 type LoginRequest struct {
 	Username    string `json:"username"`
 	Password    string `json:"password"`
@@ -26,7 +25,6 @@ type LoginRequest struct {
 }
 
 // LoginReply holds response to successful authentication
-// swagger:response LoginReply
 type LoginReply struct {
 	rout.Reply
 	AccessToken  string `json:"access_token"`

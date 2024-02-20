@@ -21,7 +21,6 @@ type ForgotPasswordRequest struct {
 }
 
 // ForgotPasswordReply contains fields for a forgot password response
-// swagger:response ForgotPasswordReply
 type ForgotPasswordReply struct {
 	rout.Reply
 	Message string `json:"message,omitempty"`

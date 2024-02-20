@@ -1,4 +1,3 @@
-//go:generate swagger generate spec
 package route
 
 import (

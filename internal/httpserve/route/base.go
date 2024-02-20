@@ -9,11 +9,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-// @Summary		Liveness Handler
-// @Description	Handles liveness check
-// @ID				liveness-handler
-// @Produce		json
-// @Router			/livez [get]
 func registerLivenessHandler(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,
@@ -28,11 +23,6 @@ func registerLivenessHandler(router *echo.Echo) (err error) {
 	return
 }
 
-// @Summary		Readiness Handler
-// @Description	Handles readiness check
-// @ID				readiness-handler
-// @Produce		json
-// @Router			/ready [get]
 func registerReadinessHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,
@@ -45,11 +35,6 @@ func registerReadinessHandler(router *echo.Echo, h *handlers.Handler) (err error
 	return
 }
 
-// @Summary		Metrics Handler
-// @Description	Handles metrics request
-// @ID				metrics-handler
-// @Produce		json
-// @Router			/metrics [get]
 func registerMetricsHandler(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,

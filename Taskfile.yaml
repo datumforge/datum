@@ -165,8 +165,4 @@ tasks:
     vars:
       PWD:
         sh: pwd
-  swagfmt:
-    desc: format swag annotations
-    cmds:
-      - swag fmt
       

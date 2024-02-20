@@ -8,8 +8,6 @@ import (
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/httpserve/middleware/swagger"
-	_ "github.com/datumforge/datum/openapi"
 )
 
 // registerJwksWellKnownHandler supplies the JWKS endpoint.
@@ -85,16 +83,6 @@ func registerRobotsHandler(router *echo.Echo) (err error) {
 		Path:    "/robots.txt",
 		Handler: echo.StaticFileHandler("robots.txt", openapi),
 	}.ForGroup(unversioned, mw))
-
-	return
-}
-
-func registerSwaggerMeowHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:  http.MethodGet,
-		Path:    "/swagger/*",
-		Handler: swagger.WrapHandler,
-	}.ForGroup(V1Version, mw))
 
 	return
 }

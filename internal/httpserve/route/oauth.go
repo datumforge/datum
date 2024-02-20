@@ -8,6 +8,8 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
+// registerOAuthReigsterandler registers the oauth register handler used by the UI to register
+// users logging in with an oauth provider
 func registerOAuthReigsterandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
@@ -20,6 +22,7 @@ func registerOAuthReigsterandler(router *echo.Echo, h *handlers.Handler) (err er
 	return
 }
 
+// registerUserInfoHandler registers the userinfo handler
 func registerUserInfoHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	authMW := mw
 	authMW = append(authMW, h.AuthMiddleware...)
@@ -36,6 +39,7 @@ func registerUserInfoHandler(router *echo.Echo, h *handlers.Handler) (err error)
 	return
 }
 
+// registerGithubLoginHandler registers the github login handler
 func registerGithubLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
@@ -46,6 +50,7 @@ func registerGithubLoginHandler(router *echo.Echo, h *handlers.Handler) (err err
 	return
 }
 
+// registerGithubCallbackHandler registers the github callback handler
 func registerGithubCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
@@ -56,6 +61,7 @@ func registerGithubCallbackHandler(router *echo.Echo, h *handlers.Handler) (err 
 	return
 }
 
+// registerGoogleLoginHandler registers the google login handler
 func registerGoogleLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
@@ -66,6 +72,7 @@ func registerGoogleLoginHandler(router *echo.Echo, h *handlers.Handler) (err err
 	return
 }
 
+// registerGoogleCallbackHandler registers the google callback handler
 func registerGoogleCallbackHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,

@@ -14,7 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-func Test_SetRequestor(t *testing.T) {
+func TestSetRequestor(t *testing.T) {
 	// setup valid user
 	userID := ulids.New().String()
 	userCtx, err := auth.NewTestContextWithValidUser(userID)

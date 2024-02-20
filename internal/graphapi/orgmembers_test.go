@@ -11,10 +11,11 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 )
 
-func TestQuery_OrgMembers(t *testing.T) {
+func TestQueryOrgMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -24,35 +25,60 @@ func TestQuery_OrgMembers(t *testing.T) {
 
 	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
 
-	orgMember, err := org1.Members(reqCtx)
+	// allow access to organization
+	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	orgMember, err := org1.Members(checkCtx)
 	require.NoError(t, err)
 	require.Len(t, orgMember, 1)
 
 	testCases := []struct {
-		name     string
-		queryID  string
-		expected *ent.OrgMembership
+		name      string
+		queryID   string
+		allowed   bool
+		expected  *ent.OrgMembership
+		expectErr bool
 	}{
 		{
 			name:     "happy path, get org member by org id",
 			queryID:  org1.ID,
+			allowed:  true,
 			expected: orgMember[0],
+		},
+		{
+			name:      "no access",
+			queryID:   org1.ID,
+			allowed:   false,
+			expected:  nil,
+			expectErr: true,
 		},
 		{
 			name:     "invalid-id",
 			queryID:  "tacos-for-dinner",
+			allowed:  true,
 			expected: nil,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
 			orgID := tc.queryID
 			whereInput := datumclient.OrgMembershipWhereInput{
 				OrganizationID: &orgID,
 			}
 
+			mock_fga.CheckAny(t, client.fga, tc.allowed)
+
 			resp, err := client.datum.GetOrgMembersByOrgID(reqCtx, &whereInput)
+
+			if tc.expectErr {
+				require.Error(t, err)
+
+				return
+			}
+
 			require.NoError(t, err)
 
 			if tc.expected == nil {
@@ -72,7 +98,7 @@ func TestQuery_OrgMembers(t *testing.T) {
 	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_CreateOrgMembers(t *testing.T) {
+func TestQueryCreateOrgMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -84,7 +110,10 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 	personalOrg := (&OrganizationBuilder{client: client, PersonalOrg: true}).MustNew(reqCtx, t)
 	listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", personalOrg.ID)}
 
-	orgMember, err := org1.Members(reqCtx)
+	// allow access to organization
+	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	orgMember, err := org1.Members(checkCtx)
 	require.NoError(t, err)
 	require.Len(t, orgMember, 1)
 
@@ -92,66 +121,74 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 	testUser2 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
-		name     string
-		orgID    string
-		userID   string
-		role     enums.Role
-		checkOrg bool
-		errMsg   string
+		name      string
+		orgID     string
+		userID    string
+		role      enums.Role
+		checkOrg  bool
+		checkRole bool
+		errMsg    string
 	}{
 		{
-			name:     "happy path, add admin",
-			orgID:    org1.ID,
-			userID:   testUser1.ID,
-			role:     enums.RoleAdmin,
-			checkOrg: true,
+			name:      "happy path, add admin",
+			orgID:     org1.ID,
+			userID:    testUser1.ID,
+			role:      enums.RoleAdmin,
+			checkRole: true,
+			checkOrg:  true,
 		},
 		{
-			name:     "happy path, add member",
-			orgID:    org1.ID,
-			userID:   testUser2.ID,
-			role:     enums.RoleMember,
-			checkOrg: true,
+			name:      "happy path, add member",
+			orgID:     org1.ID,
+			userID:    testUser2.ID,
+			role:      enums.RoleMember,
+			checkRole: true,
+			checkOrg:  true,
 		},
 		{
-			name:     "duplicate user, different role",
-			orgID:    org1.ID,
-			userID:   testUser1.ID,
-			role:     enums.RoleMember,
-			checkOrg: true,
-			errMsg:   "constraint failed",
+			name:      "duplicate user, different role",
+			orgID:     org1.ID,
+			userID:    testUser1.ID,
+			role:      enums.RoleMember,
+			checkOrg:  true,
+			checkRole: true,
+			errMsg:    "constraint failed",
 		},
 		{
-			name:     "add user to personal org not allowed",
-			orgID:    personalOrg.ID,
-			userID:   testUser1.ID,
-			role:     enums.RoleMember,
-			checkOrg: true,
-			errMsg:   hooks.ErrPersonalOrgsNoMembers.Error(),
+			name:      "add user to personal org not allowed",
+			orgID:     personalOrg.ID,
+			userID:    testUser1.ID,
+			role:      enums.RoleMember,
+			checkOrg:  true,
+			checkRole: true,
+			errMsg:    hooks.ErrPersonalOrgsNoMembers.Error(),
 		},
 		{
-			name:     "invalid user",
-			orgID:    org1.ID,
-			userID:   "not-a-valid-user-id",
-			role:     enums.RoleMember,
-			checkOrg: true,
-			errMsg:   "constraint failed", // TODO: better error messaging: https://github.com/datumforge/datum/issues/415
+			name:      "invalid user",
+			orgID:     org1.ID,
+			userID:    "not-a-valid-user-id",
+			role:      enums.RoleMember,
+			checkOrg:  true,
+			checkRole: true,
+			errMsg:    "constraint failed", // TODO: better error messaging: https://github.com/datumforge/datum/issues/415
 		},
 		{
-			name:     "invalid org",
-			orgID:    "not-a-valid-org-id",
-			userID:   testUser1.ID,
-			role:     enums.RoleMember,
-			checkOrg: true,
-			errMsg:   "organization not found",
+			name:      "invalid org",
+			orgID:     "not-a-valid-org-id",
+			userID:    testUser1.ID,
+			role:      enums.RoleMember,
+			checkOrg:  true,
+			checkRole: true,
+			errMsg:    "organization not found",
 		},
 		{
-			name:     "invalid role",
-			orgID:    org1.ID,
-			userID:   testUser1.ID,
-			role:     enums.Invalid,
-			checkOrg: false,
-			errMsg:   "not a valid OrgMembershipRole",
+			name:      "invalid role",
+			orgID:     org1.ID,
+			userID:    testUser1.ID,
+			role:      enums.Invalid,
+			checkOrg:  false,
+			checkRole: false,
+			errMsg:    "not a valid OrgMembershipRole",
 		},
 	}
 
@@ -166,6 +203,11 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 			if tc.checkOrg {
 				// checks for adding orgs to ensure not a personal org
 				mock_fga.ListAny(t, client.fga, listObjects)
+			}
+
+			// checks role in org to ensure user has ability to add other members
+			if tc.checkRole {
+				mock_fga.CheckAny(t, client.fga, true)
 			}
 
 			role := tc.role
@@ -199,7 +241,7 @@ func TestQuery_CreateOrgMembers(t *testing.T) {
 	(&UserCleanup{client: client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_UpdateOrgMembers(t *testing.T) {
+func TestQueryUpdateOrgMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -246,6 +288,10 @@ func TestQuery_UpdateOrgMembers(t *testing.T) {
 				mock_fga.WriteAny(t, client.fga)
 			}
 
+			if tc.errMsg == "" {
+				mock_fga.CheckAny(t, client.fga, true)
+			}
+
 			role := tc.role
 			input := datumclient.UpdateOrgMembershipInput{
 				Role: &role,
@@ -271,7 +317,7 @@ func TestQuery_UpdateOrgMembers(t *testing.T) {
 	(&OrgMemberCleanup{client: client, ID: om.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_DeleteOrgMembers(t *testing.T) {
+func TestQueryDeleteOrgMembers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -282,6 +328,7 @@ func TestQuery_DeleteOrgMembers(t *testing.T) {
 	om := (&OrgMemberBuilder{client: client}).MustNew(reqCtx, t)
 
 	mock_fga.WriteAny(t, client.fga)
+	mock_fga.CheckAny(t, client.fga, true)
 
 	resp, err := client.datum.RemoveUserFromOrg(reqCtx, om.ID)
 

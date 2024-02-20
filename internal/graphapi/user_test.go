@@ -20,7 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
-func TestQuery_User(t *testing.T) {
+func TestQueryUser(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -97,7 +97,7 @@ func TestQuery_User(t *testing.T) {
 	(&UserCleanup{client: client, UserID: user2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_Users(t *testing.T) {
+func TestQueryUsers(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -159,7 +159,7 @@ func TestQuery_Users(t *testing.T) {
 	})
 }
 
-func TestMutation_CreateUserNoAuth(t *testing.T) {
+func TestMutationCreateUserNoAuth(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -348,7 +348,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 	}
 }
 
-func TestMutation_CreateUser(t *testing.T) {
+func TestMutationCreateUser(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -491,7 +491,7 @@ func TestMutation_CreateUser(t *testing.T) {
 	}
 }
 
-func TestMutation_UpdateUser(t *testing.T) {
+func TestMutationUpdateUser(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -597,6 +597,13 @@ func TestMutation_UpdateUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
+			// checks for member tables
+			if tc.errorMsg == "" {
+				mock_fga.CheckAny(t, client.fga, true)
+			}
+
 			// update user
 			resp, err := client.datum.UpdateUser(reqCtx, user.ID, tc.updateInput)
 
@@ -622,7 +629,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 	}
 }
 
-func TestMutation_DeleteUser(t *testing.T) {
+func TestMutationDeleteUser(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -723,7 +730,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 	}
 }
 
-func TestMutation_UserCascadeDelete(t *testing.T) {
+func TestMutationUserCascadeDelete(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -799,7 +806,7 @@ func TestMutation_UserCascadeDelete(t *testing.T) {
 	require.Equal(t, g.PersonalAccessToken.ID, token.ID)
 }
 
-func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
+func TestMutationSoftDeleteUniqueIndex(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 

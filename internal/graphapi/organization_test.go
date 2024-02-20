@@ -21,7 +21,7 @@ const (
 	organization = "organization"
 )
 
-func TestQuery_Organization(t *testing.T) {
+func TestQueryOrganization(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -78,7 +78,7 @@ func TestQuery_Organization(t *testing.T) {
 	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_Organizations(t *testing.T) {
+func TestQueryOrganizations(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -133,7 +133,7 @@ func TestQuery_Organizations(t *testing.T) {
 	})
 }
 
-func TestMutation_CreateOrganization(t *testing.T) {
+func TestMutationCreateOrganization(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -311,7 +311,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	(&OrganizationCleanup{client: client, OrgID: parentPersonalOrg.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutation_UpdateOrganization(t *testing.T) {
+func TestMutationUpdateOrganization(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -472,7 +472,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutation_DeleteOrganization(t *testing.T) {
+func TestMutationDeleteOrganization(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -556,7 +556,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	}
 }
 
-func TestMutation_OrganizationCascadeDelete(t *testing.T) {
+func TestMutationOrganizationCascadeDelete(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -623,7 +623,7 @@ func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 	require.Equal(t, g.Group.ID, group1.ID)
 }
 
-func TestMutation_CreateOrganizationTransaction(t *testing.T) {
+func TestMutationCreateOrganizationTransaction(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 

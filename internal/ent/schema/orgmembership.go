@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -11,8 +13,12 @@ import (
 	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 )
 
 // OrgMembership holds the schema definition for the OrgMembership entity
@@ -55,7 +61,9 @@ func (OrgMembership) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType: "organization",
+			ObjectType:   "organization",
+			IncludeHooks: true,
+			IDField:      "OrganizationID",
 		},
 	}
 }
@@ -80,5 +88,25 @@ func (OrgMembership) Mixin() []ent.Mixin {
 func (OrgMembership) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookOrgMembers(),
+	}
+}
+
+// Policy of the OrgMembership
+func (OrgMembership) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			rule.DenyIfNoSubject(),
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
+			privacy.OrgMembershipMutationRuleFunc(func(ctx context.Context, m *generated.OrgMembershipMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.OrgMembershipQueryRuleFunc(func(ctx context.Context, q *generated.OrgMembershipQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

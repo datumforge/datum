@@ -3,11 +3,15 @@ package graphapi
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/lru"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	echo "github.com/datumforge/echox"
+	"github.com/gorilla/websocket"
 	"github.com/ravilushqa/otelgqlgen"
 	"github.com/wundergraph/graphql-go-tools/pkg/playground"
 	"go.uber.org/zap"
@@ -70,11 +74,29 @@ func (r *Resolver) Handler(withPlayground bool) *Handler {
 		),
 	)
 
+	srv.AddTransport(transport.Websocket{
+		KeepAlivePingInterval: 10 * time.Second, // nolint: gomnd
+		Upgrader: websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
+	})
+	srv.AddTransport(transport.Options{})
+	srv.AddTransport(transport.GET{})
+	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.MultipartForm{})
+
+	srv.SetQueryCache(lru.New(1000)) // nolint:gomnd
+
+	srv.Use(extension.Introspection{})
+	srv.Use(extension.AutomaticPersistedQuery{
+		Cache: lru.New(100), // nolint:gomnd
+	})
 	// add transactional db client
 	WithTransactions(srv, r.client)
 
 	srv.Use(otelgqlgen.Middleware())
-	srv.Use(extension.Introspection{})
 
 	h := &Handler{
 		r:              r,

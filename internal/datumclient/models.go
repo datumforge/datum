@@ -322,6 +322,12 @@ type CreateUserSettingInput struct {
 	UserID *string  `json:"userID,omitempty"`
 }
 
+type Dummy struct {
+	ID   string `json:"id"`
+	Text string `json:"text"`
+	Done bool   `json:"done"`
+}
+
 type Entitlement struct {
 	ID        string     `json:"id"`
 	CreatedAt time.Time  `json:"createdAt"`
@@ -2847,6 +2853,9 @@ type PersonalAccessTokenWhereInput struct {
 }
 
 type Query struct {
+}
+
+type Subscription struct {
 }
 
 // UpdateEntitlementInput is used for update Entitlement object.

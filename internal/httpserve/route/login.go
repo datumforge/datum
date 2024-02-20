@@ -26,10 +26,20 @@ import (
 //	@Tags			Login
 //	@Accept			json
 //	@Produce		json
+//
+// @Param login body handlers.LoginRequest true "Email and Password"
+//
 //	@Success		200	{object}	handlers.LoginReply
 //	@Failure		400	{object}	route.ErrorResponse.BadRequest
 //	@Failure		500	{object}	route.ErrorResponse.InternalServerError
 //	@Router			/login [post]
+//
+// swagger:route POST /login login LoginRequest
+// responses:
+//
+//	200: LoginReply
+//	400: BadRequest
+//	500: InternalServerError
 func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
@@ -40,4 +50,13 @@ func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	}.ForGroup(V1Version, mw))
 
 	return
+}
+
+// swagger:response BadRequest
+type BadRequest struct {
+	// in: body
+	Body struct {
+		// The error message
+		Message string `json:"message"`
+	}
 }

@@ -36,6 +36,15 @@ definitions:
       token_type:
         type: string
     type: object
+  handlers.LoginRequest:
+    properties:
+      invite_token:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   handlers.RefreshReply:
     properties:
       message:
@@ -189,6 +198,13 @@ paths:
       description: |-
         Verifies the password submitted for the user is correct by looking up the user by email
         and using the argon2 derived key verification process to confirm the password matches
+      parameters:
+      - description: Email and Password
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequest'
       produces:
       - application/json
       responses:

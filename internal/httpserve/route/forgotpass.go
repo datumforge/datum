@@ -9,15 +9,15 @@ import (
 	"github.com/datumforge/datum/internal/rout"
 )
 
-//	@Summary		Forgot Password
-//	@Description	Allows the user to request a password reset email
-//	@Tags			Forgot Password
-//	@Accept			json
-//	@Produce		json
-//	@Success		200	{object}	handlers.ForgotPasswordReply
-//	@Failure		400	{object}	route.ErrorResponse.BadRequest
-//	@Failure		500	{object}	route.ErrorResponse.InternalServerError
-//	@Router			/forgot-password [get]
+// @Summary		Forgot Password
+// @Description	Allows the user to request a password reset email
+// @Tags			Forgot Password
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	handlers.ForgotPasswordReply
+// @Failure		400	{object}	route.ErrorResponse.BadRequest
+// @Failure		500	{object}	route.ErrorResponse.InternalServerError
+// @Router			/forgot-password [get]
 func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
@@ -56,8 +56,10 @@ type ErrorResponse struct {
 func (e *ErrorResponse) BadRequest() *ErrorResponse {
 	out := &ErrorResponse{
 		rout.StatusError{
+			// the status code is set to 400
 			StatusCode: http.StatusBadRequest,
-			Reply:      rout.Reply{Success: false, Error: "bad request"},
+			// the reply is set to a string with the value "bad request"
+			Reply: rout.Reply{Success: false, Error: "bad request"},
 		}}
 	return out
 }

@@ -118,6 +118,17 @@ const docTemplate = `{
                     "Login"
                 ],
                 "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Email and Password",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.LoginRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -404,6 +415,20 @@ const docTemplate = `{
                     "$ref": "#/definitions/rout.Reply"
                 },
                 "token_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "invite_token": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

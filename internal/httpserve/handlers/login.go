@@ -18,6 +18,7 @@ import (
 )
 
 // LoginRequest to authenticate with the Datum Sever
+// swagger:parameters LoginRequest
 type LoginRequest struct {
 	Username    string `json:"username"`
 	Password    string `json:"password"`

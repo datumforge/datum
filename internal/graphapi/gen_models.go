@@ -6,6 +6,12 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+type Dummy struct {
+	ID   string `json:"id"`
+	Text string `json:"text"`
+	Done bool   `json:"done"`
+}
+
 // Return response for createEntitlement mutation
 type EntitlementCreatePayload struct {
 	// Created entitlement
@@ -220,6 +226,9 @@ type PersonalAccessTokenDeletePayload struct {
 type PersonalAccessTokenUpdatePayload struct {
 	// Updated personalAccessToken
 	PersonalAccessToken *generated.PersonalAccessToken `json:"personalAccessToken"`
+}
+
+type Subscription struct {
 }
 
 // Return response for createUser mutation

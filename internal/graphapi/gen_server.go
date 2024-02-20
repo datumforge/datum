@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -44,6 +45,7 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	OauthProvider() OauthProviderResolver
 	Query() QueryResolver
+	Subscription() SubscriptionResolver
 	CreateGroupInput() CreateGroupInputResolver
 	CreateOauthProviderInput() CreateOauthProviderInputResolver
 	CreateOrganizationInput() CreateOrganizationInputResolver
@@ -57,6 +59,12 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Dummy struct {
+		Done func(childComplexity int) int
+		ID   func(childComplexity int) int
+		Text func(childComplexity int) int
+	}
+
 	Entitlement struct {
 		Cancelled              func(childComplexity int) int
 		CreatedAt              func(childComplexity int) int
@@ -323,6 +331,7 @@ type ComplexityRoot struct {
 		DeletePersonalAccessToken func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		DeleteUserSetting         func(childComplexity int, id string) int
+		PostMessageTo             func(childComplexity int, subscriber string, content string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
 		UpdateGroup               func(childComplexity int, id string, input generated.UpdateGroupInput) int
 		UpdateGroupMembership     func(childComplexity int, id string, input generated.UpdateGroupMembershipInput) int
@@ -629,6 +638,10 @@ type ComplexityRoot struct {
 		Users                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
 	}
 
+	Subscription struct {
+		Subscribe func(childComplexity int, subscriber string) int
+	}
+
 	User struct {
 		AuthProvider         func(childComplexity int) int
 		AvatarLocalFile      func(childComplexity int) int
@@ -763,6 +776,7 @@ type MutationResolver interface {
 	CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error)
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
+	PostMessageTo(ctx context.Context, subscriber string, content string) (string, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
@@ -804,6 +818,9 @@ type QueryResolver interface {
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
 	User(ctx context.Context, id string) (*generated.User, error)
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
+}
+type SubscriptionResolver interface {
+	Subscribe(ctx context.Context, subscriber string) (<-chan string, error)
 }
 
 type CreateGroupInputResolver interface {
@@ -855,6 +872,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Dummy.done":
+		if e.complexity.Dummy.Done == nil {
+			break
+		}
+
+		return e.complexity.Dummy.Done(childComplexity), true
+
+	case "Dummy.id":
+		if e.complexity.Dummy.ID == nil {
+			break
+		}
+
+		return e.complexity.Dummy.ID(childComplexity), true
+
+	case "Dummy.text":
+		if e.complexity.Dummy.Text == nil {
+			break
+		}
+
+		return e.complexity.Dummy.Text(childComplexity), true
 
 	case "Entitlement.cancelled":
 		if e.complexity.Entitlement.Cancelled == nil {
@@ -2094,6 +2132,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteUserSetting(childComplexity, args["id"].(string)), true
+
+	case "Mutation.postMessageTo":
+		if e.complexity.Mutation.PostMessageTo == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_postMessageTo_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.PostMessageTo(childComplexity, args["subscriber"].(string), args["content"].(string)), true
 
 	case "Mutation.updateEntitlement":
 		if e.complexity.Mutation.UpdateEntitlement == nil {
@@ -3650,6 +3700,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Users(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.UserOrder), args["where"].(*generated.UserWhereInput)), true
 
+	case "Subscription.subscribe":
+		if e.complexity.Subscription.Subscribe == nil {
+			break
+		}
+
+		args, err := ec.field_Subscription_subscribe_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Subscription.Subscribe(childComplexity, args["subscriber"].(string)), true
+
 	case "User.authProvider":
 		if e.complexity.User.AuthProvider == nil {
 			break
@@ -4167,6 +4229,23 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
 			data := ec._Mutation(ctx, rc.Operation.SelectionSet)
 			var buf bytes.Buffer
+			data.MarshalGQL(&buf)
+
+			return &graphql.Response{
+				Data: buf.Bytes(),
+			}
+		}
+	case ast.Subscription:
+		next := ec._Subscription(ctx, rc.Operation.SelectionSet)
+
+		var buf bytes.Buffer
+		return func(ctx context.Context) *graphql.Response {
+			buf.Reset()
+			data := next(ctx)
+
+			if data == nil {
+				return nil
+			}
 			data.MarshalGQL(&buf)
 
 			return &graphql.Response{
@@ -10188,6 +10267,19 @@ type PersonalAccessTokenDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
+	{Name: "../../schema/subs.graphql", Input: `type Dummy {
+  id: ID!
+  text: String!
+  done: Boolean!
+}
+
+extend type Mutation {
+  postMessageTo(subscriber: String!, content: String!): ID!
+}
+
+type Subscription {
+  subscribe(subscriber: String!): String!
+}`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `extend type Query {
     """
     Look up user by ID
@@ -10762,6 +10854,30 @@ func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, 
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_postMessageTo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["subscriber"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("subscriber"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["subscriber"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["content"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["content"] = arg1
 	return args, nil
 }
 
@@ -12166,6 +12282,21 @@ func (ec *executionContext) field_Query_users_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
+func (ec *executionContext) field_Subscription_subscribe_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["subscriber"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("subscriber"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["subscriber"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -12203,6 +12334,138 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _Dummy_id(ctx context.Context, field graphql.CollectedField, obj *Dummy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Dummy_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Dummy_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Dummy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Dummy_text(ctx context.Context, field graphql.CollectedField, obj *Dummy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Dummy_text(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Text, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Dummy_text(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Dummy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Dummy_done(ctx context.Context, field graphql.CollectedField, obj *Dummy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Dummy_done(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Done, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Dummy_done(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Dummy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Entitlement_id(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Entitlement_id(ctx, field)
@@ -20890,6 +21153,61 @@ func (ec *executionContext) fieldContext_Mutation_deletePersonalAccessToken(ctx 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deletePersonalAccessToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_postMessageTo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_postMessageTo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().PostMessageTo(rctx, fc.Args["subscriber"].(string), fc.Args["content"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_postMessageTo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_postMessageTo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -31129,6 +31447,75 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscription_subscribe(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscription_subscribe(ctx, field)
+	if err != nil {
+		return nil
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = nil
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Subscription().Subscribe(rctx, fc.Args["subscriber"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return nil
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return nil
+	}
+	return func(ctx context.Context) graphql.Marshaler {
+		select {
+		case res, ok := <-resTmp.(<-chan string):
+			if !ok {
+				return nil
+			}
+			return graphql.WriterFunc(func(w io.Writer) {
+				w.Write([]byte{'{'})
+				graphql.MarshalString(field.Alias).MarshalGQL(w)
+				w.Write([]byte{':'})
+				ec.marshalNString2string(ctx, field.Selections, res).MarshalGQL(w)
+				w.Write([]byte{'}'})
+			})
+		case <-ctx.Done():
+			return nil
+		}
+	}
+}
+
+func (ec *executionContext) fieldContext_Subscription_subscribe(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Subscription_subscribe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -53565,6 +53952,55 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 
 // region    **************************** object.gotpl ****************************
 
+var dummyImplementors = []string{"Dummy"}
+
+func (ec *executionContext) _Dummy(ctx context.Context, sel ast.SelectionSet, obj *Dummy) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, dummyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Dummy")
+		case "id":
+			out.Values[i] = ec._Dummy_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "text":
+			out.Values[i] = ec._Dummy_text(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "done":
+			out.Values[i] = ec._Dummy_done(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var entitlementImplementors = []string{"Entitlement", "Node"}
 
 func (ec *executionContext) _Entitlement(ctx context.Context, sel ast.SelectionSet, obj *generated.Entitlement) graphql.Marshaler {
@@ -55867,6 +56303,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deletePersonalAccessToken":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deletePersonalAccessToken(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "postMessageTo":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_postMessageTo(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -58939,6 +59382,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	}
 
 	return out
+}
+
+var subscriptionImplementors = []string{"Subscription"}
+
+func (ec *executionContext) _Subscription(ctx context.Context, sel ast.SelectionSet) func(ctx context.Context) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscriptionImplementors)
+	ctx = graphql.WithFieldContext(ctx, &graphql.FieldContext{
+		Object: "Subscription",
+	})
+	if len(fields) != 1 {
+		ec.Errorf(ctx, "must subscribe to exactly one stream")
+		return nil
+	}
+
+	switch fields[0].Name {
+	case "subscribe":
+		return ec._Subscription_subscribe(ctx, fields[0])
+	default:
+		panic("unknown field " + strconv.Quote(fields[0].Name))
+	}
 }
 
 var userImplementors = []string{"User", "Node"}

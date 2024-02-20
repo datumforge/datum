@@ -2386,7 +2386,6 @@ type Mutation {
 		"""
 		id: ID!
 	): PersonalAccessTokenDeletePayload!
-	postMessageTo(subscriber: String!, content: String!): ID!
 	"""
 	Create a new user
 	"""
@@ -2451,6 +2450,7 @@ type Mutation {
 		"""
 		id: ID!
 	): UserSettingDeletePayload!
+	postMessageTo(subscriber: String!, content: String!): ID!
 }
 """
 An object with an ID.

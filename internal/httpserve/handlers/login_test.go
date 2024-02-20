@@ -153,6 +153,7 @@ func TestLoginHandler(t *testing.T) {
 				assert.True(t, out.Success)
 			} else {
 				assert.Contains(t, out.Error, tc.expectedErr.Error())
+				assert.False(t, out.Success)
 			}
 		})
 	}

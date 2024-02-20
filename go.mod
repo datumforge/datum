@@ -38,7 +38,7 @@ require (
 	github.com/wundergraph/graphql-go-tools v1.67.1
 	go.opentelemetry.io/otel v1.23.1
 	go.opentelemetry.io/otel/sdk v1.23.1
-	go.uber.org/zap v1.26.0
+	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.17.0
 	golang.org/x/term v0.17.0
 	google.golang.org/api v0.165.0

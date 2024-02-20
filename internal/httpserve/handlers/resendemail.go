@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
@@ -78,6 +79,11 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 
 	if _, err = h.storeAndSendEmailVerificationToken(viewerCtx, user); err != nil {
 		h.Logger.Errorw("error storing token", "error", err)
+
+		if errors.Is(err, ErrMaxAttempts) {
+			return ctx.JSON(http.StatusTooManyRequests, ErrorResponse(err))
+		}
+
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 

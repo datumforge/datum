@@ -49,6 +49,9 @@ var (
 	// ErrUnableToVerifyEmail is returned when user's email is not able to be verified
 	ErrUnableToVerifyEmail = errors.New("could not verify email")
 
+	// ErrMaxAttempts is returned when user has requested the max retry attempts to verify their email
+	ErrMaxAttempts = errors.New("max attempts verifying email address")
+
 	// ErrNoEmailFound is returned when using an oauth provider and the email address cannot be determined
 	ErrNoEmailFound = errors.New("no email found from oauth provider")
 

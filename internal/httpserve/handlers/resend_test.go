@@ -72,6 +72,36 @@ func TestResendHandler(t *testing.T) {
 			expectedMessage: "received your request to be resend",
 		},
 		{
+			name:            "happy path, attempt 2",
+			email:           "bsanderson@datum.net",
+			expectedStatus:  http.StatusOK,
+			expectedMessage: "received your request to be resend",
+		},
+		{
+			name:            "happy path, attempt 3",
+			email:           "bsanderson@datum.net",
+			expectedStatus:  http.StatusOK,
+			expectedMessage: "received your request to be resend",
+		},
+		{
+			name:            "happy path, attempt 4",
+			email:           "bsanderson@datum.net",
+			expectedStatus:  http.StatusOK,
+			expectedMessage: "received your request to be resend",
+		},
+		{
+			name:            "happy path, attempt 5",
+			email:           "bsanderson@datum.net",
+			expectedStatus:  http.StatusOK,
+			expectedMessage: "received your request to be resend",
+		},
+		{
+			name:            "happy path, attempt 6 should fail",
+			email:           "bsanderson@datum.net",
+			expectedStatus:  http.StatusTooManyRequests,
+			expectedMessage: "max attempts",
+		},
+		{
 			name:            "email does not exist, should still return 204",
 			email:           "bsanderson1@datum.net",
 			expectedStatus:  http.StatusOK,

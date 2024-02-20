@@ -24,7 +24,7 @@ import (
 // Note: there is no InviteRequest as this is handled via our graph interfaces
 // swagger:response InviteReply
 type InviteReply struct {
-	rout.Reply  `json:"reply"`
+	rout.Reply
 	ID          string `json:"user_id"`
 	Email       string `json:"email"`
 	Message     string `json:"message"`

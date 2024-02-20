@@ -37,8 +37,8 @@ type ResetPassword struct {
 // on success, no content is returned (204)
 // swagger:response ResetPasswordReply
 type ResetPasswordReply struct {
-	rout.Reply `json:"reply"`
-	Message    string `json:"message"`
+	rout.Reply
+	Message string `json:"message"`
 }
 
 // ResetPassword allows the user (after requesting a password reset) to

@@ -19,8 +19,8 @@ type RefreshRequest struct {
 // RefreshReply holds the fields that are sent on a response to the `/refresh` endpoint
 // swagger:response RefreshReply
 type RefreshReply struct {
-	rout.Reply `json:"reply"`
-	Message    string `json:"message,omitempty"`
+	rout.Reply
+	Message string `json:"message,omitempty"`
 }
 
 // RefreshHandler allows users to refresh their access token using their refresh token.

@@ -28,7 +28,7 @@ type LoginRequest struct {
 // LoginReply holds response to successful authentication
 // swagger:response LoginReply
 type LoginReply struct {
-	rout.Reply   `json:"reply"`
+	rout.Reply
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token,omitempty"`
 	TokenType    string `json:"token_type"`

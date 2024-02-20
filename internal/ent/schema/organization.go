@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
@@ -11,13 +13,16 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/ogen-go/ogen"
 
+	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/entx"
+	"github.com/datumforge/fgax/entfga"
 )
 
 const (
@@ -117,7 +122,12 @@ func (Organization) Annotations() []schema.Annotation {
 					Through: "OrgMembership",
 				},
 			},
-		)}
+		),
+		entfga.Annotations{
+			ObjectType:   "organization",
+			IncludeHooks: false,
+		},
+	}
 }
 
 // Mixin of the Organization
@@ -138,7 +148,9 @@ func (Organization) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),   // Allow all other users (e.g. a user with a JWT should be able to create a new org)
 		},
 		Query: privacy.QueryPolicy{
-			rule.HasOrgReadAccess(), // Requires a user to have can_view access of the org
+			privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
+				return q.CheckAccess(ctx)
+			}),
 			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}), // Allow invite tokens to query the org ID they are invited to
 			privacy.AlwaysDenyRule(), // Deny all other users
 		},

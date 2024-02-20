@@ -14,7 +14,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 )
 
-func TestQuery_Group(t *testing.T) {
+func TestQueryGroup(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -84,7 +84,7 @@ func TestQuery_Group(t *testing.T) {
 	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_GroupsByOwner(t *testing.T) {
+func TestQueryGroupsByOwner(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -107,6 +107,8 @@ func TestQuery_GroupsByOwner(t *testing.T) {
 
 		mock_fga.ListTimes(t, client.fga, listOrgs, 1)
 		mock_fga.ListTimes(t, client.fga, listGroups, 1)
+
+		mock_fga.CheckAny(t, client.fga, true)
 
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -165,7 +167,7 @@ func TestQuery_GroupsByOwner(t *testing.T) {
 	(&OrganizationCleanup{client: client, OrgID: org2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQuery_Groups(t *testing.T) {
+func TestQueryGroups(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -244,7 +246,7 @@ func TestQuery_Groups(t *testing.T) {
 	(&OrganizationCleanup{client: client, OrgID: org2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutation_CreateGroup(t *testing.T) {
+func TestMutationCreateGroup(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -265,6 +267,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 		owner       string
 		settings    *datumclient.CreateGroupSettingInput
 		allowed     bool
+		check       bool
 		errorMsg    string
 	}{
 		{
@@ -274,6 +277,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 			description: gofakeit.HipsterSentence(10),
 			owner:       owner1.ID,
 			allowed:     true,
+			check:       true,
 		},
 		{
 			name:        "happy path group with settings",
@@ -285,6 +289,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 				JoinPolicy: &enums.InviteOnly,
 			},
 			allowed: true,
+			check:   true,
 		},
 		{
 			name:        "no access to owner",
@@ -293,6 +298,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 			description: gofakeit.HipsterSentence(10),
 			owner:       owner2.ID,
 			allowed:     false,
+			check:       true,
 			errorMsg:    "not authorized",
 		},
 		{
@@ -300,18 +306,21 @@ func TestMutation_CreateGroup(t *testing.T) {
 			groupName: gofakeit.Name(),
 			owner:     owner1.ID,
 			allowed:   true,
+			check:     true,
 		},
 		{
 			name:      "missing owner",
 			groupName: gofakeit.Name(),
-			errorMsg:  "constraint failed", // TODO: better error messaging
+			errorMsg:  "not authorized",
 			allowed:   true,
+			check:     false, // check caught earlier
 		},
 		{
 			name:     "missing name",
 			owner:    owner1.ID,
 			errorMsg: "validator failed",
 			allowed:  true,
+			check:    true,
 		},
 	}
 
@@ -336,7 +345,9 @@ func TestMutation_CreateGroup(t *testing.T) {
 				input.CreateGroupSettings = tc.settings
 			}
 
-			mock_fga.CheckAny(t, client.fga, tc.allowed)
+			if tc.check {
+				mock_fga.CheckAny(t, client.fga, tc.allowed)
+			}
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
@@ -382,7 +393,7 @@ func TestMutation_CreateGroup(t *testing.T) {
 	(&OrganizationCleanup{client: client, OrgID: owner1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutation_UpdateGroup(t *testing.T) {
+func TestMutationUpdateGroup(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -394,7 +405,10 @@ func TestMutation_UpdateGroup(t *testing.T) {
 	displayNameUpdate := gofakeit.LetterN(40)
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 
-	group := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
+	org := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	group := (&GroupBuilder{client: client, Owner: org.ID}).MustNew(reqCtx, t)
+
+	om := (&OrgMemberBuilder{client: client, OrgID: org.ID}).MustNew(reqCtx, t)
 
 	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
 
@@ -405,6 +419,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 		allowed     bool
 		updateInput datumclient.UpdateGroupInput
 		expectedRes datumclient.UpdateGroup_UpdateGroup_Group
+		list        bool
 		errorMsg    string
 	}{
 		{
@@ -415,6 +430,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 				DisplayName: &displayNameUpdate,
 				Description: &descriptionUpdate,
 			},
+			list: true,
 			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
 				ID:          group.ID,
 				Name:        nameUpdate,
@@ -428,11 +444,12 @@ func TestMutation_UpdateGroup(t *testing.T) {
 			updateInput: datumclient.UpdateGroupInput{
 				AddGroupMembers: []*datumclient.CreateGroupMembershipInput{
 					{
-						UserID: testUser1.ID,
+						UserID: om.UserID,
 						Role:   &enums.RoleAdmin,
 					},
 				},
 			},
+			list: true,
 			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
 				ID:          group.ID,
 				Name:        nameUpdate,
@@ -442,7 +459,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 					{
 						Role: enums.RoleAdmin,
 						User: datumclient.UpdateGroup_UpdateGroup_Group_Members_User{
-							ID: testUser1.ID,
+							ID: om.UserID,
 						},
 					},
 				},
@@ -456,6 +473,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 					JoinPolicy: &enums.Open,
 				},
 			},
+			list: true,
 			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
 				ID:          group.ID,
 				Name:        nameUpdate,
@@ -474,6 +492,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 				DisplayName: &displayNameUpdate,
 				Description: &descriptionUpdate,
 			},
+			list:     false,
 			errorMsg: "not authorized",
 		},
 	}
@@ -484,11 +503,11 @@ func TestMutation_UpdateGroup(t *testing.T) {
 
 			mock_fga.CheckAny(t, client.fga, tc.allowed)
 
-			if tc.errorMsg == "" {
+			if tc.list {
 				mock_fga.ListAny(t, client.fga, listObjects)
 			}
 
-			if tc.updateInput.AddGroupMembers != nil {
+			if tc.updateInput.AddGroupMembers != nil && tc.errorMsg == "" {
 				mock_fga.WriteAny(t, client.fga)
 			}
 
@@ -531,7 +550,7 @@ func TestMutation_UpdateGroup(t *testing.T) {
 	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutation_DeleteGroup(t *testing.T) {
+func TestMutationDeleteGroup(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 

@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -407,6 +408,12 @@ func (omq *OrgMembershipQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		omq.sql = prev
+	}
+	if orgmembership.Policy == nil {
+		return errors.New("generated: uninitialized orgmembership.Policy (forgotten import generated/runtime?)")
+	}
+	if err := orgmembership.Policy.EvalQuery(ctx, omq); err != nil {
+		return err
 	}
 	return nil
 }

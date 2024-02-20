@@ -288,6 +288,7 @@ func (g *GroupBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Group {
 
 	// mock writes
 	mock_fga.WriteAny(t, g.client.fga)
+	mock_fga.ListAny(t, g.client.fga, []string{fmt.Sprintf("organization:%s", owner)})
 
 	group := g.client.db.Group.Create().SetName(g.Name).SetOwnerID(owner).SaveX(ctx)
 
@@ -413,6 +414,8 @@ func (gm *GroupMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Gr
 
 	// mock writes
 	mock_fga.WriteOnce(t, gm.client.fga)
+	// dummy check to org
+	mock_fga.ListAny(t, gm.client.fga, []string{fmt.Sprintf("organization:%s", "org1")})
 
 	groupMember := gm.client.db.GroupMembership.Create().
 		SetUserID(gm.UserID).

@@ -14,7 +14,7 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.0.0
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
-	github.com/datumforge/fgax v0.0.3
+	github.com/datumforge/fgax v0.0.5-0.20240220042328-ca3be68827ec
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
 	github.com/golang-jwt/jwt/v5 v5.2.0
@@ -126,8 +126,8 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0-rc5 // indirect
 	github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee // indirect
-	github.com/openfga/go-sdk v0.3.4 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240202014326-1758dfa8dc1b // indirect
+	github.com/openfga/go-sdk v0.3.5 // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240219105206-c13154377de0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/prometheus/client_model v0.5.0 // indirect

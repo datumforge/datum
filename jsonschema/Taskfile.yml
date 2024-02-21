@@ -10,7 +10,6 @@ tasks:
     desc: generate a new jsonschema and corresponding config/config.example.yaml
     cmds:
       - go run jsonschema/schema_generator.go
-      - task: docs
   
   docs:
     desc: generate documentation from the jsonschema

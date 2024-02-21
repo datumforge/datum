@@ -127,6 +127,7 @@ tasks:
     cmds:
       - task: generate
       - task: config:generate
+      - task: config:docs
       - task: atlas:all
       - task: go
       - task: fga:test

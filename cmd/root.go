@@ -12,8 +12,7 @@ import (
 const appName = "datum"
 
 var (
-	cfgFile string
-	logger  *zap.SugaredLogger
+	logger *zap.SugaredLogger
 )
 
 // rootCmd represents the base command when called without any subcommands

@@ -18,7 +18,7 @@ const (
 
 var includedPackages = []string{"./config", "./internal/cache", "./internal/entdb", "./internal/httpserve/handlers", "./internal/otelx", "./internal/sessions", "./internal/tokens", "./internal/utils/emails", "./internal/utils/sentry", "./internal/providers"}
 var externalPackages = map[string]string{
-	"github.com/datumforge/fgax": "./fga",
+	"github.com/datumforge/fgax": ".",
 }
 
 // schemaConfig represents the configuration for the schema generator
@@ -44,7 +44,7 @@ func main() {
 
 // generateSchema generates a JSON schema and a YAML schema based on the provided schemaConfig and structure
 func generateSchema(c schemaConfig, structure interface{}) error {
-	// override the default name to using the fully pkg name
+	// override the default name to using the prefixed pkg name
 	r := jsonschema.Reflector{Namer: namePkg}
 	r.ExpandedStruct = true
 	// set `jsonschema:required` tag to true to generate required fields

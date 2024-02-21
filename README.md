@@ -36,7 +36,7 @@ To include Taskfile's created in other directories / to call the respective task
 
 ### Updating Configuration Settings
 
-Within the `config` directory in the root of this repository there are several `example.yaml` files prefixed with `config` or similar; these hold examples of environment configurations which you should review and potentially override depending on your needs. Anything which is launched out of the `Taskfile` will source it's configuration from these files. Different tasks can be made to source from different files as can be seen by several of the tasks within the Taskfile.
+Within the `config` directory in the root of this repository there are several `example.yaml` files prefixed with `config` or similar; these hold examples of environment configurations which you should review and potentially override depending on your needs. Anything which is launched out of the `Taskfile` will source it's configuration from these files.
 
 You will need to perform a 1-time action of creating a `.config.yaml` file based on the `.example` files. 
 The Taskfiles will also source a `.dotenv` files which match the naming conventions called for `{{.ENV}}` to ease the overriding of environment variables. These files are intentionally added to the `.gitignore` within this repository to prevent you from accidentally committing secrets or other sensitive information which may live inside the server's environment variables.

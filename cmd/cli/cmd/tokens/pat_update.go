@@ -32,10 +32,10 @@ func init() {
 	datum.ViperBindFlag("pat.update.description", patUpdateCmd.Flags().Lookup("description"))
 
 	patUpdateCmd.Flags().StringSliceP("add-organizations", "o", []string{}, "add organization(s) id to associate the pat with")
-	datum.ViperBindFlag("pat.create.add-organizations", patUpdateCmd.Flags().Lookup("add-organizations"))
+	datum.ViperBindFlag("pat.update.add-organizations", patUpdateCmd.Flags().Lookup("add-organizations"))
 
 	patUpdateCmd.Flags().StringSliceP("remove-organizations", "r", []string{}, "remove organization(s) id to associate the pat with")
-	datum.ViperBindFlag("pat.create.remove-organizations", patUpdateCmd.Flags().Lookup("remove-organizations"))
+	datum.ViperBindFlag("pat.update.remove-organizations", patUpdateCmd.Flags().Lookup("remove-organizations"))
 }
 
 func updatePat(ctx context.Context) error {
@@ -69,12 +69,12 @@ func updatePat(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	addOrgs := viper.GetStringSlice("pat.create.add-organizations")
+	addOrgs := viper.GetStringSlice("pat.update.add-organizations")
 	if addOrgs != nil {
 		input.AddOrganizationIDs = addOrgs
 	}
 
-	removeOrgs := viper.GetStringSlice("pat.create.remove-organizations")
+	removeOrgs := viper.GetStringSlice("pat.update.remove-organizations")
 	if removeOrgs != nil {
 		input.RemoveOrganizationIDs = removeOrgs
 	}

@@ -122,7 +122,8 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 			predicate := func() bool {
 				return client.h.TaskMan.GetQueueLength() == 0
 			}
-			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+
+			asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 
 			mock.ResetEmailMock()
 
@@ -175,7 +176,7 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 			predicate = func() bool {
 				return client.h.TaskMan.GetQueueLength() == 0
 			}
-			successful = asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 
 			if successful != true {
 				t.Errorf("max wait of email send")

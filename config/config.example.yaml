@@ -1,0 +1,111 @@
+auth:
+    enabled: false
+    providers:
+        github:
+            client_endpoint: ""
+            client_id: ""
+            client_secret: ""
+            redirect_url: ""
+            scopes: null
+        google:
+            client_endpoint: ""
+            client_id: ""
+            client_secret: ""
+            redirect_url: ""
+            scopes: null
+        redirect_url: ""
+    supported_providers: null
+    token:
+        access_duration: 0
+        audience: ""
+        issuer: ""
+        jwks_endpoint: ""
+        keys: null
+        kid: ""
+        refresh_audience: ""
+        refresh_duration: 0
+        refresh_overlap: 0
+authz:
+    create_new_model: false
+    enabled: false
+    host_url: ""
+    model_id: ""
+    store_id: ""
+    store_name: ""
+db:
+    catch_ttl: 0
+    debug: false
+    driver_name: ""
+    multi_write: false
+    primary_db_source: ""
+    secondary_db_source: ""
+email:
+    admin_email: ""
+    archive: ""
+    datum_list_id: ""
+    from_email: ""
+    send_grid_api_key: ""
+    testing: false
+redis:
+    address: ""
+    db: 0
+    dial_timeout: 0
+    enabled: false
+    max_active_conns: 0
+    max_idle_conns: 0
+    max_retries: 0
+    min_idle_connections: 0
+    name: ""
+    password: ""
+    read_timeout: 0
+    username: ""
+    write_timeout: 0
+refresh_interval: 0
+sentry:
+    attach_stacktrace: false
+    debug: false
+    dsn: ""
+    enable_tracing: false
+    enabled: false
+    environment: ""
+    profile_sample_rate: 0
+    repanic: false
+    sample_rate: 0
+    server_name: ""
+    trace_sample_rate: 0
+    trace_sampler: 0
+server:
+    cors:
+        allow_origins: null
+        cookie_insecure: false
+    debug: false
+    dev: false
+    idle_timeout: 0
+    listen: ""
+    read_header_timeout: 0
+    read_timeout: 0
+    shutdown_grace_period: 0
+    tls:
+        auto_cert: false
+        cert_file: ""
+        cert_key: ""
+        config: null
+        enabled: false
+    write_timeout: 0
+sessions:
+    encryption_key: ""
+    signing_key: ""
+tracer:
+    enabled: false
+    environment: ""
+    otlp:
+        certificate: ""
+        compression: ""
+        endpoint: ""
+        headers: null
+        insecure: false
+        timeout: 0
+    provider: ""
+    stdout:
+        disable_timestamp: false
+        pretty: false

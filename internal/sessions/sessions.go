@@ -7,11 +7,12 @@ import (
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
+// Config contains the configuration for the session store
 type Config struct {
 	// SigningKey must be a 16, 32, or 64 character string used to encode the cookie
-	SigningKey string `yaml:"signingKey" split_words:"true" default:"my-signing-secret"` // $DATUM_SESSIONS_SIGNING_KEY
+	SigningKey string `json:"signing_key" koanf:"signing_key" default:"my-signing-secret"`
 	// EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie
-	EncryptionKey string `yaml:"encryptionKey" split_words:"true" default:"encryptionsecret"` // $DATUM_SESSIONS_ENCRYPTION_KEY
+	EncryptionKey string `json:"encryption_key" koanf:"encryption_key" default:"encryptionsecret"`
 }
 
 // Session represents state values maintained in a sessions Store

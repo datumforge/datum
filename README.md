@@ -34,11 +34,23 @@ After installation, you can then simply run `task install` to load the associate
 
 To include Taskfile's created in other directories / to call the respective tasks, you would add an `includes` per the Taskfile documentation and then reference it by name, e.g. `task cli:createorg`
 
-### Updating Environment Variables
+### Updating Configuration Settings
 
-Within the `config` directory in the root of this repository there are several `.example` files prefixed with `.env-dev` or similar; these hold examples of environment configurations which you should review and potentially override depending on your needs. Anything which is launched out of the `Taskfile` will source it's environment from these files and their configurations. Different tasks can be made to source from different files as can be seen by several of the tasks within the Taskfile.
+Within the `config` directory in the root of this repository there are several `example.yaml` files prefixed with `config` or similar; these hold examples of environment configurations which you should review and potentially override depending on your needs. Anything which is launched out of the `Taskfile` will source it's configuration from these files. Different tasks can be made to source from different files as can be seen by several of the tasks within the Taskfile.
 
-You will need to perform a 1-time action of either removing the `.example` suffix from these files or creating your own files which match the naming convensions called for `{{.ENV}}` within the Taskfile. These files are intentionally added to the `.gitignore` within this repository to prevent you from accidentally committing secrets or other sensitive information which may live inside the server's environment variables.
+You will need to perform a 1-time action of either removing the `.example` suffix from these files or`.config.yaml`. 
+The Taskfiles will also source a `.dotenv` files which match the naming conventions called for `{{.ENV}}` to ease the overriding of environment variables. These files are intentionally added to the `.gitignore` within this repository to prevent you from accidentally committing secrets or other sensitive information which may live inside the server's environment variables.
+
+All settings in the `yaml` configuration can also be overwritten with environment variables prefixed with `DATUM_`. For example, to override the Google `client_secret` set in the yaml configruation with an environment variable you can use: 
+
+```
+export DATUM_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET
+```
+
+Configuration precedence is, the latter overriding the former:
+1. `default` values set in the code structs
+2. `.config.yaml` values
+3. Environment variables
 
 ### Pre-requisites to a PR
 

@@ -61,3 +61,4 @@ results.txt
 # Configs
 *.env
 *.env-dev
+*.config.yaml

@@ -17,6 +17,14 @@ steps:
           command: ["task", "ci"]
           environment: 
             - "GOTOOLCHAIN=auto"
+  - label: ":yaml: generate config"
+    key: "generate_config"
+    plugins:
+      - docker#v5.10.0:
+          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
+          command: ["task", "config:ci"]
+          environment: 
+            - "GOTOOLCHAIN=auto"
             
 - group: ":test_tube: Tests"
   key: "tests"

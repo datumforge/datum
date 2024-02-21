@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/echox/middleware"
 	"github.com/datumforge/echozap"
 	"github.com/datumforge/fgax"
+	sentrygo "github.com/getsentry/sentry-go"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -22,7 +23,6 @@ import (
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/cachecontrol"
 	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
@@ -32,14 +32,9 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/redirect"
 	"github.com/datumforge/datum/internal/httpserve/middleware/sentry"
 	"github.com/datumforge/datum/internal/httpserve/server"
-	"github.com/datumforge/datum/internal/otelx"
-	"github.com/datumforge/datum/internal/providers/github"
-	"github.com/datumforge/datum/internal/providers/google"
 	"github.com/datumforge/datum/internal/sessions"
-	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
-	sentryOps "github.com/datumforge/datum/internal/utils/sentry"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
@@ -74,23 +69,14 @@ func WithLogger(l *zap.SugaredLogger) ServerOption {
 		// Add logger to main config
 		s.Config.Logger = l
 		// Add logger to the handlers config
-		s.Config.Server.Handler.Logger = l
-	})
-}
-
-// WithServer supplies the echo server config for the server
-func WithServer() ServerOption {
-	return newApplyFunc(func(s *ServerOptions) {
-		serverConfig := config.NewServerConfig()
-
-		s.Config = *serverConfig
+		s.Config.Handler.Logger = l
 	})
 }
 
 // WithHTTPS sets up TLS config settings for the server
 func WithHTTPS() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		if !s.Config.Server.TLS.Enabled {
+		if !s.Config.Settings.Server.TLS.Enabled {
 			// this is set to enabled by WithServer
 			// if TLS is not enabled, move on
 			return
@@ -98,51 +84,9 @@ func WithHTTPS() ServerOption {
 
 		s.Config.WithTLSDefaults()
 
-		if !s.Config.Server.TLS.AutoCert {
-			s.Config.WithTLSCerts(s.Config.Server.TLS.CertFile, s.Config.Server.TLS.CertKey)
+		if !s.Config.Settings.Server.TLS.AutoCert {
+			s.Config.WithTLSCerts(s.Config.Settings.Server.TLS.CertFile, s.Config.Settings.Server.TLS.CertKey)
 		}
-	})
-}
-
-// WithSQLiteDB supplies the sqlite db config for the server
-func WithSQLiteDB() ServerOption {
-	return newApplyFunc(func(s *ServerOptions) {
-		// Database Config Setup
-		dbConfig := &entdb.Config{}
-
-		// load defaults and env vars
-		err := envconfig.Process("datum_db", dbConfig)
-		if err != nil {
-			panic(err)
-		}
-
-		s.Config.DB = *dbConfig
-	})
-}
-
-func WithTracer() ServerOption {
-	return newApplyFunc(func(s *ServerOptions) {
-		// Tracer Config Setup
-		tracerConfig := &otelx.Config{}
-
-		// load defaults and env vars
-		if err := envconfig.Process("datum_tracing", tracerConfig); err != nil {
-			panic(err)
-		}
-
-		s.Config.Tracer = *tracerConfig
-	})
-}
-
-// WithFGAAuthz supplies the FGA authz config for the server
-func WithFGAAuthz() ServerOption {
-	return newApplyFunc(func(s *ServerOptions) {
-		config, err := fgax.NewAuthzConfig(s.Config.Logger)
-		if err != nil {
-			panic(err)
-		}
-
-		s.Config.Authz = *config
 	})
 }
 
@@ -182,7 +126,7 @@ func WithGeneratedKeys() ServerOption {
 		keys := map[string]string{}
 
 		// check if kid was passed in
-		kidPriv := s.Config.Server.Token.KID
+		kidPriv := s.Config.Settings.Auth.Token.KID
 
 		// if we didn't get a kid in the settings, assign one
 		if kidPriv == "" {
@@ -191,73 +135,25 @@ func WithGeneratedKeys() ServerOption {
 
 		keys[kidPriv] = fmt.Sprintf("%v", privFileName)
 
-		s.Config.Server.Token.Keys = keys
+		s.Config.Settings.Auth.Token.Keys = keys
 	})
 }
 
 // WithAuth supplies the authn and jwt config for the server
 func WithAuth() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		// Token Config Setup
-		tokenConfig := &tokens.Config{}
-
-		// load defaults and env vars
-		if err := envconfig.Process("datum_token", tokenConfig); err != nil {
-			panic(err)
-		}
-
-		s.Config.Server.Token = *tokenConfig
-
-		// Token Config Setup
-		authConfig := &config.Auth{}
-
-		// load defaults and env vars
-		if err := envconfig.Process("datum_auth", authConfig); err != nil {
-			panic(err)
-		}
-
-		s.Config.Auth = *authConfig
-
-		authProviderConfig := &handlers.OauthProviderConfig{}
-		googleProvider := &handlers.GoogleConfig{}
-		githubProvider := &handlers.GithubConfig{}
-
-		// load defaults and env vars for GitHub provider
-		if err := envconfig.Process("datum_auth_provider_github", githubProvider); err != nil {
-			panic(err)
-		}
-
-		// load defaults and env vars for Google Provider
-		if err := envconfig.Process("datum_auth_provider_google", googleProvider); err != nil {
-			panic(err)
-		}
-
-		// load defaults and env vars for Oauth setup
-		if err := envconfig.Process("datum_auth_provider", authProviderConfig); err != nil {
-			panic(err)
-		}
-
-		// add supported providers if not set
-		if len(s.Config.Auth.SupportedProviders) == 0 {
-			s.Config.Auth.SupportedProviders = []string{github.ProviderName, google.ProviderName}
-		}
-
-		// add external providers
-		authProviderConfig.GithubConfig = *githubProvider
-		authProviderConfig.GoogleConfig = *googleProvider
-
-		// add our oauth2 provider
-		s.Config.Server.Handler.OauthProvider = *authProviderConfig
+		// add oauth providers
+		s.Config.Handler.OauthProvider = s.Config.Settings.Auth.Providers
 
 		// add auth middleware
 		conf := authmw.NewAuthOptions(
-			authmw.WithAudience(s.Config.Server.Token.Audience),
-			authmw.WithIssuer(s.Config.Server.Token.Issuer),
-			authmw.WithJWKSEndpoint(s.Config.Server.Token.JWKSEndpoint),
+			authmw.WithAudience(s.Config.Settings.Auth.Token.Audience),
+			authmw.WithIssuer(s.Config.Settings.Auth.Token.Issuer),
+			authmw.WithJWKSEndpoint(s.Config.Settings.Auth.Token.JWKSEndpoint),
 		)
 
-		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware, authmw.Authenticate(conf))
-		s.Config.Server.Handler.AuthMiddleware = append(s.Config.Server.Handler.AuthMiddleware, authmw.Authenticate(conf))
+		s.Config.GraphMiddleware = append(s.Config.GraphMiddleware, authmw.Authenticate(conf))
+		s.Config.Handler.AuthMiddleware = append(s.Config.Handler.AuthMiddleware, authmw.Authenticate(conf))
 	})
 }
 
@@ -265,21 +161,21 @@ func WithAuth() ServerOption {
 func WithReadyChecks(c *entdb.EntClientConfig, f *fgax.Client, r *redis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Always add a check to the primary db connection
-		s.Config.Server.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
+		s.Config.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
 
 		// Check the secondary db, if enabled
-		if s.Config.DB.MultiWrite {
-			s.Config.Server.Handler.AddReadinessCheck("sqlite_db_secondary", entdb.Healthcheck(c.GetSecondaryDB()))
+		if s.Config.Settings.DB.MultiWrite {
+			s.Config.Handler.AddReadinessCheck("sqlite_db_secondary", entdb.Healthcheck(c.GetSecondaryDB()))
 		}
 
 		// Check the connection to openFGA, if enabled
-		if s.Config.Authz.Enabled {
-			s.Config.Server.Handler.AddReadinessCheck("fga", fgax.Healthcheck(*f))
+		if s.Config.Settings.Authz.Enabled {
+			s.Config.Handler.AddReadinessCheck("fga", fgax.Healthcheck(*f))
 		}
 
 		// Check the connection to redis, if enabled
-		if s.Config.RedisConfig.Enabled {
-			s.Config.Server.Handler.AddReadinessCheck("redis", cache.Healthcheck(r))
+		if s.Config.Settings.Redis.Enabled {
+			s.Config.Handler.AddReadinessCheck("redis", cache.Healthcheck(r))
 		}
 	})
 }
@@ -291,7 +187,7 @@ func WithGraphRoute(srv *server.Server, c *generated.Client) ServerOption {
 		r := graphapi.NewResolver(c).
 			WithLogger(s.Config.Logger.Named("resolvers"))
 
-		handler := r.Handler(s.Config.Server.Dev)
+		handler := r.Handler(s.Config.Settings.Server.Dev)
 
 		// Add Graph Handler
 		srv.AddHandler(handler)
@@ -302,8 +198,8 @@ func WithGraphRoute(srv *server.Server, c *generated.Client) ServerOption {
 func WithMiddleware() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Initialize middleware if null
-		if s.Config.Server.DefaultMiddleware == nil {
-			s.Config.Server.DefaultMiddleware = []echo.MiddlewareFunc{}
+		if s.Config.DefaultMiddleware == nil {
+			s.Config.DefaultMiddleware = []echo.MiddlewareFunc{}
 		}
 
 		redirectMW := redirect.Config{
@@ -314,7 +210,7 @@ func WithMiddleware() ServerOption {
 			Code: 302, // nolint: gomnd
 		}
 		// default middleware
-		s.Config.Server.DefaultMiddleware = append(s.Config.Server.DefaultMiddleware,
+		s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware,
 			middleware.RequestID(), // add request id
 			middleware.Recover(),   // recover server from any panic/fatal error gracefully
 			middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -338,15 +234,7 @@ func WithMiddleware() ServerOption {
 // on registration, password reset, etc
 func WithEmailManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		emailConfig := &emails.Config{}
-
-		// load defaults and env vars
-		err := envconfig.Process("datum_email", emailConfig)
-		if err != nil {
-			panic(err)
-		}
-
-		em, err := emails.New(*emailConfig)
+		em, err := emails.New(s.Config.Settings.Email)
 		if err != nil {
 			panic(err)
 		}
@@ -362,7 +250,7 @@ func WithEmailManager() ServerOption {
 
 		em.URLConfig = *urlConfig
 
-		s.Config.Server.Handler.EmailManager = em
+		s.Config.Handler.EmailManager = em
 	})
 }
 
@@ -378,21 +266,7 @@ func WithTaskManager() ServerOption {
 
 		tm.Start()
 
-		s.Config.Server.Handler.TaskMan = tm
-	})
-}
-
-// WithRedisCache sets up the redis config use as a key-value store for things such as session management
-func WithRedisCache() ServerOption {
-	return newApplyFunc(func(s *ServerOptions) {
-		config := &cache.Config{}
-
-		// load defaults and env vars
-		if err := envconfig.Process("datum_redis", config); err != nil {
-			panic(err)
-		}
-
-		s.Config.RedisConfig = *config
+		s.Config.Handler.TaskMan = tm
 	})
 }
 
@@ -400,26 +274,19 @@ func WithRedisCache() ServerOption {
 // with persistence to redis
 func WithSessionManager(rc *redis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		config := &sessions.Config{}
-
-		// load defaults and env vars
-		if err := envconfig.Process("datum_sessions", config); err != nil {
-			panic(err)
-		}
-
 		cc := sessions.DefaultCookieConfig
 
 		// In order for things to work in dev mode with localhost
 		// we need to se the debug cookie config
-		if s.Config.Server.Dev {
+		if s.Config.Settings.Server.Dev {
 			cc = &sessions.DebugOnlyCookieConfig
 		} else {
 			cc.Name = sessions.DefaultCookieName
 		}
 
 		sm := sessions.NewCookieStore[map[string]string](cc,
-			[]byte(config.SigningKey),
-			[]byte(config.EncryptionKey),
+			[]byte(s.Config.Settings.Sessions.SigningKey),
+			[]byte(s.Config.Settings.Sessions.EncryptionKey),
 		)
 
 		// add session middleware, this has to be added after the authMiddleware so we have the user id
@@ -436,10 +303,10 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 
 		// Make the cookie session store available
 		// to graph and REST endpoints
-		s.Config.Server.Handler.SessionConfig = &sessionConfig
-		s.Config.Server.SessionConfig = &sessionConfig
+		s.Config.Handler.SessionConfig = &sessionConfig
+		s.Config.SessionConfig = &sessionConfig
 
-		s.Config.Server.GraphMiddleware = append(s.Config.Server.GraphMiddleware,
+		s.Config.GraphMiddleware = append(s.Config.GraphMiddleware,
 			sessions.LoadAndSaveWithConfig(sessionConfig),
 		)
 	})
@@ -448,16 +315,13 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 // WithSentry sets up the sentry middleware for error tracking
 func WithSentry() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		config := &sentryOps.Config{}
+		if s.Config.Settings.Sentry.Enabled {
+			if err := sentrygo.Init(s.Config.Settings.Sentry.ClientOptions()); err != nil {
+				s.Config.Logger.Fatalw("failed to initialize sentry", "error", err)
+			}
 
-		// load defaults and env vars
-		if err := envconfig.Process("datum_sentry", config); err != nil {
-			panic(err)
+			// add sentry middleware
+			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, sentry.New())
 		}
-
-		s.Config.Server.Sentry = *config
-
-		// add sentry middleware
-		s.Config.Server.DefaultMiddleware = append(s.Config.Server.DefaultMiddleware, sentry.New())
 	})
 }

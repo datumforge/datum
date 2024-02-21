@@ -7,20 +7,32 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
-// Config for the Sentry client
+// Config settings for the Sentry client
 type Config struct {
-	Enabled            bool    `split_words:"true" default:"false"`
-	DSN                string  `split_words:"true"`
-	ServerName         string  `split_words:"true"`
-	Environment        string  `split_words:"true"`
-	EnableTracing      bool    `split_words:"true" default:"false"`
-	TracesSampler      float64 `split_words:"true" default:"1.0"`
-	AttachStacktrace   bool    `split_words:"true" default:"true"`
-	SampleRate         float64 `split_words:"true" default:"0.2"`
-	TracesSampleRate   float64 `split_words:"true" default:"0.2"`
-	ProfilesSampleRate float64 `split_words:"true" default:"0.2"`
-	Repanic            bool    `ignored:"true"`
-	Debug              bool    `default:"false"`
+	// Enabled indicates whether the Sentry client is enabled
+	Enabled bool `json:"enabled" koanf:"enabled" default:"false"`
+	// DSN is the Data Source Name for the Sentry client
+	DSN string `json:"dsn" koanf:"dsn"`
+	// Environment is the environment in which the Sentry client is running
+	Environment string `json:"environment" koanf:"environment" default:"development"`
+	// EnableTracing indicates whether tracing is enabled for the Sentry client
+	EnableTracing bool `json:"enable_tracing" koanf:"enable_tracing" default:"false"`
+	// TracesSampler is the sampling rate for tracing in the Sentry client
+	TracesSampler float64 `json:"trace_sampler" koanf:"trace_sampler" default:"1.0"`
+	// AttachStacktrace indicates whether to attach stack traces to events in the Sentry client
+	AttachStacktrace bool `json:"attach_stacktrace" koanf:"attach_stacktrace" default:"true"`
+	// SampleRate is the sampling rate for events in the Sentry client
+	SampleRate float64 `json:"sample_rate" koanf:"sample_rate" default:"0.2"`
+	// TracesSampleRate is the sampling rate for tracing events in the Sentry client
+	TracesSampleRate float64 `json:"trace_sample_rate" koanf:"trace_sample_rate" default:"0.2"`
+	// ProfilesSampleRate is the sampling rate for profiling events in the Sentry client
+	ProfilesSampleRate float64 `json:"profile_sample_rate" koanf:"profile_sample_rate" default:"0.2"`
+	// Repanic indicates whether to repanic after capturing an event in the Sentry client
+	Repanic bool `json:"repanic" koanf:"repanic" ignored:"true"`
+	// Debug indicates whether debug mode is enabled for the Sentry client
+	Debug bool `json:"debug" koanf:"debug" default:"false"`
+	// ServerName is the name of the server running the Sentry client
+	ServerName string `json:"server_name" koanf:"server_name"`
 }
 
 // UseSentry true if Sentry is enabled (e.g. a DSN is configured)

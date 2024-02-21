@@ -48,14 +48,9 @@ func serve(ctx context.Context) error {
 	serverOpts := []serveropts.ServerOption{}
 	serverOpts = append(serverOpts,
 		serveropts.WithConfigProvider(&config.ConfigProviderWithRefresh{}),
-		serveropts.WithServer(),
 		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(),
-		serveropts.WithSQLiteDB(),
-		serveropts.WithRedisCache(),
 		serveropts.WithAuth(),
-		serveropts.WithFGAAuthz(),
-		serveropts.WithTracer(),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
 		serveropts.WithSentry(),
@@ -64,20 +59,20 @@ func serve(ctx context.Context) error {
 
 	so := serveropts.NewServerOptions(serverOpts)
 
-	err = otelx.NewTracer(so.Config.Tracer, appName, logger)
+	err = otelx.NewTracer(so.Config.Settings.Tracer, appName, logger)
 	if err != nil {
 		logger.Fatalw("failed to initialize tracer", "error", err)
 	}
 
 	// Create keys for development
-	if so.Config.Server.Dev {
+	if so.Config.Settings.Server.Dev {
 		so.AddServerOptions(serveropts.WithGeneratedKeys())
 	}
 
 	// setup Authz connection
 	// this must come before the database setup because the FGA Client
 	// is used as an ent dependency
-	fgaClient, err = fgax.CreateFGAClientWithStore(ctx, so.Config.Authz)
+	fgaClient, err = fgax.CreateFGAClientWithStore(ctx, so.Config.Settings.Authz, so.Config.Logger)
 	if err != nil {
 		return err
 	}
@@ -90,13 +85,13 @@ func serve(ctx context.Context) error {
 	entOpts = append(
 		entOpts,
 		ent.Authz(*fgaClient),
-		ent.Emails(so.Config.Server.Handler.EmailManager),
-		ent.Marionette(so.Config.Server.Handler.TaskMan),
+		ent.Emails(so.Config.Handler.EmailManager),
+		ent.Marionette(so.Config.Handler.TaskMan),
 		ent.Analytics(&analytics),
 	)
 
 	// Setup DB connection
-	dbConfig := entdb.NewDBConfig(so.Config.DB, logger)
+	dbConfig := entdb.NewDBConfig(so.Config.Settings.DB, logger)
 
 	entdbClient, err = dbConfig.NewMultiDriverDBClient(ctx, entOpts)
 	if err != nil {
@@ -106,14 +101,14 @@ func serve(ctx context.Context) error {
 	defer entdbClient.Close()
 
 	// Setup Redis connection
-	redisClient := cache.New(so.Config.RedisConfig)
+	redisClient := cache.New(so.Config.Settings.Redis)
 	defer redisClient.Close()
 
 	// Add Driver to the Handlers Config
-	so.Config.Server.Handler.DBClient = entdbClient
+	so.Config.Handler.DBClient = entdbClient
 
 	// Add redis client to Handlers Config
-	so.Config.Server.Handler.RedisClient = redisClient
+	so.Config.Handler.RedisClient = redisClient
 
 	// add ready checks
 	so.AddServerOptions(
@@ -125,7 +120,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithSessionManager(redisClient),
 	)
 
-	srv := server.NewServer(so.Config.Server, so.Config.Logger)
+	srv := server.NewServer(so.Config, so.Config.Logger)
 
 	// Setup Graph API Handlers
 	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient))

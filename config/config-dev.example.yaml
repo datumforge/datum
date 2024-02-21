@@ -1,0 +1,64 @@
+# server settings
+server: 
+  debug: true
+  dev: true
+
+  # tls settings
+  tls:
+    enabled: false
+  
+# db settings
+db: 
+  debug: true
+  driver_name: sqlite3
+  multi_write: false
+
+# auth settings
+auth:
+  enabled: true
+  token:
+    kid: "02GGBS68AM12178M0REW3CEAFF"
+    audience: "http://localhost:17608"
+    refresh_audience: "http://localhost:17608"
+    issuer: "http://localhost:17608"
+    jwks_endpoint: "http://localhost:17608/.well-known/jwks.json"
+  supported_providers:
+    - google
+    - github
+  providers:
+    google:
+      client_id: "client_id_here.apps.googleusercontent.com"
+      client_secret: "client_secret_here"
+      scopes:
+        - email
+        - profile
+    github:
+      client_id: "client_id_here"
+      client_secret: "client_secret_here"
+      scopes:
+        - user:email
+        - read:user
+
+# authz settings
+authz:
+  enabled: true
+  store_name: datum
+  host_url: http://localhost:8080
+  create_new_model: false
+
+# session settings
+sessions:
+  signing_key: "4N0txRe4PSBTIGhXpMEriFlfDEH9zTri"
+  encryption_key: "IF841pLk48ibOVo6w9UIkr9OBCkjXG2q"
+
+# email settings
+email:
+  testing: true
+  archive: "fixtures/email"
+  send_grid_api_key: "SG.FakeAPIKey"
+  url_base: "http://localhost:17608/"
+
+# sentry settings
+sentry:
+  enabled: false
+  dsn: "https://fake.ingest.sentry.io/fake"

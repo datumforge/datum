@@ -7,47 +7,46 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-// Config for the redis client
+// Config for the redis client used to store key-value pairs
 type Config struct {
 	// Enabled to enable redis client in the server
-	Enabled bool `split_words:"true" default:"true"` // $DATUM_REDIS_ENABLED
+	Enabled bool `json:"enabled" koanf:"enabled" default:"true"`
 	// Address is the host:port to connect to redis
-	Address string `split_words:"true" default:"localhost:6379"` // $DATUM_REDIS_ADDRESS
+	Address string `json:"address" koanf:"address" default:"localhost:6379"`
 	// Name of the connecting client
-	Name string `split_words:"true" default:"datum"` // $DATUM_REDIS_NAME
+	Name string `json:"name" koanf:"name" default:"datum"`
 	// Username to connect to redis
-	Username string `split_words:"true" default:""` // $DATUM_REDIS_USERNAME
+	Username string `json:"username" koanf:"username"`
 	// Password, must match the password specified in the server configuration
-	Password string `split_words:"true" default:""` // $DATUM_REDIS_PASSWORD
+	Password string `json:"password" koanf:"password"`
 	// DB to be selected after connecting to the server, 0 uses the default
-	DB int `split_words:"true" default:"0"` // $DATUM_REDIS_DB
-	// Dial timeout for establishing new connections.
-	// Default is 5 seconds.
-	DialTimeout time.Duration `split_words:"true" default:"5s"` // $DATUM_REDIS_DIAL_TIMEOUT
+	DB int `json:"db" koanf:"db" default:"0"`
+	// Dial timeout for establishing new connections, defaults to 5s
+	DialTimeout time.Duration `json:"dial_timeout" koanf:"dial_timeout" default:"5s"`
 	// Timeout for socket reads. If reached, commands will fail
 	// with a timeout instead of blocking. Supported values:
 	//   - `0` - default timeout (3 seconds).
 	//   - `-1` - no timeout (block indefinitely).
 	//   - `-2` - disables SetReadDeadline calls completely.
-	ReadTimeout time.Duration `split_words:"true" default:"0"` // $DATUM_REDIS_READ_TIMEOUT
+	ReadTimeout time.Duration `json:"read_timeout" koanf:"read_timeout" default:"0"`
 	// Timeout for socket writes. If reached, commands will fail
 	// with a timeout instead of blocking.  Supported values:
 	//   - `0` - default timeout (3 seconds).
 	//   - `-1` - no timeout (block indefinitely).
 	//   - `-2` - disables SetWriteDeadline calls completely.
-	WriteTimeout time.Duration `split_words:"true" default:"0"` // $DATUM_REDIS_WRITE_TIMEOUT
+	WriteTimeout time.Duration `json:"write_timeout" koanf:"write_timeout" default:"0"`
 	// MaxRetries before giving up.
 	// Default is 3 retries; -1 (not 0) disables retries.
-	MaxRetries int `split_words:"true" default:"3"` // $DATUM_REDIS_MAX_RETRIES
+	MaxRetries int `json:"max_retries" koanf:"max_retries" default:"3"`
 	// MinIdleConns is useful when establishing new connection is slow.
 	// Default is 0. the idle connections are not closed by default.
-	MinIdleConns int `split_words:"true" default:"0"` // $DATUM_REDIS_MIN_IDLE_CONNS
+	MinIdleConns int `json:"min_idle_connections" koanf:"min_idle_conns" default:"0"`
 	// Maximum number of idle connections.
 	// Default is 0. the idle connections are not closed by default.
-	MaxIdleConns int `split_words:"true" default:"0"` // $DATUM_REDIS_MAX_IDLE_CONNS
+	MaxIdleConns int `json:"max_idle_conns" koanf:"max_idle_conns" default:"0"`
 	// Maximum number of connections allocated by the pool at a given time.
 	// When zero, there is no limit on the number of connections in the pool.
-	MaxActiveConns int `split_words:"true" default:"0"` // $DATUM_REDIS_MAX_ACTIVE_CONNS
+	MaxActiveConns int `json:"max_active_conns" koanf:"max_active_conns" default:"0"`
 }
 
 // New returns a new redis client based on the configuration settings

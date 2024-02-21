@@ -1,19 +1,26 @@
 package serveropts
 
 import (
-	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/config"
+	serverconfig "github.com/datumforge/datum/internal/httpserve/config"
 )
 
 type ServerOptions struct {
-	ConfigProvider config.ConfigProvider
-	Config         config.Config
+	ConfigProvider serverconfig.ConfigProvider
+	Config         serverconfig.Config
 }
 
 func NewServerOptions(opts []ServerOption) *ServerOptions {
-	config := config.Config{}
+	// load koanf config
+	c, err := config.Load(&config.DefaultConfigFilePath)
+	if err != nil {
+		panic(err)
+	}
 
 	so := &ServerOptions{
-		Config: config,
+		Config: serverconfig.Config{
+			Settings: *c,
+		},
 	}
 
 	for _, opt := range opts {

@@ -23,8 +23,6 @@ var externalPackages = map[string]string{
 
 // schemaConfig represents the configuration for the schema generator
 type schemaConfig struct {
-	// codePath represents the file path of the config being processed
-	codePath string
 	// jsonSchemaPath represents the file path of the JSON schema to be generated
 	jsonSchemaPath string
 	// yamlConfigPath is the file path to the YAML configuration to be generated

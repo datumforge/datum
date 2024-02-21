@@ -11,14 +11,12 @@ services:
       - serve
       - --debug
       - --pretty
-    env_file:
-      - ../config/.env-dev
     ports:
       - "17608:17608"
     restart: unless-stopped
     environment:
       DATUM_SEND_GRID_API_KEY: "THIS_IS_A_FAKE_KEY"
       DATUM_REDIS_ADDRESS: redis:6379
-      DATUM_AUTHZ_HOST: openfga:8080
+      DATUM_AUTHZ_HOST_URL: openfga:8080
     networks:
       - default

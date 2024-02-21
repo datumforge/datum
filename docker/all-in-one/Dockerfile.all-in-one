@@ -10,9 +10,6 @@ FROM cgr.dev/chainguard/bash:latest
 
 WORKDIR /home/nonroot
 
-# Copy env config 
-COPY config/.env-dev .env
-
 # Copy the binary that goreleaser built
 COPY --from=builder /go/bin/datum /bin/datum
 

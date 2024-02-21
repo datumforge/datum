@@ -223,7 +223,6 @@ steps:
     if: build.branch == "main"
     commands: |
       #!/bin/bash
-      cp config/.env-allinone.example config/.env-dev
     plugins:
       - docker-login#v3.0.0:
           username: _json_key_base64

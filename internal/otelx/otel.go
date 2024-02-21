@@ -24,26 +24,42 @@ const (
 	OTLPGRPCProvider = "otlpgrpc"
 )
 
+// Config defines the configuration settings for opentelemetry tracing
 type Config struct {
-	Enabled     bool   `yaml:"enabled" split_words:"true" default:"false"`
-	Provider    string `yaml:"provider" split_words:"true" default:"stdout"`
-	Environment string `yaml:"environment" split_words:"true" default:"development"`
-	StdOut      StdOut
-	OTLP        OTLP
+	// Enabled to enable tracing
+	Enabled bool `json:"enabled" koanf:"enabled" default:"false"`
+	// Provider to use for tracing
+	Provider string `json:"provider" koanf:"provider" default:"stdout"`
+	// Environment to set for the service
+	Environment string `json:"environment" koanf:"environment" default:"development"`
+	// StdOut settings for the stdout provider
+	StdOut StdOut `json:"stdout" koanf:"stdout"`
+	// OTLP settings for the otlp provider
+	OTLP OTLP `json:"otlp" koanf:"otlp"`
 }
 
+// StdOut settings for the stdout provider
 type StdOut struct {
-	Pretty           bool `yaml:"pretty" split_words:"true" default:"true"`
-	DisableTimestamp bool `yaml:"disable_timestamp" split_words:"true" default:"false"`
+	// Pretty enables pretty printing of the output
+	Pretty bool `json:"pretty" koanf:"pretty" default:"true"`
+	// DisableTimestamp disables the timestamp in the output
+	DisableTimestamp bool `json:"disable_timestamp" koanf:"disable_timestamp" default:"false"`
 }
 
+// OTLP settings for the otlp provider
 type OTLP struct {
-	Endpoint    string        `yaml:"endpoint" split_words:"true" default:"localhost:4317"`
-	Insecure    bool          `yaml:"insecure" split_words:"true" default:"true"`
-	Certificate string        `yaml:"certificate" split_words:"true" default:""`
-	Headers     []string      `yaml:"headers" split_words:"true" default:""`
-	Compression string        `yaml:"compression" split_words:"true" default:""`
-	Timeout     time.Duration `yaml:"timeout" split_words:"true" default:"10s"`
+	// Endpoint to send the traces to
+	Endpoint string `json:"endpoint" koanf:"endpoint" default:"localhost:4317"`
+	// Insecure to disable TLS
+	Insecure bool `json:"insecure" koanf:"insecure" default:"true"`
+	// Certificate to use for TLS
+	Certificate string `json:"certificate" koanf:"certificate"`
+	// Headers to send with the request
+	Headers []string `json:"headers" koanf:"headers"`
+	// Compression to use for the request
+	Compression string `json:"compression" koanf:"compression"`
+	// Timeout for the request
+	Timeout time.Duration `json:"timeout" koanf:"timeout" default:"10s"`
 }
 
 func NewTracer(c Config, name string, logger *zap.SugaredLogger) error {

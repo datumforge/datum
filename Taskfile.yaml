@@ -15,6 +15,8 @@ includes:
     taskfile: ./db
     dir: ./db
     aliases: [atlas]
+  config: 
+    taskfile: ./jsonschema
 
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
@@ -34,6 +36,7 @@ tasks:
       - "go get -u github.com/openfga/go-sdk"
       - "brew install openfga/tap/fga"
       - go install github.com/vektra/mockery/v2@v2.40.1
+      - task: config:install
       - defer: { task: go:tidy }
 
   ## Generate tasks
@@ -123,6 +126,8 @@ tasks:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
     cmds:
       - task: generate
+      - task: config:generate
+      - task: config:docs
       - task: atlas:all
       - task: go
       - task: fga:test

@@ -55,7 +55,7 @@ func TestGithubHandler(t *testing.T) {
 	// - github User is obtained from the GitHub API
 	// - success handler is called
 	// - github User is added to the ctx of the success handler
-	githubHandler := githubHandler(config, &Config{IsEnterprise: false, IsMock: false}, http.HandlerFunc(success), failure)
+	githubHandler := githubHandler(config, &ClientConfig{IsEnterprise: false, IsMock: false}, http.HandlerFunc(success), failure)
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil) // nolint: noctx
 	githubHandler.ServeHTTP(w, req.WithContext(ctx))
@@ -79,7 +79,7 @@ func TestMissingCtxToken(t *testing.T) {
 	// GithubHandler called without Token in ctx, assert that:
 	// - failure handler is called
 	// - error about ctx missing token is added to the failure handler ctx
-	githubHandler := githubHandler(config, &Config{IsEnterprise: false, IsMock: false}, success, http.HandlerFunc(failure))
+	githubHandler := githubHandler(config, &ClientConfig{IsEnterprise: false, IsMock: false}, success, http.HandlerFunc(failure))
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil) // nolint: noctx
 	githubHandler.ServeHTTP(w, req)
@@ -110,7 +110,7 @@ func TestErrorGettingUser(t *testing.T) {
 	// GithubHandler cannot get GitHub User, assert that:
 	// - failure handler is called
 	// - error cannot get GitHub User added to the failure handler ctx
-	githubHandler := githubHandler(config, &Config{IsEnterprise: false, IsMock: false}, success, http.HandlerFunc(failure))
+	githubHandler := githubHandler(config, &ClientConfig{IsEnterprise: false, IsMock: false}, success, http.HandlerFunc(failure))
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil) // nolint: noctx
 	githubHandler.ServeHTTP(w, req.WithContext(ctx))
@@ -151,7 +151,7 @@ func TestGithubEnterprise(t *testing.T) {
 	// - github User is obtained from the GitHub API
 	// - success handler is called
 	// - github User is added to the ctx of the success handler
-	githubHandler := githubHandler(config, &Config{IsEnterprise: true, IsMock: false}, http.HandlerFunc(success), failure)
+	githubHandler := githubHandler(config, &ClientConfig{IsEnterprise: true, IsMock: false}, http.HandlerFunc(success), failure)
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/", nil) // nolint: noctx
 	githubHandler.ServeHTTP(w, req.WithContext(ctx))
@@ -178,7 +178,7 @@ func TestEnterpriseGithubClientFromAuthURL(t *testing.T) {
 		{"http://github.mattisthebest.com/login/oauth/authorize", "http://github.mattisthebest.com/api/v3/"},
 	}
 	for _, c := range cases {
-		client, err := enterpriseGithubClientFromAuthURL(c.authURL, &Config{IsEnterprise: true, IsMock: false})
+		client, err := enterpriseGithubClientFromAuthURL(c.authURL, &ClientConfig{IsEnterprise: true, IsMock: false})
 		assert.Nil(t, err)
 		assert.Equal(t, client.BaseURL.String(), c.expClientBaseURL)
 	}

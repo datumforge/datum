@@ -7,28 +7,32 @@ import (
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
-// Config is a struct for sending emails via SendGrid and managing marketing contacts
+// Config for sending emails via SendGrid and managing marketing contacts
 type Config struct {
-	// SendGridAPIKey is the sendgrid API key
-	SendGridAPIKey string `split_words:"true" required:"false"`
-	// FromEmail is the default email we'll send from and is safe to configure by default as our emails and domain are signed
-	FromEmail string `split_words:"true" default:"no-reply@datum.net"`
-	// Testing is a bool flag to indicate we shouldn't be sending live emails and defaults to true so needs to be specifically changed to send live emails
-	Testing bool `split_words:"true" default:"true"`
+	// SendGridAPIKey is the SendGrid API key to authenticate with the service
+	SendGridAPIKey string `json:"send_grid_api_key" koanf:"send_grid_api_key"`
+	// FromEmail is the default email to send from
+	FromEmail string `json:"from_email" koanf:"from_email" default:"no-reply@datum.net"`
+	// Testing is a bool flag to indicate we shouldn't be sending live emails, and instead should be writing out fixtures
+	Testing bool `json:"testing" koanf:"testing" default:"true"`
 	// Archive is only supported in testing mode and is what is tied through the mock to write out fixtures
-	Archive string `split_words:"true" default:""`
-	// DatumListID is the UUID sendgrid spits out when you create marketing lists
-	DatumListID string `split_words:"true" required:"false" default:"f5459563-8a46-44ef-9066-e96124d30e52"`
+	Archive string `json:"archive" koanf:"archive" `
+	// DatumListID is the UUID SendGrid spits out when you create marketing lists
+	DatumListID string `json:"datum_list_id" koanf:"datum_list_id"`
 	// AdminEmail is an internal group email configured within datum for email testing and visibility
-	AdminEmail string `split_words:"true" default:"admins@datum.net"`
+	AdminEmail string `json:"admin_email" koanf:"admin_email" default:"admins@datum.net"`
 }
 
 // URLConfig for the datum registration
 type URLConfig struct {
-	Base   string `split_words:"true" default:"https://api.datum.net"`
-	Verify string `split_words:"true" default:"/v1/verify"`
-	Invite string `split_words:"true" default:"/v1/invite"`
-	Reset  string `split_words:"true" default:"/v1/password-reset"`
+	// Base is the base URL used for URL links in emails
+	Base string `json:"base" koanf:"base" default:"https://api.datum.net"`
+	// Verify is the path to the verify endpoint used in verification emails
+	Verify string `json:"verify" koanf:"verify" default:"/v1/verify"`
+	// Invite is the path to the invite endpoint used in invite emails
+	Invite string `json:"invite" koanf:"invite" default:"/v1/invite"`
+	// Reset is the path to the reset endpoint used in password reset emails
+	Reset string `json:"reset" koanf:"reset" default:"/v1/password-reset"`
 }
 
 // SetSendGridAPIKey to provided key

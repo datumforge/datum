@@ -24,28 +24,12 @@ import (
 
 // OauthProviderConfig represents the configuration for OAuth providers such as Github and Google
 type OauthProviderConfig struct {
-	RedirectURL string `yaml:"redirectURL" split_words:"true" default:"http://localhost:3001/api/auth/callback/datum"`
-	GithubConfig
-	GoogleConfig
-}
-
-// GithubConfig represents the configuration settings for a Github Oauth Provider
-type GithubConfig struct {
-	ClientID       string   `yaml:"clientId" split_words:"true"`
-	ClientSecret   string   `yaml:"clientSecret" split_words:"true"`
-	ClientEndpoint string   `yaml:"clientEndpoint" split_words:"true" default:"http://localhost:17608"`
-	Scopes         []string `yaml:"scopes" split_words:"true" default:"user:email,read:user"`
-	RedirectURL    string   `yaml:"redirectURL" split_words:"true" default:"/v1/github/callback"`
-	Orgs           []string `yaml:"orgs" split_words:"true"`
-}
-
-// GoogleConfig represents the configuration settings for a Google Oauth Provider
-type GoogleConfig struct {
-	ClientID       string   `yaml:"clientId" split_words:"true"`
-	ClientSecret   string   `yaml:"clientSecret" split_words:"true"`
-	ClientEndpoint string   `yaml:"clientEndpoint" split_words:"true" default:"http://localhost:17608"`
-	RedirectURL    string   `yaml:"redirectURL" split_words:"true" default:"/v1/google/callback"`
-	Scopes         []string `yaml:"scopes" split_words:"true" default:"email, profile"`
+	// RedirectURL is the URL that the OAuth2 client will redirect to after authentication with datum
+	RedirectURL string `json:"redirect_url" koanf:"redirect_url" default:"http://localhost:3001/api/auth/callback/datum"`
+	// Github contains the configuration settings for the Github Oauth Provider
+	Github github.ProviderConfig `json:"github" koanf:"github"`
+	// Google contains the configuration settings for the Google Oauth Provider
+	Google google.ProviderConfig `json:"google" koanf:"google"`
 }
 
 const (
@@ -55,21 +39,21 @@ const (
 
 func (h *Handler) getGoogleOauth2Config() *oauth2.Config {
 	return &oauth2.Config{
-		ClientID:     h.OauthProvider.GoogleConfig.ClientID,
-		ClientSecret: h.OauthProvider.GoogleConfig.ClientSecret,
-		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.GoogleConfig.ClientEndpoint, h.OauthProvider.GoogleConfig.RedirectURL),
+		ClientID:     h.OauthProvider.Google.ClientID,
+		ClientSecret: h.OauthProvider.Google.ClientSecret,
+		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.Google.ClientEndpoint, h.OauthProvider.Google.RedirectURL),
 		Endpoint:     googleOAuth2.Endpoint,
-		Scopes:       h.OauthProvider.GoogleConfig.Scopes,
+		Scopes:       h.OauthProvider.Google.Scopes,
 	}
 }
 
 func (h *Handler) getGithubOauth2Config() *oauth2.Config {
 	return &oauth2.Config{
-		ClientID:     h.OauthProvider.GithubConfig.ClientID,
-		ClientSecret: h.OauthProvider.GithubConfig.ClientSecret,
-		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.GithubConfig.ClientEndpoint, h.OauthProvider.GithubConfig.RedirectURL),
+		ClientID:     h.OauthProvider.Github.ClientID,
+		ClientSecret: h.OauthProvider.Github.ClientSecret,
+		RedirectURL:  fmt.Sprintf("%s%s", h.OauthProvider.Github.ClientEndpoint, h.OauthProvider.Github.RedirectURL),
 		Endpoint:     githubOAuth2.Endpoint,
-		Scopes:       h.OauthProvider.GithubConfig.Scopes,
+		Scopes:       h.OauthProvider.Github.Scopes,
 	}
 }
 

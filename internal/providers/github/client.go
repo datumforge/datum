@@ -8,8 +8,8 @@ import (
 	"github.com/google/go-github/v59/github"
 )
 
-// Config holds the configuration for the GitHub client
-type Config struct {
+// ClientConfig holds the configuration for the GitHub client
+type ClientConfig struct {
 	BaseURL   *url.URL
 	UploadURL *url.URL
 
@@ -21,8 +21,8 @@ type Config struct {
 // https://godoc.org/github.com/google/go-github/github#NewClient
 type GitHubInterface interface {
 	NewClient(httpClient *http.Client) GitHubClient
-	GetConfig() *Config
-	SetConfig(config *Config)
+	GetConfig() *ClientConfig
+	SetConfig(config *ClientConfig)
 }
 
 // GitHubClient defines all necessary methods used by the client
@@ -38,16 +38,16 @@ type githubUserService interface {
 
 // GitHubCreator implements GitHubInterface
 type GitHubCreator struct {
-	Config *Config
+	Config *ClientConfig
 }
 
 // GetConfig returns the current configuration
-func (g *GitHubCreator) GetConfig() *Config {
+func (g *GitHubCreator) GetConfig() *ClientConfig {
 	return g.Config
 }
 
 // SetConfig sets the configuration
-func (g *GitHubCreator) SetConfig(config *Config) {
+func (g *GitHubCreator) SetConfig(config *ClientConfig) {
 	g.Config = config
 }
 
@@ -70,16 +70,16 @@ func (g *GitHubCreator) NewClient(httpClient *http.Client) GitHubClient {
 
 // GitHubMock implements GitHubInterface
 type GitHubMock struct {
-	Config *Config
+	Config *ClientConfig
 }
 
 // GetConfig returns the current configuration
-func (g *GitHubMock) GetConfig() *Config {
+func (g *GitHubMock) GetConfig() *ClientConfig {
 	return g.Config
 }
 
 // SetConfig sets the configuration
-func (g *GitHubMock) SetConfig(config *Config) {
+func (g *GitHubMock) SetConfig(config *ClientConfig) {
 	g.Config = config
 }
 

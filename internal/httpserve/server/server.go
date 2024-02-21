@@ -4,7 +4,6 @@ import (
 	"context"
 
 	echo "github.com/datumforge/echox"
-	"github.com/getsentry/sentry-go"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
@@ -15,7 +14,7 @@ import (
 
 type Server struct {
 	// config contains the base server settings
-	config config.Server
+	config config.Config
 	// logger contains the zap logger
 	logger *zap.SugaredLogger
 	// handlers contains additional handlers to register with the echo server
@@ -34,7 +33,7 @@ func (s *Server) AddHandler(r handler) {
 }
 
 // NewServer returns a new Server configuration
-func NewServer(c config.Server, l *zap.SugaredLogger) *Server {
+func NewServer(c config.Config, l *zap.SugaredLogger) *Server {
 	return &Server{
 		config: c,
 		logger: l,
@@ -43,21 +42,17 @@ func NewServer(c config.Server, l *zap.SugaredLogger) *Server {
 
 // StartEchoServer creates and starts the echo server with configured middleware and handlers
 func (s *Server) StartEchoServer(ctx context.Context) error {
-	if err := sentry.Init(s.config.Sentry.ClientOptions()); err != nil {
-		return err
-	}
-
 	srv := echo.New()
 
 	sc := echo.StartConfig{
 		HideBanner:      true,
 		HidePort:        true,
-		Address:         s.config.Listen,
-		GracefulTimeout: s.config.ShutdownGracePeriod,
+		Address:         s.config.Settings.Server.Listen,
+		GracefulTimeout: s.config.Settings.Server.ShutdownGracePeriod,
 		GracefulContext: ctx,
 	}
 
-	srv.Debug = s.config.Debug
+	srv.Debug = s.config.Settings.Server.Debug
 
 	if srv.Debug {
 		srv.Use(echodebug.BodyDump(s.logger))
@@ -68,7 +63,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	}
 
 	// Setup token manager
-	tm, err := tokens.New(s.config.Token)
+	tm, err := tokens.New(s.config.Settings.Auth.Token)
 	if err != nil {
 		return err
 	}
@@ -99,10 +94,10 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	}
 
 	// if TLS is enabled, start new echo server with TLS
-	if s.config.TLS.Enabled {
+	if s.config.Settings.Server.TLS.Enabled {
 		s.logger.Infow("starting in https mode")
 
-		return sc.StartTLS(srv, s.config.TLS.CertFile, s.config.TLS.CertKey)
+		return sc.StartTLS(srv, s.config.Settings.Server.TLS.CertFile, s.config.Settings.Server.TLS.CertKey)
 	}
 
 	// otherwise, start without TLS

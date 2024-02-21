@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"strings"
-
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -15,8 +12,7 @@ import (
 const appName = "datum"
 
 var (
-	cfgFile string
-	logger  *zap.SugaredLogger
+	logger *zap.SugaredLogger
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -34,9 +30,6 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/config/."+appName+".yaml)")
-	viperBindFlag("config", rootCmd.PersistentFlags().Lookup("config"))
-
 	rootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
 	viperBindFlag("pretty", rootCmd.PersistentFlags().Lookup("pretty"))
 
@@ -44,25 +37,10 @@ func init() {
 	viperBindFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 }
 
-// initConfig reads in config file and ENV variables if set.
+// initConfig reads in flags set for server startup
+// all other configuration is done by the server with koanf
+// refer to the README.md for more information
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".datum" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".datum")
-	}
-
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
-	viper.SetEnvPrefix("datum")
-	viper.AutomaticEnv() // read in environment variables that match
-
 	err := viper.ReadInConfig()
 
 	logger = sentry.NewLogger()

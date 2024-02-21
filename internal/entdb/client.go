@@ -24,20 +24,20 @@ const (
 	DefaultCacheTTL = 1 * time.Second
 )
 
-// Config Settings
+// Config Settings for the ent database client
 type Config struct {
 	// Debug to print debug database logs
-	Debug bool `yaml:"debug" split_words:"true" default:"false"`
+	Debug bool `json:"debug" koanf:"debug" default:"false"`
 	// SQL Driver name from dialect.Driver
-	DriverName string `yaml:"driverName" split_words:"true" default:"sqlite3"`
-	// MultiWrite enabled writing to two databases
-	MultiWrite bool `yaml:"multiWrite" split_words:"true" default:"false"`
-	// Primary write database source (required)
-	PrimaryDBSource string `yaml:"primaryDBSource" split_words:"true" default:"datum.db?mode=memory&_fk=1"`
-	// Secondary write database source (optional)
-	SecondaryDBSource string `yaml:"secondaryDBSource" split_words:"true" default:"backup.db?mode=memory&_fk=1"`
+	DriverName string `json:"driver_name" koanf:"driver_name" default:"sqlite3"`
+	// MultiWrite enabled writing to two databases simultaneously
+	MultiWrite bool `json:"multi_write" koanf:"multi_write" default:"false"`
+	// Primary write database source
+	PrimaryDBSource string `json:"primary_db_source" koanf:"primary_db_source" jsonschema:"required" default:"datum.db?mode=memory&_fk=1"`
+	// Secondary write database source, if multi write is enabled
+	SecondaryDBSource string `json:"secondary_db_source" koanf:"secondary_db_source" default:"backup.db?mode=memory&_fk=1"`
 	// CacheTTL to have results cached for subsequent requests
-	CacheTTL time.Duration `yaml:"cacheTTL" split_words:"true" default:"1s"`
+	CacheTTL time.Duration `json:"catch_ttl" koanf:"cache_ttl" default:"1s"`
 }
 
 // EntClientConfig configures the entsql drivers

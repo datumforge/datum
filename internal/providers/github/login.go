@@ -31,7 +31,7 @@ func LoginHandler(config *oauth2.Config, failure http.Handler) http.Handler {
 
 // CallbackHandler adds the GitHub access token and User to the ctx
 func CallbackHandler(config *oauth2.Config, success, failure http.Handler) http.Handler {
-	success = githubHandler(config, &Config{IsEnterprise: false, IsMock: false}, success, failure)
+	success = githubHandler(config, &ClientConfig{IsEnterprise: false, IsMock: false}, success, failure)
 
 	return oauth2Login.CallbackHandler(config, success, failure)
 }
@@ -39,14 +39,14 @@ func CallbackHandler(config *oauth2.Config, success, failure http.Handler) http.
 // EnterpriseCallbackHandler handles GitHub Enterprise redirection URI requests
 // and adds the GitHub access token and User to the ctx
 func EnterpriseCallbackHandler(config *oauth2.Config, success, failure http.Handler) http.Handler {
-	success = githubHandler(config, &Config{IsEnterprise: true, IsMock: false}, success, failure)
+	success = githubHandler(config, &ClientConfig{IsEnterprise: true, IsMock: false}, success, failure)
 
 	return oauth2Login.CallbackHandler(config, success, failure)
 }
 
 // githubHandler gets the OAuth2 Token from the ctx to fetch the corresponding GitHub
 // User and add them to the context
-func githubHandler(config *oauth2.Config, clientConfig *Config, success, failure http.Handler) http.Handler {
+func githubHandler(config *oauth2.Config, clientConfig *ClientConfig, success, failure http.Handler) http.Handler {
 	if failure == nil {
 		failure = DefaultFailureHandler
 	}
@@ -110,7 +110,7 @@ func validateResponse(user *github.User, resp *github.Response, err error) error
 	return nil
 }
 
-func getGithubClient(ctx context.Context, clientConfig *Config, config *oauth2.Config, token *oauth2.Token) (githubClient GitHubClient, err error) {
+func getGithubClient(ctx context.Context, clientConfig *ClientConfig, config *oauth2.Config, token *oauth2.Token) (githubClient GitHubClient, err error) {
 	// create httClient with provided token
 	httpClient := config.Client(ctx, token)
 
@@ -140,7 +140,7 @@ func getGithubClient(ctx context.Context, clientConfig *Config, config *oauth2.C
 }
 
 // enterpriseGithubClientFromAuthURL returns a client config with required settings for GHE instance
-func enterpriseGithubClientFromAuthURL(authURL string, config *Config) (*Config, error) {
+func enterpriseGithubClientFromAuthURL(authURL string, config *ClientConfig) (*ClientConfig, error) {
 	baseURL, err := url.Parse(authURL)
 	if err != nil {
 		return config, ErrFailedConstructingEndpointURL
@@ -171,7 +171,7 @@ func getUserEmails(ctx context.Context, githubClient GitHubClient) (*string, err
 }
 
 // VerifyClientToken checks the client token and returns an error if it is invalid
-func VerifyClientToken(ctx context.Context, token *oauth2.Token, config *oauth2.Config, email string, clientConfig *Config) (err error) {
+func VerifyClientToken(ctx context.Context, token *oauth2.Token, config *oauth2.Config, email string, clientConfig *ClientConfig) (err error) {
 	githubClient, err := getGithubClient(ctx, clientConfig, config, token)
 	if err != nil {
 		return err

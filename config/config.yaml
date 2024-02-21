@@ -1,9 +1,0 @@
-webauthn:
-  timeout:
-  user_verification:
-  relying_party:
-    id: "localhost"
-    display_name: "localhost"
-    icon: "http://localhost:8888/favicon.icon"
-    origins:
-    - "http://localhost:8888"

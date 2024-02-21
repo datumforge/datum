@@ -30,7 +30,7 @@ func NewConfigProviderWithRefresh(cfgProvider ConfigProvider) (*ConfigProviderWi
 	cfgRefresh := &ConfigProviderWithRefresh{
 		config:          cfg,
 		configProvider:  cfgProvider,
-		refreshInterval: cfg.RefreshInterval,
+		refreshInterval: cfg.Settings.RefreshInterval,
 	}
 	cfgRefresh.initialize()
 

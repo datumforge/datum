@@ -116,7 +116,7 @@ tasks:
   # dev tasks
   run-dev:
     dotenv: ['{{.ENV}}/.env-dev']
-    desc: runs the datum server with oidc enabled
+    desc: runs the datum server in dev mode
     cmds:
     - task: compose:redis
     - task: compose:fga

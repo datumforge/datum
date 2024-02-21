@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -284,6 +285,21 @@ func (oc *OrganizationCreate) AddEntitlements(e ...*Entitlement) *OrganizationCr
 		ids[i] = e[i].ID
 	}
 	return oc.AddEntitlementIDs(ids...)
+}
+
+// AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
+func (oc *OrganizationCreate) AddPersonalAccessTokenIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddPersonalAccessTokenIDs(ids...)
+	return oc
+}
+
+// AddPersonalAccessTokens adds the "personal_access_tokens" edges to the PersonalAccessToken entity.
+func (oc *OrganizationCreate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *OrganizationCreate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return oc.AddPersonalAccessTokenIDs(ids...)
 }
 
 // AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
@@ -616,6 +632,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(personalaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OrganizationPersonalAccessTokens
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

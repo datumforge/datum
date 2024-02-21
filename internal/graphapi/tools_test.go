@@ -165,3 +165,18 @@ func userContext() (context.Context, error) {
 
 	return reqCtx, nil
 }
+
+// userContextWithID creates a new user context with the provided user ID
+func userContextWithID(userID string) (context.Context, error) {
+	// Use that user to create the organization
+	ec, err := auth.NewTestContextWithValidUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	return reqCtx, nil
+}

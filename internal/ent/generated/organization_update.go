@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -231,6 +232,21 @@ func (ou *OrganizationUpdate) AddEntitlements(e ...*Entitlement) *OrganizationUp
 	return ou.AddEntitlementIDs(ids...)
 }
 
+// AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
+func (ou *OrganizationUpdate) AddPersonalAccessTokenIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddPersonalAccessTokenIDs(ids...)
+	return ou
+}
+
+// AddPersonalAccessTokens adds the "personal_access_tokens" edges to the PersonalAccessToken entity.
+func (ou *OrganizationUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *OrganizationUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ou.AddPersonalAccessTokenIDs(ids...)
+}
+
 // AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
 func (ou *OrganizationUpdate) AddOauthproviderIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddOauthproviderIDs(ids...)
@@ -384,6 +400,27 @@ func (ou *OrganizationUpdate) RemoveEntitlements(e ...*Entitlement) *Organizatio
 		ids[i] = e[i].ID
 	}
 	return ou.RemoveEntitlementIDs(ids...)
+}
+
+// ClearPersonalAccessTokens clears all "personal_access_tokens" edges to the PersonalAccessToken entity.
+func (ou *OrganizationUpdate) ClearPersonalAccessTokens() *OrganizationUpdate {
+	ou.mutation.ClearPersonalAccessTokens()
+	return ou
+}
+
+// RemovePersonalAccessTokenIDs removes the "personal_access_tokens" edge to PersonalAccessToken entities by IDs.
+func (ou *OrganizationUpdate) RemovePersonalAccessTokenIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemovePersonalAccessTokenIDs(ids...)
+	return ou
+}
+
+// RemovePersonalAccessTokens removes "personal_access_tokens" edges to PersonalAccessToken entities.
+func (ou *OrganizationUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *OrganizationUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ou.RemovePersonalAccessTokenIDs(ids...)
 }
 
 // ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
@@ -793,6 +830,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = ou.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ou.mutation.PersonalAccessTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(personalaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationPersonalAccessTokens
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedPersonalAccessTokensIDs(); len(nodes) > 0 && !ou.mutation.PersonalAccessTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(personalaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(personalaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationPersonalAccessTokens
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1226,6 +1311,21 @@ func (ouo *OrganizationUpdateOne) AddEntitlements(e ...*Entitlement) *Organizati
 	return ouo.AddEntitlementIDs(ids...)
 }
 
+// AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
+func (ouo *OrganizationUpdateOne) AddPersonalAccessTokenIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddPersonalAccessTokenIDs(ids...)
+	return ouo
+}
+
+// AddPersonalAccessTokens adds the "personal_access_tokens" edges to the PersonalAccessToken entity.
+func (ouo *OrganizationUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessToken) *OrganizationUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ouo.AddPersonalAccessTokenIDs(ids...)
+}
+
 // AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
 func (ouo *OrganizationUpdateOne) AddOauthproviderIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddOauthproviderIDs(ids...)
@@ -1379,6 +1479,27 @@ func (ouo *OrganizationUpdateOne) RemoveEntitlements(e ...*Entitlement) *Organiz
 		ids[i] = e[i].ID
 	}
 	return ouo.RemoveEntitlementIDs(ids...)
+}
+
+// ClearPersonalAccessTokens clears all "personal_access_tokens" edges to the PersonalAccessToken entity.
+func (ouo *OrganizationUpdateOne) ClearPersonalAccessTokens() *OrganizationUpdateOne {
+	ouo.mutation.ClearPersonalAccessTokens()
+	return ouo
+}
+
+// RemovePersonalAccessTokenIDs removes the "personal_access_tokens" edge to PersonalAccessToken entities by IDs.
+func (ouo *OrganizationUpdateOne) RemovePersonalAccessTokenIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemovePersonalAccessTokenIDs(ids...)
+	return ouo
+}
+
+// RemovePersonalAccessTokens removes "personal_access_tokens" edges to PersonalAccessToken entities.
+func (ouo *OrganizationUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *OrganizationUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ouo.RemovePersonalAccessTokenIDs(ids...)
 }
 
 // ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
@@ -1818,6 +1939,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.PersonalAccessTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(personalaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationPersonalAccessTokens
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedPersonalAccessTokensIDs(); len(nodes) > 0 && !ouo.mutation.PersonalAccessTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(personalaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(personalaccesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationPersonalAccessTokens
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

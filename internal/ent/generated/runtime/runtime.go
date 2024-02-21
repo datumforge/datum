@@ -653,14 +653,30 @@ func init() {
 	// passwordresettoken.DefaultID holds the default value on creation for the id field.
 	passwordresettoken.DefaultID = passwordresettokenDescID.Default.(func() string)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
+	personalaccesstoken.Policy = privacy.NewPolicies(schema.PersonalAccessToken{})
+	personalaccesstoken.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := personalaccesstoken.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
 	personalaccesstokenMixinHooks1 := personalaccesstokenMixin[1].Hooks()
 	personalaccesstokenHooks := schema.PersonalAccessToken{}.Hooks()
-	personalaccesstoken.Hooks[0] = personalaccesstokenMixinHooks0[0]
-	personalaccesstoken.Hooks[1] = personalaccesstokenMixinHooks1[0]
-	personalaccesstoken.Hooks[2] = personalaccesstokenHooks[0]
+
+	personalaccesstoken.Hooks[1] = personalaccesstokenMixinHooks0[0]
+
+	personalaccesstoken.Hooks[2] = personalaccesstokenMixinHooks1[0]
+
+	personalaccesstoken.Hooks[3] = personalaccesstokenHooks[0]
+
+	personalaccesstoken.Hooks[4] = personalaccesstokenHooks[1]
 	personalaccesstokenMixinInters1 := personalaccesstokenMixin[1].Interceptors()
+	personalaccesstokenInters := schema.PersonalAccessToken{}.Interceptors()
 	personalaccesstoken.Interceptors[0] = personalaccesstokenMixinInters1[0]
+	personalaccesstoken.Interceptors[1] = personalaccesstokenInters[0]
 	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
 	_ = personalaccesstokenMixinFields0
 	personalaccesstokenMixinFields2 := personalaccesstokenMixin[2].Fields()
@@ -677,18 +693,14 @@ func init() {
 	personalaccesstoken.DefaultUpdatedAt = personalaccesstokenDescUpdatedAt.Default.(func() time.Time)
 	// personalaccesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	personalaccesstoken.UpdateDefaultUpdatedAt = personalaccesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// personalaccesstokenDescName is the schema descriptor for name field.
+	personalaccesstokenDescName := personalaccesstokenFields[0].Descriptor()
+	// personalaccesstoken.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	personalaccesstoken.NameValidator = personalaccesstokenDescName.Validators[0].(func(string) error)
 	// personalaccesstokenDescToken is the schema descriptor for token field.
 	personalaccesstokenDescToken := personalaccesstokenFields[1].Descriptor()
 	// personalaccesstoken.DefaultToken holds the default value on creation for the token field.
 	personalaccesstoken.DefaultToken = personalaccesstokenDescToken.Default.(func() string)
-	// personalaccesstokenDescDescription is the schema descriptor for description field.
-	personalaccesstokenDescDescription := personalaccesstokenFields[4].Descriptor()
-	// personalaccesstoken.DefaultDescription holds the default value on creation for the description field.
-	personalaccesstoken.DefaultDescription = personalaccesstokenDescDescription.Default.(string)
-	// personalaccesstokenDescLastUsedAt is the schema descriptor for last_used_at field.
-	personalaccesstokenDescLastUsedAt := personalaccesstokenFields[5].Descriptor()
-	// personalaccesstoken.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.
-	personalaccesstoken.UpdateDefaultLastUsedAt = personalaccesstokenDescLastUsedAt.UpdateDefault.(func() time.Time)
 	// personalaccesstokenDescID is the schema descriptor for id field.
 	personalaccesstokenDescID := personalaccesstokenMixinFields2[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.

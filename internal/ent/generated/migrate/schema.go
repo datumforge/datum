@@ -487,9 +487,9 @@ var (
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "token", Type: field.TypeString, Unique: true},
-		{Name: "abilities", Type: field.TypeJSON, Nullable: true},
 		{Name: "expires_at", Type: field.TypeTime},
-		{Name: "description", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString},
 	}
@@ -633,6 +633,31 @@ var (
 			},
 		},
 	}
+	// OrganizationPersonalAccessTokensColumns holds the columns for the "organization_personal_access_tokens" table.
+	OrganizationPersonalAccessTokensColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "personal_access_token_id", Type: field.TypeString},
+	}
+	// OrganizationPersonalAccessTokensTable holds the schema information for the "organization_personal_access_tokens" table.
+	OrganizationPersonalAccessTokensTable = &schema.Table{
+		Name:       "organization_personal_access_tokens",
+		Columns:    OrganizationPersonalAccessTokensColumns,
+		PrimaryKey: []*schema.Column{OrganizationPersonalAccessTokensColumns[0], OrganizationPersonalAccessTokensColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_personal_access_tokens_organization_id",
+				Columns:    []*schema.Column{OrganizationPersonalAccessTokensColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_personal_access_tokens_personal_access_token_id",
+				Columns:    []*schema.Column{OrganizationPersonalAccessTokensColumns[1]},
+				RefColumns: []*schema.Column{PersonalAccessTokensColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EmailVerificationTokensTable,
@@ -652,6 +677,7 @@ var (
 		UsersTable,
 		UserSettingsTable,
 		WebauthnsTable,
+		OrganizationPersonalAccessTokensTable,
 	}
 )
 
@@ -673,4 +699,6 @@ func init() {
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable
+	OrganizationPersonalAccessTokensTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationPersonalAccessTokensTable.ForeignKeys[1].RefTable = PersonalAccessTokensTable
 }

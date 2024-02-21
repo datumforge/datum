@@ -510,14 +510,8 @@ func TestMutationUpdateUser(t *testing.T) {
 	user := (&UserBuilder{client: client}).MustNew(ctx, t)
 
 	// setup valid user context
-	userCtx, err := auth.NewTestContextWithValidUser(user.ID)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(userCtx.Request().Context(), echocontext.EchoContextKey, userCtx)
-
-	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx, err := userContextWithID(user.ID)
+	require.NoError(t, err)
 
 	weakPassword := "notsecure"
 
@@ -649,14 +643,8 @@ func TestMutationDeleteUser(t *testing.T) {
 	require.NoError(t, err)
 
 	// setup valid user context
-	userCtx, err := auth.NewTestContextWithValidUser(user.ID)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(userCtx.Request().Context(), echocontext.EchoContextKey, userCtx)
-
-	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx, err := userContextWithID(user.ID)
+	require.NoError(t, err)
 
 	// bypass auth
 	ctx = privacy.DecisionContext(reqCtx, privacy.Allow)
@@ -742,17 +730,10 @@ func TestMutationUserCascadeDelete(t *testing.T) {
 
 	user := (&UserBuilder{client: client}).MustNew(ctx, t)
 
-	token := (&PersonalAccessTokenBuilder{client: client, OwnerID: user.ID}).MustNew(ctx, t)
+	reqCtx, err := userContextWithID(user.ID)
+	require.NoError(t, err)
 
-	// setup valid user context
-	userCtx, err := auth.NewTestContextWithValidUser(user.ID)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(userCtx.Request().Context(), echocontext.EchoContextKey, userCtx)
-
-	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
+	token := (&PersonalAccessTokenBuilder{client: client, OwnerID: user.ID}).MustNew(reqCtx, t)
 
 	userSettings, err := user.Setting(ctx)
 	require.NoError(t, err)

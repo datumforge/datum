@@ -375,9 +375,9 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldOwnerID:     {Type: field.TypeString, Column: personalaccesstoken.FieldOwnerID},
 			personalaccesstoken.FieldName:        {Type: field.TypeString, Column: personalaccesstoken.FieldName},
 			personalaccesstoken.FieldToken:       {Type: field.TypeString, Column: personalaccesstoken.FieldToken},
-			personalaccesstoken.FieldAbilities:   {Type: field.TypeJSON, Column: personalaccesstoken.FieldAbilities},
 			personalaccesstoken.FieldExpiresAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldExpiresAt},
 			personalaccesstoken.FieldDescription: {Type: field.TypeString, Column: personalaccesstoken.FieldDescription},
+			personalaccesstoken.FieldScopes:      {Type: field.TypeJSON, Column: personalaccesstoken.FieldScopes},
 			personalaccesstoken.FieldLastUsedAt:  {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
 		},
 	}
@@ -718,6 +718,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Entitlement",
 	)
 	graph.MustAddE(
+		"personal_access_tokens",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.PersonalAccessTokensTable,
+			Columns: organization.PersonalAccessTokensPrimaryKey,
+			Bidi:    false,
+		},
+		"Organization",
+		"PersonalAccessToken",
+	)
+	graph.MustAddE(
 		"oauthprovider",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -800,6 +812,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"PersonalAccessToken",
 		"User",
+	)
+	graph.MustAddE(
+		"organizations",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   personalaccesstoken.OrganizationsTable,
+			Columns: personalaccesstoken.OrganizationsPrimaryKey,
+			Bidi:    false,
+		},
+		"PersonalAccessToken",
+		"Organization",
 	)
 	graph.MustAddE(
 		"personal_access_tokens",
@@ -2302,6 +2326,20 @@ func (f *OrganizationFilter) WhereHasEntitlementsWith(preds ...predicate.Entitle
 	})))
 }
 
+// WhereHasPersonalAccessTokens applies a predicate to check if query has an edge personal_access_tokens.
+func (f *OrganizationFilter) WhereHasPersonalAccessTokens() {
+	f.Where(entql.HasEdge("personal_access_tokens"))
+}
+
+// WhereHasPersonalAccessTokensWith applies a predicate to check if query has an edge personal_access_tokens with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) {
+	f.Where(entql.HasEdgeWith("personal_access_tokens", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // WhereHasOauthprovider applies a predicate to check if query has an edge oauthprovider.
 func (f *OrganizationFilter) WhereHasOauthprovider() {
 	f.Where(entql.HasEdge("oauthprovider"))
@@ -2686,11 +2724,6 @@ func (f *PersonalAccessTokenFilter) WhereToken(p entql.StringP) {
 	f.Where(p.Field(personalaccesstoken.FieldToken))
 }
 
-// WhereAbilities applies the entql json.RawMessage predicate on the abilities field.
-func (f *PersonalAccessTokenFilter) WhereAbilities(p entql.BytesP) {
-	f.Where(p.Field(personalaccesstoken.FieldAbilities))
-}
-
 // WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
 func (f *PersonalAccessTokenFilter) WhereExpiresAt(p entql.TimeP) {
 	f.Where(p.Field(personalaccesstoken.FieldExpiresAt))
@@ -2699,6 +2732,11 @@ func (f *PersonalAccessTokenFilter) WhereExpiresAt(p entql.TimeP) {
 // WhereDescription applies the entql string predicate on the description field.
 func (f *PersonalAccessTokenFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(personalaccesstoken.FieldDescription))
+}
+
+// WhereScopes applies the entql json.RawMessage predicate on the scopes field.
+func (f *PersonalAccessTokenFilter) WhereScopes(p entql.BytesP) {
+	f.Where(p.Field(personalaccesstoken.FieldScopes))
 }
 
 // WhereLastUsedAt applies the entql time.Time predicate on the last_used_at field.
@@ -2714,6 +2752,20 @@ func (f *PersonalAccessTokenFilter) WhereHasOwner() {
 // WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
 func (f *PersonalAccessTokenFilter) WhereHasOwnerWith(preds ...predicate.User) {
 	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasOrganizations applies a predicate to check if query has an edge organizations.
+func (f *PersonalAccessTokenFilter) WhereHasOrganizations() {
+	f.Where(entql.HasEdge("organizations"))
+}
+
+// WhereHasOrganizationsWith applies a predicate to check if query has an edge organizations with a given conditions (other predicates).
+func (f *PersonalAccessTokenFilter) WhereHasOrganizationsWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("organizations", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

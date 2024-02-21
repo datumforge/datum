@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -29,30 +30,32 @@ import (
 // OrganizationQuery is the builder for querying Organization entities.
 type OrganizationQuery struct {
 	config
-	ctx                    *QueryContext
-	order                  []organization.OrderOption
-	inters                 []Interceptor
-	predicates             []predicate.Organization
-	withParent             *OrganizationQuery
-	withChildren           *OrganizationQuery
-	withGroups             *GroupQuery
-	withIntegrations       *IntegrationQuery
-	withSetting            *OrganizationSettingQuery
-	withEntitlements       *EntitlementQuery
-	withOauthprovider      *OauthProviderQuery
-	withUsers              *UserQuery
-	withInvites            *InviteQuery
-	withMembers            *OrgMembershipQuery
-	modifiers              []func(*sql.Selector)
-	loadTotal              []func(context.Context, []*Organization) error
-	withNamedChildren      map[string]*OrganizationQuery
-	withNamedGroups        map[string]*GroupQuery
-	withNamedIntegrations  map[string]*IntegrationQuery
-	withNamedEntitlements  map[string]*EntitlementQuery
-	withNamedOauthprovider map[string]*OauthProviderQuery
-	withNamedUsers         map[string]*UserQuery
-	withNamedInvites       map[string]*InviteQuery
-	withNamedMembers       map[string]*OrgMembershipQuery
+	ctx                           *QueryContext
+	order                         []organization.OrderOption
+	inters                        []Interceptor
+	predicates                    []predicate.Organization
+	withParent                    *OrganizationQuery
+	withChildren                  *OrganizationQuery
+	withGroups                    *GroupQuery
+	withIntegrations              *IntegrationQuery
+	withSetting                   *OrganizationSettingQuery
+	withEntitlements              *EntitlementQuery
+	withPersonalAccessTokens      *PersonalAccessTokenQuery
+	withOauthprovider             *OauthProviderQuery
+	withUsers                     *UserQuery
+	withInvites                   *InviteQuery
+	withMembers                   *OrgMembershipQuery
+	modifiers                     []func(*sql.Selector)
+	loadTotal                     []func(context.Context, []*Organization) error
+	withNamedChildren             map[string]*OrganizationQuery
+	withNamedGroups               map[string]*GroupQuery
+	withNamedIntegrations         map[string]*IntegrationQuery
+	withNamedEntitlements         map[string]*EntitlementQuery
+	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
+	withNamedOauthprovider        map[string]*OauthProviderQuery
+	withNamedUsers                map[string]*UserQuery
+	withNamedInvites              map[string]*InviteQuery
+	withNamedMembers              map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -233,6 +236,31 @@ func (oq *OrganizationQuery) QueryEntitlements() *EntitlementQuery {
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.Entitlement
 		step.Edge.Schema = schemaConfig.Entitlement
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPersonalAccessTokens chains the current query on the "personal_access_tokens" edge.
+func (oq *OrganizationQuery) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
+	query := (&PersonalAccessTokenClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(personalaccesstoken.Table, personalaccesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.PersonalAccessTokensTable, organization.PersonalAccessTokensPrimaryKey...),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -526,21 +554,22 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		return nil
 	}
 	return &OrganizationQuery{
-		config:            oq.config,
-		ctx:               oq.ctx.Clone(),
-		order:             append([]organization.OrderOption{}, oq.order...),
-		inters:            append([]Interceptor{}, oq.inters...),
-		predicates:        append([]predicate.Organization{}, oq.predicates...),
-		withParent:        oq.withParent.Clone(),
-		withChildren:      oq.withChildren.Clone(),
-		withGroups:        oq.withGroups.Clone(),
-		withIntegrations:  oq.withIntegrations.Clone(),
-		withSetting:       oq.withSetting.Clone(),
-		withEntitlements:  oq.withEntitlements.Clone(),
-		withOauthprovider: oq.withOauthprovider.Clone(),
-		withUsers:         oq.withUsers.Clone(),
-		withInvites:       oq.withInvites.Clone(),
-		withMembers:       oq.withMembers.Clone(),
+		config:                   oq.config,
+		ctx:                      oq.ctx.Clone(),
+		order:                    append([]organization.OrderOption{}, oq.order...),
+		inters:                   append([]Interceptor{}, oq.inters...),
+		predicates:               append([]predicate.Organization{}, oq.predicates...),
+		withParent:               oq.withParent.Clone(),
+		withChildren:             oq.withChildren.Clone(),
+		withGroups:               oq.withGroups.Clone(),
+		withIntegrations:         oq.withIntegrations.Clone(),
+		withSetting:              oq.withSetting.Clone(),
+		withEntitlements:         oq.withEntitlements.Clone(),
+		withPersonalAccessTokens: oq.withPersonalAccessTokens.Clone(),
+		withOauthprovider:        oq.withOauthprovider.Clone(),
+		withUsers:                oq.withUsers.Clone(),
+		withInvites:              oq.withInvites.Clone(),
+		withMembers:              oq.withMembers.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -610,6 +639,17 @@ func (oq *OrganizationQuery) WithEntitlements(opts ...func(*EntitlementQuery)) *
 		opt(query)
 	}
 	oq.withEntitlements = query
+	return oq
+}
+
+// WithPersonalAccessTokens tells the query-builder to eager-load the nodes that are connected to
+// the "personal_access_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithPersonalAccessTokens(opts ...func(*PersonalAccessTokenQuery)) *OrganizationQuery {
+	query := (&PersonalAccessTokenClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withPersonalAccessTokens = query
 	return oq
 }
 
@@ -741,13 +781,14 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [11]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
 			oq.withIntegrations != nil,
 			oq.withSetting != nil,
 			oq.withEntitlements != nil,
+			oq.withPersonalAccessTokens != nil,
 			oq.withOauthprovider != nil,
 			oq.withUsers != nil,
 			oq.withInvites != nil,
@@ -817,6 +858,15 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withPersonalAccessTokens; query != nil {
+		if err := oq.loadPersonalAccessTokens(ctx, query, nodes,
+			func(n *Organization) { n.Edges.PersonalAccessTokens = []*PersonalAccessToken{} },
+			func(n *Organization, e *PersonalAccessToken) {
+				n.Edges.PersonalAccessTokens = append(n.Edges.PersonalAccessTokens, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withOauthprovider; query != nil {
 		if err := oq.loadOauthprovider(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Oauthprovider = []*OauthProvider{} },
@@ -870,6 +920,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadEntitlements(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedEntitlements(name) },
 			func(n *Organization, e *Entitlement) { n.appendNamedEntitlements(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedPersonalAccessTokens {
+		if err := oq.loadPersonalAccessTokens(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedPersonalAccessTokens(name) },
+			func(n *Organization, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1084,6 +1141,68 @@ func (oq *OrganizationQuery) loadEntitlements(ctx context.Context, query *Entitl
 			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadPersonalAccessTokens(ctx context.Context, query *PersonalAccessTokenQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *PersonalAccessToken)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Organization)
+	nids := make(map[string]map[*Organization]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(organization.PersonalAccessTokensTable)
+		joinT.Schema(oq.schemaConfig.OrganizationPersonalAccessTokens)
+		s.Join(joinT).On(s.C(personalaccesstoken.FieldID), joinT.C(organization.PersonalAccessTokensPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(organization.PersonalAccessTokensPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(organization.PersonalAccessTokensPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Organization]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*PersonalAccessToken](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "personal_access_tokens" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
 	}
 	return nil
 }
@@ -1386,6 +1505,20 @@ func (oq *OrganizationQuery) WithNamedEntitlements(name string, opts ...func(*En
 		oq.withNamedEntitlements = make(map[string]*EntitlementQuery)
 	}
 	oq.withNamedEntitlements[name] = query
+	return oq
+}
+
+// WithNamedPersonalAccessTokens tells the query-builder to eager-load the nodes that are connected to the "personal_access_tokens"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*PersonalAccessTokenQuery)) *OrganizationQuery {
+	query := (&PersonalAccessTokenClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedPersonalAccessTokens == nil {
+		oq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
+	}
+	oq.withNamedPersonalAccessTokens[name] = query
 	return oq
 }
 

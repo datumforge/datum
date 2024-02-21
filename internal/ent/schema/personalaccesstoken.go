@@ -1,16 +1,18 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/keygen"
 )
 
@@ -23,29 +25,34 @@ type PersonalAccessToken struct {
 func (PersonalAccessToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
-			Comment("the name associated with the token"),
-		field.String("token").Sensitive().
+			Comment("the name associated with the token").
+			NotEmpty(),
+		field.String("token").
 			Unique().
 			Immutable().
+			Annotations(
+				entgql.Skip(^entgql.SkipType),
+			).
 			DefaultFunc(func() string {
 				token := keygen.Secret()
 				return token
 			}),
-		field.JSON("abilities", []string{}).
-			Comment("what abilites the token should have").
-			Optional(),
 		field.Time("expires_at").
 			Comment("when the token expires").
+			Annotations(
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			).
 			Nillable(),
 		field.String("description").
 			Comment("a description of the token's purpose").
 			Optional().
-			Default("").
+			Nillable().
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
 			),
+		field.JSON("scopes", []string{}).
+			Optional(),
 		field.Time("last_used_at").
-			UpdateDefault(time.Now).
 			Optional().
 			Nillable(),
 	}
@@ -53,7 +60,11 @@ func (PersonalAccessToken) Fields() []ent.Field {
 
 // Edges of the PersonalAccessToken
 func (PersonalAccessToken) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.From("organizations", Organization.Type).
+			Ref("personal_access_tokens").
+			Comment("the organization(s) the token is associated with"),
+	}
 }
 
 // Indexes of the PersonalAccessToken
@@ -71,7 +82,8 @@ func (PersonalAccessToken) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 		mixin.IDMixin{},
 		UserOwnedMixin{
-			Ref: "personal_access_tokens",
+			Ref:         "personal_access_tokens",
+			AllowUpdate: false,
 		},
 	}
 }
@@ -85,9 +97,32 @@ func (PersonalAccessToken) Annotations() []schema.Annotation {
 	}
 }
 
-// Hooks of the AccessToken
+// Hooks of the PersonalAccessToken
 func (PersonalAccessToken) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hooks.HookPersonalAccessToken(),
+		hooks.HookCreatePersonalAccessToken(),
+		hooks.HookUpdatePersonalAccessToken(),
+	}
+}
+
+// Interceptors of the PersonalAccessToken
+func (PersonalAccessToken) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.InterceptorPat(),
+	}
+}
+
+// Policy of the PersonalAccessToken
+func (PersonalAccessToken) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			rule.DenyIfNoSubject(),
+			rule.AllowMutationAfterApplyingOwnerFilter(),
+			privacy.AlwaysAllowRule(),
+		},
+		Query: privacy.QueryPolicy{
+			rule.AllowIfOwnedByViewer(),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

@@ -4,12 +4,15 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -20,13 +23,15 @@ import (
 // PersonalAccessTokenQuery is the builder for querying PersonalAccessToken entities.
 type PersonalAccessTokenQuery struct {
 	config
-	ctx        *QueryContext
-	order      []personalaccesstoken.OrderOption
-	inters     []Interceptor
-	predicates []predicate.PersonalAccessToken
-	withOwner  *UserQuery
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*PersonalAccessToken) error
+	ctx                    *QueryContext
+	order                  []personalaccesstoken.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.PersonalAccessToken
+	withOwner              *UserQuery
+	withOrganizations      *OrganizationQuery
+	modifiers              []func(*sql.Selector)
+	loadTotal              []func(context.Context, []*PersonalAccessToken) error
+	withNamedOrganizations map[string]*OrganizationQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -82,6 +87,31 @@ func (patq *PersonalAccessTokenQuery) QueryOwner() *UserQuery {
 		schemaConfig := patq.schemaConfig
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		fromU = sqlgraph.SetNeighbors(patq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOrganizations chains the current query on the "organizations" edge.
+func (patq *PersonalAccessTokenQuery) QueryOrganizations() *OrganizationQuery {
+	query := (&OrganizationClient{config: patq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := patq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := patq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(personalaccesstoken.Table, personalaccesstoken.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, personalaccesstoken.OrganizationsTable, personalaccesstoken.OrganizationsPrimaryKey...),
+		)
+		schemaConfig := patq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
 		fromU = sqlgraph.SetNeighbors(patq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -275,12 +305,13 @@ func (patq *PersonalAccessTokenQuery) Clone() *PersonalAccessTokenQuery {
 		return nil
 	}
 	return &PersonalAccessTokenQuery{
-		config:     patq.config,
-		ctx:        patq.ctx.Clone(),
-		order:      append([]personalaccesstoken.OrderOption{}, patq.order...),
-		inters:     append([]Interceptor{}, patq.inters...),
-		predicates: append([]predicate.PersonalAccessToken{}, patq.predicates...),
-		withOwner:  patq.withOwner.Clone(),
+		config:            patq.config,
+		ctx:               patq.ctx.Clone(),
+		order:             append([]personalaccesstoken.OrderOption{}, patq.order...),
+		inters:            append([]Interceptor{}, patq.inters...),
+		predicates:        append([]predicate.PersonalAccessToken{}, patq.predicates...),
+		withOwner:         patq.withOwner.Clone(),
+		withOrganizations: patq.withOrganizations.Clone(),
 		// clone intermediate query.
 		sql:  patq.sql.Clone(),
 		path: patq.path,
@@ -295,6 +326,17 @@ func (patq *PersonalAccessTokenQuery) WithOwner(opts ...func(*UserQuery)) *Perso
 		opt(query)
 	}
 	patq.withOwner = query
+	return patq
+}
+
+// WithOrganizations tells the query-builder to eager-load the nodes that are connected to
+// the "organizations" edge. The optional arguments are used to configure the query builder of the edge.
+func (patq *PersonalAccessTokenQuery) WithOrganizations(opts ...func(*OrganizationQuery)) *PersonalAccessTokenQuery {
+	query := (&OrganizationClient{config: patq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	patq.withOrganizations = query
 	return patq
 }
 
@@ -369,6 +411,12 @@ func (patq *PersonalAccessTokenQuery) prepareQuery(ctx context.Context) error {
 		}
 		patq.sql = prev
 	}
+	if personalaccesstoken.Policy == nil {
+		return errors.New("generated: uninitialized personalaccesstoken.Policy (forgotten import generated/runtime?)")
+	}
+	if err := personalaccesstoken.Policy.EvalQuery(ctx, patq); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -376,8 +424,9 @@ func (patq *PersonalAccessTokenQuery) sqlAll(ctx context.Context, hooks ...query
 	var (
 		nodes       = []*PersonalAccessToken{}
 		_spec       = patq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			patq.withOwner != nil,
+			patq.withOrganizations != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -406,6 +455,22 @@ func (patq *PersonalAccessTokenQuery) sqlAll(ctx context.Context, hooks ...query
 	if query := patq.withOwner; query != nil {
 		if err := patq.loadOwner(ctx, query, nodes, nil,
 			func(n *PersonalAccessToken, e *User) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := patq.withOrganizations; query != nil {
+		if err := patq.loadOrganizations(ctx, query, nodes,
+			func(n *PersonalAccessToken) { n.Edges.Organizations = []*Organization{} },
+			func(n *PersonalAccessToken, e *Organization) {
+				n.Edges.Organizations = append(n.Edges.Organizations, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range patq.withNamedOrganizations {
+		if err := patq.loadOrganizations(ctx, query, nodes,
+			func(n *PersonalAccessToken) { n.appendNamedOrganizations(name) },
+			func(n *PersonalAccessToken, e *Organization) { n.appendNamedOrganizations(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -442,6 +507,68 @@ func (patq *PersonalAccessTokenQuery) loadOwner(ctx context.Context, query *User
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (patq *PersonalAccessTokenQuery) loadOrganizations(ctx context.Context, query *OrganizationQuery, nodes []*PersonalAccessToken, init func(*PersonalAccessToken), assign func(*PersonalAccessToken, *Organization)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*PersonalAccessToken)
+	nids := make(map[string]map[*PersonalAccessToken]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(personalaccesstoken.OrganizationsTable)
+		joinT.Schema(patq.schemaConfig.OrganizationPersonalAccessTokens)
+		s.Join(joinT).On(s.C(organization.FieldID), joinT.C(personalaccesstoken.OrganizationsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(personalaccesstoken.OrganizationsPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(personalaccesstoken.OrganizationsPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*PersonalAccessToken]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Organization](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "organizations" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -537,6 +664,20 @@ func (patq *PersonalAccessTokenQuery) sqlQuery(ctx context.Context) *sql.Selecto
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedOrganizations tells the query-builder to eager-load the nodes that are connected to the "organizations"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (patq *PersonalAccessTokenQuery) WithNamedOrganizations(name string, opts ...func(*OrganizationQuery)) *PersonalAccessTokenQuery {
+	query := (&OrganizationClient{config: patq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if patq.withNamedOrganizations == nil {
+		patq.withNamedOrganizations = make(map[string]*OrganizationQuery)
+	}
+	patq.withNamedOrganizations[name] = query
+	return patq
 }
 
 // PersonalAccessTokenGroupBy is the group-by builder for PersonalAccessToken entities.

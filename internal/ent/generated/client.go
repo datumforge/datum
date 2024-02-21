@@ -2265,6 +2265,25 @@ func (c *OrganizationClient) QueryEntitlements(o *Organization) *EntitlementQuer
 	return query
 }
 
+// QueryPersonalAccessTokens queries the personal_access_tokens edge of a Organization.
+func (c *OrganizationClient) QueryPersonalAccessTokens(o *Organization) *PersonalAccessTokenQuery {
+	query := (&PersonalAccessTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(personalaccesstoken.Table, personalaccesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.PersonalAccessTokensTable, organization.PersonalAccessTokensPrimaryKey...),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryOauthprovider queries the oauthprovider edge of a Organization.
 func (c *OrganizationClient) QueryOauthprovider(o *Organization) *OauthProviderQuery {
 	query := (&OauthProviderClient{config: c.config}).Query()
@@ -2797,6 +2816,25 @@ func (c *PersonalAccessTokenClient) QueryOwner(pat *PersonalAccessToken) *UserQu
 		schemaConfig := pat.schemaConfig
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		fromV = sqlgraph.Neighbors(pat.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOrganizations queries the organizations edge of a PersonalAccessToken.
+func (c *PersonalAccessTokenClient) QueryOrganizations(pat *PersonalAccessToken) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pat.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(personalaccesstoken.Table, personalaccesstoken.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, personalaccesstoken.OrganizationsTable, personalaccesstoken.OrganizationsPrimaryKey...),
+		)
+		schemaConfig := pat.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
 		fromV = sqlgraph.Neighbors(pat.driver.Dialect(), step)
 		return fromV, nil
 	}

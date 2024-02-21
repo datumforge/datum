@@ -1022,22 +1022,23 @@ func (c *OrgMembershipUpdateOne) SetInput(i UpdateOrgMembershipInput) *OrgMember
 
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
-	CreatedAt        *time.Time
-	UpdatedAt        *time.Time
-	CreatedBy        *string
-	UpdatedBy        *string
-	Name             string
-	DisplayName      *string
-	Description      *string
-	PersonalOrg      *bool
-	ParentID         *string
-	GroupIDs         []string
-	IntegrationIDs   []string
-	SettingID        *string
-	EntitlementIDs   []string
-	OauthproviderIDs []string
-	UserIDs          []string
-	InviteIDs        []string
+	CreatedAt              *time.Time
+	UpdatedAt              *time.Time
+	CreatedBy              *string
+	UpdatedBy              *string
+	Name                   string
+	DisplayName            *string
+	Description            *string
+	PersonalOrg            *bool
+	ParentID               *string
+	GroupIDs               []string
+	IntegrationIDs         []string
+	SettingID              *string
+	EntitlementIDs         []string
+	PersonalAccessTokenIDs []string
+	OauthproviderIDs       []string
+	UserIDs                []string
+	InviteIDs              []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -1079,6 +1080,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.EntitlementIDs; len(v) > 0 {
 		m.AddEntitlementIDs(v...)
 	}
+	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
+		m.AddPersonalAccessTokenIDs(v...)
+	}
 	if v := i.OauthproviderIDs; len(v) > 0 {
 		m.AddOauthproviderIDs(v...)
 	}
@@ -1098,33 +1102,36 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 
 // UpdateOrganizationInput represents a mutation input for updating organizations.
 type UpdateOrganizationInput struct {
-	UpdatedAt              *time.Time
-	ClearUpdatedBy         bool
-	UpdatedBy              *string
-	Name                   *string
-	DisplayName            *string
-	ClearDescription       bool
-	Description            *string
-	ClearGroups            bool
-	AddGroupIDs            []string
-	RemoveGroupIDs         []string
-	ClearIntegrations      bool
-	AddIntegrationIDs      []string
-	RemoveIntegrationIDs   []string
-	ClearSetting           bool
-	SettingID              *string
-	ClearEntitlements      bool
-	AddEntitlementIDs      []string
-	RemoveEntitlementIDs   []string
-	ClearOauthprovider     bool
-	AddOauthproviderIDs    []string
-	RemoveOauthproviderIDs []string
-	ClearUsers             bool
-	AddUserIDs             []string
-	RemoveUserIDs          []string
-	ClearInvites           bool
-	AddInviteIDs           []string
-	RemoveInviteIDs        []string
+	UpdatedAt                    *time.Time
+	ClearUpdatedBy               bool
+	UpdatedBy                    *string
+	Name                         *string
+	DisplayName                  *string
+	ClearDescription             bool
+	Description                  *string
+	ClearGroups                  bool
+	AddGroupIDs                  []string
+	RemoveGroupIDs               []string
+	ClearIntegrations            bool
+	AddIntegrationIDs            []string
+	RemoveIntegrationIDs         []string
+	ClearSetting                 bool
+	SettingID                    *string
+	ClearEntitlements            bool
+	AddEntitlementIDs            []string
+	RemoveEntitlementIDs         []string
+	ClearPersonalAccessTokens    bool
+	AddPersonalAccessTokenIDs    []string
+	RemovePersonalAccessTokenIDs []string
+	ClearOauthprovider           bool
+	AddOauthproviderIDs          []string
+	RemoveOauthproviderIDs       []string
+	ClearUsers                   bool
+	AddUserIDs                   []string
+	RemoveUserIDs                []string
+	ClearInvites                 bool
+	AddInviteIDs                 []string
+	RemoveInviteIDs              []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -1182,6 +1189,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveEntitlementIDs; len(v) > 0 {
 		m.RemoveEntitlementIDs(v...)
+	}
+	if i.ClearPersonalAccessTokens {
+		m.ClearPersonalAccessTokens()
+	}
+	if v := i.AddPersonalAccessTokenIDs; len(v) > 0 {
+		m.AddPersonalAccessTokenIDs(v...)
+	}
+	if v := i.RemovePersonalAccessTokenIDs; len(v) > 0 {
+		m.RemovePersonalAccessTokenIDs(v...)
 	}
 	if i.ClearOauthprovider {
 		m.ClearOauthprovider()
@@ -1428,17 +1444,17 @@ func (c *OrganizationSettingUpdateOne) SetInput(i UpdateOrganizationSettingInput
 
 // CreatePersonalAccessTokenInput represents a mutation input for creating personalaccesstokens.
 type CreatePersonalAccessTokenInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
-	Name        string
-	Token       *string
-	Abilities   []string
-	ExpiresAt   time.Time
-	Description *string
-	LastUsedAt  *time.Time
-	OwnerID     string
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	Name            string
+	ExpiresAt       time.Time
+	Description     *string
+	Scopes          []string
+	LastUsedAt      *time.Time
+	OwnerID         string
+	OrganizationIDs []string
 }
 
 // Mutate applies the CreatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
@@ -1456,20 +1472,20 @@ func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 		m.SetUpdatedBy(*v)
 	}
 	m.SetName(i.Name)
-	if v := i.Token; v != nil {
-		m.SetToken(*v)
-	}
-	if v := i.Abilities; v != nil {
-		m.SetAbilities(v)
-	}
 	m.SetExpiresAt(i.ExpiresAt)
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
 	}
 	if v := i.LastUsedAt; v != nil {
 		m.SetLastUsedAt(*v)
 	}
 	m.SetOwnerID(i.OwnerID)
+	if v := i.OrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreatePersonalAccessTokenInput on the PersonalAccessTokenCreate builder.
@@ -1480,19 +1496,20 @@ func (c *PersonalAccessTokenCreate) SetInput(i CreatePersonalAccessTokenInput) *
 
 // UpdatePersonalAccessTokenInput represents a mutation input for updating personalaccesstokens.
 type UpdatePersonalAccessTokenInput struct {
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
-	Name             *string
-	ClearAbilities   bool
-	Abilities        []string
-	AppendAbilities  []string
-	ExpiresAt        *time.Time
-	ClearDescription bool
-	Description      *string
-	ClearLastUsedAt  bool
-	LastUsedAt       *time.Time
-	OwnerID          *string
+	UpdatedAt             *time.Time
+	ClearUpdatedBy        bool
+	UpdatedBy             *string
+	Name                  *string
+	ClearDescription      bool
+	Description           *string
+	ClearScopes           bool
+	Scopes                []string
+	AppendScopes          []string
+	ClearLastUsedAt       bool
+	LastUsedAt            *time.Time
+	ClearOrganizations    bool
+	AddOrganizationIDs    []string
+	RemoveOrganizationIDs []string
 }
 
 // Mutate applies the UpdatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
@@ -1509,23 +1526,20 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
-	if i.ClearAbilities {
-		m.ClearAbilities()
-	}
-	if v := i.Abilities; v != nil {
-		m.SetAbilities(v)
-	}
-	if i.AppendAbilities != nil {
-		m.AppendAbilities(i.Abilities)
-	}
-	if v := i.ExpiresAt; v != nil {
-		m.SetExpiresAt(*v)
-	}
 	if i.ClearDescription {
 		m.ClearDescription()
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if i.ClearScopes {
+		m.ClearScopes()
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
+	}
+	if i.AppendScopes != nil {
+		m.AppendScopes(i.Scopes)
 	}
 	if i.ClearLastUsedAt {
 		m.ClearLastUsedAt()
@@ -1533,8 +1547,14 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	if v := i.LastUsedAt; v != nil {
 		m.SetLastUsedAt(*v)
 	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
+	if i.ClearOrganizations {
+		m.ClearOrganizations()
+	}
+	if v := i.AddOrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
+	if v := i.RemoveOrganizationIDs; len(v) > 0 {
+		m.RemoveOrganizationIDs(v...)
 	}
 }
 

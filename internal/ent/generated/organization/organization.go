@@ -49,6 +49,8 @@ const (
 	EdgeSetting = "setting"
 	// EdgeEntitlements holds the string denoting the entitlements edge name in mutations.
 	EdgeEntitlements = "entitlements"
+	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
+	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeOauthprovider holds the string denoting the oauthprovider edge name in mutations.
 	EdgeOauthprovider = "oauthprovider"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -95,6 +97,11 @@ const (
 	EntitlementsInverseTable = "entitlements"
 	// EntitlementsColumn is the table column denoting the entitlements relation/edge.
 	EntitlementsColumn = "owner_id"
+	// PersonalAccessTokensTable is the table that holds the personal_access_tokens relation/edge. The primary key declared below.
+	PersonalAccessTokensTable = "organization_personal_access_tokens"
+	// PersonalAccessTokensInverseTable is the table name for the PersonalAccessToken entity.
+	// It exists in this package in order to avoid circular dependency with the "personalaccesstoken" package.
+	PersonalAccessTokensInverseTable = "personal_access_tokens"
 	// OauthproviderTable is the table that holds the oauthprovider relation/edge.
 	OauthproviderTable = "oauth_providers"
 	// OauthproviderInverseTable is the table name for the OauthProvider entity.
@@ -140,6 +147,9 @@ var Columns = []string{
 }
 
 var (
+	// PersonalAccessTokensPrimaryKey and PersonalAccessTokensColumn2 are the table columns denoting the
+	// primary key for the personal_access_tokens relation (M2M).
+	PersonalAccessTokensPrimaryKey = []string{"organization_id", "personal_access_token_id"}
 	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
 	// primary key for the users relation (M2M).
 	UsersPrimaryKey = []string{"user_id", "organization_id"}
@@ -315,6 +325,20 @@ func ByEntitlements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
+func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPersonalAccessTokensStep(), opts...)
+	}
+}
+
+// ByPersonalAccessTokens orders the results by personal_access_tokens terms.
+func ByPersonalAccessTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPersonalAccessTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByOauthproviderCount orders the results by oauthprovider count.
 func ByOauthproviderCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -410,6 +434,13 @@ func newEntitlementsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntitlementsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EntitlementsTable, EntitlementsColumn),
+	)
+}
+func newPersonalAccessTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PersonalAccessTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, PersonalAccessTokensTable, PersonalAccessTokensPrimaryKey...),
 	)
 }
 func newOauthproviderStep() *sqlgraph.Step {

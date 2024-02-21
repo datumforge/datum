@@ -118,6 +118,15 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 				SetOwnerID(org.ID).
 				SetRecipient(tc.email).SaveX(reqCtx)
 
+			// wait for messages so we don't have conflicts with the accept message
+			predicate := func() bool {
+				return client.h.TaskMan.GetQueueLength() == 0
+			}
+
+			asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+
+			mock.ResetEmailMock()
+
 			target := "/invite"
 			if tc.tokenSet {
 				target = fmt.Sprintf("/invite?token=%s", invite.Token)
@@ -153,15 +162,8 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 			assert.Equal(t, org.ID, out.JoinedOrgID)
 			assert.Equal(t, tc.email, out.Email)
 
-			// Test that one verify email was sent to each user
-			// one for invite, one for accepted
+			// Test that one email was sent for accepted invite
 			messages := []*mock.EmailMetadata{
-				{
-					To:        tc.email,
-					From:      "mitb@datum.net",
-					Subject:   fmt.Sprintf(emails.InviteRE, requestor.FirstName),
-					Timestamp: sent,
-				},
 				{
 					To:        tc.email,
 					From:      "mitb@datum.net",
@@ -171,7 +173,7 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 			}
 
 			// wait for messages
-			predicate := func() bool {
+			predicate = func() bool {
 				return client.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)

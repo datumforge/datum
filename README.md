@@ -38,17 +38,17 @@ To include Taskfile's created in other directories / to call the respective task
 
 Within the `config` directory in the root of this repository there are several `example.yaml` files prefixed with `config` or similar; these hold examples of environment configurations which you should review and potentially override depending on your needs. Anything which is launched out of the `Taskfile` will source it's configuration from these files. Different tasks can be made to source from different files as can be seen by several of the tasks within the Taskfile.
 
-You will need to perform a 1-time action of either removing the `.example` suffix from these files or`.config.yaml`. 
+You will need to perform a 1-time action of creating a `.config.yaml` file based on the `.example` files. 
 The Taskfiles will also source a `.dotenv` files which match the naming conventions called for `{{.ENV}}` to ease the overriding of environment variables. These files are intentionally added to the `.gitignore` within this repository to prevent you from accidentally committing secrets or other sensitive information which may live inside the server's environment variables.
 
-All settings in the `yaml` configuration can also be overwritten with environment variables prefixed with `DATUM_`. For example, to override the Google `client_secret` set in the yaml configruation with an environment variable you can use: 
+All settings in the `yaml` configuration can also be overwritten with environment variables prefixed with `DATUM_`. For example, to override the Google `client_secret` set in the yaml configuration with an environment variable you can use: 
 
 ```
 export DATUM_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET
 ```
 
-Configuration precedence is, the latter overriding the former:
-1. `default` values set in the code structs
+Configuration precedence is as follows, the latter overriding the former:
+1. `default` values set in the config struct within the code
 2. `.config.yaml` values
 3. Environment variables
 

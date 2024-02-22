@@ -139,6 +139,7 @@ func TestQueryUsers(t *testing.T) {
 
 		user1Found := false
 		user2Found := false
+
 		for _, o := range resp.Users.Edges {
 			if o.Node.ID == user1.ID {
 				user1Found = true

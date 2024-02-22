@@ -129,6 +129,7 @@ func TestQueryGroupsByOwner(t *testing.T) {
 
 		group1Found := false
 		group2Found := false
+
 		for _, o := range resp.Groups.Edges {
 			if o.Node.ID == group1.ID {
 				group1Found = true

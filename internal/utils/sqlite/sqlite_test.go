@@ -64,7 +64,9 @@ func TestOpenMany(t *testing.T) {
 	// Close each connection
 	for _, closer := range closers {
 		require.NoError(t, closer.Close(), "expected no error during close")
+
 		expectedConnections--
+
 		require.Equal(t, expectedConnections, sqlite.NumConns())
 	}
 }

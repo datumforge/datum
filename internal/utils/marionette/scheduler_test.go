@@ -55,6 +55,7 @@ func TestScheduler(t *testing.T) {
 		scheduler.Delay(delay, TaskFunc(func(ctx context.Context) error { // nolint: errcheck
 			atomic.AddUint32(&completed, 1)
 			t.Logf("task completed after %s delay", delay)
+
 			return nil
 		}))
 	}
@@ -69,6 +70,7 @@ func TestScheduler(t *testing.T) {
 		scheduler.Delay(delay, TaskFunc(func(ctx context.Context) error { // nolint: errcheck
 			atomic.AddUint32(&completed, 1)
 			t.Logf("task completed after %s delay", delay)
+
 			return nil
 		}))
 	}
@@ -78,6 +80,7 @@ func TestScheduler(t *testing.T) {
 	scheduler.Delay(1500*time.Millisecond, TaskFunc(func(ctx context.Context) error { // nolint :errcheck
 		close(out)
 		t.Log("out channel closed")
+
 		return nil
 	}))
 
@@ -113,6 +116,7 @@ func TestFutures(t *testing.T) {
 
 	t.Run("RandomSort", func(t *testing.T) {
 		futures := make(Futures, 0, 1000)
+
 		for i := 0; i < 1000; i++ {
 			futures = futures.Insert(makeFuture())
 		}
@@ -149,6 +153,7 @@ func TestFutures(t *testing.T) {
 		// Create a shuffled list of indexes to insert timestamps into futures in
 		// a random order to ensure that the test is correct.
 		index := make([]int, len(timestamps))
+
 		for i := 0; i < len(timestamps); i++ {
 			index[i] = i
 		}
@@ -160,6 +165,7 @@ func TestFutures(t *testing.T) {
 
 		// Create a list of futures from the timestamps.
 		futures := make(Futures, 0)
+
 		for _, i := range index {
 			ts, _ := time.Parse(time.RFC3339, timestamps[i])
 			futures = futures.Insert(&Future{Time: ts})
@@ -167,6 +173,7 @@ func TestFutures(t *testing.T) {
 
 		// Check that the futures are sorted correctly.
 		require.Len(t, futures, len(timestamps))
+
 		for i, f := range futures {
 			ts, _ := time.Parse(time.RFC3339, timestamps[i])
 			require.True(t, ts.Equal(f.Time))

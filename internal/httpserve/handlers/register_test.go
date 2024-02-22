@@ -107,6 +107,7 @@ func TestRegisterHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
+
 			sent := time.Now()
 
 			mock.ResetEmailMock()

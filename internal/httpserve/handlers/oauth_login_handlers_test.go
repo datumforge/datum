@@ -93,6 +93,7 @@ func TestHandlerCheckAndCreateUser(t *testing.T) {
 				// add mocks for writes when a new user is created
 				mock_fga.WriteOnce(t, client.fga)
 			}
+
 			now := time.Now()
 
 			// start transaction because the query expects a transaction in the context

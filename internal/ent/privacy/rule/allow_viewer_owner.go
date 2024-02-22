@@ -17,6 +17,7 @@ func AllowIfOwnedByViewer() privacy.QueryMutationRule {
 
 	return privacy.FilterFunc(func(ctx context.Context, f privacy.Filter) error {
 		v := viewer.FromContext(ctx)
+
 		if v == nil {
 			return privacy.Skipf("missing viewer in context")
 		}
@@ -32,6 +33,7 @@ func AllowIfOwnedByViewer() privacy.QueryMutationRule {
 		}
 
 		actualFilter.WhereHasOwnerWith(user.ID(viewerID))
+
 		return privacy.Allow
 	},
 	)

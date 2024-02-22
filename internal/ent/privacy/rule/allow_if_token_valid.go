@@ -45,8 +45,10 @@ func AllowAfterApplyingPrivacyTokenFilter(
 			actualToken := ctx.Value(emptyToken.GetContextKey())
 			actualTokenType := reflect.TypeOf(actualToken)
 			expectedTokenType := reflect.TypeOf(emptyToken)
+
 			if actualTokenType == expectedTokenType {
 				applyFilter(actualToken.(token.PrivacyToken), filter)
+
 				return privacy.Allowf("applied privacy token filter")
 			}
 

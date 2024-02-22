@@ -40,6 +40,7 @@ func TestTasks(t *testing.T) {
 		tm.Queue(marionette.TaskFunc(func(context.Context) error { // nolint: errcheck
 			time.Sleep(1 * time.Millisecond)
 			atomic.AddInt32(&completed, 1)
+
 			return nil
 		}))
 	}
@@ -58,10 +59,13 @@ func TestTasks(t *testing.T) {
 	require.ErrorIs(t, err, marionette.ErrTaskManagerStopped)
 }
 
+var skip = "skipping long running test in short mode"
+var retry = "expected all tasks to have failed twice before no more retries"
+
 func TestTasksRetry(t *testing.T) {
 	// This is a long running test, skip if in short mode
 	if testing.Short() {
-		t.Skip("skipping long running test in short mode")
+		t.Skip(skip)
 	}
 
 	logger := zap.NewNop().Sugar()
@@ -101,13 +105,13 @@ func TestTasksRetry(t *testing.T) {
 	}
 
 	require.Equal(t, 100, completed, "expected all tasks to have been completed")
-	require.Equal(t, 300, attempts, "expected all tasks to have failed twice before success")
+	require.Equal(t, 300, attempts, attempts)
 }
 
 func TestTasksRetryFailure(t *testing.T) {
 	// This is a long running test, skip if in short mode
 	if testing.Short() {
-		t.Skip("skipping long running test in short mode")
+		t.Skip(skip)
 	}
 
 	logger := zap.NewNop().Sugar()
@@ -147,7 +151,7 @@ func TestTasksRetryFailure(t *testing.T) {
 	}
 
 	require.Equal(t, 0, completed, "expected all tasks to have failed")
-	require.Equal(t, 200, attempts, "expected all tasks to have failed twice before no more retries")
+	require.Equal(t, 200, attempts, retry)
 }
 
 func TestTasksRetryBackoff(t *testing.T) {
@@ -187,15 +191,14 @@ func TestTasksRetryBackoff(t *testing.T) {
 		}
 	}
 
-	// TODO: how to check if backoff was respected?
 	require.Equal(t, 100, completed, "expected all tasks to have been completed")
-	require.Equal(t, 300, attempts, "expected all tasks to have failed twice before success")
+	require.Equal(t, 300, attempts, attempts)
 }
 
 func TestTasksRetryContextCanceled(t *testing.T) {
 	// This is a long running test, skip if in short mode
 	if testing.Short() {
-		t.Skip("skipping long running test in short mode")
+		t.Skip(skip)
 	}
 
 	logger := zap.NewNop().Sugar()
@@ -215,11 +218,13 @@ func TestTasksRetryContextCanceled(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		tm.Queue(marionette.TaskFunc(func(ctx context.Context) error { // nolint: errcheck
 			atomic.AddInt32(&attempts, 1)
+
 			if err := ctx.Err(); err != nil {
 				return err
 			}
 
 			atomic.AddInt32(&completed, 1)
+
 			return nil
 		}), marionette.WithRetries(1),
 			marionette.WithBackoff(&backoff.ZeroBackOff{}),
@@ -232,13 +237,13 @@ func TestTasksRetryContextCanceled(t *testing.T) {
 	tm.Stop()
 
 	require.Equal(t, int32(0), completed, "expected all tasks to have been canceled")
-	require.Equal(t, int32(200), attempts, "expected all tasks to have failed twice before no more retries")
+	require.Equal(t, int32(200), attempts, retry)
 }
 
 func TestTasksRetrySuccessAndFailure(t *testing.T) {
 	// This is a long running test, skip if in short mode
 	if testing.Short() {
-		t.Skip("skipping long running test in short mode")
+		t.Skip(skip)
 	}
 
 	logger := zap.NewNop().Sugar()
@@ -284,7 +289,7 @@ func TestTasksRetrySuccessAndFailure(t *testing.T) {
 	}
 
 	require.Equal(t, 50, completed, "expected all tasks to have failed")
-	require.Equal(t, 150, attempts, "expected all tasks to have failed twice before no more retries")
+	require.Equal(t, 150, attempts, retry)
 }
 
 func TestQueue(t *testing.T) {

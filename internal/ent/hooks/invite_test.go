@@ -50,6 +50,7 @@ func TestSetRequestor(t *testing.T) {
 			got, err := setRequestor(tt.ctx, invMut)
 
 			requestor, ok := got.RequestorID()
+
 			if tt.wantErr {
 				require.Error(t, err)
 				assert.False(t, ok)

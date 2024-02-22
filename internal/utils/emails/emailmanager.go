@@ -41,6 +41,7 @@ func New(conf Config) (m *EmailManager, err error) {
 		if conf.SendGridAPIKey == "" {
 			return nil, ErrFailedToCreateEmailClient
 		}
+
 		m.client = sg.NewSendClient(conf.SendGridAPIKey)
 	}
 
@@ -138,11 +139,13 @@ func (m *EmailManager) SendOrgInvitationEmail(i *Invite) error {
 	}
 
 	var err error
+
 	if data.InviteURL, err = m.URLConfig.InviteURL(i.Token); err != nil {
 		return err
 	}
 
 	msg, err := InviteEmail(data)
+
 	if err != nil {
 		return err
 	}
@@ -164,6 +167,7 @@ func (m *EmailManager) SendAddedtoOrgEmail(i *Invite) error {
 	}
 
 	msg, err := InviteAccepted(data)
+
 	if err != nil {
 		return err
 	}

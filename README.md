@@ -1,11 +1,9 @@
-[![Build status](https://badge.buildkite.com/a3a38b934ca2bb7fc771e19bc5a986a1452fa2962e4e1c63bf.svg?branch=main)](https://buildkite.com/datum/datum)
+[![Build status](https://badge.buildkite.com/a3a38b934ca2bb7fc771e19bc5a986a1452fa2962e4e1c63bf.svg?branch=main)](https://buildkite.com/datum/datum) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=datumforge_datum&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=datumforge_datum)
 
 # Datum Core
 
 > This repository is experimental meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style!
 > This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production - reach out to [@matoszz](https://github.com/matoszz) with any questions
-
-This repo will hold the core server / handler for Datum services - for complete detailed references please check out the go-template used to generate this repository; it can be found [here](https://github.com/datumforge/go-template)
 
 ## Development
 
@@ -14,25 +12,28 @@ Datum's core server operates with the following utilities:
 1. [ent](https://entgo.io/) - insane entity mapping tool, definitely not an ORM but kind of an ORM
 1. [atlas](https://atlasgo.io/) - Schema generation and migration
 1. [gqlgen](https://gqlgen.com/) - Code generation from schema definitions
+1. [gqlgenc](https://github.com/Yamashou/gqlgenc) - client building utilities with GraphQL
 1. [openfga](https://openfga.dev/) - Authorization
 1. [echo](https://echo.labstack.com/) - High performance, extensible, minimalist Go web framework
+1. [koanf](github.com/knadh/koanf) - configuration management
+1. [viper](https://github.com/spf13/viper) - command line flags / management
+
+We also leverage many secondary technologies in use, including (but not limited to!):
+
+1. [redis](https://redis.io/) - in-memory datastore used for sessions, caching
+1. [sqlite](https://www.sqlite.org/) - currently planned database system but also offer additional support for PostgreSQL
+1. [golangci-lint](https://github.com/golangci/golangci-lint) - an annoyingly opinionated linter
+1. [buildkite](https://buildkite.com/datum) - our CI system of choice (with github actions providing some intermediary support)
+1. [sonar](https://sonarcloud.io/summary/overall?id=datumforge_datum) - used for code scanning, vulnerability scanning
+1. [posthog](https://posthog.com/) - product analytics
+1. [sentry](https://sentry.io) - error montioring, tracing
+1. [sendgrid](https://sendgrid.com/en-us) - transactional email send provider
+
+All of these components are bundled into our respective Docker images; for additional information / instructions, see the [contributing guide](.github/CONTRIBUTING.md) in this repository. 
 
 ### Dependencies
 
-Setup [Taskfile](https://taskfile.dev/installation/) by following the instructions and using one of the various convenient package managers or installation scripts. Two of the more common installation methods are below for your convenience:
-
-```
-brew install go-task
-```
-
-```
-sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
-```
-(by default, this installs on the ``./bin`` directory relative to the working directory)
-
-After installation, you can then simply run `task install` to load the associated dependencies. Nearly everything in this repository assumes you already have a local golang environment setup so this is not included. Please see the associated documentation.
-
-To include Taskfile's created in other directories / to call the respective tasks, you would add an `includes` per the Taskfile documentation and then reference it by name, e.g. `task cli:createorg`
+Setup [Taskfile](https://taskfile.dev/installation/) by following the instructions and using one of the various convenient package managers or installation scripts. After installation, you can then simply run `task install` to load the associated dependencies. Nearly everything in this repository assumes you already have a local golang environment setup so this is not included. Please see the associated documentation.
 
 ### Updating Configuration Settings
 
@@ -48,30 +49,7 @@ export DATUM_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET
 ```
 
 Configuration precedence is as follows, the latter overriding the former:
+
 1. `default` values set in the config struct within the code
-2. `.config.yaml` values
-3. Environment variables
-
-### Pre-requisites to a PR
-
-This repository contains a number of code generating functions / utilities which take schema modifications and scaffold out resolvers, graphql API schemas, openAPI specifications, among other things. To ensure you've generated all the necessary dependencies run `task pr`; this will run the entirety of the commands required to safely generate a PR. If for some reason one of the commands fails / encounters an error, you will need to debug the individual steps. It should be decently easy to follow the `Taskfile` in the root of this repository.
-
-## Querying
-
-The best method of forming / testing queries against the server is to run `task docker:rover` which will launch an interactive query UI.
-
-## OpenFGA Playground
-
-You can load up a local openFGA environment with the compose setup in this repository; `task fga:up` - this will launch an interactive playground where you can model permissions model(s) or changes to the models
-
-## Migrations
-
-`task atlas:create` will generate the necessary migrations
-
-## Creating a new Schema
-
-To ease the effort required to add additional schemas into the system a template + task function has been created. This isn't doing anything terribly complex, but it's attempting to ensure you have the _minimum_ set of required things needed to create a schema - most notably: you need to ensure the IDMixin is present (otherwise you will get ID type conflicts) and a standard set of schema annotations.
-
-**NOTE: you still have to make intelligent decisions around things like the presence / integration of hooks, interceptors, policies, etc. This is saving you about 10 seconds of copy-paste, so don't over estimate the automation, here.
-
-To generate a new schema, you can run `task newschema -- [yourschemaname]` where you replace the name within `[]`. Please be sure to note that this isn't a command line flag so there's a space between `--` and the name.
+1. `.config.yaml` values
+1. Environment variables

@@ -69,6 +69,7 @@ func generate(n int, chars string) string {
 
 		if idx := int(cache & idxmask); idx < len(chars) {
 			sb.WriteByte(chars[idx])
+
 			i--
 		}
 

@@ -86,6 +86,7 @@ func (d SoftDeleteMixin) SoftDeleteHook(next ent.Mutator) ent.Mutator {
 
 		sd.SetDeletedAt(time.Now())
 		sd.SetDeletedBy(actor)
+
 		return sd.Client().Mutate(ctx, m)
 	})
 }

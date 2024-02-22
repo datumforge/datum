@@ -15,6 +15,7 @@ func AllowIfAdmin() privacy.QueryMutationRule {
 		if v != nil && v.IsAdmin() {
 			return privacy.Allow
 		}
+
 		return privacy.Skip
 	})
 }

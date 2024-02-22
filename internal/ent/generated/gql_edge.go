@@ -193,6 +193,18 @@ func (o *Organization) Entitlements(ctx context.Context) (result []*Entitlement,
 	return result, err
 }
 
+func (o *Organization) PersonalAccessTokens(ctx context.Context) (result []*PersonalAccessToken, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedPersonalAccessTokens(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.PersonalAccessTokensOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryPersonalAccessTokens().All(ctx)
+	}
+	return result, err
+}
+
 func (o *Organization) Oauthprovider(ctx context.Context) (result []*OauthProvider, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = o.NamedOauthprovider(graphql.GetFieldContext(ctx).Field.Alias)
@@ -253,6 +265,18 @@ func (pat *PersonalAccessToken) Owner(ctx context.Context) (*User, error) {
 	result, err := pat.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = pat.QueryOwner().Only(ctx)
+	}
+	return result, err
+}
+
+func (pat *PersonalAccessToken) Organizations(ctx context.Context) (result []*Organization, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = pat.NamedOrganizations(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = pat.Edges.OrganizationsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = pat.QueryOrganizations().All(ctx)
 	}
 	return result, err
 }

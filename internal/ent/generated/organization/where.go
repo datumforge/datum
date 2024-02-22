@@ -941,6 +941,35 @@ func HasEntitlementsWith(preds ...predicate.Entitlement) predicate.Organization 
 	})
 }
 
+// HasPersonalAccessTokens applies the HasEdge predicate on the "personal_access_tokens" edge.
+func HasPersonalAccessTokens() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, PersonalAccessTokensTable, PersonalAccessTokensPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPersonalAccessTokensWith applies the HasEdge predicate on the "personal_access_tokens" edge with a given conditions (other predicates).
+func HasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newPersonalAccessTokensStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasOauthprovider applies the HasEdge predicate on the "oauthprovider" edge.
 func HasOauthprovider() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

@@ -92,6 +92,7 @@ func (Organization) Edges() []ent.Edge {
 			Unique().
 			Annotations(entx.CascadeAnnotationField("Organization")),
 		edge.To("entitlements", Entitlement.Type),
+		edge.To("personal_access_tokens", PersonalAccessToken.Type),
 		edge.To("oauthprovider", OauthProvider.Type),
 		edge.From("users", User.Type).
 			Ref("organizations").

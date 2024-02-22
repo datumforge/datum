@@ -5919,6 +5919,10 @@ type OrganizationWhereInput struct {
 	HasEntitlements     *bool                    `json:"hasEntitlements,omitempty"`
 	HasEntitlementsWith []*EntitlementWhereInput `json:"hasEntitlementsWith,omitempty"`
 
+	// "personal_access_tokens" edge predicates.
+	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
+	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
+
 	// "oauthprovider" edge predicates.
 	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
 	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
@@ -6448,6 +6452,24 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, organization.HasEntitlementsWith(with...))
+	}
+	if i.HasPersonalAccessTokens != nil {
+		p := organization.HasPersonalAccessTokens()
+		if !*i.HasPersonalAccessTokens {
+			p = organization.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPersonalAccessTokensWith) > 0 {
+		with := make([]predicate.PersonalAccessToken, 0, len(i.HasPersonalAccessTokensWith))
+		for _, w := range i.HasPersonalAccessTokensWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPersonalAccessTokensWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, organization.HasPersonalAccessTokensWith(with...))
 	}
 	if i.HasOauthprovider != nil {
 		p := organization.HasOauthprovider()
@@ -7594,21 +7616,6 @@ type PersonalAccessTokenWhereInput struct {
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
-	// "token" field predicates.
-	Token             *string  `json:"token,omitempty"`
-	TokenNEQ          *string  `json:"tokenNEQ,omitempty"`
-	TokenIn           []string `json:"tokenIn,omitempty"`
-	TokenNotIn        []string `json:"tokenNotIn,omitempty"`
-	TokenGT           *string  `json:"tokenGT,omitempty"`
-	TokenGTE          *string  `json:"tokenGTE,omitempty"`
-	TokenLT           *string  `json:"tokenLT,omitempty"`
-	TokenLTE          *string  `json:"tokenLTE,omitempty"`
-	TokenContains     *string  `json:"tokenContains,omitempty"`
-	TokenHasPrefix    *string  `json:"tokenHasPrefix,omitempty"`
-	TokenHasSuffix    *string  `json:"tokenHasSuffix,omitempty"`
-	TokenEqualFold    *string  `json:"tokenEqualFold,omitempty"`
-	TokenContainsFold *string  `json:"tokenContainsFold,omitempty"`
-
 	// "expires_at" field predicates.
 	ExpiresAt      *time.Time  `json:"expiresAt,omitempty"`
 	ExpiresAtNEQ   *time.Time  `json:"expiresAtNEQ,omitempty"`
@@ -7634,6 +7641,10 @@ type PersonalAccessTokenWhereInput struct {
 	// "owner" edge predicates.
 	HasOwner     *bool             `json:"hasOwner,omitempty"`
 	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
+
+	// "organizations" edge predicates.
+	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
+	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -7989,45 +8000,6 @@ func (i *PersonalAccessTokenWhereInput) P() (predicate.PersonalAccessToken, erro
 	if i.NameContainsFold != nil {
 		predicates = append(predicates, personalaccesstoken.NameContainsFold(*i.NameContainsFold))
 	}
-	if i.Token != nil {
-		predicates = append(predicates, personalaccesstoken.TokenEQ(*i.Token))
-	}
-	if i.TokenNEQ != nil {
-		predicates = append(predicates, personalaccesstoken.TokenNEQ(*i.TokenNEQ))
-	}
-	if len(i.TokenIn) > 0 {
-		predicates = append(predicates, personalaccesstoken.TokenIn(i.TokenIn...))
-	}
-	if len(i.TokenNotIn) > 0 {
-		predicates = append(predicates, personalaccesstoken.TokenNotIn(i.TokenNotIn...))
-	}
-	if i.TokenGT != nil {
-		predicates = append(predicates, personalaccesstoken.TokenGT(*i.TokenGT))
-	}
-	if i.TokenGTE != nil {
-		predicates = append(predicates, personalaccesstoken.TokenGTE(*i.TokenGTE))
-	}
-	if i.TokenLT != nil {
-		predicates = append(predicates, personalaccesstoken.TokenLT(*i.TokenLT))
-	}
-	if i.TokenLTE != nil {
-		predicates = append(predicates, personalaccesstoken.TokenLTE(*i.TokenLTE))
-	}
-	if i.TokenContains != nil {
-		predicates = append(predicates, personalaccesstoken.TokenContains(*i.TokenContains))
-	}
-	if i.TokenHasPrefix != nil {
-		predicates = append(predicates, personalaccesstoken.TokenHasPrefix(*i.TokenHasPrefix))
-	}
-	if i.TokenHasSuffix != nil {
-		predicates = append(predicates, personalaccesstoken.TokenHasSuffix(*i.TokenHasSuffix))
-	}
-	if i.TokenEqualFold != nil {
-		predicates = append(predicates, personalaccesstoken.TokenEqualFold(*i.TokenEqualFold))
-	}
-	if i.TokenContainsFold != nil {
-		predicates = append(predicates, personalaccesstoken.TokenContainsFold(*i.TokenContainsFold))
-	}
 	if i.ExpiresAt != nil {
 		predicates = append(predicates, personalaccesstoken.ExpiresAtEQ(*i.ExpiresAt))
 	}
@@ -8100,6 +8072,24 @@ func (i *PersonalAccessTokenWhereInput) P() (predicate.PersonalAccessToken, erro
 			with = append(with, p)
 		}
 		predicates = append(predicates, personalaccesstoken.HasOwnerWith(with...))
+	}
+	if i.HasOrganizations != nil {
+		p := personalaccesstoken.HasOrganizations()
+		if !*i.HasOrganizations {
+			p = personalaccesstoken.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasOrganizationsWith) > 0 {
+		with := make([]predicate.Organization, 0, len(i.HasOrganizationsWith))
+		for _, w := range i.HasOrganizationsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasOrganizationsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, personalaccesstoken.HasOrganizationsWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

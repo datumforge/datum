@@ -80,7 +80,14 @@ tasks:
   go:test:
     desc: runs and outputs results of created go tests
     cmds:
-      - go test -v ./...
+      - go test -v ./... 
+
+  go:test:cover:
+    desc: runs and outputs results of created go tests with coverage
+    aliases: [cover]
+    cmds:
+      - go test -v ./... -coverprofile=coverage.out
+      - go tool cover -html=coverage.out
 
   go:fmt:
     desc: format all go code

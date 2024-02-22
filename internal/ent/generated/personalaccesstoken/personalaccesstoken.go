@@ -33,16 +33,18 @@ const (
 	FieldName = "name"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
-	// FieldAbilities holds the string denoting the abilities field in the database.
-	FieldAbilities = "abilities"
 	// FieldExpiresAt holds the string denoting the expires_at field in the database.
 	FieldExpiresAt = "expires_at"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldScopes holds the string denoting the scopes field in the database.
+	FieldScopes = "scopes"
 	// FieldLastUsedAt holds the string denoting the last_used_at field in the database.
 	FieldLastUsedAt = "last_used_at"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
+	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
+	EdgeOrganizations = "organizations"
 	// Table holds the table name of the personalaccesstoken in the database.
 	Table = "personal_access_tokens"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -52,6 +54,11 @@ const (
 	OwnerInverseTable = "users"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "owner_id"
+	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
+	OrganizationsTable = "organization_personal_access_tokens"
+	// OrganizationsInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationsInverseTable = "organizations"
 )
 
 // Columns holds all SQL columns for personalaccesstoken fields.
@@ -66,11 +73,17 @@ var Columns = []string{
 	FieldOwnerID,
 	FieldName,
 	FieldToken,
-	FieldAbilities,
 	FieldExpiresAt,
 	FieldDescription,
+	FieldScopes,
 	FieldLastUsedAt,
 }
+
+var (
+	// OrganizationsPrimaryKey and OrganizationsColumn2 are the table columns denoting the
+	// primary key for the organizations relation (M2M).
+	OrganizationsPrimaryKey = []string{"organization_id", "personal_access_token_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -88,20 +101,19 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [3]ent.Hook
-	Interceptors [1]ent.Interceptor
+	Hooks        [5]ent.Hook
+	Interceptors [2]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// NameValidator is a validator for the "name" field. It is called by the builders before save.
+	NameValidator func(string) error
 	// DefaultToken holds the default value on creation for the "token" field.
 	DefaultToken func() string
-	// DefaultDescription holds the default value on creation for the "description" field.
-	DefaultDescription string
-	// UpdateDefaultLastUsedAt holds the default value on update for the "last_used_at" field.
-	UpdateDefaultLastUsedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -180,10 +192,31 @@ func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByOrganizationsCount orders the results by organizations count.
+func ByOrganizationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOrganizationsStep(), opts...)
+	}
+}
+
+// ByOrganizations orders the results by organizations terms.
+func ByOrganizations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOrganizationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OwnerInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
+}
+func newOrganizationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrganizationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, OrganizationsTable, OrganizationsPrimaryKey...),
 	)
 }

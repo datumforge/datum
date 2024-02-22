@@ -3,6 +3,7 @@ package datumtokens
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -28,8 +29,11 @@ func init() {
 	patCreateCmd.Flags().StringP("description", "d", "", "description of the pat")
 	datum.ViperBindFlag("pat.create.description", patCreateCmd.Flags().Lookup("description"))
 
-	patCreateCmd.Flags().StringP("owner-id", "o", "", "the owner of the personal access token")
-	datum.ViperBindFlag("pat.create.owner-id", patCreateCmd.Flags().Lookup("owner-id"))
+	patCreateCmd.Flags().StringSliceP("organizations", "o", []string{}, "organization(s) id to associate the pat with")
+	datum.ViperBindFlag("pat.create.organizations", patCreateCmd.Flags().Lookup("organizations"))
+
+	patCreateCmd.Flags().DurationP("expiration", "e", 0, "duration of the pat to be valid, defaults to 7 days")
+	datum.ViperBindFlag("pat.create.expiration", patCreateCmd.Flags().Lookup("expiration"))
 }
 
 func createPat(ctx context.Context) error {
@@ -50,20 +54,23 @@ func createPat(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token name")
 	}
 
-	owner := viper.GetString("pat.create.owner-id")
-	if owner == "" {
-		return datum.NewRequiredFieldMissingError("user id")
+	input := datumclient.CreatePersonalAccessTokenInput{
+		Name: name,
 	}
 
 	description := viper.GetString("pat.create.description")
-
-	input := datumclient.CreatePersonalAccessTokenInput{
-		Name:    name,
-		OwnerID: owner,
-	}
-
 	if description != "" {
 		input.Description = &description
+	}
+
+	organizations := viper.GetStringSlice("pat.create.organizations")
+	if organizations != nil {
+		input.OrganizationIDs = organizations
+	}
+
+	expiration := viper.GetDuration("pat.create.expiration")
+	if expiration != 0 {
+		input.ExpiresAt = time.Now().Add(expiration)
 	}
 
 	o, err := cli.Client.CreatePersonalAccessToken(ctx, input, cli.Interceptor)

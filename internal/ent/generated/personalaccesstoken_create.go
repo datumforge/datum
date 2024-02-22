@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
@@ -131,12 +132,6 @@ func (patc *PersonalAccessTokenCreate) SetNillableToken(s *string) *PersonalAcce
 	return patc
 }
 
-// SetAbilities sets the "abilities" field.
-func (patc *PersonalAccessTokenCreate) SetAbilities(s []string) *PersonalAccessTokenCreate {
-	patc.mutation.SetAbilities(s)
-	return patc
-}
-
 // SetExpiresAt sets the "expires_at" field.
 func (patc *PersonalAccessTokenCreate) SetExpiresAt(t time.Time) *PersonalAccessTokenCreate {
 	patc.mutation.SetExpiresAt(t)
@@ -154,6 +149,12 @@ func (patc *PersonalAccessTokenCreate) SetNillableDescription(s *string) *Person
 	if s != nil {
 		patc.SetDescription(*s)
 	}
+	return patc
+}
+
+// SetScopes sets the "scopes" field.
+func (patc *PersonalAccessTokenCreate) SetScopes(s []string) *PersonalAccessTokenCreate {
+	patc.mutation.SetScopes(s)
 	return patc
 }
 
@@ -188,6 +189,21 @@ func (patc *PersonalAccessTokenCreate) SetNillableID(s *string) *PersonalAccessT
 // SetOwner sets the "owner" edge to the User entity.
 func (patc *PersonalAccessTokenCreate) SetOwner(u *User) *PersonalAccessTokenCreate {
 	return patc.SetOwnerID(u.ID)
+}
+
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (patc *PersonalAccessTokenCreate) AddOrganizationIDs(ids ...string) *PersonalAccessTokenCreate {
+	patc.mutation.AddOrganizationIDs(ids...)
+	return patc
+}
+
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (patc *PersonalAccessTokenCreate) AddOrganizations(o ...*Organization) *PersonalAccessTokenCreate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return patc.AddOrganizationIDs(ids...)
 }
 
 // Mutation returns the PersonalAccessTokenMutation object of the builder.
@@ -248,10 +264,6 @@ func (patc *PersonalAccessTokenCreate) defaults() error {
 		v := personalaccesstoken.DefaultToken()
 		patc.mutation.SetToken(v)
 	}
-	if _, ok := patc.mutation.Description(); !ok {
-		v := personalaccesstoken.DefaultDescription
-		patc.mutation.SetDescription(v)
-	}
 	if _, ok := patc.mutation.ID(); !ok {
 		if personalaccesstoken.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized personalaccesstoken.DefaultID (forgotten import generated/runtime?)")
@@ -275,6 +287,11 @@ func (patc *PersonalAccessTokenCreate) check() error {
 	}
 	if _, ok := patc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "PersonalAccessToken.name"`)}
+	}
+	if v, ok := patc.mutation.Name(); ok {
+		if err := personalaccesstoken.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "PersonalAccessToken.name": %w`, err)}
+		}
 	}
 	if _, ok := patc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "PersonalAccessToken.token"`)}
@@ -353,17 +370,17 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 		_spec.SetField(personalaccesstoken.FieldToken, field.TypeString, value)
 		_node.Token = value
 	}
-	if value, ok := patc.mutation.Abilities(); ok {
-		_spec.SetField(personalaccesstoken.FieldAbilities, field.TypeJSON, value)
-		_node.Abilities = value
-	}
 	if value, ok := patc.mutation.ExpiresAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldExpiresAt, field.TypeTime, value)
 		_node.ExpiresAt = &value
 	}
 	if value, ok := patc.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)
-		_node.Description = value
+		_node.Description = &value
+	}
+	if value, ok := patc.mutation.Scopes(); ok {
+		_spec.SetField(personalaccesstoken.FieldScopes, field.TypeJSON, value)
+		_node.Scopes = value
 	}
 	if value, ok := patc.mutation.LastUsedAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldLastUsedAt, field.TypeTime, value)
@@ -385,6 +402,23 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := patc.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   personalaccesstoken.OrganizationsTable,
+			Columns: personalaccesstoken.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = patc.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

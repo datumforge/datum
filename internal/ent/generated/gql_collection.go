@@ -1460,6 +1460,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedEntitlements(alias, func(wq *EntitlementQuery) {
 				*wq = *query
 			})
+		case "personalAccessTokens":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PersonalAccessTokenClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedPersonalAccessTokens(alias, func(wq *PersonalAccessTokenQuery) {
+				*wq = *query
+			})
 		case "oauthprovider":
 			var (
 				alias = field.Alias
@@ -1808,6 +1820,18 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 				selectedFields = append(selectedFields, personalaccesstoken.FieldOwnerID)
 				fieldSeen[personalaccesstoken.FieldOwnerID] = struct{}{}
 			}
+		case "organizations":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: pat.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			pat.WithNamedOrganizations(alias, func(wq *OrganizationQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[personalaccesstoken.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldCreatedAt)
@@ -1843,10 +1867,10 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 				selectedFields = append(selectedFields, personalaccesstoken.FieldName)
 				fieldSeen[personalaccesstoken.FieldName] = struct{}{}
 			}
-		case "abilities":
-			if _, ok := fieldSeen[personalaccesstoken.FieldAbilities]; !ok {
-				selectedFields = append(selectedFields, personalaccesstoken.FieldAbilities)
-				fieldSeen[personalaccesstoken.FieldAbilities] = struct{}{}
+		case "token":
+			if _, ok := fieldSeen[personalaccesstoken.FieldToken]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldToken)
+				fieldSeen[personalaccesstoken.FieldToken] = struct{}{}
 			}
 		case "expiresAt":
 			if _, ok := fieldSeen[personalaccesstoken.FieldExpiresAt]; !ok {
@@ -1857,6 +1881,11 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 			if _, ok := fieldSeen[personalaccesstoken.FieldDescription]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldDescription)
 				fieldSeen[personalaccesstoken.FieldDescription] = struct{}{}
+			}
+		case "scopes":
+			if _, ok := fieldSeen[personalaccesstoken.FieldScopes]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldScopes)
+				fieldSeen[personalaccesstoken.FieldScopes] = struct{}{}
 			}
 		case "lastUsedAt":
 			if _, ok := fieldSeen[personalaccesstoken.FieldLastUsedAt]; !ok {

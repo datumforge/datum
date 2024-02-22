@@ -117,12 +117,13 @@ type PersonalAccessTokenBuilder struct {
 	client *client
 
 	// Fields
-	Name        string
-	Token       string
-	Abilities   []string
-	Description string
-	ExpiresAt   time.Time
-	OwnerID     string
+	Name           string
+	Token          string
+	Abilities      []string
+	Description    string
+	ExpiresAt      time.Time
+	OwnerID        string
+	OrganizationID string
 }
 
 // MustNew organization builder is used to create, without authz checks, orgs in the database
@@ -379,12 +380,17 @@ func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T
 		pat.OwnerID = owner.ID
 	}
 
+	if pat.OrganizationID == "" {
+		org := (&OrganizationBuilder{client: pat.client}).MustNew(ctx, t)
+		pat.OrganizationID = org.ID
+	}
+
 	token := pat.client.db.PersonalAccessToken.Create().
 		SetName(pat.Name).
 		SetOwnerID(pat.OwnerID).
-		SetToken(pat.Token).
 		SetDescription(pat.Description).
 		SetExpiresAt(pat.ExpiresAt).
+		AddOrganizationIDs(pat.OrganizationID).
 		SaveX(ctx)
 
 	// clear mocks before going to tests

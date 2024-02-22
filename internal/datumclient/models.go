@@ -193,16 +193,17 @@ type CreateOrganizationInput struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg       *bool                           `json:"personalOrg,omitempty"`
-	ParentID          *string                         `json:"parentID,omitempty"`
-	GroupIDs          []string                        `json:"groupIDs,omitempty"`
-	IntegrationIDs    []string                        `json:"integrationIDs,omitempty"`
-	SettingID         *string                         `json:"settingID,omitempty"`
-	EntitlementIDs    []string                        `json:"entitlementIDs,omitempty"`
-	OauthproviderIDs  []string                        `json:"oauthproviderIDs,omitempty"`
-	UserIDs           []string                        `json:"userIDs,omitempty"`
-	InviteIDs         []string                        `json:"inviteIDs,omitempty"`
-	CreateOrgSettings *CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
+	PersonalOrg            *bool                           `json:"personalOrg,omitempty"`
+	ParentID               *string                         `json:"parentID,omitempty"`
+	GroupIDs               []string                        `json:"groupIDs,omitempty"`
+	IntegrationIDs         []string                        `json:"integrationIDs,omitempty"`
+	SettingID              *string                         `json:"settingID,omitempty"`
+	EntitlementIDs         []string                        `json:"entitlementIDs,omitempty"`
+	PersonalAccessTokenIDs []string                        `json:"personalAccessTokenIDs,omitempty"`
+	OauthproviderIDs       []string                        `json:"oauthproviderIDs,omitempty"`
+	UserIDs                []string                        `json:"userIDs,omitempty"`
+	InviteIDs              []string                        `json:"inviteIDs,omitempty"`
+	CreateOrgSettings      *CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
 }
 
 // CreateOrganizationSettingInput is used for create OrganizationSetting object.
@@ -237,16 +238,15 @@ type CreatePersonalAccessTokenInput struct {
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	// the name associated with the token
-	Name  string  `json:"name"`
-	Token *string `json:"token,omitempty"`
-	// what abilites the token should have
-	Abilities []string `json:"abilities,omitempty"`
+	Name string `json:"name"`
 	// when the token expires
 	ExpiresAt time.Time `json:"expiresAt"`
 	// a description of the token's purpose
-	Description *string    `json:"description,omitempty"`
-	LastUsedAt  *time.Time `json:"lastUsedAt,omitempty"`
-	OwnerID     string     `json:"ownerID"`
+	Description     *string    `json:"description,omitempty"`
+	Scopes          []string   `json:"scopes,omitempty"`
+	LastUsedAt      *time.Time `json:"lastUsedAt,omitempty"`
+	OwnerID         string     `json:"ownerID"`
+	OrganizationIDs []string   `json:"organizationIDs,omitempty"`
 }
 
 // CreateUserInput is used for create User object.
@@ -2140,17 +2140,18 @@ type Organization struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg   bool                    `json:"personalOrg"`
-	Parent        *Organization           `json:"parent,omitempty"`
-	Children      *OrganizationConnection `json:"children"`
-	Groups        []*Group                `json:"groups,omitempty"`
-	Integrations  []*Integration          `json:"integrations,omitempty"`
-	Setting       *OrganizationSetting    `json:"setting,omitempty"`
-	Entitlements  []*Entitlement          `json:"entitlements,omitempty"`
-	Oauthprovider []*OauthProvider        `json:"oauthprovider,omitempty"`
-	Users         []*User                 `json:"users,omitempty"`
-	Invites       []*Invite               `json:"invites,omitempty"`
-	Members       []*OrgMembership        `json:"members,omitempty"`
+	PersonalOrg          bool                    `json:"personalOrg"`
+	Parent               *Organization           `json:"parent,omitempty"`
+	Children             *OrganizationConnection `json:"children"`
+	Groups               []*Group                `json:"groups,omitempty"`
+	Integrations         []*Integration          `json:"integrations,omitempty"`
+	Setting              *OrganizationSetting    `json:"setting,omitempty"`
+	Entitlements         []*Entitlement          `json:"entitlements,omitempty"`
+	PersonalAccessTokens []*PersonalAccessToken  `json:"personalAccessTokens,omitempty"`
+	Oauthprovider        []*OauthProvider        `json:"oauthprovider,omitempty"`
+	Users                []*User                 `json:"users,omitempty"`
+	Invites              []*Invite               `json:"invites,omitempty"`
+	Members              []*OrgMembership        `json:"members,omitempty"`
 }
 
 func (Organization) IsNode() {}
@@ -2634,6 +2635,9 @@ type OrganizationWhereInput struct {
 	// entitlements edge predicates
 	HasEntitlements     *bool                    `json:"hasEntitlements,omitempty"`
 	HasEntitlementsWith []*EntitlementWhereInput `json:"hasEntitlementsWith,omitempty"`
+	// personal_access_tokens edge predicates
+	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
+	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
 	// oauthprovider edge predicates
 	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
 	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
@@ -2670,15 +2674,17 @@ type PersonalAccessToken struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// the name associated with the token
-	Name string `json:"name"`
-	// what abilites the token should have
-	Abilities []string `json:"abilities,omitempty"`
+	Name  string `json:"name"`
+	Token string `json:"token"`
 	// when the token expires
 	ExpiresAt time.Time `json:"expiresAt"`
 	// a description of the token's purpose
 	Description *string    `json:"description,omitempty"`
+	Scopes      []string   `json:"scopes,omitempty"`
 	LastUsedAt  *time.Time `json:"lastUsedAt,omitempty"`
 	Owner       *User      `json:"owner"`
+	// the organization(s) the token is associated with
+	Organizations []*Organization `json:"organizations,omitempty"`
 }
 
 func (PersonalAccessToken) IsNode() {}
@@ -2850,6 +2856,9 @@ type PersonalAccessTokenWhereInput struct {
 	// owner edge predicates
 	HasOwner     *bool             `json:"hasOwner,omitempty"`
 	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
+	// organizations edge predicates
+	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
+	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
 }
 
 type Query struct {
@@ -3043,30 +3052,33 @@ type UpdateOrganizationInput struct {
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
-	Description            *string                         `json:"description,omitempty"`
-	ClearDescription       *bool                           `json:"clearDescription,omitempty"`
-	AddGroupIDs            []string                        `json:"addGroupIDs,omitempty"`
-	RemoveGroupIDs         []string                        `json:"removeGroupIDs,omitempty"`
-	ClearGroups            *bool                           `json:"clearGroups,omitempty"`
-	AddIntegrationIDs      []string                        `json:"addIntegrationIDs,omitempty"`
-	RemoveIntegrationIDs   []string                        `json:"removeIntegrationIDs,omitempty"`
-	ClearIntegrations      *bool                           `json:"clearIntegrations,omitempty"`
-	SettingID              *string                         `json:"settingID,omitempty"`
-	ClearSetting           *bool                           `json:"clearSetting,omitempty"`
-	AddEntitlementIDs      []string                        `json:"addEntitlementIDs,omitempty"`
-	RemoveEntitlementIDs   []string                        `json:"removeEntitlementIDs,omitempty"`
-	ClearEntitlements      *bool                           `json:"clearEntitlements,omitempty"`
-	AddOauthproviderIDs    []string                        `json:"addOauthproviderIDs,omitempty"`
-	RemoveOauthproviderIDs []string                        `json:"removeOauthproviderIDs,omitempty"`
-	ClearOauthprovider     *bool                           `json:"clearOauthprovider,omitempty"`
-	AddUserIDs             []string                        `json:"addUserIDs,omitempty"`
-	RemoveUserIDs          []string                        `json:"removeUserIDs,omitempty"`
-	ClearUsers             *bool                           `json:"clearUsers,omitempty"`
-	AddInviteIDs           []string                        `json:"addInviteIDs,omitempty"`
-	RemoveInviteIDs        []string                        `json:"removeInviteIDs,omitempty"`
-	ClearInvites           *bool                           `json:"clearInvites,omitempty"`
-	AddOrgMembers          []*CreateOrgMembershipInput     `json:"addOrgMembers,omitempty"`
-	UpdateOrgSettings      *UpdateOrganizationSettingInput `json:"updateOrgSettings,omitempty"`
+	Description                  *string                         `json:"description,omitempty"`
+	ClearDescription             *bool                           `json:"clearDescription,omitempty"`
+	AddGroupIDs                  []string                        `json:"addGroupIDs,omitempty"`
+	RemoveGroupIDs               []string                        `json:"removeGroupIDs,omitempty"`
+	ClearGroups                  *bool                           `json:"clearGroups,omitempty"`
+	AddIntegrationIDs            []string                        `json:"addIntegrationIDs,omitempty"`
+	RemoveIntegrationIDs         []string                        `json:"removeIntegrationIDs,omitempty"`
+	ClearIntegrations            *bool                           `json:"clearIntegrations,omitempty"`
+	SettingID                    *string                         `json:"settingID,omitempty"`
+	ClearSetting                 *bool                           `json:"clearSetting,omitempty"`
+	AddEntitlementIDs            []string                        `json:"addEntitlementIDs,omitempty"`
+	RemoveEntitlementIDs         []string                        `json:"removeEntitlementIDs,omitempty"`
+	ClearEntitlements            *bool                           `json:"clearEntitlements,omitempty"`
+	AddPersonalAccessTokenIDs    []string                        `json:"addPersonalAccessTokenIDs,omitempty"`
+	RemovePersonalAccessTokenIDs []string                        `json:"removePersonalAccessTokenIDs,omitempty"`
+	ClearPersonalAccessTokens    *bool                           `json:"clearPersonalAccessTokens,omitempty"`
+	AddOauthproviderIDs          []string                        `json:"addOauthproviderIDs,omitempty"`
+	RemoveOauthproviderIDs       []string                        `json:"removeOauthproviderIDs,omitempty"`
+	ClearOauthprovider           *bool                           `json:"clearOauthprovider,omitempty"`
+	AddUserIDs                   []string                        `json:"addUserIDs,omitempty"`
+	RemoveUserIDs                []string                        `json:"removeUserIDs,omitempty"`
+	ClearUsers                   *bool                           `json:"clearUsers,omitempty"`
+	AddInviteIDs                 []string                        `json:"addInviteIDs,omitempty"`
+	RemoveInviteIDs              []string                        `json:"removeInviteIDs,omitempty"`
+	ClearInvites                 *bool                           `json:"clearInvites,omitempty"`
+	AddOrgMembers                []*CreateOrgMembershipInput     `json:"addOrgMembers,omitempty"`
+	UpdateOrgSettings            *UpdateOrganizationSettingInput `json:"updateOrgSettings,omitempty"`
 }
 
 // UpdateOrganizationSettingInput is used for update OrganizationSetting object.
@@ -3113,18 +3125,17 @@ type UpdatePersonalAccessTokenInput struct {
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the name associated with the token
 	Name *string `json:"name,omitempty"`
-	// what abilites the token should have
-	Abilities       []string `json:"abilities,omitempty"`
-	AppendAbilities []string `json:"appendAbilities,omitempty"`
-	ClearAbilities  *bool    `json:"clearAbilities,omitempty"`
-	// when the token expires
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// a description of the token's purpose
-	Description      *string    `json:"description,omitempty"`
-	ClearDescription *bool      `json:"clearDescription,omitempty"`
-	LastUsedAt       *time.Time `json:"lastUsedAt,omitempty"`
-	ClearLastUsedAt  *bool      `json:"clearLastUsedAt,omitempty"`
-	OwnerID          *string    `json:"ownerID,omitempty"`
+	Description           *string    `json:"description,omitempty"`
+	ClearDescription      *bool      `json:"clearDescription,omitempty"`
+	Scopes                []string   `json:"scopes,omitempty"`
+	AppendScopes          []string   `json:"appendScopes,omitempty"`
+	ClearScopes           *bool      `json:"clearScopes,omitempty"`
+	LastUsedAt            *time.Time `json:"lastUsedAt,omitempty"`
+	ClearLastUsedAt       *bool      `json:"clearLastUsedAt,omitempty"`
+	AddOrganizationIDs    []string   `json:"addOrganizationIDs,omitempty"`
+	RemoveOrganizationIDs []string   `json:"removeOrganizationIDs,omitempty"`
+	ClearOrganizations    *bool      `json:"clearOrganizations,omitempty"`
 }
 
 // UpdateUserInput is used for update User object.

@@ -677,16 +677,6 @@ func TokenContainsFold(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldContainsFold(FieldToken, v))
 }
 
-// AbilitiesIsNil applies the IsNil predicate on the "abilities" field.
-func AbilitiesIsNil() predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldIsNull(FieldAbilities))
-}
-
-// AbilitiesNotNil applies the NotNil predicate on the "abilities" field.
-func AbilitiesNotNil() predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldNotNull(FieldAbilities))
-}
-
 // ExpiresAtEQ applies the EQ predicate on the "expires_at" field.
 func ExpiresAtEQ(v time.Time) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldExpiresAt, v))
@@ -802,6 +792,16 @@ func DescriptionContainsFold(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldContainsFold(FieldDescription, v))
 }
 
+// ScopesIsNil applies the IsNil predicate on the "scopes" field.
+func ScopesIsNil() predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldIsNull(FieldScopes))
+}
+
+// ScopesNotNil applies the NotNil predicate on the "scopes" field.
+func ScopesNotNil() predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldNotNull(FieldScopes))
+}
+
 // LastUsedAtEQ applies the EQ predicate on the "last_used_at" field.
 func LastUsedAtEQ(v time.Time) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldLastUsedAt, v))
@@ -873,6 +873,35 @@ func HasOwnerWith(preds ...predicate.User) predicate.PersonalAccessToken {
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOrganizations applies the HasEdge predicate on the "organizations" edge.
+func HasOrganizations() predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, OrganizationsTable, OrganizationsPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOrganizationsWith applies the HasEdge predicate on the "organizations" edge with a given conditions (other predicates).
+func HasOrganizationsWith(preds ...predicate.Organization) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(func(s *sql.Selector) {
+		step := newOrganizationsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

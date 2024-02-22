@@ -265,6 +265,7 @@ input CreateOrganizationInput {
 	integrationIDs: [ID!]
 	settingID: ID
 	entitlementIDs: [ID!]
+	personalAccessTokenIDs: [ID!]
 	oauthproviderIDs: [ID!]
 	userIDs: [ID!]
 	inviteIDs: [ID!]
@@ -316,11 +317,6 @@ input CreatePersonalAccessTokenInput {
 	the name associated with the token
 	"""
 	name: String!
-	token: String
-	"""
-	what abilites the token should have
-	"""
-	abilities: [String!]
 	"""
 	when the token expires
 	"""
@@ -329,8 +325,10 @@ input CreatePersonalAccessTokenInput {
 	a description of the token's purpose
 	"""
 	description: String
+	scopes: [String!]
 	lastUsedAt: Time
 	ownerID: ID!
+	organizationIDs: [ID!]
 }
 """
 CreateUserInput is used for create User object.
@@ -3314,6 +3312,7 @@ type Organization implements Node {
 	integrations: [Integration!]
 	setting: OrganizationSetting
 	entitlements: [Entitlement!]
+	personalAccessTokens: [PersonalAccessToken!]
 	oauthprovider: [OauthProvider!]
 	users: [User!]
 	invites: [Invite!]
@@ -3925,6 +3924,11 @@ input OrganizationWhereInput {
 	hasEntitlements: Boolean
 	hasEntitlementsWith: [EntitlementWhereInput!]
 	"""
+	personal_access_tokens edge predicates
+	"""
+	hasPersonalAccessTokens: Boolean
+	hasPersonalAccessTokensWith: [PersonalAccessTokenWhereInput!]
+	"""
 	oauthprovider edge predicates
 	"""
 	hasOauthprovider: Boolean
@@ -3979,10 +3983,7 @@ type PersonalAccessToken implements Node {
 	the name associated with the token
 	"""
 	name: String!
-	"""
-	what abilites the token should have
-	"""
-	abilities: [String!]
+	token: String!
 	"""
 	when the token expires
 	"""
@@ -3991,8 +3992,13 @@ type PersonalAccessToken implements Node {
 	a description of the token's purpose
 	"""
 	description: String
+	scopes: [String!]
 	lastUsedAt: Time
 	owner: User!
+	"""
+	the organization(s) the token is associated with
+	"""
+	organizations: [Organization!]
 }
 """
 A connection to a list of items.
@@ -4206,6 +4212,11 @@ input PersonalAccessTokenWhereInput {
 	"""
 	hasOwner: Boolean
 	hasOwnerWith: [UserWhereInput!]
+	"""
+	organizations edge predicates
+	"""
+	hasOrganizations: Boolean
+	hasOrganizationsWith: [OrganizationWhereInput!]
 }
 type Query {
 	"""
@@ -5015,6 +5026,9 @@ input UpdateOrganizationInput {
 	addEntitlementIDs: [ID!]
 	removeEntitlementIDs: [ID!]
 	clearEntitlements: Boolean
+	addPersonalAccessTokenIDs: [ID!]
+	removePersonalAccessTokenIDs: [ID!]
+	clearPersonalAccessTokens: Boolean
 	addOauthproviderIDs: [ID!]
 	removeOauthproviderIDs: [ID!]
 	clearOauthprovider: Boolean
@@ -5085,23 +5099,18 @@ input UpdatePersonalAccessTokenInput {
 	"""
 	name: String
 	"""
-	what abilites the token should have
-	"""
-	abilities: [String!]
-	appendAbilities: [String!]
-	clearAbilities: Boolean
-	"""
-	when the token expires
-	"""
-	expiresAt: Time
-	"""
 	a description of the token's purpose
 	"""
 	description: String
 	clearDescription: Boolean
+	scopes: [String!]
+	appendScopes: [String!]
+	clearScopes: Boolean
 	lastUsedAt: Time
 	clearLastUsedAt: Boolean
-	ownerID: ID
+	addOrganizationIDs: [ID!]
+	removeOrganizationIDs: [ID!]
+	clearOrganizations: Boolean
 }
 """
 UpdateUserInput is used for update User object.

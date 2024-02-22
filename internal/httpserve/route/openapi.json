@@ -4576,6 +4576,12 @@
                       "type": "string"
                     }
                   },
+                  "personal_access_tokens": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "oauthprovider": {
                     "type": "array",
                     "items": {
@@ -4789,6 +4795,12 @@
                     "type": "string"
                   },
                   "entitlements": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "personal_access_tokens": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5324,6 +5336,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Organization_ParentRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/personal-access-tokens": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached PersonalAccessTokens",
+        "description": "List attached PersonalAccessTokens.",
+        "operationId": "listOrganizationPersonalAccessTokens",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_PersonalAccessTokensList"
+                  }
                 }
               }
             }
@@ -5920,12 +5996,6 @@
                   "token": {
                     "type": "string"
                   },
-                  "abilities": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
@@ -5933,12 +6003,24 @@
                   "description": {
                     "type": "string"
                   },
+                  "scopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "last_used_at": {
                     "type": "string",
                     "format": "date-time"
                   },
                   "owner": {
                     "type": "string"
+                  },
+                  "organizations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
@@ -6103,12 +6185,6 @@
                   "name": {
                     "type": "string"
                   },
-                  "abilities": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
@@ -6116,12 +6192,24 @@
                   "description": {
                     "type": "string"
                   },
+                  "scopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "last_used_at": {
                     "type": "string",
                     "format": "date-time"
                   },
                   "owner": {
                     "type": "string"
+                  },
+                  "organizations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -6136,6 +6224,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PersonalAccessTokenUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/personal-access-tokens/{id}/organizations": {
+      "get": {
+        "tags": [
+          "PersonalAccessToken"
+        ],
+        "summary": "List attached Organizations",
+        "description": "List attached Organizations.",
+        "operationId": "listPersonalAccessTokenOrganizations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the PersonalAccessToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result PersonalAccessTokens list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonalAccessToken_OrganizationsList"
+                  }
                 }
               }
             }
@@ -12209,6 +12361,12 @@
               "$ref": "#/components/schemas/Entitlement"
             }
           },
+          "personal_access_tokens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonalAccessToken"
+            }
+          },
           "oauthprovider": {
             "type": "array",
             "items": {
@@ -13329,6 +13487,69 @@
           "personal_org"
         ]
       },
+      "Organization_PersonalAccessTokensList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "token"
+        ]
+      },
       "Organization_SettingRead": {
         "type": "object",
         "properties": {
@@ -13901,12 +14122,6 @@
           "token": {
             "type": "string"
           },
-          "abilities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
@@ -13914,12 +14129,24 @@
           "description": {
             "type": "string"
           },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "last_used_at": {
             "type": "string",
             "format": "date-time"
           },
           "owner": {
             "$ref": "#/components/schemas/User"
+          },
+          "organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Organization"
+            }
           }
         },
         "required": [
@@ -13965,11 +14192,8 @@
           "name": {
             "type": "string"
           },
-          "abilities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "token": {
+            "type": "string"
           },
           "expires_at": {
             "type": "string",
@@ -13977,6 +14201,12 @@
           },
           "description": {
             "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "last_used_at": {
             "type": "string",
@@ -13988,7 +14218,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "name"
+          "name",
+          "token"
         ]
       },
       "PersonalAccessTokenList": {
@@ -14024,11 +14255,8 @@
           "name": {
             "type": "string"
           },
-          "abilities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "token": {
+            "type": "string"
           },
           "expires_at": {
             "type": "string",
@@ -14036,6 +14264,12 @@
           },
           "description": {
             "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "last_used_at": {
             "type": "string",
@@ -14047,7 +14281,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "name"
+          "name",
+          "token"
         ]
       },
       "PersonalAccessTokenRead": {
@@ -14083,11 +14318,8 @@
           "name": {
             "type": "string"
           },
-          "abilities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "token": {
+            "type": "string"
           },
           "expires_at": {
             "type": "string",
@@ -14095,6 +14327,12 @@
           },
           "description": {
             "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "last_used_at": {
             "type": "string",
@@ -14106,7 +14344,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "name"
+          "name",
+          "token"
         ]
       },
       "PersonalAccessTokenUpdate": {
@@ -14142,11 +14381,8 @@
           "name": {
             "type": "string"
           },
-          "abilities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "token": {
+            "type": "string"
           },
           "expires_at": {
             "type": "string",
@@ -14154,6 +14390,12 @@
           },
           "description": {
             "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "last_used_at": {
             "type": "string",
@@ -14165,7 +14407,60 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "name"
+          "name",
+          "token"
+        ]
+      },
+      "PersonalAccessToken_OrganizationsList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string"
+          },
+          "personal_org": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "display_name",
+          "personal_org"
         ]
       },
       "PersonalAccessToken_OwnerRead": {
@@ -15610,11 +15905,8 @@
           "name": {
             "type": "string"
           },
-          "abilities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "token": {
+            "type": "string"
           },
           "expires_at": {
             "type": "string",
@@ -15622,6 +15914,12 @@
           },
           "description": {
             "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "last_used_at": {
             "type": "string",
@@ -15633,7 +15931,8 @@
           "created_at",
           "updated_at",
           "owner_id",
-          "name"
+          "name",
+          "token"
         ]
       },
       "User_SettingRead": {

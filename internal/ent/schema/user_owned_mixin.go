@@ -12,8 +12,9 @@ import (
 
 type UserOwnedMixin struct {
 	mixin.Schema
-	Ref      string
-	Optional bool
+	Ref         string
+	Optional    bool
+	AllowUpdate bool
 }
 
 // Fields of the UserOwnedMixin
@@ -44,6 +45,12 @@ func (userOwned UserOwnedMixin) Edges() []ent.Edge {
 
 	if !userOwned.Optional {
 		ownerEdge.Required()
+	}
+
+	if !userOwned.AllowUpdate {
+		ownerEdge.Annotations(
+			entgql.Skip(entgql.SkipMutationUpdateInput),
+		)
 	}
 
 	return []ent.Edge{

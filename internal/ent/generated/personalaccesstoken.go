@@ -36,13 +36,13 @@ type PersonalAccessToken struct {
 	// the name associated with the token
 	Name string `json:"name,omitempty"`
 	// Token holds the value of the "token" field.
-	Token string `json:"-"`
-	// what abilites the token should have
-	Abilities []string `json:"abilities,omitempty"`
+	Token string `json:"token,omitempty"`
 	// when the token expires
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 	// a description of the token's purpose
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
+	// Scopes holds the value of the "scopes" field.
+	Scopes []string `json:"scopes,omitempty"`
 	// LastUsedAt holds the value of the "last_used_at" field.
 	LastUsedAt *time.Time `json:"last_used_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -55,11 +55,15 @@ type PersonalAccessToken struct {
 type PersonalAccessTokenEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *User `json:"owner,omitempty"`
+	// the organization(s) the token is associated with
+	Organizations []*Organization `json:"organizations,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
+
+	namedOrganizations map[string][]*Organization
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -75,12 +79,21 @@ func (e PersonalAccessTokenEdges) OwnerOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "owner"}
 }
 
+// OrganizationsOrErr returns the Organizations value or an error if the edge
+// was not loaded in eager-loading.
+func (e PersonalAccessTokenEdges) OrganizationsOrErr() ([]*Organization, error) {
+	if e.loadedTypes[1] {
+		return e.Organizations, nil
+	}
+	return nil, &NotLoadedError{edge: "organizations"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*PersonalAccessToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case personalaccesstoken.FieldAbilities:
+		case personalaccesstoken.FieldScopes:
 			values[i] = new([]byte)
 		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldDeletedBy, personalaccesstoken.FieldOwnerID, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -161,14 +174,6 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				pat.Token = value.String
 			}
-		case personalaccesstoken.FieldAbilities:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field abilities", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &pat.Abilities); err != nil {
-					return fmt.Errorf("unmarshal field abilities: %w", err)
-				}
-			}
 		case personalaccesstoken.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
@@ -180,7 +185,16 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				pat.Description = value.String
+				pat.Description = new(string)
+				*pat.Description = value.String
+			}
+		case personalaccesstoken.FieldScopes:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field scopes", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &pat.Scopes); err != nil {
+					return fmt.Errorf("unmarshal field scopes: %w", err)
+				}
 			}
 		case personalaccesstoken.FieldLastUsedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -205,6 +219,11 @@ func (pat *PersonalAccessToken) Value(name string) (ent.Value, error) {
 // QueryOwner queries the "owner" edge of the PersonalAccessToken entity.
 func (pat *PersonalAccessToken) QueryOwner() *UserQuery {
 	return NewPersonalAccessTokenClient(pat.config).QueryOwner(pat)
+}
+
+// QueryOrganizations queries the "organizations" edge of the PersonalAccessToken entity.
+func (pat *PersonalAccessToken) QueryOrganizations() *OrganizationQuery {
+	return NewPersonalAccessTokenClient(pat.config).QueryOrganizations(pat)
 }
 
 // Update returns a builder for updating this PersonalAccessToken.
@@ -254,18 +273,21 @@ func (pat *PersonalAccessToken) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(pat.Name)
 	builder.WriteString(", ")
-	builder.WriteString("token=<sensitive>")
-	builder.WriteString(", ")
-	builder.WriteString("abilities=")
-	builder.WriteString(fmt.Sprintf("%v", pat.Abilities))
+	builder.WriteString("token=")
+	builder.WriteString(pat.Token)
 	builder.WriteString(", ")
 	if v := pat.ExpiresAt; v != nil {
 		builder.WriteString("expires_at=")
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
-	builder.WriteString("description=")
-	builder.WriteString(pat.Description)
+	if v := pat.Description; v != nil {
+		builder.WriteString("description=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("scopes=")
+	builder.WriteString(fmt.Sprintf("%v", pat.Scopes))
 	builder.WriteString(", ")
 	if v := pat.LastUsedAt; v != nil {
 		builder.WriteString("last_used_at=")
@@ -273,6 +295,30 @@ func (pat *PersonalAccessToken) String() string {
 	}
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedOrganizations returns the Organizations named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (pat *PersonalAccessToken) NamedOrganizations(name string) ([]*Organization, error) {
+	if pat.Edges.namedOrganizations == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := pat.Edges.namedOrganizations[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (pat *PersonalAccessToken) appendNamedOrganizations(name string, edges ...*Organization) {
+	if pat.Edges.namedOrganizations == nil {
+		pat.Edges.namedOrganizations = make(map[string][]*Organization)
+	}
+	if len(edges) == 0 {
+		pat.Edges.namedOrganizations[name] = []*Organization{}
+	} else {
+		pat.Edges.namedOrganizations[name] = append(pat.Edges.namedOrganizations[name], edges...)
+	}
 }
 
 // PersonalAccessTokens is a parsable slice of PersonalAccessToken.

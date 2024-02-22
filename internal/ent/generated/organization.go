@@ -60,6 +60,8 @@ type OrganizationEdges struct {
 	Setting *OrganizationSetting `json:"setting,omitempty"`
 	// Entitlements holds the value of the entitlements edge.
 	Entitlements []*Entitlement `json:"entitlements,omitempty"`
+	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
+	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Oauthprovider holds the value of the oauthprovider edge.
 	Oauthprovider []*OauthProvider `json:"oauthprovider,omitempty"`
 	// Users holds the value of the users edge.
@@ -70,18 +72,19 @@ type OrganizationEdges struct {
 	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [11]bool
 	// totalCount holds the count of the edges above.
-	totalCount [10]map[string]int
+	totalCount [11]map[string]int
 
-	namedChildren      map[string][]*Organization
-	namedGroups        map[string][]*Group
-	namedIntegrations  map[string][]*Integration
-	namedEntitlements  map[string][]*Entitlement
-	namedOauthprovider map[string][]*OauthProvider
-	namedUsers         map[string][]*User
-	namedInvites       map[string][]*Invite
-	namedMembers       map[string][]*OrgMembership
+	namedChildren             map[string][]*Organization
+	namedGroups               map[string][]*Group
+	namedIntegrations         map[string][]*Integration
+	namedEntitlements         map[string][]*Entitlement
+	namedPersonalAccessTokens map[string][]*PersonalAccessToken
+	namedOauthprovider        map[string][]*OauthProvider
+	namedUsers                map[string][]*User
+	namedInvites              map[string][]*Invite
+	namedMembers              map[string][]*OrgMembership
 }
 
 // ParentOrErr returns the Parent value or an error if the edge
@@ -146,10 +149,19 @@ func (e OrganizationEdges) EntitlementsOrErr() ([]*Entitlement, error) {
 	return nil, &NotLoadedError{edge: "entitlements"}
 }
 
+// PersonalAccessTokensOrErr returns the PersonalAccessTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
+	if e.loadedTypes[6] {
+		return e.PersonalAccessTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "personal_access_tokens"}
+}
+
 // OauthproviderOrErr returns the Oauthprovider value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.Oauthprovider, nil
 	}
 	return nil, &NotLoadedError{edge: "oauthprovider"}
@@ -158,7 +170,7 @@ func (e OrganizationEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
 // UsersOrErr returns the Users value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.Users, nil
 	}
 	return nil, &NotLoadedError{edge: "users"}
@@ -167,7 +179,7 @@ func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
 // InvitesOrErr returns the Invites value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) InvitesOrErr() ([]*Invite, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.Invites, nil
 	}
 	return nil, &NotLoadedError{edge: "invites"}
@@ -176,7 +188,7 @@ func (e OrganizationEdges) InvitesOrErr() ([]*Invite, error) {
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) MembersOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.Members, nil
 	}
 	return nil, &NotLoadedError{edge: "members"}
@@ -321,6 +333,11 @@ func (o *Organization) QuerySetting() *OrganizationSettingQuery {
 // QueryEntitlements queries the "entitlements" edge of the Organization entity.
 func (o *Organization) QueryEntitlements() *EntitlementQuery {
 	return NewOrganizationClient(o.config).QueryEntitlements(o)
+}
+
+// QueryPersonalAccessTokens queries the "personal_access_tokens" edge of the Organization entity.
+func (o *Organization) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
+	return NewOrganizationClient(o.config).QueryPersonalAccessTokens(o)
 }
 
 // QueryOauthprovider queries the "oauthprovider" edge of the Organization entity.
@@ -495,6 +512,30 @@ func (o *Organization) appendNamedEntitlements(name string, edges ...*Entitlemen
 		o.Edges.namedEntitlements[name] = []*Entitlement{}
 	} else {
 		o.Edges.namedEntitlements[name] = append(o.Edges.namedEntitlements[name], edges...)
+	}
+}
+
+// NamedPersonalAccessTokens returns the PersonalAccessTokens named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedPersonalAccessTokens(name string) ([]*PersonalAccessToken, error) {
+	if o.Edges.namedPersonalAccessTokens == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedPersonalAccessTokens[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAccessToken) {
+	if o.Edges.namedPersonalAccessTokens == nil {
+		o.Edges.namedPersonalAccessTokens = make(map[string][]*PersonalAccessToken)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
+	} else {
+		o.Edges.namedPersonalAccessTokens[name] = append(o.Edges.namedPersonalAccessTokens[name], edges...)
 	}
 }
 

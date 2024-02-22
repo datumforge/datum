@@ -7,12 +7,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/ulids"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
-func Test_GetActorUserID(t *testing.T) {
+func TestGetActorUserID(t *testing.T) {
 	// context with no user set
 	basicContext := echocontext.NewTestEchoContext()
 
@@ -76,7 +76,7 @@ func Test_GetActorUserID(t *testing.T) {
 	}
 }
 
-func Test_GetOrganizationID(t *testing.T) {
+func TestGetOrganizationID(t *testing.T) {
 	// context with no user set
 	basicContext := echocontext.NewTestEchoContext()
 

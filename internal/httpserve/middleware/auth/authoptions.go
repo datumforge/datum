@@ -2,28 +2,20 @@ package auth
 
 import (
 	"context"
-	"regexp"
 	"time"
 
 	"github.com/datumforge/echox/middleware"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 
+	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
 const (
-	Authorization             = "Authorization"
 	DefaultKeysURL            = "http://localhost:17608/.well-known/jwks.json"
 	DefaultAudience           = "http://localhost:17608"
 	DefaultIssuer             = "http://localhost:17608"
 	DefaultMinRefreshInterval = 5 * time.Minute
-	AccessTokenCookie         = "access_token"
-	RefreshTokenCookie        = "refresh_token"
-)
-
-// used to extract the access token from the header
-var (
-	bearer = regexp.MustCompile(`^\s*[Bb]earer\s+([a-zA-Z0-9_\-\.]+)\s*$`)
 )
 
 // AuthOption allows users to optionally supply configuration to the Authorization middleware.
@@ -51,6 +43,9 @@ type AuthOptions struct {
 	Skipper middleware.Skipper
 	// BeforeFunc  defines a function which is executed just before the middleware
 	BeforeFunc middleware.BeforeFunc
+
+	// Used to check other auth types like personal access tokens
+	DBClient *ent.Client
 }
 
 // Reauthenticator generates new access and refresh pair given a valid refresh token.
@@ -205,5 +200,13 @@ func WithSkipperFunc(skipper middleware.Skipper) AuthOption {
 func WithBeforeFunc(before middleware.BeforeFunc) AuthOption {
 	return func(opts *AuthOptions) {
 		opts.BeforeFunc = before
+	}
+}
+
+// WithDBClient is a function that returns an AuthOption function which sets the DBClient field of AuthOptions.
+// The DBClient field is used to specify the database client to be to check authentication with personal access tokens.
+func WithDBClient(client *ent.Client) AuthOption {
+	return func(opts *AuthOptions) {
+		opts.DBClient = client
 	}
 }

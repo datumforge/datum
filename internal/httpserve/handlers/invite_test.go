@@ -19,10 +19,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/emails/mock"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 func TestOrgInviteAcceptHandler(t *testing.T) {

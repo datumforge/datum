@@ -12,7 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // CreateUser is the resolver for the createUser field.

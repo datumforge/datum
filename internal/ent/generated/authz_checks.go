@@ -13,7 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/fgax"
 )
 

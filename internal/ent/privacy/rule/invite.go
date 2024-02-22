@@ -7,7 +7,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // HasInviteEditAccess is a rule that returns allow decision if user has edit access to invite users to an organization

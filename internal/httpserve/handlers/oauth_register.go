@@ -12,11 +12,11 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/providers/github"
 	"github.com/datumforge/datum/internal/providers/google"
 	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // OauthTokenRequest to authenticate an oauth user with the Datum Server

@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 var happy = "happy path"

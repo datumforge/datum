@@ -33,7 +33,7 @@ authz:
     store_id: ""
     store_name: ""
 db:
-    catch_ttl: 0
+    cache_ttl: 0
     debug: false
     driver_name: ""
     multi_write: false
@@ -54,7 +54,7 @@ redis:
     max_active_conns: 0
     max_idle_conns: 0
     max_retries: 0
-    min_idle_connections: 0
+    min_idle_conns: 0
     name: ""
     password: ""
     read_timeout: 0

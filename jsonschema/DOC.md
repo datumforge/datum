@@ -196,12 +196,12 @@ ProviderConfig represents the configuration settings for a Google Oauth Provider
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
-|**enabled**|`boolean`||no|
-|**store\_name**|`string`||no|
-|**host\_url**|`string`||yes|
-|**store\_id**|`string`||no|
-|**model\_id**|`string`||no|
-|**create\_new\_model**|`boolean`||no|
+|**enabled**|`boolean`|enables authorization checks with openFGA<br/>|no|
+|**store\_name**|`string`|name of openFGA store<br/>|no|
+|**host\_url**|`string`|host url with scheme of the openFGA API<br/>|yes|
+|**store\_id**|`string`|id of openFGA store<br/>|no|
+|**model\_id**|`string`|id of openFGA model<br/>|no|
+|**create\_new\_model**|`boolean`|force create a new model<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="db"></a>
@@ -219,7 +219,7 @@ Config Settings for the ent database client
 |**multi\_write**|`boolean`|MultiWrite enabled writing to two databases simultaneously<br/>|no|
 |**primary\_db\_source**|`string`|Primary write database source<br/>|yes|
 |**secondary\_db\_source**|`string`|Secondary write database source, if multi write is enabled<br/>|no|
-|**catch\_ttl**|`integer`|CacheTTL to have results cached for subsequent requests<br/>|no|
+|**cache\_ttl**|`integer`|CacheTTL to have results cached for subsequent requests<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="redis"></a>
@@ -242,7 +242,7 @@ Config for the redis client used to store key-value pairs
 |**read\_timeout**|`integer`|Timeout for socket reads. If reached, commands will fail<br/>with a timeout instead of blocking. Supported values:<br/>  - `0` - default timeout (3 seconds).<br/>  - `-1` - no timeout (block indefinitely).<br/>  - `-2` - disables SetReadDeadline calls completely.<br/>||
 |**write\_timeout**|`integer`|Timeout for socket writes. If reached, commands will fail<br/>with a timeout instead of blocking.  Supported values:<br/>  - `0` - default timeout (3 seconds).<br/>  - `-1` - no timeout (block indefinitely).<br/>  - `-2` - disables SetWriteDeadline calls completely.<br/>||
 |**max\_retries**|`integer`|MaxRetries before giving up.<br/>Default is 3 retries; -1 (not 0) disables retries.<br/>||
-|**min\_idle\_connections**|`integer`|MinIdleConns is useful when establishing new connection is slow.<br/>Default is 0. the idle connections are not closed by default.<br/>||
+|**min\_idle\_conns**|`integer`|MinIdleConns is useful when establishing new connection is slow.<br/>Default is 0. the idle connections are not closed by default.<br/>||
 |**max\_idle\_conns**|`integer`|Maximum number of idle connections.<br/>Default is 0. the idle connections are not closed by default.<br/>||
 |**max\_active\_conns**|`integer`|Maximum number of connections allocated by the pool at a given time.<br/>When zero, there is no limit on the number of connections in the pool.<br/>||
 

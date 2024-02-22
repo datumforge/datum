@@ -16,9 +16,20 @@ const (
 	yamlConfigPath = "./config/config.example.yaml"
 )
 
-var includedPackages = []string{"./config", "./internal/cache", "./internal/entdb", "./internal/httpserve/handlers", "./internal/otelx", "./internal/sessions", "./internal/tokens", "./internal/utils/emails", "./internal/utils/sentry", "./internal/providers"}
-var externalPackages = map[string]string{
-	"github.com/datumforge/fgax": ".",
+// includedPackages is a list of packages to include in the schema generation
+// that contain Go comments to be added to the schema
+// any external packages must use the jsonschema description tags to add comments
+var includedPackages = []string{
+	"./config",
+	"./internal/cache",
+	"./internal/entdb",
+	"./internal/httpserve/handlers",
+	"./internal/otelx",
+	"./internal/sessions",
+	"./internal/tokens",
+	"./internal/utils/emails",
+	"./internal/utils/sentry",
+	"./internal/providers",
 }
 
 // schemaConfig represents the configuration for the schema generator
@@ -47,17 +58,12 @@ func generateSchema(c schemaConfig, structure interface{}) error {
 	r.ExpandedStruct = true
 	// set `jsonschema:required` tag to true to generate required fields
 	r.RequiredFromJSONSchemaTags = true
+	// set the tag name to `koanf` for the koanf struct tags
+	r.FieldNameTag = "koanf"
 
 	// add go comments to the schema
 	for _, pkg := range includedPackages {
 		if err := r.AddGoComments("github.com/datumforge/datum/", pkg); err != nil {
-			panic(err.Error())
-		}
-	}
-
-	// add go comments to the schema from extrernal packages
-	for pkg, path := range externalPackages {
-		if err := r.AddGoComments(pkg, path); err != nil {
 			panic(err.Error())
 		}
 	}

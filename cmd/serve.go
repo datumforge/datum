@@ -50,14 +50,6 @@ func serve(ctx context.Context) error {
 		serveropts.WithConfigProvider(&config.ConfigProviderWithRefresh{}),
 		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(),
-<<<<<<< HEAD
-		serveropts.WithAuth(),
-=======
-		serveropts.WithSQLiteDB(),
-		serveropts.WithRedisCache(),
-		serveropts.WithFGAAuthz(),
-		serveropts.WithTracer(),
->>>>>>> 0616791e (update auth and session middleware to support PAT auth)
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
 		serveropts.WithSentry(),
@@ -71,14 +63,11 @@ func serve(ctx context.Context) error {
 		logger.Fatalw("failed to initialize tracer", "error", err)
 	}
 
-<<<<<<< HEAD
 	// Create keys for development
 	if so.Config.Settings.Server.Dev {
 		so.AddServerOptions(serveropts.WithGeneratedKeys())
 	}
 
-=======
->>>>>>> 0616791e (update auth and session middleware to support PAT auth)
 	// setup Authz connection
 	// this must come before the database setup because the FGA Client
 	// is used as an ent dependency
@@ -125,13 +114,13 @@ func serve(ctx context.Context) error {
 		serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient),
 	)
 
-	// add authz options
+	// add auth options
 	so.AddServerOptions(
 		serveropts.WithAuth(),
 	)
 
 	// Create keys for development
-	if so.Config.Server.Dev {
+	if so.Config.Settings.Server.Dev {
 		so.AddServerOptions(serveropts.WithGeneratedKeys())
 	}
 

@@ -156,7 +156,6 @@ steps:
           step: lint
 
   - label: ":rocket: atlas push"
-    depends_on: [atlas_lint]
     if: build.branch == "main"
     key: "atlas_migrate"
     plugins:

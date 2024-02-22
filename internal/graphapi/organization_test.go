@@ -107,6 +107,7 @@ func TestQueryOrganizations(t *testing.T) {
 
 		org1Found := false
 		org2Found := false
+
 		for _, o := range resp.Organizations.Edges {
 			if o.Node.ID == org1.ID {
 				org1Found = true

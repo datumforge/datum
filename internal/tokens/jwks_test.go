@@ -83,10 +83,12 @@ func (s *TokenTestSuite) TestCachedJWKSValidator() {
 			w.Header().Add("Content-Type", "text/plain")
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error())) // nolint: errcheck
+
 			return
 		}
 
 		requests++
+
 		w.Header().Add("Content-Type", "application/json")
 		io.Copy(w, f) // nolint: errcheck
 	}))

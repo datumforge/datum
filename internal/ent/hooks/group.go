@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
-	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 

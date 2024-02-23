@@ -22,8 +22,9 @@ import (
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
+	"github.com/datumforge/entx"
+
 	"github.com/datumforge/datum/internal/analytics"
-	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )

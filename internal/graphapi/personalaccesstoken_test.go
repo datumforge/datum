@@ -236,6 +236,7 @@ func TestMutationCreatePersonalAccessToken(t *testing.T) {
 			// check organization is set if provided
 			if tc.input.OrganizationIDs != nil {
 				assert.Len(t, resp.CreatePersonalAccessToken.PersonalAccessToken.Organizations, len(tc.input.OrganizationIDs))
+
 				for _, orgID := range resp.CreatePersonalAccessToken.PersonalAccessToken.Organizations {
 					assert.Contains(t, tc.input.OrganizationIDs, orgID.ID)
 				}

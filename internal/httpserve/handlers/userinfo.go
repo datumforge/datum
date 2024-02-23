@@ -6,8 +6,8 @@ import (
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/rout"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // UserInfo returns the user information for the authenticated user

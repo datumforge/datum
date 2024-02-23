@@ -3,28 +3,21 @@ package auth
 import (
 	"context"
 	"errors"
-	"net/http"
 	"time"
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/rout"
-	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
-// ContextUserClaims is the context key for the user claims
-var ContextUserClaims = &ContextKey{"user_claims"}
-
-// ContextAccessToken is the context key for the access token
-var ContextAccessToken = &ContextKey{"access_token"}
-
-// ContextRequestID is the context key for the request ID
-var ContextRequestID = &ContextKey{"request_id"}
-
-// ContextKey is the key name for the additional context
-type ContextKey struct {
-	name string
+// SessionSkipperFunc is the function that determines if the session check should be skipped
+// due to the request being a PAT auth request
+var SessionSkipperFunc = func(c echo.Context) bool {
+	return c.Get(auth.GetContextName(auth.ContextAuthType)) == auth.PATAuthentication
 }
 
 // Authenticate is a middleware function that is used to authenticate requests - it is not applied to all routes so be cognizant of that
@@ -51,7 +44,7 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 
 			// Get access token from the request, if not available then attempt to refresh
 			// using the refresh token cookie.
-			accessToken, err := GetAccessToken(c)
+			accessToken, err := auth.GetAccessToken(c)
 			if err != nil {
 				switch {
 				case errors.Is(err, ErrNoAuthorization):
@@ -64,13 +57,28 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 			}
 
 			// Verify the access token is authorized for use with datum and extract claims.
+			authType := auth.JWTAuthentication
+
 			claims, err := validator.Verify(accessToken)
 			if err != nil {
-				return rout.HTTPErrorResponse(err)
+				// if its not a JWT, check to see if its a PAT
+				if conf.DBClient == nil {
+					return rout.HTTPErrorResponse(err)
+				}
+
+				claims, err = checkToken(c.Request().Context(), conf, accessToken)
+				if err != nil {
+					return rout.HTTPErrorResponse(err)
+				}
+
+				authType = auth.PATAuthentication
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers
-			c.Set(ContextUserClaims.name, claims)
+			c.Set(auth.GetContextName(auth.ContextUserClaims), claims)
+
+			// Set auth type in context
+			c.Set(auth.GetContextName(auth.ContextAuthType), authType)
 
 			return next(c)
 		}
@@ -91,7 +99,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 	// If the reauthenticator is available, return a function that utilizes it.
 	return func(c echo.Context) (string, error) {
 		// Get the refresh token from the cookies or the headers of the request.
-		refreshToken, err := GetRefreshToken(c)
+		refreshToken, err := auth.GetRefreshToken(c)
 		if err != nil {
 			return "", err
 		}
@@ -110,123 +118,30 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 		}
 
 		// Set the new access and refresh cookies
-		SetAuthCookies(c.Response().Writer, reply.AccessToken, reply.RefreshToken)
+		auth.SetAuthCookies(c.Response().Writer, reply.AccessToken, reply.RefreshToken)
 
 		return reply.AccessToken, nil
 	}
 }
 
-// GetAccessToken retrieves the bearer token from the authorization header and parses it
-// to return only the JWT access token component of the header. Alternatively, if the
-// authorization header is not present, then the token is fetched from cookies. If the
-// header is missing or the token is not available, an error is returned.
-//
-// NOTE: the authorization header takes precedence over access tokens in cookies.
-func GetAccessToken(c echo.Context) (string, error) {
-	// Attempt to get the access token from the header.
-	if h := c.Request().Header.Get(Authorization); h != "" {
-		match := bearer.FindStringSubmatch(h)
-		if len(match) == 2 { //nolint:gomnd
-			return match[1], nil
-		}
+// checkToken checks the bearer authorization token against the database to see if the provided
+// token is an active personal access token. If the token is valid, the claims are returned
+func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Claims, error) {
+	// allow check to bypass privacy rules
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-		return "", ErrParseBearer
-	}
-
-	// Attempt to get the access token from cookies.
-	if cookie, err := c.Cookie(AccessTokenCookie); err == nil {
-		// If the error is nil, that means we were able to retrieve the access token cookie
-		if CookieExpired(cookie) {
-			return "", ErrNoAuthorization
-		}
-
-		return cookie.Value, nil
-	}
-
-	return "", ErrNoAuthorization
-}
-
-// GetRefreshToken retrieves the refresh token from the cookies in the request. If the
-// cookie is not present or expired then an error is returned.
-func GetRefreshToken(c echo.Context) (string, error) {
-	cookie, err := c.Cookie(RefreshTokenCookie)
+	pat, err := conf.DBClient.PersonalAccessToken.Query().Where(personalaccesstoken.Token(token)).Only(ctx)
 	if err != nil {
-		return "", ErrNoRefreshToken
+		return nil, err
 	}
 
-	// ensure cookie is not expired
-	if CookieExpired(cookie) {
-		return "", ErrNoRefreshToken
+	if pat.ExpiresAt.Before(time.Now()) {
+		return nil, rout.ErrExpiredCredentials
 	}
 
-	return cookie.Value, nil
-}
-
-// GetClaims fetches and parses datum claims from the echo context. Returns an
-// error if no claims exist on the context
-func GetClaims(c echo.Context) (*tokens.Claims, error) {
-	claims, ok := c.Get(ContextUserClaims.name).(*tokens.Claims)
-	if !ok {
-		return nil, ErrNoClaims
+	claims := &tokens.Claims{
+		UserID: pat.OwnerID,
 	}
 
 	return claims, nil
-}
-
-// AuthContextFromRequest creates a context from the echo request context, copying fields
-// that may be required for forwarded requests. This method should be called by
-// handlers which need to forward requests to other services and need to preserve data
-// from the original request such as the user's credentials.
-func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
-	req := c.Request()
-	if req == nil {
-		return nil, ErrNoRequest
-	}
-
-	// Add access token to context (from either header or cookie using Authenticate middleware)
-	ctx := req.Context()
-	if token := c.Get(ContextAccessToken.name); token != "" {
-		ctx = context.WithValue(ctx, ContextAccessToken, token)
-	}
-
-	// Add request id to context
-	if requestID := c.Get(ContextRequestID.name); requestID != "" {
-		ctx = context.WithValue(ctx, ContextRequestID, requestID)
-	} else if requestID := c.Request().Header.Get("X-Request-ID"); requestID != "" {
-		ctx = context.WithValue(ctx, ContextRequestID, requestID)
-	}
-
-	return &ctx, nil
-}
-
-// SetAuthCookies is a helper function to set authentication cookies on a echo request.
-// The access token cookie (access_token) is an http only cookie that expires when the
-// access token expires. The refresh token cookie is not an http only cookie (it can be
-// accessed by client-side scripts) and it expires when the refresh token expires. Both
-// cookies require https and will not be set (silently) over http connections.
-func SetAuthCookies(w http.ResponseWriter, accessToken, refreshToken string) {
-	sessions.SetCookie(w, accessToken, AccessTokenCookie, *sessions.DefaultCookieConfig)
-	sessions.SetCookie(w, refreshToken, RefreshTokenCookie, *sessions.DefaultCookieConfig)
-}
-
-// ClearAuthCookies is a helper function to clear authentication cookies on a echo
-// request to effectively logger out a user.
-func ClearAuthCookies(w http.ResponseWriter) {
-	sessions.RemoveCookie(w, AccessTokenCookie, *sessions.DefaultCookieConfig)
-	sessions.RemoveCookie(w, RefreshTokenCookie, *sessions.DefaultCookieConfig)
-}
-
-// CookieExpired checks to see if a cookie is expired
-func CookieExpired(cookie *http.Cookie) bool {
-	// ensure cookie is not expired
-	if !cookie.Expires.IsZero() && cookie.Expires.Before(time.Now()) {
-		return true
-	}
-
-	// negative max age means to expire immediately
-	if cookie.MaxAge < 0 {
-		return true
-	}
-
-	return false
 }

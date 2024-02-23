@@ -50,7 +50,6 @@ func serve(ctx context.Context) error {
 		serveropts.WithConfigProvider(&config.ConfigProviderWithRefresh{}),
 		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(),
-		serveropts.WithAuth(),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
 		serveropts.WithSentry(),
@@ -62,11 +61,6 @@ func serve(ctx context.Context) error {
 	err = otelx.NewTracer(so.Config.Settings.Tracer, appName, logger)
 	if err != nil {
 		logger.Fatalw("failed to initialize tracer", "error", err)
-	}
-
-	// Create keys for development
-	if so.Config.Settings.Server.Dev {
-		so.AddServerOptions(serveropts.WithGeneratedKeys())
 	}
 
 	// setup Authz connection
@@ -114,6 +108,16 @@ func serve(ctx context.Context) error {
 	so.AddServerOptions(
 		serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient),
 	)
+
+	// add auth options
+	so.AddServerOptions(
+		serveropts.WithAuth(),
+	)
+
+	// Create keys for development
+	if so.Config.Settings.Server.Dev {
+		so.AddServerOptions(serveropts.WithGeneratedKeys())
+	}
 
 	// add session manager
 	so.AddServerOptions(

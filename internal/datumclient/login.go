@@ -13,9 +13,9 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // Login creates a login request to the Datum API

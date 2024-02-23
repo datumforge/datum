@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // ViewerContextKey is the context key for the viewer-context

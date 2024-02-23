@@ -150,6 +150,7 @@ func WithAuth() ServerOption {
 			authmw.WithAudience(s.Config.Settings.Auth.Token.Audience),
 			authmw.WithIssuer(s.Config.Settings.Auth.Token.Issuer),
 			authmw.WithJWKSEndpoint(s.Config.Settings.Auth.Token.JWKSEndpoint),
+			authmw.WithDBClient(s.Config.Handler.DBClient),
 		)
 
 		s.Config.GraphMiddleware = append(s.Config.GraphMiddleware, authmw.Authenticate(conf))
@@ -296,6 +297,7 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 			sm,
 			sessions.WithPersistence(rc),
 			sessions.WithLogger(s.Config.Logger),
+			sessions.WithSkipperFunc(authmw.SessionSkipperFunc),
 		)
 
 		// set cookie config to be used

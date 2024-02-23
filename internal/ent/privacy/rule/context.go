@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // DenyIfNoSubject is a rule that returns deny decision if the subject is missing in the context.

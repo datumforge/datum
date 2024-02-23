@@ -63,12 +63,12 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 			if err != nil {
 				// if its not a JWT, check to see if its a PAT
 				if conf.DBClient == nil {
-					return rout.HTTPErrorResponse(err)
+					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
 				}
 
 				claims, err = checkToken(c.Request().Context(), conf, accessToken)
 				if err != nil {
-					return rout.HTTPErrorResponse(err)
+					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
 				}
 
 				authType = auth.PATAuthentication

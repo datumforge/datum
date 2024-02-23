@@ -107,8 +107,8 @@ github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PB
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
 github.com/datumforge/entx v0.0.1 h1:+UoHNFO7mh6PtQHol6Kd+Nxk22y6boo7rhEWQTDkPrA=
 github.com/datumforge/entx v0.0.1/go.mod h1:nG1Fk4UULF+JNjvDjcJUQQs2GyEm3X+fwGiClspBMB4=
-github.com/datumforge/fgax v0.1.0 h1:TR+C3RiFPstIFitRGWaqkxsDZAbmpmh2+1OX5l9RA+0=
-github.com/datumforge/fgax v0.1.0/go.mod h1:cyk37uVYBsR+QBYNGNDVaWaQRQVvP7LJqYZ/yIybsLA=
+github.com/datumforge/fgax v0.1.1 h1:++DRf19bvcauAT2rt7NekUUNd/yZ80Qv+FLcufyd8tc=
+github.com/datumforge/fgax v0.1.1/go.mod h1:4RuoDatO/4S7vqBWyXPpH33V2cvqF9odWRwapfTY3lc=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
@@ -401,8 +401,8 @@ github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee h1:ZqeLB0dxo4XgR
 github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee/go.mod h1:XF/4W9je/FGBZQ2M5pbQnrzdKF4VcEEtds3ole9sW5E=
 github.com/openfga/go-sdk v0.3.5 h1:KQXhMREh+g/K7HNuZ/YmXuHkREkq0VMKteua4bYr3Uw=
 github.com/openfga/go-sdk v0.3.5/go.mod h1:u1iErzj5E9/bhe+8nsMv0gigcYbJtImcdgcE5DmpbBg=
-github.com/openfga/language/pkg/go v0.0.0-20240220203952-67b944cad387 h1:S+VRON2Me3HZd8qGA5CQUkQblX07x1Onk+DiJvnF/0Y=
-github.com/openfga/language/pkg/go v0.0.0-20240220203952-67b944cad387/go.mod h1:JX39jFXAmm5xl0ZEpppt1/6FPQ9mUu0ebjERu7wurEE=
+github.com/openfga/language/pkg/go v0.0.0-20240222161358-20ec0be0006d h1:pRN4QkwHZLVMCJzBIKHzpKteXJQRdqhKORRnCrXTKZo=
+github.com/openfga/language/pkg/go v0.0.0-20240222161358-20ec0be0006d/go.mod h1:JX39jFXAmm5xl0ZEpppt1/6FPQ9mUu0ebjERu7wurEE=
 github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 github.com/pelletier/go-toml/v2 v2.1.1 h1:LWAJwfNvjQZCFIDKWYQaM62NcYeYViCmWIwmOStowAI=
 github.com/pelletier/go-toml/v2 v2.1.1/go.mod h1:tJU2Z3ZkXwnxa4DPO899bsyIoywizdUvyaeZurnPPDc=

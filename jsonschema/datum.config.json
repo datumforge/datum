@@ -97,7 +97,7 @@
       "properties": {
         "allow_origins": {
           "$ref": "#/$defs/[]string",
-          "description": "AllowOrigins is a list of allowed origin to indicate whether the response can be shared with requesting code from the given origin"
+          "description": "AllowOrigins is a list of allowed origin to indicate whether the response can be shared with\nrequesting code from the given origin"
         },
         "cookie_insecure": {
           "type": "boolean",

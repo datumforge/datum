@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
-	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/pkg/auth"
 )
 

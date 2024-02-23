@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/gravatar"
 	"github.com/datumforge/datum/pkg/auth"

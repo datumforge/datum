@@ -17,7 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/datum/internal/entx"
+	"github.com/datumforge/entx"
 )
 
 // PasswordResetToken holds the schema definition for the PasswordResetToken entity

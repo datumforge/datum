@@ -7,7 +7,7 @@ package generated
 import (
 	"context"
 
-	"github.com/datumforge/datum/internal/entx"
+	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
 	"github.com/datumforge/fgax/entfga"
 )

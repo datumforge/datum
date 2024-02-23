@@ -82,4 +82,4 @@ tasks:
     desc: launches an interactive browser to navigate the configured graph schema
     cmds:
       - 'open "http://localhost:4000"'
-      - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+      - rover dev --skip-update-check --skip-update -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept

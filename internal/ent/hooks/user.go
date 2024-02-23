@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"entgo.io/ent"
+	"github.com/datumforge/entx"
 	petname "github.com/dustinkirkland/golang-petname"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -13,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/entx"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/gravatar"

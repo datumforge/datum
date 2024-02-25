@@ -47,6 +47,8 @@ steps:
       - docker#v5.10.0:
           image: golang:1.22.0
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
+          environment:
+            - "TEST_DB_URL"
     artifact_paths: ["coverage.out"]
 
   - label: ":golang: go test - {{matrix}}"

@@ -230,7 +230,6 @@ func NewTestClient(ctx context.Context, entOpts []ent.Option) (*ent.Client, *tes
 
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
-	fmt.Println("testDBURI", testDBURI)
 
 	ctr := testutils.GetTestURI(ctx, testDBURI)
 

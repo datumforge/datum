@@ -3,9 +3,6 @@ package cmd
 import (
 	"context"
 
-	_ "github.com/lib/pq"           // postgres driver
-	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
-
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
@@ -37,9 +34,8 @@ func init() {
 func serve(ctx context.Context) error {
 	// setup db connection for server
 	var (
-		entdbClient *ent.Client
-		fgaClient   *fgax.Client
-		err         error
+		fgaClient *fgax.Client
+		err       error
 	)
 
 	// create ent dependency injection
@@ -85,9 +81,7 @@ func serve(ctx context.Context) error {
 	)
 
 	// Setup DB connection
-	dbConfig := entdb.NewDBConfig(so.Config.Settings.DB, logger)
-
-	entdbClient, err = dbConfig.NewMultiDriverDBClient(ctx, entOpts)
+	entdbClient, dbConfig, err := entdb.NewMultiDriverDBClient(ctx, so.Config.Settings.DB, logger, entOpts)
 	if err != nil {
 		return err
 	}

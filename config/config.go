@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
@@ -13,7 +14,6 @@ import (
 	"github.com/mcuadros/go-defaults"
 
 	"github.com/datumforge/datum/internal/cache"
-	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/sessions"
@@ -41,7 +41,7 @@ type Config struct {
 	Authz fgax.Config `json:"authz" koanf:"authz"`
 
 	// DB contains the database configuration for the ent client
-	DB entdb.Config `json:"db" koanf:"db"`
+	DB entx.Config `json:"db" koanf:"db"`
 
 	// Redis contains the redis configuration for the key-value store
 	Redis cache.Config `json:"redis" koanf:"redis"`

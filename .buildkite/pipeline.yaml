@@ -39,10 +39,10 @@ steps:
           environment: 
             - "GOTOOLCHAIN=auto"
 
-  - label: ":golang: go test - sqlite"
-    key: "go_test_sqlite"
+  - label: ":golang: go test - libsql"
+    key: "go_test_libsql"
     env:
-      TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
+      TEST_DB_URL: "libsql://file::memory:?cache=shared&_fk=1"
     plugins:
       - docker#v5.10.0:
           image: golang:1.22.0
@@ -56,6 +56,7 @@ steps:
     matrix:
       - "docker://postgres:16-alpine"
       - "docker://postgres:15-alpine"
+      - "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
     plugins:
       - docker#v5.10.0:
           image: golang:1.22.0
@@ -86,13 +87,13 @@ steps:
   - label: ":github: upload PR reports"
     key: "scan-upload-pr"
     if: build.pull_request.id != null
-    depends_on: ["gosec", "go_test_sqlite"]
+    depends_on: ["gosec", "go_test_libsql"]
     plugins:
       - artifacts#v1.9.3:
           download: "results.txt"
       - artifacts#v1.9.3:
           download: "coverage.out"
-          step: "go_test_sqlite"    
+          step: "go_test_libsql"    
       - docker#v5.10.0:
             image: "sonarsource/sonar-scanner-cli:5"
             environment:
@@ -103,13 +104,13 @@ steps:
   - label: ":github: upload reports"
     key: "scan-upload"
     if: build.branch == "main"
-    depends_on: ["gosec", "go_test_sqlite"]
+    depends_on: ["gosec", "go_test_libsql"]
     plugins:
       - artifacts#v1.9.3:
           download: results.txt
       - artifacts#v1.9.3:
           download: coverage.out
-          step: "go_test_sqlite"
+          step: "go_test_libsql"
       - docker#v5.10.0:
             image: "sonarsource/sonar-scanner-cli:5"
             environment:

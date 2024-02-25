@@ -10,7 +10,6 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	mock_fga "github.com/datumforge/fgax/mockery"
-	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -28,6 +27,8 @@ func TestVerifyHandler(t *testing.T) {
 	client.e.GET("verify", client.h.VerifyEmail)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
+
+	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
 	testCases := []struct {
 		name            string
@@ -67,7 +68,7 @@ func TestVerifyHandler(t *testing.T) {
 			userConfirmed:   false,
 			email:           "elf@datum.net",
 			tokenSet:        true,
-			ttl:             "1987-08-16T03:04:11.169086-07:00",
+			ttl:             expiredTTL,
 			expectedMessage: "Token expired, a new token has been issued. Please try again",
 			expectedStatus:  http.StatusCreated,
 		},

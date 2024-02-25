@@ -64,6 +64,8 @@ steps:
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
           environment:
             - "TEST_DB_URL"
+          volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
     artifact_paths: ["coverage.out"]
 
   - label: ":auth0: fga model test"

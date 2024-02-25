@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	_ "github.com/datumforge/entx"
 	_ "github.com/lib/pq"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	_ "modernc.org/sqlite"

@@ -40,7 +40,7 @@ type Config struct {
 	MaxRetries int `json:"max_retries" koanf:"max_retries" default:"3"`
 	// MinIdleConns is useful when establishing new connection is slow.
 	// Default is 0. the idle connections are not closed by default.
-	MinIdleConns int `json:"min_idle_connections" koanf:"min_idle_conns" default:"0"`
+	MinIdleConns int `json:"min_idle_conns" koanf:"min_idle_conns" default:"0"`
 	// Maximum number of idle connections.
 	// Default is 0. the idle connections are not closed by default.
 	MaxIdleConns int `json:"max_idle_conns" koanf:"max_idle_conns" default:"0"`

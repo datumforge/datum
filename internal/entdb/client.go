@@ -37,7 +37,7 @@ type Config struct {
 	// Secondary write database source, if multi write is enabled
 	SecondaryDBSource string `json:"secondary_db_source" koanf:"secondary_db_source" default:"backup.db?mode=memory&_fk=1"`
 	// CacheTTL to have results cached for subsequent requests
-	CacheTTL time.Duration `json:"catch_ttl" koanf:"cache_ttl" default:"1s"`
+	CacheTTL time.Duration `json:"cache_ttl" koanf:"cache_ttl" default:"1s"`
 }
 
 // EntClientConfig configures the entsql drivers

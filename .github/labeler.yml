@@ -58,3 +58,8 @@ datumclient:
 - changed-files:
   - any-glob-to-any-file: internal/datumclient/**
   - any-glob-to-any-file: query/**
+
+config:
+- changed-files:
+  - any-glob-to-any-file: config/**
+  - any-glob-to-any-file: jsonschema/**

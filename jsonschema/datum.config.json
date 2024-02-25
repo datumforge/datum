@@ -50,7 +50,7 @@
           "type": "integer",
           "description": "MaxRetries before giving up.\nDefault is 3 retries; -1 (not 0) disables retries."
         },
-        "min_idle_connections": {
+        "min_idle_conns": {
           "type": "integer",
           "description": "MinIdleConns is useful when establishing new connection is slow.\nDefault is 0. the idle connections are not closed by default."
         },
@@ -234,7 +234,7 @@
           "type": "string",
           "description": "Secondary write database source, if multi write is enabled"
         },
-        "catch_ttl": {
+        "cache_ttl": {
           "type": "integer",
           "description": "CacheTTL to have results cached for subsequent requests"
         }
@@ -249,22 +249,28 @@
     "fgax.Config": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "enables authorization checks with openFGA"
         },
         "store_name": {
-          "type": "string"
+          "type": "string",
+          "description": "name of openFGA store"
         },
         "host_url": {
-          "type": "string"
+          "type": "string",
+          "description": "host url with scheme of the openFGA API"
         },
         "store_id": {
-          "type": "string"
+          "type": "string",
+          "description": "id of openFGA store"
         },
         "model_id": {
-          "type": "string"
+          "type": "string",
+          "description": "id of openFGA model"
         },
         "create_new_model": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "force create a new model"
         }
       },
       "additionalProperties": false,

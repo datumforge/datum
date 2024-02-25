@@ -153,7 +153,7 @@ func NewSigningInfo(expires time.Duration) (info SigningInfo, err error) {
 	}
 
 	info = SigningInfo{
-		ExpiresAt: time.Now().Add(expires),
+		ExpiresAt: time.Now().UTC().Add(expires),
 		Nonce:     make([]byte, nonceLength),
 	}
 

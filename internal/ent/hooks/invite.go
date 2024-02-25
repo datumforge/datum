@@ -44,23 +44,24 @@ func HookInvite() ent.Hook {
 				return nil, err
 			}
 
+			// check if the invite already exists
+			existingInvite, err := getInvite(ctx, m)
+
 			// attempt to do the mutation for a new user invite
-			retValue, err := next.Mutate(ctx, m)
-			if err != nil {
-				if IsUniqueConstraintError(err) {
-					m.Logger.Infow("invitation for user already exists")
+			if existingInvite != nil && err == nil {
+				m.Logger.Infow("invitation for user already exists")
 
-					// update invite instead
-					retValue, err = updateInvite(ctx, m)
-					if err != nil {
-						m.Logger.Errorw("unable to update invitation", "error", err)
-					}
-
-					return retValue, err
+				// update invite instead
+				retValue, err := updateInvite(ctx, m)
+				if err != nil {
+					m.Logger.Errorw("unable to update invitation", "error", err)
 				}
 
-				m.Logger.Errorw("unable to create org invitation", "error", err)
+				return retValue, err
+			}
 
+			retValue, err := next.Mutate(ctx, m)
+			if err != nil {
 				return retValue, err
 			}
 
@@ -321,7 +322,7 @@ func updateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.
 	rec, _ := m.Recipient()
 	ownerID, _ := m.OwnerID()
 
-	invite, err := m.Client().Invite.Query().Clone().Where(invite.Recipient(rec)).Where(invite.OwnerID(ownerID)).Only(ctx)
+	invite, err := m.Client().Invite.Query().Where(invite.Recipient(rec)).Where(invite.OwnerID(ownerID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -363,4 +364,11 @@ func deleteInvite(ctx context.Context, m *generated.InviteMutation) error {
 	}
 
 	return nil
+}
+
+func getInvite(ctx context.Context, m *generated.InviteMutation) (*generated.Invite, error) {
+	rec, _ := m.Recipient()
+	ownerID, _ := m.OwnerID()
+
+	return m.Client().Invite.Query().Where(invite.Recipient(rec)).Where(invite.OwnerID(ownerID)).Only(ctx)
 }

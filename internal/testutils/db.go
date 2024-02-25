@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	_ "github.com/datumforge/entx"
 	_ "github.com/lib/pq"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	_ "modernc.org/sqlite"
@@ -120,9 +119,9 @@ func getTestDB(ctx context.Context, u string) (TC, error) {
 // GetTestURI returns the dialect, connection string and if used a testcontainer for database connectivity in tests
 func GetTestURI(ctx context.Context, u string) *TC {
 	switch {
-	case u == "":
-		// return dialect.SQLite, "file:ent?mode=memory&cache=shared&_fk=1"
-		return &TC{Dialect: "libsql", URI: "file::memory:&cache=shared&_fk=1"}
+	// case u == "":
+	// 	// return dialect.SQLite, "file:ent?mode=memory&cache=shared&_fk=1"
+	// 	return &TC{Dialect: "libsql", URI: "file::memory:&cache=shared&_fk=1"}
 	case strings.HasPrefix(u, "sqlite://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "sqlite://")
 		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "sqlite://")}

@@ -42,7 +42,7 @@ steps:
   - label: ":golang: go test - libsql"
     key: "go_test_libsql"
     env:
-      TEST_DB_URL: "libsql://file::memory:?cache=shared&_fk=1"
+      TEST_DB_URL: "libsql://file::memory:?cache=shared"
     plugins:
       - docker#v5.10.0:
           image: golang:1.22.0
@@ -56,7 +56,7 @@ steps:
     matrix:
       - "docker://postgres:16-alpine"
       - "docker://postgres:15-alpine"
-      - "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
+      - "sqlite://file:ent?mode=memory&cache=shared"
     plugins:
       - docker#v5.10.0:
           image: golang:1.22.0

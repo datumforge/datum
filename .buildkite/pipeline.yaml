@@ -60,7 +60,8 @@ steps:
       - docker#v5.10.0:
           image: golang:1.22.0
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
-          propagate-environment: true
+          environment:
+            - "TEST_DB_URL"
     artifact_paths: ["coverage.out"]
 
   - label: ":auth0: fga model test"

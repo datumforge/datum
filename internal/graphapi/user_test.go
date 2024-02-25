@@ -825,7 +825,7 @@ func TestMutationSoftDeleteUniqueIndex(t *testing.T) {
 	// should fail on unique
 	_, err = client.datum.CreateUser(ctx, input)
 	require.Error(t, err)
-	assert.ErrorContains(t, err, "UNIQUE")
+	assert.ErrorContains(t, err, "constraint failed")
 
 	// setup valid user context
 	userCtx, err := auth.NewTestContextWithValidUser(resp.CreateUser.User.ID)

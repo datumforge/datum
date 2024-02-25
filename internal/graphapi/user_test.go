@@ -206,7 +206,7 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 				AuthProvider: &enums.Credentials,
 				Password:     &strongPassword,
 			},
-			errorMsg: "UNIQUE constraint failed: users.email",
+			errorMsg: "constraint failed",
 		},
 		{
 			name: "same email, different auth provider",

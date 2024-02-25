@@ -133,7 +133,7 @@ func HookInviteAccepted() ent.Hook {
 			}
 
 			// fetch org details to pass the name in the email
-			org, err := m.Client().Organization.Query().Where(organization.ID(ownerID)).Only(ctx)
+			org, err := m.Client().Organization.Query().Clone().Where(organization.ID(ownerID)).Only(ctx)
 			if err != nil {
 				m.Logger.Errorw("unable to get organization", "error", err)
 
@@ -321,7 +321,7 @@ func updateInvite(ctx context.Context, m *generated.InviteMutation) (*generated.
 	rec, _ := m.Recipient()
 	ownerID, _ := m.OwnerID()
 
-	invite, err := m.Client().Invite.Query().Where(invite.Recipient(rec)).Where(invite.OwnerID(ownerID)).Only(ctx)
+	invite, err := m.Client().Invite.Query().Clone().Where(invite.Recipient(rec)).Where(invite.OwnerID(ownerID)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}

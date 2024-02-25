@@ -17,7 +17,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 )
 
-func TestQuery_Invite(t *testing.T) {
+func TestQueryInvite(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -84,7 +84,7 @@ func TestQuery_Invite(t *testing.T) {
 	}
 }
 
-func TestQuery_CreateInvite(t *testing.T) {
+func TestMutationCreateInvite(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -245,7 +245,7 @@ func TestQuery_CreateInvite(t *testing.T) {
 	}
 }
 
-func TestQuery_DeleteInvite(t *testing.T) {
+func TestMutationDeleteInvite(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 

@@ -11,18 +11,14 @@ This repository contains a number of code generating functions / utilities which
 ## Starting the Server
 
 1. Copy the config, this is in .gitignore so you do not have to worry about accidentally committing secrets
-
 ```bash
 cp ./config/config-dev.example.yaml ./config/.config.yaml
 ```
-
-2. Use the task commands to start the server
-
+1. Use the task commands to start the server
 Run the Datum server in development mode with dependencies in docker 
 ```bash
 task run-dev
 ```
-
 Run fully in docker
 ```bash
 task docker:all:up

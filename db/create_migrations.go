@@ -7,12 +7,17 @@ import (
 	"log"
 	"os"
 
-	atlas "ariga.io/atlas/sql/migrate"
-	"github.com/datumforge/datum/internal/ent/generated/migrate"
+	// supported ent database drivers
+	_ "github.com/datumforge/entx"                       // overlay for sqlite
+	_ "github.com/lib/pq"                                // postgres driver
+	_ "github.com/tursodatabase/libsql-client-go/libsql" // libsql driver
+	_ "modernc.org/sqlite"                               // sqlite driver (non-cgo)
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/schema"
-	_ "github.com/mattn/go-sqlite3"
+
+	atlas "ariga.io/atlas/sql/migrate"
+	"github.com/datumforge/datum/internal/ent/generated/migrate"
 )
 
 func main() {

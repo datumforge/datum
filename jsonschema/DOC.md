@@ -11,7 +11,7 @@ Config contains the configuration for the datum server
 |[**server**](#server)|`object`|Server settings for the echo server<br/>|yes|
 |[**auth**](#auth)|`object`|Auth settings including oauth2 providers and datum token configuration<br/>|yes|
 |[**authz**](#authz)|`object`||yes|
-|[**db**](#db)|`object`|Config Settings for the ent database client<br/>|yes|
+|[**db**](#db)|`object`||yes|
 |[**redis**](#redis)|`object`|Config for the redis client used to store key-value pairs<br/>||
 |[**tracer**](#tracer)|`object`|Config defines the configuration settings for opentelemetry tracing<br/>||
 |[**email**](#email)|`object`|Config for sending emails via SendGrid and managing marketing contacts<br/>||
@@ -207,19 +207,17 @@ ProviderConfig represents the configuration settings for a Google Oauth Provider
 <a name="db"></a>
 ## db: object
 
-Config Settings for the ent database client
-
-
 **Properties**
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
-|**debug**|`boolean`|Debug to print debug database logs<br/>|no|
-|**driver\_name**|`string`|SQL Driver name from dialect.Driver<br/>|no|
-|**multi\_write**|`boolean`|MultiWrite enabled writing to two databases simultaneously<br/>|no|
-|**primary\_db\_source**|`string`|Primary write database source<br/>|yes|
-|**secondary\_db\_source**|`string`|Secondary write database source, if multi write is enabled<br/>|no|
-|**cache\_ttl**|`integer`|CacheTTL to have results cached for subsequent requests<br/>|no|
+|**debug**|`boolean`|debug enables printing the debug database logs<br/>|no|
+|**database\_name**|`string`|the name of the database to use with otel tracing<br/>|no|
+|**driver\_name**|`string`|sql driver name<br/>|no|
+|**multi\_write**|`boolean`|enables writing to two databases simultaneously<br/>|no|
+|**primary\_db\_source**|`string`|dsn of the primary database<br/>|yes|
+|**secondary\_db\_source**|`string`|dsn of the secondary database if multi-write is enabled<br/>|no|
+|**cache\_ttl**|`integer`|cache results for subsequent requests<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="redis"></a>

@@ -17,7 +17,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 )
 
-func TestQuery_Invite(t *testing.T) {
+func TestQueryInvite(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -84,7 +84,7 @@ func TestQuery_Invite(t *testing.T) {
 	}
 }
 
-func TestQuery_CreateInvite(t *testing.T) {
+func TestMutationCreateInvite(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
@@ -240,12 +240,12 @@ func TestQuery_CreateInvite(t *testing.T) {
 			assert.Equal(t, orgAdmin.ID, resp.CreateInvite.Invite.RequestorID)
 			assert.Equal(t, tc.expectedStatus, resp.CreateInvite.Invite.Status)
 			assert.Equal(t, tc.expectedAttempts, resp.CreateInvite.Invite.SendAttempts)
-			assert.WithinDuration(t, time.Now().AddDate(0, 0, 14), resp.CreateInvite.Invite.Expires, time.Minute)
+			assert.WithinDuration(t, time.Now().UTC().AddDate(0, 0, 14), resp.CreateInvite.Invite.Expires, time.Minute)
 		})
 	}
 }
 
-func TestQuery_DeleteInvite(t *testing.T) {
+func TestMutationDeleteInvite(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 

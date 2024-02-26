@@ -212,39 +212,42 @@
       "type": "object",
       "description": "Config for sending emails via SendGrid and managing marketing contacts"
     },
-    "entdb.Config": {
+    "entx.Config": {
       "properties": {
         "debug": {
           "type": "boolean",
-          "description": "Debug to print debug database logs"
+          "description": "debug enables printing the debug database logs"
+        },
+        "database_name": {
+          "type": "string",
+          "description": "the name of the database to use with otel tracing"
         },
         "driver_name": {
           "type": "string",
-          "description": "SQL Driver name from dialect.Driver"
+          "description": "sql driver name"
         },
         "multi_write": {
           "type": "boolean",
-          "description": "MultiWrite enabled writing to two databases simultaneously"
+          "description": "enables writing to two databases simultaneously"
         },
         "primary_db_source": {
           "type": "string",
-          "description": "Primary write database source"
+          "description": "dsn of the primary database"
         },
         "secondary_db_source": {
           "type": "string",
-          "description": "Secondary write database source, if multi write is enabled"
+          "description": "dsn of the secondary database if multi-write is enabled"
         },
         "cache_ttl": {
           "type": "integer",
-          "description": "CacheTTL to have results cached for subsequent requests"
+          "description": "cache results for subsequent requests"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
         "primary_db_source"
-      ],
-      "description": "Config Settings for the ent database client"
+      ]
     },
     "fgax.Config": {
       "properties": {
@@ -581,7 +584,7 @@
       "description": "Authz contains the authorization settings for fine grained access control"
     },
     "db": {
-      "$ref": "#/$defs/entdb.Config",
+      "$ref": "#/$defs/entx.Config",
       "description": "DB contains the database configuration for the ent client"
     },
     "redis": {

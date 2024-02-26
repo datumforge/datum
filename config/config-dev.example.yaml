@@ -10,7 +10,8 @@ server:
 # db settings
 db: 
   debug: true
-  driver_name: sqlite3
+  driver_name: libsql
+  primary_db_source: "file:datum.db"
   multi_write: false
 
 # auth settings

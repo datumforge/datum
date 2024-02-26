@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/docker/go-connections/nat"
 	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
+	_ "modernc.org/sqlite"
+
+	"github.com/docker/go-connections/nat"
 
 	"entgo.io/ent/dialect"
 	"github.com/testcontainers/testcontainers-go"
@@ -117,12 +119,15 @@ func getTestDB(ctx context.Context, u string) (TC, error) {
 // GetTestURI returns the dialect, connection string and if used a testcontainer for database connectivity in tests
 func GetTestURI(ctx context.Context, u string) *TC {
 	switch {
-	case u == "":
-		// return dialect.SQLite, "file:ent?mode=memory&cache=shared&_fk=1"
-		return &TC{Dialect: dialect.SQLite, URI: "file:ent?mode=memory&cache=shared&_fk=1"}
+	// case u == "":
+	// 	// return dialect.SQLite, "file:ent?mode=memory&cache=shared&_fk=1"
+	// 	return &TC{Dialect: dialect.SQLite, URI: "file:ent?mode=memory&cache=shared&_fk=1"}
 	case strings.HasPrefix(u, "sqlite://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "sqlite://")
 		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "sqlite://")}
+	case strings.HasPrefix(u, "libsql://"):
+		// return dialect.SQLite, strings.TrimPrefix(u, "libsql://")
+		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "libsql://")}
 	case strings.HasPrefix(u, "postgres://"), strings.HasPrefix(u, "postgresql://"):
 		// return dialect.Postgres, u
 		return &TC{Dialect: dialect.Postgres, URI: u}

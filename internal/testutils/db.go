@@ -121,13 +121,13 @@ func GetTestURI(ctx context.Context, u string) *TC {
 	switch {
 	case u == "":
 		// return dialect.SQLite, "file::memory:?cache=shared"
-		return &TC{Dialect: dialect.SQLite, URI: "file::memory:?cache=shared"}
+		return &TC{Dialect: "libsql", URI: "file::memory:?cache=shared"}
 	case strings.HasPrefix(u, "sqlite://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "sqlite://")
 		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "sqlite://")}
 	case strings.HasPrefix(u, "libsql://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "libsql://")
-		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "libsql://")}
+		return &TC{Dialect: "libsql", URI: strings.TrimPrefix(u, "libsql://")}
 	case strings.HasPrefix(u, "postgres://"), strings.HasPrefix(u, "postgresql://"):
 		// return dialect.Postgres, u
 		return &TC{Dialect: dialect.Postgres, URI: u}

@@ -10,7 +10,6 @@ import (
 	"time"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
-	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

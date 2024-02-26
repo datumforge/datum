@@ -33,7 +33,8 @@ authz:
     store_id: ""
     store_name: ""
 db:
-    cache_ttl: 0
+    catch_ttl: 0
+    database_name: ""
     debug: false
     driver_name: ""
     multi_write: false

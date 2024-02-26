@@ -12,6 +12,7 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
 	"github.com/datumforge/echozap"
+	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
 	sentrygo "github.com/getsentry/sentry-go"
 	"github.com/kelseyhightower/envconfig"
@@ -20,7 +21,6 @@ import (
 
 	"github.com/datumforge/datum/internal/cache"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -159,14 +159,14 @@ func WithAuth() ServerOption {
 }
 
 // WithReadyChecks adds readiness checks to the server
-func WithReadyChecks(c *entdb.EntClientConfig, f *fgax.Client, r *redis.Client) ServerOption {
+func WithReadyChecks(c *entx.EntClientConfig, f *fgax.Client, r *redis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Always add a check to the primary db connection
-		s.Config.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
+		s.Config.Handler.AddReadinessCheck("sqlite_db_primary", entx.Healthcheck(c.GetPrimaryDB()))
 
 		// Check the secondary db, if enabled
 		if s.Config.Settings.DB.MultiWrite {
-			s.Config.Handler.AddReadinessCheck("sqlite_db_secondary", entdb.Healthcheck(c.GetSecondaryDB()))
+			s.Config.Handler.AddReadinessCheck("sqlite_db_secondary", entx.Healthcheck(c.GetSecondaryDB()))
 		}
 
 		// Check the connection to openFGA, if enabled

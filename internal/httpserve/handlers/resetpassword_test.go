@@ -12,7 +12,6 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	mock_fga "github.com/datumforge/fgax/mockery"
-	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -35,7 +34,9 @@ func TestResetPassword(t *testing.T) {
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
-	var newPassword = "6z9Fqc-E-9v32NsJzLNU" // nolint: gosec
+	var newPassword = "6z9Fqc-E-9v32NsJzLNU" //nolint:gosec
+
+	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
 	testCases := []struct {
 		name                 string
@@ -109,7 +110,7 @@ func TestResetPassword(t *testing.T) {
 			tokenSet:       true,
 			emailExpected:  false,
 			from:           "zonkertons",
-			ttl:            "1987-08-16T03:04:11.169086-07:00",
+			ttl:            expiredTTL,
 			expectedResp:   "reset token is expired, please request a new token using forgot-password",
 			expectedStatus: http.StatusBadRequest,
 		},

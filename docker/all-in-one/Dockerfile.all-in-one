@@ -2,9 +2,9 @@ FROM golang:1.22 as builder
 
 WORKDIR /go/src/app
 COPY . .
-COPY ./config/config.example.yaml ./config/.config.yaml
 
 RUN go mod download
+
 RUN CGO_ENABLED=1 GOOS=linux go build -o /go/bin/datum -a -ldflags '-linkmode external -extldflags "-static"' .
 
 FROM cgr.dev/chainguard/bash:latest
@@ -27,6 +27,9 @@ COPY --from=ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.24 /ko-app/grpc-health
 
 # Copy entrypoint and env files
 COPY docker/all-in-one/docker_entrypoint.sh /bin/docker_entrypoint.sh
+
+# Copy config 
+COPY ./config/config-dev.example.yaml ./config/.config.yaml
 
 RUN chmod +x /bin/docker_entrypoint.sh
 

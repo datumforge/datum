@@ -34,6 +34,43 @@ var (
 	graphSchemaDir = "./schema/"
 )
 
+func setSecuritySchemes() *ogen.Components {
+	c := &ogen.Components{}
+	c.Init()
+
+	c.SecuritySchemes = map[string]*ogen.SecurityScheme{
+		"BearerAuth": {
+			Type:   "http",
+			Scheme: "Bearer",
+			Name:   "Authorization",
+			In:     "header",
+		},
+		"BasicAuth": {
+			Type:   "http",
+			Scheme: "basic",
+		},
+		"ApiKeyAuth": {
+			Type: "apiKey",
+			Name: "X-API-KEY",
+			In:   "header",
+		},
+		"OpenIDConnect": {
+			Type:             "openIdConnect",
+			OpenIDConnectURL: "https://api.datum.net/.well-known/openid-configuration",
+		},
+		//		"OAuth2": {
+		//			Type: "oauth2",
+		//			Flows: &ogen.OAuthFlows{
+		//				AuthorizationCode: &ogen.OAuthFlow{
+		//					AuthorizationURL: "https://api.datum.net/oauth2/authorize",
+		//				},
+		//			},
+		//		},
+	}
+
+	return c
+}
+
 func main() {
 	xExt, err := entx.NewExtension(
 		entx.WithJSONScalar(),
@@ -49,13 +86,35 @@ func main() {
 	spec := new(ogen.Spec)
 	oas, err := entoas.NewExtension(
 		entoas.Spec(spec),
-		//		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
-		//			spec.Info.SetTitle("Datum API").
-		//				SetDescription("Programmatic interfaces for interacting with Datum Services").
-		//				SetVersion("1.0.1")
-		//			return nil
-		//
-		//		}),
+		entoas.SimpleModels(),
+		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
+			spec.SetOpenAPI("3.1.0")
+			spec.SetServers([]ogen.Server{
+				{
+					URL:         "https://api.datum.net",
+					Description: "Datum Production API Endpoint",
+				},
+				{
+					URL:         "http://localhost:17608/v1",
+					Description: "http localhost endpoint for testing purposes",
+				}})
+			spec.Info.SetTitle("Datum OpenAPI 3.1.0 Specifications").
+				SetDescription("Programmatic interfaces for interacting with Datum Services").
+				SetVersion("1.0.1")
+			spec.Info.SetContact(&ogen.Contact{
+				Name:  "Datum Support",
+				URL:   "https://datum.net",
+				Email: "support@datum.net",
+			})
+			spec.Info.SetLicense(&ogen.License{
+				Name: "Apache 2.0",
+				URL:  "https://www.apache.org/licenses/LICENSE-2.0",
+			})
+			spec.Info.SetTermsOfService("https://datum.net/tos")
+			spec.Components = setSecuritySchemes()
+
+			return nil
+		}),
 	)
 
 	if err != nil {

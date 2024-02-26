@@ -48,21 +48,25 @@ func HookInvite() ent.Hook {
 			existingInvite, err := getInvite(ctx, m)
 
 			// attempt to do the mutation for a new user invite
+			var retValue ent.Value
+
+			// if the invite exists, update the token and resend
 			if existingInvite != nil && err == nil {
 				m.Logger.Infow("invitation for user already exists")
 
 				// update invite instead
-				retValue, err := updateInvite(ctx, m)
+				retValue, err = updateInvite(ctx, m)
 				if err != nil {
 					m.Logger.Errorw("unable to update invitation", "error", err)
+
+					return retValue, err
 				}
-
-				return retValue, err
-			}
-
-			retValue, err := next.Mutate(ctx, m)
-			if err != nil {
-				return retValue, err
+			} else {
+				// create new invite
+				retValue, err = next.Mutate(ctx, m)
+				if err != nil {
+					return retValue, err
+				}
 			}
 
 			// non-blocking queued email

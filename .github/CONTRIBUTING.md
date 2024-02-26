@@ -8,6 +8,22 @@ Please also read our main [contributing guide](https://github.com/datumforge/.gi
 
 This repository contains a number of code generating functions / utilities which take schema modifications and scaffold out resolvers, graphql API schemas, openAPI specifications, among other things. To ensure you've generated all the necessary dependencies run `task pr`; this will run the entirety of the commands required to safely generate a PR. If for some reason one of the commands fails / encounters an error, you will need to debug the individual steps. It should be decently easy to follow the `Taskfile` in the root of this repository.
 
+## Starting the Server
+
+1. Copy the config, this is in .gitignore so you do not have to worry about accidentally committing secrets
+```bash
+cp ./config/config-dev.example.yaml ./config/.config.yaml
+```
+1. Use the task commands to start the server
+Run the Datum server in development mode with dependencies in docker 
+```bash
+task run-dev
+```
+Run fully in docker
+```bash
+task docker:all:up
+```
+
 ## Creating Queries in GraphQL
 
 The best method of forming / testing queries against the server is to run `task docker:rover` which will launch an interactive query UI.

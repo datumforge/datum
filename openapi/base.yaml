@@ -1,0 +1,61 @@
+---
+openapi: 3.1.0
+info:
+    title: Datum OpenAPI 3.1.0 Specifications
+    description: Documentation for Datum's API services
+    termsOfService: https://datum.net/terms
+    contact:
+        name: Datum Support
+        url: https://datum.net/support
+        email: support@datum.net
+    license:
+        name: Apache 2.0
+        url: https://www.apache.org/licenses/LICENSE-2.0.html
+    version: 1.0.1
+servers:
+    - url: http://localhost:17608/v1
+    - url: https://api.datum.net/v1
+paths:
+    /ready:
+        get:
+            operationId: readyID
+            security:
+                - {}
+            summary: Status Check
+            description: A status check for the server and it's associated dependencies
+            responses:
+                "400":
+                    description: Bad Request
+                "200":
+                    description: The status of the server and sub components are returned
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    fga:
+                                        type: string
+                                    redis:
+                                        type: string
+                                    sqlite_db_primary:
+                                        type: string
+    /livez:
+        get:
+            operationId: liveID
+            security:
+                - {}
+            summary: Server liveness check response
+            description: A heartbeat check to confirm the server is up or down
+            responses:
+                "400":
+                    description: Bad Request
+                "200":
+                    description: An up / down status of the server is returned
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+

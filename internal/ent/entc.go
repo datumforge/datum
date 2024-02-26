@@ -49,13 +49,13 @@ func main() {
 	spec := new(ogen.Spec)
 	oas, err := entoas.NewExtension(
 		entoas.Spec(spec),
-		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
-			spec.Info.SetTitle("Datum API").
-				SetDescription("Programmatic interfaces for interacting with Datum Services").
-				SetVersion("1.0.1")
-			return nil
-
-		}),
+		//		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
+		//			spec.Info.SetTitle("Datum API").
+		//				SetDescription("Programmatic interfaces for interacting with Datum Services").
+		//				SetVersion("1.0.1")
+		//			return nil
+		//
+		//		}),
 	)
 
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -12,9 +13,10 @@ import (
 
 type UserOwnedMixin struct {
 	mixin.Schema
-	Ref         string
-	Optional    bool
-	AllowUpdate bool
+	Ref               string
+	Optional          bool
+	AllowUpdate       bool
+	SkipOASGeneration bool
 }
 
 // Fields of the UserOwnedMixin
@@ -50,6 +52,17 @@ func (userOwned UserOwnedMixin) Edges() []ent.Edge {
 	if !userOwned.AllowUpdate {
 		ownerEdge.Annotations(
 			entgql.Skip(entgql.SkipMutationUpdateInput),
+			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		)
+	}
+
+	if userOwned.SkipOASGeneration {
+		ownerEdge.Annotations(
+			entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		)
 	}
 

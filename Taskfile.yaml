@@ -38,38 +38,12 @@ tasks:
       - go install github.com/vektra/mockery/v2@v2.40.1
       - task: config:install
       - defer: { task: go:tidy }
-
-  ## Generate tasks
-  ent:
-    desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
-    cmds:
-      - go generate ./...
-
-  gqlgen:
-    desc: runs gqlgen and gqlgenc commands using gen_generate.go and entc
-    cmds:
-      - go run github.com/99designs/gqlgen generate --verbose
-      - task: tidy
-      - go run ./gen_schema.go
-      - go run github.com/Yamashou/gqlgenc generate --configdir schema
-
+  
   generate:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc. 
     cmds:
-      - task: ent
-      - task: gqlgen
+      - go generate ./...
       - cp ./internal/ent/generated/openapi.json ./internal/httpserve/route
-
-  clean:generated:
-    desc: cleans ent / gqlgen generated files to be re-generated
-    cmds:
-      - |
-        echo "Enter the name of the ent schema object name to clean:"
-        read clean;
-        go run ./internal/entclean/main.go --path=internal/ent ${clean};
-      - "rm -f schema/ent.graphql"
-      - "rm -f schema.graphql"
-      - "rm -rf internal/datumclient/"
 
   ## Go tasks
   go:lint:
@@ -142,8 +116,7 @@ tasks:
   ci:
     desc: a task that runs during CI
     cmds:
-      - task: ent
-      - task: gqlgen
+      - task: generate
       - task: tidy
       - "git config --global --add safe.directory /workdir"
       - |
@@ -177,4 +150,5 @@ tasks:
     vars:
       PWD:
         sh: pwd
-      
+        
+  

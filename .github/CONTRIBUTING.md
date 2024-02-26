@@ -23,6 +23,10 @@ Run fully in docker
 ```bash
 task docker:all:up
 ```
+1. Create a verified test user
+```bash
+task cli:user:all
+```
 
 ## Creating Queries in GraphQL
 

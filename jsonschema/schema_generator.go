@@ -30,6 +30,7 @@ var includedPackages = []string{
 	"./internal/utils/emails",
 	"./internal/utils/sentry",
 	"./internal/providers",
+	"./pkg/analytics",
 }
 
 // schemaConfig represents the configuration for the schema generator

@@ -47,6 +47,10 @@ email:
     from_email: ""
     send_grid_api_key: ""
     testing: false
+posthog:
+    api_key: ""
+    enabled: false
+    host: ""
 redis:
     address: ""
     db: 0

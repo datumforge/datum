@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
+	"github.com/datumforge/datum/pkg/analytics"
 )
 
 // Handler contains configuration options for handlers
@@ -35,6 +36,8 @@ type Handler struct {
 	EmailManager *emails.EmailManager
 	// TaskMan manages tasks in a separate goroutine to allow for non blocking operations
 	TaskMan *marionette.TaskManager
+	// AnalyticsClient is the client used to send analytics events
+	AnalyticsClient *analytics.EventManager
 	// OauthProvider contains the configuration settings for all supported Oauth2 providers
 	OauthProvider OauthProviderConfig
 	// AuthMiddleware contains the middleware to be used for authenticated endpoints

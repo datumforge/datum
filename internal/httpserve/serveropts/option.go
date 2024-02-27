@@ -36,6 +36,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/ulids"
+	"github.com/datumforge/datum/pkg/analytics"
 )
 
 type ServerOption interface {
@@ -324,6 +325,26 @@ func WithSentry() ServerOption {
 
 			// add sentry middleware
 			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, sentry.New())
+		}
+	})
+}
+
+// WithAnalytics sets up the PostHog analytics manager
+func WithAnalytics() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		ph := s.Config.Settings.PostHog.Init()
+		if ph == nil {
+			s.Config.Handler.AnalyticsClient = &analytics.EventManager{
+				Enabled: false,
+				Handler: nil,
+			}
+
+			return
+		}
+
+		s.Config.Handler.AnalyticsClient = &analytics.EventManager{
+			Enabled: true,
+			Handler: ph,
 		}
 	})
 }

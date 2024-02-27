@@ -7,7 +7,6 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
@@ -68,7 +67,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	analytics.AssociateUser(user.ID, claims.OrgID)
+	h.AnalyticsClient.AssociateUser(user.ID, claims.OrgID)
 
 	out := LoginReply{
 		Reply:        rout.Reply{Success: true},

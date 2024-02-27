@@ -17,6 +17,7 @@ Config contains the configuration for the datum server
 |[**email**](#email)|`object`|Config for sending emails via SendGrid and managing marketing contacts<br/>||
 |[**sessions**](#sessions)|`object`|Config contains the configuration for the session store<br/>||
 |[**sentry**](#sentry)|`object`|Config settings for the Sentry client<br/>||
+|[**posthog**](#posthog)|`object`|Config is the configuration for PostHog<br/>||
 
 **Additional Properties:** not allowed  
 <a name="server"></a>
@@ -354,6 +355,21 @@ Config settings for the Sentry client
 |**repanic**|`boolean`|Repanic indicates whether to repanic after capturing an event in the Sentry client<br/>||
 |**debug**|`boolean`|Debug indicates whether debug mode is enabled for the Sentry client<br/>||
 |**server\_name**|`string`|ServerName is the name of the server running the Sentry client<br/>||
+
+**Additional Properties:** not allowed  
+<a name="posthog"></a>
+## posthog: object
+
+Config is the configuration for PostHog
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to enable or disable PostHog<br/>||
+|**api\_key**|`string`|APIKey is the PostHog API Key<br/>||
+|**host**|`string`|Host is the PostHog API Host<br/>||
 
 **Additional Properties:** not allowed  
 

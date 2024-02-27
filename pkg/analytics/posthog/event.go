@@ -1,21 +1,22 @@
 package posthog
 
 import (
-	"os"
 	"time"
 
 	"github.com/posthog/posthog-go"
 
-	"github.com/datumforge/datum/internal/analytics/machine"
+	"github.com/datumforge/datum/pkg/analytics/machine"
 )
 
-var (
-	// PosthogAPIKey is the PostHog API Key
-	PosthogAPIKey = os.Getenv("POSTHOG_API_KEY")
-
-	// PosthogAPIHost is the PostHog API Host
-	PosthogAPIHost = "https://app.posthog.com"
-)
+// Config is the configuration for PostHog
+type Config struct {
+	// Enabled is a flag to enable or disable PostHog
+	Enabled bool `json:"enabled" koanf:"enabled" default:"false"`
+	// APIKey is the PostHog API Key
+	APIKey string `json:"api_key" koanf:"api_key"`
+	// Host is the PostHog API Host
+	Host string `json:"host" koanf:"host" default:"https://app.posthog.com"`
+}
 
 type PostHog struct {
 	client     posthog.Client
@@ -23,13 +24,13 @@ type PostHog struct {
 }
 
 // Init returns a pointer to a PostHog object
-func Init() *PostHog {
-	if PosthogAPIKey == "" || PosthogAPIHost == "" || !machine.Available() {
+func (c *Config) Init() *PostHog {
+	if !c.Enabled || c.APIKey == "" || c.Host == "" || !machine.Available() {
 		return nil
 	}
 
-	client, _ := posthog.NewWithConfig(PosthogAPIKey, posthog.Config{
-		Endpoint:  PosthogAPIHost,
+	client, _ := posthog.NewWithConfig(c.APIKey, posthog.Config{
+		Endpoint:  c.Host,
 		BatchSize: 1,
 		Logger:    new(noopLogger),
 	})

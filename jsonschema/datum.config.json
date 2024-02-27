@@ -446,6 +446,21 @@
       "type": "object",
       "description": "StdOut settings for the stdout provider"
     },
+    "posthog.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "api_key": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "sentry.Config": {
       "properties": {
         "enabled": {
@@ -606,6 +621,10 @@
     "sentry": {
       "$ref": "#/$defs/sentry.Config",
       "description": "Sentry contains the sentry configuration for error tracking"
+    },
+    "posthog": {
+      "$ref": "#/$defs/posthog.Config",
+      "description": "PostHog contains the configuration for the PostHog analytics"
     }
   },
   "additionalProperties": false,

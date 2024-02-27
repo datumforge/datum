@@ -10,10 +10,10 @@ import (
 )
 
 // Capture is intended to be a wrapper around CLI commands to generate generic events associated with the CLI actions
-func Capture(command *cobra.Command, userID string) {
-	ph, err := posthog.NewWithConfig(PosthogAPIKey,
+func (c *Config) Capture(command *cobra.Command, userID string) {
+	ph, err := posthog.NewWithConfig(c.APIKey,
 		posthog.Config{
-			Endpoint: PosthogAPIHost,
+			Endpoint: c.Host,
 		},
 	)
 	if err != nil {

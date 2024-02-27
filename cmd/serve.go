@@ -8,8 +8,6 @@ import (
 
 	"github.com/datumforge/fgax"
 
-	"github.com/datumforge/datum/internal/analytics"
-	"github.com/datumforge/datum/internal/analytics/posthog"
 	"github.com/datumforge/datum/internal/cache"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
@@ -50,6 +48,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithTaskManager(),
 		serveropts.WithSentry(),
 		serveropts.WithMiddleware(),
+		serveropts.WithAnalytics(),
 	)
 
 	so := serveropts.NewServerOptions(serverOpts)
@@ -67,17 +66,13 @@ func serve(ctx context.Context) error {
 		return err
 	}
 
-	phclient := posthog.Init()
-	analytics := analytics.EventManager{}
-	analytics.Handler = phclient
-
 	// add additional ent dependencies
 	entOpts = append(
 		entOpts,
 		ent.Authz(*fgaClient),
 		ent.Emails(so.Config.Handler.EmailManager),
 		ent.Marionette(so.Config.Handler.TaskMan),
-		ent.Analytics(&analytics),
+		ent.Analytics(so.Config.Handler.AnalyticsClient),
 	)
 
 	// Setup DB connection

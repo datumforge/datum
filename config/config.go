@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/sentry"
+	"github.com/datumforge/datum/pkg/analytics/posthog"
 )
 
 var (
@@ -57,6 +58,9 @@ type Config struct {
 
 	// Sentry contains the sentry configuration for error tracking
 	Sentry sentry.Config `json:"sentry" koanf:"sentry"`
+
+	// PostHog contains the configuration for the PostHog analytics
+	PostHog posthog.Config `json:"posthog" koanf:"posthog"`
 }
 
 // Server settings for the echo server

@@ -60,12 +60,10 @@ type GroupMembershipEdges struct {
 // GroupOrErr returns the Group value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e GroupMembershipEdges) GroupOrErr() (*Group, error) {
-	if e.loadedTypes[0] {
-		if e.Group == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: group.Label}
-		}
+	if e.Group != nil {
 		return e.Group, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: group.Label}
 	}
 	return nil, &NotLoadedError{edge: "group"}
 }
@@ -73,12 +71,10 @@ func (e GroupMembershipEdges) GroupOrErr() (*Group, error) {
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e GroupMembershipEdges) UserOrErr() (*User, error) {
-	if e.loadedTypes[1] {
-		if e.User == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: user.Label}
-		}
+	if e.User != nil {
 		return e.User, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
 }

@@ -90,12 +90,10 @@ type OrganizationEdges struct {
 // ParentOrErr returns the Parent value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e OrganizationEdges) ParentOrErr() (*Organization, error) {
-	if e.loadedTypes[0] {
-		if e.Parent == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: organization.Label}
-		}
+	if e.Parent != nil {
 		return e.Parent, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: organization.Label}
 	}
 	return nil, &NotLoadedError{edge: "parent"}
 }
@@ -130,12 +128,10 @@ func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e OrganizationEdges) SettingOrErr() (*OrganizationSetting, error) {
-	if e.loadedTypes[4] {
-		if e.Setting == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: organizationsetting.Label}
-		}
+	if e.Setting != nil {
 		return e.Setting, nil
+	} else if e.loadedTypes[4] {
+		return nil, &NotFoundError{label: organizationsetting.Label}
 	}
 	return nil, &NotLoadedError{edge: "setting"}
 }

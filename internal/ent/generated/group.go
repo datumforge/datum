@@ -72,12 +72,10 @@ type GroupEdges struct {
 // OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e GroupEdges) OwnerOrErr() (*Organization, error) {
-	if e.loadedTypes[0] {
-		if e.Owner == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: organization.Label}
-		}
+	if e.Owner != nil {
 		return e.Owner, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: organization.Label}
 	}
 	return nil, &NotLoadedError{edge: "owner"}
 }
@@ -85,12 +83,10 @@ func (e GroupEdges) OwnerOrErr() (*Organization, error) {
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e GroupEdges) SettingOrErr() (*GroupSetting, error) {
-	if e.loadedTypes[1] {
-		if e.Setting == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: groupsetting.Label}
-		}
+	if e.Setting != nil {
 		return e.Setting, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: groupsetting.Label}
 	}
 	return nil, &NotLoadedError{edge: "setting"}
 }

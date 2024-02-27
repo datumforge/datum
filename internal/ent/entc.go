@@ -58,14 +58,19 @@ func setSecuritySchemes() *ogen.Components {
 			Type:             "openIdConnect",
 			OpenIDConnectURL: "https://api.datum.net/.well-known/openid-configuration",
 		},
-		//		"OAuth2": {
-		//			Type: "oauth2",
-		//			Flows: &ogen.OAuthFlows{
-		//				AuthorizationCode: &ogen.OAuthFlow{
-		//					AuthorizationURL: "https://api.datum.net/oauth2/authorize",
-		//				},
-		//			},
-		//		},
+		"OAuth2": {
+			Type: "oauth2",
+			Flows: &ogen.OAuthFlows{
+				AuthorizationCode: &ogen.OAuthFlow{
+					AuthorizationURL: "https://api.datum.net/oauth2/authorize",
+					TokenURL: 	   "https://api.datum.net/oauth2/token",
+					RefreshURL:	   "https://api.datum.net/oauth2/refresh",
+					Scopes: map[string]string{
+						"user:email": "read user data",
+						"read:user": "modify user data",
+				},
+			},
+		},
 	}
 
 	return c

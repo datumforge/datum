@@ -7554,6 +7554,15 @@
         "in": "header",
         "scheme": "Bearer"
       },
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://api.datum.net/oauth2/authorize",
+            "scopes": null
+          }
+        }
+      },
       "OpenIDConnect": {
         "type": "openIdConnect",
         "openIdConnectUrl": "https://api.datum.net/.well-known/openid-configuration"

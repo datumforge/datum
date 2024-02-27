@@ -612,9 +612,6 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.Oauth(); !ok {
-		return &ValidationError{Name: "oauth", err: errors.New(`generated: missing required field "User.oauth"`)}
-	}
 	if _, ok := uc.mutation.AuthProvider(); !ok {
 		return &ValidationError{Name: "auth_provider", err: errors.New(`generated: missing required field "User.auth_provider"`)}
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
@@ -22,15 +23,19 @@ func (AuditMixin) Fields() []ent.Field {
 		field.Time("created_at").
 			Immutable().
 			Optional().
+			Annotations(entoas.Annotation{ReadOnly: true}).
 			Default(time.Now),
 		field.Time("updated_at").
 			Default(time.Now).
 			Optional().
+			Annotations(entoas.Annotation{ReadOnly: true}).
 			UpdateDefault(time.Now),
 		field.String("created_by").
 			Immutable().
+			Annotations(entoas.Annotation{ReadOnly: true}).
 			Optional(),
 		field.String("updated_by").
+			Annotations(entoas.Annotation{ReadOnly: true}).
 			Optional(),
 	}
 }

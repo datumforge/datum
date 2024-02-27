@@ -29,9 +29,14 @@ func (GroupSetting) Fields() []ent.Field {
 			Default(string(enums.InviteOrApplication)),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the object").
+			Optional().
 			Default([]string{}),
-		field.Bool("sync_to_slack").Default(false),
-		field.Bool("sync_to_github").Default(false),
+		field.Bool("sync_to_slack").
+			Optional().
+			Default(false),
+		field.Bool("sync_to_github").
+			Optional().
+			Default(false),
 	}
 }
 

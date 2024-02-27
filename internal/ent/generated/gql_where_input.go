@@ -2068,12 +2068,16 @@ type GroupSettingWhereInput struct {
 	JoinPolicyNotIn []enums.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
 
 	// "sync_to_slack" field predicates.
-	SyncToSlack    *bool `json:"syncToSlack,omitempty"`
-	SyncToSlackNEQ *bool `json:"syncToSlackNEQ,omitempty"`
+	SyncToSlack       *bool `json:"syncToSlack,omitempty"`
+	SyncToSlackNEQ    *bool `json:"syncToSlackNEQ,omitempty"`
+	SyncToSlackIsNil  bool  `json:"syncToSlackIsNil,omitempty"`
+	SyncToSlackNotNil bool  `json:"syncToSlackNotNil,omitempty"`
 
 	// "sync_to_github" field predicates.
-	SyncToGithub    *bool `json:"syncToGithub,omitempty"`
-	SyncToGithubNEQ *bool `json:"syncToGithubNEQ,omitempty"`
+	SyncToGithub       *bool `json:"syncToGithub,omitempty"`
+	SyncToGithubNEQ    *bool `json:"syncToGithubNEQ,omitempty"`
+	SyncToGithubIsNil  bool  `json:"syncToGithubIsNil,omitempty"`
+	SyncToGithubNotNil bool  `json:"syncToGithubNotNil,omitempty"`
 
 	// "group" edge predicates.
 	HasGroup     *bool              `json:"hasGroup,omitempty"`
@@ -2436,11 +2440,23 @@ func (i *GroupSettingWhereInput) P() (predicate.GroupSetting, error) {
 	if i.SyncToSlackNEQ != nil {
 		predicates = append(predicates, groupsetting.SyncToSlackNEQ(*i.SyncToSlackNEQ))
 	}
+	if i.SyncToSlackIsNil {
+		predicates = append(predicates, groupsetting.SyncToSlackIsNil())
+	}
+	if i.SyncToSlackNotNil {
+		predicates = append(predicates, groupsetting.SyncToSlackNotNil())
+	}
 	if i.SyncToGithub != nil {
 		predicates = append(predicates, groupsetting.SyncToGithubEQ(*i.SyncToGithub))
 	}
 	if i.SyncToGithubNEQ != nil {
 		predicates = append(predicates, groupsetting.SyncToGithubNEQ(*i.SyncToGithubNEQ))
+	}
+	if i.SyncToGithubIsNil {
+		predicates = append(predicates, groupsetting.SyncToGithubIsNil())
+	}
+	if i.SyncToGithubNotNil {
+		predicates = append(predicates, groupsetting.SyncToGithubNotNil())
 	}
 
 	if i.HasGroup != nil {
@@ -2621,6 +2637,8 @@ type IntegrationWhereInput struct {
 	SecretNameContains     *string  `json:"secretNameContains,omitempty"`
 	SecretNameHasPrefix    *string  `json:"secretNameHasPrefix,omitempty"`
 	SecretNameHasSuffix    *string  `json:"secretNameHasSuffix,omitempty"`
+	SecretNameIsNil        bool     `json:"secretNameIsNil,omitempty"`
+	SecretNameNotNil       bool     `json:"secretNameNotNil,omitempty"`
 	SecretNameEqualFold    *string  `json:"secretNameEqualFold,omitempty"`
 	SecretNameContainsFold *string  `json:"secretNameContainsFold,omitempty"`
 
@@ -3071,6 +3089,12 @@ func (i *IntegrationWhereInput) P() (predicate.Integration, error) {
 	}
 	if i.SecretNameHasSuffix != nil {
 		predicates = append(predicates, integration.SecretNameHasSuffix(*i.SecretNameHasSuffix))
+	}
+	if i.SecretNameIsNil {
+		predicates = append(predicates, integration.SecretNameIsNil())
+	}
+	if i.SecretNameNotNil {
+		predicates = append(predicates, integration.SecretNameNotNil())
 	}
 	if i.SecretNameEqualFold != nil {
 		predicates = append(predicates, integration.SecretNameEqualFold(*i.SecretNameEqualFold))
@@ -6024,8 +6048,10 @@ type OrganizationWhereInput struct {
 	ParentOrganizationIDContainsFold *string  `json:"parentOrganizationIDContainsFold,omitempty"`
 
 	// "personal_org" field predicates.
-	PersonalOrg    *bool `json:"personalOrg,omitempty"`
-	PersonalOrgNEQ *bool `json:"personalOrgNEQ,omitempty"`
+	PersonalOrg       *bool `json:"personalOrg,omitempty"`
+	PersonalOrgNEQ    *bool `json:"personalOrgNEQ,omitempty"`
+	PersonalOrgIsNil  bool  `json:"personalOrgIsNil,omitempty"`
+	PersonalOrgNotNil bool  `json:"personalOrgNotNil,omitempty"`
 
 	// "parent" edge predicates.
 	HasParent     *bool                     `json:"hasParent,omitempty"`
@@ -6487,6 +6513,12 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	}
 	if i.PersonalOrgNEQ != nil {
 		predicates = append(predicates, organization.PersonalOrgNEQ(*i.PersonalOrgNEQ))
+	}
+	if i.PersonalOrgIsNil {
+		predicates = append(predicates, organization.PersonalOrgIsNil())
+	}
+	if i.PersonalOrgNotNil {
+		predicates = append(predicates, organization.PersonalOrgNotNil())
 	}
 
 	if i.HasParent != nil {
@@ -8536,8 +8568,10 @@ type UserWhereInput struct {
 	SubContainsFold *string  `json:"subContainsFold,omitempty"`
 
 	// "oauth" field predicates.
-	Oauth    *bool `json:"oauth,omitempty"`
-	OauthNEQ *bool `json:"oauthNEQ,omitempty"`
+	Oauth       *bool `json:"oauth,omitempty"`
+	OauthNEQ    *bool `json:"oauthNEQ,omitempty"`
+	OauthIsNil  bool  `json:"oauthIsNil,omitempty"`
+	OauthNotNil bool  `json:"oauthNotNil,omitempty"`
 
 	// "auth_provider" field predicates.
 	AuthProvider      *enums.AuthProvider  `json:"authProvider,omitempty"`
@@ -9344,6 +9378,12 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.OauthNEQ != nil {
 		predicates = append(predicates, user.OauthNEQ(*i.OauthNEQ))
+	}
+	if i.OauthIsNil {
+		predicates = append(predicates, user.OauthIsNil())
+	}
+	if i.OauthNotNil {
+		predicates = append(predicates, user.OauthNotNil())
 	}
 	if i.AuthProvider != nil {
 		predicates = append(predicates, user.AuthProviderEQ(*i.AuthProvider))

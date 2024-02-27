@@ -1,6 +1,7 @@
 package mixin
 
 import (
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
@@ -18,6 +19,7 @@ func (IDMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").
 			Immutable().
+			Annotations(entoas.Annotation{ReadOnly: true}).
 			DefaultFunc(func() string { return ulids.New().String() }),
 	}
 }

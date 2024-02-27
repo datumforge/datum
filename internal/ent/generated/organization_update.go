@@ -624,6 +624,9 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ou.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
 	}
+	if ou.mutation.PersonalOrgCleared() {
+		_spec.ClearField(organization.FieldPersonalOrg, field.TypeBool)
+	}
 	if ou.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1744,6 +1747,9 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if ouo.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
+	}
+	if ouo.mutation.PersonalOrgCleared() {
+		_spec.ClearField(organization.FieldPersonalOrg, field.TypeBool)
 	}
 	if ouo.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -97,27 +97,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -290,20 +269,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -483,27 +448,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -665,20 +609,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -886,27 +816,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "visibility": {
                     "type": "string",
                     "enum": [
@@ -943,10 +852,7 @@
                 },
                 "required": [
                   "visibility",
-                  "join_policy",
-                  "tags",
-                  "sync_to_slack",
-                  "sync_to_github"
+                  "join_policy"
                 ]
               }
             }
@@ -1081,20 +987,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "visibility": {
                     "type": "string",
                     "enum": [
@@ -1276,27 +1168,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -1474,20 +1345,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -1845,27 +1702,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -1883,8 +1719,7 @@
                   }
                 },
                 "required": [
-                  "name",
-                  "secret_name"
+                  "name"
                 ]
               }
             }
@@ -2019,20 +1854,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -2193,49 +2014,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
-                  "token": {
-                    "type": "string"
-                  },
-                  "expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
                   "recipient": {
                     "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "INVITATION_SENT",
-                      "APPROVAL_REQUIRED",
-                      "INVITATION_ACCEPTED",
-                      "INVITATION_EXPIRED"
-                    ],
-                    "default": "INVITATION_SENT"
                   },
                   "role": {
                     "type": "string",
@@ -2246,30 +2029,14 @@
                     ],
                     "default": "MEMBER"
                   },
-                  "send_attempts": {
-                    "type": "integer"
-                  },
-                  "requestor_id": {
-                    "type": "string"
-                  },
-                  "secret": {
-                    "type": "string",
-                    "format": "byte"
-                  },
                   "owner": {
                     "type": "string"
                   }
                 },
                 "required": [
                   "owner_id",
-                  "token",
-                  "expires",
                   "recipient",
-                  "status",
                   "role",
-                  "send_attempts",
-                  "requestor_id",
-                  "secret",
                   "owner"
                 ]
               }
@@ -2405,42 +2172,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
-                  "token": {
-                    "type": "string"
-                  },
-                  "expires": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
                   "recipient": {
                     "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "INVITATION_SENT",
-                      "APPROVAL_REQUIRED",
-                      "INVITATION_ACCEPTED",
-                      "INVITATION_EXPIRED"
-                    ],
-                    "default": "INVITATION_SENT"
                   },
                   "role": {
                     "type": "string",
@@ -2450,13 +2186,6 @@
                       "OWNER"
                     ],
                     "default": "MEMBER"
-                  },
-                  "send_attempts": {
-                    "type": "integer"
-                  },
-                  "secret": {
-                    "type": "string",
-                    "format": "byte"
                   },
                   "owner": {
                     "type": "string"
@@ -2609,27 +2338,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -2808,20 +2516,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -3343,27 +3037,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -3526,20 +3199,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -3748,27 +3407,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "domains": {
                     "type": "array",
                     "items": {
@@ -3942,20 +3580,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "domains": {
                     "type": "array",
                     "items": {
@@ -4143,27 +3767,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -4242,8 +3845,7 @@
                 },
                 "required": [
                   "name",
-                  "display_name",
-                  "personal_org"
+                  "display_name"
                 ]
               }
             }
@@ -4378,20 +3980,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -5230,27 +4818,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -5427,20 +4994,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -5685,27 +5238,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "locked": {
                     "type": "boolean"
                   },
@@ -5885,20 +5417,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "locked": {
                     "type": "boolean"
                   },
@@ -6086,27 +5604,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "email": {
                     "type": "string"
                   },
@@ -6129,13 +5626,6 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "last_seen": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "password": {
-                    "type": "string"
-                  },
                   "sub": {
                     "type": "string"
                   },
@@ -6150,9 +5640,6 @@
                       "GITHUB"
                     ],
                     "default": "CREDENTIALS"
-                  },
-                  "tfa_secret": {
-                    "type": "string"
                   },
                   "is_phone_otp_allowed": {
                     "type": "boolean"
@@ -6226,7 +5713,6 @@
                   "first_name",
                   "last_name",
                   "display_name",
-                  "oauth",
                   "auth_provider",
                   "setting"
                 ]
@@ -6363,20 +5849,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "email": {
                     "type": "string"
                   },
@@ -6399,13 +5871,6 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "last_seen": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "password": {
-                    "type": "string"
-                  },
                   "sub": {
                     "type": "string"
                   },
@@ -6420,9 +5885,6 @@
                       "GITHUB"
                     ],
                     "default": "CREDENTIALS"
-                  },
-                  "tfa_secret": {
-                    "type": "string"
                   },
                   "is_phone_otp_allowed": {
                     "type": "boolean"
@@ -7150,27 +6612,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -7363,20 +6804,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "deleted_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "deleted_by": {
-                    "type": "string"
-                  },
                   "owner_id": {
                     "type": "string"
                   },
@@ -7827,10 +7254,7 @@
         "required": [
           "id",
           "visibility",
-          "join_policy",
-          "tags",
-          "sync_to_slack",
-          "sync_to_github"
+          "join_policy"
         ]
       },
       "Integration": {
@@ -7878,8 +7302,7 @@
         },
         "required": [
           "id",
-          "name",
-          "secret_name"
+          "name"
         ]
       },
       "Invite": {
@@ -7910,9 +7333,6 @@
             "type": "string"
           },
           "owner_id": {
-            "type": "string"
-          },
-          "token": {
             "type": "string"
           },
           "expires": {
@@ -7947,10 +7367,6 @@
           "requestor_id": {
             "type": "string"
           },
-          "secret": {
-            "type": "string",
-            "format": "byte"
-          },
           "owner": {
             "$ref": "#/components/schemas/Organization"
           }
@@ -7958,7 +7374,6 @@
         "required": [
           "id",
           "owner_id",
-          "token",
           "recipient",
           "status",
           "role",
@@ -8271,8 +7686,7 @@
         "required": [
           "id",
           "name",
-          "display_name",
-          "personal_org"
+          "display_name"
         ]
       },
       "OrganizationSetting": {
@@ -8526,9 +7940,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -8543,9 +7954,6 @@
               "GITHUB"
             ],
             "default": "CREDENTIALS"
-          },
-          "tfa_secret": {
-            "type": "string"
           },
           "is_phone_otp_allowed": {
             "type": "boolean"
@@ -8620,7 +8028,6 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth",
           "auth_provider",
           "setting"
         ]

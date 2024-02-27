@@ -145,6 +145,14 @@ func (ic *IntegrationCreate) SetSecretName(s string) *IntegrationCreate {
 	return ic
 }
 
+// SetNillableSecretName sets the "secret_name" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableSecretName(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetSecretName(*s)
+	}
+	return ic
+}
+
 // SetID sets the "id" field.
 func (ic *IntegrationCreate) SetID(s string) *IntegrationCreate {
 	ic.mutation.SetID(s)
@@ -248,9 +256,6 @@ func (ic *IntegrationCreate) check() error {
 		if err := integration.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
-	}
-	if _, ok := ic.mutation.SecretName(); !ok {
-		return &ValidationError{Name: "secret_name", err: errors.New(`generated: missing required field "Integration.secret_name"`)}
 	}
 	return nil
 }

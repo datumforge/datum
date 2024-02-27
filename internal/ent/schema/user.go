@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -105,12 +106,14 @@ func (User) Fields() []ent.Field {
 		field.Time("last_seen").
 			Comment("the time the user was last seen").
 			UpdateDefault(time.Now).
+			Annotations(entoas.Annotation{ReadOnly: true}).
 			Optional().
 			Nillable(),
 		field.String("password").
 			Comment("user password hash").
 			Nillable().
 			Sensitive().
+			Annotations(entoas.Skip(true)).
 			Optional(),
 		field.String("sub").
 			Comment("the Subject of the user JWT").
@@ -118,6 +121,7 @@ func (User) Fields() []ent.Field {
 			Optional(),
 		field.Bool("oauth").
 			Comment("whether the user uses oauth for login or not").
+			Optional().
 			Default(false),
 		field.Enum("auth_provider").
 			GoType(enums.AuthProvider("")).
@@ -126,6 +130,7 @@ func (User) Fields() []ent.Field {
 		field.String("tfa_secret").
 			Comment("TFA secret for the user").
 			Sensitive().
+			Annotations(entoas.Skip(true)).
 			Optional().
 			Nillable(),
 		field.Bool("is_phone_otp_allowed").
@@ -171,9 +176,15 @@ func (User) Edges() []ent.Edge {
 			Unique().
 			Annotations(entx.CascadeAnnotationField("User")),
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
-			Annotations(entx.CascadeAnnotationField("Owner")),
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+				entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			),
 		edge.To("password_reset_tokens", PasswordResetToken.Type).
-			Annotations(entx.CascadeAnnotationField("Owner")),
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+				entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			),
 		edge.To("groups", Group.Type).
 			Through("group_memberships", GroupMembership.Type),
 		edge.To("organizations", Organization.Type).

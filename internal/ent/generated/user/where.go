@@ -1228,6 +1228,16 @@ func OauthNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldOauth, v))
 }
 
+// OauthIsNil applies the IsNil predicate on the "oauth" field.
+func OauthIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldOauth))
+}
+
+// OauthNotNil applies the NotNil predicate on the "oauth" field.
+func OauthNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldOauth))
+}
+
 // AuthProviderEQ applies the EQ predicate on the "auth_provider" field.
 func AuthProviderEQ(v enums.AuthProvider) predicate.User {
 	vc := v

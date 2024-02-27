@@ -286,6 +286,12 @@ func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
 	return uu
 }
 
+// ClearOauth clears the value of the "oauth" field.
+func (uu *UserUpdate) ClearOauth() *UserUpdate {
+	uu.mutation.ClearOauth()
+	return uu
+}
+
 // SetAuthProvider sets the "auth_provider" field.
 func (uu *UserUpdate) SetAuthProvider(ep enums.AuthProvider) *UserUpdate {
 	uu.mutation.SetAuthProvider(ep)
@@ -921,6 +927,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if uu.mutation.OauthCleared() {
+		_spec.ClearField(user.FieldOauth, field.TypeBool)
 	}
 	if value, ok := uu.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
@@ -1686,6 +1695,12 @@ func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
 	return uuo
 }
 
+// ClearOauth clears the value of the "oauth" field.
+func (uuo *UserUpdateOne) ClearOauth() *UserUpdateOne {
+	uuo.mutation.ClearOauth()
+	return uuo
+}
+
 // SetAuthProvider sets the "auth_provider" field.
 func (uuo *UserUpdateOne) SetAuthProvider(ep enums.AuthProvider) *UserUpdateOne {
 	uuo.mutation.SetAuthProvider(ep)
@@ -2351,6 +2366,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if uuo.mutation.OauthCleared() {
+		_spec.ClearField(user.FieldOauth, field.TypeBool)
 	}
 	if value, ok := uuo.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)

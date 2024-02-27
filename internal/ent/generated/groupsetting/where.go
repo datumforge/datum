@@ -543,6 +543,16 @@ func JoinPolicyNotIn(vs ...enums.JoinPolicy) predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldNotIn(FieldJoinPolicy, v...))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldNotNull(FieldTags))
+}
+
 // SyncToSlackEQ applies the EQ predicate on the "sync_to_slack" field.
 func SyncToSlackEQ(v bool) predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldEQ(FieldSyncToSlack, v))
@@ -553,6 +563,16 @@ func SyncToSlackNEQ(v bool) predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldNEQ(FieldSyncToSlack, v))
 }
 
+// SyncToSlackIsNil applies the IsNil predicate on the "sync_to_slack" field.
+func SyncToSlackIsNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldIsNull(FieldSyncToSlack))
+}
+
+// SyncToSlackNotNil applies the NotNil predicate on the "sync_to_slack" field.
+func SyncToSlackNotNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldNotNull(FieldSyncToSlack))
+}
+
 // SyncToGithubEQ applies the EQ predicate on the "sync_to_github" field.
 func SyncToGithubEQ(v bool) predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldEQ(FieldSyncToGithub, v))
@@ -561,6 +581,16 @@ func SyncToGithubEQ(v bool) predicate.GroupSetting {
 // SyncToGithubNEQ applies the NEQ predicate on the "sync_to_github" field.
 func SyncToGithubNEQ(v bool) predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldNEQ(FieldSyncToGithub, v))
+}
+
+// SyncToGithubIsNil applies the IsNil predicate on the "sync_to_github" field.
+func SyncToGithubIsNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldIsNull(FieldSyncToGithub))
+}
+
+// SyncToGithubNotNil applies the NotNil predicate on the "sync_to_github" field.
+func SyncToGithubNotNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldNotNull(FieldSyncToGithub))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

@@ -300,15 +300,6 @@ func (gsc *GroupSettingCreate) check() error {
 			return &ValidationError{Name: "join_policy", err: fmt.Errorf(`generated: validator failed for field "GroupSetting.join_policy": %w`, err)}
 		}
 	}
-	if _, ok := gsc.mutation.Tags(); !ok {
-		return &ValidationError{Name: "tags", err: errors.New(`generated: missing required field "GroupSetting.tags"`)}
-	}
-	if _, ok := gsc.mutation.SyncToSlack(); !ok {
-		return &ValidationError{Name: "sync_to_slack", err: errors.New(`generated: missing required field "GroupSetting.sync_to_slack"`)}
-	}
-	if _, ok := gsc.mutation.SyncToGithub(); !ok {
-		return &ValidationError{Name: "sync_to_github", err: errors.New(`generated: missing required field "GroupSetting.sync_to_github"`)}
-	}
 	return nil
 }
 

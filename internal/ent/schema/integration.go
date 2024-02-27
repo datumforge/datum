@@ -35,7 +35,9 @@ func (Integration) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("kind"),
 			),
-		field.String("secret_name").Immutable(),
+		field.String("secret_name").
+			Optional().
+			Immutable(),
 	}
 }
 

@@ -418,18 +418,21 @@ func (c *GroupSettingCreate) SetInput(i CreateGroupSettingInput) *GroupSettingCr
 
 // UpdateGroupSettingInput represents a mutation input for updating groupsettings.
 type UpdateGroupSettingInput struct {
-	ClearUpdatedAt bool
-	UpdatedAt      *time.Time
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	Visibility     *enums.Visibility
-	JoinPolicy     *enums.JoinPolicy
-	Tags           []string
-	AppendTags     []string
-	SyncToSlack    *bool
-	SyncToGithub   *bool
-	ClearGroup     bool
-	GroupID        *string
+	ClearUpdatedAt    bool
+	UpdatedAt         *time.Time
+	ClearUpdatedBy    bool
+	UpdatedBy         *string
+	Visibility        *enums.Visibility
+	JoinPolicy        *enums.JoinPolicy
+	ClearTags         bool
+	Tags              []string
+	AppendTags        []string
+	ClearSyncToSlack  bool
+	SyncToSlack       *bool
+	ClearSyncToGithub bool
+	SyncToGithub      *bool
+	ClearGroup        bool
+	GroupID           *string
 }
 
 // Mutate applies the UpdateGroupSettingInput on the GroupSettingMutation builder.
@@ -452,14 +455,23 @@ func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
 	if v := i.JoinPolicy; v != nil {
 		m.SetJoinPolicy(*v)
 	}
+	if i.ClearTags {
+		m.ClearTags()
+	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
+	if i.ClearSyncToSlack {
+		m.ClearSyncToSlack()
+	}
 	if v := i.SyncToSlack; v != nil {
 		m.SetSyncToSlack(*v)
+	}
+	if i.ClearSyncToGithub {
+		m.ClearSyncToGithub()
 	}
 	if v := i.SyncToGithub; v != nil {
 		m.SetSyncToGithub(*v)
@@ -493,7 +505,7 @@ type CreateIntegrationInput struct {
 	Name        string
 	Description *string
 	Kind        *string
-	SecretName  string
+	SecretName  *string
 	OwnerID     *string
 }
 
@@ -518,7 +530,9 @@ func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
 	if v := i.Kind; v != nil {
 		m.SetKind(*v)
 	}
-	m.SetSecretName(i.SecretName)
+	if v := i.SecretName; v != nil {
+		m.SetSecretName(*v)
+	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -1756,6 +1770,7 @@ type UpdateUserInput struct {
 	Password                        *string
 	ClearSub                        bool
 	Sub                             *string
+	ClearOauth                      bool
 	Oauth                           *bool
 	AuthProvider                    *enums.AuthProvider
 	ClearTfaSecret                  bool
@@ -1852,6 +1867,9 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
+	}
+	if i.ClearOauth {
+		m.ClearOauth()
 	}
 	if v := i.Oauth; v != nil {
 		m.SetOauth(*v)

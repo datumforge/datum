@@ -296,6 +296,9 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if iu.mutation.KindCleared() {
 		_spec.ClearField(integration.FieldKind, field.TypeString)
 	}
+	if iu.mutation.SecretNameCleared() {
+		_spec.ClearField(integration.FieldSecretName, field.TypeString)
+	}
 	if iu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -643,6 +646,9 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 	}
 	if iuo.mutation.KindCleared() {
 		_spec.ClearField(integration.FieldKind, field.TypeString)
+	}
+	if iuo.mutation.SecretNameCleared() {
+		_spec.ClearField(integration.FieldSecretName, field.TypeString)
 	}
 	if iuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

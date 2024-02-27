@@ -173,9 +173,9 @@ var (
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
 		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
-		{Name: "tags", Type: field.TypeJSON},
-		{Name: "sync_to_slack", Type: field.TypeBool, Default: false},
-		{Name: "sync_to_github", Type: field.TypeBool, Default: false},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "group_setting", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// GroupSettingsTable holds the schema information for the "group_settings" table.
@@ -204,7 +204,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "kind", Type: field.TypeString, Nullable: true},
-		{Name: "secret_name", Type: field.TypeString},
+		{Name: "secret_name", Type: field.TypeString, Nullable: true},
 		{Name: "organization_integrations", Type: field.TypeString, Nullable: true},
 	}
 	// IntegrationsTable holds the schema information for the "integrations" table.
@@ -375,7 +375,7 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 160},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "personal_org", Type: field.TypeBool, Default: false},
+		{Name: "personal_org", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -533,7 +533,7 @@ var (
 		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "oauth", Type: field.TypeBool, Default: false},
+		{Name: "oauth", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB"}, Default: "CREDENTIALS"},
 		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
 		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},

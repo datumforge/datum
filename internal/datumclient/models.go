@@ -97,7 +97,7 @@ type CreateIntegrationInput struct {
 	// a description of the integration
 	Description *string `json:"description,omitempty"`
 	Kind        *string `json:"kind,omitempty"`
-	SecretName  string  `json:"secretName"`
+	SecretName  *string `json:"secretName,omitempty"`
 	OwnerID     *string `json:"ownerID,omitempty"`
 }
 
@@ -782,9 +782,9 @@ type GroupSetting struct {
 	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
 	JoinPolicy enums.JoinPolicy `json:"joinPolicy"`
 	// tags associated with the object
-	Tags         []string `json:"tags"`
-	SyncToSlack  bool     `json:"syncToSlack"`
-	SyncToGithub bool     `json:"syncToGithub"`
+	Tags         []string `json:"tags,omitempty"`
+	SyncToSlack  *bool    `json:"syncToSlack,omitempty"`
+	SyncToGithub *bool    `json:"syncToGithub,omitempty"`
 	Group        *Group   `json:"group,omitempty"`
 }
 
@@ -935,11 +935,15 @@ type GroupSettingWhereInput struct {
 	JoinPolicyIn    []enums.JoinPolicy `json:"joinPolicyIn,omitempty"`
 	JoinPolicyNotIn []enums.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
 	// sync_to_slack field predicates
-	SyncToSlack    *bool `json:"syncToSlack,omitempty"`
-	SyncToSlackNeq *bool `json:"syncToSlackNEQ,omitempty"`
+	SyncToSlack       *bool `json:"syncToSlack,omitempty"`
+	SyncToSlackNeq    *bool `json:"syncToSlackNEQ,omitempty"`
+	SyncToSlackIsNil  *bool `json:"syncToSlackIsNil,omitempty"`
+	SyncToSlackNotNil *bool `json:"syncToSlackNotNil,omitempty"`
 	// sync_to_github field predicates
-	SyncToGithub    *bool `json:"syncToGithub,omitempty"`
-	SyncToGithubNeq *bool `json:"syncToGithubNEQ,omitempty"`
+	SyncToGithub       *bool `json:"syncToGithub,omitempty"`
+	SyncToGithubNeq    *bool `json:"syncToGithubNEQ,omitempty"`
+	SyncToGithubIsNil  *bool `json:"syncToGithubIsNil,omitempty"`
+	SyncToGithubNotNil *bool `json:"syncToGithubNotNil,omitempty"`
 	// group edge predicates
 	HasGroup     *bool              `json:"hasGroup,omitempty"`
 	HasGroupWith []*GroupWhereInput `json:"hasGroupWith,omitempty"`
@@ -1104,7 +1108,7 @@ type Integration struct {
 	// a description of the integration
 	Description *string       `json:"description,omitempty"`
 	Kind        *string       `json:"kind,omitempty"`
-	SecretName  string        `json:"secretName"`
+	SecretName  *string       `json:"secretName,omitempty"`
 	Owner       *Organization `json:"owner,omitempty"`
 }
 
@@ -1294,6 +1298,8 @@ type IntegrationWhereInput struct {
 	SecretNameContains     *string  `json:"secretNameContains,omitempty"`
 	SecretNameHasPrefix    *string  `json:"secretNameHasPrefix,omitempty"`
 	SecretNameHasSuffix    *string  `json:"secretNameHasSuffix,omitempty"`
+	SecretNameIsNil        *bool    `json:"secretNameIsNil,omitempty"`
+	SecretNameNotNil       *bool    `json:"secretNameNotNil,omitempty"`
 	SecretNameEqualFold    *string  `json:"secretNameEqualFold,omitempty"`
 	SecretNameContainsFold *string  `json:"secretNameContainsFold,omitempty"`
 	// owner edge predicates
@@ -2172,7 +2178,7 @@ type Organization struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg          bool                    `json:"personalOrg"`
+	PersonalOrg          *bool                   `json:"personalOrg,omitempty"`
 	Parent               *Organization           `json:"parent,omitempty"`
 	Children             *OrganizationConnection `json:"children"`
 	Groups               []*Group                `json:"groups,omitempty"`
@@ -2655,8 +2661,10 @@ type OrganizationWhereInput struct {
 	ParentOrganizationIDEqualFold    *string  `json:"parentOrganizationIDEqualFold,omitempty"`
 	ParentOrganizationIDContainsFold *string  `json:"parentOrganizationIDContainsFold,omitempty"`
 	// personal_org field predicates
-	PersonalOrg    *bool `json:"personalOrg,omitempty"`
-	PersonalOrgNeq *bool `json:"personalOrgNEQ,omitempty"`
+	PersonalOrg       *bool `json:"personalOrg,omitempty"`
+	PersonalOrgNeq    *bool `json:"personalOrgNEQ,omitempty"`
+	PersonalOrgIsNil  *bool `json:"personalOrgIsNil,omitempty"`
+	PersonalOrgNotNil *bool `json:"personalOrgNotNil,omitempty"`
 	// parent edge predicates
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`
@@ -2986,12 +2994,15 @@ type UpdateGroupSettingInput struct {
 	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
 	JoinPolicy *enums.JoinPolicy `json:"joinPolicy,omitempty"`
 	// tags associated with the object
-	Tags         []string `json:"tags,omitempty"`
-	AppendTags   []string `json:"appendTags,omitempty"`
-	SyncToSlack  *bool    `json:"syncToSlack,omitempty"`
-	SyncToGithub *bool    `json:"syncToGithub,omitempty"`
-	GroupID      *string  `json:"groupID,omitempty"`
-	ClearGroup   *bool    `json:"clearGroup,omitempty"`
+	Tags              []string `json:"tags,omitempty"`
+	AppendTags        []string `json:"appendTags,omitempty"`
+	ClearTags         *bool    `json:"clearTags,omitempty"`
+	SyncToSlack       *bool    `json:"syncToSlack,omitempty"`
+	ClearSyncToSlack  *bool    `json:"clearSyncToSlack,omitempty"`
+	SyncToGithub      *bool    `json:"syncToGithub,omitempty"`
+	ClearSyncToGithub *bool    `json:"clearSyncToGithub,omitempty"`
+	GroupID           *string  `json:"groupID,omitempty"`
+	ClearGroup        *bool    `json:"clearGroup,omitempty"`
 }
 
 // UpdateIntegrationInput is used for update Integration object.
@@ -3224,7 +3235,8 @@ type UpdateUserInput struct {
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth *bool `json:"oauth,omitempty"`
+	Oauth      *bool `json:"oauth,omitempty"`
+	ClearOauth *bool `json:"clearOauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider *enums.AuthProvider `json:"authProvider,omitempty"`
 	// TFA secret for the user
@@ -3320,7 +3332,7 @@ type User struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth bool `json:"oauth"`
+	Oauth *bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"authProvider"`
 	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
@@ -3825,8 +3837,10 @@ type UserWhereInput struct {
 	SubEqualFold    *string  `json:"subEqualFold,omitempty"`
 	SubContainsFold *string  `json:"subContainsFold,omitempty"`
 	// oauth field predicates
-	Oauth    *bool `json:"oauth,omitempty"`
-	OauthNeq *bool `json:"oauthNEQ,omitempty"`
+	Oauth       *bool `json:"oauth,omitempty"`
+	OauthNeq    *bool `json:"oauthNEQ,omitempty"`
+	OauthIsNil  *bool `json:"oauthIsNil,omitempty"`
+	OauthNotNil *bool `json:"oauthNotNil,omitempty"`
 	// auth_provider field predicates
 	AuthProvider      *enums.AuthProvider  `json:"authProvider,omitempty"`
 	AuthProviderNeq   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`

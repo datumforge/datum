@@ -122,7 +122,7 @@ input CreateIntegrationInput {
 	"""
 	description: String
 	kind: String
-	secretName: String!
+	secretName: String
 	ownerID: ID
 }
 """
@@ -1061,9 +1061,9 @@ type GroupSetting implements Node {
 	"""
 	tags associated with the object
 	"""
-	tags: [String!]!
-	syncToSlack: Boolean!
-	syncToGithub: Boolean!
+	tags: [String!]
+	syncToSlack: Boolean
+	syncToGithub: Boolean
 	group: Group
 }
 """
@@ -1272,11 +1272,15 @@ input GroupSettingWhereInput {
 	"""
 	syncToSlack: Boolean
 	syncToSlackNEQ: Boolean
+	syncToSlackIsNil: Boolean
+	syncToSlackNotNil: Boolean
 	"""
 	sync_to_github field predicates
 	"""
 	syncToGithub: Boolean
 	syncToGithubNEQ: Boolean
+	syncToGithubIsNil: Boolean
+	syncToGithubNotNil: Boolean
 	"""
 	group edge predicates
 	"""
@@ -1476,7 +1480,7 @@ type Integration implements Node {
 	"""
 	description: String
 	kind: String
-	secretName: String!
+	secretName: String
 	owner: Organization
 }
 """
@@ -1718,6 +1722,8 @@ input IntegrationWhereInput {
 	secretNameContains: String
 	secretNameHasPrefix: String
 	secretNameHasSuffix: String
+	secretNameIsNil: Boolean
+	secretNameNotNil: Boolean
 	secretNameEqualFold: String
 	secretNameContainsFold: String
 	"""
@@ -3307,7 +3313,7 @@ type Organization implements Node {
 	"""
 	orgs directly associated with a user
 	"""
-	personalOrg: Boolean!
+	personalOrg: Boolean
 	parent: Organization
 	children(
 		"""
@@ -3933,6 +3939,8 @@ input OrganizationWhereInput {
 	"""
 	personalOrg: Boolean
 	personalOrgNEQ: Boolean
+	personalOrgIsNil: Boolean
+	personalOrgNotNil: Boolean
 	"""
 	parent edge predicates
 	"""
@@ -4907,8 +4915,11 @@ input UpdateGroupSettingInput {
 	"""
 	tags: [String!]
 	appendTags: [String!]
+	clearTags: Boolean
 	syncToSlack: Boolean
+	clearSyncToSlack: Boolean
 	syncToGithub: Boolean
+	clearSyncToGithub: Boolean
 	groupID: ID
 	clearGroup: Boolean
 }
@@ -5217,6 +5228,7 @@ input UpdateUserInput {
 	whether the user uses oauth for login or not
 	"""
 	oauth: Boolean
+	clearOauth: Boolean
 	"""
 	auth provider used to register the account
 	"""
@@ -5352,7 +5364,7 @@ type User implements Node {
 	"""
 	whether the user uses oauth for login or not
 	"""
-	oauth: Boolean!
+	oauth: Boolean
 	"""
 	auth provider used to register the account
 	"""
@@ -6012,6 +6024,8 @@ input UserWhereInput {
 	"""
 	oauth: Boolean
 	oauthNEQ: Boolean
+	oauthIsNil: Boolean
+	oauthNotNil: Boolean
 	"""
 	auth_provider field predicates
 	"""

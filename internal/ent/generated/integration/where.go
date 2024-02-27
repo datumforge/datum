@@ -762,6 +762,16 @@ func SecretNameHasSuffix(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldHasSuffix(FieldSecretName, v))
 }
 
+// SecretNameIsNil applies the IsNil predicate on the "secret_name" field.
+func SecretNameIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldSecretName))
+}
+
+// SecretNameNotNil applies the NotNil predicate on the "secret_name" field.
+func SecretNameNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldSecretName))
+}
+
 // SecretNameEqualFold applies the EqualFold predicate on the "secret_name" field.
 func SecretNameEqualFold(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldEqualFold(FieldSecretName, v))

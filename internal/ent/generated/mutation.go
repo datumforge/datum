@@ -5214,10 +5214,24 @@ func (m *GroupSettingMutation) AppendedTags() ([]string, bool) {
 	return m.appendtags, true
 }
 
+// ClearTags clears the value of the "tags" field.
+func (m *GroupSettingMutation) ClearTags() {
+	m.tags = nil
+	m.appendtags = nil
+	m.clearedFields[groupsetting.FieldTags] = struct{}{}
+}
+
+// TagsCleared returns if the "tags" field was cleared in this mutation.
+func (m *GroupSettingMutation) TagsCleared() bool {
+	_, ok := m.clearedFields[groupsetting.FieldTags]
+	return ok
+}
+
 // ResetTags resets all changes to the "tags" field.
 func (m *GroupSettingMutation) ResetTags() {
 	m.tags = nil
 	m.appendtags = nil
+	delete(m.clearedFields, groupsetting.FieldTags)
 }
 
 // SetSyncToSlack sets the "sync_to_slack" field.
@@ -5251,9 +5265,22 @@ func (m *GroupSettingMutation) OldSyncToSlack(ctx context.Context) (v bool, err 
 	return oldValue.SyncToSlack, nil
 }
 
+// ClearSyncToSlack clears the value of the "sync_to_slack" field.
+func (m *GroupSettingMutation) ClearSyncToSlack() {
+	m.sync_to_slack = nil
+	m.clearedFields[groupsetting.FieldSyncToSlack] = struct{}{}
+}
+
+// SyncToSlackCleared returns if the "sync_to_slack" field was cleared in this mutation.
+func (m *GroupSettingMutation) SyncToSlackCleared() bool {
+	_, ok := m.clearedFields[groupsetting.FieldSyncToSlack]
+	return ok
+}
+
 // ResetSyncToSlack resets all changes to the "sync_to_slack" field.
 func (m *GroupSettingMutation) ResetSyncToSlack() {
 	m.sync_to_slack = nil
+	delete(m.clearedFields, groupsetting.FieldSyncToSlack)
 }
 
 // SetSyncToGithub sets the "sync_to_github" field.
@@ -5287,9 +5314,22 @@ func (m *GroupSettingMutation) OldSyncToGithub(ctx context.Context) (v bool, err
 	return oldValue.SyncToGithub, nil
 }
 
+// ClearSyncToGithub clears the value of the "sync_to_github" field.
+func (m *GroupSettingMutation) ClearSyncToGithub() {
+	m.sync_to_github = nil
+	m.clearedFields[groupsetting.FieldSyncToGithub] = struct{}{}
+}
+
+// SyncToGithubCleared returns if the "sync_to_github" field was cleared in this mutation.
+func (m *GroupSettingMutation) SyncToGithubCleared() bool {
+	_, ok := m.clearedFields[groupsetting.FieldSyncToGithub]
+	return ok
+}
+
 // ResetSyncToGithub resets all changes to the "sync_to_github" field.
 func (m *GroupSettingMutation) ResetSyncToGithub() {
 	m.sync_to_github = nil
+	delete(m.clearedFields, groupsetting.FieldSyncToGithub)
 }
 
 // SetGroupID sets the "group" edge to the Group entity by id.
@@ -5594,6 +5634,15 @@ func (m *GroupSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(groupsetting.FieldDeletedBy) {
 		fields = append(fields, groupsetting.FieldDeletedBy)
 	}
+	if m.FieldCleared(groupsetting.FieldTags) {
+		fields = append(fields, groupsetting.FieldTags)
+	}
+	if m.FieldCleared(groupsetting.FieldSyncToSlack) {
+		fields = append(fields, groupsetting.FieldSyncToSlack)
+	}
+	if m.FieldCleared(groupsetting.FieldSyncToGithub) {
+		fields = append(fields, groupsetting.FieldSyncToGithub)
+	}
 	return fields
 }
 
@@ -5625,6 +5674,15 @@ func (m *GroupSettingMutation) ClearField(name string) error {
 		return nil
 	case groupsetting.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case groupsetting.FieldTags:
+		m.ClearTags()
+		return nil
+	case groupsetting.FieldSyncToSlack:
+		m.ClearSyncToSlack()
+		return nil
+	case groupsetting.FieldSyncToGithub:
+		m.ClearSyncToGithub()
 		return nil
 	}
 	return fmt.Errorf("unknown GroupSetting nullable field %s", name)
@@ -6332,9 +6390,22 @@ func (m *IntegrationMutation) OldSecretName(ctx context.Context) (v string, err 
 	return oldValue.SecretName, nil
 }
 
+// ClearSecretName clears the value of the "secret_name" field.
+func (m *IntegrationMutation) ClearSecretName() {
+	m.secret_name = nil
+	m.clearedFields[integration.FieldSecretName] = struct{}{}
+}
+
+// SecretNameCleared returns if the "secret_name" field was cleared in this mutation.
+func (m *IntegrationMutation) SecretNameCleared() bool {
+	_, ok := m.clearedFields[integration.FieldSecretName]
+	return ok
+}
+
 // ResetSecretName resets all changes to the "secret_name" field.
 func (m *IntegrationMutation) ResetSecretName() {
 	m.secret_name = nil
+	delete(m.clearedFields, integration.FieldSecretName)
 }
 
 // SetOwnerID sets the "owner" edge to the Organization entity by id.
@@ -6631,6 +6702,9 @@ func (m *IntegrationMutation) ClearedFields() []string {
 	if m.FieldCleared(integration.FieldKind) {
 		fields = append(fields, integration.FieldKind)
 	}
+	if m.FieldCleared(integration.FieldSecretName) {
+		fields = append(fields, integration.FieldSecretName)
+	}
 	return fields
 }
 
@@ -6668,6 +6742,9 @@ func (m *IntegrationMutation) ClearField(name string) error {
 		return nil
 	case integration.FieldKind:
 		m.ClearKind()
+		return nil
+	case integration.FieldSecretName:
+		m.ClearSecretName()
 		return nil
 	}
 	return fmt.Errorf("unknown Integration nullable field %s", name)
@@ -12058,9 +12135,22 @@ func (m *OrganizationMutation) OldPersonalOrg(ctx context.Context) (v bool, err 
 	return oldValue.PersonalOrg, nil
 }
 
+// ClearPersonalOrg clears the value of the "personal_org" field.
+func (m *OrganizationMutation) ClearPersonalOrg() {
+	m.personal_org = nil
+	m.clearedFields[organization.FieldPersonalOrg] = struct{}{}
+}
+
+// PersonalOrgCleared returns if the "personal_org" field was cleared in this mutation.
+func (m *OrganizationMutation) PersonalOrgCleared() bool {
+	_, ok := m.clearedFields[organization.FieldPersonalOrg]
+	return ok
+}
+
 // ResetPersonalOrg resets all changes to the "personal_org" field.
 func (m *OrganizationMutation) ResetPersonalOrg() {
 	m.personal_org = nil
+	delete(m.clearedFields, organization.FieldPersonalOrg)
 }
 
 // SetParentID sets the "parent" edge to the Organization entity by id.
@@ -12897,6 +12987,9 @@ func (m *OrganizationMutation) ClearedFields() []string {
 	if m.FieldCleared(organization.FieldParentOrganizationID) {
 		fields = append(fields, organization.FieldParentOrganizationID)
 	}
+	if m.FieldCleared(organization.FieldPersonalOrg) {
+		fields = append(fields, organization.FieldPersonalOrg)
+	}
 	return fields
 }
 
@@ -12934,6 +13027,9 @@ func (m *OrganizationMutation) ClearField(name string) error {
 		return nil
 	case organization.FieldParentOrganizationID:
 		m.ClearParentOrganizationID()
+		return nil
+	case organization.FieldPersonalOrg:
+		m.ClearPersonalOrg()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization nullable field %s", name)
@@ -18140,9 +18236,22 @@ func (m *UserMutation) OldOauth(ctx context.Context) (v bool, err error) {
 	return oldValue.Oauth, nil
 }
 
+// ClearOauth clears the value of the "oauth" field.
+func (m *UserMutation) ClearOauth() {
+	m.oauth = nil
+	m.clearedFields[user.FieldOauth] = struct{}{}
+}
+
+// OauthCleared returns if the "oauth" field was cleared in this mutation.
+func (m *UserMutation) OauthCleared() bool {
+	_, ok := m.clearedFields[user.FieldOauth]
+	return ok
+}
+
 // ResetOauth resets all changes to the "oauth" field.
 func (m *UserMutation) ResetOauth() {
 	m.oauth = nil
+	delete(m.clearedFields, user.FieldOauth)
 }
 
 // SetAuthProvider sets the "auth_provider" field.
@@ -19409,6 +19518,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldSub) {
 		fields = append(fields, user.FieldSub)
 	}
+	if m.FieldCleared(user.FieldOauth) {
+		fields = append(fields, user.FieldOauth)
+	}
 	if m.FieldCleared(user.FieldTfaSecret) {
 		fields = append(fields, user.FieldTfaSecret)
 	}
@@ -19476,6 +19588,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldSub:
 		m.ClearSub()
+		return nil
+	case user.FieldOauth:
+		m.ClearOauth()
 		return nil
 	case user.FieldTfaSecret:
 		m.ClearTfaSecret()

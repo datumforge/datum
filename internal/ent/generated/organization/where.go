@@ -787,6 +787,16 @@ func PersonalOrgNEQ(v bool) predicate.Organization {
 	return predicate.Organization(sql.FieldNEQ(FieldPersonalOrg, v))
 }
 
+// PersonalOrgIsNil applies the IsNil predicate on the "personal_org" field.
+func PersonalOrgIsNil() predicate.Organization {
+	return predicate.Organization(sql.FieldIsNull(FieldPersonalOrg))
+}
+
+// PersonalOrgNotNil applies the NotNil predicate on the "personal_org" field.
+func PersonalOrgNotNil() predicate.Organization {
+	return predicate.Organization(sql.FieldNotNull(FieldPersonalOrg))
+}
+
 // HasParent applies the HasEdge predicate on the "parent" edge.
 func HasParent() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

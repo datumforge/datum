@@ -145,6 +145,12 @@ func (gsu *GroupSettingUpdate) AppendTags(s []string) *GroupSettingUpdate {
 	return gsu
 }
 
+// ClearTags clears the value of the "tags" field.
+func (gsu *GroupSettingUpdate) ClearTags() *GroupSettingUpdate {
+	gsu.mutation.ClearTags()
+	return gsu
+}
+
 // SetSyncToSlack sets the "sync_to_slack" field.
 func (gsu *GroupSettingUpdate) SetSyncToSlack(b bool) *GroupSettingUpdate {
 	gsu.mutation.SetSyncToSlack(b)
@@ -159,6 +165,12 @@ func (gsu *GroupSettingUpdate) SetNillableSyncToSlack(b *bool) *GroupSettingUpda
 	return gsu
 }
 
+// ClearSyncToSlack clears the value of the "sync_to_slack" field.
+func (gsu *GroupSettingUpdate) ClearSyncToSlack() *GroupSettingUpdate {
+	gsu.mutation.ClearSyncToSlack()
+	return gsu
+}
+
 // SetSyncToGithub sets the "sync_to_github" field.
 func (gsu *GroupSettingUpdate) SetSyncToGithub(b bool) *GroupSettingUpdate {
 	gsu.mutation.SetSyncToGithub(b)
@@ -170,6 +182,12 @@ func (gsu *GroupSettingUpdate) SetNillableSyncToGithub(b *bool) *GroupSettingUpd
 	if b != nil {
 		gsu.SetSyncToGithub(*b)
 	}
+	return gsu
+}
+
+// ClearSyncToGithub clears the value of the "sync_to_github" field.
+func (gsu *GroupSettingUpdate) ClearSyncToGithub() *GroupSettingUpdate {
+	gsu.mutation.ClearSyncToGithub()
 	return gsu
 }
 
@@ -316,11 +334,20 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			sqljson.Append(u, groupsetting.FieldTags, value)
 		})
 	}
+	if gsu.mutation.TagsCleared() {
+		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gsu.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsetting.FieldSyncToSlack, field.TypeBool, value)
 	}
+	if gsu.mutation.SyncToSlackCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToSlack, field.TypeBool)
+	}
 	if value, ok := gsu.mutation.SyncToGithub(); ok {
 		_spec.SetField(groupsetting.FieldSyncToGithub, field.TypeBool, value)
+	}
+	if gsu.mutation.SyncToGithubCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToGithub, field.TypeBool)
 	}
 	if gsu.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -487,6 +514,12 @@ func (gsuo *GroupSettingUpdateOne) AppendTags(s []string) *GroupSettingUpdateOne
 	return gsuo
 }
 
+// ClearTags clears the value of the "tags" field.
+func (gsuo *GroupSettingUpdateOne) ClearTags() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearTags()
+	return gsuo
+}
+
 // SetSyncToSlack sets the "sync_to_slack" field.
 func (gsuo *GroupSettingUpdateOne) SetSyncToSlack(b bool) *GroupSettingUpdateOne {
 	gsuo.mutation.SetSyncToSlack(b)
@@ -501,6 +534,12 @@ func (gsuo *GroupSettingUpdateOne) SetNillableSyncToSlack(b *bool) *GroupSetting
 	return gsuo
 }
 
+// ClearSyncToSlack clears the value of the "sync_to_slack" field.
+func (gsuo *GroupSettingUpdateOne) ClearSyncToSlack() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearSyncToSlack()
+	return gsuo
+}
+
 // SetSyncToGithub sets the "sync_to_github" field.
 func (gsuo *GroupSettingUpdateOne) SetSyncToGithub(b bool) *GroupSettingUpdateOne {
 	gsuo.mutation.SetSyncToGithub(b)
@@ -512,6 +551,12 @@ func (gsuo *GroupSettingUpdateOne) SetNillableSyncToGithub(b *bool) *GroupSettin
 	if b != nil {
 		gsuo.SetSyncToGithub(*b)
 	}
+	return gsuo
+}
+
+// ClearSyncToGithub clears the value of the "sync_to_github" field.
+func (gsuo *GroupSettingUpdateOne) ClearSyncToGithub() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearSyncToGithub()
 	return gsuo
 }
 
@@ -688,11 +733,20 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 			sqljson.Append(u, groupsetting.FieldTags, value)
 		})
 	}
+	if gsuo.mutation.TagsCleared() {
+		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gsuo.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsetting.FieldSyncToSlack, field.TypeBool, value)
 	}
+	if gsuo.mutation.SyncToSlackCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToSlack, field.TypeBool)
+	}
 	if value, ok := gsuo.mutation.SyncToGithub(); ok {
 		_spec.SetField(groupsetting.FieldSyncToGithub, field.TypeBool, value)
+	}
+	if gsuo.mutation.SyncToGithubCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToGithub, field.TypeBool)
 	}
 	if gsuo.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

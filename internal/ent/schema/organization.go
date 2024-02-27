@@ -66,6 +66,7 @@ func (Organization) Fields() []ent.Field {
 			),
 		field.Bool("personal_org").
 			Comment("orgs directly associated with a user").
+			Optional().
 			Default(false).
 			Immutable(),
 	}
@@ -78,7 +79,6 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(
 				entgql.RelayConnection(),
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
-				entoas.Skip(true),
 			).
 			From("parent").
 			Field("parent_organization_id").
@@ -87,18 +87,15 @@ func (Organization) Edges() []ent.Edge {
 		edge.To("groups", Group.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
-				entoas.Skip(true),
 			),
 		edge.To("integrations", Integration.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
-				entoas.Skip(true),
 			),
 		edge.To("setting", OrganizationSetting.Type).
 			Unique().
 			Annotations(
 				entx.CascadeAnnotationField("Organization"),
-				entoas.Skip(true),
 			),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type),

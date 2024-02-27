@@ -79,9 +79,9 @@ type GetGroupByID_Group_Setting struct {
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
 	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string         "json:\"tags\" graphql:\"tags\""
+	SyncToSlack  *bool            "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool            "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *GetGroupByID_Group_Setting) GetID() string {
@@ -126,13 +126,13 @@ func (t *GetGroupByID_Group_Setting) GetJoinPolicy() *enums.JoinPolicy {
 	}
 	return &t.JoinPolicy
 }
-func (t *GetGroupByID_Group_Setting) GetSyncToSlack() bool {
+func (t *GetGroupByID_Group_Setting) GetSyncToSlack() *bool {
 	if t == nil {
 		t = &GetGroupByID_Group_Setting{}
 	}
 	return t.SyncToSlack
 }
-func (t *GetGroupByID_Group_Setting) GetSyncToGithub() bool {
+func (t *GetGroupByID_Group_Setting) GetSyncToGithub() *bool {
 	if t == nil {
 		t = &GetGroupByID_Group_Setting{}
 	}
@@ -302,9 +302,9 @@ type GroupsWhere_Groups_Edges_Node_Setting struct {
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
 	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string         "json:\"tags\" graphql:\"tags\""
+	SyncToSlack  *bool            "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool            "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *GroupsWhere_Groups_Edges_Node_Setting) GetID() string {
@@ -349,13 +349,13 @@ func (t *GroupsWhere_Groups_Edges_Node_Setting) GetJoinPolicy() *enums.JoinPolic
 	}
 	return &t.JoinPolicy
 }
-func (t *GroupsWhere_Groups_Edges_Node_Setting) GetSyncToSlack() bool {
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetSyncToSlack() *bool {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Setting{}
 	}
 	return t.SyncToSlack
 }
-func (t *GroupsWhere_Groups_Edges_Node_Setting) GetSyncToGithub() bool {
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetSyncToGithub() *bool {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Setting{}
 	}
@@ -547,9 +547,9 @@ type GetAllGroups_Groups_Edges_Node_Setting struct {
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
 	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string         "json:\"tags\" graphql:\"tags\""
+	SyncToSlack  *bool            "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool            "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *GetAllGroups_Groups_Edges_Node_Setting) GetID() string {
@@ -594,13 +594,13 @@ func (t *GetAllGroups_Groups_Edges_Node_Setting) GetJoinPolicy() *enums.JoinPoli
 	}
 	return &t.JoinPolicy
 }
-func (t *GetAllGroups_Groups_Edges_Node_Setting) GetSyncToSlack() bool {
+func (t *GetAllGroups_Groups_Edges_Node_Setting) GetSyncToSlack() *bool {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Setting{}
 	}
 	return t.SyncToSlack
 }
-func (t *GetAllGroups_Groups_Edges_Node_Setting) GetSyncToGithub() bool {
+func (t *GetAllGroups_Groups_Edges_Node_Setting) GetSyncToGithub() *bool {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Setting{}
 	}
@@ -792,9 +792,9 @@ type CreateGroup_CreateGroup_Group_Setting struct {
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
 	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string         "json:\"tags\" graphql:\"tags\""
+	SyncToSlack  *bool            "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool            "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *CreateGroup_CreateGroup_Group_Setting) GetID() string {
@@ -839,13 +839,13 @@ func (t *CreateGroup_CreateGroup_Group_Setting) GetJoinPolicy() *enums.JoinPolic
 	}
 	return &t.JoinPolicy
 }
-func (t *CreateGroup_CreateGroup_Group_Setting) GetSyncToSlack() bool {
+func (t *CreateGroup_CreateGroup_Group_Setting) GetSyncToSlack() *bool {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Setting{}
 	}
 	return t.SyncToSlack
 }
-func (t *CreateGroup_CreateGroup_Group_Setting) GetSyncToGithub() bool {
+func (t *CreateGroup_CreateGroup_Group_Setting) GetSyncToGithub() *bool {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Setting{}
 	}
@@ -1015,9 +1015,9 @@ type UpdateGroup_UpdateGroup_Group_Setting struct {
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
 	JoinPolicy   enums.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	SyncToSlack  bool             "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool             "json:\"syncToGithub\" graphql:\"syncToGithub\""
-	Tags         []string         "json:\"tags\" graphql:\"tags\""
+	SyncToSlack  *bool            "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool            "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Tags         []string         "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *UpdateGroup_UpdateGroup_Group_Setting) GetID() string {
@@ -1062,13 +1062,13 @@ func (t *UpdateGroup_UpdateGroup_Group_Setting) GetJoinPolicy() *enums.JoinPolic
 	}
 	return &t.JoinPolicy
 }
-func (t *UpdateGroup_UpdateGroup_Group_Setting) GetSyncToSlack() bool {
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetSyncToSlack() *bool {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Setting{}
 	}
 	return t.SyncToSlack
 }
-func (t *UpdateGroup_UpdateGroup_Group_Setting) GetSyncToGithub() bool {
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetSyncToGithub() *bool {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Setting{}
 	}
@@ -1429,9 +1429,9 @@ type GetGroupSetting_GroupSetting struct {
 	UpdatedBy    *string                             "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility                    "json:\"visibility\" graphql:\"visibility\""
 	JoinPolicy   enums.JoinPolicy                    "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	Tags         []string                            "json:\"tags\" graphql:\"tags\""
-	SyncToSlack  bool                                "json:\"syncToSlack\" graphql:\"syncToSlack\""
-	SyncToGithub bool                                "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string                            "json:\"tags,omitempty\" graphql:\"tags\""
+	SyncToSlack  *bool                               "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool                               "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
 	Group        *GetGroupSetting_GroupSetting_Group "json:\"group,omitempty\" graphql:\"group\""
 }
 
@@ -1483,13 +1483,13 @@ func (t *GetGroupSetting_GroupSetting) GetTags() []string {
 	}
 	return t.Tags
 }
-func (t *GetGroupSetting_GroupSetting) GetSyncToSlack() bool {
+func (t *GetGroupSetting_GroupSetting) GetSyncToSlack() *bool {
 	if t == nil {
 		t = &GetGroupSetting_GroupSetting{}
 	}
 	return t.SyncToSlack
 }
-func (t *GetGroupSetting_GroupSetting) GetSyncToGithub() bool {
+func (t *GetGroupSetting_GroupSetting) GetSyncToGithub() *bool {
 	if t == nil {
 		t = &GetGroupSetting_GroupSetting{}
 	}
@@ -2048,7 +2048,7 @@ type GetOrganizationByID_Organization struct {
 	Name        string                                      "json:\"name\" graphql:\"name\""
 	DisplayName string                                      "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                     "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg bool                                        "json:\"personalOrg\" graphql:\"personalOrg\""
+	PersonalOrg *bool                                       "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
 	Parent      *GetOrganizationByID_Organization_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
 	Children    GetOrganizationByID_Organization_Children   "json:\"children\" graphql:\"children\""
 	Members     []*GetOrganizationByID_Organization_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -2083,7 +2083,7 @@ func (t *GetOrganizationByID_Organization) GetDescription() *string {
 	}
 	return t.Description
 }
-func (t *GetOrganizationByID_Organization) GetPersonalOrg() bool {
+func (t *GetOrganizationByID_Organization) GetPersonalOrg() *bool {
 	if t == nil {
 		t = &GetOrganizationByID_Organization{}
 	}
@@ -2374,7 +2374,7 @@ type GetAllOrganizations_Organizations_Edges_Node struct {
 	Name        string                                                  "json:\"name\" graphql:\"name\""
 	DisplayName string                                                  "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                 "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg bool                                                    "json:\"personalOrg\" graphql:\"personalOrg\""
+	PersonalOrg *bool                                                   "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
 	Parent      *GetAllOrganizations_Organizations_Edges_Node_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
 	Children    GetAllOrganizations_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
 	Members     []*GetAllOrganizations_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -2407,7 +2407,7 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetDescription() *string 
 	}
 	return t.Description
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node) GetPersonalOrg() bool {
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetPersonalOrg() *bool {
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
@@ -2708,7 +2708,7 @@ type OrganizationsWhere_Organizations_Edges_Node struct {
 	Name        string                                                 "json:\"name\" graphql:\"name\""
 	DisplayName string                                                 "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg bool                                                   "json:\"personalOrg\" graphql:\"personalOrg\""
+	PersonalOrg *bool                                                  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
 	Parent      *OrganizationsWhere_Organizations_Edges_Node_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
 	Children    OrganizationsWhere_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
 	Members     []*OrganizationsWhere_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
@@ -2741,7 +2741,7 @@ func (t *OrganizationsWhere_Organizations_Edges_Node) GetDescription() *string {
 	}
 	return t.Description
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node) GetPersonalOrg() bool {
+func (t *OrganizationsWhere_Organizations_Edges_Node) GetPersonalOrg() *bool {
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node{}
 	}
@@ -2992,7 +2992,7 @@ type CreateOrganization_CreateOrganization_Organization struct {
 	Name        string                                                      "json:\"name\" graphql:\"name\""
 	DisplayName string                                                      "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                     "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg bool                                                        "json:\"personalOrg\" graphql:\"personalOrg\""
+	PersonalOrg *bool                                                       "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
 	CreatedAt   *time.Time                                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	UpdatedAt   *time.Time                                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	Setting     *CreateOrganization_CreateOrganization_Organization_Setting "json:\"setting,omitempty\" graphql:\"setting\""
@@ -3024,7 +3024,7 @@ func (t *CreateOrganization_CreateOrganization_Organization) GetDescription() *s
 	}
 	return t.Description
 }
-func (t *CreateOrganization_CreateOrganization_Organization) GetPersonalOrg() bool {
+func (t *CreateOrganization_CreateOrganization_Organization) GetPersonalOrg() *bool {
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
@@ -4279,7 +4279,7 @@ func (t *GetUserByID_User_Organizations_Members) GetRole() *enums.Role {
 type GetUserByID_User_Organizations struct {
 	ID          string                                    "json:\"id\" graphql:\"id\""
 	Name        string                                    "json:\"name\" graphql:\"name\""
-	PersonalOrg bool                                      "json:\"personalOrg\" graphql:\"personalOrg\""
+	PersonalOrg *bool                                     "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
 	Members     []*GetUserByID_User_Organizations_Members "json:\"members,omitempty\" graphql:\"members\""
 }
 
@@ -4295,7 +4295,7 @@ func (t *GetUserByID_User_Organizations) GetName() string {
 	}
 	return t.Name
 }
-func (t *GetUserByID_User_Organizations) GetPersonalOrg() bool {
+func (t *GetUserByID_User_Organizations) GetPersonalOrg() *bool {
 	if t == nil {
 		t = &GetUserByID_User_Organizations{}
 	}
@@ -4318,7 +4318,7 @@ type GetUserByID_User struct {
 	Sub             *string                           "json:\"sub,omitempty\" graphql:\"sub\""
 	AvatarRemoteURL *string                           "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                           "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Oauth           bool                              "json:\"oauth\" graphql:\"oauth\""
+	Oauth           *bool                             "json:\"oauth,omitempty\" graphql:\"oauth\""
 	AuthProvider    enums.AuthProvider                "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetUserByID_User_Setting          "json:\"setting\" graphql:\"setting\""
 	Organizations   []*GetUserByID_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
@@ -4382,7 +4382,7 @@ func (t *GetUserByID_User) GetAvatarLocalFile() *string {
 	}
 	return t.AvatarLocalFile
 }
-func (t *GetUserByID_User) GetOauth() bool {
+func (t *GetUserByID_User) GetOauth() *bool {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
@@ -4565,7 +4565,7 @@ type GetUserByIDWithOrgs_User struct {
 	Sub             *string                                    "json:\"sub,omitempty\" graphql:\"sub\""
 	AvatarRemoteURL *string                                    "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                                    "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Oauth           bool                                       "json:\"oauth\" graphql:\"oauth\""
+	Oauth           *bool                                      "json:\"oauth,omitempty\" graphql:\"oauth\""
 	AuthProvider    enums.AuthProvider                         "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetUserByIDWithOrgs_User_Setting           "json:\"setting\" graphql:\"setting\""
 	UpdatedAt       *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
@@ -4629,7 +4629,7 @@ func (t *GetUserByIDWithOrgs_User) GetAvatarLocalFile() *string {
 	}
 	return t.AvatarLocalFile
 }
-func (t *GetUserByIDWithOrgs_User) GetOauth() bool {
+func (t *GetUserByIDWithOrgs_User) GetOauth() *bool {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
@@ -4769,7 +4769,7 @@ type GetAllUsers_Users_Edges_Node struct {
 	Sub             *string                              "json:\"sub,omitempty\" graphql:\"sub\""
 	AvatarRemoteURL *string                              "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                              "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Oauth           bool                                 "json:\"oauth\" graphql:\"oauth\""
+	Oauth           *bool                                "json:\"oauth,omitempty\" graphql:\"oauth\""
 	AuthProvider    enums.AuthProvider                   "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
 	UpdatedAt       *time.Time                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
@@ -4832,7 +4832,7 @@ func (t *GetAllUsers_Users_Edges_Node) GetAvatarLocalFile() *string {
 	}
 	return t.AvatarLocalFile
 }
-func (t *GetAllUsers_Users_Edges_Node) GetOauth() bool {
+func (t *GetAllUsers_Users_Edges_Node) GetOauth() *bool {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
@@ -5023,7 +5023,7 @@ type CreateUser_CreateUser_User struct {
 	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
-	Oauth            bool                                           "json:\"oauth\" graphql:\"oauth\""
+	Oauth            *bool                                          "json:\"oauth,omitempty\" graphql:\"oauth\""
 	AuthProvider     enums.AuthProvider                             "json:\"authProvider\" graphql:\"authProvider\""
 	OrgMemberships   []*CreateUser_CreateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 	GroupMemberships []*CreateUser_CreateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
@@ -5078,7 +5078,7 @@ func (t *CreateUser_CreateUser_User) GetSub() *string {
 	}
 	return t.Sub
 }
-func (t *CreateUser_CreateUser_User) GetOauth() bool {
+func (t *CreateUser_CreateUser_User) GetOauth() *bool {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
@@ -5232,7 +5232,7 @@ type UpdateUser_UpdateUser_User struct {
 	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
-	Oauth            bool                                           "json:\"oauth\" graphql:\"oauth\""
+	Oauth            *bool                                          "json:\"oauth,omitempty\" graphql:\"oauth\""
 	AuthProvider     enums.AuthProvider                             "json:\"authProvider\" graphql:\"authProvider\""
 	GroupMemberships []*UpdateUser_UpdateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
 	OrgMemberships   []*UpdateUser_UpdateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
@@ -5287,7 +5287,7 @@ func (t *UpdateUser_UpdateUser_User) GetSub() *string {
 	}
 	return t.Sub
 }
-func (t *UpdateUser_UpdateUser_User) GetOauth() bool {
+func (t *UpdateUser_UpdateUser_User) GetOauth() *bool {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}

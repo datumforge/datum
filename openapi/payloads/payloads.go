@@ -15,9 +15,6 @@ type ResponseError struct {
 	// build commit
 	Version string `json:"version" yaml:"version"`
 
-	// build time
-	BuildTime string `json:"build_time" yaml:"build_time"`
-
 	// environment (prod or stage or ephemeral)
 	Environment string `json:"environment,omitempty" yaml:"environment"`
 }

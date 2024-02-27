@@ -30,9 +30,6 @@ type ResponseError struct {
 	// build commit
 	Version string `json:"version" yaml:"version"`
 
-	// build time
-	BuildTime string `json:"build_time" yaml:"build_time"`
-
 	// environment (prod or stage or ephemeral)
 	Environment string `json:"environment,omitempty" yaml:"environment"`
 }
@@ -51,7 +48,7 @@ func NewSchemaGenerator() *APISchemaGen {
 	//			Description: "Local development",
 	//			URL:         "http://0.0.0.0:{port}/api/{applicationName}",
 	//			Variables: map[string]*openapi3.ServerVariable{
-	//				"applicationName": {Default: "provisioning"},
+	//				"applicationName": {Default: "datum"},
 	//				"port":            {Default: "8000"},
 	//			},
 	//		},
@@ -107,9 +104,8 @@ func (s *APISchemaGen) addSchema(name string, model interface{}) {
 }
 
 var ResponseErrorGenericExample = payloads.ResponseError{
-	Error:     "error: this can be pretty long string",
-	Version:   "df8a489",
-	BuildTime: "2023-04-14_17:15:02",
+	Error:   "error: this can be pretty long string",
+	Version: "df8a489",
 }
 
 type Parameter struct {
@@ -192,12 +188,7 @@ func addPayloads(gen *APISchemaGen) {
 }
 
 func main() {
-	// i'm guessing the best way to do this is to have a function for each part of the schema and then call them in the main function in the order they should be added to the schema - this way the schema can be built in a modular way and the order of the parts can be controlled
 	gen := NewSchemaGenerator()
-	// if you roll up the schema operations that are logically grouped together the way we write code, the sections are something like:
-	// PATHS -> OPERATIONS -> REQUESTS -> RESPONSES
-	//
-
 	addErrorSchemas(gen)
 	addPayloads(gen)
 	addExamples(gen)
@@ -209,7 +200,6 @@ func main() {
 		panic(err)
 	}
 
-	// load configured file - the intent is that this file is the base schema with mostly the info / version information populated in it but for this to be usable as a package I might need to split up the ability to write the files individually and the ability to load the files individually
 	bufferYAML, err := os.ReadFile("./openapi/base.yaml")
 	if err != nil {
 		panic(err)
@@ -252,12 +242,12 @@ func main() {
 	tmp = append(tmp, '\n')
 	bufferJSON = tmp
 
-	err = os.WriteFile("./mitb.gen.json", bufferJSON, 0o644) // nolint: gomnd,gosec
+	err = os.WriteFile("./openapi/mitb.gen.json", bufferJSON, 0o644) // nolint: gomnd,gosec
 	if err != nil {
 		panic(err)
 	}
 
-	err = os.WriteFile("./mitb.gen.yaml", bufferYAML, 0o644) // nolint: gomnd,gosec
+	err = os.WriteFile("./openapi/mitb.gen.yaml", bufferYAML, 0o644) // nolint: gomnd,gosec
 	if err != nil {
 		panic(err)
 	}

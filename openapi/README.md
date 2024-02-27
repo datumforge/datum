@@ -9,9 +9,6 @@ generate OpenAPI specifications, this package uses the amazing `kin-openapi` pro
 
 Well, first, I'll just go fuck myself.
 
-
-
-
 go-openapi does not suuport 3.x
 https://github.com/go-openapi/spec?tab=readme-ov-file#faq
 
@@ -19,21 +16,15 @@ https://github.com/go-openapi/spec?tab=readme-ov-file#faq
 go-swagger uses go-openapi and also thus, does not support current specifications
 https://github.com/go-swagger/go-swagger
 
-
 https://github.com/go-openapi/swag
 also unusable
-
 
 https://github.com/ogen-go/ogen
 is closer to what we want
 
-
 https://github.com/oapi-codegen/echo-middleware
-
 
 https://spec.openapis.org/oas/latest.html
 
 3.1.0
-
-
 npx @redocly/cli@latest push [openapi.yaml] --destination="Datum API@v2" --organization="datum"

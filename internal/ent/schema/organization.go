@@ -78,18 +78,28 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(
 				entgql.RelayConnection(),
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
+				entoas.Skip(true),
 			).
 			From("parent").
 			Field("parent_organization_id").
 			Immutable().
 			Unique(),
 		edge.To("groups", Group.Type).
-			Annotations(entx.CascadeAnnotationField("Owner")),
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+				entoas.Skip(true),
+			),
 		edge.To("integrations", Integration.Type).
-			Annotations(entx.CascadeAnnotationField("Owner")),
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+				entoas.Skip(true),
+			),
 		edge.To("setting", OrganizationSetting.Type).
 			Unique().
-			Annotations(entx.CascadeAnnotationField("Organization")),
+			Annotations(
+				entx.CascadeAnnotationField("Organization"),
+				entoas.Skip(true),
+			),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type),
 		edge.To("oauthprovider", OauthProvider.Type),

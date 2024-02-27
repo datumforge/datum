@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -12,8 +13,9 @@ import (
 
 type OrgOwnerMixin struct {
 	mixin.Schema
-	Ref      string
-	Optional bool
+	Ref               string
+	Optional          bool
+	SkipOASGeneration bool
 }
 
 // Fields of the OrgOwnerMixin
@@ -45,6 +47,16 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 
 	if !orgOwned.Optional {
 		ownerEdge.Required()
+	}
+
+	if orgOwned.SkipOASGeneration {
+		ownerEdge.Annotations(
+			entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		)
 	}
 
 	return []ent.Edge{

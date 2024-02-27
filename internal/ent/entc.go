@@ -34,6 +34,16 @@ var (
 	graphSchemaDir = "./schema/"
 )
 
+func setSecurityOperations() *ogen.Operation {
+	return &ogen.Operation{
+		Security: []map[string][]string{
+			{
+				"BearerAuth": {"read:users"},
+			},
+		},
+	}
+}
+
 func setSecuritySchemes() *ogen.Components {
 	c := &ogen.Components{}
 	c.Init()
@@ -63,11 +73,12 @@ func setSecuritySchemes() *ogen.Components {
 			Flows: &ogen.OAuthFlows{
 				AuthorizationCode: &ogen.OAuthFlow{
 					AuthorizationURL: "https://api.datum.net/oauth2/authorize",
-					TokenURL: 	   "https://api.datum.net/oauth2/token",
-					RefreshURL:	   "https://api.datum.net/oauth2/refresh",
+					TokenURL:         "https://api.datum.net/oauth2/token",
+					RefreshURL:       "https://api.datum.net/oauth2/refresh",
 					Scopes: map[string]string{
 						"user:email": "read user data",
-						"read:user": "modify user data",
+						"read:user":  "modify user data",
+					},
 				},
 			},
 		},
@@ -88,9 +99,8 @@ func main() {
 	_ = os.Mkdir("schema", 0755)
 
 	// Add OpenAPI Gen extension
-	spec := new(ogen.Spec)
-	oas, err := entoas.NewExtension(
-		entoas.Spec(spec),
+
+	ex, err := entoas.NewExtension(
 		entoas.SimpleModels(),
 		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
 			spec.SetOpenAPI("3.1.0")
@@ -116,7 +126,7 @@ func main() {
 				URL:  "https://www.apache.org/licenses/LICENSE-2.0",
 			})
 			spec.Info.SetTermsOfService("https://datum.net/tos")
-			spec.Components = setSecuritySchemes()
+			//			spec.Components = setSecuritySchemes()
 
 			return nil
 		}),
@@ -185,7 +195,7 @@ func main() {
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
 			gqlExt,
-			oas,
+			ex,
 			entfga.NewFGAExtension(
 				entfga.WithSoftDeletes(),
 			),

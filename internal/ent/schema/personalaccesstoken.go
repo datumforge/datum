@@ -34,7 +34,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 				entgql.Skip(^entgql.SkipType),
 			).
 			DefaultFunc(func() string {
-				token := keygen.Secret()
+				token := keygen.PrefixedSecret("dtm") // datum token prefix
 				return token
 			}),
 		field.Time("expires_at").

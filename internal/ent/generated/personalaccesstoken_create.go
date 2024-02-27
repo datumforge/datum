@@ -276,12 +276,6 @@ func (patc *PersonalAccessTokenCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (patc *PersonalAccessTokenCreate) check() error {
-	if _, ok := patc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "PersonalAccessToken.created_at"`)}
-	}
-	if _, ok := patc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "PersonalAccessToken.updated_at"`)}
-	}
 	if _, ok := patc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "PersonalAccessToken.owner_id"`)}
 	}

@@ -39,6 +39,12 @@ func (patu *PersonalAccessTokenUpdate) SetUpdatedAt(t time.Time) *PersonalAccess
 	return patu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (patu *PersonalAccessTokenUpdate) ClearUpdatedAt() *PersonalAccessTokenUpdate {
+	patu.mutation.ClearUpdatedAt()
+	return patu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (patu *PersonalAccessTokenUpdate) SetUpdatedBy(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetUpdatedBy(s)
@@ -283,7 +289,7 @@ func (patu *PersonalAccessTokenUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (patu *PersonalAccessTokenUpdate) defaults() error {
-	if _, ok := patu.mutation.UpdatedAt(); !ok {
+	if _, ok := patu.mutation.UpdatedAt(); !ok && !patu.mutation.UpdatedAtCleared() {
 		if personalaccesstoken.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized personalaccesstoken.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -318,8 +324,14 @@ func (patu *PersonalAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err 
 			}
 		}
 	}
+	if patu.mutation.CreatedAtCleared() {
+		_spec.ClearField(personalaccesstoken.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := patu.mutation.UpdatedAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if patu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(personalaccesstoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if patu.mutation.CreatedByCleared() {
 		_spec.ClearField(personalaccesstoken.FieldCreatedBy, field.TypeString)
@@ -475,6 +487,12 @@ type PersonalAccessTokenUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (patuo *PersonalAccessTokenUpdateOne) SetUpdatedAt(t time.Time) *PersonalAccessTokenUpdateOne {
 	patuo.mutation.SetUpdatedAt(t)
+	return patuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (patuo *PersonalAccessTokenUpdateOne) ClearUpdatedAt() *PersonalAccessTokenUpdateOne {
+	patuo.mutation.ClearUpdatedAt()
 	return patuo
 }
 
@@ -735,7 +753,7 @@ func (patuo *PersonalAccessTokenUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (patuo *PersonalAccessTokenUpdateOne) defaults() error {
-	if _, ok := patuo.mutation.UpdatedAt(); !ok {
+	if _, ok := patuo.mutation.UpdatedAt(); !ok && !patuo.mutation.UpdatedAtCleared() {
 		if personalaccesstoken.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized personalaccesstoken.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -787,8 +805,14 @@ func (patuo *PersonalAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *
 			}
 		}
 	}
+	if patuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(personalaccesstoken.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := patuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if patuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(personalaccesstoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if patuo.mutation.CreatedByCleared() {
 		_spec.ClearField(personalaccesstoken.FieldCreatedBy, field.TypeString)

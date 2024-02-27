@@ -37,6 +37,12 @@ func (opu *OauthProviderUpdate) SetUpdatedAt(t time.Time) *OauthProviderUpdate {
 	return opu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (opu *OauthProviderUpdate) ClearUpdatedAt() *OauthProviderUpdate {
+	opu.mutation.ClearUpdatedAt()
+	return opu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (opu *OauthProviderUpdate) SetUpdatedBy(s string) *OauthProviderUpdate {
 	opu.mutation.SetUpdatedBy(s)
@@ -292,7 +298,7 @@ func (opu *OauthProviderUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (opu *OauthProviderUpdate) defaults() error {
-	if _, ok := opu.mutation.UpdatedAt(); !ok {
+	if _, ok := opu.mutation.UpdatedAt(); !ok && !opu.mutation.UpdatedAtCleared() {
 		if oauthprovider.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized oauthprovider.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -311,8 +317,14 @@ func (opu *OauthProviderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			}
 		}
 	}
+	if opu.mutation.CreatedAtCleared() {
+		_spec.ClearField(oauthprovider.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := opu.mutation.UpdatedAt(); ok {
 		_spec.SetField(oauthprovider.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if opu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(oauthprovider.FieldUpdatedAt, field.TypeTime)
 	}
 	if opu.mutation.CreatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldCreatedBy, field.TypeString)
@@ -421,6 +433,12 @@ type OauthProviderUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (opuo *OauthProviderUpdateOne) SetUpdatedAt(t time.Time) *OauthProviderUpdateOne {
 	opuo.mutation.SetUpdatedAt(t)
+	return opuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (opuo *OauthProviderUpdateOne) ClearUpdatedAt() *OauthProviderUpdateOne {
+	opuo.mutation.ClearUpdatedAt()
 	return opuo
 }
 
@@ -692,7 +710,7 @@ func (opuo *OauthProviderUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (opuo *OauthProviderUpdateOne) defaults() error {
-	if _, ok := opuo.mutation.UpdatedAt(); !ok {
+	if _, ok := opuo.mutation.UpdatedAt(); !ok && !opuo.mutation.UpdatedAtCleared() {
 		if oauthprovider.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized oauthprovider.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -728,8 +746,14 @@ func (opuo *OauthProviderUpdateOne) sqlSave(ctx context.Context) (_node *OauthPr
 			}
 		}
 	}
+	if opuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(oauthprovider.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := opuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(oauthprovider.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if opuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(oauthprovider.FieldUpdatedAt, field.TypeTime)
 	}
 	if opuo.mutation.CreatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldCreatedBy, field.TypeString)

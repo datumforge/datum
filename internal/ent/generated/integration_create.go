@@ -241,12 +241,6 @@ func (ic *IntegrationCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ic *IntegrationCreate) check() error {
-	if _, ok := ic.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Integration.created_at"`)}
-	}
-	if _, ok := ic.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Integration.updated_at"`)}
-	}
 	if _, ok := ic.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Integration.name"`)}
 	}

@@ -37,6 +37,12 @@ func (omu *OrgMembershipUpdate) SetUpdatedAt(t time.Time) *OrgMembershipUpdate {
 	return omu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (omu *OrgMembershipUpdate) ClearUpdatedAt() *OrgMembershipUpdate {
+	omu.mutation.ClearUpdatedAt()
+	return omu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (omu *OrgMembershipUpdate) SetUpdatedBy(s string) *OrgMembershipUpdate {
 	omu.mutation.SetUpdatedBy(s)
@@ -148,7 +154,7 @@ func (omu *OrgMembershipUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (omu *OrgMembershipUpdate) defaults() error {
-	if _, ok := omu.mutation.UpdatedAt(); !ok {
+	if _, ok := omu.mutation.UpdatedAt(); !ok && !omu.mutation.UpdatedAtCleared() {
 		if orgmembership.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized orgmembership.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -186,8 +192,14 @@ func (omu *OrgMembershipUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			}
 		}
 	}
+	if omu.mutation.CreatedAtCleared() {
+		_spec.ClearField(orgmembership.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := omu.mutation.UpdatedAt(); ok {
 		_spec.SetField(orgmembership.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if omu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orgmembership.FieldUpdatedAt, field.TypeTime)
 	}
 	if omu.mutation.CreatedByCleared() {
 		_spec.ClearField(orgmembership.FieldCreatedBy, field.TypeString)
@@ -238,6 +250,12 @@ type OrgMembershipUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (omuo *OrgMembershipUpdateOne) SetUpdatedAt(t time.Time) *OrgMembershipUpdateOne {
 	omuo.mutation.SetUpdatedAt(t)
+	return omuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (omuo *OrgMembershipUpdateOne) ClearUpdatedAt() *OrgMembershipUpdateOne {
+	omuo.mutation.ClearUpdatedAt()
 	return omuo
 }
 
@@ -365,7 +383,7 @@ func (omuo *OrgMembershipUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (omuo *OrgMembershipUpdateOne) defaults() error {
-	if _, ok := omuo.mutation.UpdatedAt(); !ok {
+	if _, ok := omuo.mutation.UpdatedAt(); !ok && !omuo.mutation.UpdatedAtCleared() {
 		if orgmembership.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized orgmembership.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -420,8 +438,14 @@ func (omuo *OrgMembershipUpdateOne) sqlSave(ctx context.Context) (_node *OrgMemb
 			}
 		}
 	}
+	if omuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(orgmembership.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := omuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(orgmembership.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if omuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(orgmembership.FieldUpdatedAt, field.TypeTime)
 	}
 	if omuo.mutation.CreatedByCleared() {
 		_spec.ClearField(orgmembership.FieldCreatedBy, field.TypeString)

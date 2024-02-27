@@ -4778,8 +4778,8 @@ https://relay.dev/graphql/connections.htm#sec-Cursor
 scalar Cursor
 type Entitlement implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -4877,6 +4877,8 @@ input EntitlementWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -4888,6 +4890,8 @@ input EntitlementWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -5029,8 +5033,8 @@ input EntitlementWhereInput {
 }
 type Group implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -5092,8 +5096,8 @@ type GroupEdge {
 }
 type GroupMembership implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -5173,6 +5177,8 @@ input GroupMembershipWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -5184,6 +5190,8 @@ input GroupMembershipWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -5281,8 +5289,8 @@ enum GroupOrderField {
 }
 type GroupSetting implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -5381,6 +5389,8 @@ input GroupSettingWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -5392,6 +5402,8 @@ input GroupSettingWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -5521,6 +5533,8 @@ input GroupWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -5532,6 +5546,8 @@ input GroupWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -5654,8 +5670,8 @@ input GroupWhereInput {
 }
 type Integration implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -5754,6 +5770,8 @@ input IntegrationWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -5765,6 +5783,8 @@ input IntegrationWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -5890,8 +5910,8 @@ input IntegrationWhereInput {
 }
 type Invite implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -5998,6 +6018,8 @@ input InviteWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -6009,6 +6031,8 @@ input InviteWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -6166,8 +6190,8 @@ interface Node @goModel(model: "github.com/datumforge/datum/internal/ent/generat
 }
 type OauthProvider implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -6272,6 +6296,8 @@ input OauthProviderWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -6283,6 +6309,8 @@ input OauthProviderWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -6705,8 +6733,8 @@ enum OrderDirection {
 }
 type OrgMembership implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -6787,6 +6815,8 @@ input OrgMembershipWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -6798,6 +6828,8 @@ input OrgMembershipWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -6875,8 +6907,8 @@ input OrgMembershipWhereInput {
 }
 type Organization implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -6991,8 +7023,8 @@ enum OrganizationOrderField {
 }
 type OrganizationSetting implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -7083,6 +7115,8 @@ input OrganizationSettingWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -7094,6 +7128,8 @@ input OrganizationSettingWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -7343,6 +7379,8 @@ input OrganizationWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -7354,6 +7392,8 @@ input OrganizationWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -7540,8 +7580,8 @@ type PageInfo {
 }
 type PersonalAccessToken implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -7629,6 +7669,8 @@ input PersonalAccessTokenWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -7640,6 +7682,8 @@ input PersonalAccessTokenWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -8172,6 +8216,7 @@ Input was generated by ent.
 """
 input UpdateEntitlementInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   tier: EntitlementTier
@@ -8206,6 +8251,7 @@ Input was generated by ent.
 """
 input UpdateGroupInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8243,6 +8289,7 @@ Input was generated by ent.
 """
 input UpdateGroupMembershipInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   role: GroupMembershipRole
@@ -8253,6 +8300,7 @@ Input was generated by ent.
 """
 input UpdateGroupSettingInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8279,6 +8327,7 @@ Input was generated by ent.
 """
 input UpdateIntegrationInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8301,6 +8350,7 @@ Input was generated by ent.
 """
 input UpdateInviteInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8328,6 +8378,7 @@ Input was generated by ent.
 """
 input UpdateOauthProviderInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8399,6 +8450,7 @@ Input was generated by ent.
 """
 input UpdateOrgMembershipInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   role: OrgMembershipRole
@@ -8409,6 +8461,7 @@ Input was generated by ent.
 """
 input UpdateOrganizationInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8454,6 +8507,7 @@ Input was generated by ent.
 """
 input UpdateOrganizationSettingInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8499,6 +8553,7 @@ Input was generated by ent.
 """
 input UpdatePersonalAccessTokenInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8525,6 +8580,7 @@ Input was generated by ent.
 """
 input UpdateUserInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   email: String
@@ -8628,6 +8684,7 @@ Input was generated by ent.
 """
 input UpdateUserSettingInput {
   updatedAt: Time
+  clearUpdatedAt: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
   """
@@ -8666,8 +8723,8 @@ input UpdateUserSettingInput {
 }
 type User implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -8795,8 +8852,8 @@ enum UserOrderField {
 }
 type UserSetting implements Node {
   id: ID!
-  createdAt: Time!
-  updatedAt: Time!
+  createdAt: Time
+  updatedAt: Time
   createdBy: String
   updatedBy: String
   deletedAt: Time
@@ -8896,6 +8953,8 @@ input UserSettingWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -8907,6 +8966,8 @@ input UserSettingWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -9073,6 +9134,8 @@ input UserWhereInput {
   createdAtGTE: Time
   createdAtLT: Time
   createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
   """
   updated_at field predicates
   """
@@ -9084,6 +9147,8 @@ input UserWhereInput {
   updatedAtGTE: Time
   updatedAtLT: Time
   updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   created_by field predicates
   """
@@ -12565,14 +12630,11 @@ func (ec *executionContext) _Entitlement_createdAt(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Entitlement_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12609,14 +12671,11 @@ func (ec *executionContext) _Entitlement_updatedAt(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Entitlement_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13658,14 +13717,11 @@ func (ec *executionContext) _Group_createdAt(ctx context.Context, field graphql.
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13702,14 +13758,11 @@ func (ec *executionContext) _Group_updatedAt(ctx context.Context, field graphql.
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14881,14 +14934,11 @@ func (ec *executionContext) _GroupMembership_createdAt(ctx context.Context, fiel
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GroupMembership_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14925,14 +14975,11 @@ func (ec *executionContext) _GroupMembership_updatedAt(ctx context.Context, fiel
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GroupMembership_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15931,14 +15978,11 @@ func (ec *executionContext) _GroupSetting_createdAt(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GroupSetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15975,14 +16019,11 @@ func (ec *executionContext) _GroupSetting_updatedAt(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_GroupSetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -17046,14 +17087,11 @@ func (ec *executionContext) _Integration_createdAt(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Integration_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -17090,14 +17128,11 @@ func (ec *executionContext) _Integration_updatedAt(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Integration_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -18039,14 +18074,11 @@ func (ec *executionContext) _Invite_createdAt(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Invite_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -18083,14 +18115,11 @@ func (ec *executionContext) _Invite_updatedAt(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Invite_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21674,14 +21703,11 @@ func (ec *executionContext) _OauthProvider_createdAt(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OauthProvider_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21718,14 +21744,11 @@ func (ec *executionContext) _OauthProvider_updatedAt(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OauthProvider_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -23932,14 +23955,11 @@ func (ec *executionContext) _OrgMembership_createdAt(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrgMembership_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -23976,14 +23996,11 @@ func (ec *executionContext) _OrgMembership_updatedAt(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrgMembership_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -24994,14 +25011,11 @@ func (ec *executionContext) _Organization_createdAt(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Organization_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -25038,14 +25052,11 @@ func (ec *executionContext) _Organization_updatedAt(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Organization_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -26704,14 +26715,11 @@ func (ec *executionContext) _OrganizationSetting_createdAt(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -26748,14 +26756,11 @@ func (ec *executionContext) _OrganizationSetting_updatedAt(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -28233,14 +28238,11 @@ func (ec *executionContext) _PersonalAccessToken_createdAt(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PersonalAccessToken_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -28277,14 +28279,11 @@ func (ec *executionContext) _PersonalAccessToken_updatedAt(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PersonalAccessToken_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -31862,14 +31861,11 @@ func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -31906,14 +31902,11 @@ func (ec *executionContext) _User_updatedAt(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -33715,14 +33708,11 @@ func (ec *executionContext) _UserSetting_createdAt(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserSetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -33759,14 +33749,11 @@ func (ec *executionContext) _UserSetting_updatedAt(ctx context.Context, field gr
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserSetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -38234,7 +38221,7 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "tier", "tierNEQ", "tierIn", "tierNotIn", "externalCustomerID", "externalCustomerIDNEQ", "externalCustomerIDIn", "externalCustomerIDNotIn", "externalCustomerIDGT", "externalCustomerIDGTE", "externalCustomerIDLT", "externalCustomerIDLTE", "externalCustomerIDContains", "externalCustomerIDHasPrefix", "externalCustomerIDHasSuffix", "externalCustomerIDIsNil", "externalCustomerIDNotNil", "externalCustomerIDEqualFold", "externalCustomerIDContainsFold", "externalSubscriptionID", "externalSubscriptionIDNEQ", "externalSubscriptionIDIn", "externalSubscriptionIDNotIn", "externalSubscriptionIDGT", "externalSubscriptionIDGTE", "externalSubscriptionIDLT", "externalSubscriptionIDLTE", "externalSubscriptionIDContains", "externalSubscriptionIDHasPrefix", "externalSubscriptionIDHasSuffix", "externalSubscriptionIDIsNil", "externalSubscriptionIDNotNil", "externalSubscriptionIDEqualFold", "externalSubscriptionIDContainsFold", "expires", "expiresNEQ", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "expiresAtIsNil", "expiresAtNotNil", "cancelled", "cancelledNEQ", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "tier", "tierNEQ", "tierIn", "tierNotIn", "externalCustomerID", "externalCustomerIDNEQ", "externalCustomerIDIn", "externalCustomerIDNotIn", "externalCustomerIDGT", "externalCustomerIDGTE", "externalCustomerIDLT", "externalCustomerIDLTE", "externalCustomerIDContains", "externalCustomerIDHasPrefix", "externalCustomerIDHasSuffix", "externalCustomerIDIsNil", "externalCustomerIDNotNil", "externalCustomerIDEqualFold", "externalCustomerIDContainsFold", "externalSubscriptionID", "externalSubscriptionIDNEQ", "externalSubscriptionIDIn", "externalSubscriptionIDNotIn", "externalSubscriptionIDGT", "externalSubscriptionIDGTE", "externalSubscriptionIDLT", "externalSubscriptionIDLTE", "externalSubscriptionIDContains", "externalSubscriptionIDHasPrefix", "externalSubscriptionIDHasSuffix", "externalSubscriptionIDIsNil", "externalSubscriptionIDNotNil", "externalSubscriptionIDEqualFold", "externalSubscriptionIDContainsFold", "expires", "expiresNEQ", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "expiresAtIsNil", "expiresAtNotNil", "cancelled", "cancelledNEQ", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38388,6 +38375,20 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -38444,6 +38445,20 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -39192,7 +39207,7 @@ func (ec *executionContext) unmarshalInputGroupMembershipWhereInput(ctx context.
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "groupID", "userID"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "groupID", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39346,6 +39361,20 @@ func (ec *executionContext) unmarshalInputGroupMembershipWhereInput(ctx context.
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -39402,6 +39431,20 @@ func (ec *executionContext) unmarshalInputGroupMembershipWhereInput(ctx context.
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -39880,7 +39923,7 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToGithub", "syncToGithubNEQ", "hasGroup", "hasGroupWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToGithub", "syncToGithubNEQ", "hasGroup", "hasGroupWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40034,6 +40077,20 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -40090,6 +40147,20 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -40586,7 +40657,7 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasOwner", "hasOwnerWith", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasMembers", "hasMembersWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasOwner", "hasOwnerWith", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasMembers", "hasMembersWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40740,6 +40811,20 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -40796,6 +40881,20 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -41470,7 +41569,7 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "kind", "kindNEQ", "kindIn", "kindNotIn", "kindGT", "kindGTE", "kindLT", "kindLTE", "kindContains", "kindHasPrefix", "kindHasSuffix", "kindIsNil", "kindNotNil", "kindEqualFold", "kindContainsFold", "secretName", "secretNameNEQ", "secretNameIn", "secretNameNotIn", "secretNameGT", "secretNameGTE", "secretNameLT", "secretNameLTE", "secretNameContains", "secretNameHasPrefix", "secretNameHasSuffix", "secretNameEqualFold", "secretNameContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "kind", "kindNEQ", "kindIn", "kindNotIn", "kindGT", "kindGTE", "kindLT", "kindLTE", "kindContains", "kindHasPrefix", "kindHasSuffix", "kindIsNil", "kindNotNil", "kindEqualFold", "kindContainsFold", "secretName", "secretNameNEQ", "secretNameIn", "secretNameNotIn", "secretNameGT", "secretNameGTE", "secretNameLT", "secretNameLTE", "secretNameContains", "secretNameHasPrefix", "secretNameHasSuffix", "secretNameEqualFold", "secretNameContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41624,6 +41723,20 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -41680,6 +41793,20 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -42379,7 +42506,7 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "sendAttempts", "sendAttemptsNEQ", "sendAttemptsIn", "sendAttemptsNotIn", "sendAttemptsGT", "sendAttemptsGTE", "sendAttemptsLT", "sendAttemptsLTE", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "sendAttempts", "sendAttemptsNEQ", "sendAttemptsIn", "sendAttemptsNotIn", "sendAttemptsGT", "sendAttemptsGTE", "sendAttemptsLT", "sendAttemptsLTE", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -42533,6 +42660,20 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -42589,6 +42730,20 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -43351,7 +43506,7 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "clientSecret", "clientSecretNEQ", "clientSecretIn", "clientSecretNotIn", "clientSecretGT", "clientSecretGTE", "clientSecretLT", "clientSecretLTE", "clientSecretContains", "clientSecretHasPrefix", "clientSecretHasSuffix", "clientSecretEqualFold", "clientSecretContainsFold", "redirectURL", "redirectURLNEQ", "redirectURLIn", "redirectURLNotIn", "redirectURLGT", "redirectURLGTE", "redirectURLLT", "redirectURLLTE", "redirectURLContains", "redirectURLHasPrefix", "redirectURLHasSuffix", "redirectURLEqualFold", "redirectURLContainsFold", "scopes", "scopesNEQ", "scopesIn", "scopesNotIn", "scopesGT", "scopesGTE", "scopesLT", "scopesLTE", "scopesContains", "scopesHasPrefix", "scopesHasSuffix", "scopesEqualFold", "scopesContainsFold", "authURL", "authURLNEQ", "authURLIn", "authURLNotIn", "authURLGT", "authURLGTE", "authURLLT", "authURLLTE", "authURLContains", "authURLHasPrefix", "authURLHasSuffix", "authURLEqualFold", "authURLContainsFold", "tokenURL", "tokenURLNEQ", "tokenURLIn", "tokenURLNotIn", "tokenURLGT", "tokenURLGTE", "tokenURLLT", "tokenURLLTE", "tokenURLContains", "tokenURLHasPrefix", "tokenURLHasSuffix", "tokenURLEqualFold", "tokenURLContainsFold", "authStyle", "authStyleNEQ", "authStyleIn", "authStyleNotIn", "authStyleGT", "authStyleGTE", "authStyleLT", "authStyleLTE", "infoURL", "infoURLNEQ", "infoURLIn", "infoURLNotIn", "infoURLGT", "infoURLGTE", "infoURLLT", "infoURLLTE", "infoURLContains", "infoURLHasPrefix", "infoURLHasSuffix", "infoURLEqualFold", "infoURLContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "clientSecret", "clientSecretNEQ", "clientSecretIn", "clientSecretNotIn", "clientSecretGT", "clientSecretGTE", "clientSecretLT", "clientSecretLTE", "clientSecretContains", "clientSecretHasPrefix", "clientSecretHasSuffix", "clientSecretEqualFold", "clientSecretContainsFold", "redirectURL", "redirectURLNEQ", "redirectURLIn", "redirectURLNotIn", "redirectURLGT", "redirectURLGTE", "redirectURLLT", "redirectURLLTE", "redirectURLContains", "redirectURLHasPrefix", "redirectURLHasSuffix", "redirectURLEqualFold", "redirectURLContainsFold", "scopes", "scopesNEQ", "scopesIn", "scopesNotIn", "scopesGT", "scopesGTE", "scopesLT", "scopesLTE", "scopesContains", "scopesHasPrefix", "scopesHasSuffix", "scopesEqualFold", "scopesContainsFold", "authURL", "authURLNEQ", "authURLIn", "authURLNotIn", "authURLGT", "authURLGTE", "authURLLT", "authURLLTE", "authURLContains", "authURLHasPrefix", "authURLHasSuffix", "authURLEqualFold", "authURLContainsFold", "tokenURL", "tokenURLNEQ", "tokenURLIn", "tokenURLNotIn", "tokenURLGT", "tokenURLGTE", "tokenURLLT", "tokenURLLTE", "tokenURLContains", "tokenURLHasPrefix", "tokenURLHasSuffix", "tokenURLEqualFold", "tokenURLContainsFold", "authStyle", "authStyleNEQ", "authStyleIn", "authStyleNotIn", "authStyleGT", "authStyleGTE", "authStyleLT", "authStyleLTE", "infoURL", "infoURLNEQ", "infoURLIn", "infoURLNotIn", "infoURLGT", "infoURLGTE", "infoURLLT", "infoURLLTE", "infoURLContains", "infoURLHasPrefix", "infoURLHasSuffix", "infoURLEqualFold", "infoURLContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -43505,6 +43660,20 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -43561,6 +43730,20 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45591,7 +45774,7 @@ func (ec *executionContext) unmarshalInputOrgMembershipWhereInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "organizationID", "userID"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "organizationID", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -45745,6 +45928,20 @@ func (ec *executionContext) unmarshalInputOrgMembershipWhereInput(ctx context.Co
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -45801,6 +45998,20 @@ func (ec *executionContext) unmarshalInputOrgMembershipWhereInput(ctx context.Co
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -46279,7 +46490,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertIsNil", "ssoCertNotNil", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointIsNil", "ssoEntrypointNotNil", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerIsNil", "ssoIssuerNotNil", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertIsNil", "ssoCertNotNil", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointIsNil", "ssoEntrypointNotNil", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerIsNil", "ssoIssuerNotNil", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46433,6 +46644,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -46489,6 +46714,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -47741,7 +47980,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasInvites", "hasInvitesWith", "hasMembers", "hasMembersWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasInvites", "hasInvitesWith", "hasMembers", "hasMembersWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47895,6 +48134,20 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -47951,6 +48204,20 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -48713,7 +48980,7 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "lastUsedAt", "lastUsedAtNEQ", "lastUsedAtIn", "lastUsedAtNotIn", "lastUsedAtGT", "lastUsedAtGTE", "lastUsedAtLT", "lastUsedAtLTE", "lastUsedAtIsNil", "lastUsedAtNotNil", "hasOwner", "hasOwnerWith", "hasOrganizations", "hasOrganizationsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "lastUsedAt", "lastUsedAtNEQ", "lastUsedAtIn", "lastUsedAtNotIn", "lastUsedAtGT", "lastUsedAtGTE", "lastUsedAtLT", "lastUsedAtLTE", "lastUsedAtIsNil", "lastUsedAtNotNil", "hasOwner", "hasOwnerWith", "hasOrganizations", "hasOrganizationsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -48867,6 +49134,20 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -48923,6 +49204,20 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49566,7 +49861,7 @@ func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "tier", "externalCustomerID", "clearExternalCustomerID", "externalSubscriptionID", "clearExternalSubscriptionID", "expires", "expiresAt", "clearExpiresAt", "cancelled", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "tier", "externalCustomerID", "clearExternalCustomerID", "externalSubscriptionID", "clearExternalSubscriptionID", "expires", "expiresAt", "clearExpiresAt", "cancelled", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -49580,6 +49875,13 @@ func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49677,7 +49979,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "gravatarLogoURL", "clearGravatarLogoURL", "logoURL", "clearLogoURL", "displayName", "ownerID", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupMembers", "updateGroupSettings"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "gravatarLogoURL", "clearGravatarLogoURL", "logoURL", "clearLogoURL", "displayName", "ownerID", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupMembers", "updateGroupSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -49691,6 +49993,13 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49827,7 +50136,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupMembershipInput(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "role"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -49841,6 +50150,13 @@ func (ec *executionContext) unmarshalInputUpdateGroupMembershipInput(ctx context
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49875,7 +50191,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy", "tags", "appendTags", "syncToSlack", "syncToGithub", "groupID", "clearGroup"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy", "tags", "appendTags", "syncToSlack", "syncToGithub", "groupID", "clearGroup"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -49889,6 +50205,13 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingInput(ctx context.Co
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49972,7 +50295,7 @@ func (ec *executionContext) unmarshalInputUpdateIntegrationInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "kind", "clearKind", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "kind", "clearKind", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -49986,6 +50309,13 @@ func (ec *executionContext) unmarshalInputUpdateIntegrationInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -50062,7 +50392,7 @@ func (ec *executionContext) unmarshalInputUpdateInviteInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "expires", "recipient", "status", "role", "sendAttempts", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "expires", "recipient", "status", "role", "sendAttempts", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50076,6 +50406,13 @@ func (ec *executionContext) unmarshalInputUpdateInviteInput(ctx context.Context,
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -50145,7 +50482,7 @@ func (ec *executionContext) unmarshalInputUpdateOauthProviderInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "clientID", "clientSecret", "redirectURL", "scopes", "authURL", "tokenURL", "authStyle", "infoURL", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "clientID", "clientSecret", "redirectURL", "scopes", "authURL", "tokenURL", "authStyle", "infoURL", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50159,6 +50496,13 @@ func (ec *executionContext) unmarshalInputUpdateOauthProviderInput(ctx context.C
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -50411,7 +50755,7 @@ func (ec *executionContext) unmarshalInputUpdateOrgMembershipInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "role"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50425,6 +50769,13 @@ func (ec *executionContext) unmarshalInputUpdateOrgMembershipInput(ctx context.C
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -50459,7 +50810,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers", "addInviteIDs", "removeInviteIDs", "clearInvites", "addOrgMembers", "updateOrgSettings"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers", "addInviteIDs", "removeInviteIDs", "clearInvites", "addOrgMembers", "updateOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50473,6 +50824,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -50707,7 +51065,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "ssoCert", "clearSSOCert", "ssoEntrypoint", "clearSSOEntrypoint", "ssoIssuer", "clearSSOIssuer", "billingContact", "clearBillingContact", "billingEmail", "clearBillingEmail", "billingPhone", "clearBillingPhone", "billingAddress", "clearBillingAddress", "taxIdentifier", "clearTaxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "ssoCert", "clearSSOCert", "ssoEntrypoint", "clearSSOEntrypoint", "ssoIssuer", "clearSSOIssuer", "billingContact", "clearBillingContact", "billingEmail", "clearBillingEmail", "billingPhone", "clearBillingPhone", "billingAddress", "clearBillingAddress", "taxIdentifier", "clearTaxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50721,6 +51079,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -50916,7 +51281,7 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "scopes", "appendScopes", "clearScopes", "lastUsedAt", "clearLastUsedAt", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "scopes", "appendScopes", "clearScopes", "lastUsedAt", "clearLastUsedAt", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50930,6 +51295,13 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -51034,7 +51406,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "authProvider", "tfaSecret", "clearTfaSecret", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addWebauthnIDs", "removeWebauthnIDs", "clearWebauthn"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "authProvider", "tfaSecret", "clearTfaSecret", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addWebauthnIDs", "removeWebauthnIDs", "clearWebauthn"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51048,6 +51420,13 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -51418,7 +51797,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "defaultOrg", "clearDefaultOrg", "emailConfirmed", "tags", "appendTags", "userID", "clearUser"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "defaultOrg", "clearDefaultOrg", "emailConfirmed", "tags", "appendTags", "userID", "clearUser"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51432,6 +51811,13 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
 		case "updatedBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -51602,7 +51988,7 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "defaultOrg", "defaultOrgNEQ", "defaultOrgIn", "defaultOrgNotIn", "defaultOrgGT", "defaultOrgGTE", "defaultOrgLT", "defaultOrgLTE", "defaultOrgContains", "defaultOrgHasPrefix", "defaultOrgHasSuffix", "defaultOrgIsNil", "defaultOrgNotNil", "defaultOrgEqualFold", "defaultOrgContainsFold", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "defaultOrg", "defaultOrgNEQ", "defaultOrgIn", "defaultOrgNotIn", "defaultOrgGT", "defaultOrgGTE", "defaultOrgLT", "defaultOrgLTE", "defaultOrgContains", "defaultOrgHasPrefix", "defaultOrgHasSuffix", "defaultOrgIsNil", "defaultOrgNotNil", "defaultOrgEqualFold", "defaultOrgContainsFold", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51756,6 +52142,20 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -51812,6 +52212,20 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -52525,7 +52939,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "authProvider", "authProviderNEQ", "authProviderIn", "authProviderNotIn", "isPhoneOtpAllowed", "isPhoneOtpAllowedNEQ", "isPhoneOtpAllowedIsNil", "isPhoneOtpAllowedNotNil", "isEmailOtpAllowed", "isEmailOtpAllowedNEQ", "isEmailOtpAllowedIsNil", "isEmailOtpAllowedNotNil", "isTotpAllowed", "isTotpAllowedNEQ", "isTotpAllowedIsNil", "isTotpAllowedNotNil", "isWebauthnAllowed", "isWebauthnAllowedNEQ", "isWebauthnAllowedIsNil", "isWebauthnAllowedNotNil", "isTfaEnabled", "isTfaEnabledNEQ", "isTfaEnabledIsNil", "isTfaEnabledNotNil", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "authProvider", "authProviderNEQ", "authProviderIn", "authProviderNotIn", "isPhoneOtpAllowed", "isPhoneOtpAllowedNEQ", "isPhoneOtpAllowedIsNil", "isPhoneOtpAllowedNotNil", "isEmailOtpAllowed", "isEmailOtpAllowedNEQ", "isEmailOtpAllowedIsNil", "isEmailOtpAllowedNotNil", "isTotpAllowed", "isTotpAllowedNEQ", "isTotpAllowedIsNil", "isTotpAllowedNotNil", "isWebauthnAllowed", "isWebauthnAllowedNEQ", "isWebauthnAllowedIsNil", "isWebauthnAllowedNotNil", "isTfaEnabled", "isTfaEnabledNEQ", "isTfaEnabledIsNil", "isTfaEnabledNotNil", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -52679,6 +53093,20 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -52735,6 +53163,20 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
 		case "createdBy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -54365,14 +54807,8 @@ func (ec *executionContext) _Entitlement(ctx context.Context, sel ast.SelectionS
 			}
 		case "createdAt":
 			out.Values[i] = ec._Entitlement_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._Entitlement_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._Entitlement_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -54683,14 +55119,8 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "createdAt":
 			out.Values[i] = ec._Group_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._Group_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._Group_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -55059,14 +55489,8 @@ func (ec *executionContext) _GroupMembership(ctx context.Context, sel ast.Select
 			}
 		case "createdAt":
 			out.Values[i] = ec._GroupMembership_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._GroupMembership_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._GroupMembership_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -55407,14 +55831,8 @@ func (ec *executionContext) _GroupSetting(ctx context.Context, sel ast.Selection
 			}
 		case "createdAt":
 			out.Values[i] = ec._GroupSetting_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._GroupSetting_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._GroupSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -55765,14 +56183,8 @@ func (ec *executionContext) _Integration(ctx context.Context, sel ast.SelectionS
 			}
 		case "createdAt":
 			out.Values[i] = ec._Integration_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._Integration_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._Integration_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -56073,14 +56485,8 @@ func (ec *executionContext) _Invite(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "createdAt":
 			out.Values[i] = ec._Invite_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._Invite_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._Invite_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -56743,14 +57149,8 @@ func (ec *executionContext) _OauthProvider(ctx context.Context, sel ast.Selectio
 			}
 		case "createdAt":
 			out.Values[i] = ec._OauthProvider_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._OauthProvider_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._OauthProvider_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -57407,14 +57807,8 @@ func (ec *executionContext) _OrgMembership(ctx context.Context, sel ast.Selectio
 			}
 		case "createdAt":
 			out.Values[i] = ec._OrgMembership_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._OrgMembership_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._OrgMembership_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -57755,14 +58149,8 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			}
 		case "createdAt":
 			out.Values[i] = ec._Organization_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._Organization_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._Organization_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -58360,14 +58748,8 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			}
 		case "createdAt":
 			out.Values[i] = ec._OrganizationSetting_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._OrganizationSetting_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._OrganizationSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -58761,14 +59143,8 @@ func (ec *executionContext) _PersonalAccessToken(ctx context.Context, sel ast.Se
 			}
 		case "createdAt":
 			out.Values[i] = ec._PersonalAccessToken_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._PersonalAccessToken_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._PersonalAccessToken_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -59839,14 +60215,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._User_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._User_createdBy(ctx, field, obj)
 		case "updatedBy":
@@ -60312,14 +60682,8 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			}
 		case "createdAt":
 			out.Values[i] = ec._UserSetting_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "updatedAt":
 			out.Values[i] = ec._UserSetting_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdBy":
 			out.Values[i] = ec._UserSetting_createdBy(ctx, field, obj)
 		case "updatedBy":

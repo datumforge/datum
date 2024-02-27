@@ -284,12 +284,6 @@ func (gsc *GroupSettingCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (gsc *GroupSettingCreate) check() error {
-	if _, ok := gsc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "GroupSetting.created_at"`)}
-	}
-	if _, ok := gsc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "GroupSetting.updated_at"`)}
-	}
 	if _, ok := gsc.mutation.Visibility(); !ok {
 		return &ValidationError{Name: "visibility", err: errors.New(`generated: missing required field "GroupSetting.visibility"`)}
 	}

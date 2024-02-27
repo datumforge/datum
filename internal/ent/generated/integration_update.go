@@ -37,6 +37,12 @@ func (iu *IntegrationUpdate) SetUpdatedAt(t time.Time) *IntegrationUpdate {
 	return iu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (iu *IntegrationUpdate) ClearUpdatedAt() *IntegrationUpdate {
+	iu.mutation.ClearUpdatedAt()
+	return iu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (iu *IntegrationUpdate) SetUpdatedBy(s string) *IntegrationUpdate {
 	iu.mutation.SetUpdatedBy(s)
@@ -213,7 +219,7 @@ func (iu *IntegrationUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (iu *IntegrationUpdate) defaults() error {
-	if _, ok := iu.mutation.UpdatedAt(); !ok {
+	if _, ok := iu.mutation.UpdatedAt(); !ok && !iu.mutation.UpdatedAtCleared() {
 		if integration.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized integration.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -245,8 +251,14 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if iu.mutation.CreatedAtCleared() {
+		_spec.ClearField(integration.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(integration.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if iu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(integration.FieldUpdatedAt, field.TypeTime)
 	}
 	if iu.mutation.CreatedByCleared() {
 		_spec.ClearField(integration.FieldCreatedBy, field.TypeString)
@@ -340,6 +352,12 @@ type IntegrationUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (iuo *IntegrationUpdateOne) SetUpdatedAt(t time.Time) *IntegrationUpdateOne {
 	iuo.mutation.SetUpdatedAt(t)
+	return iuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (iuo *IntegrationUpdateOne) ClearUpdatedAt() *IntegrationUpdateOne {
+	iuo.mutation.ClearUpdatedAt()
 	return iuo
 }
 
@@ -532,7 +550,7 @@ func (iuo *IntegrationUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (iuo *IntegrationUpdateOne) defaults() error {
-	if _, ok := iuo.mutation.UpdatedAt(); !ok {
+	if _, ok := iuo.mutation.UpdatedAt(); !ok && !iuo.mutation.UpdatedAtCleared() {
 		if integration.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized integration.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -581,8 +599,14 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 			}
 		}
 	}
+	if iuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(integration.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(integration.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if iuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(integration.FieldUpdatedAt, field.TypeTime)
 	}
 	if iuo.mutation.CreatedByCleared() {
 		_spec.ClearField(integration.FieldCreatedBy, field.TypeString)

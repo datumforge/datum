@@ -330,8 +330,8 @@ type Dummy struct {
 
 type Entitlement struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -406,23 +406,27 @@ type EntitlementWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -543,8 +547,8 @@ type EntitlementWhereInput struct {
 
 type Group struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -599,8 +603,8 @@ type GroupEdge struct {
 
 type GroupMembership struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -668,23 +672,27 @@ type GroupMembershipWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -763,8 +771,8 @@ type GroupOrder struct {
 
 type GroupSetting struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -836,23 +844,27 @@ type GroupSettingWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -957,23 +969,27 @@ type GroupWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -1077,8 +1093,8 @@ type GroupWhereInput struct {
 
 type Integration struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -1156,23 +1172,27 @@ type IntegrationWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -1283,8 +1303,8 @@ type IntegrationWhereInput struct {
 
 type Invite struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -1359,23 +1379,27 @@ type InviteWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -1501,8 +1525,8 @@ type Mutation struct {
 
 type OauthProvider struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -1584,23 +1608,27 @@ type OauthProviderWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -1971,8 +1999,8 @@ type OhAuthTooTokenWhereInput struct {
 
 type OrgMembership struct {
 	ID             string        `json:"id"`
-	CreatedAt      time.Time     `json:"createdAt"`
-	UpdatedAt      time.Time     `json:"updatedAt"`
+	CreatedAt      *time.Time    `json:"createdAt,omitempty"`
+	UpdatedAt      *time.Time    `json:"updatedAt,omitempty"`
 	CreatedBy      *string       `json:"createdBy,omitempty"`
 	UpdatedBy      *string       `json:"updatedBy,omitempty"`
 	DeletedAt      *time.Time    `json:"deletedAt,omitempty"`
@@ -2040,23 +2068,27 @@ type OrgMembershipWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -2127,8 +2159,8 @@ type OrgMembershipWhereInput struct {
 
 type Organization struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -2196,8 +2228,8 @@ type OrganizationOrder struct {
 
 type OrganizationSetting struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -2275,23 +2307,27 @@ type OrganizationSettingWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -2508,23 +2544,27 @@ type OrganizationWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -2667,8 +2707,8 @@ type PageInfo struct {
 
 type PersonalAccessToken struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -2743,23 +2783,27 @@ type PersonalAccessTokenWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -2871,6 +2915,7 @@ type Subscription struct {
 // Input was generated by ent.
 type UpdateEntitlementInput struct {
 	UpdatedAt      *time.Time  `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool       `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string     `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool       `json:"clearUpdatedBy,omitempty"`
 	Tier           *enums.Tier `json:"tier,omitempty"`
@@ -2894,6 +2939,7 @@ type UpdateEntitlementInput struct {
 // Input was generated by ent.
 type UpdateGroupInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the name of the group - must be unique within the organization
@@ -2922,6 +2968,7 @@ type UpdateGroupInput struct {
 // Input was generated by ent.
 type UpdateGroupMembershipInput struct {
 	UpdatedAt      *time.Time  `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool       `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string     `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool       `json:"clearUpdatedBy,omitempty"`
 	Role           *enums.Role `json:"role,omitempty"`
@@ -2931,6 +2978,7 @@ type UpdateGroupMembershipInput struct {
 // Input was generated by ent.
 type UpdateGroupSettingInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization
@@ -2950,6 +2998,7 @@ type UpdateGroupSettingInput struct {
 // Input was generated by ent.
 type UpdateIntegrationInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the name of the integration - must be unique within the organization
@@ -2967,6 +3016,7 @@ type UpdateIntegrationInput struct {
 // Input was generated by ent.
 type UpdateInviteInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
@@ -2985,6 +3035,7 @@ type UpdateInviteInput struct {
 // Input was generated by ent.
 type UpdateOauthProviderInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the oauth provider's name
@@ -3036,6 +3087,7 @@ type UpdateOhAuthTooTokenInput struct {
 // Input was generated by ent.
 type UpdateOrgMembershipInput struct {
 	UpdatedAt      *time.Time  `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool       `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string     `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool       `json:"clearUpdatedBy,omitempty"`
 	Role           *enums.Role `json:"role,omitempty"`
@@ -3045,6 +3097,7 @@ type UpdateOrgMembershipInput struct {
 // Input was generated by ent.
 type UpdateOrganizationInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the name of the organization
@@ -3085,6 +3138,7 @@ type UpdateOrganizationInput struct {
 // Input was generated by ent.
 type UpdateOrganizationSettingInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// domains associated with the organization
@@ -3121,6 +3175,7 @@ type UpdateOrganizationSettingInput struct {
 // Input was generated by ent.
 type UpdatePersonalAccessTokenInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// the name associated with the token
@@ -3142,6 +3197,7 @@ type UpdatePersonalAccessTokenInput struct {
 // Input was generated by ent.
 type UpdateUserInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	Email          *string    `json:"email,omitempty"`
@@ -3214,6 +3270,7 @@ type UpdateUserInput struct {
 // Input was generated by ent.
 type UpdateUserSettingInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
+	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// user account is locked if unconfirmed or explicitly locked
@@ -3241,8 +3298,8 @@ type UpdateUserSettingInput struct {
 
 type User struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -3326,8 +3383,8 @@ type UserOrder struct {
 
 type UserSetting struct {
 	ID        string     `json:"id"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
@@ -3403,23 +3460,27 @@ type UserSettingWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`
@@ -3557,23 +3618,27 @@ type UserWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 	// created_at field predicates
-	CreatedAt      *time.Time   `json:"createdAt,omitempty"`
-	CreatedAtNeq   *time.Time   `json:"createdAtNEQ,omitempty"`
-	CreatedAtIn    []*time.Time `json:"createdAtIn,omitempty"`
-	CreatedAtNotIn []*time.Time `json:"createdAtNotIn,omitempty"`
-	CreatedAtGt    *time.Time   `json:"createdAtGT,omitempty"`
-	CreatedAtGte   *time.Time   `json:"createdAtGTE,omitempty"`
-	CreatedAtLt    *time.Time   `json:"createdAtLT,omitempty"`
-	CreatedAtLte   *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAt       *time.Time   `json:"createdAt,omitempty"`
+	CreatedAtNeq    *time.Time   `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []*time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []*time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGt     *time.Time   `json:"createdAtGT,omitempty"`
+	CreatedAtGte    *time.Time   `json:"createdAtGTE,omitempty"`
+	CreatedAtLt     *time.Time   `json:"createdAtLT,omitempty"`
+	CreatedAtLte    *time.Time   `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  *bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil *bool        `json:"createdAtNotNil,omitempty"`
 	// updated_at field predicates
-	UpdatedAt      *time.Time   `json:"updatedAt,omitempty"`
-	UpdatedAtNeq   *time.Time   `json:"updatedAtNEQ,omitempty"`
-	UpdatedAtIn    []*time.Time `json:"updatedAtIn,omitempty"`
-	UpdatedAtNotIn []*time.Time `json:"updatedAtNotIn,omitempty"`
-	UpdatedAtGt    *time.Time   `json:"updatedAtGT,omitempty"`
-	UpdatedAtGte   *time.Time   `json:"updatedAtGTE,omitempty"`
-	UpdatedAtLt    *time.Time   `json:"updatedAtLT,omitempty"`
-	UpdatedAtLte   *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAt       *time.Time   `json:"updatedAt,omitempty"`
+	UpdatedAtNeq    *time.Time   `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []*time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []*time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGt     *time.Time   `json:"updatedAtGT,omitempty"`
+	UpdatedAtGte    *time.Time   `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLt     *time.Time   `json:"updatedAtLT,omitempty"`
+	UpdatedAtLte    *time.Time   `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  *bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil *bool        `json:"updatedAtNotNil,omitempty"`
 	// created_by field predicates
 	CreatedBy             *string  `json:"createdBy,omitempty"`
 	CreatedByNeq          *string  `json:"createdByNEQ,omitempty"`

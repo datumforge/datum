@@ -39,6 +39,12 @@ func (gsu *GroupSettingUpdate) SetUpdatedAt(t time.Time) *GroupSettingUpdate {
 	return gsu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gsu *GroupSettingUpdate) ClearUpdatedAt() *GroupSettingUpdate {
+	gsu.mutation.ClearUpdatedAt()
+	return gsu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (gsu *GroupSettingUpdate) SetUpdatedBy(s string) *GroupSettingUpdate {
 	gsu.mutation.SetUpdatedBy(s)
@@ -229,7 +235,7 @@ func (gsu *GroupSettingUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (gsu *GroupSettingUpdate) defaults() error {
-	if _, ok := gsu.mutation.UpdatedAt(); !ok {
+	if _, ok := gsu.mutation.UpdatedAt(); !ok && !gsu.mutation.UpdatedAtCleared() {
 		if groupsetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized groupsetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -266,8 +272,14 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if gsu.mutation.CreatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := gsu.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gsu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if gsu.mutation.CreatedByCleared() {
 		_spec.ClearField(groupsetting.FieldCreatedBy, field.TypeString)
@@ -366,6 +378,12 @@ type GroupSettingUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (gsuo *GroupSettingUpdateOne) SetUpdatedAt(t time.Time) *GroupSettingUpdateOne {
 	gsuo.mutation.SetUpdatedAt(t)
+	return gsuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gsuo *GroupSettingUpdateOne) ClearUpdatedAt() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearUpdatedAt()
 	return gsuo
 }
 
@@ -572,7 +590,7 @@ func (gsuo *GroupSettingUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (gsuo *GroupSettingUpdateOne) defaults() error {
-	if _, ok := gsuo.mutation.UpdatedAt(); !ok {
+	if _, ok := gsuo.mutation.UpdatedAt(); !ok && !gsuo.mutation.UpdatedAtCleared() {
 		if groupsetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized groupsetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -626,8 +644,14 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 			}
 		}
 	}
+	if gsuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := gsuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gsuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if gsuo.mutation.CreatedByCleared() {
 		_spec.ClearField(groupsetting.FieldCreatedBy, field.TypeString)

@@ -21,9 +21,11 @@ func (AuditMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("created_at").
 			Immutable().
+			Optional().
 			Default(time.Now),
 		field.Time("updated_at").
 			Default(time.Now).
+			Optional().
 			UpdateDefault(time.Now),
 		field.String("created_by").
 			Immutable().

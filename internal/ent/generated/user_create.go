@@ -570,12 +570,6 @@ func (uc *UserCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "User.created_at"`)}
-	}
-	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "User.updated_at"`)}
-	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "User.email"`)}
 	}

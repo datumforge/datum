@@ -37,6 +37,12 @@ func (prtu *PasswordResetTokenUpdate) SetUpdatedAt(t time.Time) *PasswordResetTo
 	return prtu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (prtu *PasswordResetTokenUpdate) ClearUpdatedAt() *PasswordResetTokenUpdate {
+	prtu.mutation.ClearUpdatedAt()
+	return prtu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (prtu *PasswordResetTokenUpdate) SetUpdatedBy(s string) *PasswordResetTokenUpdate {
 	prtu.mutation.SetUpdatedBy(s)
@@ -207,7 +213,7 @@ func (prtu *PasswordResetTokenUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (prtu *PasswordResetTokenUpdate) defaults() error {
-	if _, ok := prtu.mutation.UpdatedAt(); !ok {
+	if _, ok := prtu.mutation.UpdatedAt(); !ok && !prtu.mutation.UpdatedAtCleared() {
 		if passwordresettoken.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized passwordresettoken.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -252,8 +258,14 @@ func (prtu *PasswordResetTokenUpdate) sqlSave(ctx context.Context) (n int, err e
 			}
 		}
 	}
+	if prtu.mutation.CreatedAtCleared() {
+		_spec.ClearField(passwordresettoken.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := prtu.mutation.UpdatedAt(); ok {
 		_spec.SetField(passwordresettoken.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if prtu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(passwordresettoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if prtu.mutation.CreatedByCleared() {
 		_spec.ClearField(passwordresettoken.FieldCreatedBy, field.TypeString)
@@ -344,6 +356,12 @@ type PasswordResetTokenUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (prtuo *PasswordResetTokenUpdateOne) SetUpdatedAt(t time.Time) *PasswordResetTokenUpdateOne {
 	prtuo.mutation.SetUpdatedAt(t)
+	return prtuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (prtuo *PasswordResetTokenUpdateOne) ClearUpdatedAt() *PasswordResetTokenUpdateOne {
+	prtuo.mutation.ClearUpdatedAt()
 	return prtuo
 }
 
@@ -530,7 +548,7 @@ func (prtuo *PasswordResetTokenUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (prtuo *PasswordResetTokenUpdateOne) defaults() error {
-	if _, ok := prtuo.mutation.UpdatedAt(); !ok {
+	if _, ok := prtuo.mutation.UpdatedAt(); !ok && !prtuo.mutation.UpdatedAtCleared() {
 		if passwordresettoken.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized passwordresettoken.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -592,8 +610,14 @@ func (prtuo *PasswordResetTokenUpdateOne) sqlSave(ctx context.Context) (_node *P
 			}
 		}
 	}
+	if prtuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(passwordresettoken.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := prtuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(passwordresettoken.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if prtuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(passwordresettoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if prtuo.mutation.CreatedByCleared() {
 		_spec.ClearField(passwordresettoken.FieldCreatedBy, field.TypeString)

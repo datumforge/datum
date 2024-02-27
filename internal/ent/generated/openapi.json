@@ -151,8 +151,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "owner_id",
                   "tier",
                   "expires",
@@ -528,8 +526,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "role",
                   "group_id",
                   "user_id",
@@ -946,8 +942,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "visibility",
                   "join_policy",
                   "tags",
@@ -1341,8 +1335,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "owner_id",
                   "name",
                   "display_name",
@@ -1891,8 +1883,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "name",
                   "secret_name"
                 ]
@@ -2271,8 +2261,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "owner_id",
                   "token",
                   "expires",
@@ -2677,8 +2665,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "name",
                   "client_id",
                   "client_secret",
@@ -3401,8 +3387,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "role",
                   "organization_id",
                   "user_id",
@@ -3824,11 +3808,7 @@
                   "organization": {
                     "type": "string"
                   }
-                },
-                "required": [
-                  "created_at",
-                  "updated_at"
-                ]
+                }
               }
             }
           },
@@ -4261,8 +4241,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "name",
                   "display_name",
                   "personal_org"
@@ -5310,8 +5288,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "owner_id",
                   "name",
                   "token",
@@ -5771,8 +5747,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "locked",
                   "status",
                   "email_confirmed",
@@ -6248,8 +6222,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "email",
                   "first_name",
                   "last_name",
@@ -7253,8 +7225,6 @@
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
                   "owner_id",
                   "name",
                   "user_id",
@@ -7589,8 +7559,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "owner_id",
           "token",
           "email",
@@ -7658,8 +7626,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "owner_id",
           "tier",
           "expires",
@@ -7733,8 +7699,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "owner_id",
           "name",
           "display_name",
@@ -7792,8 +7756,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "role",
           "group_id",
           "user_id",
@@ -7864,8 +7826,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "visibility",
           "join_policy",
           "tags",
@@ -7918,8 +7878,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "name",
           "secret_name"
         ]
@@ -7999,8 +7957,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "owner_id",
           "token",
           "recipient",
@@ -8074,8 +8030,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "name",
           "client_id",
           "client_secret",
@@ -8204,8 +8158,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "role",
           "organization_id",
           "user_id",
@@ -8318,8 +8270,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "name",
           "display_name",
           "personal_org"
@@ -8393,9 +8343,7 @@
           }
         },
         "required": [
-          "id",
-          "created_at",
-          "updated_at"
+          "id"
         ]
       },
       "PasswordResetToken": {
@@ -8448,8 +8396,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "owner_id",
           "token",
           "email",
@@ -8521,8 +8467,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "owner_id",
           "name",
           "token",
@@ -8672,8 +8616,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "email",
           "first_name",
           "last_name",
@@ -8752,8 +8694,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "locked",
           "status",
           "email_confirmed",
@@ -8842,8 +8782,6 @@
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
           "owner_id",
           "name",
           "user_id",

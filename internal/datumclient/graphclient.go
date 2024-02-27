@@ -73,8 +73,8 @@ func (t *GetGroupByID_Group_Owner) GetID() string {
 
 type GetGroupByID_Group_Setting struct {
 	ID           string           "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt    *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
@@ -94,13 +94,13 @@ func (t *GetGroupByID_Group_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetGroupByID_Group_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetGroupByID_Group_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetGroupByID_Group_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetGroupByID_Group_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -204,9 +204,9 @@ type GetGroupByID_Group struct {
 	LogoURL     *string                       "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     GetGroupByID_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GetGroupByID_Group_Members "json:\"members,omitempty\" graphql:\"members\""
-	CreatedAt   time.Time                     "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt   *time.Time                    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy   *string                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                     "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt   *time.Time                    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy   *string                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
@@ -262,7 +262,7 @@ func (t *GetGroupByID_Group) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetGroupByID_Group{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetGroupByID_Group) GetCreatedBy() *string {
 	if t == nil {
@@ -274,7 +274,7 @@ func (t *GetGroupByID_Group) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetGroupByID_Group{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetGroupByID_Group) GetUpdatedBy() *string {
 	if t == nil {
@@ -296,8 +296,8 @@ func (t *GroupsWhere_Groups_Edges_Node_Owner) GetID() string {
 
 type GroupsWhere_Groups_Edges_Node_Setting struct {
 	ID           string           "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt    *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
@@ -317,13 +317,13 @@ func (t *GroupsWhere_Groups_Edges_Node_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GroupsWhere_Groups_Edges_Node_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GroupsWhere_Groups_Edges_Node_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -427,9 +427,9 @@ type GroupsWhere_Groups_Edges_Node struct {
 	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     GroupsWhere_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GroupsWhere_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
-	CreatedAt   time.Time                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt   *time.Time                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy   *string                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt   *time.Time                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
@@ -485,7 +485,7 @@ func (t *GroupsWhere_Groups_Edges_Node) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GroupsWhere_Groups_Edges_Node) GetCreatedBy() *string {
 	if t == nil {
@@ -497,7 +497,7 @@ func (t *GroupsWhere_Groups_Edges_Node) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GroupsWhere_Groups_Edges_Node) GetUpdatedBy() *string {
 	if t == nil {
@@ -541,8 +541,8 @@ func (t *GetAllGroups_Groups_Edges_Node_Owner) GetID() string {
 
 type GetAllGroups_Groups_Edges_Node_Setting struct {
 	ID           string           "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt    *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
@@ -562,13 +562,13 @@ func (t *GetAllGroups_Groups_Edges_Node_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetAllGroups_Groups_Edges_Node_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetAllGroups_Groups_Edges_Node_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -672,9 +672,9 @@ type GetAllGroups_Groups_Edges_Node struct {
 	LogoURL     *string                                   "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     GetAllGroups_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*GetAllGroups_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
-	CreatedAt   time.Time                                 "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt   *time.Time                                "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy   *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                                 "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt   *time.Time                                "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
@@ -730,7 +730,7 @@ func (t *GetAllGroups_Groups_Edges_Node) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetAllGroups_Groups_Edges_Node) GetCreatedBy() *string {
 	if t == nil {
@@ -742,7 +742,7 @@ func (t *GetAllGroups_Groups_Edges_Node) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetAllGroups_Groups_Edges_Node) GetUpdatedBy() *string {
 	if t == nil {
@@ -786,8 +786,8 @@ func (t *CreateGroup_CreateGroup_Group_Owner) GetID() string {
 
 type CreateGroup_CreateGroup_Group_Setting struct {
 	ID           string           "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt    *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
@@ -807,13 +807,13 @@ func (t *CreateGroup_CreateGroup_Group_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *CreateGroup_CreateGroup_Group_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *CreateGroup_CreateGroup_Group_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -917,9 +917,9 @@ type CreateGroup_CreateGroup_Group struct {
 	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Setting     CreateGroup_CreateGroup_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*CreateGroup_CreateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
-	CreatedAt   time.Time                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt   *time.Time                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy   *string                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt   *time.Time                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
@@ -975,7 +975,7 @@ func (t *CreateGroup_CreateGroup_Group) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *CreateGroup_CreateGroup_Group) GetCreatedBy() *string {
 	if t == nil {
@@ -987,7 +987,7 @@ func (t *CreateGroup_CreateGroup_Group) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *CreateGroup_CreateGroup_Group) GetUpdatedBy() *string {
 	if t == nil {
@@ -1009,8 +1009,8 @@ func (t *CreateGroup_CreateGroup) GetGroup() *CreateGroup_CreateGroup_Group {
 
 type UpdateGroup_UpdateGroup_Group_Setting struct {
 	ID           string           "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time        "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt    *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy    *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility "json:\"visibility\" graphql:\"visibility\""
@@ -1030,13 +1030,13 @@ func (t *UpdateGroup_UpdateGroup_Group_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *UpdateGroup_UpdateGroup_Group_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *UpdateGroup_UpdateGroup_Group_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -1138,7 +1138,7 @@ type UpdateGroup_UpdateGroup_Group struct {
 	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
 	Setting     UpdateGroup_UpdateGroup_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*UpdateGroup_UpdateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
-	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt   *time.Time                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
@@ -1182,7 +1182,7 @@ func (t *UpdateGroup_UpdateGroup_Group) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *UpdateGroup_UpdateGroup_Group) GetUpdatedBy() *string {
 	if t == nil {
@@ -1423,8 +1423,8 @@ func (t *GetGroupSetting_GroupSetting_Group) GetID() string {
 
 type GetGroupSetting_GroupSetting struct {
 	ID           string                              "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time                           "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time                           "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt    *time.Time                          "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time                          "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy    *string                             "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string                             "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Visibility   enums.Visibility                    "json:\"visibility\" graphql:\"visibility\""
@@ -1445,13 +1445,13 @@ func (t *GetGroupSetting_GroupSetting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetGroupSetting_GroupSetting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetGroupSetting_GroupSetting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetGroupSetting_GroupSetting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetGroupSetting_GroupSetting) GetCreatedBy() *string {
 	if t == nil {
@@ -1622,8 +1622,8 @@ func (t *GetInvite_Invite_Owner) GetName() string {
 
 type GetInvite_Invite struct {
 	ID           string                 "json:\"id\" graphql:\"id\""
-	CreatedAt    time.Time              "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt    time.Time              "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt    *time.Time             "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time             "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy    *string                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy    *string                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	DeletedAt    *time.Time             "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
@@ -1647,13 +1647,13 @@ func (t *GetInvite_Invite) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetInvite_Invite{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetInvite_Invite) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetInvite_Invite{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetInvite_Invite) GetCreatedBy() *string {
 	if t == nil {
@@ -1935,21 +1935,21 @@ func (t *GetOrganizationByID_Organization_Members) GetUser() *GetOrganizationByI
 }
 
 type GetOrganizationByID_Organization_Setting struct {
-	ID             string    "json:\"id\" graphql:\"id\""
-	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
-	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string     "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
+	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *GetOrganizationByID_Organization_Setting) GetID() string {
@@ -1962,13 +1962,13 @@ func (t *GetOrganizationByID_Organization_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetOrganizationByID_Organization_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetOrganizationByID_Organization_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetOrganizationByID_Organization_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetOrganizationByID_Organization_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -2053,9 +2053,9 @@ type GetOrganizationByID_Organization struct {
 	Children    GetOrganizationByID_Organization_Children   "json:\"children\" graphql:\"children\""
 	Members     []*GetOrganizationByID_Organization_Members "json:\"members,omitempty\" graphql:\"members\""
 	Setting     *GetOrganizationByID_Organization_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt   time.Time                                   "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt   *time.Time                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy   *string                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                                   "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt   *time.Time                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
@@ -2117,7 +2117,7 @@ func (t *GetOrganizationByID_Organization) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetOrganizationByID_Organization{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetOrganizationByID_Organization) GetCreatedBy() *string {
 	if t == nil {
@@ -2129,7 +2129,7 @@ func (t *GetOrganizationByID_Organization) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetOrganizationByID_Organization{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetOrganizationByID_Organization) GetUpdatedBy() *string {
 	if t == nil {
@@ -2261,21 +2261,21 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Members) GetUser() *GetAll
 }
 
 type GetAllOrganizations_Organizations_Edges_Node_Setting struct {
-	ID             string    "json:\"id\" graphql:\"id\""
-	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
-	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string     "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
+	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetID() string {
@@ -2288,13 +2288,13 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetCreatedAt() *t
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -2379,8 +2379,8 @@ type GetAllOrganizations_Organizations_Edges_Node struct {
 	Children    GetAllOrganizations_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
 	Members     []*GetAllOrganizations_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
 	Setting     *GetAllOrganizations_Organizations_Edges_Node_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt   time.Time                                               "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt   time.Time                                               "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt   *time.Time                                              "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                              "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetID() string {
@@ -2441,13 +2441,13 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetCreatedAt() *time.Time
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 
 type GetAllOrganizations_Organizations_Edges struct {
@@ -2595,21 +2595,21 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Members) GetUser() *Organiz
 }
 
 type OrganizationsWhere_Organizations_Edges_Node_Setting struct {
-	ID             string    "json:\"id\" graphql:\"id\""
-	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
-	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string     "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
+	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetID() string {
@@ -2622,13 +2622,13 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetCreatedAt() *ti
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -2713,8 +2713,8 @@ type OrganizationsWhere_Organizations_Edges_Node struct {
 	Children    OrganizationsWhere_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
 	Members     []*OrganizationsWhere_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
 	Setting     *OrganizationsWhere_Organizations_Edges_Node_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt   time.Time                                              "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt   time.Time                                              "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt   *time.Time                                             "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                             "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 }
 
 func (t *OrganizationsWhere_Organizations_Edges_Node) GetID() string {
@@ -2775,13 +2775,13 @@ func (t *OrganizationsWhere_Organizations_Edges_Node) GetCreatedAt() *time.Time 
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *OrganizationsWhere_Organizations_Edges_Node) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 
 type OrganizationsWhere_Organizations_Edges struct {
@@ -2807,21 +2807,21 @@ func (t *OrganizationsWhere_Organizations) GetEdges() []*OrganizationsWhere_Orga
 }
 
 type CreateOrganization_CreateOrganization_Organization_Setting struct {
-	ID             string    "json:\"id\" graphql:\"id\""
-	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
-	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string     "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
+	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetID() string {
@@ -2834,13 +2834,13 @@ func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetCreatedA
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -2993,8 +2993,8 @@ type CreateOrganization_CreateOrganization_Organization struct {
 	DisplayName string                                                      "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                     "json:\"description,omitempty\" graphql:\"description\""
 	PersonalOrg bool                                                        "json:\"personalOrg\" graphql:\"personalOrg\""
-	CreatedAt   time.Time                                                   "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt   time.Time                                                   "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt   *time.Time                                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	Setting     *CreateOrganization_CreateOrganization_Organization_Setting "json:\"setting,omitempty\" graphql:\"setting\""
 	Parent      *CreateOrganization_CreateOrganization_Organization_Parent  "json:\"parent,omitempty\" graphql:\"parent\""
 	Children    CreateOrganization_CreateOrganization_Organization_Children "json:\"children\" graphql:\"children\""
@@ -3034,13 +3034,13 @@ func (t *CreateOrganization_CreateOrganization_Organization) GetCreatedAt() *tim
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *CreateOrganization_CreateOrganization_Organization) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *CreateOrganization_CreateOrganization_Organization) GetSetting() *CreateOrganization_CreateOrganization_Organization_Setting {
 	if t == nil {
@@ -3098,21 +3098,21 @@ func (t *UpdateOrganization_UpdateOrganization_Organization_Members) GetUserID()
 }
 
 type UpdateOrganization_UpdateOrganization_Organization_Setting struct {
-	ID             string    "json:\"id\" graphql:\"id\""
-	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
-	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string     "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
+	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
 }
 
 func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetID() string {
@@ -3125,13 +3125,13 @@ func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetCreatedA
 	if t == nil {
 		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -3296,10 +3296,10 @@ type GetOrganizationSetting_OrganizationSetting struct {
 	BillingContact *string                                                  "json:\"billingContact,omitempty\" graphql:\"billingContact\""
 	BillingEmail   *string                                                  "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
 	BillingPhone   *string                                                  "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	CreatedAt      time.Time                                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt      *time.Time                                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	Domains        []string                                                 "json:\"domains,omitempty\" graphql:\"domains\""
-	UpdatedAt      time.Time                                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt      *time.Time                                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy      *string                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Organization   *GetOrganizationSetting_OrganizationSetting_Organization "json:\"organization,omitempty\" graphql:\"organization\""
 }
@@ -3368,7 +3368,7 @@ func (t *GetOrganizationSetting_OrganizationSetting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetOrganizationSetting_OrganizationSetting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetOrganizationSetting_OrganizationSetting) GetCreatedBy() *string {
 	if t == nil {
@@ -3386,7 +3386,7 @@ func (t *GetOrganizationSetting_OrganizationSetting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetOrganizationSetting_OrganizationSetting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetOrganizationSetting_OrganizationSetting) GetUpdatedBy() *string {
 	if t == nil {
@@ -3639,8 +3639,8 @@ type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken str
 	Token         string                                                                                   "json:\"token\" graphql:\"token\""
 	Scopes        []string                                                                                 "json:\"scopes,omitempty\" graphql:\"scopes\""
 	Organizations []*CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
-	CreatedAt     time.Time                                                                                "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt     time.Time                                                                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt     *time.Time                                                                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt     *time.Time                                                                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy     *string                                                                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy     *string                                                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name          string                                                                                   "json:\"name\" graphql:\"name\""
@@ -3678,13 +3678,13 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken
 	if t == nil {
 		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetCreatedBy() *string {
 	if t == nil {
@@ -3781,8 +3781,8 @@ type UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken str
 	Token         string                                                                                   "json:\"token\" graphql:\"token\""
 	Scopes        []string                                                                                 "json:\"scopes,omitempty\" graphql:\"scopes\""
 	Organizations []*UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
-	CreatedAt     time.Time                                                                                "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt     time.Time                                                                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt     *time.Time                                                                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt     *time.Time                                                                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy     *string                                                                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy     *string                                                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name          string                                                                                   "json:\"name\" graphql:\"name\""
@@ -3820,13 +3820,13 @@ func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken
 	if t == nil {
 		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *UpdatePersonalAccessToken_UpdatePersonalAccessToken_PersonalAccessToken) GetCreatedBy() *string {
 	if t == nil {
@@ -3923,8 +3923,8 @@ type GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node struct {
 	Token         string                                                                      "json:\"token\" graphql:\"token\""
 	Scopes        []string                                                                    "json:\"scopes,omitempty\" graphql:\"scopes\""
 	Organizations []*GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
-	CreatedAt     time.Time                                                                   "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt     time.Time                                                                   "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt     *time.Time                                                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt     *time.Time                                                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy     *string                                                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy     *string                                                                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name          string                                                                      "json:\"name\" graphql:\"name\""
@@ -3962,13 +3962,13 @@ func (t *GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node) GetCreatedA
 	if t == nil {
 		t = &GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetAllPersonalAccessTokens_PersonalAccessTokens_Edges_Node) GetCreatedBy() *string {
 	if t == nil {
@@ -4076,8 +4076,8 @@ type GetPersonalAccessTokenByID_PersonalAccessToken struct {
 	Token         string                                                          "json:\"token\" graphql:\"token\""
 	Scopes        []string                                                        "json:\"scopes,omitempty\" graphql:\"scopes\""
 	Organizations []*GetPersonalAccessTokenByID_PersonalAccessToken_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
-	CreatedAt     time.Time                                                       "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt     time.Time                                                       "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedAt     *time.Time                                                      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt     *time.Time                                                      "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	CreatedBy     *string                                                         "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy     *string                                                         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name          string                                                          "json:\"name\" graphql:\"name\""
@@ -4115,13 +4115,13 @@ func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetCreatedAt() *time.Ti
 	if t == nil {
 		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetCreatedBy() *string {
 	if t == nil {
@@ -4184,9 +4184,9 @@ type GetUserByID_User_Setting struct {
 	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
 	Tags           []string         "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
@@ -4231,7 +4231,7 @@ func (t *GetUserByID_User_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetUserByID_User_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -4243,7 +4243,7 @@ func (t *GetUserByID_User_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetUserByID_User_Setting) GetUpdatedBy() *string {
 	if t == nil {
@@ -4322,9 +4322,9 @@ type GetUserByID_User struct {
 	AuthProvider    enums.AuthProvider                "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetUserByID_User_Setting          "json:\"setting\" graphql:\"setting\""
 	Organizations   []*GetUserByID_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
-	UpdatedAt       time.Time                         "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt       *time.Time                        "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy       *string                           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	CreatedAt       time.Time                         "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt       *time.Time                        "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy       *string                           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 }
 
@@ -4410,7 +4410,7 @@ func (t *GetUserByID_User) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetUserByID_User) GetUpdatedBy() *string {
 	if t == nil {
@@ -4422,7 +4422,7 @@ func (t *GetUserByID_User) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetUserByID_User) GetCreatedBy() *string {
 	if t == nil {
@@ -4438,9 +4438,9 @@ type GetUserByIDWithOrgs_User_Setting struct {
 	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
 	Tags           []string         "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
@@ -4485,7 +4485,7 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetUserByIDWithOrgs_User_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -4497,7 +4497,7 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetUserByIDWithOrgs_User_Setting) GetUpdatedBy() *string {
 	if t == nil {
@@ -4568,9 +4568,9 @@ type GetUserByIDWithOrgs_User struct {
 	Oauth           bool                                       "json:\"oauth\" graphql:\"oauth\""
 	AuthProvider    enums.AuthProvider                         "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetUserByIDWithOrgs_User_Setting           "json:\"setting\" graphql:\"setting\""
-	UpdatedAt       time.Time                                  "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt       *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy       *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	CreatedAt       time.Time                                  "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt       *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy       *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	OrgMemberships  []*GetUserByIDWithOrgs_User_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 }
@@ -4651,7 +4651,7 @@ func (t *GetUserByIDWithOrgs_User) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetUserByIDWithOrgs_User) GetUpdatedBy() *string {
 	if t == nil {
@@ -4663,7 +4663,7 @@ func (t *GetUserByIDWithOrgs_User) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetUserByIDWithOrgs_User) GetCreatedBy() *string {
 	if t == nil {
@@ -4685,9 +4685,9 @@ type GetAllUsers_Users_Edges_Node_Setting struct {
 	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
 	Tags           []string         "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
@@ -4732,7 +4732,7 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -4744,7 +4744,7 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedBy() *string {
 	if t == nil {
@@ -4772,9 +4772,9 @@ type GetAllUsers_Users_Edges_Node struct {
 	Oauth           bool                                 "json:\"oauth\" graphql:\"oauth\""
 	AuthProvider    enums.AuthProvider                   "json:\"authProvider\" graphql:\"authProvider\""
 	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
-	UpdatedAt       time.Time                            "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt       *time.Time                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy       *string                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	CreatedAt       time.Time                            "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt       *time.Time                           "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy       *string                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 }
 
@@ -4854,7 +4854,7 @@ func (t *GetAllUsers_Users_Edges_Node) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetAllUsers_Users_Edges_Node) GetUpdatedBy() *string {
 	if t == nil {
@@ -4866,7 +4866,7 @@ func (t *GetAllUsers_Users_Edges_Node) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetAllUsers_Users_Edges_Node) GetCreatedBy() *string {
 	if t == nil {
@@ -4940,9 +4940,9 @@ type CreateUser_CreateUser_User_Setting struct {
 	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
 	Tags           []string         "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
@@ -4987,7 +4987,7 @@ func (t *CreateUser_CreateUser_User_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *CreateUser_CreateUser_User_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -4999,7 +4999,7 @@ func (t *CreateUser_CreateUser_User_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *CreateUser_CreateUser_User_Setting) GetUpdatedBy() *string {
 	if t == nil {
@@ -5149,9 +5149,9 @@ type UpdateUser_UpdateUser_User_Setting struct {
 	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
 	Tags           []string         "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
@@ -5196,7 +5196,7 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *UpdateUser_UpdateUser_User_Setting) GetCreatedBy() *string {
 	if t == nil {
@@ -5208,7 +5208,7 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *UpdateUser_UpdateUser_User_Setting) GetUpdatedBy() *string {
 	if t == nil {
@@ -5349,11 +5349,11 @@ type GetUserSettingByID_UserSetting struct {
 	Tags           []string         "json:\"tags\" graphql:\"tags\""
 	Locked         bool             "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	CreatedAt      time.Time        "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	DeletedAt      *time.Time       "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
 	DeletedBy      *string          "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	UpdatedAt      time.Time        "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
 	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
@@ -5409,7 +5409,7 @@ func (t *GetUserSettingByID_UserSetting) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserSettingByID_UserSetting{}
 	}
-	return &t.CreatedAt
+	return t.CreatedAt
 }
 func (t *GetUserSettingByID_UserSetting) GetCreatedBy() *string {
 	if t == nil {
@@ -5433,7 +5433,7 @@ func (t *GetUserSettingByID_UserSetting) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &GetUserSettingByID_UserSetting{}
 	}
-	return &t.UpdatedAt
+	return t.UpdatedAt
 }
 func (t *GetUserSettingByID_UserSetting) GetUpdatedBy() *string {
 	if t == nil {

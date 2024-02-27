@@ -40,6 +40,12 @@ func (gu *GroupUpdate) SetUpdatedAt(t time.Time) *GroupUpdate {
 	return gu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gu *GroupUpdate) ClearUpdatedAt() *GroupUpdate {
+	gu.mutation.ClearUpdatedAt()
+	return gu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (gu *GroupUpdate) SetUpdatedBy(s string) *GroupUpdate {
 	gu.mutation.SetUpdatedBy(s)
@@ -339,7 +345,7 @@ func (gu *GroupUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (gu *GroupUpdate) defaults() error {
-	if _, ok := gu.mutation.UpdatedAt(); !ok {
+	if _, ok := gu.mutation.UpdatedAt(); !ok && !gu.mutation.UpdatedAtCleared() {
 		if group.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized group.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -382,8 +388,14 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if gu.mutation.CreatedAtCleared() {
+		_spec.ClearField(group.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := gu.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(group.FieldUpdatedAt, field.TypeTime)
 	}
 	if gu.mutation.CreatedByCleared() {
 		_spec.ClearField(group.FieldCreatedBy, field.TypeString)
@@ -634,6 +646,12 @@ type GroupUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (guo *GroupUpdateOne) SetUpdatedAt(t time.Time) *GroupUpdateOne {
 	guo.mutation.SetUpdatedAt(t)
+	return guo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (guo *GroupUpdateOne) ClearUpdatedAt() *GroupUpdateOne {
+	guo.mutation.ClearUpdatedAt()
 	return guo
 }
 
@@ -949,7 +967,7 @@ func (guo *GroupUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (guo *GroupUpdateOne) defaults() error {
-	if _, ok := guo.mutation.UpdatedAt(); !ok {
+	if _, ok := guo.mutation.UpdatedAt(); !ok && !guo.mutation.UpdatedAtCleared() {
 		if group.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized group.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -1009,8 +1027,14 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			}
 		}
 	}
+	if guo.mutation.CreatedAtCleared() {
+		_spec.ClearField(group.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := guo.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if guo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(group.FieldUpdatedAt, field.TypeTime)
 	}
 	if guo.mutation.CreatedByCleared() {
 		_spec.ClearField(group.FieldCreatedBy, field.TypeString)

@@ -217,12 +217,6 @@ func (evtc *EmailVerificationTokenCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (evtc *EmailVerificationTokenCreate) check() error {
-	if _, ok := evtc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "EmailVerificationToken.created_at"`)}
-	}
-	if _, ok := evtc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "EmailVerificationToken.updated_at"`)}
-	}
 	if _, ok := evtc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "EmailVerificationToken.owner_id"`)}
 	}

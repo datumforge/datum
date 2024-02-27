@@ -322,12 +322,6 @@ func (usc *UserSettingCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (usc *UserSettingCreate) check() error {
-	if _, ok := usc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "UserSetting.created_at"`)}
-	}
-	if _, ok := usc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "UserSetting.updated_at"`)}
-	}
 	if _, ok := usc.mutation.Locked(); !ok {
 		return &ValidationError{Name: "locked", err: errors.New(`generated: missing required field "UserSetting.locked"`)}
 	}

@@ -46,6 +46,12 @@ func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 	return uu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (uu *UserUpdate) ClearUpdatedAt() *UserUpdate {
+	uu.mutation.ClearUpdatedAt()
+	return uu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (uu *UserUpdate) SetUpdatedBy(s string) *UserUpdate {
 	uu.mutation.SetUpdatedBy(s)
@@ -756,7 +762,7 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uu *UserUpdate) defaults() error {
-	if _, ok := uu.mutation.UpdatedAt(); !ok {
+	if _, ok := uu.mutation.UpdatedAt(); !ok && !uu.mutation.UpdatedAtCleared() {
 		if user.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized user.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -835,8 +841,14 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if uu.mutation.CreatedAtCleared() {
+		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := uu.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
 	}
 	if uu.mutation.CreatedByCleared() {
 		_spec.ClearField(user.FieldCreatedBy, field.TypeString)
@@ -1431,6 +1443,12 @@ type UserUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetUpdatedAt(t)
+	return uuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (uuo *UserUpdateOne) ClearUpdatedAt() *UserUpdateOne {
+	uuo.mutation.ClearUpdatedAt()
 	return uuo
 }
 
@@ -2157,7 +2175,7 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uuo *UserUpdateOne) defaults() error {
-	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+	if _, ok := uuo.mutation.UpdatedAt(); !ok && !uuo.mutation.UpdatedAtCleared() {
 		if user.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized user.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -2253,8 +2271,14 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
+	if uuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := uuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
 	}
 	if uuo.mutation.CreatedByCleared() {
 		_spec.ClearField(user.FieldCreatedBy, field.TypeString)

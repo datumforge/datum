@@ -38,6 +38,12 @@ func (iu *InviteUpdate) SetUpdatedAt(t time.Time) *InviteUpdate {
 	return iu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (iu *InviteUpdate) ClearUpdatedAt() *InviteUpdate {
+	iu.mutation.ClearUpdatedAt()
+	return iu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (iu *InviteUpdate) SetUpdatedBy(s string) *InviteUpdate {
 	iu.mutation.SetUpdatedBy(s)
@@ -257,7 +263,7 @@ func (iu *InviteUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (iu *InviteUpdate) defaults() error {
-	if _, ok := iu.mutation.UpdatedAt(); !ok {
+	if _, ok := iu.mutation.UpdatedAt(); !ok && !iu.mutation.UpdatedAtCleared() {
 		if invite.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized invite.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -312,8 +318,14 @@ func (iu *InviteUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if iu.mutation.CreatedAtCleared() {
+		_spec.ClearField(invite.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(invite.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if iu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(invite.FieldUpdatedAt, field.TypeTime)
 	}
 	if iu.mutation.CreatedByCleared() {
 		_spec.ClearField(invite.FieldCreatedBy, field.TypeString)
@@ -416,6 +428,12 @@ type InviteUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (iuo *InviteUpdateOne) SetUpdatedAt(t time.Time) *InviteUpdateOne {
 	iuo.mutation.SetUpdatedAt(t)
+	return iuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (iuo *InviteUpdateOne) ClearUpdatedAt() *InviteUpdateOne {
+	iuo.mutation.ClearUpdatedAt()
 	return iuo
 }
 
@@ -651,7 +669,7 @@ func (iuo *InviteUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (iuo *InviteUpdateOne) defaults() error {
-	if _, ok := iuo.mutation.UpdatedAt(); !ok {
+	if _, ok := iuo.mutation.UpdatedAt(); !ok && !iuo.mutation.UpdatedAtCleared() {
 		if invite.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized invite.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -723,8 +741,14 @@ func (iuo *InviteUpdateOne) sqlSave(ctx context.Context) (_node *Invite, err err
 			}
 		}
 	}
+	if iuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(invite.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(invite.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if iuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(invite.FieldUpdatedAt, field.TypeTime)
 	}
 	if iuo.mutation.CreatedByCleared() {
 		_spec.ClearField(invite.FieldCreatedBy, field.TypeString)

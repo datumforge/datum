@@ -39,6 +39,12 @@ func (usu *UserSettingUpdate) SetUpdatedAt(t time.Time) *UserSettingUpdate {
 	return usu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (usu *UserSettingUpdate) ClearUpdatedAt() *UserSettingUpdate {
+	usu.mutation.ClearUpdatedAt()
+	return usu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (usu *UserSettingUpdate) SetUpdatedBy(s string) *UserSettingUpdate {
 	usu.mutation.SetUpdatedBy(s)
@@ -295,7 +301,7 @@ func (usu *UserSettingUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (usu *UserSettingUpdate) defaults() error {
-	if _, ok := usu.mutation.UpdatedAt(); !ok {
+	if _, ok := usu.mutation.UpdatedAt(); !ok && !usu.mutation.UpdatedAtCleared() {
 		if usersetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized usersetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -327,8 +333,14 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if usu.mutation.CreatedAtCleared() {
+		_spec.ClearField(usersetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := usu.mutation.UpdatedAt(); ok {
 		_spec.SetField(usersetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if usu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(usersetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if usu.mutation.CreatedByCleared() {
 		_spec.ClearField(usersetting.FieldCreatedBy, field.TypeString)
@@ -448,6 +460,12 @@ type UserSettingUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (usuo *UserSettingUpdateOne) SetUpdatedAt(t time.Time) *UserSettingUpdateOne {
 	usuo.mutation.SetUpdatedAt(t)
+	return usuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (usuo *UserSettingUpdateOne) ClearUpdatedAt() *UserSettingUpdateOne {
+	usuo.mutation.ClearUpdatedAt()
 	return usuo
 }
 
@@ -720,7 +738,7 @@ func (usuo *UserSettingUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (usuo *UserSettingUpdateOne) defaults() error {
-	if _, ok := usuo.mutation.UpdatedAt(); !ok {
+	if _, ok := usuo.mutation.UpdatedAt(); !ok && !usuo.mutation.UpdatedAtCleared() {
 		if usersetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized usersetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -769,8 +787,14 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 			}
 		}
 	}
+	if usuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(usersetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := usuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(usersetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if usuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(usersetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if usuo.mutation.CreatedByCleared() {
 		_spec.ClearField(usersetting.FieldCreatedBy, field.TypeString)

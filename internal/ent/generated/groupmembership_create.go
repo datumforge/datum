@@ -224,12 +224,6 @@ func (gmc *GroupMembershipCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (gmc *GroupMembershipCreate) check() error {
-	if _, ok := gmc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "GroupMembership.created_at"`)}
-	}
-	if _, ok := gmc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "GroupMembership.updated_at"`)}
-	}
 	if _, ok := gmc.mutation.Role(); !ok {
 		return &ValidationError{Name: "role", err: errors.New(`generated: missing required field "GroupMembership.role"`)}
 	}

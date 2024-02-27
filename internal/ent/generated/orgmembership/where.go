@@ -148,6 +148,16 @@ func CreatedAtLTE(v time.Time) predicate.OrgMembership {
 	return predicate.OrgMembership(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.OrgMembership {
 	return predicate.OrgMembership(sql.FieldEQ(FieldUpdatedAt, v))
@@ -186,6 +196,16 @@ func UpdatedAtLT(v time.Time) predicate.OrgMembership {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.OrgMembership {
 	return predicate.OrgMembership(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.OrgMembership {
+	return predicate.OrgMembership(sql.FieldNotNull(FieldUpdatedAt))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.

@@ -37,6 +37,12 @@ func (evtu *EmailVerificationTokenUpdate) SetUpdatedAt(t time.Time) *EmailVerifi
 	return evtu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (evtu *EmailVerificationTokenUpdate) ClearUpdatedAt() *EmailVerificationTokenUpdate {
+	evtu.mutation.ClearUpdatedAt()
+	return evtu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (evtu *EmailVerificationTokenUpdate) SetUpdatedBy(s string) *EmailVerificationTokenUpdate {
 	evtu.mutation.SetUpdatedBy(s)
@@ -207,7 +213,7 @@ func (evtu *EmailVerificationTokenUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (evtu *EmailVerificationTokenUpdate) defaults() error {
-	if _, ok := evtu.mutation.UpdatedAt(); !ok {
+	if _, ok := evtu.mutation.UpdatedAt(); !ok && !evtu.mutation.UpdatedAtCleared() {
 		if emailverificationtoken.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized emailverificationtoken.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -252,8 +258,14 @@ func (evtu *EmailVerificationTokenUpdate) sqlSave(ctx context.Context) (n int, e
 			}
 		}
 	}
+	if evtu.mutation.CreatedAtCleared() {
+		_spec.ClearField(emailverificationtoken.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := evtu.mutation.UpdatedAt(); ok {
 		_spec.SetField(emailverificationtoken.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if evtu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(emailverificationtoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if evtu.mutation.CreatedByCleared() {
 		_spec.ClearField(emailverificationtoken.FieldCreatedBy, field.TypeString)
@@ -344,6 +356,12 @@ type EmailVerificationTokenUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (evtuo *EmailVerificationTokenUpdateOne) SetUpdatedAt(t time.Time) *EmailVerificationTokenUpdateOne {
 	evtuo.mutation.SetUpdatedAt(t)
+	return evtuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (evtuo *EmailVerificationTokenUpdateOne) ClearUpdatedAt() *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.ClearUpdatedAt()
 	return evtuo
 }
 
@@ -530,7 +548,7 @@ func (evtuo *EmailVerificationTokenUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (evtuo *EmailVerificationTokenUpdateOne) defaults() error {
-	if _, ok := evtuo.mutation.UpdatedAt(); !ok {
+	if _, ok := evtuo.mutation.UpdatedAt(); !ok && !evtuo.mutation.UpdatedAtCleared() {
 		if emailverificationtoken.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized emailverificationtoken.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -592,8 +610,14 @@ func (evtuo *EmailVerificationTokenUpdateOne) sqlSave(ctx context.Context) (_nod
 			}
 		}
 	}
+	if evtuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(emailverificationtoken.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := evtuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(emailverificationtoken.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if evtuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(emailverificationtoken.FieldUpdatedAt, field.TypeTime)
 	}
 	if evtuo.mutation.CreatedByCleared() {
 		_spec.ClearField(emailverificationtoken.FieldCreatedBy, field.TypeString)

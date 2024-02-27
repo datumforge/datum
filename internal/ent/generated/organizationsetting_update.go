@@ -38,6 +38,12 @@ func (osu *OrganizationSettingUpdate) SetUpdatedAt(t time.Time) *OrganizationSet
 	return osu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (osu *OrganizationSettingUpdate) ClearUpdatedAt() *OrganizationSettingUpdate {
+	osu.mutation.ClearUpdatedAt()
+	return osu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (osu *OrganizationSettingUpdate) SetUpdatedBy(s string) *OrganizationSettingUpdate {
 	osu.mutation.SetUpdatedBy(s)
@@ -356,7 +362,7 @@ func (osu *OrganizationSettingUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (osu *OrganizationSettingUpdate) defaults() error {
-	if _, ok := osu.mutation.UpdatedAt(); !ok {
+	if _, ok := osu.mutation.UpdatedAt(); !ok && !osu.mutation.UpdatedAtCleared() {
 		if organizationsetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized organizationsetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -375,8 +381,14 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 			}
 		}
 	}
+	if osu.mutation.CreatedAtCleared() {
+		_spec.ClearField(organizationsetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := osu.mutation.UpdatedAt(); ok {
 		_spec.SetField(organizationsetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if osu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(organizationsetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if osu.mutation.CreatedByCleared() {
 		_spec.ClearField(organizationsetting.FieldCreatedBy, field.TypeString)
@@ -525,6 +537,12 @@ type OrganizationSettingUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (osuo *OrganizationSettingUpdateOne) SetUpdatedAt(t time.Time) *OrganizationSettingUpdateOne {
 	osuo.mutation.SetUpdatedAt(t)
+	return osuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (osuo *OrganizationSettingUpdateOne) ClearUpdatedAt() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearUpdatedAt()
 	return osuo
 }
 
@@ -859,7 +877,7 @@ func (osuo *OrganizationSettingUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (osuo *OrganizationSettingUpdateOne) defaults() error {
-	if _, ok := osuo.mutation.UpdatedAt(); !ok {
+	if _, ok := osuo.mutation.UpdatedAt(); !ok && !osuo.mutation.UpdatedAtCleared() {
 		if organizationsetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized organizationsetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -895,8 +913,14 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 			}
 		}
 	}
+	if osuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(organizationsetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := osuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(organizationsetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if osuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(organizationsetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if osuo.mutation.CreatedByCleared() {
 		_spec.ClearField(organizationsetting.FieldCreatedBy, field.TypeString)

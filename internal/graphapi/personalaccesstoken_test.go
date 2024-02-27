@@ -249,6 +249,9 @@ func TestMutationCreatePersonalAccessToken(t *testing.T) {
 
 			// token should not be redacted on create
 			assert.NotEqual(t, redacted, resp.CreatePersonalAccessToken.PersonalAccessToken.Token)
+
+			// ensure the token is prefixed
+			assert.Contains(t, resp.CreatePersonalAccessToken.PersonalAccessToken.Token, "dtm_")
 		})
 	}
 }

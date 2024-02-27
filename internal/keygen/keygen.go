@@ -50,6 +50,11 @@ func Secret() string {
 	return AlphaNumeric(SecretLength)
 }
 
+// PrefixedSecret returns a prefixed random string of a fixed length with alpha-numeric characters
+func PrefixedSecret(prefix string) string {
+	return fmt.Sprintf("%s_%s", prefix, Secret())
+}
+
 // generate is a helper function to create a random string of n characters from the
 // character set defined by chars. It uses as efficient a method of generation as
 // possible, using a string builder to prevent multiple allocations and a 6 bit mask

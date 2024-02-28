@@ -30,62 +30,8 @@ import (
 )
 
 var (
-	entSchemaDir   = "./internal/ent/schema/"
 	graphSchemaDir = "./schema/"
 )
-
-func setSecurityOperations() *ogen.Operation {
-	return &ogen.Operation{
-		Security: []map[string][]string{
-			{
-				"BearerAuth": {"read:users"},
-			},
-		},
-	}
-}
-
-func setSecuritySchemes() *ogen.Components {
-	c := &ogen.Components{}
-	c.Init()
-
-	c.SecuritySchemes = map[string]*ogen.SecurityScheme{
-		"BearerAuth": {
-			Type:   "http",
-			Scheme: "Bearer",
-			Name:   "Authorization",
-			In:     "header",
-		},
-		"BasicAuth": {
-			Type:   "http",
-			Scheme: "basic",
-		},
-		"ApiKeyAuth": {
-			Type: "apiKey",
-			Name: "X-API-KEY",
-			In:   "header",
-		},
-		"OpenIDConnect": {
-			Type:             "openIdConnect",
-			OpenIDConnectURL: "https://api.datum.net/.well-known/openid-configuration",
-		},
-		"OAuth2": {
-			Type: "oauth2",
-			Flows: &ogen.OAuthFlows{
-				AuthorizationCode: &ogen.OAuthFlow{
-					AuthorizationURL: "https://api.datum.net/oauth2/authorize",
-					TokenURL:         "https://api.datum.net/oauth2/token",
-					RefreshURL:       "https://api.datum.net/oauth2/refresh",
-					Scopes: map[string]string{
-						"user:email": "read user data",
-						"read:user":  "modify user data",
-					},
-				},
-			},
-		},
-	}
-
-	return c
-}
 
 func main() {
 	xExt, err := entx.NewExtension(
@@ -97,8 +43,6 @@ func main() {
 
 	// Ensure the schema directory exists before running entc.
 	_ = os.Mkdir("schema", 0755)
-
-	// Add OpenAPI Gen extension
 
 	ex, err := entoas.NewExtension(
 		entoas.SimpleModels(),
@@ -126,7 +70,6 @@ func main() {
 				URL:  "https://www.apache.org/licenses/LICENSE-2.0",
 			})
 			spec.Info.SetTermsOfService("https://datum.net/tos")
-			//			spec.Components = setSecuritySchemes()
 
 			return nil
 		}),

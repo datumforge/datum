@@ -8,8 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
-	"text/template"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
@@ -18,7 +16,6 @@ import (
 	"github.com/datumforge/fgax"
 	"github.com/datumforge/fgax/entfga"
 	"github.com/ogen-go/ogen"
-	"github.com/stoewer/go-strcase"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
@@ -96,7 +93,7 @@ func main() {
 		Target:    "./internal/ent/generated",
 		Templates: entgql.AllTemplates,
 		Hooks: []gen.Hook{
-			GenSchema(),
+			entx.GenSchema(graphSchemaDir),
 		},
 		Package: "github.com/datumforge/datum/internal/ent/generated",
 		Features: []gen.Feature{
@@ -144,48 +141,5 @@ func main() {
 			),
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
-	}
-}
-
-// GenSchema generates graphql schemas when not specified to be skipped
-func GenSchema() gen.Hook {
-	return func(next gen.Generator) gen.Generator {
-		return gen.GenerateFunc(func(g *gen.Graph) error {
-			for _, node := range g.Nodes {
-				if sg, ok := node.Annotations[entx.SchemaGenAnnotationName]; ok {
-					val, _ := sg.(map[string]interface{})["Skip"]
-
-					if val.(bool) {
-						continue
-					}
-				}
-
-				fm := template.FuncMap{
-					"ToLowerCamel": strcase.LowerCamelCase,
-				}
-
-				tmpl, err := template.New("graph.tpl").Funcs(fm).ParseFiles("./scripts/templates/graph.tpl")
-				if err != nil {
-					log.Fatalf("Unable to parse template: %v", err)
-				}
-
-				file, err := os.Create(graphSchemaDir + strings.ToLower(node.Name) + ".graphql")
-				if err != nil {
-					log.Fatalf("Unable to create file: %v", err)
-				}
-
-				s := struct {
-					Name string
-				}{
-					Name: node.Name,
-				}
-
-				err = tmpl.Execute(file, s)
-				if err != nil {
-					log.Fatalf("Unable to execute template: %v", err)
-				}
-			}
-			return next.Generate(g)
-		})
 	}
 }

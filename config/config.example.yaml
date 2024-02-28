@@ -39,6 +39,7 @@ db:
     driver_name: ""
     multi_write: false
     primary_db_source: ""
+    run_migrations: false
     secondary_db_source: ""
 email:
     admin_email: ""

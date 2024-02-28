@@ -163,11 +163,11 @@ func WithAuth() ServerOption {
 func WithReadyChecks(c *entx.EntClientConfig, f *fgax.Client, r *redis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Always add a check to the primary db connection
-		s.Config.Handler.AddReadinessCheck("sqlite_db_primary", entx.Healthcheck(c.GetPrimaryDB()))
+		s.Config.Handler.AddReadinessCheck("db_primary", entx.Healthcheck(c.GetPrimaryDB()))
 
 		// Check the secondary db, if enabled
 		if s.Config.Settings.DB.MultiWrite {
-			s.Config.Handler.AddReadinessCheck("sqlite_db_secondary", entx.Healthcheck(c.GetSecondaryDB()))
+			s.Config.Handler.AddReadinessCheck("db_secondary", entx.Healthcheck(c.GetSecondaryDB()))
 		}
 
 		// Check the connection to openFGA, if enabled

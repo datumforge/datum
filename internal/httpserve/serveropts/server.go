@@ -10,9 +10,9 @@ type ServerOptions struct {
 	Config         serverconfig.Config
 }
 
-func NewServerOptions(opts []ServerOption) *ServerOptions {
+func NewServerOptions(opts []ServerOption, cfgLoc string) *ServerOptions {
 	// load koanf config
-	c, err := config.Load(&config.DefaultConfigFilePath)
+	c, err := config.Load(&cfgLoc)
 	if err != nil {
 		panic(err)
 	}

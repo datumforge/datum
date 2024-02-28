@@ -241,6 +241,10 @@
         "cache_ttl": {
           "type": "integer",
           "description": "cache results for subsequent requests"
+        },
+        "run_migrations": {
+          "type": "boolean",
+          "description": "run migrations on startup"
         }
       },
       "additionalProperties": false,

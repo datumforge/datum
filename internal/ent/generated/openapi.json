@@ -6,7 +6,7 @@
     "termsOfService": "https://datum.net/tos",
     "contact": {
       "name": "Datum Support",
-      "url": "https://datum.net",
+      "url": "https://datum.net/support",
       "email": "support@datum.net"
     },
     "license": {
@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "https://api.datum.net",
+      "url": "https://api.datum.net/v1",
       "description": "Datum Production API Endpoint"
     },
     {

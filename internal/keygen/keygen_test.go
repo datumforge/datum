@@ -3,6 +3,7 @@ package keygen_test
 import (
 	"math/rand"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -116,4 +117,17 @@ func BenchmarkRandInt(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		source.Int63()
 	}
+}
+
+func TestPrefixedSecret(t *testing.T) {
+	// This is a long running test, skip if in short mode
+	if testing.Short() {
+		t.Skip("skipping long running test in short mode")
+	}
+
+	prefix := "PREFIX"
+	secret := keygen.PrefixedSecret(prefix)
+
+	require.True(t, strings.HasPrefix(secret, prefix), "secret should have the specified prefix")
+	require.Len(t, secret, len(prefix)+keygen.SecretLength+1, "secret should have the specified prefix and the length of a secret plus 1 for underscore")
 }

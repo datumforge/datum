@@ -39,6 +39,7 @@ db:
     driver_name: ""
     multi_write: false
     primary_db_source: ""
+    run_migrations: false
     secondary_db_source: ""
 email:
     admin_email: ""
@@ -47,6 +48,10 @@ email:
     from_email: ""
     send_grid_api_key: ""
     testing: false
+posthog:
+    api_key: ""
+    enabled: false
+    host: ""
 redis:
     address: ""
     db: 0

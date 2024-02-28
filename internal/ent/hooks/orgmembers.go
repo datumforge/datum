@@ -6,7 +6,6 @@ import (
 	"entgo.io/ent"
 	ph "github.com/posthog/posthog-go"
 
-	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -64,8 +63,8 @@ func HookOrgMembers() ent.Hook {
 					Set("user_name", user.FirstName+user.LastName).
 					Set("join_role", role.String())
 
-				analytics.OrganizationEvent(orgID, userID, "organization_membership", props)
-				analytics.UserEvent(userID, "organization_membership", props)
+				mutation.Analytics.OrganizationEvent(orgID, userID, "organization_membership", props)
+				mutation.Analytics.UserEvent(userID, "organization_membership", props)
 			}
 
 			return retValue, err

@@ -36,6 +36,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/ulids"
+	"github.com/datumforge/datum/pkg/analytics"
 )
 
 type ServerOption interface {
@@ -162,11 +163,11 @@ func WithAuth() ServerOption {
 func WithReadyChecks(c *entx.EntClientConfig, f *fgax.Client, r *redis.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Always add a check to the primary db connection
-		s.Config.Handler.AddReadinessCheck("sqlite_db_primary", entx.Healthcheck(c.GetPrimaryDB()))
+		s.Config.Handler.AddReadinessCheck("db_primary", entx.Healthcheck(c.GetPrimaryDB()))
 
 		// Check the secondary db, if enabled
 		if s.Config.Settings.DB.MultiWrite {
-			s.Config.Handler.AddReadinessCheck("sqlite_db_secondary", entx.Healthcheck(c.GetSecondaryDB()))
+			s.Config.Handler.AddReadinessCheck("db_secondary", entx.Healthcheck(c.GetSecondaryDB()))
 		}
 
 		// Check the connection to openFGA, if enabled
@@ -324,6 +325,26 @@ func WithSentry() ServerOption {
 
 			// add sentry middleware
 			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, sentry.New())
+		}
+	})
+}
+
+// WithAnalytics sets up the PostHog analytics manager
+func WithAnalytics() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		ph := s.Config.Settings.PostHog.Init()
+		if ph == nil {
+			s.Config.Handler.AnalyticsClient = &analytics.EventManager{
+				Enabled: false,
+				Handler: nil,
+			}
+
+			return
+		}
+
+		s.Config.Handler.AnalyticsClient = &analytics.EventManager{
+			Enabled: true,
+			Handler: ph,
 		}
 	})
 }

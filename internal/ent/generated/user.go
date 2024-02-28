@@ -121,12 +121,10 @@ func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e UserEdges) SettingOrErr() (*UserSetting, error) {
-	if e.loadedTypes[1] {
-		if e.Setting == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: usersetting.Label}
-		}
+	if e.Setting != nil {
 		return e.Setting, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: usersetting.Label}
 	}
 	return nil, &NotLoadedError{edge: "setting"}
 }

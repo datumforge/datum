@@ -24,9 +24,9 @@ import (
 
 	"github.com/datumforge/entx"
 
-	"github.com/datumforge/datum/internal/analytics"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
+	"github.com/datumforge/datum/pkg/analytics"
 )
 
 var (

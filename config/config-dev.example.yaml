@@ -63,3 +63,8 @@ email:
 sentry:
   enabled: false
   dsn: "https://fake.ingest.sentry.io/fake"
+
+# analytics settings
+posthog:
+  enabled: false
+  api_key: "phc_FakeKey"

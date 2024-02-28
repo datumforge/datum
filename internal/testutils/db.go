@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	_ "github.com/lib/pq"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
@@ -73,13 +74,19 @@ func getPG(ctx context.Context, image string, opts ...testcontainers.ContainerCu
 		imgTag = p[1]
 	}
 
+	dbURI := "postgres://postgres:postgres@%s:%s/postgres?sslmode=disable"
+
 	uriFunc := func(host string, port nat.Port) string {
-		return fmt.Sprintf("postgres://postgres:postgres@%s:%s/postgres?sslmode=disable", host, port.Port())
+		return fmt.Sprintf(dbURI, host, port.Port())
 	}
 
 	opts = append(opts,
 		testcontainers.WithImage(fmt.Sprintf("%s:%s", defaultImg, imgTag)),
-		testcontainers.WithWaitStrategy(wait.ForSQL(nat.Port("5432"), "postgres", uriFunc)),
+		testcontainers.WithWaitStrategy(
+			wait.ForSQL(nat.Port("5432"), "postgres", uriFunc),
+			wait.ForLog("database system is ready to accept connections").
+				WithOccurrence(2).
+				WithStartupTimeout(30*time.Second)),
 		postgres.WithPassword("postgres"),
 	)
 
@@ -98,7 +105,7 @@ func getPG(ctx context.Context, image string, opts ...testcontainers.ContainerCu
 		return postgres.PostgresContainer{}, "", err
 	}
 
-	uri := fmt.Sprintf("postgres://postgres:postgres@%s:%s/postgres?sslmode=disable", hostIP, mappedPort.Port())
+	uri := fmt.Sprintf(dbURI, hostIP, mappedPort.Port())
 
 	return *container, uri, nil
 }
@@ -121,13 +128,13 @@ func GetTestURI(ctx context.Context, u string) *TC {
 	switch {
 	case u == "":
 		// return dialect.SQLite, "file::memory:?cache=shared"
-		return &TC{Dialect: dialect.SQLite, URI: "file::memory:?cache=shared"}
+		return &TC{Dialect: "libsql", URI: "file::memory:?cache=shared"}
 	case strings.HasPrefix(u, "sqlite://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "sqlite://")
 		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "sqlite://")}
 	case strings.HasPrefix(u, "libsql://"):
 		// return dialect.SQLite, strings.TrimPrefix(u, "libsql://")
-		return &TC{Dialect: dialect.SQLite, URI: strings.TrimPrefix(u, "libsql://")}
+		return &TC{Dialect: "libsql", URI: strings.TrimPrefix(u, "libsql://")}
 	case strings.HasPrefix(u, "postgres://"), strings.HasPrefix(u, "postgresql://"):
 		// return dialect.Postgres, u
 		return &TC{Dialect: dialect.Postgres, URI: u}

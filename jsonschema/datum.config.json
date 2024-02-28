@@ -241,6 +241,10 @@
         "cache_ttl": {
           "type": "integer",
           "description": "cache results for subsequent requests"
+        },
+        "run_migrations": {
+          "type": "boolean",
+          "description": "run migrations on startup"
         }
       },
       "additionalProperties": false,
@@ -446,6 +450,25 @@
       "type": "object",
       "description": "StdOut settings for the stdout provider"
     },
+    "posthog.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable PostHog"
+        },
+        "api_key": {
+          "type": "string",
+          "description": "APIKey is the PostHog API Key"
+        },
+        "host": {
+          "type": "string",
+          "description": "Host is the PostHog API Host"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Config is the configuration for PostHog"
+    },
     "sentry.Config": {
       "properties": {
         "enabled": {
@@ -606,6 +629,10 @@
     "sentry": {
       "$ref": "#/$defs/sentry.Config",
       "description": "Sentry contains the sentry configuration for error tracking"
+    },
+    "posthog": {
+      "$ref": "#/$defs/posthog.Config",
+      "description": "PostHog contains the configuration for the PostHog analytics"
     }
   },
   "additionalProperties": false,

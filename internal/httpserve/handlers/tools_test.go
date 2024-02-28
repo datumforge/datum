@@ -29,6 +29,7 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/marionette"
+	"github.com/datumforge/datum/pkg/analytics"
 )
 
 var (
@@ -91,6 +92,9 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 		SessionConfig: &sessionConfig,
 		EmailManager:  em,
 		TaskMan:       taskMan,
+		AnalyticsClient: &analytics.EventManager{
+			Enabled: false,
+		},
 	}
 
 	return h
@@ -134,6 +138,7 @@ func setupTest(t *testing.T) *client {
 		ent.Authz(*fc),
 		ent.Marionette(taskMan),
 		ent.Emails(em),
+		ent.Analytics(&analytics.EventManager{Enabled: false}),
 	}
 
 	// create database connection

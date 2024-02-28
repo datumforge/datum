@@ -4,12 +4,11 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/fgax"
 
-	"github.com/datumforge/datum/internal/analytics"
-	"github.com/datumforge/datum/internal/analytics/posthog"
 	"github.com/datumforge/datum/internal/cache"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
@@ -29,6 +28,9 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
+
+	serveCmd.PersistentFlags().String("config", "./config/.config.yaml", "config file location")
+	viperBindFlag("config", serveCmd.PersistentFlags().Lookup("config"))
 }
 
 func serve(ctx context.Context) error {
@@ -50,9 +52,10 @@ func serve(ctx context.Context) error {
 		serveropts.WithTaskManager(),
 		serveropts.WithSentry(),
 		serveropts.WithMiddleware(),
+		serveropts.WithAnalytics(),
 	)
 
-	so := serveropts.NewServerOptions(serverOpts)
+	so := serveropts.NewServerOptions(serverOpts, viper.GetString("config"))
 
 	err = otelx.NewTracer(so.Config.Settings.Tracer, appName, logger)
 	if err != nil {
@@ -67,17 +70,13 @@ func serve(ctx context.Context) error {
 		return err
 	}
 
-	phclient := posthog.Init()
-	analytics := analytics.EventManager{}
-	analytics.Handler = phclient
-
 	// add additional ent dependencies
 	entOpts = append(
 		entOpts,
 		ent.Authz(*fgaClient),
 		ent.Emails(so.Config.Handler.EmailManager),
 		ent.Marionette(so.Config.Handler.TaskMan),
-		ent.Analytics(&analytics),
+		ent.Analytics(so.Config.Handler.AnalyticsClient),
 	)
 
 	// Setup DB connection

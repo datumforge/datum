@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/fgax"
@@ -27,6 +28,9 @@ var serveCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serveCmd)
+
+	serveCmd.PersistentFlags().String("config", "./config/.config.yaml", "config file location")
+	viperBindFlag("config", serveCmd.PersistentFlags().Lookup("config"))
 }
 
 func serve(ctx context.Context) error {
@@ -51,7 +55,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithAnalytics(),
 	)
 
-	so := serveropts.NewServerOptions(serverOpts)
+	so := serveropts.NewServerOptions(serverOpts, viper.GetString("config"))
 
 	err = otelx.NewTracer(so.Config.Settings.Tracer, appName, logger)
 	if err != nil {

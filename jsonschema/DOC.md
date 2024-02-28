@@ -219,6 +219,7 @@ ProviderConfig represents the configuration settings for a Google Oauth Provider
 |**primary\_db\_source**|`string`|dsn of the primary database<br/>|yes|
 |**secondary\_db\_source**|`string`|dsn of the secondary database if multi-write is enabled<br/>|no|
 |**cache\_ttl**|`integer`|cache results for subsequent requests<br/>|no|
+|**run\_migrations**|`boolean`|run migrations on startup<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="redis"></a>

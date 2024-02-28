@@ -38,7 +38,7 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 		entx.WithLogger(l),
 	}
 
-	if c.SecondaryDBSource != "" {
+	if c.MultiWrite {
 		dbOpts = append(dbOpts, entx.WithSecondaryDB())
 	}
 
@@ -52,10 +52,12 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 
 	client.pc = client.createEntDBClient(entConfig.GetPrimaryDB())
 
-	if err := client.createSchema(ctx); err != nil {
-		client.logger.Errorf("failed creating schema resources", zap.Error(err))
+	if c.RunMigrations {
+		if err := client.createSchema(ctx); err != nil {
+			client.logger.Errorf("failed creating schema resources", zap.Error(err))
 
-		return nil, nil, err
+			return nil, nil, err
+		}
 	}
 
 	var cOpts []ent.Option
@@ -69,10 +71,12 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 
 		client.sc = client.createEntDBClient(entConfig.GetSecondaryDB())
 
-		if err := client.createSchema(ctx); err != nil {
-			client.logger.Errorf("failed creating schema resources", zap.Error(err))
+		if c.RunMigrations {
+			if err := client.createSchema(ctx); err != nil {
+				client.logger.Errorf("failed creating schema resources", zap.Error(err))
 
-			return nil, nil, err
+				return nil, nil, err
+			}
 		}
 
 		// Create Multiwrite driver

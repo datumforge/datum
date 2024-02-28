@@ -50,7 +50,7 @@ func main() {
 			spec.SetOpenAPI("3.1.0")
 			spec.SetServers([]ogen.Server{
 				{
-					URL:         "https://api.datum.net",
+					URL:         "https://api.datum.net/v1",
 					Description: "Datum Production API Endpoint",
 				},
 				{
@@ -62,7 +62,7 @@ func main() {
 				SetVersion("1.0.1")
 			spec.Info.SetContact(&ogen.Contact{
 				Name:  "Datum Support",
-				URL:   "https://datum.net",
+				URL:   "https://datum.net/support",
 				Email: "support@datum.net",
 			})
 			spec.Info.SetLicense(&ogen.License{

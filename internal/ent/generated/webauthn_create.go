@@ -313,12 +313,6 @@ func (wc *WebauthnCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (wc *WebauthnCreate) check() error {
-	if _, ok := wc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Webauthn.created_at"`)}
-	}
-	if _, ok := wc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Webauthn.updated_at"`)}
-	}
 	if _, ok := wc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Webauthn.owner_id"`)}
 	}

@@ -38,6 +38,12 @@ func (wu *WebauthnUpdate) SetUpdatedAt(t time.Time) *WebauthnUpdate {
 	return wu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (wu *WebauthnUpdate) ClearUpdatedAt() *WebauthnUpdate {
+	wu.mutation.ClearUpdatedAt()
+	return wu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (wu *WebauthnUpdate) SetUpdatedBy(s string) *WebauthnUpdate {
 	wu.mutation.SetUpdatedBy(s)
@@ -381,7 +387,7 @@ func (wu *WebauthnUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (wu *WebauthnUpdate) defaults() error {
-	if _, ok := wu.mutation.UpdatedAt(); !ok {
+	if _, ok := wu.mutation.UpdatedAt(); !ok && !wu.mutation.UpdatedAtCleared() {
 		if webauthn.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized webauthn.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -416,8 +422,14 @@ func (wu *WebauthnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if wu.mutation.CreatedAtCleared() {
+		_spec.ClearField(webauthn.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := wu.mutation.UpdatedAt(); ok {
 		_spec.SetField(webauthn.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if wu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(webauthn.FieldUpdatedAt, field.TypeTime)
 	}
 	if wu.mutation.CreatedByCleared() {
 		_spec.ClearField(webauthn.FieldCreatedBy, field.TypeString)
@@ -580,6 +592,12 @@ type WebauthnUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (wuo *WebauthnUpdateOne) SetUpdatedAt(t time.Time) *WebauthnUpdateOne {
 	wuo.mutation.SetUpdatedAt(t)
+	return wuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (wuo *WebauthnUpdateOne) ClearUpdatedAt() *WebauthnUpdateOne {
+	wuo.mutation.ClearUpdatedAt()
 	return wuo
 }
 
@@ -939,7 +957,7 @@ func (wuo *WebauthnUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (wuo *WebauthnUpdateOne) defaults() error {
-	if _, ok := wuo.mutation.UpdatedAt(); !ok {
+	if _, ok := wuo.mutation.UpdatedAt(); !ok && !wuo.mutation.UpdatedAtCleared() {
 		if webauthn.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized webauthn.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -991,8 +1009,14 @@ func (wuo *WebauthnUpdateOne) sqlSave(ctx context.Context) (_node *Webauthn, err
 			}
 		}
 	}
+	if wuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(webauthn.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := wuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(webauthn.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if wuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(webauthn.FieldUpdatedAt, field.TypeTime)
 	}
 	if wuo.mutation.CreatedByCleared() {
 		_spec.ClearField(webauthn.FieldCreatedBy, field.TypeString)

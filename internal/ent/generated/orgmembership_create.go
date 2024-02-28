@@ -224,12 +224,6 @@ func (omc *OrgMembershipCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (omc *OrgMembershipCreate) check() error {
-	if _, ok := omc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "OrgMembership.created_at"`)}
-	}
-	if _, ok := omc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "OrgMembership.updated_at"`)}
-	}
 	if _, ok := omc.mutation.Role(); !ok {
 		return &ValidationError{Name: "role", err: errors.New(`generated: missing required field "OrgMembership.role"`)}
 	}

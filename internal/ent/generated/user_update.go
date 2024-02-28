@@ -46,6 +46,12 @@ func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 	return uu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (uu *UserUpdate) ClearUpdatedAt() *UserUpdate {
+	uu.mutation.ClearUpdatedAt()
+	return uu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (uu *UserUpdate) SetUpdatedBy(s string) *UserUpdate {
 	uu.mutation.SetUpdatedBy(s)
@@ -277,6 +283,12 @@ func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
 	if b != nil {
 		uu.SetOauth(*b)
 	}
+	return uu
+}
+
+// ClearOauth clears the value of the "oauth" field.
+func (uu *UserUpdate) ClearOauth() *UserUpdate {
+	uu.mutation.ClearOauth()
 	return uu
 }
 
@@ -756,7 +768,7 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uu *UserUpdate) defaults() error {
-	if _, ok := uu.mutation.UpdatedAt(); !ok {
+	if _, ok := uu.mutation.UpdatedAt(); !ok && !uu.mutation.UpdatedAtCleared() {
 		if user.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized user.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -835,8 +847,14 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if uu.mutation.CreatedAtCleared() {
+		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := uu.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
 	}
 	if uu.mutation.CreatedByCleared() {
 		_spec.ClearField(user.FieldCreatedBy, field.TypeString)
@@ -909,6 +927,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if uu.mutation.OauthCleared() {
+		_spec.ClearField(user.FieldOauth, field.TypeBool)
 	}
 	if value, ok := uu.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
@@ -1434,6 +1455,12 @@ func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (uuo *UserUpdateOne) ClearUpdatedAt() *UserUpdateOne {
+	uuo.mutation.ClearUpdatedAt()
+	return uuo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (uuo *UserUpdateOne) SetUpdatedBy(s string) *UserUpdateOne {
 	uuo.mutation.SetUpdatedBy(s)
@@ -1665,6 +1692,12 @@ func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
 	if b != nil {
 		uuo.SetOauth(*b)
 	}
+	return uuo
+}
+
+// ClearOauth clears the value of the "oauth" field.
+func (uuo *UserUpdateOne) ClearOauth() *UserUpdateOne {
+	uuo.mutation.ClearOauth()
 	return uuo
 }
 
@@ -2157,7 +2190,7 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uuo *UserUpdateOne) defaults() error {
-	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+	if _, ok := uuo.mutation.UpdatedAt(); !ok && !uuo.mutation.UpdatedAtCleared() {
 		if user.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized user.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -2253,8 +2286,14 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
+	if uuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := uuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
 	}
 	if uuo.mutation.CreatedByCleared() {
 		_spec.ClearField(user.FieldCreatedBy, field.TypeString)
@@ -2327,6 +2366,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if uuo.mutation.OauthCleared() {
+		_spec.ClearField(user.FieldOauth, field.TypeBool)
 	}
 	if value, ok := uuo.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)

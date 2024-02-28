@@ -340,7 +340,7 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 			personalOrg, err := client.datum.GetOrganizationByID(reqCtx, orgs[0].OrganizationID)
 			require.NoError(t, err)
 
-			assert.True(t, personalOrg.Organization.PersonalOrg)
+			assert.True(t, *personalOrg.Organization.PersonalOrg)
 			// make sure there is only one user
 			require.Len(t, personalOrg.Organization.Members, 1)
 			// make sure user was added as owner
@@ -487,7 +487,7 @@ func TestMutationCreateUser(t *testing.T) {
 			org, err := client.datum.GetOrganizationByID(reqCtx, personalOrgID, nil)
 			require.NoError(t, err)
 			assert.Equal(t, personalOrgID, org.Organization.ID)
-			assert.True(t, org.Organization.PersonalOrg)
+			assert.True(t, *org.Organization.PersonalOrg)
 		})
 	}
 }

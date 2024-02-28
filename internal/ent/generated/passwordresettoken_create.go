@@ -217,12 +217,6 @@ func (prtc *PasswordResetTokenCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (prtc *PasswordResetTokenCreate) check() error {
-	if _, ok := prtc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "PasswordResetToken.created_at"`)}
-	}
-	if _, ok := prtc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "PasswordResetToken.updated_at"`)}
-	}
 	if _, ok := prtc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "PasswordResetToken.owner_id"`)}
 	}

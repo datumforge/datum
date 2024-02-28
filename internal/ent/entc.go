@@ -30,7 +30,6 @@ import (
 )
 
 var (
-	entSchemaDir   = "./internal/ent/schema/"
 	graphSchemaDir = "./schema/"
 )
 
@@ -45,16 +44,34 @@ func main() {
 	// Ensure the schema directory exists before running entc.
 	_ = os.Mkdir("schema", 0755)
 
-	// Add OpenAPI Gen extension
-	spec := new(ogen.Spec)
-	oas, err := entoas.NewExtension(
-		entoas.Spec(spec),
+	ex, err := entoas.NewExtension(
+		entoas.SimpleModels(),
 		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
-			spec.Info.SetTitle("Datum API").
+			spec.SetOpenAPI("3.1.0")
+			spec.SetServers([]ogen.Server{
+				{
+					URL:         "https://api.datum.net/v1",
+					Description: "Datum Production API Endpoint",
+				},
+				{
+					URL:         "http://localhost:17608/v1",
+					Description: "http localhost endpoint for testing purposes",
+				}})
+			spec.Info.SetTitle("Datum OpenAPI 3.1.0 Specifications").
 				SetDescription("Programmatic interfaces for interacting with Datum Services").
 				SetVersion("1.0.1")
-			return nil
+			spec.Info.SetContact(&ogen.Contact{
+				Name:  "Datum Support",
+				URL:   "https://datum.net/support",
+				Email: "support@datum.net",
+			})
+			spec.Info.SetLicense(&ogen.License{
+				Name: "Apache 2.0",
+				URL:  "https://www.apache.org/licenses/LICENSE-2.0",
+			})
+			spec.Info.SetTermsOfService("https://datum.net/tos")
 
+			return nil
 		}),
 	)
 
@@ -121,7 +138,7 @@ func main() {
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
 			gqlExt,
-			oas,
+			ex,
 			entfga.NewFGAExtension(
 				entfga.WithSoftDeletes(),
 			),

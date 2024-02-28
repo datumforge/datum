@@ -76,15 +76,43 @@ type FieldError struct {
 
 // StatusError decodes an error response from datum
 type StatusError struct {
-	StatusCode int   `json:"code"`  // the HTTP status code
-	Reply      Reply `json:"reply"` // an object containing whether the request was successful or not, and if not the error message
+	StatusCode int   `json:"code" yaml:"code" description:"the response HTTP code also in the response payload for your parsing convenience"`
+	Reply      Reply `json:"reply" yaml:"reply" description:"the Reply generated via the internal/rout package which contains a success bool and the corresponding message"`
 }
 
 // Reply contains standard fields that are used for generic API responses and errors
 type Reply struct {
-	Success    bool   `json:"success"`              // indicates if the request was successful
-	Error      string `json:"error,omitempty"`      // error message if the request was not successful
-	Unverified bool   `json:"unverified,omitempty"` // indicates if the user has not verified their email address
+	Success    bool   `json:"success" yaml:"success" description:"Whether or not the request was successful or not"`
+	Error      string `json:"error,omitempty" yaml:"error,omitempty" description:"The error message if the request was unsuccessful"`
+	Unverified bool   `json:"unverified,omitempty" yaml:"unverified,omitempty"`
+}
+
+func BadRequest() StatusError {
+	return StatusError{
+		StatusCode: http.StatusBadRequest,
+		Reply:      Reply{Success: false, Error: "bad request", Unverified: false},
+	}
+}
+
+func InternalServerError() StatusError {
+	return StatusError{
+		StatusCode: http.StatusInternalServerError,
+		Reply:      Reply{Success: false, Error: "internal server error", Unverified: false},
+	}
+}
+
+func Conflict() StatusError {
+	return StatusError{
+		StatusCode: http.StatusConflict,
+		Reply:      Reply{Success: false, Error: "conflict", Unverified: false},
+	}
+}
+
+func Unauthorzied() StatusError {
+	return StatusError{
+		StatusCode: http.StatusUnauthorized,
+		Reply:      Reply{Success: false, Error: "unauthorized", Unverified: false},
+	}
 }
 
 // MissingRequiredFieldError is returned when a required field was not provided in a request

@@ -157,6 +157,16 @@ func CreatedAtLTE(v time.Time) predicate.Integration {
 	return predicate.Integration(sql.FieldLTE(FieldCreatedAt, v))
 }
 
+// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
+func CreatedAtIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldCreatedAt))
+}
+
+// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
+func CreatedAtNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldCreatedAt))
+}
+
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
 func UpdatedAtEQ(v time.Time) predicate.Integration {
 	return predicate.Integration(sql.FieldEQ(FieldUpdatedAt, v))
@@ -195,6 +205,16 @@ func UpdatedAtLT(v time.Time) predicate.Integration {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.Integration {
 	return predicate.Integration(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldUpdatedAt))
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
@@ -740,6 +760,16 @@ func SecretNameHasPrefix(v string) predicate.Integration {
 // SecretNameHasSuffix applies the HasSuffix predicate on the "secret_name" field.
 func SecretNameHasSuffix(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldHasSuffix(FieldSecretName, v))
+}
+
+// SecretNameIsNil applies the IsNil predicate on the "secret_name" field.
+func SecretNameIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldSecretName))
+}
+
+// SecretNameNotNil applies the NotNil predicate on the "secret_name" field.
+func SecretNameNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldSecretName))
 }
 
 // SecretNameEqualFold applies the EqualFold predicate on the "secret_name" field.

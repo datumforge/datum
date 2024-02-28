@@ -284,12 +284,6 @@ func (gsc *GroupSettingCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (gsc *GroupSettingCreate) check() error {
-	if _, ok := gsc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "GroupSetting.created_at"`)}
-	}
-	if _, ok := gsc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "GroupSetting.updated_at"`)}
-	}
 	if _, ok := gsc.mutation.Visibility(); !ok {
 		return &ValidationError{Name: "visibility", err: errors.New(`generated: missing required field "GroupSetting.visibility"`)}
 	}
@@ -305,15 +299,6 @@ func (gsc *GroupSettingCreate) check() error {
 		if err := groupsetting.JoinPolicyValidator(v); err != nil {
 			return &ValidationError{Name: "join_policy", err: fmt.Errorf(`generated: validator failed for field "GroupSetting.join_policy": %w`, err)}
 		}
-	}
-	if _, ok := gsc.mutation.Tags(); !ok {
-		return &ValidationError{Name: "tags", err: errors.New(`generated: missing required field "GroupSetting.tags"`)}
-	}
-	if _, ok := gsc.mutation.SyncToSlack(); !ok {
-		return &ValidationError{Name: "sync_to_slack", err: errors.New(`generated: missing required field "GroupSetting.sync_to_slack"`)}
-	}
-	if _, ok := gsc.mutation.SyncToGithub(); !ok {
-		return &ValidationError{Name: "sync_to_github", err: errors.New(`generated: missing required field "GroupSetting.sync_to_github"`)}
 	}
 	return nil
 }

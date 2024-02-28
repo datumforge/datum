@@ -37,6 +37,12 @@ func (gmu *GroupMembershipUpdate) SetUpdatedAt(t time.Time) *GroupMembershipUpda
 	return gmu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gmu *GroupMembershipUpdate) ClearUpdatedAt() *GroupMembershipUpdate {
+	gmu.mutation.ClearUpdatedAt()
+	return gmu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (gmu *GroupMembershipUpdate) SetUpdatedBy(s string) *GroupMembershipUpdate {
 	gmu.mutation.SetUpdatedBy(s)
@@ -148,7 +154,7 @@ func (gmu *GroupMembershipUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (gmu *GroupMembershipUpdate) defaults() error {
-	if _, ok := gmu.mutation.UpdatedAt(); !ok {
+	if _, ok := gmu.mutation.UpdatedAt(); !ok && !gmu.mutation.UpdatedAtCleared() {
 		if groupmembership.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized groupmembership.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -186,8 +192,14 @@ func (gmu *GroupMembershipUpdate) sqlSave(ctx context.Context) (n int, err error
 			}
 		}
 	}
+	if gmu.mutation.CreatedAtCleared() {
+		_spec.ClearField(groupmembership.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := gmu.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupmembership.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gmu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(groupmembership.FieldUpdatedAt, field.TypeTime)
 	}
 	if gmu.mutation.CreatedByCleared() {
 		_spec.ClearField(groupmembership.FieldCreatedBy, field.TypeString)
@@ -238,6 +250,12 @@ type GroupMembershipUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (gmuo *GroupMembershipUpdateOne) SetUpdatedAt(t time.Time) *GroupMembershipUpdateOne {
 	gmuo.mutation.SetUpdatedAt(t)
+	return gmuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gmuo *GroupMembershipUpdateOne) ClearUpdatedAt() *GroupMembershipUpdateOne {
+	gmuo.mutation.ClearUpdatedAt()
 	return gmuo
 }
 
@@ -365,7 +383,7 @@ func (gmuo *GroupMembershipUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (gmuo *GroupMembershipUpdateOne) defaults() error {
-	if _, ok := gmuo.mutation.UpdatedAt(); !ok {
+	if _, ok := gmuo.mutation.UpdatedAt(); !ok && !gmuo.mutation.UpdatedAtCleared() {
 		if groupmembership.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized groupmembership.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -420,8 +438,14 @@ func (gmuo *GroupMembershipUpdateOne) sqlSave(ctx context.Context) (_node *Group
 			}
 		}
 	}
+	if gmuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(groupmembership.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := gmuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupmembership.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gmuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(groupmembership.FieldUpdatedAt, field.TypeTime)
 	}
 	if gmuo.mutation.CreatedByCleared() {
 		_spec.ClearField(groupmembership.FieldCreatedBy, field.TypeString)

@@ -39,6 +39,12 @@ func (gsu *GroupSettingUpdate) SetUpdatedAt(t time.Time) *GroupSettingUpdate {
 	return gsu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gsu *GroupSettingUpdate) ClearUpdatedAt() *GroupSettingUpdate {
+	gsu.mutation.ClearUpdatedAt()
+	return gsu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (gsu *GroupSettingUpdate) SetUpdatedBy(s string) *GroupSettingUpdate {
 	gsu.mutation.SetUpdatedBy(s)
@@ -139,6 +145,12 @@ func (gsu *GroupSettingUpdate) AppendTags(s []string) *GroupSettingUpdate {
 	return gsu
 }
 
+// ClearTags clears the value of the "tags" field.
+func (gsu *GroupSettingUpdate) ClearTags() *GroupSettingUpdate {
+	gsu.mutation.ClearTags()
+	return gsu
+}
+
 // SetSyncToSlack sets the "sync_to_slack" field.
 func (gsu *GroupSettingUpdate) SetSyncToSlack(b bool) *GroupSettingUpdate {
 	gsu.mutation.SetSyncToSlack(b)
@@ -153,6 +165,12 @@ func (gsu *GroupSettingUpdate) SetNillableSyncToSlack(b *bool) *GroupSettingUpda
 	return gsu
 }
 
+// ClearSyncToSlack clears the value of the "sync_to_slack" field.
+func (gsu *GroupSettingUpdate) ClearSyncToSlack() *GroupSettingUpdate {
+	gsu.mutation.ClearSyncToSlack()
+	return gsu
+}
+
 // SetSyncToGithub sets the "sync_to_github" field.
 func (gsu *GroupSettingUpdate) SetSyncToGithub(b bool) *GroupSettingUpdate {
 	gsu.mutation.SetSyncToGithub(b)
@@ -164,6 +182,12 @@ func (gsu *GroupSettingUpdate) SetNillableSyncToGithub(b *bool) *GroupSettingUpd
 	if b != nil {
 		gsu.SetSyncToGithub(*b)
 	}
+	return gsu
+}
+
+// ClearSyncToGithub clears the value of the "sync_to_github" field.
+func (gsu *GroupSettingUpdate) ClearSyncToGithub() *GroupSettingUpdate {
+	gsu.mutation.ClearSyncToGithub()
 	return gsu
 }
 
@@ -229,7 +253,7 @@ func (gsu *GroupSettingUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (gsu *GroupSettingUpdate) defaults() error {
-	if _, ok := gsu.mutation.UpdatedAt(); !ok {
+	if _, ok := gsu.mutation.UpdatedAt(); !ok && !gsu.mutation.UpdatedAtCleared() {
 		if groupsetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized groupsetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -266,8 +290,14 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if gsu.mutation.CreatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := gsu.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gsu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if gsu.mutation.CreatedByCleared() {
 		_spec.ClearField(groupsetting.FieldCreatedBy, field.TypeString)
@@ -304,11 +334,20 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			sqljson.Append(u, groupsetting.FieldTags, value)
 		})
 	}
+	if gsu.mutation.TagsCleared() {
+		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gsu.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsetting.FieldSyncToSlack, field.TypeBool, value)
 	}
+	if gsu.mutation.SyncToSlackCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToSlack, field.TypeBool)
+	}
 	if value, ok := gsu.mutation.SyncToGithub(); ok {
 		_spec.SetField(groupsetting.FieldSyncToGithub, field.TypeBool, value)
+	}
+	if gsu.mutation.SyncToGithubCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToGithub, field.TypeBool)
 	}
 	if gsu.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -366,6 +405,12 @@ type GroupSettingUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (gsuo *GroupSettingUpdateOne) SetUpdatedAt(t time.Time) *GroupSettingUpdateOne {
 	gsuo.mutation.SetUpdatedAt(t)
+	return gsuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (gsuo *GroupSettingUpdateOne) ClearUpdatedAt() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearUpdatedAt()
 	return gsuo
 }
 
@@ -469,6 +514,12 @@ func (gsuo *GroupSettingUpdateOne) AppendTags(s []string) *GroupSettingUpdateOne
 	return gsuo
 }
 
+// ClearTags clears the value of the "tags" field.
+func (gsuo *GroupSettingUpdateOne) ClearTags() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearTags()
+	return gsuo
+}
+
 // SetSyncToSlack sets the "sync_to_slack" field.
 func (gsuo *GroupSettingUpdateOne) SetSyncToSlack(b bool) *GroupSettingUpdateOne {
 	gsuo.mutation.SetSyncToSlack(b)
@@ -483,6 +534,12 @@ func (gsuo *GroupSettingUpdateOne) SetNillableSyncToSlack(b *bool) *GroupSetting
 	return gsuo
 }
 
+// ClearSyncToSlack clears the value of the "sync_to_slack" field.
+func (gsuo *GroupSettingUpdateOne) ClearSyncToSlack() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearSyncToSlack()
+	return gsuo
+}
+
 // SetSyncToGithub sets the "sync_to_github" field.
 func (gsuo *GroupSettingUpdateOne) SetSyncToGithub(b bool) *GroupSettingUpdateOne {
 	gsuo.mutation.SetSyncToGithub(b)
@@ -494,6 +551,12 @@ func (gsuo *GroupSettingUpdateOne) SetNillableSyncToGithub(b *bool) *GroupSettin
 	if b != nil {
 		gsuo.SetSyncToGithub(*b)
 	}
+	return gsuo
+}
+
+// ClearSyncToGithub clears the value of the "sync_to_github" field.
+func (gsuo *GroupSettingUpdateOne) ClearSyncToGithub() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearSyncToGithub()
 	return gsuo
 }
 
@@ -572,7 +635,7 @@ func (gsuo *GroupSettingUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (gsuo *GroupSettingUpdateOne) defaults() error {
-	if _, ok := gsuo.mutation.UpdatedAt(); !ok {
+	if _, ok := gsuo.mutation.UpdatedAt(); !ok && !gsuo.mutation.UpdatedAtCleared() {
 		if groupsetting.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized groupsetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -626,8 +689,14 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 			}
 		}
 	}
+	if gsuo.mutation.CreatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := gsuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if gsuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(groupsetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if gsuo.mutation.CreatedByCleared() {
 		_spec.ClearField(groupsetting.FieldCreatedBy, field.TypeString)
@@ -664,11 +733,20 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 			sqljson.Append(u, groupsetting.FieldTags, value)
 		})
 	}
+	if gsuo.mutation.TagsCleared() {
+		_spec.ClearField(groupsetting.FieldTags, field.TypeJSON)
+	}
 	if value, ok := gsuo.mutation.SyncToSlack(); ok {
 		_spec.SetField(groupsetting.FieldSyncToSlack, field.TypeBool, value)
 	}
+	if gsuo.mutation.SyncToSlackCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToSlack, field.TypeBool)
+	}
 	if value, ok := gsuo.mutation.SyncToGithub(); ok {
 		_spec.SetField(groupsetting.FieldSyncToGithub, field.TypeBool, value)
+	}
+	if gsuo.mutation.SyncToGithubCleared() {
+		_spec.ClearField(groupsetting.FieldSyncToGithub, field.TypeBool)
 	}
 	if gsuo.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

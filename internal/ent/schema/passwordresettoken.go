@@ -4,6 +4,7 @@ import (
 	"net/mail"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/entql"
@@ -61,7 +62,8 @@ func (PasswordResetToken) Mixin() []ent.Mixin {
 		mixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		UserOwnedMixin{
-			Ref: "password_reset_tokens",
+			Ref:               "password_reset_tokens",
+			SkipOASGeneration: true,
 		},
 	}
 }
@@ -80,6 +82,11 @@ func (PasswordResetToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 	}
 }
 

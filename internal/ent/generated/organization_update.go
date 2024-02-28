@@ -45,6 +45,12 @@ func (ou *OrganizationUpdate) SetUpdatedAt(t time.Time) *OrganizationUpdate {
 	return ou
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (ou *OrganizationUpdate) ClearUpdatedAt() *OrganizationUpdate {
+	ou.mutation.ClearUpdatedAt()
+	return ou
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (ou *OrganizationUpdate) SetUpdatedBy(s string) *OrganizationUpdate {
 	ou.mutation.SetUpdatedBy(s)
@@ -539,7 +545,7 @@ func (ou *OrganizationUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ou *OrganizationUpdate) defaults() error {
-	if _, ok := ou.mutation.UpdatedAt(); !ok {
+	if _, ok := ou.mutation.UpdatedAt(); !ok && !ou.mutation.UpdatedAtCleared() {
 		if organization.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized organization.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -576,8 +582,14 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if ou.mutation.CreatedAtCleared() {
+		_spec.ClearField(organization.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := ou.mutation.UpdatedAt(); ok {
 		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if ou.mutation.UpdatedAtCleared() {
+		_spec.ClearField(organization.FieldUpdatedAt, field.TypeTime)
 	}
 	if ou.mutation.CreatedByCleared() {
 		_spec.ClearField(organization.FieldCreatedBy, field.TypeString)
@@ -611,6 +623,9 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
+	}
+	if ou.mutation.PersonalOrgCleared() {
+		_spec.ClearField(organization.FieldPersonalOrg, field.TypeBool)
 	}
 	if ou.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1124,6 +1139,12 @@ func (ouo *OrganizationUpdateOne) SetUpdatedAt(t time.Time) *OrganizationUpdateO
 	return ouo
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (ouo *OrganizationUpdateOne) ClearUpdatedAt() *OrganizationUpdateOne {
+	ouo.mutation.ClearUpdatedAt()
+	return ouo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (ouo *OrganizationUpdateOne) SetUpdatedBy(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetUpdatedBy(s)
@@ -1631,7 +1652,7 @@ func (ouo *OrganizationUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ouo *OrganizationUpdateOne) defaults() error {
-	if _, ok := ouo.mutation.UpdatedAt(); !ok {
+	if _, ok := ouo.mutation.UpdatedAt(); !ok && !ouo.mutation.UpdatedAtCleared() {
 		if organization.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized organization.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -1685,8 +1706,14 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			}
 		}
 	}
+	if ouo.mutation.CreatedAtCleared() {
+		_spec.ClearField(organization.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := ouo.mutation.UpdatedAt(); ok {
 		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if ouo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(organization.FieldUpdatedAt, field.TypeTime)
 	}
 	if ouo.mutation.CreatedByCleared() {
 		_spec.ClearField(organization.FieldCreatedBy, field.TypeString)
@@ -1720,6 +1747,9 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if ouo.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
+	}
+	if ouo.mutation.PersonalOrgCleared() {
+		_spec.ClearField(organization.FieldPersonalOrg, field.TypeBool)
 	}
 	if ouo.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{

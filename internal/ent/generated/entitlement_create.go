@@ -290,12 +290,6 @@ func (ec *EntitlementCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ec *EntitlementCreate) check() error {
-	if _, ok := ec.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Entitlement.created_at"`)}
-	}
-	if _, ok := ec.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Entitlement.updated_at"`)}
-	}
 	if _, ok := ec.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Entitlement.owner_id"`)}
 	}

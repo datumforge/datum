@@ -4,7 +4,6 @@ package generated
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -329,12 +328,6 @@ func (osc *OrganizationSettingCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (osc *OrganizationSettingCreate) check() error {
-	if _, ok := osc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "OrganizationSetting.created_at"`)}
-	}
-	if _, ok := osc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "OrganizationSetting.updated_at"`)}
-	}
 	return nil
 }
 

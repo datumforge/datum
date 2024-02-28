@@ -122,7 +122,7 @@ input CreateIntegrationInput {
 	"""
 	description: String
 	kind: String
-	secretName: String!
+	secretName: String
 	ownerID: ID
 }
 """
@@ -459,8 +459,8 @@ type Dummy {
 }
 type Entitlement implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -585,6 +585,8 @@ input EntitlementWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -596,6 +598,8 @@ input EntitlementWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -737,8 +741,8 @@ input EntitlementWhereInput {
 }
 type Group implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -818,8 +822,8 @@ type GroupEdge {
 }
 type GroupMembership implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -926,6 +930,8 @@ input GroupMembershipWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -937,6 +943,8 @@ input GroupMembershipWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -1036,8 +1044,8 @@ enum GroupOrderField {
 }
 type GroupSetting implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -1053,9 +1061,9 @@ type GroupSetting implements Node {
 	"""
 	tags associated with the object
 	"""
-	tags: [String!]!
-	syncToSlack: Boolean!
-	syncToGithub: Boolean!
+	tags: [String!]
+	syncToSlack: Boolean
+	syncToGithub: Boolean
 	group: Group
 }
 """
@@ -1163,6 +1171,8 @@ input GroupSettingWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -1174,6 +1184,8 @@ input GroupSettingWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -1260,11 +1272,15 @@ input GroupSettingWhereInput {
 	"""
 	syncToSlack: Boolean
 	syncToSlackNEQ: Boolean
+	syncToSlackIsNil: Boolean
+	syncToSlackNotNil: Boolean
 	"""
 	sync_to_github field predicates
 	"""
 	syncToGithub: Boolean
 	syncToGithubNEQ: Boolean
+	syncToGithubIsNil: Boolean
+	syncToGithubNotNil: Boolean
 	"""
 	group edge predicates
 	"""
@@ -1312,6 +1328,8 @@ input GroupWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -1323,6 +1341,8 @@ input GroupWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -1445,8 +1465,8 @@ input GroupWhereInput {
 }
 type Integration implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -1460,7 +1480,7 @@ type Integration implements Node {
 	"""
 	description: String
 	kind: String
-	secretName: String!
+	secretName: String
 	owner: Organization
 }
 """
@@ -1572,6 +1592,8 @@ input IntegrationWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -1583,6 +1605,8 @@ input IntegrationWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -1698,6 +1722,8 @@ input IntegrationWhereInput {
 	secretNameContains: String
 	secretNameHasPrefix: String
 	secretNameHasSuffix: String
+	secretNameIsNil: Boolean
+	secretNameNotNil: Boolean
 	secretNameEqualFold: String
 	secretNameContainsFold: String
 	"""
@@ -1708,8 +1734,8 @@ input IntegrationWhereInput {
 }
 type Invite implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -1843,6 +1869,8 @@ input InviteWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -1854,6 +1882,8 @@ input InviteWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -2462,8 +2492,8 @@ interface Node @goModel(model: "github.com/datumforge/datum/internal/ent/generat
 }
 type OauthProvider implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -2595,6 +2625,8 @@ input OauthProviderWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -2606,6 +2638,8 @@ input OauthProviderWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -3055,8 +3089,8 @@ enum OrderDirection {
 }
 type OrgMembership implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -3164,6 +3198,8 @@ input OrgMembershipWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -3175,6 +3211,8 @@ input OrgMembershipWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -3254,8 +3292,8 @@ input OrgMembershipWhereInput {
 }
 type Organization implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -3275,7 +3313,7 @@ type Organization implements Node {
 	"""
 	orgs directly associated with a user
 	"""
-	personalOrg: Boolean!
+	personalOrg: Boolean
 	parent: Organization
 	children(
 		"""
@@ -3388,8 +3426,8 @@ enum OrganizationOrderField {
 }
 type OrganizationSetting implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -3507,6 +3545,8 @@ input OrganizationSettingWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -3518,6 +3558,8 @@ input OrganizationSettingWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -3776,6 +3818,8 @@ input OrganizationWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -3787,6 +3831,8 @@ input OrganizationWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -3893,6 +3939,8 @@ input OrganizationWhereInput {
 	"""
 	personalOrg: Boolean
 	personalOrgNEQ: Boolean
+	personalOrgIsNil: Boolean
+	personalOrgNotNil: Boolean
 	"""
 	parent edge predicates
 	"""
@@ -3973,8 +4021,8 @@ type PageInfo {
 }
 type PersonalAccessToken implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -4089,6 +4137,8 @@ input PersonalAccessTokenWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -4100,6 +4150,8 @@ input PersonalAccessTokenWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -4761,6 +4813,7 @@ Input was generated by ent.
 """
 input UpdateEntitlementInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	tier: EntitlementTier
@@ -4795,6 +4848,7 @@ Input was generated by ent.
 """
 input UpdateGroupInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -4834,6 +4888,7 @@ Input was generated by ent.
 """
 input UpdateGroupMembershipInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	role: GroupMembershipRole
@@ -4844,6 +4899,7 @@ Input was generated by ent.
 """
 input UpdateGroupSettingInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -4859,8 +4915,11 @@ input UpdateGroupSettingInput {
 	"""
 	tags: [String!]
 	appendTags: [String!]
+	clearTags: Boolean
 	syncToSlack: Boolean
+	clearSyncToSlack: Boolean
 	syncToGithub: Boolean
+	clearSyncToGithub: Boolean
 	groupID: ID
 	clearGroup: Boolean
 }
@@ -4870,6 +4929,7 @@ Input was generated by ent.
 """
 input UpdateIntegrationInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -4892,6 +4952,7 @@ Input was generated by ent.
 """
 input UpdateInviteInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -4919,6 +4980,7 @@ Input was generated by ent.
 """
 input UpdateOauthProviderInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -4990,6 +5052,7 @@ Input was generated by ent.
 """
 input UpdateOrgMembershipInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	role: OrgMembershipRole
@@ -5000,6 +5063,7 @@ Input was generated by ent.
 """
 input UpdateOrganizationInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -5047,6 +5111,7 @@ Input was generated by ent.
 """
 input UpdateOrganizationSettingInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -5092,6 +5157,7 @@ Input was generated by ent.
 """
 input UpdatePersonalAccessTokenInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -5118,6 +5184,7 @@ Input was generated by ent.
 """
 input UpdateUserInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	email: String
@@ -5161,6 +5228,7 @@ input UpdateUserInput {
 	whether the user uses oauth for login or not
 	"""
 	oauth: Boolean
+	clearOauth: Boolean
 	"""
 	auth provider used to register the account
 	"""
@@ -5221,6 +5289,7 @@ Input was generated by ent.
 """
 input UpdateUserSettingInput {
 	updatedAt: Time
+	clearUpdatedAt: Boolean
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	"""
@@ -5259,8 +5328,8 @@ input UpdateUserSettingInput {
 }
 type User implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -5295,7 +5364,7 @@ type User implements Node {
 	"""
 	whether the user uses oauth for login or not
 	"""
-	oauth: Boolean!
+	oauth: Boolean
 	"""
 	auth provider used to register the account
 	"""
@@ -5406,8 +5475,8 @@ enum UserOrderField {
 }
 type UserSetting implements Node {
 	id: ID!
-	createdAt: Time!
-	updatedAt: Time!
+	createdAt: Time
+	updatedAt: Time
 	createdBy: String
 	updatedBy: String
 	deletedAt: Time
@@ -5534,6 +5603,8 @@ input UserSettingWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -5545,6 +5616,8 @@ input UserSettingWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -5720,6 +5793,8 @@ input UserWhereInput {
 	createdAtGTE: Time
 	createdAtLT: Time
 	createdAtLTE: Time
+	createdAtIsNil: Boolean
+	createdAtNotNil: Boolean
 	"""
 	updated_at field predicates
 	"""
@@ -5731,6 +5806,8 @@ input UserWhereInput {
 	updatedAtGTE: Time
 	updatedAtLT: Time
 	updatedAtLTE: Time
+	updatedAtIsNil: Boolean
+	updatedAtNotNil: Boolean
 	"""
 	created_by field predicates
 	"""
@@ -5947,6 +6024,8 @@ input UserWhereInput {
 	"""
 	oauth: Boolean
 	oauthNEQ: Boolean
+	oauthIsNil: Boolean
+	oauthNotNil: Boolean
 	"""
 	auth_provider field predicates
 	"""

@@ -570,12 +570,6 @@ func (uc *UserCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "User.created_at"`)}
-	}
-	if _, ok := uc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "User.updated_at"`)}
-	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "User.email"`)}
 	}
@@ -617,9 +611,6 @@ func (uc *UserCreate) check() error {
 		if err := user.AvatarLocalFileValidator(v); err != nil {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
-	}
-	if _, ok := uc.mutation.Oauth(); !ok {
-		return &ValidationError{Name: "oauth", err: errors.New(`generated: missing required field "User.oauth"`)}
 	}
 	if _, ok := uc.mutation.AuthProvider(); !ok {
 		return &ValidationError{Name: "auth_provider", err: errors.New(`generated: missing required field "User.auth_provider"`)}

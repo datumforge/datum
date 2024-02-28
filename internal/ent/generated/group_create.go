@@ -303,12 +303,6 @@ func (gc *GroupCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (gc *GroupCreate) check() error {
-	if _, ok := gc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Group.created_at"`)}
-	}
-	if _, ok := gc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Group.updated_at"`)}
-	}
 	if _, ok := gc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Group.owner_id"`)}
 	}

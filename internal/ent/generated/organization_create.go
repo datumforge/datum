@@ -433,12 +433,6 @@ func (oc *OrganizationCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (oc *OrganizationCreate) check() error {
-	if _, ok := oc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Organization.created_at"`)}
-	}
-	if _, ok := oc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Organization.updated_at"`)}
-	}
 	if _, ok := oc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Organization.name"`)}
 	}
@@ -454,9 +448,6 @@ func (oc *OrganizationCreate) check() error {
 		if err := organization.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
-	}
-	if _, ok := oc.mutation.PersonalOrg(); !ok {
-		return &ValidationError{Name: "personal_org", err: errors.New(`generated: missing required field "Organization.personal_org"`)}
 	}
 	return nil
 }

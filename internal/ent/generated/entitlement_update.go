@@ -38,6 +38,12 @@ func (eu *EntitlementUpdate) SetUpdatedAt(t time.Time) *EntitlementUpdate {
 	return eu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (eu *EntitlementUpdate) ClearUpdatedAt() *EntitlementUpdate {
+	eu.mutation.ClearUpdatedAt()
+	return eu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (eu *EntitlementUpdate) SetUpdatedBy(s string) *EntitlementUpdate {
 	eu.mutation.SetUpdatedBy(s)
@@ -262,7 +268,7 @@ func (eu *EntitlementUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (eu *EntitlementUpdate) defaults() error {
-	if _, ok := eu.mutation.UpdatedAt(); !ok {
+	if _, ok := eu.mutation.UpdatedAt(); !ok && !eu.mutation.UpdatedAtCleared() {
 		if entitlement.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized entitlement.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -297,8 +303,14 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if eu.mutation.CreatedAtCleared() {
+		_spec.ClearField(entitlement.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := eu.mutation.UpdatedAt(); ok {
 		_spec.SetField(entitlement.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if eu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(entitlement.FieldUpdatedAt, field.TypeTime)
 	}
 	if eu.mutation.CreatedByCleared() {
 		_spec.ClearField(entitlement.FieldCreatedBy, field.TypeString)
@@ -404,6 +416,12 @@ type EntitlementUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (euo *EntitlementUpdateOne) SetUpdatedAt(t time.Time) *EntitlementUpdateOne {
 	euo.mutation.SetUpdatedAt(t)
+	return euo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (euo *EntitlementUpdateOne) ClearUpdatedAt() *EntitlementUpdateOne {
+	euo.mutation.ClearUpdatedAt()
 	return euo
 }
 
@@ -644,7 +662,7 @@ func (euo *EntitlementUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (euo *EntitlementUpdateOne) defaults() error {
-	if _, ok := euo.mutation.UpdatedAt(); !ok {
+	if _, ok := euo.mutation.UpdatedAt(); !ok && !euo.mutation.UpdatedAtCleared() {
 		if entitlement.UpdateDefaultUpdatedAt == nil {
 			return fmt.Errorf("generated: uninitialized entitlement.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
@@ -696,8 +714,14 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 			}
 		}
 	}
+	if euo.mutation.CreatedAtCleared() {
+		_spec.ClearField(entitlement.FieldCreatedAt, field.TypeTime)
+	}
 	if value, ok := euo.mutation.UpdatedAt(); ok {
 		_spec.SetField(entitlement.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if euo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(entitlement.FieldUpdatedAt, field.TypeTime)
 	}
 	if euo.mutation.CreatedByCleared() {
 		_spec.ClearField(entitlement.FieldCreatedBy, field.TypeString)

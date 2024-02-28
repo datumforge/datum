@@ -255,12 +255,6 @@ func (opc *OauthProviderCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (opc *OauthProviderCreate) check() error {
-	if _, ok := opc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "OauthProvider.created_at"`)}
-	}
-	if _, ok := opc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "OauthProvider.updated_at"`)}
-	}
 	if _, ok := opc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "OauthProvider.name"`)}
 	}

@@ -91,12 +91,15 @@ func HookUser() ent.Hook {
 				}
 
 				// when a user is created, we create a personal user org
-				if err := createPersonalOrg(ctx, mutation.Client(), userCreated); err != nil {
+				setting, err := createPersonalOrg(ctx, mutation.Client(), userCreated)
+				if err != nil {
 					return nil, err
 				}
+
+				userCreated.Edges.Setting = setting
 			}
 
-			return v, err
+			return userCreated, err
 		})
 	}, ent.OpCreate|ent.OpUpdateOne)
 }
@@ -162,7 +165,7 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 }
 
 // createPersonalOrg creates an org for a user with a unique random name
-func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *generated.User) error {
+func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *generated.User) (*generated.UserSetting, error) {
 	// this prevents a privacy check that would be required for regular orgs, but not a personal org
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -177,7 +180,7 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 
 		user.Logger.Errorw("unable to create personal org", "error", err.Error())
 
-		return err
+		return nil, err
 	}
 
 	// Create Role as owner for user in the personal org
@@ -192,28 +195,32 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 		Save(ctx); err != nil {
 		user.Logger.Errorw("unable to add user as owner to organization", "error", err.Error())
 
-		return err
+		return nil, err
 	}
 
 	// set default org
-	return setDefaultOrg(ctx, dbClient, user, org.ID)
+	return setDefaultOrg(ctx, dbClient, user, org)
 }
 
-func setDefaultOrg(ctx context.Context, dbClient *generated.Client, user *generated.User, orgID string) error {
+func setDefaultOrg(ctx context.Context, dbClient *generated.Client, user *generated.User, org *generated.Organization) (*generated.UserSetting, error) {
 	setting, err := user.Setting(ctx)
 	if err != nil {
 		user.Logger.Errorw("unable to get user settings", "error", err)
 
-		return err
+		return nil, err
 	}
 
-	if _, err := dbClient.UserSetting.UpdateOneID(setting.ID).SetDefaultOrg(orgID).Save(ctx); err != nil {
+	setting, err = dbClient.UserSetting.UpdateOneID(setting.ID).SetDefaultOrg(org).Save(ctx)
+	if err != nil {
 		user.Logger.Errorw("unable to set default org", "error", err)
 
-		return err
+		return nil, err
 	}
 
-	return nil
+	// set the default org on the settings to eager load for the response
+	setting.Edges.DefaultOrg = org
+
+	return setting, nil
 }
 
 // defaultUserSettings creates the default user settings for a new user

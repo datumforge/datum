@@ -19981,30 +19981,30 @@ func (m *UserMutation) ResetEdge(name string) error {
 // UserSettingMutation represents an operation that mutates the UserSetting nodes in the graph.
 type UserSettingMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *string
-	created_at      *time.Time
-	updated_at      *time.Time
-	created_by      *string
-	updated_by      *string
-	deleted_at      *time.Time
-	deleted_by      *string
-	locked          *bool
-	silenced_at     *time.Time
-	suspended_at    *time.Time
-	recovery_code   *string
-	status          *enums.UserStatus
-	default_org     *string
-	email_confirmed *bool
-	tags            *[]string
-	appendtags      []string
-	clearedFields   map[string]struct{}
-	user            *string
-	cleareduser     bool
-	done            bool
-	oldValue        func(context.Context) (*UserSetting, error)
-	predicates      []predicate.UserSetting
+	op                 Op
+	typ                string
+	id                 *string
+	created_at         *time.Time
+	updated_at         *time.Time
+	created_by         *string
+	updated_by         *string
+	deleted_at         *time.Time
+	deleted_by         *string
+	locked             *bool
+	silenced_at        *time.Time
+	suspended_at       *time.Time
+	status             *enums.UserStatus
+	email_confirmed    *bool
+	tags               *[]string
+	appendtags         []string
+	clearedFields      map[string]struct{}
+	user               *string
+	cleareduser        bool
+	default_org        *string
+	cleareddefault_org bool
+	done               bool
+	oldValue           func(context.Context) (*UserSetting, error)
+	predicates         []predicate.UserSetting
 }
 
 var _ ent.Mutation = (*UserSettingMutation)(nil)
@@ -20405,6 +20405,55 @@ func (m *UserSettingMutation) ResetDeletedBy() {
 	delete(m.clearedFields, usersetting.FieldDeletedBy)
 }
 
+// SetUserID sets the "user_id" field.
+func (m *UserSettingMutation) SetUserID(s string) {
+	m.user = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *UserSettingMutation) UserID() (r string, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *UserSettingMutation) ClearUserID() {
+	m.user = nil
+	m.clearedFields[usersetting.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *UserSettingMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *UserSettingMutation) ResetUserID() {
+	m.user = nil
+	delete(m.clearedFields, usersetting.FieldUserID)
+}
+
 // SetLocked sets the "locked" field.
 func (m *UserSettingMutation) SetLocked(b bool) {
 	m.locked = &b
@@ -20539,55 +20588,6 @@ func (m *UserSettingMutation) ResetSuspendedAt() {
 	delete(m.clearedFields, usersetting.FieldSuspendedAt)
 }
 
-// SetRecoveryCode sets the "recovery_code" field.
-func (m *UserSettingMutation) SetRecoveryCode(s string) {
-	m.recovery_code = &s
-}
-
-// RecoveryCode returns the value of the "recovery_code" field in the mutation.
-func (m *UserSettingMutation) RecoveryCode() (r string, exists bool) {
-	v := m.recovery_code
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRecoveryCode returns the old "recovery_code" field's value of the UserSetting entity.
-// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserSettingMutation) OldRecoveryCode(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRecoveryCode is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRecoveryCode requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRecoveryCode: %w", err)
-	}
-	return oldValue.RecoveryCode, nil
-}
-
-// ClearRecoveryCode clears the value of the "recovery_code" field.
-func (m *UserSettingMutation) ClearRecoveryCode() {
-	m.recovery_code = nil
-	m.clearedFields[usersetting.FieldRecoveryCode] = struct{}{}
-}
-
-// RecoveryCodeCleared returns if the "recovery_code" field was cleared in this mutation.
-func (m *UserSettingMutation) RecoveryCodeCleared() bool {
-	_, ok := m.clearedFields[usersetting.FieldRecoveryCode]
-	return ok
-}
-
-// ResetRecoveryCode resets all changes to the "recovery_code" field.
-func (m *UserSettingMutation) ResetRecoveryCode() {
-	m.recovery_code = nil
-	delete(m.clearedFields, usersetting.FieldRecoveryCode)
-}
-
 // SetStatus sets the "status" field.
 func (m *UserSettingMutation) SetStatus(es enums.UserStatus) {
 	m.status = &es
@@ -20622,55 +20622,6 @@ func (m *UserSettingMutation) OldStatus(ctx context.Context) (v enums.UserStatus
 // ResetStatus resets all changes to the "status" field.
 func (m *UserSettingMutation) ResetStatus() {
 	m.status = nil
-}
-
-// SetDefaultOrg sets the "default_org" field.
-func (m *UserSettingMutation) SetDefaultOrg(s string) {
-	m.default_org = &s
-}
-
-// DefaultOrg returns the value of the "default_org" field in the mutation.
-func (m *UserSettingMutation) DefaultOrg() (r string, exists bool) {
-	v := m.default_org
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDefaultOrg returns the old "default_org" field's value of the UserSetting entity.
-// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserSettingMutation) OldDefaultOrg(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDefaultOrg is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDefaultOrg requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDefaultOrg: %w", err)
-	}
-	return oldValue.DefaultOrg, nil
-}
-
-// ClearDefaultOrg clears the value of the "default_org" field.
-func (m *UserSettingMutation) ClearDefaultOrg() {
-	m.default_org = nil
-	m.clearedFields[usersetting.FieldDefaultOrg] = struct{}{}
-}
-
-// DefaultOrgCleared returns if the "default_org" field was cleared in this mutation.
-func (m *UserSettingMutation) DefaultOrgCleared() bool {
-	_, ok := m.clearedFields[usersetting.FieldDefaultOrg]
-	return ok
-}
-
-// ResetDefaultOrg resets all changes to the "default_org" field.
-func (m *UserSettingMutation) ResetDefaultOrg() {
-	m.default_org = nil
-	delete(m.clearedFields, usersetting.FieldDefaultOrg)
 }
 
 // SetEmailConfirmed sets the "email_confirmed" field.
@@ -20760,27 +20711,15 @@ func (m *UserSettingMutation) ResetTags() {
 	m.appendtags = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *UserSettingMutation) SetUserID(id string) {
-	m.user = &id
-}
-
 // ClearUser clears the "user" edge to the User entity.
 func (m *UserSettingMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[usersetting.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *UserSettingMutation) UserCleared() bool {
-	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *UserSettingMutation) UserID() (id string, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
+	return m.UserIDCleared() || m.cleareduser
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -20797,6 +20736,45 @@ func (m *UserSettingMutation) UserIDs() (ids []string) {
 func (m *UserSettingMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
+}
+
+// SetDefaultOrgID sets the "default_org" edge to the Organization entity by id.
+func (m *UserSettingMutation) SetDefaultOrgID(id string) {
+	m.default_org = &id
+}
+
+// ClearDefaultOrg clears the "default_org" edge to the Organization entity.
+func (m *UserSettingMutation) ClearDefaultOrg() {
+	m.cleareddefault_org = true
+}
+
+// DefaultOrgCleared reports if the "default_org" edge to the Organization entity was cleared.
+func (m *UserSettingMutation) DefaultOrgCleared() bool {
+	return m.cleareddefault_org
+}
+
+// DefaultOrgID returns the "default_org" edge ID in the mutation.
+func (m *UserSettingMutation) DefaultOrgID() (id string, exists bool) {
+	if m.default_org != nil {
+		return *m.default_org, true
+	}
+	return
+}
+
+// DefaultOrgIDs returns the "default_org" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DefaultOrgID instead. It exists only for internal usage by the builders.
+func (m *UserSettingMutation) DefaultOrgIDs() (ids []string) {
+	if id := m.default_org; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDefaultOrg resets all changes to the "default_org" edge.
+func (m *UserSettingMutation) ResetDefaultOrg() {
+	m.default_org = nil
+	m.cleareddefault_org = false
 }
 
 // Where appends a list predicates to the UserSettingMutation builder.
@@ -20833,7 +20811,7 @@ func (m *UserSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSettingMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, usersetting.FieldCreatedAt)
 	}
@@ -20852,6 +20830,9 @@ func (m *UserSettingMutation) Fields() []string {
 	if m.deleted_by != nil {
 		fields = append(fields, usersetting.FieldDeletedBy)
 	}
+	if m.user != nil {
+		fields = append(fields, usersetting.FieldUserID)
+	}
 	if m.locked != nil {
 		fields = append(fields, usersetting.FieldLocked)
 	}
@@ -20861,14 +20842,8 @@ func (m *UserSettingMutation) Fields() []string {
 	if m.suspended_at != nil {
 		fields = append(fields, usersetting.FieldSuspendedAt)
 	}
-	if m.recovery_code != nil {
-		fields = append(fields, usersetting.FieldRecoveryCode)
-	}
 	if m.status != nil {
 		fields = append(fields, usersetting.FieldStatus)
-	}
-	if m.default_org != nil {
-		fields = append(fields, usersetting.FieldDefaultOrg)
 	}
 	if m.email_confirmed != nil {
 		fields = append(fields, usersetting.FieldEmailConfirmed)
@@ -20896,18 +20871,16 @@ func (m *UserSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case usersetting.FieldDeletedBy:
 		return m.DeletedBy()
+	case usersetting.FieldUserID:
+		return m.UserID()
 	case usersetting.FieldLocked:
 		return m.Locked()
 	case usersetting.FieldSilencedAt:
 		return m.SilencedAt()
 	case usersetting.FieldSuspendedAt:
 		return m.SuspendedAt()
-	case usersetting.FieldRecoveryCode:
-		return m.RecoveryCode()
 	case usersetting.FieldStatus:
 		return m.Status()
-	case usersetting.FieldDefaultOrg:
-		return m.DefaultOrg()
 	case usersetting.FieldEmailConfirmed:
 		return m.EmailConfirmed()
 	case usersetting.FieldTags:
@@ -20933,18 +20906,16 @@ func (m *UserSettingMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDeletedAt(ctx)
 	case usersetting.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case usersetting.FieldUserID:
+		return m.OldUserID(ctx)
 	case usersetting.FieldLocked:
 		return m.OldLocked(ctx)
 	case usersetting.FieldSilencedAt:
 		return m.OldSilencedAt(ctx)
 	case usersetting.FieldSuspendedAt:
 		return m.OldSuspendedAt(ctx)
-	case usersetting.FieldRecoveryCode:
-		return m.OldRecoveryCode(ctx)
 	case usersetting.FieldStatus:
 		return m.OldStatus(ctx)
-	case usersetting.FieldDefaultOrg:
-		return m.OldDefaultOrg(ctx)
 	case usersetting.FieldEmailConfirmed:
 		return m.OldEmailConfirmed(ctx)
 	case usersetting.FieldTags:
@@ -21000,6 +20971,13 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedBy(v)
 		return nil
+	case usersetting.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	case usersetting.FieldLocked:
 		v, ok := value.(bool)
 		if !ok {
@@ -21021,26 +20999,12 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSuspendedAt(v)
 		return nil
-	case usersetting.FieldRecoveryCode:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRecoveryCode(v)
-		return nil
 	case usersetting.FieldStatus:
 		v, ok := value.(enums.UserStatus)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
-		return nil
-	case usersetting.FieldDefaultOrg:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDefaultOrg(v)
 		return nil
 	case usersetting.FieldEmailConfirmed:
 		v, ok := value.(bool)
@@ -21104,17 +21068,14 @@ func (m *UserSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(usersetting.FieldDeletedBy) {
 		fields = append(fields, usersetting.FieldDeletedBy)
 	}
+	if m.FieldCleared(usersetting.FieldUserID) {
+		fields = append(fields, usersetting.FieldUserID)
+	}
 	if m.FieldCleared(usersetting.FieldSilencedAt) {
 		fields = append(fields, usersetting.FieldSilencedAt)
 	}
 	if m.FieldCleared(usersetting.FieldSuspendedAt) {
 		fields = append(fields, usersetting.FieldSuspendedAt)
-	}
-	if m.FieldCleared(usersetting.FieldRecoveryCode) {
-		fields = append(fields, usersetting.FieldRecoveryCode)
-	}
-	if m.FieldCleared(usersetting.FieldDefaultOrg) {
-		fields = append(fields, usersetting.FieldDefaultOrg)
 	}
 	return fields
 }
@@ -21148,17 +21109,14 @@ func (m *UserSettingMutation) ClearField(name string) error {
 	case usersetting.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case usersetting.FieldUserID:
+		m.ClearUserID()
+		return nil
 	case usersetting.FieldSilencedAt:
 		m.ClearSilencedAt()
 		return nil
 	case usersetting.FieldSuspendedAt:
 		m.ClearSuspendedAt()
-		return nil
-	case usersetting.FieldRecoveryCode:
-		m.ClearRecoveryCode()
-		return nil
-	case usersetting.FieldDefaultOrg:
-		m.ClearDefaultOrg()
 		return nil
 	}
 	return fmt.Errorf("unknown UserSetting nullable field %s", name)
@@ -21186,6 +21144,9 @@ func (m *UserSettingMutation) ResetField(name string) error {
 	case usersetting.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case usersetting.FieldUserID:
+		m.ResetUserID()
+		return nil
 	case usersetting.FieldLocked:
 		m.ResetLocked()
 		return nil
@@ -21195,14 +21156,8 @@ func (m *UserSettingMutation) ResetField(name string) error {
 	case usersetting.FieldSuspendedAt:
 		m.ResetSuspendedAt()
 		return nil
-	case usersetting.FieldRecoveryCode:
-		m.ResetRecoveryCode()
-		return nil
 	case usersetting.FieldStatus:
 		m.ResetStatus()
-		return nil
-	case usersetting.FieldDefaultOrg:
-		m.ResetDefaultOrg()
 		return nil
 	case usersetting.FieldEmailConfirmed:
 		m.ResetEmailConfirmed()
@@ -21216,9 +21171,12 @@ func (m *UserSettingMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserSettingMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.user != nil {
 		edges = append(edges, usersetting.EdgeUser)
+	}
+	if m.default_org != nil {
+		edges = append(edges, usersetting.EdgeDefaultOrg)
 	}
 	return edges
 }
@@ -21231,13 +21189,17 @@ func (m *UserSettingMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
+	case usersetting.EdgeDefaultOrg:
+		if id := m.default_org; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserSettingMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -21249,9 +21211,12 @@ func (m *UserSettingMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserSettingMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.cleareduser {
 		edges = append(edges, usersetting.EdgeUser)
+	}
+	if m.cleareddefault_org {
+		edges = append(edges, usersetting.EdgeDefaultOrg)
 	}
 	return edges
 }
@@ -21262,6 +21227,8 @@ func (m *UserSettingMutation) EdgeCleared(name string) bool {
 	switch name {
 	case usersetting.EdgeUser:
 		return m.cleareduser
+	case usersetting.EdgeDefaultOrg:
+		return m.cleareddefault_org
 	}
 	return false
 }
@@ -21273,6 +21240,9 @@ func (m *UserSettingMutation) ClearEdge(name string) error {
 	case usersetting.EdgeUser:
 		m.ClearUser()
 		return nil
+	case usersetting.EdgeDefaultOrg:
+		m.ClearDefaultOrg()
+		return nil
 	}
 	return fmt.Errorf("unknown UserSetting unique edge %s", name)
 }
@@ -21283,6 +21253,9 @@ func (m *UserSettingMutation) ResetEdge(name string) error {
 	switch name {
 	case usersetting.EdgeUser:
 		m.ResetUser()
+		return nil
+	case usersetting.EdgeDefaultOrg:
+		m.ResetDefaultOrg()
 		return nil
 	}
 	return fmt.Errorf("unknown UserSetting edge %s", name)

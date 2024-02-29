@@ -42,7 +42,7 @@ func TestLoginHandler(t *testing.T) {
 
 	userSetting := client.db.UserSetting.Create().
 		SetEmailConfirmed(true).
-		SaveX(ec)
+		SaveX(ctx)
 
 	_ = client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).

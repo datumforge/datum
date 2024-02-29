@@ -30,7 +30,7 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.No
 
 // Entitlements is the resolver for the entitlements field.
 func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error) {
-	panic(fmt.Errorf("not implemented: Entitlements - entitlements"))
+	return withTransactionalMutation(ctx).Entitlement.Query().Paginate(ctx, after, first, before, last, generated.WithEntitlementFilter(where.Filter))
 }
 
 // Groups is the resolver for the groups field.
@@ -99,7 +99,9 @@ func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string],
 
 // UserSettings is the resolver for the userSettings field.
 func (r *queryResolver) UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error) {
-	panic(fmt.Errorf("not implemented: UserSettings - userSettings"))
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
+	return withTransactionalMutation(ctx).UserSetting.Query().Paginate(ctx, after, first, before, last, generated.WithUserSettingFilter(where.Filter))
 }
 
 // AuthStyle is the resolver for the authStyle field.

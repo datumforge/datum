@@ -864,12 +864,28 @@ func init() {
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() string)
 	usersettingMixin := schema.UserSetting{}.Mixin()
+	usersetting.Policy = privacy.NewPolicies(schema.UserSetting{})
+	usersetting.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := usersetting.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	usersettingMixinHooks0 := usersettingMixin[0].Hooks()
 	usersettingMixinHooks2 := usersettingMixin[2].Hooks()
-	usersetting.Hooks[0] = usersettingMixinHooks0[0]
-	usersetting.Hooks[1] = usersettingMixinHooks2[0]
+	usersettingHooks := schema.UserSetting{}.Hooks()
+
+	usersetting.Hooks[1] = usersettingMixinHooks0[0]
+
+	usersetting.Hooks[2] = usersettingMixinHooks2[0]
+
+	usersetting.Hooks[3] = usersettingHooks[0]
 	usersettingMixinInters2 := usersettingMixin[2].Interceptors()
+	usersettingInters := schema.UserSetting{}.Interceptors()
 	usersetting.Interceptors[0] = usersettingMixinInters2[0]
+	usersetting.Interceptors[1] = usersettingInters[0]
 	usersettingMixinFields0 := usersettingMixin[0].Fields()
 	_ = usersettingMixinFields0
 	usersettingMixinFields1 := usersettingMixin[1].Fields()
@@ -887,15 +903,15 @@ func init() {
 	// usersetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	usersetting.UpdateDefaultUpdatedAt = usersettingDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// usersettingDescLocked is the schema descriptor for locked field.
-	usersettingDescLocked := usersettingFields[0].Descriptor()
+	usersettingDescLocked := usersettingFields[1].Descriptor()
 	// usersetting.DefaultLocked holds the default value on creation for the locked field.
 	usersetting.DefaultLocked = usersettingDescLocked.Default.(bool)
 	// usersettingDescEmailConfirmed is the schema descriptor for email_confirmed field.
-	usersettingDescEmailConfirmed := usersettingFields[6].Descriptor()
+	usersettingDescEmailConfirmed := usersettingFields[5].Descriptor()
 	// usersetting.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
 	usersetting.DefaultEmailConfirmed = usersettingDescEmailConfirmed.Default.(bool)
 	// usersettingDescTags is the schema descriptor for tags field.
-	usersettingDescTags := usersettingFields[7].Descriptor()
+	usersettingDescTags := usersettingFields[6].Descriptor()
 	// usersetting.DefaultTags holds the default value on creation for the tags field.
 	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
 	// usersettingDescID is the schema descriptor for id field.

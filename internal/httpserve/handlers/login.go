@@ -90,7 +90,6 @@ func createClaims(u *generated.User) *tokens.Claims {
 		Email:       u.Email,
 		DisplayName: u.DisplayName,
 		AvatarURL:   *u.AvatarRemoteURL,
-		OrgID:       u.Edges.Setting.DefaultOrg,
 	}
 }
 

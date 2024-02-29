@@ -1993,12 +1993,11 @@ type CreateUserSettingInput struct {
 	Locked         *bool
 	SilencedAt     *time.Time
 	SuspendedAt    *time.Time
-	RecoveryCode   *string
 	Status         *enums.UserStatus
-	DefaultOrg     *string
 	EmailConfirmed *bool
 	Tags           []string
 	UserID         *string
+	DefaultOrgID   *string
 }
 
 // Mutate applies the CreateUserSettingInput on the UserSettingMutation builder.
@@ -2024,14 +2023,8 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.SuspendedAt; v != nil {
 		m.SetSuspendedAt(*v)
 	}
-	if v := i.RecoveryCode; v != nil {
-		m.SetRecoveryCode(*v)
-	}
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
-	}
-	if v := i.DefaultOrg; v != nil {
-		m.SetDefaultOrg(*v)
 	}
 	if v := i.EmailConfirmed; v != nil {
 		m.SetEmailConfirmed(*v)
@@ -2041,6 +2034,9 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)
+	}
+	if v := i.DefaultOrgID; v != nil {
+		m.SetDefaultOrgID(*v)
 	}
 }
 
@@ -2052,25 +2048,23 @@ func (c *UserSettingCreate) SetInput(i CreateUserSettingInput) *UserSettingCreat
 
 // UpdateUserSettingInput represents a mutation input for updating usersettings.
 type UpdateUserSettingInput struct {
-	ClearUpdatedAt    bool
-	UpdatedAt         *time.Time
-	ClearUpdatedBy    bool
-	UpdatedBy         *string
-	Locked            *bool
-	ClearSilencedAt   bool
-	SilencedAt        *time.Time
-	ClearSuspendedAt  bool
-	SuspendedAt       *time.Time
-	ClearRecoveryCode bool
-	RecoveryCode      *string
-	Status            *enums.UserStatus
-	ClearDefaultOrg   bool
-	DefaultOrg        *string
-	EmailConfirmed    *bool
-	Tags              []string
-	AppendTags        []string
-	ClearUser         bool
-	UserID            *string
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Locked           *bool
+	ClearSilencedAt  bool
+	SilencedAt       *time.Time
+	ClearSuspendedAt bool
+	SuspendedAt      *time.Time
+	Status           *enums.UserStatus
+	EmailConfirmed   *bool
+	Tags             []string
+	AppendTags       []string
+	ClearUser        bool
+	UserID           *string
+	ClearDefaultOrg  bool
+	DefaultOrgID     *string
 }
 
 // Mutate applies the UpdateUserSettingInput on the UserSettingMutation builder.
@@ -2102,20 +2096,8 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.SuspendedAt; v != nil {
 		m.SetSuspendedAt(*v)
 	}
-	if i.ClearRecoveryCode {
-		m.ClearRecoveryCode()
-	}
-	if v := i.RecoveryCode; v != nil {
-		m.SetRecoveryCode(*v)
-	}
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
-	}
-	if i.ClearDefaultOrg {
-		m.ClearDefaultOrg()
-	}
-	if v := i.DefaultOrg; v != nil {
-		m.SetDefaultOrg(*v)
 	}
 	if v := i.EmailConfirmed; v != nil {
 		m.SetEmailConfirmed(*v)
@@ -2131,6 +2113,12 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)
+	}
+	if i.ClearDefaultOrg {
+		m.ClearDefaultOrg()
+	}
+	if v := i.DefaultOrgID; v != nil {
+		m.SetDefaultOrgID(*v)
 	}
 }
 

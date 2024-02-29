@@ -3301,6 +3301,25 @@ func (c *UserSettingClient) QueryUser(us *UserSetting) *UserQuery {
 	return query
 }
 
+// QueryDefaultOrg queries the default_org edge of a UserSetting.
+func (c *UserSettingClient) QueryDefaultOrg(us *UserSetting) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := us.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usersetting.Table, usersetting.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usersetting.DefaultOrgTable, usersetting.DefaultOrgColumn),
+		)
+		schemaConfig := us.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.UserSetting
+		fromV = sqlgraph.Neighbors(us.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserSettingClient) Hooks() []Hook {
 	hooks := c.hooks.UserSetting

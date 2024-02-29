@@ -13,7 +13,11 @@ query GetUserByID($userId: ID!) {
     authProvider
     setting {
       emailConfirmed
-      defaultOrg
+      defaultOrg {
+        id
+        name
+        personalOrg
+      }
       locked
       status
       tags
@@ -55,7 +59,11 @@ query GetUserByIDWithOrgs($userId: ID!) {
     authProvider
     setting {
       emailConfirmed
-      defaultOrg
+      defaultOrg {
+        id
+        name
+        personalOrg
+      }
       locked
       status
       tags
@@ -98,7 +106,11 @@ query GetAllUsers {
         authProvider
         setting {
           emailConfirmed
-          defaultOrg 
+          defaultOrg {
+            id
+            name
+            personalOrg
+          }
           locked
           status
           tags
@@ -141,7 +153,11 @@ mutation CreateUser($input: CreateUserInput!) {
       }
       setting {
         emailConfirmed
-        defaultOrg
+        defaultOrg {
+          id
+          name
+          personalOrg
+        }
         locked
         status
         tags
@@ -177,7 +193,11 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
       }
       setting {
         emailConfirmed
-        defaultOrg
+        defaultOrg {
+          id
+          name
+          personalOrg
+        }
         locked
         status
         tags

@@ -10,7 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 )
 
-// HookEmailVerificationToken runs on accesstoken mutations and sets expires
+// HookEmailVerificationToken runs on email verification mutations and sets expires
 func HookEmailVerificationToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.EmailVerificationTokenFunc(func(ctx context.Context, mutation *generated.EmailVerificationTokenMutation) (generated.Value, error) {

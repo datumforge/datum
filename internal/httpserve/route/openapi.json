@@ -5238,19 +5238,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "user_id": {
+                    "type": "string"
+                  },
                   "locked": {
                     "type": "boolean"
                   },
                   "silenced_at": {
                     "type": "string",
                     "format": "date-time"
-                  },
-                  "suspended_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "recovery_code": {
-                    "type": "string"
                   },
                   "status": {
                     "type": "string",
@@ -5262,12 +5258,6 @@
                     ],
                     "default": "ACTIVE"
                   },
-                  "default_org": {
-                    "type": "string"
-                  },
-                  "email_confirmed": {
-                    "type": "boolean"
-                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -5276,12 +5266,14 @@
                   },
                   "user": {
                     "type": "string"
+                  },
+                  "default_org": {
+                    "type": "string"
                   }
                 },
                 "required": [
                   "locked",
                   "status",
-                  "email_confirmed",
                   "tags"
                 ]
               }
@@ -5417,19 +5409,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "user_id": {
+                    "type": "string"
+                  },
                   "locked": {
                     "type": "boolean"
                   },
                   "silenced_at": {
                     "type": "string",
                     "format": "date-time"
-                  },
-                  "suspended_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "recovery_code": {
-                    "type": "string"
                   },
                   "status": {
                     "type": "string",
@@ -5441,12 +5429,6 @@
                     ],
                     "default": "ACTIVE"
                   },
-                  "default_org": {
-                    "type": "string"
-                  },
-                  "email_confirmed": {
-                    "type": "boolean"
-                  },
                   "tags": {
                     "type": "array",
                     "items": {
@@ -5454,6 +5436,9 @@
                     }
                   },
                   "user": {
+                    "type": "string"
+                  },
+                  "default_org": {
                     "type": "string"
                   }
                 }
@@ -5469,6 +5454,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserSetting"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/user-settings/{id}/default-org": {
+      "get": {
+        "tags": [
+          "UserSetting"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the UserSetting with the given ID",
+        "operationId": "readUserSettingDefaultOrg",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the UserSetting",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to UserSetting with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
                 }
               }
             }
@@ -8059,6 +8089,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "user_id": {
+            "type": "string"
+          },
           "locked": {
             "type": "boolean"
           },
@@ -8070,9 +8103,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "recovery_code": {
-            "type": "string"
-          },
           "status": {
             "type": "string",
             "enum": [
@@ -8082,9 +8112,6 @@
               "SUSPENDED"
             ],
             "default": "ACTIVE"
-          },
-          "default_org": {
-            "type": "string"
           },
           "email_confirmed": {
             "type": "boolean"
@@ -8097,6 +8124,9 @@
           },
           "user": {
             "$ref": "#/components/schemas/User"
+          },
+          "default_org": {
+            "$ref": "#/components/schemas/Organization"
           }
         },
         "required": [

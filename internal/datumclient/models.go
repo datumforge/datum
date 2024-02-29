@@ -310,16 +310,13 @@ type CreateUserSettingInput struct {
 	// The time notifications regarding the user were silenced
 	SilencedAt *time.Time `json:"silencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt *time.Time `json:"suspendedAt,omitempty"`
-	// local user password recovery code generated during account creation - does not exist for oauth'd users
-	RecoveryCode *string           `json:"recoveryCode,omitempty"`
-	Status       *enums.UserStatus `json:"status,omitempty"`
-	// organization to load on user login
-	DefaultOrg     *string `json:"defaultOrg,omitempty"`
-	EmailConfirmed *bool   `json:"emailConfirmed,omitempty"`
-	// tags associated with the object
-	Tags   []string `json:"tags,omitempty"`
-	UserID *string  `json:"userID,omitempty"`
+	SuspendedAt    *time.Time        `json:"suspendedAt,omitempty"`
+	Status         *enums.UserStatus `json:"status,omitempty"`
+	EmailConfirmed *bool             `json:"emailConfirmed,omitempty"`
+	// tags associated with the user
+	Tags         []string `json:"tags,omitempty"`
+	UserID       *string  `json:"userID,omitempty"`
+	DefaultOrgID *string  `json:"defaultOrgID,omitempty"`
 }
 
 type Dummy struct {
@@ -3291,21 +3288,17 @@ type UpdateUserSettingInput struct {
 	SilencedAt      *time.Time `json:"silencedAt,omitempty"`
 	ClearSilencedAt *bool      `json:"clearSilencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt      *time.Time `json:"suspendedAt,omitempty"`
-	ClearSuspendedAt *bool      `json:"clearSuspendedAt,omitempty"`
-	// local user password recovery code generated during account creation - does not exist for oauth'd users
-	RecoveryCode      *string           `json:"recoveryCode,omitempty"`
-	ClearRecoveryCode *bool             `json:"clearRecoveryCode,omitempty"`
-	Status            *enums.UserStatus `json:"status,omitempty"`
-	// organization to load on user login
-	DefaultOrg      *string `json:"defaultOrg,omitempty"`
-	ClearDefaultOrg *bool   `json:"clearDefaultOrg,omitempty"`
-	EmailConfirmed  *bool   `json:"emailConfirmed,omitempty"`
-	// tags associated with the object
-	Tags       []string `json:"tags,omitempty"`
-	AppendTags []string `json:"appendTags,omitempty"`
-	UserID     *string  `json:"userID,omitempty"`
-	ClearUser  *bool    `json:"clearUser,omitempty"`
+	SuspendedAt      *time.Time        `json:"suspendedAt,omitempty"`
+	ClearSuspendedAt *bool             `json:"clearSuspendedAt,omitempty"`
+	Status           *enums.UserStatus `json:"status,omitempty"`
+	EmailConfirmed   *bool             `json:"emailConfirmed,omitempty"`
+	// tags associated with the user
+	Tags            []string `json:"tags,omitempty"`
+	AppendTags      []string `json:"appendTags,omitempty"`
+	UserID          *string  `json:"userID,omitempty"`
+	ClearUser       *bool    `json:"clearUser,omitempty"`
+	DefaultOrgID    *string  `json:"defaultOrgID,omitempty"`
+	ClearDefaultOrg *bool    `json:"clearDefaultOrg,omitempty"`
 }
 
 type User struct {
@@ -3401,19 +3394,20 @@ type UserSetting struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	UserID    *string    `json:"userID,omitempty"`
 	// user account is locked if unconfirmed or explicitly locked
 	Locked bool `json:"locked"`
 	// The time notifications regarding the user were silenced
 	SilencedAt *time.Time `json:"silencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt *time.Time       `json:"suspendedAt,omitempty"`
-	Status      enums.UserStatus `json:"status"`
-	// organization to load on user login
-	DefaultOrg     *string `json:"defaultOrg,omitempty"`
-	EmailConfirmed bool    `json:"emailConfirmed"`
-	// tags associated with the object
+	SuspendedAt    *time.Time       `json:"suspendedAt,omitempty"`
+	Status         enums.UserStatus `json:"status"`
+	EmailConfirmed bool             `json:"emailConfirmed"`
+	// tags associated with the user
 	Tags []string `json:"tags"`
 	User *User    `json:"user,omitempty"`
+	// organization to load on user login
+	DefaultOrg *Organization `json:"defaultOrg,omitempty"`
 }
 
 func (UserSetting) IsNode() {}
@@ -3426,18 +3420,6 @@ type UserSettingConnection struct {
 	PageInfo *PageInfo `json:"pageInfo"`
 	// Identifies the total count of items in the connection.
 	TotalCount int64 `json:"totalCount"`
-}
-
-// Return response for createUserSetting mutation
-type UserSettingCreatePayload struct {
-	// Created userSetting
-	UserSetting *UserSetting `json:"userSetting"`
-}
-
-// Return response for deleteUserSetting mutation
-type UserSettingDeletePayload struct {
-	// Deleted userSetting ID
-	DeletedID string `json:"deletedID"`
 }
 
 // An edge in a connection.
@@ -3552,6 +3534,22 @@ type UserSettingWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// user_id field predicates
+	UserID             *string  `json:"userID,omitempty"`
+	UserIDNeq          *string  `json:"userIDNEQ,omitempty"`
+	UserIDIn           []string `json:"userIDIn,omitempty"`
+	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
+	UserIDGt           *string  `json:"userIDGT,omitempty"`
+	UserIDGte          *string  `json:"userIDGTE,omitempty"`
+	UserIDLt           *string  `json:"userIDLT,omitempty"`
+	UserIDLte          *string  `json:"userIDLTE,omitempty"`
+	UserIDContains     *string  `json:"userIDContains,omitempty"`
+	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
+	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
+	UserIDIsNil        *bool    `json:"userIDIsNil,omitempty"`
+	UserIDNotNil       *bool    `json:"userIDNotNil,omitempty"`
+	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
+	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 	// locked field predicates
 	Locked    *bool `json:"locked,omitempty"`
 	LockedNeq *bool `json:"lockedNEQ,omitempty"`
@@ -3582,28 +3580,15 @@ type UserSettingWhereInput struct {
 	StatusNeq   *enums.UserStatus  `json:"statusNEQ,omitempty"`
 	StatusIn    []enums.UserStatus `json:"statusIn,omitempty"`
 	StatusNotIn []enums.UserStatus `json:"statusNotIn,omitempty"`
-	// default_org field predicates
-	DefaultOrg             *string  `json:"defaultOrg,omitempty"`
-	DefaultOrgNeq          *string  `json:"defaultOrgNEQ,omitempty"`
-	DefaultOrgIn           []string `json:"defaultOrgIn,omitempty"`
-	DefaultOrgNotIn        []string `json:"defaultOrgNotIn,omitempty"`
-	DefaultOrgGt           *string  `json:"defaultOrgGT,omitempty"`
-	DefaultOrgGte          *string  `json:"defaultOrgGTE,omitempty"`
-	DefaultOrgLt           *string  `json:"defaultOrgLT,omitempty"`
-	DefaultOrgLte          *string  `json:"defaultOrgLTE,omitempty"`
-	DefaultOrgContains     *string  `json:"defaultOrgContains,omitempty"`
-	DefaultOrgHasPrefix    *string  `json:"defaultOrgHasPrefix,omitempty"`
-	DefaultOrgHasSuffix    *string  `json:"defaultOrgHasSuffix,omitempty"`
-	DefaultOrgIsNil        *bool    `json:"defaultOrgIsNil,omitempty"`
-	DefaultOrgNotNil       *bool    `json:"defaultOrgNotNil,omitempty"`
-	DefaultOrgEqualFold    *string  `json:"defaultOrgEqualFold,omitempty"`
-	DefaultOrgContainsFold *string  `json:"defaultOrgContainsFold,omitempty"`
 	// email_confirmed field predicates
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
 	EmailConfirmedNeq *bool `json:"emailConfirmedNEQ,omitempty"`
 	// user edge predicates
 	HasUser     *bool             `json:"hasUser,omitempty"`
 	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+	// default_org edge predicates
+	HasDefaultOrg     *bool                     `json:"hasDefaultOrg,omitempty"`
+	HasDefaultOrgWith []*OrganizationWhereInput `json:"hasDefaultOrgWith,omitempty"`
 }
 
 // Return response for updateUser mutation

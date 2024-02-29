@@ -40,13 +40,6 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 		return nil, err
 	}
 
-	meowuser.Edges.Setting, err = meowuser.Setting(ctx)
-	if err != nil {
-		h.Logger.Errorw("error getting settings", "error", err)
-
-		return nil, err
-	}
-
 	return meowuser, nil
 }
 

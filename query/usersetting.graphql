@@ -3,7 +3,11 @@ query GetUserSettingByID($userSettingId: ID!) {
     id
     silencedAt
     status
-    defaultOrg
+    defaultOrg {
+      id
+      name
+      personalOrg
+    }
     suspendedAt
     tags
     locked
@@ -14,5 +18,86 @@ query GetUserSettingByID($userSettingId: ID!) {
     deletedBy
     updatedAt
     updatedBy
+  }
+}
+
+
+query GetUserSettings() {
+  userSettings() {
+    edges {
+      node {
+        id
+        silencedAt
+        status
+        defaultOrg {
+          id
+          name
+          personalOrg
+        }
+        suspendedAt
+        tags
+        locked
+        emailConfirmed
+        createdAt
+        createdBy
+        deletedAt
+        deletedBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+
+
+query GetUserSettingWhere($where: UserSettingWhereInput!) {
+  userSettings(where: $where) {
+    edges {
+      node {
+        id
+        silencedAt
+        status
+        defaultOrg {
+          id
+          name
+          personalOrg
+        }
+        suspendedAt
+        tags
+        locked
+        emailConfirmed
+        createdAt
+        createdBy
+        deletedAt
+        deletedBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+
+mutation UpdateUserSetting($updateUserSettingId: ID!, $input: UpdateUserSettingInput!) {
+  updateUserSetting(id: $updateUserSettingId, input: $input) {
+    userSetting {
+      id
+      silencedAt
+      status
+      defaultOrg {
+        id
+        name
+        personalOrg
+      }
+      suspendedAt
+      tags
+      locked
+      emailConfirmed
+      createdAt
+      createdBy
+      deletedAt
+      deletedBy
+      updatedAt
+      updatedBy
+    }
   }
 }

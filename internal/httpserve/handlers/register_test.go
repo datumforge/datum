@@ -3,7 +3,6 @@ package handlers_test
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -163,12 +162,6 @@ func TestRegisterHandler(t *testing.T) {
 				user, err := client.db.User.Get(ctx, out.ID)
 				require.NoError(t, err)
 
-				// make sure personal org was created
-				setting, err := user.Setting(ctx)
-				require.NoError(t, err)
-
-				personalOrg := setting.DefaultOrg
-
 				// setup echo context
 				ctx = context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
@@ -176,12 +169,8 @@ func TestRegisterHandler(t *testing.T) {
 				ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 				// mocks to check for org access
-				listObjects := []string{fmt.Sprintf("organization:%s", personalOrg)}
-				mock_fga.ListAny(t, client.fga, listObjects)
-
-				org, err := client.db.Organization.Get(ctx, personalOrg)
-				require.NoError(t, err)
-				assert.True(t, org.PersonalOrg)
+				listObjects := []string{"organization:test"}
+				mock_fga.ListOnce(t, client.fga, listObjects, nil)
 
 				// make sure user is an owner of their personal org
 				orgMemberships, err := user.OrgMemberships(ctx)

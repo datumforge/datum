@@ -243,18 +243,6 @@ type UserDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response for createUserSetting mutation
-type UserSettingCreatePayload struct {
-	// Created userSetting
-	UserSetting *generated.UserSetting `json:"userSetting"`
-}
-
-// Return response for deleteUserSetting mutation
-type UserSettingDeletePayload struct {
-	// Deleted userSetting ID
-	DeletedID string `json:"deletedID"`
-}
-
 // Return response for updateUserSetting mutation
 type UserSettingUpdatePayload struct {
 	// Updated userSetting

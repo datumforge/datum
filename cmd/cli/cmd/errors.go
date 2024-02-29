@@ -17,6 +17,9 @@ var (
 
 	// ErrUnsupportedProvider is returned when an invalid provider is specified during login
 	ErrUnsupportedProvider = errors.New("invalid provider, only Github and Google are supported")
+
+	// ErrNotFound is returned when a resource is not found
+	ErrNotFound = errors.New("resource not found")
 )
 
 // RequiredFieldMissingError is returned when a field is required but not provided

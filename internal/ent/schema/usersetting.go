@@ -1,14 +1,25 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // UserSetting holds the schema definition for the User entity.
@@ -28,6 +39,7 @@ func (UserSetting) Mixin() []ent.Mixin {
 // Fields of the UserSetting
 func (UserSetting) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("user_id").Optional(),
 		field.Bool("locked").
 			Comment("user account is locked if unconfirmed or explicitly locked").
 			Default(false),
@@ -38,21 +50,15 @@ func (UserSetting) Fields() []ent.Field {
 		field.Time("suspended_at").
 			Comment("The time the user was suspended").
 			Optional().
-			Nillable(),
-		field.String("recovery_code").
-			Comment("local user password recovery code generated during account creation - does not exist for oauth'd users").
-			Sensitive().
 			Nillable().
-			Optional(),
+			Annotations(entoas.Annotation{ReadOnly: true}),
 		field.Enum("status").
 			GoType(enums.UserStatus("")).
 			Default(string(enums.Active)),
-		field.String("default_org").
-			Comment("organization to load on user login").
-			Optional(),
-		field.Bool("email_confirmed").Default(false),
+		field.Bool("email_confirmed").Default(false).
+			Annotations(entoas.Annotation{ReadOnly: true}),
 		field.JSON("tags", []string{}).
-			Comment("tags associated with the object").
+			Comment("tags associated with the user").
 			Default([]string{}),
 	}
 }
@@ -60,7 +66,10 @@ func (UserSetting) Fields() []ent.Field {
 // Edges of the UserSetting
 func (UserSetting) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("setting").Unique(),
+		edge.From("user", User.Type).Ref("setting").Unique().Field("user_id"),
+		edge.To("default_org", Organization.Type).
+			Unique().
+			Comment("organization to load on user login"),
 	}
 }
 
@@ -70,5 +79,52 @@ func (UserSetting) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Hooks of the UserSetting.
+func (UserSetting) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookUserSetting(),
+	}
+}
+
+// Interceptors of the UserSetting.
+func (d UserSetting) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		intercept.TraverseUserSetting(func(ctx context.Context, q *generated.UserSettingQuery) error {
+			// Filter query based on viewer context
+			v := viewer.FromContext(ctx)
+			if v != nil {
+				viewerID, exists := v.GetID()
+				if exists {
+					q.Where(usersetting.UserID(viewerID))
+					return nil
+				}
+			}
+
+			return nil
+		}),
+	}
+}
+
+func (UserSetting) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			privacy.OnMutationOperation(
+				privacy.MutationPolicy{
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.VerifyToken{}),
+					rule.DenyIfNoViewer(),
+					rule.AllowIfSelf(),
+					privacy.AlwaysDenyRule(),
+				},
+				// only resolvers exist for update operations
+				ent.OpUpdateOne|ent.OpUpdate,
+			),
+		},
+		Query: privacy.QueryPolicy{
+			// Privacy will be always allow, but interceptors will filter the queries
+			privacy.AlwaysAllowRule(),
+		},
 	}
 }

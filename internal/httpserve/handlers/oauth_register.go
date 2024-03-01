@@ -12,6 +12,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/providers/github"
 	"github.com/datumforge/datum/internal/providers/google"
 	"github.com/datumforge/datum/internal/rout"
@@ -53,6 +54,13 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	// check if users exists and create if not, updates last seen of existing user
 	user, err := h.CheckAndCreateUser(ctxWithToken, r.Name, r.Email, enums.AuthProvider(strings.ToUpper(r.AuthProvider)))
 	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	// set context for remaining request based on logged in user
+	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
+
+	if err := h.addDefaultOrgToUserQuery(userCtx, user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 

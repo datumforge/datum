@@ -30,6 +30,8 @@ func TestVerifyHandler(t *testing.T) {
 
 	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
+	listObjects := []string{"organization:test"}
+
 	testCases := []struct {
 		name            string
 		userConfirmed   bool
@@ -77,6 +79,10 @@ func TestVerifyHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(client.fga)
+
+			if tc.expectedStatus == http.StatusOK {
+				mock_fga.ListAny(t, client.fga, listObjects)
+			}
 
 			// set privacy allow in order to allow the creation of the users without
 			// authentication in the tests

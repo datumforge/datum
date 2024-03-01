@@ -8,7 +8,6 @@ query GetUserSettingByID($userSettingId: ID!) {
       name
       personalOrg
     }
-    suspendedAt
     tags
     locked
     emailConfirmed
@@ -34,7 +33,6 @@ query GetUserSettings() {
           name
           personalOrg
         }
-        suspendedAt
         tags
         locked
         emailConfirmed
@@ -62,7 +60,6 @@ query GetUserSettingWhere($where: UserSettingWhereInput!) {
           name
           personalOrg
         }
-        suspendedAt
         tags
         locked
         emailConfirmed
@@ -88,7 +85,6 @@ mutation UpdateUserSetting($updateUserSettingId: ID!, $input: UpdateUserSettingI
         name
         personalOrg
       }
-      suspendedAt
       tags
       locked
       emailConfirmed

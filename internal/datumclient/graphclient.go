@@ -5498,7 +5498,6 @@ type GetUserSettingByID_UserSetting struct {
 	SilencedAt     *time.Time                                 "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 	Status         enums.UserStatus                           "json:\"status\" graphql:\"status\""
 	DefaultOrg     *GetUserSettingByID_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	SuspendedAt    *time.Time                                 "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	Tags           []string                                   "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                       "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool                                       "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
@@ -5533,12 +5532,6 @@ func (t *GetUserSettingByID_UserSetting) GetDefaultOrg() *GetUserSettingByID_Use
 		t = &GetUserSettingByID_UserSetting{}
 	}
 	return t.DefaultOrg
-}
-func (t *GetUserSettingByID_UserSetting) GetSuspendedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.SuspendedAt
 }
 func (t *GetUserSettingByID_UserSetting) GetTags() []string {
 	if t == nil {
@@ -5625,7 +5618,6 @@ type GetUserSettings_UserSettings_Edges_Node struct {
 	SilencedAt     *time.Time                                          "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 	Status         enums.UserStatus                                    "json:\"status\" graphql:\"status\""
 	DefaultOrg     *GetUserSettings_UserSettings_Edges_Node_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	SuspendedAt    *time.Time                                          "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	Tags           []string                                            "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                                "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool                                                "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
@@ -5660,12 +5652,6 @@ func (t *GetUserSettings_UserSettings_Edges_Node) GetDefaultOrg() *GetUserSettin
 		t = &GetUserSettings_UserSettings_Edges_Node{}
 	}
 	return t.DefaultOrg
-}
-func (t *GetUserSettings_UserSettings_Edges_Node) GetSuspendedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettings_UserSettings_Edges_Node{}
-	}
-	return t.SuspendedAt
 }
 func (t *GetUserSettings_UserSettings_Edges_Node) GetTags() []string {
 	if t == nil {
@@ -5774,7 +5760,6 @@ type GetUserSettingWhere_UserSettings_Edges_Node struct {
 	SilencedAt     *time.Time                                              "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 	Status         enums.UserStatus                                        "json:\"status\" graphql:\"status\""
 	DefaultOrg     *GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	SuspendedAt    *time.Time                                              "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	Tags           []string                                                "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                                    "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool                                                    "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
@@ -5809,12 +5794,6 @@ func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetDefaultOrg() *GetUserSe
 		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
 	}
 	return t.DefaultOrg
-}
-func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetSuspendedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
-	}
-	return t.SuspendedAt
 }
 func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetTags() []string {
 	if t == nil {
@@ -5923,7 +5902,6 @@ type UpdateUserSetting_UpdateUserSetting_UserSetting struct {
 	SilencedAt     *time.Time                                                  "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 	Status         enums.UserStatus                                            "json:\"status\" graphql:\"status\""
 	DefaultOrg     *UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	SuspendedAt    *time.Time                                                  "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	Tags           []string                                                    "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                                        "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool                                                        "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
@@ -5958,12 +5936,6 @@ func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetDefaultOrg() *Updat
 		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
 	}
 	return t.DefaultOrg
-}
-func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetSuspendedAt() *time.Time {
-	if t == nil {
-		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
-	}
-	return t.SuspendedAt
 }
 func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetTags() []string {
 	if t == nil {
@@ -8140,7 +8112,6 @@ const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID
 			name
 			personalOrg
 		}
-		suspendedAt
 		tags
 		locked
 		emailConfirmed
@@ -8183,7 +8154,6 @@ const GetUserSettingsDocument = `query GetUserSettings {
 					name
 					personalOrg
 				}
-				suspendedAt
 				tags
 				locked
 				emailConfirmed
@@ -8226,7 +8196,6 @@ const GetUserSettingWhereDocument = `query GetUserSettingWhere ($where: UserSett
 					name
 					personalOrg
 				}
-				suspendedAt
 				tags
 				locked
 				emailConfirmed
@@ -8270,7 +8239,6 @@ const UpdateUserSettingDocument = `mutation UpdateUserSetting ($updateUserSettin
 				name
 				personalOrg
 			}
-			suspendedAt
 			tags
 			locked
 			emailConfirmed

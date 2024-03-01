@@ -44,6 +44,10 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	// set context for remaining request based on logged in user
 	userCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(user.ID, true))
 
+	if err := h.addDefaultOrgToUserQuery(userCtx, user); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
 	claims := createClaims(user)
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
@@ -82,6 +86,11 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 }
 
 func createClaims(u *generated.User) *tokens.Claims {
+	orgID := ""
+	if u.Edges.Setting.Edges.DefaultOrg != nil {
+		orgID = u.Edges.Setting.Edges.DefaultOrg.ID
+	}
+
 	return &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: u.ID,
@@ -90,6 +99,7 @@ func createClaims(u *generated.User) *tokens.Claims {
 		Email:       u.Email,
 		DisplayName: u.DisplayName,
 		AvatarURL:   *u.AvatarRemoteURL,
+		OrgID:       orgID,
 	}
 }
 

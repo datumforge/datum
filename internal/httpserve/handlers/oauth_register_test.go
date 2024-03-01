@@ -87,6 +87,12 @@ func TestOauthRegister(t *testing.T) {
 				mock_fga.WriteOnce(t, client.fga)
 			}
 
+			if !tt.writes && tt.expectedStatus == http.StatusOK {
+				// required to list objects to get the default org in claims
+				// when the user is not created in the call
+				mock_fga.ListAny(t, client.fga, []string{"organization:test"})
+			}
+
 			registerJSON := handlers.OauthTokenRequest{
 				Name:             tt.args.name,
 				Email:            tt.args.email,

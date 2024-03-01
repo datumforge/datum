@@ -18,7 +18,7 @@ type SessionConfig struct {
 	BeforeFunc middleware.BeforeFunc
 	// SessionManager is responsible for managing the session cookies. It handles the creation, retrieval, and deletion of
 	// session cookies for each user session
-	SessionManager Store[map[string]string]
+	SessionManager Store[map[string]any]
 	// CookieConfig contains the cookie settings for sessions
 	CookieConfig *CookieConfig
 	// RedisStore is used to store and retrieve session data in a persistent manner such as to a redis backend
@@ -33,7 +33,7 @@ type SessionConfig struct {
 type Option func(opts *SessionConfig)
 
 // NewSessionConfig creates a new session config with options
-func NewSessionConfig(sm Store[map[string]string], opts ...Option) (c SessionConfig) {
+func NewSessionConfig(sm Store[map[string]any], opts ...Option) (c SessionConfig) {
 	c = SessionConfig{
 		Skipper:        middleware.DefaultSkipper, // default skipper always returns false
 		Logger:         zap.NewNop().Sugar(),      // default logger if none is provided is a no-op
@@ -82,14 +82,14 @@ func WithBeforeFunc(before middleware.BeforeFunc) Option {
 // CreateAndStoreSession creates the session values with user ID and sets the cookie stores the session in
 // the persistent store (redis)
 func (sc *SessionConfig) CreateAndStoreSession(ctx echo.Context, userID string) error {
-	setSessionMap := map[string]string{}
+	setSessionMap := map[string]any{}
 	setSessionMap[UserIDKey] = userID
 
 	return sc.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, userID)
 }
 
 // SaveAndStoreSession saves the session to the cookie and to the persistent store (redis) with the provided map of values
-func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.ResponseWriter, sessionMap map[string]string, userID string) error {
+func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.ResponseWriter, sessionMap map[string]any, userID string) error {
 	session := sc.SessionManager.New(sc.CookieConfig.Name)
 	sessionID := GenerateSessionID()
 
@@ -112,7 +112,7 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.Respons
 // LoadAndSave is a middleware function that loads and saves session data using a
 // provided session manager. It takes a `SessionManager` as input and returns a middleware function
 // that can be used with an Echo framework application
-func LoadAndSave(sm Store[map[string]string], opts ...Option) echo.MiddlewareFunc {
+func LoadAndSave(sm Store[map[string]any], opts ...Option) echo.MiddlewareFunc {
 	c := NewSessionConfig(sm, opts...)
 
 	return LoadAndSaveWithConfig(c)
@@ -151,7 +151,7 @@ func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 			sessionData := config.SessionManager.GetSessionDataFromCookie(session)
 
 			// check session token on request matches cache
-			userIDFromCookie := sessionData.(map[string]string)[UserIDKey]
+			userIDFromCookie := sessionData.(map[string]any)[UserIDKey]
 
 			// lookup userID in cache to ensure tokens match
 			userID, err := config.RedisStore.GetSession(c.Request().Context(), sessionID)

@@ -15,9 +15,9 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/rout"
-	"github.com/datumforge/datum/internal/sessions"
-	"github.com/datumforge/datum/internal/utils/ulids"
+	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 // WebauthnRegistrationRequest is the request to begin a webauthn login
@@ -68,7 +68,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 
 	id := ulids.New().String()
 
-	setSessionMap := map[string]*webauthn.SessionData{}
+	setSessionMap := map[string]any{}
 	setSessionMap[id] = session
 
 	setSessionMap[sessions.ExternalUserIDKey] = id
@@ -88,7 +88,6 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	})
 
 	return ctx.JSON(http.StatusOK, options)
-
 }
 
 var Sessions = map[string]*webauthn.SessionData{}
@@ -101,7 +100,7 @@ func InsertSession(id string, session *webauthn.SessionData) {
 func GetSession(id string) (*webauthn.SessionData, error) {
 	s, ok := Sessions[id]
 	if !ok {
-		return nil, ErrUserNotFound
+		return nil, ErrNoAuthUser
 	}
 
 	return s, nil
@@ -211,7 +210,7 @@ func InsertUser(id string, user *User) {
 func GetUser(name string) (*User, error) {
 	u, ok := Users[name]
 	if !ok {
-		return nil, ErrUserNotFound
+		return nil, ErrNoAuthUser
 	}
 
 	return u, nil
@@ -224,7 +223,7 @@ func GetUserByID(id []byte) (*User, error) {
 		}
 	}
 
-	return nil, ErrUserNotFound
+	return nil, ErrNoAuthUser
 }
 
 func (u *User) WebAuthnID() []byte {
@@ -251,11 +250,10 @@ func (u *User) WebAuthnIcon() string {
 	return ""
 }
 
-func (user *User) CredentialExcludeList() []protocol.CredentialDescriptor {
-
+func (u *User) CredentialExcludeList() []protocol.CredentialDescriptor {
 	credentialExcludeList := []protocol.CredentialDescriptor{}
 
-	for _, cred := range user.WebauthnCredentials {
+	for _, cred := range u.WebauthnCredentials {
 		descriptor := protocol.CredentialDescriptor{
 			Type:         protocol.PublicKeyCredentialType,
 			CredentialID: cred.ID,

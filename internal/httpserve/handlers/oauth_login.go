@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
 	oauth "github.com/datumforge/datum/pkg/providers/oauth2"
+	"github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/sessions"
 )
 
@@ -30,6 +31,8 @@ type OauthProviderConfig struct {
 	Github github.ProviderConfig `json:"github" koanf:"github"`
 	// Google contains the configuration settings for the Google Oauth Provider
 	Google google.ProviderConfig `json:"google" koanf:"google"`
+	// Webauthn contains the configuration settings for the Webauthn Oauth Provider
+	Webauthn webauthn.ProviderConfig `json:"webauthn" koanf:"webauthn"`
 }
 
 const (
@@ -118,7 +121,7 @@ func (h *Handler) issueGoogleSession() http.Handler {
 		}
 
 		// Create session with external data
-		setSessionMap := map[string]string{}
+		setSessionMap := map[string]any{}
 		setSessionMap[sessions.ExternalUserIDKey] = googleUser.Id
 		setSessionMap[sessions.UsernameKey] = googleUser.Name
 		setSessionMap[sessions.EmailKey] = googleUser.Email
@@ -222,7 +225,7 @@ func (h *Handler) issueGitHubSession() http.Handler {
 
 		auth.SetAuthCookies(w, access, refresh)
 
-		setSessionMap := map[string]string{}
+		setSessionMap := map[string]any{}
 		setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", githubUser.ID)
 		setSessionMap[sessions.UsernameKey] = *githubUser.Login
 		setSessionMap[sessions.UserTypeKey] = githubProvider

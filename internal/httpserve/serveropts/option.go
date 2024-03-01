@@ -287,7 +287,7 @@ func WithSessionManager(rc *redis.Client) ServerOption {
 			cc.Name = sessions.DefaultCookieName
 		}
 
-		sm := sessions.NewCookieStore[map[string]string](cc,
+		sm := sessions.NewCookieStore[map[string]any](cc,
 			[]byte(s.Config.Settings.Sessions.SigningKey),
 			[]byte(s.Config.Settings.Sessions.EncryptionKey),
 		)

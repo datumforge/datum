@@ -18,7 +18,7 @@ COPY --from=builder /go/bin/datum /bin/datum
 COPY --from=redis:7.2.4 /usr/local/bin/redis-server /bin/redis-server
 
 # Copy FGA binary
-COPY --from=openfga/openfga:v1.4.3 /openfga /bin/openfga
+COPY --from=openfga/openfga:v1.5.0 /openfga /bin/openfga
 
 # Copy default model into image
 COPY fga/model/datum.fga fga/model/datum.fga

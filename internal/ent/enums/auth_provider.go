@@ -14,6 +14,8 @@ var (
 	Google AuthProvider = "GOOGLE"
 	// Github oauth2 provider for authentication
 	GitHub AuthProvider = "GITHUB"
+	// Webauthn passkey provider for authentication
+	Webauthn AuthProvider = "WEBAUTHN"
 )
 
 // Values returns a slice of strings that represents all the possible values of the AuthProvider enum.

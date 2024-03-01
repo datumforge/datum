@@ -2,7 +2,9 @@ package route
 
 import (
 	"embed"
+	"io"
 	"net/http"
+	"text/template"
 
 	echo "github.com/datumforge/echox"
 
@@ -34,6 +36,14 @@ func registerOIDCHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	}.ForGroup(unversioned, mw))
 
 	return
+}
+
+type Template struct {
+	templates *template.Template
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.templates.ExecuteTemplate(w, name, data)
 }
 
 //go:embed openapi.json

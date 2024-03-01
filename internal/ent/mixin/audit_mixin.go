@@ -21,20 +21,24 @@ type AuditMixin struct {
 func (AuditMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("created_at").
+			Comment("the time the record was created").
 			Immutable().
 			Optional().
 			Annotations(entoas.Annotation{ReadOnly: true}).
 			Default(time.Now),
 		field.Time("updated_at").
+			Comment("the time the record was last updated").
 			Default(time.Now).
 			Optional().
 			Annotations(entoas.Annotation{ReadOnly: true}).
 			UpdateDefault(time.Now),
 		field.String("created_by").
+			Comment("the user who created the record").
 			Immutable().
 			Annotations(entoas.Annotation{ReadOnly: true}).
 			Optional(),
 		field.String("updated_by").
+			Comment("the user who last updated the record").
 			Annotations(entoas.Annotation{ReadOnly: true}).
 			Optional(),
 	}

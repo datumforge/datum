@@ -27,12 +27,14 @@ type SoftDeleteMixin struct {
 func (SoftDeleteMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("deleted_at").
+			Comment("the time the record was deleted").
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
 				entoas.Annotation{ReadOnly: true},
 			),
 		field.String("deleted_by").
+			Comment("the user who deleted the record").
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),

@@ -14,6 +14,11 @@ auth:
             redirect_url: ""
             scopes: null
         redirect_url: ""
+        webauthn:
+            display_name: ""
+            domain: ""
+            max_devices: 0
+            request_origin: ""
     supported_providers: null
     token:
         access_duration: 0

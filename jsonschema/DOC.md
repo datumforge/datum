@@ -142,6 +142,7 @@ OauthProviderConfig represents the configuration for OAuth providers such as Git
 |**redirect\_url**|`string`|RedirectURL is the URL that the OAuth2 client will redirect to after authentication with datum<br/>||
 |[**github**](#authprovidersgithub)|`object`|ProviderConfig represents the configuration settings for a Github Oauth Provider<br/>|yes|
 |[**google**](#authprovidersgoogle)|`object`|ProviderConfig represents the configuration settings for a Google Oauth Provider<br/>|yes|
+|[**webauthn**](#authproviderswebauthn)|`object`|ProviderConfig represents the configuration settings for a Github Oauth Provider<br/>|yes|
 
 **Additional Properties:** not allowed  
 <a name="authprovidersgithub"></a>
@@ -190,6 +191,22 @@ ProviderConfig represents the configuration settings for a Google Oauth Provider
 **Items**
 
 **Item Type:** `string`  
+<a name="authproviderswebauthn"></a>
+#### auth\.providers\.webauthn: object
+
+ProviderConfig represents the configuration settings for a Github Oauth Provider
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**display\_name**|`string`|DisplayName is the site display name<br/>|yes|
+|**domain**|`string`|Domain is the domain of the site<br/>|yes|
+|**request\_origin**|`string`|RequestOrigin the origin domain for authentication requests<br/>|yes|
+|**max\_devices**|`integer`|MaxDevices is the maximum number of devices that can be associated with a user<br/>|yes|
+
+**Additional Properties:** not allowed  
 <a name="authz"></a>
 ## authz: object
 

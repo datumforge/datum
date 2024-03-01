@@ -365,6 +365,10 @@
         "google": {
           "$ref": "#/$defs/google.ProviderConfig",
           "description": "Google contains the configuration settings for the Google Oauth Provider"
+        },
+        "webauthn": {
+          "$ref": "#/$defs/webauthn.ProviderConfig",
+          "description": "Webauthn contains the configuration settings for the Webauthn Oauth Provider"
         }
       },
       "additionalProperties": false,
@@ -587,6 +591,35 @@
         "keys"
       ],
       "description": "Config defines the configuration settings for authentication tokens used in the server"
+    },
+    "webauthn.ProviderConfig": {
+      "properties": {
+        "display_name": {
+          "type": "string",
+          "description": "DisplayName is the site display name"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain is the domain of the site"
+        },
+        "request_origin": {
+          "type": "string",
+          "description": "RequestOrigin the origin domain for authentication requests"
+        },
+        "max_devices": {
+          "type": "integer",
+          "description": "MaxDevices is the maximum number of devices that can be associated with a user"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "display_name",
+        "domain",
+        "request_origin",
+        "max_devices"
+      ],
+      "description": "ProviderConfig represents the configuration settings for a Github Oauth Provider"
     }
   },
   "properties": {

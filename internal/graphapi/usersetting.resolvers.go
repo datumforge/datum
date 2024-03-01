@@ -11,7 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/rout"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // UpdateUserSetting is the resolver for the updateUserSetting field.

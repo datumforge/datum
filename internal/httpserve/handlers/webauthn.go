@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	echo "github.com/datumforge/echox"
 
@@ -14,7 +15,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/internal/utils/ulids"
@@ -40,12 +40,16 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	ctxWithToken := token.NewContextWithWebauthnToken(ctx.Request().Context(), r.Email)
+	// to register a new passkey, the user needs to be logged in first
+	// once the the passkey is added to the user's account, they can use it to login
+	context := ctx.Request().Context()
 
-	entUser, err := h.CheckAndCreateUser(ctxWithToken, r.Name, r.Email, enums.AuthProvider(strings.ToUpper("webauthn")))
+	entUser, err := h.ConfirmOrCreateUser(context, r.Name, r.Email, enums.AuthProvider(strings.ToUpper("webauthn")))
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
+
+	//	userCtx := viewer.NewContext(context, viewer.NewUserViewerFromSubject(context))
 
 	user := &User{
 		ID:    entUser.ID,
@@ -53,6 +57,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 		Name:  entUser.FirstName + " " + entUser.LastName,
 	}
 
+	// options is the object that needs to be returned for the front end to open the creation dialog for the user
 	options, session, err := h.WebAuthn.BeginRegistration(user,
 		webauthn.WithResidentKeyRequirement(protocol.ResidentKeyRequirementRequired),
 		webauthn.WithExclusions(user.CredentialExcludeList()),
@@ -63,16 +68,9 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 
 	id := ulids.New().String()
 
-	InsertSession(id, session)
-	InsertUser(id, user)
+	setSessionMap := map[string]*webauthn.SessionData{}
+	setSessionMap[id] = session
 
-	ctx.SetCookie(&http.Cookie{
-		Name:  "registration",
-		Value: id,
-		Path:  "/",
-	})
-
-	setSessionMap := map[string]string{}
 	setSessionMap[sessions.ExternalUserIDKey] = id
 	setSessionMap[sessions.UsernameKey] = user.Name
 	setSessionMap[sessions.UserTypeKey] = strings.ToUpper("webauthn")
@@ -83,8 +81,30 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
+	ctx.SetCookie(&http.Cookie{
+		Name:  "registration",
+		Value: id,
+		Path:  "/",
+	})
+
 	return ctx.JSON(http.StatusOK, options)
 
+}
+
+var Sessions = map[string]*webauthn.SessionData{}
+var Users = map[string]*User{}
+
+func InsertSession(id string, session *webauthn.SessionData) {
+	Sessions[id] = session
+}
+
+func GetSession(id string) (*webauthn.SessionData, error) {
+	s, ok := Sessions[id]
+	if !ok {
+		return nil, ErrUserNotFound
+	}
+
+	return s, nil
 }
 
 // FinishWebauthnRegistration is the request to finish a webauthn login
@@ -184,24 +204,6 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, loggedInUser)
 }
 
-var ErrUserNotFound = echo.NewHTTPError(http.StatusNotFound, "user not found")
-
-var Sessions = map[string]*webauthn.SessionData{}
-var Users = map[string]*User{}
-
-func InsertSession(id string, session *webauthn.SessionData) {
-	Sessions[id] = session
-}
-
-func GetSession(id string) (*webauthn.SessionData, error) {
-	s, ok := Sessions[id]
-	if !ok {
-		return nil, ErrUserNotFound
-	}
-
-	return s, nil
-}
-
 func InsertUser(id string, user *User) {
 	Users[id] = user
 }
@@ -264,20 +266,21 @@ func (user *User) CredentialExcludeList() []protocol.CredentialDescriptor {
 	return credentialExcludeList
 }
 
-func (h *Handler) ConfirmOrCreateUser(ctx context.Context, email string, provider enums.AuthProvider) (*ent.User, error) {
+func (h *Handler) ConfirmOrCreateUser(ctx context.Context, name, email string, provider enums.AuthProvider) (*ent.User, error) {
 	// check if users exists
 	entUser, err := h.getUserByEmail(ctx, email, provider)
 	if err != nil {
 		// if the user is not found, create now
 		if ent.IsNotFound(err) {
 			isWebAuthnAllowed := true
+			lastSeen := time.Now()
 
-			userInput := ent.CreateUserInput{
-				Email:             email,
-				IsWebauthnAllowed: &isWebAuthnAllowed,
-			}
+			input := parseName(name)
+			input.Email = email
+			input.LastSeen = &lastSeen
+			input.IsWebauthnAllowed = &isWebAuthnAllowed
 
-			entUser, err = h.createUser(ctx, userInput)
+			entUser, err = h.createUser(ctx, input)
 			if err != nil {
 				h.Logger.Errorw("error creating new user", "error", err)
 				return nil, err

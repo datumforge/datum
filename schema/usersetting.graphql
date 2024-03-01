@@ -12,15 +12,6 @@ extend type Query {
 
 extend type Mutation{
     """
-    Create a new userSetting
-    """
-    createUserSetting(
-        """
-        values of the userSetting
-        """
-        input: CreateUserSettingInput!
-    ): UserSettingCreatePayload!
-    """
     Update an existing userSetting
     """
     updateUserSetting(
@@ -33,25 +24,6 @@ extend type Mutation{
         """
         input: UpdateUserSettingInput!
     ): UserSettingUpdatePayload!
-    """
-    Delete an existing userSetting
-    """
-    deleteUserSetting(
-        """
-        ID of the userSetting
-        """
-        id: ID!
-    ): UserSettingDeletePayload!
-}
-
-"""
-Return response for createUserSetting mutation
-"""
-type UserSettingCreatePayload {
-    """
-    Created userSetting
-    """
-    userSetting: UserSetting!
 }
 
 """
@@ -62,14 +34,4 @@ type UserSettingUpdatePayload {
     Updated userSetting
     """
     userSetting: UserSetting!
-}
-
-"""
-Return response for deleteUserSetting mutation
-"""
-type UserSettingDeletePayload {
-    """
-    Deleted userSetting ID
-    """
-    deletedID: ID!
 }

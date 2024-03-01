@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -106,6 +107,20 @@ func (usc *UserSettingCreate) SetNillableDeletedBy(s *string) *UserSettingCreate
 	return usc
 }
 
+// SetUserID sets the "user_id" field.
+func (usc *UserSettingCreate) SetUserID(s string) *UserSettingCreate {
+	usc.mutation.SetUserID(s)
+	return usc
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillableUserID(s *string) *UserSettingCreate {
+	if s != nil {
+		usc.SetUserID(*s)
+	}
+	return usc
+}
+
 // SetLocked sets the "locked" field.
 func (usc *UserSettingCreate) SetLocked(b bool) *UserSettingCreate {
 	usc.mutation.SetLocked(b)
@@ -148,20 +163,6 @@ func (usc *UserSettingCreate) SetNillableSuspendedAt(t *time.Time) *UserSettingC
 	return usc
 }
 
-// SetRecoveryCode sets the "recovery_code" field.
-func (usc *UserSettingCreate) SetRecoveryCode(s string) *UserSettingCreate {
-	usc.mutation.SetRecoveryCode(s)
-	return usc
-}
-
-// SetNillableRecoveryCode sets the "recovery_code" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableRecoveryCode(s *string) *UserSettingCreate {
-	if s != nil {
-		usc.SetRecoveryCode(*s)
-	}
-	return usc
-}
-
 // SetStatus sets the "status" field.
 func (usc *UserSettingCreate) SetStatus(es enums.UserStatus) *UserSettingCreate {
 	usc.mutation.SetStatus(es)
@@ -172,20 +173,6 @@ func (usc *UserSettingCreate) SetStatus(es enums.UserStatus) *UserSettingCreate 
 func (usc *UserSettingCreate) SetNillableStatus(es *enums.UserStatus) *UserSettingCreate {
 	if es != nil {
 		usc.SetStatus(*es)
-	}
-	return usc
-}
-
-// SetDefaultOrg sets the "default_org" field.
-func (usc *UserSettingCreate) SetDefaultOrg(s string) *UserSettingCreate {
-	usc.mutation.SetDefaultOrg(s)
-	return usc
-}
-
-// SetNillableDefaultOrg sets the "default_org" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableDefaultOrg(s *string) *UserSettingCreate {
-	if s != nil {
-		usc.SetDefaultOrg(*s)
 	}
 	return usc
 }
@@ -224,23 +211,28 @@ func (usc *UserSettingCreate) SetNillableID(s *string) *UserSettingCreate {
 	return usc
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (usc *UserSettingCreate) SetUserID(id string) *UserSettingCreate {
-	usc.mutation.SetUserID(id)
+// SetUser sets the "user" edge to the User entity.
+func (usc *UserSettingCreate) SetUser(u *User) *UserSettingCreate {
+	return usc.SetUserID(u.ID)
+}
+
+// SetDefaultOrgID sets the "default_org" edge to the Organization entity by ID.
+func (usc *UserSettingCreate) SetDefaultOrgID(id string) *UserSettingCreate {
+	usc.mutation.SetDefaultOrgID(id)
 	return usc
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableUserID(id *string) *UserSettingCreate {
+// SetNillableDefaultOrgID sets the "default_org" edge to the Organization entity by ID if the given value is not nil.
+func (usc *UserSettingCreate) SetNillableDefaultOrgID(id *string) *UserSettingCreate {
 	if id != nil {
-		usc = usc.SetUserID(*id)
+		usc = usc.SetDefaultOrgID(*id)
 	}
 	return usc
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (usc *UserSettingCreate) SetUser(u *User) *UserSettingCreate {
-	return usc.SetUserID(u.ID)
+// SetDefaultOrg sets the "default_org" edge to the Organization entity.
+func (usc *UserSettingCreate) SetDefaultOrg(o *Organization) *UserSettingCreate {
+	return usc.SetDefaultOrgID(o.ID)
 }
 
 // Mutation returns the UserSettingMutation object of the builder.
@@ -411,17 +403,9 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 		_spec.SetField(usersetting.FieldSuspendedAt, field.TypeTime, value)
 		_node.SuspendedAt = &value
 	}
-	if value, ok := usc.mutation.RecoveryCode(); ok {
-		_spec.SetField(usersetting.FieldRecoveryCode, field.TypeString, value)
-		_node.RecoveryCode = &value
-	}
 	if value, ok := usc.mutation.Status(); ok {
 		_spec.SetField(usersetting.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
-	}
-	if value, ok := usc.mutation.DefaultOrg(); ok {
-		_spec.SetField(usersetting.FieldDefaultOrg, field.TypeString, value)
-		_node.DefaultOrg = value
 	}
 	if value, ok := usc.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)
@@ -446,7 +430,25 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_setting = &nodes[0]
+		_node.UserID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := usc.mutation.DefaultOrgIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   usersetting.DefaultOrgTable,
+			Columns: []string{usersetting.DefaultOrgColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = usc.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_setting_default_org = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

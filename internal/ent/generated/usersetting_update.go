@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -105,6 +106,26 @@ func (usu *UserSettingUpdate) ClearDeletedBy() *UserSettingUpdate {
 	return usu
 }
 
+// SetUserID sets the "user_id" field.
+func (usu *UserSettingUpdate) SetUserID(s string) *UserSettingUpdate {
+	usu.mutation.SetUserID(s)
+	return usu
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableUserID(s *string) *UserSettingUpdate {
+	if s != nil {
+		usu.SetUserID(*s)
+	}
+	return usu
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (usu *UserSettingUpdate) ClearUserID() *UserSettingUpdate {
+	usu.mutation.ClearUserID()
+	return usu
+}
+
 // SetLocked sets the "locked" field.
 func (usu *UserSettingUpdate) SetLocked(b bool) *UserSettingUpdate {
 	usu.mutation.SetLocked(b)
@@ -159,26 +180,6 @@ func (usu *UserSettingUpdate) ClearSuspendedAt() *UserSettingUpdate {
 	return usu
 }
 
-// SetRecoveryCode sets the "recovery_code" field.
-func (usu *UserSettingUpdate) SetRecoveryCode(s string) *UserSettingUpdate {
-	usu.mutation.SetRecoveryCode(s)
-	return usu
-}
-
-// SetNillableRecoveryCode sets the "recovery_code" field if the given value is not nil.
-func (usu *UserSettingUpdate) SetNillableRecoveryCode(s *string) *UserSettingUpdate {
-	if s != nil {
-		usu.SetRecoveryCode(*s)
-	}
-	return usu
-}
-
-// ClearRecoveryCode clears the value of the "recovery_code" field.
-func (usu *UserSettingUpdate) ClearRecoveryCode() *UserSettingUpdate {
-	usu.mutation.ClearRecoveryCode()
-	return usu
-}
-
 // SetStatus sets the "status" field.
 func (usu *UserSettingUpdate) SetStatus(es enums.UserStatus) *UserSettingUpdate {
 	usu.mutation.SetStatus(es)
@@ -190,26 +191,6 @@ func (usu *UserSettingUpdate) SetNillableStatus(es *enums.UserStatus) *UserSetti
 	if es != nil {
 		usu.SetStatus(*es)
 	}
-	return usu
-}
-
-// SetDefaultOrg sets the "default_org" field.
-func (usu *UserSettingUpdate) SetDefaultOrg(s string) *UserSettingUpdate {
-	usu.mutation.SetDefaultOrg(s)
-	return usu
-}
-
-// SetNillableDefaultOrg sets the "default_org" field if the given value is not nil.
-func (usu *UserSettingUpdate) SetNillableDefaultOrg(s *string) *UserSettingUpdate {
-	if s != nil {
-		usu.SetDefaultOrg(*s)
-	}
-	return usu
-}
-
-// ClearDefaultOrg clears the value of the "default_org" field.
-func (usu *UserSettingUpdate) ClearDefaultOrg() *UserSettingUpdate {
-	usu.mutation.ClearDefaultOrg()
 	return usu
 }
 
@@ -239,23 +220,28 @@ func (usu *UserSettingUpdate) AppendTags(s []string) *UserSettingUpdate {
 	return usu
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (usu *UserSettingUpdate) SetUserID(id string) *UserSettingUpdate {
-	usu.mutation.SetUserID(id)
+// SetUser sets the "user" edge to the User entity.
+func (usu *UserSettingUpdate) SetUser(u *User) *UserSettingUpdate {
+	return usu.SetUserID(u.ID)
+}
+
+// SetDefaultOrgID sets the "default_org" edge to the Organization entity by ID.
+func (usu *UserSettingUpdate) SetDefaultOrgID(id string) *UserSettingUpdate {
+	usu.mutation.SetDefaultOrgID(id)
 	return usu
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (usu *UserSettingUpdate) SetNillableUserID(id *string) *UserSettingUpdate {
+// SetNillableDefaultOrgID sets the "default_org" edge to the Organization entity by ID if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableDefaultOrgID(id *string) *UserSettingUpdate {
 	if id != nil {
-		usu = usu.SetUserID(*id)
+		usu = usu.SetDefaultOrgID(*id)
 	}
 	return usu
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (usu *UserSettingUpdate) SetUser(u *User) *UserSettingUpdate {
-	return usu.SetUserID(u.ID)
+// SetDefaultOrg sets the "default_org" edge to the Organization entity.
+func (usu *UserSettingUpdate) SetDefaultOrg(o *Organization) *UserSettingUpdate {
+	return usu.SetDefaultOrgID(o.ID)
 }
 
 // Mutation returns the UserSettingMutation object of the builder.
@@ -266,6 +252,12 @@ func (usu *UserSettingUpdate) Mutation() *UserSettingMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (usu *UserSettingUpdate) ClearUser() *UserSettingUpdate {
 	usu.mutation.ClearUser()
+	return usu
+}
+
+// ClearDefaultOrg clears the "default_org" edge to the Organization entity.
+func (usu *UserSettingUpdate) ClearDefaultOrg() *UserSettingUpdate {
+	usu.mutation.ClearDefaultOrg()
 	return usu
 }
 
@@ -378,20 +370,8 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if usu.mutation.SuspendedAtCleared() {
 		_spec.ClearField(usersetting.FieldSuspendedAt, field.TypeTime)
 	}
-	if value, ok := usu.mutation.RecoveryCode(); ok {
-		_spec.SetField(usersetting.FieldRecoveryCode, field.TypeString, value)
-	}
-	if usu.mutation.RecoveryCodeCleared() {
-		_spec.ClearField(usersetting.FieldRecoveryCode, field.TypeString)
-	}
 	if value, ok := usu.mutation.Status(); ok {
 		_spec.SetField(usersetting.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := usu.mutation.DefaultOrg(); ok {
-		_spec.SetField(usersetting.FieldDefaultOrg, field.TypeString, value)
-	}
-	if usu.mutation.DefaultOrgCleared() {
-		_spec.ClearField(usersetting.FieldDefaultOrg, field.TypeString)
 	}
 	if value, ok := usu.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)
@@ -427,6 +407,37 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = usu.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if usu.mutation.DefaultOrgCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   usersetting.DefaultOrgTable,
+			Columns: []string{usersetting.DefaultOrgColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = usu.schemaConfig.UserSetting
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := usu.mutation.DefaultOrgIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   usersetting.DefaultOrgTable,
+			Columns: []string{usersetting.DefaultOrgColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = usu.schemaConfig.UserSetting
@@ -529,6 +540,26 @@ func (usuo *UserSettingUpdateOne) ClearDeletedBy() *UserSettingUpdateOne {
 	return usuo
 }
 
+// SetUserID sets the "user_id" field.
+func (usuo *UserSettingUpdateOne) SetUserID(s string) *UserSettingUpdateOne {
+	usuo.mutation.SetUserID(s)
+	return usuo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableUserID(s *string) *UserSettingUpdateOne {
+	if s != nil {
+		usuo.SetUserID(*s)
+	}
+	return usuo
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (usuo *UserSettingUpdateOne) ClearUserID() *UserSettingUpdateOne {
+	usuo.mutation.ClearUserID()
+	return usuo
+}
+
 // SetLocked sets the "locked" field.
 func (usuo *UserSettingUpdateOne) SetLocked(b bool) *UserSettingUpdateOne {
 	usuo.mutation.SetLocked(b)
@@ -583,26 +614,6 @@ func (usuo *UserSettingUpdateOne) ClearSuspendedAt() *UserSettingUpdateOne {
 	return usuo
 }
 
-// SetRecoveryCode sets the "recovery_code" field.
-func (usuo *UserSettingUpdateOne) SetRecoveryCode(s string) *UserSettingUpdateOne {
-	usuo.mutation.SetRecoveryCode(s)
-	return usuo
-}
-
-// SetNillableRecoveryCode sets the "recovery_code" field if the given value is not nil.
-func (usuo *UserSettingUpdateOne) SetNillableRecoveryCode(s *string) *UserSettingUpdateOne {
-	if s != nil {
-		usuo.SetRecoveryCode(*s)
-	}
-	return usuo
-}
-
-// ClearRecoveryCode clears the value of the "recovery_code" field.
-func (usuo *UserSettingUpdateOne) ClearRecoveryCode() *UserSettingUpdateOne {
-	usuo.mutation.ClearRecoveryCode()
-	return usuo
-}
-
 // SetStatus sets the "status" field.
 func (usuo *UserSettingUpdateOne) SetStatus(es enums.UserStatus) *UserSettingUpdateOne {
 	usuo.mutation.SetStatus(es)
@@ -614,26 +625,6 @@ func (usuo *UserSettingUpdateOne) SetNillableStatus(es *enums.UserStatus) *UserS
 	if es != nil {
 		usuo.SetStatus(*es)
 	}
-	return usuo
-}
-
-// SetDefaultOrg sets the "default_org" field.
-func (usuo *UserSettingUpdateOne) SetDefaultOrg(s string) *UserSettingUpdateOne {
-	usuo.mutation.SetDefaultOrg(s)
-	return usuo
-}
-
-// SetNillableDefaultOrg sets the "default_org" field if the given value is not nil.
-func (usuo *UserSettingUpdateOne) SetNillableDefaultOrg(s *string) *UserSettingUpdateOne {
-	if s != nil {
-		usuo.SetDefaultOrg(*s)
-	}
-	return usuo
-}
-
-// ClearDefaultOrg clears the value of the "default_org" field.
-func (usuo *UserSettingUpdateOne) ClearDefaultOrg() *UserSettingUpdateOne {
-	usuo.mutation.ClearDefaultOrg()
 	return usuo
 }
 
@@ -663,23 +654,28 @@ func (usuo *UserSettingUpdateOne) AppendTags(s []string) *UserSettingUpdateOne {
 	return usuo
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (usuo *UserSettingUpdateOne) SetUserID(id string) *UserSettingUpdateOne {
-	usuo.mutation.SetUserID(id)
+// SetUser sets the "user" edge to the User entity.
+func (usuo *UserSettingUpdateOne) SetUser(u *User) *UserSettingUpdateOne {
+	return usuo.SetUserID(u.ID)
+}
+
+// SetDefaultOrgID sets the "default_org" edge to the Organization entity by ID.
+func (usuo *UserSettingUpdateOne) SetDefaultOrgID(id string) *UserSettingUpdateOne {
+	usuo.mutation.SetDefaultOrgID(id)
 	return usuo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (usuo *UserSettingUpdateOne) SetNillableUserID(id *string) *UserSettingUpdateOne {
+// SetNillableDefaultOrgID sets the "default_org" edge to the Organization entity by ID if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableDefaultOrgID(id *string) *UserSettingUpdateOne {
 	if id != nil {
-		usuo = usuo.SetUserID(*id)
+		usuo = usuo.SetDefaultOrgID(*id)
 	}
 	return usuo
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (usuo *UserSettingUpdateOne) SetUser(u *User) *UserSettingUpdateOne {
-	return usuo.SetUserID(u.ID)
+// SetDefaultOrg sets the "default_org" edge to the Organization entity.
+func (usuo *UserSettingUpdateOne) SetDefaultOrg(o *Organization) *UserSettingUpdateOne {
+	return usuo.SetDefaultOrgID(o.ID)
 }
 
 // Mutation returns the UserSettingMutation object of the builder.
@@ -690,6 +686,12 @@ func (usuo *UserSettingUpdateOne) Mutation() *UserSettingMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (usuo *UserSettingUpdateOne) ClearUser() *UserSettingUpdateOne {
 	usuo.mutation.ClearUser()
+	return usuo
+}
+
+// ClearDefaultOrg clears the "default_org" edge to the Organization entity.
+func (usuo *UserSettingUpdateOne) ClearDefaultOrg() *UserSettingUpdateOne {
+	usuo.mutation.ClearDefaultOrg()
 	return usuo
 }
 
@@ -832,20 +834,8 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	if usuo.mutation.SuspendedAtCleared() {
 		_spec.ClearField(usersetting.FieldSuspendedAt, field.TypeTime)
 	}
-	if value, ok := usuo.mutation.RecoveryCode(); ok {
-		_spec.SetField(usersetting.FieldRecoveryCode, field.TypeString, value)
-	}
-	if usuo.mutation.RecoveryCodeCleared() {
-		_spec.ClearField(usersetting.FieldRecoveryCode, field.TypeString)
-	}
 	if value, ok := usuo.mutation.Status(); ok {
 		_spec.SetField(usersetting.FieldStatus, field.TypeEnum, value)
-	}
-	if value, ok := usuo.mutation.DefaultOrg(); ok {
-		_spec.SetField(usersetting.FieldDefaultOrg, field.TypeString, value)
-	}
-	if usuo.mutation.DefaultOrgCleared() {
-		_spec.ClearField(usersetting.FieldDefaultOrg, field.TypeString)
 	}
 	if value, ok := usuo.mutation.EmailConfirmed(); ok {
 		_spec.SetField(usersetting.FieldEmailConfirmed, field.TypeBool, value)
@@ -881,6 +871,37 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = usuo.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if usuo.mutation.DefaultOrgCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   usersetting.DefaultOrgTable,
+			Columns: []string{usersetting.DefaultOrgColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = usuo.schemaConfig.UserSetting
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := usuo.mutation.DefaultOrgIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   usersetting.DefaultOrgTable,
+			Columns: []string{usersetting.DefaultOrgColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = usuo.schemaConfig.UserSetting

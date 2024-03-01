@@ -435,12 +435,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldUpdatedBy:      {Type: field.TypeString, Column: usersetting.FieldUpdatedBy},
 			usersetting.FieldDeletedAt:      {Type: field.TypeTime, Column: usersetting.FieldDeletedAt},
 			usersetting.FieldDeletedBy:      {Type: field.TypeString, Column: usersetting.FieldDeletedBy},
+			usersetting.FieldUserID:         {Type: field.TypeString, Column: usersetting.FieldUserID},
 			usersetting.FieldLocked:         {Type: field.TypeBool, Column: usersetting.FieldLocked},
 			usersetting.FieldSilencedAt:     {Type: field.TypeTime, Column: usersetting.FieldSilencedAt},
 			usersetting.FieldSuspendedAt:    {Type: field.TypeTime, Column: usersetting.FieldSuspendedAt},
-			usersetting.FieldRecoveryCode:   {Type: field.TypeString, Column: usersetting.FieldRecoveryCode},
 			usersetting.FieldStatus:         {Type: field.TypeEnum, Column: usersetting.FieldStatus},
-			usersetting.FieldDefaultOrg:     {Type: field.TypeString, Column: usersetting.FieldDefaultOrg},
 			usersetting.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
 			usersetting.FieldTags:           {Type: field.TypeJSON, Column: usersetting.FieldTags},
 		},
@@ -944,6 +943,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"UserSetting",
 		"User",
+	)
+	graph.MustAddE(
+		"default_org",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   usersetting.DefaultOrgTable,
+			Columns: []string{usersetting.DefaultOrgColumn},
+			Bidi:    false,
+		},
+		"UserSetting",
+		"Organization",
 	)
 	graph.MustAddE(
 		"owner",
@@ -3128,6 +3139,11 @@ func (f *UserSettingFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(usersetting.FieldDeletedBy))
 }
 
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *UserSettingFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldUserID))
+}
+
 // WhereLocked applies the entql bool predicate on the locked field.
 func (f *UserSettingFilter) WhereLocked(p entql.BoolP) {
 	f.Where(p.Field(usersetting.FieldLocked))
@@ -3143,19 +3159,9 @@ func (f *UserSettingFilter) WhereSuspendedAt(p entql.TimeP) {
 	f.Where(p.Field(usersetting.FieldSuspendedAt))
 }
 
-// WhereRecoveryCode applies the entql string predicate on the recovery_code field.
-func (f *UserSettingFilter) WhereRecoveryCode(p entql.StringP) {
-	f.Where(p.Field(usersetting.FieldRecoveryCode))
-}
-
 // WhereStatus applies the entql string predicate on the status field.
 func (f *UserSettingFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(usersetting.FieldStatus))
-}
-
-// WhereDefaultOrg applies the entql string predicate on the default_org field.
-func (f *UserSettingFilter) WhereDefaultOrg(p entql.StringP) {
-	f.Where(p.Field(usersetting.FieldDefaultOrg))
 }
 
 // WhereEmailConfirmed applies the entql bool predicate on the email_confirmed field.
@@ -3176,6 +3182,20 @@ func (f *UserSettingFilter) WhereHasUser() {
 // WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
 func (f *UserSettingFilter) WhereHasUserWith(preds ...predicate.User) {
 	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasDefaultOrg applies a predicate to check if query has an edge default_org.
+func (f *UserSettingFilter) WhereHasDefaultOrg() {
+	f.Where(entql.HasEdge("default_org"))
+}
+
+// WhereHasDefaultOrgWith applies a predicate to check if query has an edge default_org with a given conditions (other predicates).
+func (f *UserSettingFilter) WhereHasDefaultOrgWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("default_org", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

@@ -356,3 +356,11 @@ func (us *UserSetting) User(ctx context.Context) (*User, error) {
 	}
 	return result, MaskNotFound(err)
 }
+
+func (us *UserSetting) DefaultOrg(ctx context.Context) (*Organization, error) {
+	result, err := us.Edges.DefaultOrgOrErr()
+	if IsNotLoaded(err) {
+		result, err = us.QueryDefaultOrg().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}

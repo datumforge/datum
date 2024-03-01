@@ -98,6 +98,11 @@ func DeletedBy(v string) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEQ(FieldUserID, v))
+}
+
 // Locked applies equality check predicate on the "locked" field. It's identical to LockedEQ.
 func Locked(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldLocked, v))
@@ -111,16 +116,6 @@ func SilencedAt(v time.Time) predicate.UserSetting {
 // SuspendedAt applies equality check predicate on the "suspended_at" field. It's identical to SuspendedAtEQ.
 func SuspendedAt(v time.Time) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldSuspendedAt, v))
-}
-
-// RecoveryCode applies equality check predicate on the "recovery_code" field. It's identical to RecoveryCodeEQ.
-func RecoveryCode(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldRecoveryCode, v))
-}
-
-// DefaultOrg applies equality check predicate on the "default_org" field. It's identical to DefaultOrgEQ.
-func DefaultOrg(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldDefaultOrg, v))
 }
 
 // EmailConfirmed applies equality check predicate on the "email_confirmed" field. It's identical to EmailConfirmedEQ.
@@ -503,6 +498,81 @@ func DeletedByContainsFold(v string) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldContainsFold(FieldDeletedBy, v))
 }
 
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldGT(FieldUserID, v))
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldGTE(FieldUserID, v))
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldLT(FieldUserID, v))
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldLTE(FieldUserID, v))
+}
+
+// UserIDContains applies the Contains predicate on the "user_id" field.
+func UserIDContains(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldContains(FieldUserID, v))
+}
+
+// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
+func UserIDHasPrefix(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldHasPrefix(FieldUserID, v))
+}
+
+// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
+func UserIDHasSuffix(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldHasSuffix(FieldUserID, v))
+}
+
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIsNull(FieldUserID))
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotNull(FieldUserID))
+}
+
+// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
+func UserIDEqualFold(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEqualFold(FieldUserID, v))
+}
+
+// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
+func UserIDContainsFold(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldContainsFold(FieldUserID, v))
+}
+
 // LockedEQ applies the EQ predicate on the "locked" field.
 func LockedEQ(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldLocked, v))
@@ -613,81 +683,6 @@ func SuspendedAtNotNil() predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldNotNull(FieldSuspendedAt))
 }
 
-// RecoveryCodeEQ applies the EQ predicate on the "recovery_code" field.
-func RecoveryCodeEQ(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeNEQ applies the NEQ predicate on the "recovery_code" field.
-func RecoveryCodeNEQ(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeIn applies the In predicate on the "recovery_code" field.
-func RecoveryCodeIn(vs ...string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIn(FieldRecoveryCode, vs...))
-}
-
-// RecoveryCodeNotIn applies the NotIn predicate on the "recovery_code" field.
-func RecoveryCodeNotIn(vs ...string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotIn(FieldRecoveryCode, vs...))
-}
-
-// RecoveryCodeGT applies the GT predicate on the "recovery_code" field.
-func RecoveryCodeGT(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldGT(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeGTE applies the GTE predicate on the "recovery_code" field.
-func RecoveryCodeGTE(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldGTE(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeLT applies the LT predicate on the "recovery_code" field.
-func RecoveryCodeLT(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldLT(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeLTE applies the LTE predicate on the "recovery_code" field.
-func RecoveryCodeLTE(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldLTE(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeContains applies the Contains predicate on the "recovery_code" field.
-func RecoveryCodeContains(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldContains(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeHasPrefix applies the HasPrefix predicate on the "recovery_code" field.
-func RecoveryCodeHasPrefix(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldHasPrefix(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeHasSuffix applies the HasSuffix predicate on the "recovery_code" field.
-func RecoveryCodeHasSuffix(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldHasSuffix(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeIsNil applies the IsNil predicate on the "recovery_code" field.
-func RecoveryCodeIsNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIsNull(FieldRecoveryCode))
-}
-
-// RecoveryCodeNotNil applies the NotNil predicate on the "recovery_code" field.
-func RecoveryCodeNotNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotNull(FieldRecoveryCode))
-}
-
-// RecoveryCodeEqualFold applies the EqualFold predicate on the "recovery_code" field.
-func RecoveryCodeEqualFold(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEqualFold(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeContainsFold applies the ContainsFold predicate on the "recovery_code" field.
-func RecoveryCodeContainsFold(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldContainsFold(FieldRecoveryCode, v))
-}
-
 // StatusEQ applies the EQ predicate on the "status" field.
 func StatusEQ(v enums.UserStatus) predicate.UserSetting {
 	vc := v
@@ -716,81 +711,6 @@ func StatusNotIn(vs ...enums.UserStatus) predicate.UserSetting {
 		v[i] = vs[i]
 	}
 	return predicate.UserSetting(sql.FieldNotIn(FieldStatus, v...))
-}
-
-// DefaultOrgEQ applies the EQ predicate on the "default_org" field.
-func DefaultOrgEQ(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldDefaultOrg, v))
-}
-
-// DefaultOrgNEQ applies the NEQ predicate on the "default_org" field.
-func DefaultOrgNEQ(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldDefaultOrg, v))
-}
-
-// DefaultOrgIn applies the In predicate on the "default_org" field.
-func DefaultOrgIn(vs ...string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIn(FieldDefaultOrg, vs...))
-}
-
-// DefaultOrgNotIn applies the NotIn predicate on the "default_org" field.
-func DefaultOrgNotIn(vs ...string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotIn(FieldDefaultOrg, vs...))
-}
-
-// DefaultOrgGT applies the GT predicate on the "default_org" field.
-func DefaultOrgGT(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldGT(FieldDefaultOrg, v))
-}
-
-// DefaultOrgGTE applies the GTE predicate on the "default_org" field.
-func DefaultOrgGTE(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldGTE(FieldDefaultOrg, v))
-}
-
-// DefaultOrgLT applies the LT predicate on the "default_org" field.
-func DefaultOrgLT(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldLT(FieldDefaultOrg, v))
-}
-
-// DefaultOrgLTE applies the LTE predicate on the "default_org" field.
-func DefaultOrgLTE(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldLTE(FieldDefaultOrg, v))
-}
-
-// DefaultOrgContains applies the Contains predicate on the "default_org" field.
-func DefaultOrgContains(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldContains(FieldDefaultOrg, v))
-}
-
-// DefaultOrgHasPrefix applies the HasPrefix predicate on the "default_org" field.
-func DefaultOrgHasPrefix(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldHasPrefix(FieldDefaultOrg, v))
-}
-
-// DefaultOrgHasSuffix applies the HasSuffix predicate on the "default_org" field.
-func DefaultOrgHasSuffix(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldHasSuffix(FieldDefaultOrg, v))
-}
-
-// DefaultOrgIsNil applies the IsNil predicate on the "default_org" field.
-func DefaultOrgIsNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIsNull(FieldDefaultOrg))
-}
-
-// DefaultOrgNotNil applies the NotNil predicate on the "default_org" field.
-func DefaultOrgNotNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotNull(FieldDefaultOrg))
-}
-
-// DefaultOrgEqualFold applies the EqualFold predicate on the "default_org" field.
-func DefaultOrgEqualFold(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEqualFold(FieldDefaultOrg, v))
-}
-
-// DefaultOrgContainsFold applies the ContainsFold predicate on the "default_org" field.
-func DefaultOrgContainsFold(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldContainsFold(FieldDefaultOrg, v))
 }
 
 // EmailConfirmedEQ applies the EQ predicate on the "email_confirmed" field.
@@ -823,6 +743,35 @@ func HasUserWith(preds ...predicate.User) predicate.UserSetting {
 		step := newUserStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.UserSetting
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasDefaultOrg applies the HasEdge predicate on the "default_org" edge.
+func HasDefaultOrg() predicate.UserSetting {
+	return predicate.UserSetting(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, DefaultOrgTable, DefaultOrgColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.UserSetting
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDefaultOrgWith applies the HasEdge predicate on the "default_org" edge with a given conditions (other predicates).
+func HasDefaultOrgWith(preds ...predicate.Organization) predicate.UserSetting {
+	return predicate.UserSetting(func(s *sql.Selector) {
+		step := newDefaultOrgStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.UserSetting
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

@@ -575,12 +575,11 @@ var (
 		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
 		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
-		{Name: "recovery_code", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
-		{Name: "default_org", Type: field.TypeString, Nullable: true},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON},
-		{Name: "user_setting", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "user_id", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "user_setting_default_org", Type: field.TypeString, Nullable: true},
 	}
 	// UserSettingsTable holds the schema information for the "user_settings" table.
 	UserSettingsTable = &schema.Table{
@@ -590,8 +589,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_settings_users_setting",
-				Columns:    []*schema.Column{UserSettingsColumns[15]},
+				Columns:    []*schema.Column{UserSettingsColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "user_settings_organizations_default_org",
+				Columns:    []*schema.Column{UserSettingsColumns[14]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -698,6 +703,7 @@ func init() {
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
+	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable
 	OrganizationPersonalAccessTokensTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationPersonalAccessTokensTable.ForeignKeys[1].RefTable = PersonalAccessTokensTable

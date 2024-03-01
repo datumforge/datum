@@ -42,7 +42,7 @@ func TestLoginHandler(t *testing.T) {
 
 	userSetting := client.db.UserSetting.Create().
 		SetEmailConfirmed(true).
-		SaveX(ec)
+		SaveX(ctx)
 
 	_ = client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
@@ -51,6 +51,8 @@ func TestLoginHandler(t *testing.T) {
 		SetPassword(validPassword).
 		SetSetting(userSetting).
 		SaveX(ctx)
+
+	listObjects := []string{"organization:test"}
 
 	validUnconfirmedUser := "msmith@datum.net"
 
@@ -118,6 +120,13 @@ func TestLoginHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			defer mock_fga.ClearMocks(client.fga)
+
+			// required to list objects to get the default org in claims
+			if tc.expectedErr == nil {
+				mock_fga.ListAny(t, client.fga, listObjects)
+			}
+
 			loginJSON := handlers.LoginRequest{
 				Username: tc.username,
 				Password: tc.password,

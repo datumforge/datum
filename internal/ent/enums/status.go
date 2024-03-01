@@ -3,15 +3,17 @@ package enums
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 type UserStatus string
 
 var (
-	Active      UserStatus = "ACTIVE"
-	Inactive    UserStatus = "INACTIVE"
-	Deactivated UserStatus = "DEACTIVATED"
-	Suspended   UserStatus = "SUSPENDED"
+	Active        UserStatus = "ACTIVE"
+	Inactive      UserStatus = "INACTIVE"
+	Deactivated   UserStatus = "DEACTIVATED"
+	Suspended     UserStatus = "SUSPENDED"
+	StatusInvalid UserStatus = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the UserStatus enum.
@@ -27,6 +29,22 @@ func (UserStatus) Values() (kinds []string) {
 // String returns the UserStatus as a string
 func (r UserStatus) String() string {
 	return string(r)
+}
+
+// ToUserStatus returns the user status enum based on string input
+func ToUserStatus(r string) *UserStatus {
+	switch r := strings.ToUpper(r); r {
+	case Active.String():
+		return &Active
+	case Inactive.String():
+		return &Inactive
+	case Deactivated.String():
+		return &Deactivated
+	case Suspended.String():
+		return &Suspended
+	default:
+		return &StatusInvalid
+	}
 }
 
 // MarshalGQL implement the Marshaler interface for gqlgen

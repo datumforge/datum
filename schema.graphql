@@ -431,21 +431,14 @@ input CreateUserSettingInput {
 	The time the user was suspended
 	"""
 	suspendedAt: Time
-	"""
-	local user password recovery code generated during account creation - does not exist for oauth'd users
-	"""
-	recoveryCode: String
 	status: UserSettingUserStatus
-	"""
-	organization to load on user login
-	"""
-	defaultOrg: String
 	emailConfirmed: Boolean
 	"""
-	tags associated with the object
+	tags associated with the user
 	"""
 	tags: [String!]
 	userID: ID
+	defaultOrgID: ID
 }
 """
 Define a Relay Cursor type:
@@ -2447,15 +2440,6 @@ type Mutation {
 		id: ID!
 	): UserDeletePayload!
 	"""
-	Create a new userSetting
-	"""
-	createUserSetting(
-		"""
-		values of the userSetting
-		"""
-		input: CreateUserSettingInput!
-	): UserSettingCreatePayload!
-	"""
 	Update an existing userSetting
 	"""
 	updateUserSetting(
@@ -2469,15 +2453,6 @@ type Mutation {
 		"""
 		input: UpdateUserSettingInput!
 	): UserSettingUpdatePayload!
-	"""
-	Delete an existing userSetting
-	"""
-	deleteUserSetting(
-		"""
-		ID of the userSetting
-		"""
-		id: ID!
-	): UserSettingDeletePayload!
 	postMessageTo(subscriber: String!, content: String!): ID!
 }
 """
@@ -5306,25 +5281,17 @@ input UpdateUserSettingInput {
 	"""
 	suspendedAt: Time
 	clearSuspendedAt: Boolean
-	"""
-	local user password recovery code generated during account creation - does not exist for oauth'd users
-	"""
-	recoveryCode: String
-	clearRecoveryCode: Boolean
 	status: UserSettingUserStatus
-	"""
-	organization to load on user login
-	"""
-	defaultOrg: String
-	clearDefaultOrg: Boolean
 	emailConfirmed: Boolean
 	"""
-	tags associated with the object
+	tags associated with the user
 	"""
 	tags: [String!]
 	appendTags: [String!]
 	userID: ID
 	clearUser: Boolean
+	defaultOrgID: ID
+	clearDefaultOrg: Boolean
 }
 type User implements Node {
 	id: ID!
@@ -5481,6 +5448,7 @@ type UserSetting implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
+	userID: ID
 	"""
 	user account is locked if unconfirmed or explicitly locked
 	"""
@@ -5494,16 +5462,16 @@ type UserSetting implements Node {
 	"""
 	suspendedAt: Time
 	status: UserSettingUserStatus!
-	"""
-	organization to load on user login
-	"""
-	defaultOrg: String
 	emailConfirmed: Boolean!
 	"""
-	tags associated with the object
+	tags associated with the user
 	"""
 	tags: [String!]!
 	user: User
+	"""
+	organization to load on user login
+	"""
+	defaultOrg: Organization
 }
 """
 A connection to a list of items.
@@ -5521,24 +5489,6 @@ type UserSettingConnection {
 	Identifies the total count of items in the connection.
 	"""
 	totalCount: Int!
-}
-"""
-Return response for createUserSetting mutation
-"""
-type UserSettingCreatePayload {
-	"""
-	Created userSetting
-	"""
-	userSetting: UserSetting!
-}
-"""
-Return response for deleteUserSetting mutation
-"""
-type UserSettingDeletePayload {
-	"""
-	Deleted userSetting ID
-	"""
-	deletedID: ID!
 }
 """
 An edge in a connection.
@@ -5686,6 +5636,24 @@ input UserSettingWhereInput {
 	deletedByEqualFold: String
 	deletedByContainsFold: String
 	"""
+	user_id field predicates
+	"""
+	userID: ID
+	userIDNEQ: ID
+	userIDIn: [ID!]
+	userIDNotIn: [ID!]
+	userIDGT: ID
+	userIDGTE: ID
+	userIDLT: ID
+	userIDLTE: ID
+	userIDContains: ID
+	userIDHasPrefix: ID
+	userIDHasSuffix: ID
+	userIDIsNil: Boolean
+	userIDNotNil: Boolean
+	userIDEqualFold: ID
+	userIDContainsFold: ID
+	"""
 	locked field predicates
 	"""
 	locked: Boolean
@@ -5724,24 +5692,6 @@ input UserSettingWhereInput {
 	statusIn: [UserSettingUserStatus!]
 	statusNotIn: [UserSettingUserStatus!]
 	"""
-	default_org field predicates
-	"""
-	defaultOrg: String
-	defaultOrgNEQ: String
-	defaultOrgIn: [String!]
-	defaultOrgNotIn: [String!]
-	defaultOrgGT: String
-	defaultOrgGTE: String
-	defaultOrgLT: String
-	defaultOrgLTE: String
-	defaultOrgContains: String
-	defaultOrgHasPrefix: String
-	defaultOrgHasSuffix: String
-	defaultOrgIsNil: Boolean
-	defaultOrgNotNil: Boolean
-	defaultOrgEqualFold: String
-	defaultOrgContainsFold: String
-	"""
 	email_confirmed field predicates
 	"""
 	emailConfirmed: Boolean
@@ -5751,6 +5701,11 @@ input UserSettingWhereInput {
 	"""
 	hasUser: Boolean
 	hasUserWith: [UserWhereInput!]
+	"""
+	default_org edge predicates
+	"""
+	hasDefaultOrg: Boolean
+	hasDefaultOrgWith: [OrganizationWhereInput!]
 }
 """
 Return response for updateUser mutation

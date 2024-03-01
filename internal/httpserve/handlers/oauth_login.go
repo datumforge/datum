@@ -130,6 +130,14 @@ func (h *Handler) issueGoogleSession() http.Handler {
 			return
 		}
 
+		// set context for remaining request based on logged in user
+		userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
+
+		if err := h.addDefaultOrgToUserQuery(userCtx, user); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// this might get moved based on the UI auth flow
 		// but works here for the cli login
 		claims := createClaims(user)
@@ -191,6 +199,14 @@ func (h *Handler) issueGitHubSession() http.Handler {
 		user, err := h.CheckAndCreateUser(ctxWithToken, *githubUser.Name, *githubUser.Email, enums.GitHub)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// set context for remaining request based on logged in user
+		userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
+
+		if err := h.addDefaultOrgToUserQuery(userCtx, user); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 

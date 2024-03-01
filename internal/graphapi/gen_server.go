@@ -316,7 +316,6 @@ type ComplexityRoot struct {
 		CreateOrganizationSetting func(childComplexity int, input generated.CreateOrganizationSettingInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
-		CreateUserSetting         func(childComplexity int, input generated.CreateUserSettingInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
 		DeleteGroupMembership     func(childComplexity int, id string) int
@@ -330,7 +329,6 @@ type ComplexityRoot struct {
 		DeleteOrganizationSetting func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
-		DeleteUserSetting         func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
 		UpdateGroup               func(childComplexity int, id string, input generated.UpdateGroupInput) int
@@ -712,20 +710,13 @@ type ComplexityRoot struct {
 		UpdatedAt      func(childComplexity int) int
 		UpdatedBy      func(childComplexity int) int
 		User           func(childComplexity int) int
+		UserID         func(childComplexity int) int
 	}
 
 	UserSettingConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
-	}
-
-	UserSettingCreatePayload struct {
-		UserSetting func(childComplexity int) int
-	}
-
-	UserSettingDeletePayload struct {
-		DeletedID func(childComplexity int) int
 	}
 
 	UserSettingEdge struct {
@@ -782,9 +773,7 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
-	CreateUserSetting(ctx context.Context, input generated.CreateUserSettingInput) (*UserSettingCreatePayload, error)
 	UpdateUserSetting(ctx context.Context, id string, input generated.UpdateUserSettingInput) (*UserSettingUpdatePayload, error)
-	DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error)
 	PostMessageTo(ctx context.Context, subscriber string, content string) (string, error)
 }
 type OauthProviderResolver interface {
@@ -1956,18 +1945,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(generated.CreateUserInput)), true
 
-	case "Mutation.createUserSetting":
-		if e.complexity.Mutation.CreateUserSetting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createUserSetting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateUserSetting(childComplexity, args["input"].(generated.CreateUserSettingInput)), true
-
 	case "Mutation.deleteEntitlement":
 		if e.complexity.Mutation.DeleteEntitlement == nil {
 			break
@@ -2123,18 +2100,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
-
-	case "Mutation.deleteUserSetting":
-		if e.complexity.Mutation.DeleteUserSetting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteUserSetting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteUserSetting(childComplexity, args["id"].(string)), true
 
 	case "Mutation.postMessageTo":
 		if e.complexity.Mutation.PostMessageTo == nil {
@@ -4093,6 +4058,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSetting.User(childComplexity), true
 
+	case "UserSetting.userID":
+		if e.complexity.UserSetting.UserID == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.UserID(childComplexity), true
+
 	case "UserSettingConnection.edges":
 		if e.complexity.UserSettingConnection.Edges == nil {
 			break
@@ -4113,20 +4085,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserSettingConnection.TotalCount(childComplexity), true
-
-	case "UserSettingCreatePayload.userSetting":
-		if e.complexity.UserSettingCreatePayload.UserSetting == nil {
-			break
-		}
-
-		return e.complexity.UserSettingCreatePayload.UserSetting(childComplexity), true
-
-	case "UserSettingDeletePayload.deletedID":
-		if e.complexity.UserSettingDeletePayload.DeletedID == nil {
-			break
-		}
-
-		return e.complexity.UserSettingDeletePayload.DeletedID(childComplexity), true
 
 	case "UserSettingEdge.cursor":
 		if e.complexity.UserSettingEdge.Cursor == nil {
@@ -4755,21 +4713,14 @@ input CreateUserSettingInput {
   The time the user was suspended
   """
   suspendedAt: Time
-  """
-  local user password recovery code generated during account creation - does not exist for oauth'd users
-  """
-  recoveryCode: String
   status: UserSettingUserStatus
-  """
-  organization to load on user login
-  """
-  defaultOrg: String
   emailConfirmed: Boolean
   """
-  tags associated with the object
+  tags associated with the user
   """
   tags: [String!]
   userID: ID
+  defaultOrgID: ID
 }
 """
 Define a Relay Cursor type:
@@ -8713,25 +8664,17 @@ input UpdateUserSettingInput {
   """
   suspendedAt: Time
   clearSuspendedAt: Boolean
-  """
-  local user password recovery code generated during account creation - does not exist for oauth'd users
-  """
-  recoveryCode: String
-  clearRecoveryCode: Boolean
   status: UserSettingUserStatus
-  """
-  organization to load on user login
-  """
-  defaultOrg: String
-  clearDefaultOrg: Boolean
   emailConfirmed: Boolean
   """
-  tags associated with the object
+  tags associated with the user
   """
   tags: [String!]
   appendTags: [String!]
   userID: ID
   clearUser: Boolean
+  defaultOrgID: ID
+  clearDefaultOrg: Boolean
 }
 type User implements Node {
   id: ID!
@@ -8870,6 +8813,7 @@ type UserSetting implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  userID: ID
   """
   user account is locked if unconfirmed or explicitly locked
   """
@@ -8883,16 +8827,16 @@ type UserSetting implements Node {
   """
   suspendedAt: Time
   status: UserSettingUserStatus!
-  """
-  organization to load on user login
-  """
-  defaultOrg: String
   emailConfirmed: Boolean!
   """
-  tags associated with the object
+  tags associated with the user
   """
   tags: [String!]!
   user: User
+  """
+  organization to load on user login
+  """
+  defaultOrg: Organization
 }
 """
 A connection to a list of items.
@@ -9048,6 +8992,24 @@ input UserSettingWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  user_id field predicates
+  """
+  userID: ID
+  userIDNEQ: ID
+  userIDIn: [ID!]
+  userIDNotIn: [ID!]
+  userIDGT: ID
+  userIDGTE: ID
+  userIDLT: ID
+  userIDLTE: ID
+  userIDContains: ID
+  userIDHasPrefix: ID
+  userIDHasSuffix: ID
+  userIDIsNil: Boolean
+  userIDNotNil: Boolean
+  userIDEqualFold: ID
+  userIDContainsFold: ID
+  """
   locked field predicates
   """
   locked: Boolean
@@ -9086,24 +9048,6 @@ input UserSettingWhereInput {
   statusIn: [UserSettingUserStatus!]
   statusNotIn: [UserSettingUserStatus!]
   """
-  default_org field predicates
-  """
-  defaultOrg: String
-  defaultOrgNEQ: String
-  defaultOrgIn: [String!]
-  defaultOrgNotIn: [String!]
-  defaultOrgGT: String
-  defaultOrgGTE: String
-  defaultOrgLT: String
-  defaultOrgLTE: String
-  defaultOrgContains: String
-  defaultOrgHasPrefix: String
-  defaultOrgHasSuffix: String
-  defaultOrgIsNil: Boolean
-  defaultOrgNotNil: Boolean
-  defaultOrgEqualFold: String
-  defaultOrgContainsFold: String
-  """
   email_confirmed field predicates
   """
   emailConfirmed: Boolean
@@ -9113,6 +9057,11 @@ input UserSettingWhereInput {
   """
   hasUser: Boolean
   hasUserWith: [UserWhereInput!]
+  """
+  default_org edge predicates
+  """
+  hasDefaultOrg: Boolean
+  hasDefaultOrgWith: [OrganizationWhereInput!]
 }
 """
 UserWhereInput is used for filtering User objects.
@@ -10468,15 +10417,6 @@ type UserDeletePayload {
 
 extend type Mutation{
     """
-    Create a new userSetting
-    """
-    createUserSetting(
-        """
-        values of the userSetting
-        """
-        input: CreateUserSettingInput!
-    ): UserSettingCreatePayload!
-    """
     Update an existing userSetting
     """
     updateUserSetting(
@@ -10489,25 +10429,6 @@ extend type Mutation{
         """
         input: UpdateUserSettingInput!
     ): UserSettingUpdatePayload!
-    """
-    Delete an existing userSetting
-    """
-    deleteUserSetting(
-        """
-        ID of the userSetting
-        """
-        id: ID!
-    ): UserSettingDeletePayload!
-}
-
-"""
-Return response for createUserSetting mutation
-"""
-type UserSettingCreatePayload {
-    """
-    Created userSetting
-    """
-    userSetting: UserSetting!
 }
 
 """
@@ -10518,16 +10439,6 @@ type UserSettingUpdatePayload {
     Updated userSetting
     """
     userSetting: UserSetting!
-}
-
-"""
-Return response for deleteUserSetting mutation
-"""
-type UserSettingDeletePayload {
-    """
-    Deleted userSetting ID
-    """
-    deletedID: ID!
 }`, BuiltIn: false},
 	{Name: "../../subscriptions/subs.graphql", Input: `type Dummy {
   id: ID!
@@ -10729,21 +10640,6 @@ func (ec *executionContext) field_Mutation_createPersonalAccessToken_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createUserSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 generated.CreateUserSettingInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateUserSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -10925,21 +10821,6 @@ func (ec *executionContext) field_Mutation_deleteOrganization_args(ctx context.C
 }
 
 func (ec *executionContext) field_Mutation_deletePersonalAccessToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_deleteUserSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -21408,65 +21289,6 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createUserSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUserSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUserSetting(rctx, fc.Args["input"].(generated.CreateUserSettingInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*UserSettingCreatePayload)
-	fc.Result = res
-	return ec.marshalNUserSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingCreatePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createUserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "userSetting":
-				return ec.fieldContext_UserSettingCreatePayload_userSetting(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettingCreatePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createUserSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_updateUserSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_updateUserSetting(ctx, field)
 	if err != nil {
@@ -21520,65 +21342,6 @@ func (ec *executionContext) fieldContext_Mutation_updateUserSetting(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateUserSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteUserSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteUserSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUserSetting(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*UserSettingDeletePayload)
-	fc.Result = res
-	return ec.marshalNUserSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingDeletePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteUserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "deletedID":
-				return ec.fieldContext_UserSettingDeletePayload_deletedID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettingDeletePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteUserSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -31563,6 +31326,8 @@ func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, 
 				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
+			case "userID":
+				return ec.fieldContext_UserSetting_userID(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -31571,14 +31336,14 @@ func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, 
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "defaultOrg":
-				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
+			case "defaultOrg":
+				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
@@ -32882,6 +32647,8 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
+			case "userID":
+				return ec.fieldContext_UserSetting_userID(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -32890,14 +32657,14 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "defaultOrg":
-				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
+			case "defaultOrg":
+				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
@@ -33929,6 +33696,47 @@ func (ec *executionContext) fieldContext_UserSetting_deletedBy(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _UserSetting_userID(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_userID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSetting_userID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserSetting_locked(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSetting_locked(ctx, field)
 	if err != nil {
@@ -34094,47 +33902,6 @@ func (ec *executionContext) fieldContext_UserSetting_status(ctx context.Context,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UserSettingUserStatus does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UserSetting_defaultOrg(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSetting_defaultOrg(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DefaultOrg, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSetting_defaultOrg(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -34329,6 +34096,93 @@ func (ec *executionContext) fieldContext_UserSetting_user(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _UserSetting_defaultOrg(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_defaultOrg(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DefaultOrg(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Organization)
+	fc.Result = res
+	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSetting_defaultOrg(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSetting",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Organization_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Organization_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Organization_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Organization_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Organization_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Organization_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Organization_deletedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
+			case "description":
+				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "parent":
+				return ec.fieldContext_Organization_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_Organization_children(ctx, field)
+			case "groups":
+				return ec.fieldContext_Organization_groups(ctx, field)
+			case "integrations":
+				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
+			case "entitlements":
+				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "personalAccessTokens":
+				return ec.fieldContext_Organization_personalAccessTokens(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
+			case "users":
+				return ec.fieldContext_Organization_users(ctx, field)
+			case "invites":
+				return ec.fieldContext_Organization_invites(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserSettingConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSettingConnection_edges(ctx, field)
 	if err != nil {
@@ -34474,126 +34328,6 @@ func (ec *executionContext) fieldContext_UserSettingConnection_totalCount(ctx co
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingCreatePayload_userSetting(ctx context.Context, field graphql.CollectedField, obj *UserSettingCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingCreatePayload_userSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserSetting, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*generated.UserSetting)
-	fc.Result = res
-	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSettingCreatePayload_userSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSettingCreatePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_UserSetting_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_UserSetting_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_UserSetting_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_UserSetting_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
-			case "locked":
-				return ec.fieldContext_UserSetting_locked(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_UserSetting_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
-			case "status":
-				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "defaultOrg":
-				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
-			case "emailConfirmed":
-				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
-			case "tags":
-				return ec.fieldContext_UserSetting_tags(ctx, field)
-			case "user":
-				return ec.fieldContext_UserSetting_user(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UserSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *UserSettingDeletePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingDeletePayload_deletedID(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSettingDeletePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _UserSettingEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingEdge) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSettingEdge_node(ctx, field)
 	if err != nil {
@@ -34644,6 +34378,8 @@ func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Contex
 				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
+			case "userID":
+				return ec.fieldContext_UserSetting_userID(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -34652,14 +34388,14 @@ func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Contex
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "defaultOrg":
-				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
+			case "defaultOrg":
+				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
@@ -34764,6 +34500,8 @@ func (ec *executionContext) fieldContext_UserSettingUpdatePayload_userSetting(ct
 				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
+			case "userID":
+				return ec.fieldContext_UserSetting_userID(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -34772,14 +34510,14 @@ func (ec *executionContext) fieldContext_UserSettingUpdatePayload_userSetting(ct
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "defaultOrg":
-				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
+			case "defaultOrg":
+				return ec.fieldContext_UserSetting_defaultOrg(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
@@ -38106,7 +37844,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "recoveryCode", "status", "defaultOrg", "emailConfirmed", "tags", "userID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "userID", "defaultOrgID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38162,13 +37900,6 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.SuspendedAt = data
-		case "recoveryCode":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCode"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCode = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, v)
@@ -38176,13 +37907,6 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.Status = data
-		case "defaultOrg":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrg"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrg = data
 		case "emailConfirmed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfirmed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -38204,6 +37928,13 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.UserID = data
+		case "defaultOrgID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DefaultOrgID = data
 		}
 	}
 
@@ -51877,7 +51608,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "defaultOrg", "clearDefaultOrg", "emailConfirmed", "tags", "appendTags", "userID", "clearUser"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51947,20 +51678,6 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.ClearSuspendedAt = data
-		case "recoveryCode":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCode"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCode = data
-		case "clearRecoveryCode":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearRecoveryCode"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearRecoveryCode = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalOUserSettingUserStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐUserStatus(ctx, v)
@@ -51968,20 +51685,6 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.Status = data
-		case "defaultOrg":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrg"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrg = data
-		case "clearDefaultOrg":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDefaultOrg"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearDefaultOrg = data
 		case "emailConfirmed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfirmed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -52017,6 +51720,20 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.ClearUser = data
+		case "defaultOrgID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DefaultOrgID = data
+		case "clearDefaultOrg":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDefaultOrg"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearDefaultOrg = data
 		}
 	}
 
@@ -52068,7 +51785,7 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "defaultOrg", "defaultOrgNEQ", "defaultOrgIn", "defaultOrgNotIn", "defaultOrgGT", "defaultOrgGTE", "defaultOrgLT", "defaultOrgLTE", "defaultOrgContains", "defaultOrgHasPrefix", "defaultOrgHasSuffix", "defaultOrgIsNil", "defaultOrgNotNil", "defaultOrgEqualFold", "defaultOrgContainsFold", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "userIDGT", "userIDGTE", "userIDLT", "userIDLTE", "userIDContains", "userIDHasPrefix", "userIDHasSuffix", "userIDIsNil", "userIDNotNil", "userIDEqualFold", "userIDContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith", "hasDefaultOrg", "hasDefaultOrgWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -52691,6 +52408,111 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.DeletedByContainsFold = data
+		case "userID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "userIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDNEQ = data
+		case "userIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDIn = data
+		case "userIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDNotIn = data
+		case "userIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDGT = data
+		case "userIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDGTE = data
+		case "userIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDLT = data
+		case "userIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDLTE = data
+		case "userIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDContains = data
+		case "userIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDHasPrefix = data
+		case "userIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDHasSuffix = data
+		case "userIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDIsNil = data
+		case "userIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDNotNil = data
+		case "userIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDEqualFold = data
+		case "userIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDContainsFold = data
 		case "locked":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -52873,111 +52695,6 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.StatusNotIn = data
-		case "defaultOrg":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrg"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrg = data
-		case "defaultOrgNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgNEQ = data
-		case "defaultOrgIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgIn = data
-		case "defaultOrgNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgNotIn = data
-		case "defaultOrgGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgGT = data
-		case "defaultOrgGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgGTE = data
-		case "defaultOrgLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgLT = data
-		case "defaultOrgLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgLTE = data
-		case "defaultOrgContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgContains = data
-		case "defaultOrgHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgHasPrefix = data
-		case "defaultOrgHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgHasSuffix = data
-		case "defaultOrgIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgIsNil = data
-		case "defaultOrgNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgNotNil = data
-		case "defaultOrgEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgEqualFold = data
-		case "defaultOrgContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("defaultOrgContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DefaultOrgContainsFold = data
 		case "emailConfirmed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfirmed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -53006,6 +52723,20 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.HasUserWith = data
+		case "hasDefaultOrg":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasDefaultOrg"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasDefaultOrg = data
+		case "hasDefaultOrgWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasDefaultOrgWith"))
+			data, err := ec.unmarshalOOrganizationWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasDefaultOrgWith = data
 		}
 	}
 
@@ -57162,23 +56893,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createUserSetting":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createUserSetting(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "updateUserSetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateUserSetting(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deleteUserSetting":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteUserSetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -60768,6 +60485,8 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._UserSetting_deletedAt(ctx, field, obj)
 		case "deletedBy":
 			out.Values[i] = ec._UserSetting_deletedBy(ctx, field, obj)
+		case "userID":
+			out.Values[i] = ec._UserSetting_userID(ctx, field, obj)
 		case "locked":
 			out.Values[i] = ec._UserSetting_locked(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -60782,8 +60501,6 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "defaultOrg":
-			out.Values[i] = ec._UserSetting_defaultOrg(ctx, field, obj)
 		case "emailConfirmed":
 			out.Values[i] = ec._UserSetting_emailConfirmed(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -60804,6 +60521,39 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 					}
 				}()
 				res = ec._UserSetting_user(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "defaultOrg":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._UserSetting_defaultOrg(ctx, field, obj)
 				return res
 			}
 
@@ -60870,84 +60620,6 @@ func (ec *executionContext) _UserSettingConnection(ctx context.Context, sel ast.
 			}
 		case "totalCount":
 			out.Values[i] = ec._UserSettingConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var userSettingCreatePayloadImplementors = []string{"UserSettingCreatePayload"}
-
-func (ec *executionContext) _UserSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingCreatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingCreatePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettingCreatePayload")
-		case "userSetting":
-			out.Values[i] = ec._UserSettingCreatePayload_userSetting(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var userSettingDeletePayloadImplementors = []string{"UserSettingDeletePayload"}
-
-func (ec *executionContext) _UserSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingDeletePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingDeletePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettingDeletePayload")
-		case "deletedID":
-			out.Values[i] = ec._UserSettingDeletePayload_deletedID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -61506,11 +61178,6 @@ func (ec *executionContext) unmarshalNCreatePersonalAccessTokenInput2githubᚗco
 
 func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserInput(ctx context.Context, v interface{}) (generated.CreateUserInput, error) {
 	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNCreateUserSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingInput(ctx context.Context, v interface{}) (generated.CreateUserSettingInput, error) {
-	res, err := ec.unmarshalInputCreateUserSettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -62919,34 +62586,6 @@ func (ec *executionContext) marshalNUserSettingConnection2ᚖgithubᚗcomᚋdatu
 	return ec._UserSettingConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserSettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingCreatePayload) graphql.Marshaler {
-	return ec._UserSettingCreatePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUserSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingCreatePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._UserSettingCreatePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNUserSettingDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingDeletePayload) graphql.Marshaler {
-	return ec._UserSettingDeletePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUserSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingDeletePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._UserSettingDeletePayload(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNUserSettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐUserSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingUpdatePayload) graphql.Marshaler {
 	return ec._UserSettingUpdatePayload(ctx, sel, &v)
 }
@@ -64157,6 +63796,16 @@ func (ec *executionContext) unmarshalOGroupWhereInput2ᚖgithubᚗcomᚋdatumfor
 	}
 	res, err := ec.unmarshalInputGroupWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOID2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalString(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalString(v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOID2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {

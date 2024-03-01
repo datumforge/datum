@@ -30,24 +30,24 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldLocked holds the string denoting the locked field in the database.
 	FieldLocked = "locked"
 	// FieldSilencedAt holds the string denoting the silenced_at field in the database.
 	FieldSilencedAt = "silenced_at"
 	// FieldSuspendedAt holds the string denoting the suspended_at field in the database.
 	FieldSuspendedAt = "suspended_at"
-	// FieldRecoveryCode holds the string denoting the recovery_code field in the database.
-	FieldRecoveryCode = "recovery_code"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldDefaultOrg holds the string denoting the default_org field in the database.
-	FieldDefaultOrg = "default_org"
 	// FieldEmailConfirmed holds the string denoting the email_confirmed field in the database.
 	FieldEmailConfirmed = "email_confirmed"
 	// FieldTags holds the string denoting the tags field in the database.
 	FieldTags = "tags"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
+	// EdgeDefaultOrg holds the string denoting the default_org edge name in mutations.
+	EdgeDefaultOrg = "default_org"
 	// Table holds the table name of the usersetting in the database.
 	Table = "user_settings"
 	// UserTable is the table that holds the user relation/edge.
@@ -56,7 +56,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_setting"
+	UserColumn = "user_id"
+	// DefaultOrgTable is the table that holds the default_org relation/edge.
+	DefaultOrgTable = "user_settings"
+	// DefaultOrgInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	DefaultOrgInverseTable = "organizations"
+	// DefaultOrgColumn is the table column denoting the default_org relation/edge.
+	DefaultOrgColumn = "user_setting_default_org"
 )
 
 // Columns holds all SQL columns for usersetting fields.
@@ -68,12 +75,11 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedAt,
 	FieldDeletedBy,
+	FieldUserID,
 	FieldLocked,
 	FieldSilencedAt,
 	FieldSuspendedAt,
-	FieldRecoveryCode,
 	FieldStatus,
-	FieldDefaultOrg,
 	FieldEmailConfirmed,
 	FieldTags,
 }
@@ -81,7 +87,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "user_settings"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"user_setting",
+	"user_setting_default_org",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -105,8 +111,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [2]ent.Hook
-	Interceptors [1]ent.Interceptor
+	Hooks        [4]ent.Hook
+	Interceptors [2]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -173,6 +180,11 @@ func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
 }
 
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
 // ByLocked orders the results by the locked field.
 func ByLocked(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLocked, opts...).ToFunc()
@@ -188,19 +200,9 @@ func BySuspendedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSuspendedAt, opts...).ToFunc()
 }
 
-// ByRecoveryCode orders the results by the recovery_code field.
-func ByRecoveryCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRecoveryCode, opts...).ToFunc()
-}
-
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
-}
-
-// ByDefaultOrg orders the results by the default_org field.
-func ByDefaultOrg(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDefaultOrg, opts...).ToFunc()
 }
 
 // ByEmailConfirmed orders the results by the email_confirmed field.
@@ -214,11 +216,25 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByDefaultOrgField orders the results by default_org field.
+func ByDefaultOrgField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDefaultOrgStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, true, UserTable, UserColumn),
+	)
+}
+func newDefaultOrgStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DefaultOrgInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, DefaultOrgTable, DefaultOrgColumn),
 	)
 }
 

@@ -9727,6 +9727,23 @@ type UserSettingWhereInput struct {
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 
+	// "user_id" field predicates.
+	UserID             *string  `json:"userID,omitempty"`
+	UserIDNEQ          *string  `json:"userIDNEQ,omitempty"`
+	UserIDIn           []string `json:"userIDIn,omitempty"`
+	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
+	UserIDGT           *string  `json:"userIDGT,omitempty"`
+	UserIDGTE          *string  `json:"userIDGTE,omitempty"`
+	UserIDLT           *string  `json:"userIDLT,omitempty"`
+	UserIDLTE          *string  `json:"userIDLTE,omitempty"`
+	UserIDContains     *string  `json:"userIDContains,omitempty"`
+	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
+	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
+	UserIDIsNil        bool     `json:"userIDIsNil,omitempty"`
+	UserIDNotNil       bool     `json:"userIDNotNil,omitempty"`
+	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
+	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
+
 	// "locked" field predicates.
 	Locked    *bool `json:"locked,omitempty"`
 	LockedNEQ *bool `json:"lockedNEQ,omitempty"`
@@ -9755,45 +9772,11 @@ type UserSettingWhereInput struct {
 	SuspendedAtIsNil  bool        `json:"suspendedAtIsNil,omitempty"`
 	SuspendedAtNotNil bool        `json:"suspendedAtNotNil,omitempty"`
 
-	// "recovery_code" field predicates.
-	RecoveryCode             *string  `json:"recoveryCode,omitempty"`
-	RecoveryCodeNEQ          *string  `json:"recoveryCodeNEQ,omitempty"`
-	RecoveryCodeIn           []string `json:"recoveryCodeIn,omitempty"`
-	RecoveryCodeNotIn        []string `json:"recoveryCodeNotIn,omitempty"`
-	RecoveryCodeGT           *string  `json:"recoveryCodeGT,omitempty"`
-	RecoveryCodeGTE          *string  `json:"recoveryCodeGTE,omitempty"`
-	RecoveryCodeLT           *string  `json:"recoveryCodeLT,omitempty"`
-	RecoveryCodeLTE          *string  `json:"recoveryCodeLTE,omitempty"`
-	RecoveryCodeContains     *string  `json:"recoveryCodeContains,omitempty"`
-	RecoveryCodeHasPrefix    *string  `json:"recoveryCodeHasPrefix,omitempty"`
-	RecoveryCodeHasSuffix    *string  `json:"recoveryCodeHasSuffix,omitempty"`
-	RecoveryCodeIsNil        bool     `json:"recoveryCodeIsNil,omitempty"`
-	RecoveryCodeNotNil       bool     `json:"recoveryCodeNotNil,omitempty"`
-	RecoveryCodeEqualFold    *string  `json:"recoveryCodeEqualFold,omitempty"`
-	RecoveryCodeContainsFold *string  `json:"recoveryCodeContainsFold,omitempty"`
-
 	// "status" field predicates.
 	Status      *enums.UserStatus  `json:"status,omitempty"`
 	StatusNEQ   *enums.UserStatus  `json:"statusNEQ,omitempty"`
 	StatusIn    []enums.UserStatus `json:"statusIn,omitempty"`
 	StatusNotIn []enums.UserStatus `json:"statusNotIn,omitempty"`
-
-	// "default_org" field predicates.
-	DefaultOrg             *string  `json:"defaultOrg,omitempty"`
-	DefaultOrgNEQ          *string  `json:"defaultOrgNEQ,omitempty"`
-	DefaultOrgIn           []string `json:"defaultOrgIn,omitempty"`
-	DefaultOrgNotIn        []string `json:"defaultOrgNotIn,omitempty"`
-	DefaultOrgGT           *string  `json:"defaultOrgGT,omitempty"`
-	DefaultOrgGTE          *string  `json:"defaultOrgGTE,omitempty"`
-	DefaultOrgLT           *string  `json:"defaultOrgLT,omitempty"`
-	DefaultOrgLTE          *string  `json:"defaultOrgLTE,omitempty"`
-	DefaultOrgContains     *string  `json:"defaultOrgContains,omitempty"`
-	DefaultOrgHasPrefix    *string  `json:"defaultOrgHasPrefix,omitempty"`
-	DefaultOrgHasSuffix    *string  `json:"defaultOrgHasSuffix,omitempty"`
-	DefaultOrgIsNil        bool     `json:"defaultOrgIsNil,omitempty"`
-	DefaultOrgNotNil       bool     `json:"defaultOrgNotNil,omitempty"`
-	DefaultOrgEqualFold    *string  `json:"defaultOrgEqualFold,omitempty"`
-	DefaultOrgContainsFold *string  `json:"defaultOrgContainsFold,omitempty"`
 
 	// "email_confirmed" field predicates.
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
@@ -9802,6 +9785,10 @@ type UserSettingWhereInput struct {
 	// "user" edge predicates.
 	HasUser     *bool             `json:"hasUser,omitempty"`
 	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+
+	// "default_org" edge predicates.
+	HasDefaultOrg     *bool                     `json:"hasDefaultOrg,omitempty"`
+	HasDefaultOrgWith []*OrganizationWhereInput `json:"hasDefaultOrgWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -10130,6 +10117,51 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 	if i.DeletedByContainsFold != nil {
 		predicates = append(predicates, usersetting.DeletedByContainsFold(*i.DeletedByContainsFold))
 	}
+	if i.UserID != nil {
+		predicates = append(predicates, usersetting.UserIDEQ(*i.UserID))
+	}
+	if i.UserIDNEQ != nil {
+		predicates = append(predicates, usersetting.UserIDNEQ(*i.UserIDNEQ))
+	}
+	if len(i.UserIDIn) > 0 {
+		predicates = append(predicates, usersetting.UserIDIn(i.UserIDIn...))
+	}
+	if len(i.UserIDNotIn) > 0 {
+		predicates = append(predicates, usersetting.UserIDNotIn(i.UserIDNotIn...))
+	}
+	if i.UserIDGT != nil {
+		predicates = append(predicates, usersetting.UserIDGT(*i.UserIDGT))
+	}
+	if i.UserIDGTE != nil {
+		predicates = append(predicates, usersetting.UserIDGTE(*i.UserIDGTE))
+	}
+	if i.UserIDLT != nil {
+		predicates = append(predicates, usersetting.UserIDLT(*i.UserIDLT))
+	}
+	if i.UserIDLTE != nil {
+		predicates = append(predicates, usersetting.UserIDLTE(*i.UserIDLTE))
+	}
+	if i.UserIDContains != nil {
+		predicates = append(predicates, usersetting.UserIDContains(*i.UserIDContains))
+	}
+	if i.UserIDHasPrefix != nil {
+		predicates = append(predicates, usersetting.UserIDHasPrefix(*i.UserIDHasPrefix))
+	}
+	if i.UserIDHasSuffix != nil {
+		predicates = append(predicates, usersetting.UserIDHasSuffix(*i.UserIDHasSuffix))
+	}
+	if i.UserIDIsNil {
+		predicates = append(predicates, usersetting.UserIDIsNil())
+	}
+	if i.UserIDNotNil {
+		predicates = append(predicates, usersetting.UserIDNotNil())
+	}
+	if i.UserIDEqualFold != nil {
+		predicates = append(predicates, usersetting.UserIDEqualFold(*i.UserIDEqualFold))
+	}
+	if i.UserIDContainsFold != nil {
+		predicates = append(predicates, usersetting.UserIDContainsFold(*i.UserIDContainsFold))
+	}
 	if i.Locked != nil {
 		predicates = append(predicates, usersetting.LockedEQ(*i.Locked))
 	}
@@ -10196,51 +10228,6 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 	if i.SuspendedAtNotNil {
 		predicates = append(predicates, usersetting.SuspendedAtNotNil())
 	}
-	if i.RecoveryCode != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeEQ(*i.RecoveryCode))
-	}
-	if i.RecoveryCodeNEQ != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeNEQ(*i.RecoveryCodeNEQ))
-	}
-	if len(i.RecoveryCodeIn) > 0 {
-		predicates = append(predicates, usersetting.RecoveryCodeIn(i.RecoveryCodeIn...))
-	}
-	if len(i.RecoveryCodeNotIn) > 0 {
-		predicates = append(predicates, usersetting.RecoveryCodeNotIn(i.RecoveryCodeNotIn...))
-	}
-	if i.RecoveryCodeGT != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeGT(*i.RecoveryCodeGT))
-	}
-	if i.RecoveryCodeGTE != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeGTE(*i.RecoveryCodeGTE))
-	}
-	if i.RecoveryCodeLT != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeLT(*i.RecoveryCodeLT))
-	}
-	if i.RecoveryCodeLTE != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeLTE(*i.RecoveryCodeLTE))
-	}
-	if i.RecoveryCodeContains != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeContains(*i.RecoveryCodeContains))
-	}
-	if i.RecoveryCodeHasPrefix != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeHasPrefix(*i.RecoveryCodeHasPrefix))
-	}
-	if i.RecoveryCodeHasSuffix != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeHasSuffix(*i.RecoveryCodeHasSuffix))
-	}
-	if i.RecoveryCodeIsNil {
-		predicates = append(predicates, usersetting.RecoveryCodeIsNil())
-	}
-	if i.RecoveryCodeNotNil {
-		predicates = append(predicates, usersetting.RecoveryCodeNotNil())
-	}
-	if i.RecoveryCodeEqualFold != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeEqualFold(*i.RecoveryCodeEqualFold))
-	}
-	if i.RecoveryCodeContainsFold != nil {
-		predicates = append(predicates, usersetting.RecoveryCodeContainsFold(*i.RecoveryCodeContainsFold))
-	}
 	if i.Status != nil {
 		predicates = append(predicates, usersetting.StatusEQ(*i.Status))
 	}
@@ -10252,51 +10239,6 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 	}
 	if len(i.StatusNotIn) > 0 {
 		predicates = append(predicates, usersetting.StatusNotIn(i.StatusNotIn...))
-	}
-	if i.DefaultOrg != nil {
-		predicates = append(predicates, usersetting.DefaultOrgEQ(*i.DefaultOrg))
-	}
-	if i.DefaultOrgNEQ != nil {
-		predicates = append(predicates, usersetting.DefaultOrgNEQ(*i.DefaultOrgNEQ))
-	}
-	if len(i.DefaultOrgIn) > 0 {
-		predicates = append(predicates, usersetting.DefaultOrgIn(i.DefaultOrgIn...))
-	}
-	if len(i.DefaultOrgNotIn) > 0 {
-		predicates = append(predicates, usersetting.DefaultOrgNotIn(i.DefaultOrgNotIn...))
-	}
-	if i.DefaultOrgGT != nil {
-		predicates = append(predicates, usersetting.DefaultOrgGT(*i.DefaultOrgGT))
-	}
-	if i.DefaultOrgGTE != nil {
-		predicates = append(predicates, usersetting.DefaultOrgGTE(*i.DefaultOrgGTE))
-	}
-	if i.DefaultOrgLT != nil {
-		predicates = append(predicates, usersetting.DefaultOrgLT(*i.DefaultOrgLT))
-	}
-	if i.DefaultOrgLTE != nil {
-		predicates = append(predicates, usersetting.DefaultOrgLTE(*i.DefaultOrgLTE))
-	}
-	if i.DefaultOrgContains != nil {
-		predicates = append(predicates, usersetting.DefaultOrgContains(*i.DefaultOrgContains))
-	}
-	if i.DefaultOrgHasPrefix != nil {
-		predicates = append(predicates, usersetting.DefaultOrgHasPrefix(*i.DefaultOrgHasPrefix))
-	}
-	if i.DefaultOrgHasSuffix != nil {
-		predicates = append(predicates, usersetting.DefaultOrgHasSuffix(*i.DefaultOrgHasSuffix))
-	}
-	if i.DefaultOrgIsNil {
-		predicates = append(predicates, usersetting.DefaultOrgIsNil())
-	}
-	if i.DefaultOrgNotNil {
-		predicates = append(predicates, usersetting.DefaultOrgNotNil())
-	}
-	if i.DefaultOrgEqualFold != nil {
-		predicates = append(predicates, usersetting.DefaultOrgEqualFold(*i.DefaultOrgEqualFold))
-	}
-	if i.DefaultOrgContainsFold != nil {
-		predicates = append(predicates, usersetting.DefaultOrgContainsFold(*i.DefaultOrgContainsFold))
 	}
 	if i.EmailConfirmed != nil {
 		predicates = append(predicates, usersetting.EmailConfirmedEQ(*i.EmailConfirmed))
@@ -10322,6 +10264,24 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, usersetting.HasUserWith(with...))
+	}
+	if i.HasDefaultOrg != nil {
+		p := usersetting.HasDefaultOrg()
+		if !*i.HasDefaultOrg {
+			p = usersetting.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasDefaultOrgWith) > 0 {
+		with := make([]predicate.Organization, 0, len(i.HasDefaultOrgWith))
+		for _, w := range i.HasDefaultOrgWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasDefaultOrgWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, usersetting.HasDefaultOrgWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

@@ -2228,6 +2228,20 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				return err
 			}
 			us.withUser = query
+			if _, ok := fieldSeen[usersetting.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldUserID)
+				fieldSeen[usersetting.FieldUserID] = struct{}{}
+			}
+		case "defaultOrg":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: us.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			us.withDefaultOrg = query
 		case "createdAt":
 			if _, ok := fieldSeen[usersetting.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldCreatedAt)
@@ -2258,6 +2272,11 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, usersetting.FieldDeletedBy)
 				fieldSeen[usersetting.FieldDeletedBy] = struct{}{}
 			}
+		case "userID":
+			if _, ok := fieldSeen[usersetting.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldUserID)
+				fieldSeen[usersetting.FieldUserID] = struct{}{}
+			}
 		case "locked":
 			if _, ok := fieldSeen[usersetting.FieldLocked]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldLocked)
@@ -2277,11 +2296,6 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			if _, ok := fieldSeen[usersetting.FieldStatus]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldStatus)
 				fieldSeen[usersetting.FieldStatus] = struct{}{}
-			}
-		case "defaultOrg":
-			if _, ok := fieldSeen[usersetting.FieldDefaultOrg]; !ok {
-				selectedFields = append(selectedFields, usersetting.FieldDefaultOrg)
-				fieldSeen[usersetting.FieldDefaultOrg] = struct{}{}
 			}
 		case "emailConfirmed":
 			if _, ok := fieldSeen[usersetting.FieldEmailConfirmed]; !ok {

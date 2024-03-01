@@ -4,12 +4,14 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -20,14 +22,15 @@ import (
 // UserSettingQuery is the builder for querying UserSetting entities.
 type UserSettingQuery struct {
 	config
-	ctx        *QueryContext
-	order      []usersetting.OrderOption
-	inters     []Interceptor
-	predicates []predicate.UserSetting
-	withUser   *UserQuery
-	withFKs    bool
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*UserSetting) error
+	ctx            *QueryContext
+	order          []usersetting.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.UserSetting
+	withUser       *UserQuery
+	withDefaultOrg *OrganizationQuery
+	withFKs        bool
+	modifiers      []func(*sql.Selector)
+	loadTotal      []func(context.Context, []*UserSetting) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -82,6 +85,31 @@ func (usq *UserSettingQuery) QueryUser() *UserQuery {
 		)
 		schemaConfig := usq.schemaConfig
 		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.UserSetting
+		fromU = sqlgraph.SetNeighbors(usq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDefaultOrg chains the current query on the "default_org" edge.
+func (usq *UserSettingQuery) QueryDefaultOrg() *OrganizationQuery {
+	query := (&OrganizationClient{config: usq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := usq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := usq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usersetting.Table, usersetting.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, usersetting.DefaultOrgTable, usersetting.DefaultOrgColumn),
+		)
+		schemaConfig := usq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.UserSetting
 		fromU = sqlgraph.SetNeighbors(usq.driver.Dialect(), step)
 		return fromU, nil
@@ -276,12 +304,13 @@ func (usq *UserSettingQuery) Clone() *UserSettingQuery {
 		return nil
 	}
 	return &UserSettingQuery{
-		config:     usq.config,
-		ctx:        usq.ctx.Clone(),
-		order:      append([]usersetting.OrderOption{}, usq.order...),
-		inters:     append([]Interceptor{}, usq.inters...),
-		predicates: append([]predicate.UserSetting{}, usq.predicates...),
-		withUser:   usq.withUser.Clone(),
+		config:         usq.config,
+		ctx:            usq.ctx.Clone(),
+		order:          append([]usersetting.OrderOption{}, usq.order...),
+		inters:         append([]Interceptor{}, usq.inters...),
+		predicates:     append([]predicate.UserSetting{}, usq.predicates...),
+		withUser:       usq.withUser.Clone(),
+		withDefaultOrg: usq.withDefaultOrg.Clone(),
 		// clone intermediate query.
 		sql:  usq.sql.Clone(),
 		path: usq.path,
@@ -296,6 +325,17 @@ func (usq *UserSettingQuery) WithUser(opts ...func(*UserQuery)) *UserSettingQuer
 		opt(query)
 	}
 	usq.withUser = query
+	return usq
+}
+
+// WithDefaultOrg tells the query-builder to eager-load the nodes that are connected to
+// the "default_org" edge. The optional arguments are used to configure the query builder of the edge.
+func (usq *UserSettingQuery) WithDefaultOrg(opts ...func(*OrganizationQuery)) *UserSettingQuery {
+	query := (&OrganizationClient{config: usq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	usq.withDefaultOrg = query
 	return usq
 }
 
@@ -370,6 +410,12 @@ func (usq *UserSettingQuery) prepareQuery(ctx context.Context) error {
 		}
 		usq.sql = prev
 	}
+	if usersetting.Policy == nil {
+		return errors.New("generated: uninitialized usersetting.Policy (forgotten import generated/runtime?)")
+	}
+	if err := usersetting.Policy.EvalQuery(ctx, usq); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -378,11 +424,12 @@ func (usq *UserSettingQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		nodes       = []*UserSetting{}
 		withFKs     = usq.withFKs
 		_spec       = usq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			usq.withUser != nil,
+			usq.withDefaultOrg != nil,
 		}
 	)
-	if usq.withUser != nil {
+	if usq.withDefaultOrg != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -417,6 +464,12 @@ func (usq *UserSettingQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := usq.withDefaultOrg; query != nil {
+		if err := usq.loadDefaultOrg(ctx, query, nodes, nil,
+			func(n *UserSetting, e *Organization) { n.Edges.DefaultOrg = e }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range usq.loadTotal {
 		if err := usq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
@@ -429,10 +482,7 @@ func (usq *UserSettingQuery) loadUser(ctx context.Context, query *UserQuery, nod
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*UserSetting)
 	for i := range nodes {
-		if nodes[i].user_setting == nil {
-			continue
-		}
-		fk := *nodes[i].user_setting
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +499,39 @@ func (usq *UserSettingQuery) loadUser(ctx context.Context, query *UserQuery, nod
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_setting" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (usq *UserSettingQuery) loadDefaultOrg(ctx context.Context, query *OrganizationQuery, nodes []*UserSetting, init func(*UserSetting), assign func(*UserSetting, *Organization)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*UserSetting)
+	for i := range nodes {
+		if nodes[i].user_setting_default_org == nil {
+			continue
+		}
+		fk := *nodes[i].user_setting_default_org
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(organization.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_setting_default_org" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +569,9 @@ func (usq *UserSettingQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != usersetting.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if usq.withUser != nil {
+			_spec.Node.AddColumnOnce(usersetting.FieldUserID)
 		}
 	}
 	if ps := usq.predicates; len(ps) > 0 {

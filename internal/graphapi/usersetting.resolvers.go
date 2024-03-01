@@ -6,28 +6,53 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/internal/rout"
 )
-
-// CreateUserSetting is the resolver for the createUserSetting field.
-func (r *mutationResolver) CreateUserSetting(ctx context.Context, input generated.CreateUserSettingInput) (*UserSettingCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateUserSetting - createUserSetting"))
-}
 
 // UpdateUserSetting is the resolver for the updateUserSetting field.
 func (r *mutationResolver) UpdateUserSetting(ctx context.Context, id string, input generated.UpdateUserSettingInput) (*UserSettingUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateUserSetting - updateUserSetting"))
-}
+	// setup view context
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
-// DeleteUserSetting is the resolver for the DeleteUserSetting field.
-func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteUserSetting - DeleteUserSetting"))
+	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+		}
+
+		r.logger.Errorw("failed to get user setting", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	userSetting, err = userSetting.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			ve := err.(*generated.ValidationError)
+
+			return nil, rout.InvalidField(ve.Name)
+		}
+
+		r.logger.Errorw("failed to update user setting", "error", err)
+		return nil, err
+	}
+
+	return &UserSettingUpdatePayload{UserSetting: userSetting}, nil
 }
 
 // UserSetting is the resolver for the UserSetting field.
 func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.UserSetting, error) {
+	// setup view context
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
 	userSetting, err := withTransactionalMutation(ctx).UserSetting.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

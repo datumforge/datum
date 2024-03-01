@@ -24,24 +24,16 @@ func TestQueryUser(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
-	ec := echocontext.NewTestEchoContext()
-
-	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(ctx))
+	// setup user context
+	ctx, err := userContext()
+	require.NoError(t, err)
 
 	user1 := (&UserBuilder{client: client}).MustNew(ctx, t)
 	user2 := (&UserBuilder{client: client}).MustNew(ctx, t)
 
 	// setup valid user context
-	userCtx, err := auth.NewTestContextWithValidUser(user1.ID)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(userCtx.Request().Context(), echocontext.EchoContextKey, userCtx)
-
-	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx, err := userContextWithID(user1.ID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name     string
@@ -73,7 +65,7 @@ func TestQueryUser(t *testing.T) {
 			if tc.errorMsg == "" {
 				// placeholder until authz is enforced on org members
 				// at which point this needs to be the correct organization id
-				listObjects := []string{fmt.Sprintf("organization:%s", "test")}
+				listObjects := []string{"organization:test"}
 				mock_fga.ListAny(t, client.fga, listObjects)
 			}
 
@@ -108,7 +100,15 @@ func TestQueryUsers(t *testing.T) {
 	user1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
 	user2 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
 
+	// mock list
+	listObjects := []string{"organization:test"}
+
 	t.Run("Get Users", func(t *testing.T) {
+		defer mock_fga.ClearMocks(client.fga)
+
+		// mock list for default org on user settings
+		mock_fga.ListAny(t, client.fga, listObjects)
+
 		resp, err := client.datum.GetAllUsers(reqCtx)
 
 		require.NoError(t, err)
@@ -118,15 +118,9 @@ func TestQueryUsers(t *testing.T) {
 		// make sure only the current user is returned
 		assert.Equal(t, len(resp.Users.Edges), 1)
 
-		// set new context with another user id
-		ec, err := auth.NewTestContextWithValidUser(user1.ID)
-		if err != nil {
-			t.Fatal()
-		}
-
-		reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-		ec.SetRequest(ec.Request().WithContext(reqCtx))
+		// setup valid user context
+		reqCtx, err := userContextWithID(user1.ID)
+		require.NoError(t, err)
 
 		resp, err = client.datum.GetAllUsers(reqCtx)
 
@@ -165,14 +159,11 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 	defer client.db.Close()
 
 	// setup user context
-	ec := echocontext.NewTestEchoContext()
-
-	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(ctx))
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	// Bypass auth checks to ensure input checks for now
-	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
 	weakPassword := "notsecure"
 	strongPassword := "my&supers3cr3tpassw0rd!"
@@ -279,7 +270,7 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 				mock_fga.WriteAny(t, client.fga)
 			}
 
-			resp, err := client.datum.CreateUser(ctx, tc.userInput)
+			resp, err := client.datum.CreateUser(reqCtx, tc.userInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -333,10 +324,9 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 			// mocks to check for org access
 			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrganizationID)}
 			mock_fga.ListAny(t, client.fga, listObjects)
+			mock_fga.CheckAny(t, client.fga, true)
 
 			// Bypass auth checks to ensure input checks for now
-			reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
-
 			personalOrg, err := client.datum.GetOrganizationByID(reqCtx, orgs[0].OrganizationID)
 			require.NoError(t, err)
 
@@ -482,7 +472,7 @@ func TestMutationCreateUser(t *testing.T) {
 
 			// ensure personal org is created
 			// default org will always be the personal org when the user is first created
-			personalOrgID := *resp.CreateUser.User.Setting.DefaultOrg
+			personalOrgID := resp.CreateUser.User.Setting.DefaultOrg.ID
 
 			org, err := client.datum.GetOrganizationByID(reqCtx, personalOrgID, nil)
 			require.NoError(t, err)
@@ -496,11 +486,9 @@ func TestMutationUpdateUser(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
-	ec := echocontext.NewTestEchoContext()
-
-	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(ctx))
+	// setup user context
+	ctx, err := userContext()
+	require.NoError(t, err)
 
 	firstNameUpdate := gofakeit.FirstName()
 	lastNameUpdate := gofakeit.LastName()
@@ -597,6 +585,9 @@ func TestMutationUpdateUser(t *testing.T) {
 			// checks for member tables
 			if tc.errorMsg == "" {
 				mock_fga.CheckAny(t, client.fga, true)
+
+				// mock list for default org on user settings
+				mock_fga.ListAny(t, client.fga, []string{"organization:test"})
 			}
 
 			// update user
@@ -628,32 +619,23 @@ func TestMutationDeleteUser(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
-	// Setup echo context
-	ec := echocontext.NewTestEchoContext()
-
-	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(ctx))
+	// setup user context
+	ctx, err := userContext()
+	require.NoError(t, err)
 
 	// bypass auth on object creation
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	user := (&UserBuilder{client: client}).MustNew(ctx, t)
 
-	userSetting, err := user.Setting(ctx)
-	require.NoError(t, err)
+	userSetting := user.Edges.Setting
 
 	// setup valid user context
 	reqCtx, err := userContextWithID(user.ID)
 	require.NoError(t, err)
 
-	// bypass auth
-	ctx = privacy.DecisionContext(reqCtx, privacy.Allow)
-	userSettings, err := user.Setting(ctx)
-	require.NoError(t, err)
-
 	// personal org will be the default org when the user is created
-	personalOrgID := userSettings.DefaultOrg
+	personalOrgID := user.Edges.Setting.Edges.DefaultOrg.ParentOrganizationID
 
 	listObjects := []string{fmt.Sprintf("organization:%s", personalOrgID)}
 
@@ -723,11 +705,9 @@ func TestMutationUserCascadeDelete(t *testing.T) {
 	client := setupTest(t)
 	defer client.db.Close()
 
-	ec := echocontext.NewTestEchoContext()
-
-	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(ctx))
+	// setup user context
+	ctx, err := userContext()
+	require.NoError(t, err)
 
 	user := (&UserBuilder{client: client}).MustNew(ctx, t)
 
@@ -739,7 +719,7 @@ func TestMutationUserCascadeDelete(t *testing.T) {
 	userSettings, err := user.Setting(ctx)
 	require.NoError(t, err)
 
-	listObjects := []string{fmt.Sprintf("organization:%s", userSettings.DefaultOrg)}
+	listObjects := []string{fmt.Sprintf("organization:%s", userSettings.Edges.DefaultOrg.ID)}
 
 	// mock checks
 	mock_fga.CheckAny(t, client.fga, true)

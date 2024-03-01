@@ -99,7 +99,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "usersetting" package.
 	SettingInverseTable = "user_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
-	SettingColumn = "user_setting"
+	SettingColumn = "user_id"
 	// EmailVerificationTokensTable is the table that holds the email_verification_tokens relation/edge.
 	EmailVerificationTokensTable = "email_verification_tokens"
 	// EmailVerificationTokensInverseTable is the table name for the EmailVerificationToken entity.

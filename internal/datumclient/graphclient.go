@@ -50,6 +50,9 @@ type DatumClient interface {
 	UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error)
 	DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error)
 	GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error)
+	GetUserSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetUserSettings, error)
+	GetUserSettingWhere(ctx context.Context, where UserSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingWhere, error)
+	UpdateUserSetting(ctx context.Context, updateUserSettingID string, input UpdateUserSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserSetting, error)
 }
 
 type Client struct {
@@ -4177,18 +4180,43 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 	return t.DeletedID
 }
 
+type GetUserByID_User_Setting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetUserByID_User_Setting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetUserByID_User_Setting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetUserByID_User_Setting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetUserByID_User_Setting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetUserByID_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetUserByID_User_Setting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
 type GetUserByID_User_Setting struct {
-	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool             "json:\"locked\" graphql:\"locked\""
-	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
-	Tags           []string         "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool                                 "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *GetUserByID_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool                                 "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus                     "json:\"status\" graphql:\"status\""
+	Tags           []string                             "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time                           "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      *time.Time                           "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      *time.Time                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time                           "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *GetUserByID_User_Setting) GetEmailConfirmed() bool {
@@ -4197,7 +4225,7 @@ func (t *GetUserByID_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
-func (t *GetUserByID_User_Setting) GetDefaultOrg() *string {
+func (t *GetUserByID_User_Setting) GetDefaultOrg() *GetUserByID_User_Setting_DefaultOrg {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
 	}
@@ -4431,18 +4459,43 @@ func (t *GetUserByID_User) GetCreatedBy() *string {
 	return t.CreatedBy
 }
 
+type GetUserByIDWithOrgs_User_Setting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetUserByIDWithOrgs_User_Setting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetUserByIDWithOrgs_User_Setting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetUserByIDWithOrgs_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
 type GetUserByIDWithOrgs_User_Setting struct {
-	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool             "json:\"locked\" graphql:\"locked\""
-	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
-	Tags           []string         "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool                                         "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *GetUserByIDWithOrgs_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool                                         "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus                             "json:\"status\" graphql:\"status\""
+	Tags           []string                                     "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time                                   "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time                                   "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *GetUserByIDWithOrgs_User_Setting) GetEmailConfirmed() bool {
@@ -4451,7 +4504,7 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
-func (t *GetUserByIDWithOrgs_User_Setting) GetDefaultOrg() *string {
+func (t *GetUserByIDWithOrgs_User_Setting) GetDefaultOrg() *GetUserByIDWithOrgs_User_Setting_DefaultOrg {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
@@ -4678,18 +4731,43 @@ func (t *GetUserByIDWithOrgs_User) GetOrgMemberships() []*GetUserByIDWithOrgs_Us
 	return t.OrgMemberships
 }
 
+type GetAllUsers_Users_Edges_Node_Setting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
 type GetAllUsers_Users_Edges_Node_Setting struct {
-	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool             "json:\"locked\" graphql:\"locked\""
-	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
-	Tags           []string         "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool                                             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool                                             "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus                                 "json:\"status\" graphql:\"status\""
+	Tags           []string                                         "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time                                       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      *time.Time                                       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      *time.Time                                       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time                                       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
@@ -4698,7 +4776,7 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetDefaultOrg() *string {
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetDefaultOrg() *GetAllUsers_Users_Edges_Node_Setting_DefaultOrg {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
@@ -4933,18 +5011,43 @@ func (t *CreateUser_CreateUser_User_GroupMemberships) GetGroupID() string {
 	return t.GroupID
 }
 
+type CreateUser_CreateUser_User_Setting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *CreateUser_CreateUser_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
 type CreateUser_CreateUser_User_Setting struct {
-	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool             "json:\"locked\" graphql:\"locked\""
-	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
-	Tags           []string         "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool                                           "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *CreateUser_CreateUser_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool                                           "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus                               "json:\"status\" graphql:\"status\""
+	Tags           []string                                       "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time                                     "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      *time.Time                                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time                                     "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
@@ -4953,7 +5056,7 @@ func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
-func (t *CreateUser_CreateUser_User_Setting) GetDefaultOrg() *string {
+func (t *CreateUser_CreateUser_User_Setting) GetDefaultOrg() *CreateUser_CreateUser_User_Setting_DefaultOrg {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
@@ -5142,18 +5245,43 @@ func (t *UpdateUser_UpdateUser_User_OrgMemberships) GetID() string {
 	return t.ID
 }
 
+type UpdateUser_UpdateUser_User_Setting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *UpdateUser_UpdateUser_User_Setting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *UpdateUser_UpdateUser_User_Setting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *UpdateUser_UpdateUser_User_Setting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
 type UpdateUser_UpdateUser_User_Setting struct {
-	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	Locked         bool             "json:\"locked\" graphql:\"locked\""
-	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
-	Tags           []string         "json:\"tags\" graphql:\"tags\""
-	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	EmailConfirmed bool                                           "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *UpdateUser_UpdateUser_User_Setting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Locked         bool                                           "json:\"locked\" graphql:\"locked\""
+	Status         enums.UserStatus                               "json:\"status\" graphql:\"status\""
+	Tags           []string                                       "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time                                     "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      *time.Time                                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      *time.Time                                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time                                     "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
 func (t *UpdateUser_UpdateUser_User_Setting) GetEmailConfirmed() bool {
@@ -5162,7 +5290,7 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
-func (t *UpdateUser_UpdateUser_User_Setting) GetDefaultOrg() *string {
+func (t *UpdateUser_UpdateUser_User_Setting) GetDefaultOrg() *UpdateUser_UpdateUser_User_Setting_DefaultOrg {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
@@ -5340,21 +5468,45 @@ func (t *DeleteUser_DeleteUser) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type GetUserSettingByID_UserSetting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetUserSettingByID_UserSetting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
 type GetUserSettingByID_UserSetting struct {
-	ID             string           "json:\"id\" graphql:\"id\""
-	SilencedAt     *time.Time       "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
-	Status         enums.UserStatus "json:\"status\" graphql:\"status\""
-	DefaultOrg     *string          "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
-	SuspendedAt    *time.Time       "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
-	Tags           []string         "json:\"tags\" graphql:\"tags\""
-	Locked         bool             "json:\"locked\" graphql:\"locked\""
-	EmailConfirmed bool             "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
-	CreatedAt      *time.Time       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	DeletedAt      *time.Time       "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy      *string          "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	UpdatedAt      *time.Time       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID             string                                     "json:\"id\" graphql:\"id\""
+	SilencedAt     *time.Time                                 "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus                           "json:\"status\" graphql:\"status\""
+	DefaultOrg     *GetUserSettingByID_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                   "json:\"tags\" graphql:\"tags\""
+	Locked         bool                                       "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool                                       "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	CreatedAt      *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	DeletedAt      *time.Time                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	UpdatedAt      *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetUserSettingByID_UserSetting) GetID() string {
@@ -5375,17 +5527,11 @@ func (t *GetUserSettingByID_UserSetting) GetStatus() *enums.UserStatus {
 	}
 	return &t.Status
 }
-func (t *GetUserSettingByID_UserSetting) GetDefaultOrg() *string {
+func (t *GetUserSettingByID_UserSetting) GetDefaultOrg() *GetUserSettingByID_UserSetting_DefaultOrg {
 	if t == nil {
 		t = &GetUserSettingByID_UserSetting{}
 	}
 	return t.DefaultOrg
-}
-func (t *GetUserSettingByID_UserSetting) GetSuspendedAt() *time.Time {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.SuspendedAt
 }
 func (t *GetUserSettingByID_UserSetting) GetTags() []string {
 	if t == nil {
@@ -5440,6 +5586,421 @@ func (t *GetUserSettingByID_UserSetting) GetUpdatedBy() *string {
 		t = &GetUserSettingByID_UserSetting{}
 	}
 	return t.UpdatedBy
+}
+
+type GetUserSettings_UserSettings_Edges_Node_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetUserSettings_UserSettings_Edges_Node_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetUserSettings_UserSettings_Edges_Node_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetUserSettings_UserSettings_Edges_Node_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
+type GetUserSettings_UserSettings_Edges_Node struct {
+	ID             string                                              "json:\"id\" graphql:\"id\""
+	SilencedAt     *time.Time                                          "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus                                    "json:\"status\" graphql:\"status\""
+	DefaultOrg     *GetUserSettings_UserSettings_Edges_Node_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                            "json:\"tags\" graphql:\"tags\""
+	Locked         bool                                                "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool                                                "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	CreatedAt      *time.Time                                          "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                             "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	DeletedAt      *time.Time                                          "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                             "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	UpdatedAt      *time.Time                                          "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                             "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetUserSettings_UserSettings_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.SilencedAt
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return &t.Status
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetDefaultOrg() *GetUserSettings_UserSettings_Edges_Node_DefaultOrg {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.DefaultOrg
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetLocked() bool {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.Locked
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.EmailConfirmed
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.DeletedAt
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.DeletedBy
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetUserSettings_UserSettings_Edges struct {
+	Node *GetUserSettings_UserSettings_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetUserSettings_UserSettings_Edges) GetNode() *GetUserSettings_UserSettings_Edges_Node {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges{}
+	}
+	return t.Node
+}
+
+type GetUserSettings_UserSettings struct {
+	Edges []*GetUserSettings_UserSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetUserSettings_UserSettings) GetEdges() []*GetUserSettings_UserSettings_Edges {
+	if t == nil {
+		t = &GetUserSettings_UserSettings{}
+	}
+	return t.Edges
+}
+
+type GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
+type GetUserSettingWhere_UserSettings_Edges_Node struct {
+	ID             string                                                  "json:\"id\" graphql:\"id\""
+	SilencedAt     *time.Time                                              "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus                                        "json:\"status\" graphql:\"status\""
+	DefaultOrg     *GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                                "json:\"tags\" graphql:\"tags\""
+	Locked         bool                                                    "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool                                                    "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	CreatedAt      *time.Time                                              "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	DeletedAt      *time.Time                                              "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                                 "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	UpdatedAt      *time.Time                                              "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.SilencedAt
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return &t.Status
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetDefaultOrg() *GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.DefaultOrg
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetLocked() bool {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.Locked
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.EmailConfirmed
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.DeletedAt
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.DeletedBy
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+
+type GetUserSettingWhere_UserSettings_Edges struct {
+	Node *GetUserSettingWhere_UserSettings_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetUserSettingWhere_UserSettings_Edges) GetNode() *GetUserSettingWhere_UserSettings_Edges_Node {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges{}
+	}
+	return t.Node
+}
+
+type GetUserSettingWhere_UserSettings struct {
+	Edges []*GetUserSettingWhere_UserSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetUserSettingWhere_UserSettings) GetEdges() []*GetUserSettingWhere_UserSettings_Edges {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings{}
+	}
+	return t.Edges
+}
+
+type UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	PersonalOrg *bool  "json:\"personalOrg,omitempty\" graphql:\"personalOrg\""
+}
+
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg) GetID() string {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg{}
+	}
+	return t.ID
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg) GetName() string {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg{}
+	}
+	return t.Name
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg) GetPersonalOrg() *bool {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg{}
+	}
+	return t.PersonalOrg
+}
+
+type UpdateUserSetting_UpdateUserSetting_UserSetting struct {
+	ID             string                                                      "json:\"id\" graphql:\"id\""
+	SilencedAt     *time.Time                                                  "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         enums.UserStatus                                            "json:\"status\" graphql:\"status\""
+	DefaultOrg     *UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
+	Tags           []string                                                    "json:\"tags\" graphql:\"tags\""
+	Locked         bool                                                        "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool                                                        "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	CreatedAt      *time.Time                                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy      *string                                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	DeletedAt      *time.Time                                                  "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                                     "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	UpdatedAt      *time.Time                                                  "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetID() string {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.ID
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.SilencedAt
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetStatus() *enums.UserStatus {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return &t.Status
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetDefaultOrg() *UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.DefaultOrg
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetTags() []string {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.Tags
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetLocked() bool {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.Locked
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.EmailConfirmed
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.DeletedAt
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetDeletedBy() *string {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.DeletedBy
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateUserSetting_UpdateUserSetting struct {
+	UserSetting UpdateUserSetting_UpdateUserSetting_UserSetting "json:\"userSetting\" graphql:\"userSetting\""
+}
+
+func (t *UpdateUserSetting_UpdateUserSetting) GetUserSetting() *UpdateUserSetting_UpdateUserSetting_UserSetting {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting{}
+	}
+	return &t.UserSetting
 }
 
 type GetGroupByID struct {
@@ -5858,6 +6419,39 @@ func (t *GetUserSettingByID) GetUserSetting() *GetUserSettingByID_UserSetting {
 		t = &GetUserSettingByID{}
 	}
 	return &t.UserSetting
+}
+
+type GetUserSettings struct {
+	UserSettings GetUserSettings_UserSettings "json:\"userSettings\" graphql:\"userSettings\""
+}
+
+func (t *GetUserSettings) GetUserSettings() *GetUserSettings_UserSettings {
+	if t == nil {
+		t = &GetUserSettings{}
+	}
+	return &t.UserSettings
+}
+
+type GetUserSettingWhere struct {
+	UserSettings GetUserSettingWhere_UserSettings "json:\"userSettings\" graphql:\"userSettings\""
+}
+
+func (t *GetUserSettingWhere) GetUserSettings() *GetUserSettingWhere_UserSettings {
+	if t == nil {
+		t = &GetUserSettingWhere{}
+	}
+	return &t.UserSettings
+}
+
+type UpdateUserSetting struct {
+	UpdateUserSetting UpdateUserSetting_UpdateUserSetting "json:\"updateUserSetting\" graphql:\"updateUserSetting\""
+}
+
+func (t *UpdateUserSetting) GetUpdateUserSetting() *UpdateUserSetting_UpdateUserSetting {
+	if t == nil {
+		t = &UpdateUserSetting{}
+	}
+	return &t.UpdateUserSetting
 }
 
 const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
@@ -7196,7 +7790,11 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 		authProvider
 		setting {
 			emailConfirmed
-			defaultOrg
+			defaultOrg {
+				id
+				name
+				personalOrg
+			}
 			locked
 			status
 			tags
@@ -7256,7 +7854,11 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 		authProvider
 		setting {
 			emailConfirmed
-			defaultOrg
+			defaultOrg {
+				id
+				name
+				personalOrg
+			}
 			locked
 			status
 			tags
@@ -7317,7 +7919,11 @@ const GetAllUsersDocument = `query GetAllUsers {
 				authProvider
 				setting {
 					emailConfirmed
-					defaultOrg
+					defaultOrg {
+						id
+						name
+						personalOrg
+					}
 					locked
 					status
 					tags
@@ -7376,7 +7982,11 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			}
 			setting {
 				emailConfirmed
-				defaultOrg
+				defaultOrg {
+					id
+					name
+					personalOrg
+				}
 				locked
 				status
 				tags
@@ -7430,7 +8040,11 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 			}
 			setting {
 				emailConfirmed
-				defaultOrg
+				defaultOrg {
+					id
+					name
+					personalOrg
+				}
 				locked
 				status
 				tags
@@ -7493,8 +8107,11 @@ const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID
 		id
 		silencedAt
 		status
-		defaultOrg
-		suspendedAt
+		defaultOrg {
+			id
+			name
+			personalOrg
+		}
 		tags
 		locked
 		emailConfirmed
@@ -7515,6 +8132,135 @@ func (c *Client) GetUserSettingByID(ctx context.Context, userSettingID string, i
 
 	var res GetUserSettingByID
 	if err := c.Client.Post(ctx, "GetUserSettingByID", GetUserSettingByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetUserSettingsDocument = `query GetUserSettings {
+	userSettings {
+		edges {
+			node {
+				id
+				silencedAt
+				status
+				defaultOrg {
+					id
+					name
+					personalOrg
+				}
+				tags
+				locked
+				emailConfirmed
+				createdAt
+				createdBy
+				deletedAt
+				deletedBy
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetUserSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetUserSettings, error) {
+	vars := map[string]interface{}{}
+
+	var res GetUserSettings
+	if err := c.Client.Post(ctx, "GetUserSettings", GetUserSettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetUserSettingWhereDocument = `query GetUserSettingWhere ($where: UserSettingWhereInput!) {
+	userSettings(where: $where) {
+		edges {
+			node {
+				id
+				silencedAt
+				status
+				defaultOrg {
+					id
+					name
+					personalOrg
+				}
+				tags
+				locked
+				emailConfirmed
+				createdAt
+				createdBy
+				deletedAt
+				deletedBy
+				updatedAt
+				updatedBy
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetUserSettingWhere(ctx context.Context, where UserSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingWhere, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res GetUserSettingWhere
+	if err := c.Client.Post(ctx, "GetUserSettingWhere", GetUserSettingWhereDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateUserSettingDocument = `mutation UpdateUserSetting ($updateUserSettingId: ID!, $input: UpdateUserSettingInput!) {
+	updateUserSetting(id: $updateUserSettingId, input: $input) {
+		userSetting {
+			id
+			silencedAt
+			status
+			defaultOrg {
+				id
+				name
+				personalOrg
+			}
+			tags
+			locked
+			emailConfirmed
+			createdAt
+			createdBy
+			deletedAt
+			deletedBy
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) UpdateUserSetting(ctx context.Context, updateUserSettingID string, input UpdateUserSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserSetting, error) {
+	vars := map[string]interface{}{
+		"updateUserSettingId": updateUserSettingID,
+		"input":               input,
+	}
+
+	var res UpdateUserSetting
+	if err := c.Client.Post(ctx, "UpdateUserSetting", UpdateUserSettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -7564,4 +8310,7 @@ var DocumentOperationNames = map[string]string{
 	UpdateUserDocument:                 "UpdateUser",
 	DeleteUserDocument:                 "DeleteUser",
 	GetUserSettingByIDDocument:         "GetUserSettingByID",
+	GetUserSettingsDocument:            "GetUserSettings",
+	GetUserSettingWhereDocument:        "GetUserSettingWhere",
+	UpdateUserSettingDocument:          "UpdateUserSetting",
 }

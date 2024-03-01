@@ -115,6 +115,10 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		}
 	}
 
+	if err := h.addDefaultOrgToUserQuery(viewerCtx, entUser); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
 	claims := createClaims(entUser)
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)

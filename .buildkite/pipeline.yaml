@@ -159,7 +159,7 @@ steps:
       BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
     plugins:
       - datumforge/apollo#init:
-          graph-ref: datum@current
+          graph-ref: Datum@current
           subgraph: datum
 
 # - group: ":database: atlas migrate"

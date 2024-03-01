@@ -12,7 +12,7 @@ import (
 
 	"github.com/datumforge/datum/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/pkg/sessions"
 )
 
 var (

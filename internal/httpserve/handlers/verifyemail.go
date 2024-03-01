@@ -11,9 +11,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/rout"
-	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 // VerifyRequest holds the fields that should be included on a request to the `/verify` endpoint

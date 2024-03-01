@@ -11,7 +11,7 @@ linters-settings:
 run:
   skip-files:
     - internal/entclean/main.go
-    - internal/testutils
+    - pkg/testutils
     - .buildkite/*
     - .github/*
     - docker/*

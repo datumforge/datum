@@ -8,8 +8,8 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/sessions"
-	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 const (

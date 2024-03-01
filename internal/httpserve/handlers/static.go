@@ -6,8 +6,8 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/rout"
-	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 // OpenIDConfiguration returns a JSON document with the OpenID configuration as defined by the OpenID

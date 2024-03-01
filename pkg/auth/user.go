@@ -5,8 +5,8 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/utils/ulids"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 // GetActorUserID returns the user from the echo.Context

@@ -21,15 +21,15 @@ const (
 // any external packages must use the jsonschema description tags to add comments
 var includedPackages = []string{
 	"./config",
-	"./internal/cache",
+	"./pkg/cache",
 	"./internal/entdb",
 	"./internal/httpserve/handlers",
-	"./internal/otelx",
-	"./internal/sessions",
-	"./internal/tokens",
-	"./internal/utils/emails",
-	"./internal/utils/sentry",
-	"./internal/providers",
+	"./pkg/otelx",
+	"./pkg/sessions",
+	"./pkg/tokens",
+	"./pkg/utils/emails",
+	"./pkg/utils/sentry",
+	"./pkg/providers",
 	"./pkg/analytics",
 }
 

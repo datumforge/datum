@@ -13,9 +13,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/passwd"
-	"github.com/datumforge/datum/internal/rout"
-	"github.com/datumforge/datum/internal/utils/marionette"
+	"github.com/datumforge/datum/pkg/passwd"
+	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
 const (

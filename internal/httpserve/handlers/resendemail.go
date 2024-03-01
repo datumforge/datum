@@ -11,7 +11,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/rout"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // ResendRequest contains fields for a resend email verification request

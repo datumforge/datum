@@ -16,8 +16,8 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/graphapi"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	auth "github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
 func TestQueryUser(t *testing.T) {

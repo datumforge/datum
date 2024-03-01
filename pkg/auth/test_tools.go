@@ -6,8 +6,8 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 // newValidClaims returns claims with a fake subject for testing purposes ONLY

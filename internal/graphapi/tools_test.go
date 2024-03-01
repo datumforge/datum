@@ -19,14 +19,14 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/utils/emails"
-	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/utils/emails"
+	"github.com/datumforge/datum/pkg/utils/marionette"
 
 	"github.com/datumforge/datum/internal/graphapi"
-	"github.com/datumforge/datum/internal/testutils"
+	"github.com/datumforge/datum/pkg/testutils"
 )
 
 var (

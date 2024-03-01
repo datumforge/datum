@@ -13,14 +13,14 @@ import (
 	"github.com/knadh/koanf/v2"
 	"github.com/mcuadros/go-defaults"
 
-	"github.com/datumforge/datum/internal/cache"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/otelx"
-	"github.com/datumforge/datum/internal/sessions"
-	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/emails"
-	"github.com/datumforge/datum/internal/utils/sentry"
 	"github.com/datumforge/datum/pkg/analytics/posthog"
+	"github.com/datumforge/datum/pkg/cache"
+	"github.com/datumforge/datum/pkg/otelx"
+	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/tokens"
+	"github.com/datumforge/datum/pkg/utils/emails"
+	"github.com/datumforge/datum/pkg/utils/sentry"
 )
 
 var (

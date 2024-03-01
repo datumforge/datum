@@ -11,8 +11,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/rout"
-	"github.com/datumforge/datum/internal/utils/marionette"
+	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
 // ForgotPasswordRequest contains fields for a forgot password request

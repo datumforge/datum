@@ -14,8 +14,8 @@ import (
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
-	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/sessions"
 )
 
 // Login creates a login request to the Datum API

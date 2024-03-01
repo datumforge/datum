@@ -5,7 +5,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/constants"
-	"github.com/datumforge/datum/internal/utils/cli/useragent"
+	"github.com/datumforge/datum/pkg/utils/cli/useragent"
 )
 
 // VersionCmd is the version command

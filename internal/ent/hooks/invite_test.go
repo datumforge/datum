@@ -9,9 +9,9 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/utils/ulids"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 func TestSetRequestor(t *testing.T) {

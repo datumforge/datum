@@ -8,7 +8,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
-	"github.com/datumforge/datum/internal/rout"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // HookUserSetting runs on user settings mutations and validates input on update

@@ -13,7 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
-	"github.com/datumforge/datum/internal/keygen"
+	"github.com/datumforge/datum/pkg/keygen"
 )
 
 // PersonalAccessToken holds the schema definition for the PersonalAccessToken entity.

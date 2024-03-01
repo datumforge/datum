@@ -13,7 +13,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 func TestOauthRegister(t *testing.T) {

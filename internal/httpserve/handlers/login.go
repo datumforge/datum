@@ -10,10 +10,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/passwd"
-	"github.com/datumforge/datum/internal/rout"
-	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/passwd"
+	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 // LoginRequest to authenticate with the Datum Sever

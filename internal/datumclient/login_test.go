@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
 
-	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/pkg/sessions"
 )
 
 func TestGetTokensFromCookies(t *testing.T) {

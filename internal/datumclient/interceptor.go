@@ -8,7 +8,7 @@ import (
 
 	"github.com/Yamashou/gqlgenc/clientv2"
 
-	"github.com/datumforge/datum/internal/sessions"
+	"github.com/datumforge/datum/pkg/sessions"
 )
 
 // WithAuthorization adds the authorization header and session to the client request

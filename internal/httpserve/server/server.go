@@ -7,9 +7,9 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
-	echodebug "github.com/datumforge/datum/internal/httpserve/middleware/debug"
 	"github.com/datumforge/datum/internal/httpserve/route"
-	"github.com/datumforge/datum/internal/tokens"
+	echodebug "github.com/datumforge/datum/pkg/middleware/debug"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 type Server struct {

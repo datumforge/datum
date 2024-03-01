@@ -19,8 +19,8 @@ import (
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
-	"github.com/datumforge/datum/internal/providers/github"
-	"github.com/datumforge/datum/internal/providers/google"
+	"github.com/datumforge/datum/pkg/providers/github"
+	"github.com/datumforge/datum/pkg/providers/google"
 )
 
 var loginCmd = &cobra.Command{

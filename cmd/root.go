@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"github.com/datumforge/datum/internal/utils/sentry"
+	"github.com/datumforge/datum/pkg/utils/sentry"
 )
 
 const appName = "datum"

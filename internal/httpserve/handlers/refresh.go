@@ -7,8 +7,8 @@ import (
 	echo "github.com/datumforge/echox"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/rout"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // RefreshRequest holds the fields that should be included on a request to the `/refresh` endpoint

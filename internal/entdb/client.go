@@ -13,7 +13,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/interceptors"
-	"github.com/datumforge/datum/internal/testutils"
+	"github.com/datumforge/datum/pkg/testutils"
 )
 
 type client struct {

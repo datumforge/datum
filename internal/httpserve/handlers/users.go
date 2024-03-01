@@ -6,7 +6,7 @@ import (
 
 	"github.com/oklog/ulid/v2"
 
-	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 // User holds data specific to the datum user for the REST handlers for

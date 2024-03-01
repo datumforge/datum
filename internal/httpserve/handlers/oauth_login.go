@@ -15,11 +15,11 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/providers/github"
-	"github.com/datumforge/datum/internal/providers/google"
-	oauth "github.com/datumforge/datum/internal/providers/oauth2"
-	"github.com/datumforge/datum/internal/sessions"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/providers/github"
+	"github.com/datumforge/datum/pkg/providers/google"
+	oauth "github.com/datumforge/datum/pkg/providers/oauth2"
+	"github.com/datumforge/datum/pkg/sessions"
 )
 
 // OauthProviderConfig represents the configuration for OAuth providers such as Github and Google

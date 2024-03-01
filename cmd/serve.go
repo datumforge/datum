@@ -9,13 +9,13 @@ import (
 
 	"github.com/datumforge/fgax"
 
-	"github.com/datumforge/datum/internal/cache"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
-	"github.com/datumforge/datum/internal/otelx"
+	"github.com/datumforge/datum/pkg/cache"
+	"github.com/datumforge/datum/pkg/otelx"
 )
 
 var serveCmd = &cobra.Command{

@@ -23,13 +23,13 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
-	"github.com/datumforge/datum/internal/sessions"
-	"github.com/datumforge/datum/internal/testutils"
-	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/emails"
-	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/pkg/analytics"
+	"github.com/datumforge/datum/pkg/middleware/transaction"
+	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/testutils"
+	"github.com/datumforge/datum/pkg/tokens"
+	"github.com/datumforge/datum/pkg/utils/emails"
+	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
 var (

@@ -12,7 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
-	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
+	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
 
 // updateUserLastSeen updates the last seen timestamp of the user

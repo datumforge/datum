@@ -7,8 +7,8 @@ import (
 	"github.com/datumforge/echox/middleware"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
-	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
+	"github.com/datumforge/datum/pkg/middleware/ratelimit"
+	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
 
 const (

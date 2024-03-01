@@ -9,7 +9,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
-	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/pkg/tokens"
 )
 
 var userGetCmd = &cobra.Command{

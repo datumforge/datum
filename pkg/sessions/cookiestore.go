@@ -13,6 +13,7 @@ const (
 	UserTypeKey       = "userType"
 	UsernameKey       = "username"
 	EmailKey          = "email"
+	WebAuthnKey       = "webauthn"
 )
 
 type Store[T any] interface {
@@ -24,7 +25,7 @@ type Store[T any] interface {
 	Save(w http.ResponseWriter, session *Session[T]) error
 	// Destroy removes (expires) a named Session
 	Destroy(w http.ResponseWriter, name string)
-	// GetUserFromSession returns the key, which should be the sessionID, in the map
+	// GetSessionIDFromCookie returns the key, which should be the sessionID, in the map
 	GetSessionIDFromCookie(sess *Session[T]) string
 	// GetSessionDataFromCookie returns the value stored map
 	GetSessionDataFromCookie(sess *Session[T]) any

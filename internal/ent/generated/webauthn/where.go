@@ -87,16 +87,6 @@ func UpdatedBy(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
-func DeletedAt(v time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEQ(FieldDeletedAt, v))
-}
-
-// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEQ(FieldDeletedBy, v))
-}
-
 // OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
 func OwnerID(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldOwnerID, v))
@@ -107,13 +97,8 @@ func Name(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldName, v))
 }
 
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEQ(FieldUserID, v))
-}
-
 // CredentialID applies equality check predicate on the "credential_id" field. It's identical to CredentialIDEQ.
-func CredentialID(v string) predicate.Webauthn {
+func CredentialID(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldCredentialID, v))
 }
 
@@ -128,12 +113,12 @@ func AttestationType(v string) predicate.Webauthn {
 }
 
 // Aaguid applies equality check predicate on the "aaguid" field. It's identical to AaguidEQ.
-func Aaguid(v string) predicate.Webauthn {
+func Aaguid(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldAaguid, v))
 }
 
 // SignCount applies equality check predicate on the "sign_count" field. It's identical to SignCountEQ.
-func SignCount(v int) predicate.Webauthn {
+func SignCount(v int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldSignCount, v))
 }
 
@@ -145,6 +130,16 @@ func BackupEligible(v bool) predicate.Webauthn {
 // BackupState applies equality check predicate on the "backup_state" field. It's identical to BackupStateEQ.
 func BackupState(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldBackupState, v))
+}
+
+// UserPresent applies equality check predicate on the "user_present" field. It's identical to UserPresentEQ.
+func UserPresent(v bool) predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldEQ(FieldUserPresent, v))
+}
+
+// UserVerified applies equality check predicate on the "user_verified" field. It's identical to UserVerifiedEQ.
+func UserVerified(v bool) predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldEQ(FieldUserVerified, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -397,131 +392,6 @@ func UpdatedByContainsFold(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldContainsFold(FieldUpdatedBy, v))
 }
 
-// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
-func DeletedAtEQ(v time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
-func DeletedAtNEQ(v time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNEQ(FieldDeletedAt, v))
-}
-
-// DeletedAtIn applies the In predicate on the "deleted_at" field.
-func DeletedAtIn(vs ...time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
-func DeletedAtNotIn(vs ...time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotIn(FieldDeletedAt, vs...))
-}
-
-// DeletedAtGT applies the GT predicate on the "deleted_at" field.
-func DeletedAtGT(v time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldGT(FieldDeletedAt, v))
-}
-
-// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
-func DeletedAtGTE(v time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldGTE(FieldDeletedAt, v))
-}
-
-// DeletedAtLT applies the LT predicate on the "deleted_at" field.
-func DeletedAtLT(v time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldLT(FieldDeletedAt, v))
-}
-
-// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
-func DeletedAtLTE(v time.Time) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldLTE(FieldDeletedAt, v))
-}
-
-// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
-func DeletedAtIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldDeletedAt))
-}
-
-// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
-func DeletedAtNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldDeletedAt))
-}
-
-// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEQ(FieldDeletedBy, v))
-}
-
-// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNEQ(FieldDeletedBy, v))
-}
-
-// DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIn(FieldDeletedBy, vs...))
-}
-
-// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotIn(FieldDeletedBy, vs...))
-}
-
-// DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldGT(FieldDeletedBy, v))
-}
-
-// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldGTE(FieldDeletedBy, v))
-}
-
-// DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldLT(FieldDeletedBy, v))
-}
-
-// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldLTE(FieldDeletedBy, v))
-}
-
-// DeletedByContains applies the Contains predicate on the "deleted_by" field.
-func DeletedByContains(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContains(FieldDeletedBy, v))
-}
-
-// DeletedByHasPrefix applies the HasPrefix predicate on the "deleted_by" field.
-func DeletedByHasPrefix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasPrefix(FieldDeletedBy, v))
-}
-
-// DeletedByHasSuffix applies the HasSuffix predicate on the "deleted_by" field.
-func DeletedByHasSuffix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasSuffix(FieldDeletedBy, v))
-}
-
-// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
-func DeletedByIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldDeletedBy))
-}
-
-// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
-func DeletedByNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldDeletedBy))
-}
-
-// DeletedByEqualFold applies the EqualFold predicate on the "deleted_by" field.
-func DeletedByEqualFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEqualFold(FieldDeletedBy, v))
-}
-
-// DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
-func DeletedByContainsFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContainsFold(FieldDeletedBy, v))
-}
-
 // OwnerIDEQ applies the EQ predicate on the "owner_id" field.
 func OwnerIDEQ(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldOwnerID, v))
@@ -652,124 +522,44 @@ func NameContainsFold(v string) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldContainsFold(FieldName, v))
 }
 
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEQ(FieldUserID, v))
-}
-
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNEQ(FieldUserID, v))
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIn(FieldUserID, vs...))
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDContains applies the Contains predicate on the "user_id" field.
-func UserIDContains(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContains(FieldUserID, v))
-}
-
-// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
-func UserIDHasPrefix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasPrefix(FieldUserID, v))
-}
-
-// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
-func UserIDHasSuffix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasSuffix(FieldUserID, v))
-}
-
-// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
-func UserIDEqualFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEqualFold(FieldUserID, v))
-}
-
-// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
-func UserIDContainsFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContainsFold(FieldUserID, v))
-}
-
 // CredentialIDEQ applies the EQ predicate on the "credential_id" field.
-func CredentialIDEQ(v string) predicate.Webauthn {
+func CredentialIDEQ(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldCredentialID, v))
 }
 
 // CredentialIDNEQ applies the NEQ predicate on the "credential_id" field.
-func CredentialIDNEQ(v string) predicate.Webauthn {
+func CredentialIDNEQ(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNEQ(FieldCredentialID, v))
 }
 
 // CredentialIDIn applies the In predicate on the "credential_id" field.
-func CredentialIDIn(vs ...string) predicate.Webauthn {
+func CredentialIDIn(vs ...[]byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldIn(FieldCredentialID, vs...))
 }
 
 // CredentialIDNotIn applies the NotIn predicate on the "credential_id" field.
-func CredentialIDNotIn(vs ...string) predicate.Webauthn {
+func CredentialIDNotIn(vs ...[]byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNotIn(FieldCredentialID, vs...))
 }
 
 // CredentialIDGT applies the GT predicate on the "credential_id" field.
-func CredentialIDGT(v string) predicate.Webauthn {
+func CredentialIDGT(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldGT(FieldCredentialID, v))
 }
 
 // CredentialIDGTE applies the GTE predicate on the "credential_id" field.
-func CredentialIDGTE(v string) predicate.Webauthn {
+func CredentialIDGTE(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldGTE(FieldCredentialID, v))
 }
 
 // CredentialIDLT applies the LT predicate on the "credential_id" field.
-func CredentialIDLT(v string) predicate.Webauthn {
+func CredentialIDLT(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLT(FieldCredentialID, v))
 }
 
 // CredentialIDLTE applies the LTE predicate on the "credential_id" field.
-func CredentialIDLTE(v string) predicate.Webauthn {
+func CredentialIDLTE(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLTE(FieldCredentialID, v))
-}
-
-// CredentialIDContains applies the Contains predicate on the "credential_id" field.
-func CredentialIDContains(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContains(FieldCredentialID, v))
-}
-
-// CredentialIDHasPrefix applies the HasPrefix predicate on the "credential_id" field.
-func CredentialIDHasPrefix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasPrefix(FieldCredentialID, v))
-}
-
-// CredentialIDHasSuffix applies the HasSuffix predicate on the "credential_id" field.
-func CredentialIDHasSuffix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasSuffix(FieldCredentialID, v))
 }
 
 // CredentialIDIsNil applies the IsNil predicate on the "credential_id" field.
@@ -780,16 +570,6 @@ func CredentialIDIsNil() predicate.Webauthn {
 // CredentialIDNotNil applies the NotNil predicate on the "credential_id" field.
 func CredentialIDNotNil() predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNotNull(FieldCredentialID))
-}
-
-// CredentialIDEqualFold applies the EqualFold predicate on the "credential_id" field.
-func CredentialIDEqualFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEqualFold(FieldCredentialID, v))
-}
-
-// CredentialIDContainsFold applies the ContainsFold predicate on the "credential_id" field.
-func CredentialIDContainsFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContainsFold(FieldCredentialID, v))
 }
 
 // PublicKeyEQ applies the EQ predicate on the "public_key" field.
@@ -918,158 +698,83 @@ func AttestationTypeContainsFold(v string) predicate.Webauthn {
 }
 
 // AaguidEQ applies the EQ predicate on the "aaguid" field.
-func AaguidEQ(v string) predicate.Webauthn {
+func AaguidEQ(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldAaguid, v))
 }
 
 // AaguidNEQ applies the NEQ predicate on the "aaguid" field.
-func AaguidNEQ(v string) predicate.Webauthn {
+func AaguidNEQ(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNEQ(FieldAaguid, v))
 }
 
 // AaguidIn applies the In predicate on the "aaguid" field.
-func AaguidIn(vs ...string) predicate.Webauthn {
+func AaguidIn(vs ...[]byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldIn(FieldAaguid, vs...))
 }
 
 // AaguidNotIn applies the NotIn predicate on the "aaguid" field.
-func AaguidNotIn(vs ...string) predicate.Webauthn {
+func AaguidNotIn(vs ...[]byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNotIn(FieldAaguid, vs...))
 }
 
 // AaguidGT applies the GT predicate on the "aaguid" field.
-func AaguidGT(v string) predicate.Webauthn {
+func AaguidGT(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldGT(FieldAaguid, v))
 }
 
 // AaguidGTE applies the GTE predicate on the "aaguid" field.
-func AaguidGTE(v string) predicate.Webauthn {
+func AaguidGTE(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldGTE(FieldAaguid, v))
 }
 
 // AaguidLT applies the LT predicate on the "aaguid" field.
-func AaguidLT(v string) predicate.Webauthn {
+func AaguidLT(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLT(FieldAaguid, v))
 }
 
 // AaguidLTE applies the LTE predicate on the "aaguid" field.
-func AaguidLTE(v string) predicate.Webauthn {
+func AaguidLTE(v []byte) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLTE(FieldAaguid, v))
 }
 
-// AaguidContains applies the Contains predicate on the "aaguid" field.
-func AaguidContains(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContains(FieldAaguid, v))
-}
-
-// AaguidHasPrefix applies the HasPrefix predicate on the "aaguid" field.
-func AaguidHasPrefix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasPrefix(FieldAaguid, v))
-}
-
-// AaguidHasSuffix applies the HasSuffix predicate on the "aaguid" field.
-func AaguidHasSuffix(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldHasSuffix(FieldAaguid, v))
-}
-
-// AaguidIsNil applies the IsNil predicate on the "aaguid" field.
-func AaguidIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldAaguid))
-}
-
-// AaguidNotNil applies the NotNil predicate on the "aaguid" field.
-func AaguidNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldAaguid))
-}
-
-// AaguidEqualFold applies the EqualFold predicate on the "aaguid" field.
-func AaguidEqualFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldEqualFold(FieldAaguid, v))
-}
-
-// AaguidContainsFold applies the ContainsFold predicate on the "aaguid" field.
-func AaguidContainsFold(v string) predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldContainsFold(FieldAaguid, v))
-}
-
 // SignCountEQ applies the EQ predicate on the "sign_count" field.
-func SignCountEQ(v int) predicate.Webauthn {
+func SignCountEQ(v int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldSignCount, v))
 }
 
 // SignCountNEQ applies the NEQ predicate on the "sign_count" field.
-func SignCountNEQ(v int) predicate.Webauthn {
+func SignCountNEQ(v int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNEQ(FieldSignCount, v))
 }
 
 // SignCountIn applies the In predicate on the "sign_count" field.
-func SignCountIn(vs ...int) predicate.Webauthn {
+func SignCountIn(vs ...int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldIn(FieldSignCount, vs...))
 }
 
 // SignCountNotIn applies the NotIn predicate on the "sign_count" field.
-func SignCountNotIn(vs ...int) predicate.Webauthn {
+func SignCountNotIn(vs ...int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNotIn(FieldSignCount, vs...))
 }
 
 // SignCountGT applies the GT predicate on the "sign_count" field.
-func SignCountGT(v int) predicate.Webauthn {
+func SignCountGT(v int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldGT(FieldSignCount, v))
 }
 
 // SignCountGTE applies the GTE predicate on the "sign_count" field.
-func SignCountGTE(v int) predicate.Webauthn {
+func SignCountGTE(v int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldGTE(FieldSignCount, v))
 }
 
 // SignCountLT applies the LT predicate on the "sign_count" field.
-func SignCountLT(v int) predicate.Webauthn {
+func SignCountLT(v int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLT(FieldSignCount, v))
 }
 
 // SignCountLTE applies the LTE predicate on the "sign_count" field.
-func SignCountLTE(v int) predicate.Webauthn {
+func SignCountLTE(v int32) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldLTE(FieldSignCount, v))
-}
-
-// SignCountIsNil applies the IsNil predicate on the "sign_count" field.
-func SignCountIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldSignCount))
-}
-
-// SignCountNotNil applies the NotNil predicate on the "sign_count" field.
-func SignCountNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldSignCount))
-}
-
-// TransportsIsNil applies the IsNil predicate on the "transports" field.
-func TransportsIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldTransports))
-}
-
-// TransportsNotNil applies the NotNil predicate on the "transports" field.
-func TransportsNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldTransports))
-}
-
-// FlagsIsNil applies the IsNil predicate on the "flags" field.
-func FlagsIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldFlags))
-}
-
-// FlagsNotNil applies the NotNil predicate on the "flags" field.
-func FlagsNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldFlags))
-}
-
-// AuthenticatorIsNil applies the IsNil predicate on the "authenticator" field.
-func AuthenticatorIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldAuthenticator))
-}
-
-// AuthenticatorNotNil applies the NotNil predicate on the "authenticator" field.
-func AuthenticatorNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldAuthenticator))
 }
 
 // BackupEligibleEQ applies the EQ predicate on the "backup_eligible" field.
@@ -1082,16 +787,6 @@ func BackupEligibleNEQ(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNEQ(FieldBackupEligible, v))
 }
 
-// BackupEligibleIsNil applies the IsNil predicate on the "backup_eligible" field.
-func BackupEligibleIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldBackupEligible))
-}
-
-// BackupEligibleNotNil applies the NotNil predicate on the "backup_eligible" field.
-func BackupEligibleNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldBackupEligible))
-}
-
 // BackupStateEQ applies the EQ predicate on the "backup_state" field.
 func BackupStateEQ(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldEQ(FieldBackupState, v))
@@ -1102,14 +797,24 @@ func BackupStateNEQ(v bool) predicate.Webauthn {
 	return predicate.Webauthn(sql.FieldNEQ(FieldBackupState, v))
 }
 
-// BackupStateIsNil applies the IsNil predicate on the "backup_state" field.
-func BackupStateIsNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldIsNull(FieldBackupState))
+// UserPresentEQ applies the EQ predicate on the "user_present" field.
+func UserPresentEQ(v bool) predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldEQ(FieldUserPresent, v))
 }
 
-// BackupStateNotNil applies the NotNil predicate on the "backup_state" field.
-func BackupStateNotNil() predicate.Webauthn {
-	return predicate.Webauthn(sql.FieldNotNull(FieldBackupState))
+// UserPresentNEQ applies the NEQ predicate on the "user_present" field.
+func UserPresentNEQ(v bool) predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNEQ(FieldUserPresent, v))
+}
+
+// UserVerifiedEQ applies the EQ predicate on the "user_verified" field.
+func UserVerifiedEQ(v bool) predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldEQ(FieldUserVerified, v))
+}
+
+// UserVerifiedNEQ applies the NEQ predicate on the "user_verified" field.
+func UserVerifiedNEQ(v bool) predicate.Webauthn {
+	return predicate.Webauthn(sql.FieldNEQ(FieldUserVerified, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

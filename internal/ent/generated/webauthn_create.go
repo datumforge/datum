@@ -77,34 +77,6 @@ func (wc *WebauthnCreate) SetNillableUpdatedBy(s *string) *WebauthnCreate {
 	return wc
 }
 
-// SetDeletedAt sets the "deleted_at" field.
-func (wc *WebauthnCreate) SetDeletedAt(t time.Time) *WebauthnCreate {
-	wc.mutation.SetDeletedAt(t)
-	return wc
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (wc *WebauthnCreate) SetNillableDeletedAt(t *time.Time) *WebauthnCreate {
-	if t != nil {
-		wc.SetDeletedAt(*t)
-	}
-	return wc
-}
-
-// SetDeletedBy sets the "deleted_by" field.
-func (wc *WebauthnCreate) SetDeletedBy(s string) *WebauthnCreate {
-	wc.mutation.SetDeletedBy(s)
-	return wc
-}
-
-// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (wc *WebauthnCreate) SetNillableDeletedBy(s *string) *WebauthnCreate {
-	if s != nil {
-		wc.SetDeletedBy(*s)
-	}
-	return wc
-}
-
 // SetOwnerID sets the "owner_id" field.
 func (wc *WebauthnCreate) SetOwnerID(s string) *WebauthnCreate {
 	wc.mutation.SetOwnerID(s)
@@ -117,23 +89,9 @@ func (wc *WebauthnCreate) SetName(s string) *WebauthnCreate {
 	return wc
 }
 
-// SetUserID sets the "user_id" field.
-func (wc *WebauthnCreate) SetUserID(s string) *WebauthnCreate {
-	wc.mutation.SetUserID(s)
-	return wc
-}
-
 // SetCredentialID sets the "credential_id" field.
-func (wc *WebauthnCreate) SetCredentialID(s string) *WebauthnCreate {
-	wc.mutation.SetCredentialID(s)
-	return wc
-}
-
-// SetNillableCredentialID sets the "credential_id" field if the given value is not nil.
-func (wc *WebauthnCreate) SetNillableCredentialID(s *string) *WebauthnCreate {
-	if s != nil {
-		wc.SetCredentialID(*s)
-	}
+func (wc *WebauthnCreate) SetCredentialID(b []byte) *WebauthnCreate {
+	wc.mutation.SetCredentialID(b)
 	return wc
 }
 
@@ -158,48 +116,20 @@ func (wc *WebauthnCreate) SetNillableAttestationType(s *string) *WebauthnCreate 
 }
 
 // SetAaguid sets the "aaguid" field.
-func (wc *WebauthnCreate) SetAaguid(s string) *WebauthnCreate {
-	wc.mutation.SetAaguid(s)
-	return wc
-}
-
-// SetNillableAaguid sets the "aaguid" field if the given value is not nil.
-func (wc *WebauthnCreate) SetNillableAaguid(s *string) *WebauthnCreate {
-	if s != nil {
-		wc.SetAaguid(*s)
-	}
+func (wc *WebauthnCreate) SetAaguid(b []byte) *WebauthnCreate {
+	wc.mutation.SetAaguid(b)
 	return wc
 }
 
 // SetSignCount sets the "sign_count" field.
-func (wc *WebauthnCreate) SetSignCount(i int) *WebauthnCreate {
+func (wc *WebauthnCreate) SetSignCount(i int32) *WebauthnCreate {
 	wc.mutation.SetSignCount(i)
-	return wc
-}
-
-// SetNillableSignCount sets the "sign_count" field if the given value is not nil.
-func (wc *WebauthnCreate) SetNillableSignCount(i *int) *WebauthnCreate {
-	if i != nil {
-		wc.SetSignCount(*i)
-	}
 	return wc
 }
 
 // SetTransports sets the "transports" field.
 func (wc *WebauthnCreate) SetTransports(s []string) *WebauthnCreate {
 	wc.mutation.SetTransports(s)
-	return wc
-}
-
-// SetFlags sets the "flags" field.
-func (wc *WebauthnCreate) SetFlags(s []string) *WebauthnCreate {
-	wc.mutation.SetFlags(s)
-	return wc
-}
-
-// SetAuthenticator sets the "authenticator" field.
-func (wc *WebauthnCreate) SetAuthenticator(s []string) *WebauthnCreate {
-	wc.mutation.SetAuthenticator(s)
 	return wc
 }
 
@@ -227,6 +157,34 @@ func (wc *WebauthnCreate) SetBackupState(b bool) *WebauthnCreate {
 func (wc *WebauthnCreate) SetNillableBackupState(b *bool) *WebauthnCreate {
 	if b != nil {
 		wc.SetBackupState(*b)
+	}
+	return wc
+}
+
+// SetUserPresent sets the "user_present" field.
+func (wc *WebauthnCreate) SetUserPresent(b bool) *WebauthnCreate {
+	wc.mutation.SetUserPresent(b)
+	return wc
+}
+
+// SetNillableUserPresent sets the "user_present" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableUserPresent(b *bool) *WebauthnCreate {
+	if b != nil {
+		wc.SetUserPresent(*b)
+	}
+	return wc
+}
+
+// SetUserVerified sets the "user_verified" field.
+func (wc *WebauthnCreate) SetUserVerified(b bool) *WebauthnCreate {
+	wc.mutation.SetUserVerified(b)
+	return wc
+}
+
+// SetNillableUserVerified sets the "user_verified" field if the given value is not nil.
+func (wc *WebauthnCreate) SetNillableUserVerified(b *bool) *WebauthnCreate {
+	if b != nil {
+		wc.SetUserVerified(*b)
 	}
 	return wc
 }
@@ -301,6 +259,22 @@ func (wc *WebauthnCreate) defaults() error {
 		v := webauthn.DefaultUpdatedAt()
 		wc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := wc.mutation.BackupEligible(); !ok {
+		v := webauthn.DefaultBackupEligible
+		wc.mutation.SetBackupEligible(v)
+	}
+	if _, ok := wc.mutation.BackupState(); !ok {
+		v := webauthn.DefaultBackupState
+		wc.mutation.SetBackupState(v)
+	}
+	if _, ok := wc.mutation.UserPresent(); !ok {
+		v := webauthn.DefaultUserPresent
+		wc.mutation.SetUserPresent(v)
+	}
+	if _, ok := wc.mutation.UserVerified(); !ok {
+		v := webauthn.DefaultUserVerified
+		wc.mutation.SetUserVerified(v)
+	}
 	if _, ok := wc.mutation.ID(); !ok {
 		if webauthn.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized webauthn.DefaultID (forgotten import generated/runtime?)")
@@ -319,13 +293,26 @@ func (wc *WebauthnCreate) check() error {
 	if _, ok := wc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Webauthn.name"`)}
 	}
-	if _, ok := wc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`generated: missing required field "Webauthn.user_id"`)}
+	if _, ok := wc.mutation.Aaguid(); !ok {
+		return &ValidationError{Name: "aaguid", err: errors.New(`generated: missing required field "Webauthn.aaguid"`)}
 	}
-	if v, ok := wc.mutation.UserID(); ok {
-		if err := webauthn.UserIDValidator(v); err != nil {
-			return &ValidationError{Name: "user_id", err: fmt.Errorf(`generated: validator failed for field "Webauthn.user_id": %w`, err)}
-		}
+	if _, ok := wc.mutation.SignCount(); !ok {
+		return &ValidationError{Name: "sign_count", err: errors.New(`generated: missing required field "Webauthn.sign_count"`)}
+	}
+	if _, ok := wc.mutation.Transports(); !ok {
+		return &ValidationError{Name: "transports", err: errors.New(`generated: missing required field "Webauthn.transports"`)}
+	}
+	if _, ok := wc.mutation.BackupEligible(); !ok {
+		return &ValidationError{Name: "backup_eligible", err: errors.New(`generated: missing required field "Webauthn.backup_eligible"`)}
+	}
+	if _, ok := wc.mutation.BackupState(); !ok {
+		return &ValidationError{Name: "backup_state", err: errors.New(`generated: missing required field "Webauthn.backup_state"`)}
+	}
+	if _, ok := wc.mutation.UserPresent(); !ok {
+		return &ValidationError{Name: "user_present", err: errors.New(`generated: missing required field "Webauthn.user_present"`)}
+	}
+	if _, ok := wc.mutation.UserVerified(); !ok {
+		return &ValidationError{Name: "user_verified", err: errors.New(`generated: missing required field "Webauthn.user_verified"`)}
 	}
 	if _, ok := wc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Webauthn.owner"`)}
@@ -382,24 +369,12 @@ func (wc *WebauthnCreate) createSpec() (*Webauthn, *sqlgraph.CreateSpec) {
 		_spec.SetField(webauthn.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
-	if value, ok := wc.mutation.DeletedAt(); ok {
-		_spec.SetField(webauthn.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = value
-	}
-	if value, ok := wc.mutation.DeletedBy(); ok {
-		_spec.SetField(webauthn.FieldDeletedBy, field.TypeString, value)
-		_node.DeletedBy = value
-	}
 	if value, ok := wc.mutation.Name(); ok {
 		_spec.SetField(webauthn.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := wc.mutation.UserID(); ok {
-		_spec.SetField(webauthn.FieldUserID, field.TypeString, value)
-		_node.UserID = value
-	}
 	if value, ok := wc.mutation.CredentialID(); ok {
-		_spec.SetField(webauthn.FieldCredentialID, field.TypeString, value)
+		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)
 		_node.CredentialID = value
 	}
 	if value, ok := wc.mutation.PublicKey(); ok {
@@ -411,24 +386,16 @@ func (wc *WebauthnCreate) createSpec() (*Webauthn, *sqlgraph.CreateSpec) {
 		_node.AttestationType = value
 	}
 	if value, ok := wc.mutation.Aaguid(); ok {
-		_spec.SetField(webauthn.FieldAaguid, field.TypeString, value)
+		_spec.SetField(webauthn.FieldAaguid, field.TypeBytes, value)
 		_node.Aaguid = value
 	}
 	if value, ok := wc.mutation.SignCount(); ok {
-		_spec.SetField(webauthn.FieldSignCount, field.TypeInt, value)
+		_spec.SetField(webauthn.FieldSignCount, field.TypeInt32, value)
 		_node.SignCount = value
 	}
 	if value, ok := wc.mutation.Transports(); ok {
 		_spec.SetField(webauthn.FieldTransports, field.TypeJSON, value)
 		_node.Transports = value
-	}
-	if value, ok := wc.mutation.Flags(); ok {
-		_spec.SetField(webauthn.FieldFlags, field.TypeJSON, value)
-		_node.Flags = value
-	}
-	if value, ok := wc.mutation.Authenticator(); ok {
-		_spec.SetField(webauthn.FieldAuthenticator, field.TypeJSON, value)
-		_node.Authenticator = value
 	}
 	if value, ok := wc.mutation.BackupEligible(); ok {
 		_spec.SetField(webauthn.FieldBackupEligible, field.TypeBool, value)
@@ -437,6 +404,14 @@ func (wc *WebauthnCreate) createSpec() (*Webauthn, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.BackupState(); ok {
 		_spec.SetField(webauthn.FieldBackupState, field.TypeBool, value)
 		_node.BackupState = value
+	}
+	if value, ok := wc.mutation.UserPresent(); ok {
+		_spec.SetField(webauthn.FieldUserPresent, field.TypeBool, value)
+		_node.UserPresent = value
+	}
+	if value, ok := wc.mutation.UserVerified(); ok {
+		_spec.SetField(webauthn.FieldUserVerified, field.TypeBool, value)
+		_node.UserVerified = value
 	}
 	if nodes := wc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

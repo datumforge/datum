@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
+	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 // updateUserLastSeen updates the last seen timestamp of the user
@@ -138,6 +139,43 @@ func (h *Handler) getUserByEmail(ctx context.Context, email string, authProvider
 	}
 
 	return user, nil
+}
+
+// getUserByID returns the ent user with the user settings based on the email and auth provider in the request
+func (h *Handler) getUserByID(ctx context.Context, id string, authProvider enums.AuthProvider) (*ent.User, error) {
+	user, err := transaction.FromContext(ctx).User.Query().WithSetting().
+		Where(user.ID(id)).
+		Where(user.AuthProviderEQ(authProvider)).
+		Only(ctx)
+	if err != nil {
+		h.Logger.Errorw("error obtaining user from id", "error", err)
+
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (h *Handler) addCredentialToUser(ctx context.Context, user *ent.User, credential webauthn.Credential) error {
+	_, err := transaction.FromContext(ctx).Webauthn.Create().
+		SetOwnerID(user.ID).
+		SetAttestationType(credential.AttestationType).
+		SetAaguid(credential.Authenticator.AAGUID).
+		SetCredentialID(credential.ID).
+		SetPublicKey(credential.PublicKey).
+		SetBackupState(credential.Flags.BackupEligible).
+		SetBackupEligible(credential.Flags.BackupEligible).
+		SetUserPresent(credential.Flags.UserPresent).
+		SetUserVerified(credential.Flags.UserVerified).
+		SetSignCount(int32(credential.Authenticator.SignCount)).
+		Save(ctx)
+	if err != nil {
+		h.Logger.Errorw("error creating email verification token", "error", err)
+
+		return err
+	}
+
+	return nil
 }
 
 // getUserBySub returns the ent user with the user settings based on the subject in the claim

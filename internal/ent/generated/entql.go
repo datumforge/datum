@@ -459,21 +459,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			webauthn.FieldUpdatedAt:       {Type: field.TypeTime, Column: webauthn.FieldUpdatedAt},
 			webauthn.FieldCreatedBy:       {Type: field.TypeString, Column: webauthn.FieldCreatedBy},
 			webauthn.FieldUpdatedBy:       {Type: field.TypeString, Column: webauthn.FieldUpdatedBy},
-			webauthn.FieldDeletedAt:       {Type: field.TypeTime, Column: webauthn.FieldDeletedAt},
-			webauthn.FieldDeletedBy:       {Type: field.TypeString, Column: webauthn.FieldDeletedBy},
 			webauthn.FieldOwnerID:         {Type: field.TypeString, Column: webauthn.FieldOwnerID},
 			webauthn.FieldName:            {Type: field.TypeString, Column: webauthn.FieldName},
-			webauthn.FieldUserID:          {Type: field.TypeString, Column: webauthn.FieldUserID},
-			webauthn.FieldCredentialID:    {Type: field.TypeString, Column: webauthn.FieldCredentialID},
+			webauthn.FieldCredentialID:    {Type: field.TypeBytes, Column: webauthn.FieldCredentialID},
 			webauthn.FieldPublicKey:       {Type: field.TypeBytes, Column: webauthn.FieldPublicKey},
 			webauthn.FieldAttestationType: {Type: field.TypeString, Column: webauthn.FieldAttestationType},
-			webauthn.FieldAaguid:          {Type: field.TypeString, Column: webauthn.FieldAaguid},
-			webauthn.FieldSignCount:       {Type: field.TypeInt, Column: webauthn.FieldSignCount},
+			webauthn.FieldAaguid:          {Type: field.TypeBytes, Column: webauthn.FieldAaguid},
+			webauthn.FieldSignCount:       {Type: field.TypeInt32, Column: webauthn.FieldSignCount},
 			webauthn.FieldTransports:      {Type: field.TypeJSON, Column: webauthn.FieldTransports},
-			webauthn.FieldFlags:           {Type: field.TypeJSON, Column: webauthn.FieldFlags},
-			webauthn.FieldAuthenticator:   {Type: field.TypeJSON, Column: webauthn.FieldAuthenticator},
 			webauthn.FieldBackupEligible:  {Type: field.TypeBool, Column: webauthn.FieldBackupEligible},
 			webauthn.FieldBackupState:     {Type: field.TypeBool, Column: webauthn.FieldBackupState},
+			webauthn.FieldUserPresent:     {Type: field.TypeBool, Column: webauthn.FieldUserPresent},
+			webauthn.FieldUserVerified:    {Type: field.TypeBool, Column: webauthn.FieldUserVerified},
 		},
 	}
 	graph.MustAddE(
@@ -3262,16 +3259,6 @@ func (f *WebauthnFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(webauthn.FieldUpdatedBy))
 }
 
-// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
-func (f *WebauthnFilter) WhereDeletedAt(p entql.TimeP) {
-	f.Where(p.Field(webauthn.FieldDeletedAt))
-}
-
-// WhereDeletedBy applies the entql string predicate on the deleted_by field.
-func (f *WebauthnFilter) WhereDeletedBy(p entql.StringP) {
-	f.Where(p.Field(webauthn.FieldDeletedBy))
-}
-
 // WhereOwnerID applies the entql string predicate on the owner_id field.
 func (f *WebauthnFilter) WhereOwnerID(p entql.StringP) {
 	f.Where(p.Field(webauthn.FieldOwnerID))
@@ -3282,13 +3269,8 @@ func (f *WebauthnFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(webauthn.FieldName))
 }
 
-// WhereUserID applies the entql string predicate on the user_id field.
-func (f *WebauthnFilter) WhereUserID(p entql.StringP) {
-	f.Where(p.Field(webauthn.FieldUserID))
-}
-
-// WhereCredentialID applies the entql string predicate on the credential_id field.
-func (f *WebauthnFilter) WhereCredentialID(p entql.StringP) {
+// WhereCredentialID applies the entql []byte predicate on the credential_id field.
+func (f *WebauthnFilter) WhereCredentialID(p entql.BytesP) {
 	f.Where(p.Field(webauthn.FieldCredentialID))
 }
 
@@ -3302,29 +3284,19 @@ func (f *WebauthnFilter) WhereAttestationType(p entql.StringP) {
 	f.Where(p.Field(webauthn.FieldAttestationType))
 }
 
-// WhereAaguid applies the entql string predicate on the aaguid field.
-func (f *WebauthnFilter) WhereAaguid(p entql.StringP) {
+// WhereAaguid applies the entql []byte predicate on the aaguid field.
+func (f *WebauthnFilter) WhereAaguid(p entql.BytesP) {
 	f.Where(p.Field(webauthn.FieldAaguid))
 }
 
-// WhereSignCount applies the entql int predicate on the sign_count field.
-func (f *WebauthnFilter) WhereSignCount(p entql.IntP) {
+// WhereSignCount applies the entql int32 predicate on the sign_count field.
+func (f *WebauthnFilter) WhereSignCount(p entql.Int32P) {
 	f.Where(p.Field(webauthn.FieldSignCount))
 }
 
 // WhereTransports applies the entql json.RawMessage predicate on the transports field.
 func (f *WebauthnFilter) WhereTransports(p entql.BytesP) {
 	f.Where(p.Field(webauthn.FieldTransports))
-}
-
-// WhereFlags applies the entql json.RawMessage predicate on the flags field.
-func (f *WebauthnFilter) WhereFlags(p entql.BytesP) {
-	f.Where(p.Field(webauthn.FieldFlags))
-}
-
-// WhereAuthenticator applies the entql json.RawMessage predicate on the authenticator field.
-func (f *WebauthnFilter) WhereAuthenticator(p entql.BytesP) {
-	f.Where(p.Field(webauthn.FieldAuthenticator))
 }
 
 // WhereBackupEligible applies the entql bool predicate on the backup_eligible field.
@@ -3335,6 +3307,16 @@ func (f *WebauthnFilter) WhereBackupEligible(p entql.BoolP) {
 // WhereBackupState applies the entql bool predicate on the backup_state field.
 func (f *WebauthnFilter) WhereBackupState(p entql.BoolP) {
 	f.Where(p.Field(webauthn.FieldBackupState))
+}
+
+// WhereUserPresent applies the entql bool predicate on the user_present field.
+func (f *WebauthnFilter) WhereUserPresent(p entql.BoolP) {
+	f.Where(p.Field(webauthn.FieldUserPresent))
+}
+
+// WhereUserVerified applies the entql bool predicate on the user_verified field.
+func (f *WebauthnFilter) WhereUserVerified(p entql.BoolP) {
+	f.Where(p.Field(webauthn.FieldUserVerified))
 }
 
 // WhereHasOwner applies a predicate to check if query has an edge owner.

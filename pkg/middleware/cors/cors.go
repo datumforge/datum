@@ -23,7 +23,11 @@ var DefaultConfig = Config{
 }
 
 // New creates a new middleware function with the default config
-func New() echo.MiddlewareFunc {
+func New(allowedOrigins []string) echo.MiddlewareFunc {
+	DefaultConfig.Prefixes = map[string][]string{
+		"/": allowedOrigins,
+	}
+
 	mw, _ := NewWithConfig(DefaultConfig)
 
 	return mw
@@ -44,7 +48,7 @@ func NewWithConfig(config Config) (echo.MiddlewareFunc, error) {
 
 		conf := middleware.CORSConfig{
 			AllowOrigins:     origins,
-			AllowMethods:     []string{"GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"},
+			AllowMethods:     []string{"GET", "HEAD", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"},
 			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
 			ExposeHeaders:    []string{"Content-Length"},
 			AllowCredentials: true,

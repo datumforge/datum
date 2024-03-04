@@ -534,7 +534,7 @@ var (
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB"}, Default: "CREDENTIALS"},
+		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN"}, Default: "CREDENTIALS"},
 		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
 		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
 		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},

@@ -11,7 +11,7 @@ import (
 // registerWebauthnRegistrationHandler registers the webauthn registration handler
 func registerWebauthnRegistrationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
+		Method: http.MethodPost,
 		Path:   "/registration/options",
 		Handler: func(c echo.Context) error {
 			return h.BeginWebauthnRegistration(c)

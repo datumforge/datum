@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/go-webauthn/webauthn/webauthn"
+
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -13,7 +15,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
-	"github.com/go-webauthn/webauthn/webauthn"
 )
 
 // updateUserLastSeen updates the last seen timestamp of the user
@@ -313,4 +314,58 @@ func (h *Handler) addDefaultOrgToUserQuery(ctx context.Context, user *ent.User) 
 	user.Edges.Setting.Edges.DefaultOrg = org
 
 	return nil
+}
+
+// CheckAndCreateUser takes a user with an OauthTooToken set in the context and checks if the user is already created
+// if the user already exists, update last seen
+func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, provider enums.AuthProvider) (*ent.User, error) {
+	// check if users exists
+	entUser, err := h.getUserByEmail(ctx, email, provider)
+	if err != nil {
+		// if the user is not found, create now
+		if ent.IsNotFound(err) {
+			isOAuthUser := false
+			isWebAuthnAllowed := false
+
+			switch provider {
+			case enums.GitHub:
+				isOAuthUser = true
+			case enums.Google:
+				isOAuthUser = true
+			case enums.Webauthn:
+				isWebAuthnAllowed = true
+			}
+
+			lastSeen := time.Now()
+
+			// create new user input
+			input := parseName(name)
+			input.Email = email
+			input.Oauth = &isOAuthUser
+			input.AuthProvider = &provider
+			input.LastSeen = &lastSeen
+			input.IsWebauthnAllowed = &isWebAuthnAllowed
+
+			entUser, err = h.createUser(ctx, input)
+			if err != nil {
+				h.Logger.Errorw("error creating new user", "error", err)
+
+				return nil, err
+			}
+
+			// return newly created user
+			return entUser, nil
+		}
+
+		return nil, err
+	}
+
+	// update last seen of user
+	if err := h.updateUserLastSeen(ctx, entUser.ID); err != nil {
+		h.Logger.Errorw("unable to update last seen", "error", err)
+
+		return nil, err
+	}
+
+	return entUser, nil
 }

@@ -19,9 +19,9 @@ var (
 )
 
 // Values returns a slice of strings that represents all the possible values of the AuthProvider enum.
-// Possible default values are "CREDENTIALS", "GOOGLE", and "GITHUB"
+// Possible default values are "CREDENTIALS", "GOOGLE", "GITHUB", and "WEBAUTHN"
 func (AuthProvider) Values() (kinds []string) {
-	for _, s := range []AuthProvider{Credentials, Google, GitHub} {
+	for _, s := range []AuthProvider{Credentials, Google, GitHub, Webauthn} {
 		kinds = append(kinds, string(s))
 	}
 

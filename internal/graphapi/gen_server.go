@@ -8753,6 +8753,7 @@ enum UserAuthProvider @goModel(model: "github.com/datumforge/datum/internal/ent/
   CREDENTIALS
   GOOGLE
   GITHUB
+  WEBAUTHN
 }
 """
 A connection to a list of items.

@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"golang.org/x/oauth2"
 	githubOAuth2 "golang.org/x/oauth2/github"
@@ -260,48 +258,6 @@ func parseName(name string) (c ent.CreateUserInput) {
 	}
 
 	return
-}
-
-// CheckAndCreateUser takes a user with an OauthTooToken set in the context and checks if the user is already created
-// if the user already exists, update last seen
-func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, provider enums.AuthProvider) (*ent.User, error) {
-	// check if users exists
-	entUser, err := h.getUserByEmail(ctx, email, provider)
-	if err != nil {
-		// if the user is not found, create now
-		if ent.IsNotFound(err) {
-			isOAuthUser := true
-			lastSeen := time.Now()
-
-			// create new user input
-			input := parseName(name)
-			input.Email = email
-			input.Oauth = &isOAuthUser
-			input.AuthProvider = &provider
-			input.LastSeen = &lastSeen
-
-			entUser, err = h.createUser(ctx, input)
-			if err != nil {
-				h.Logger.Errorw("error creating new user", "error", err)
-
-				return nil, err
-			}
-
-			// return newly created user
-			return entUser, nil
-		}
-
-		return nil, err
-	}
-
-	// update last seen of user
-	if err := h.updateUserLastSeen(ctx, entUser.ID); err != nil {
-		h.Logger.Errorw("unable to update last seen", "error", err)
-
-		return nil, err
-	}
-
-	return entUser, nil
 }
 
 // getRedirectURI checks headers for a request type, if not set, will default to the browser redirect url

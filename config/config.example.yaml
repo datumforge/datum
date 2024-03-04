@@ -15,10 +15,15 @@ auth:
             scopes: null
         redirect_url: ""
         webauthn:
+            debug: false
             display_name: ""
             domain: ""
+            enabled: false
+            enforce_timeout: false
             max_devices: 0
+            relying_party_id: ""
             request_origin: ""
+            timeout: 0
     supported_providers: null
     token:
         access_duration: 0

@@ -247,7 +247,7 @@ const DefaultAuthProvider enums.AuthProvider = "CREDENTIALS"
 // AuthProviderValidator is a validator for the "auth_provider" field enum values. It is called by the builders before save.
 func AuthProviderValidator(ap enums.AuthProvider) error {
 	switch ap.String() {
-	case "CREDENTIALS", "GOOGLE", "GITHUB":
+	case "CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN":
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for auth_provider field: %q", ap)

@@ -594,9 +594,17 @@
     },
     "webauthn.ProviderConfig": {
       "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is the provider enabled"
+        },
         "display_name": {
           "type": "string",
           "description": "DisplayName is the site display name"
+        },
+        "relying_party_id": {
+          "type": "string",
+          "description": "RelyingPartyID is the relying party identifier"
         },
         "domain": {
           "type": "string",
@@ -609,17 +617,30 @@
         "max_devices": {
           "type": "integer",
           "description": "MaxDevices is the maximum number of devices that can be associated with a user"
+        },
+        "enforce": {
+          "type": "boolean",
+          "description": "EnforceTimeout at the Relying Party / Server. This means if enabled and the user takes too long that even if the browser does not\nenforce a timeout, the server will"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout is the timeout in seconds"
+        },
+        "debug": {
+          "type": "boolean",
+          "description": "Debug enables debug mode"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
         "display_name",
+        "relying_party_id",
         "domain",
         "request_origin",
         "max_devices"
       ],
-      "description": "ProviderConfig represents the configuration settings for a Github Oauth Provider"
+      "description": "ProviderConfig represents the configuration settings for a Webauthn Provider"
     }
   },
   "properties": {

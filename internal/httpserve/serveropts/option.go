@@ -223,12 +223,12 @@ func WithMiddleware() ServerOption {
 			echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
 			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
-			cors.New(), // add cors middleware
 			mime.NewWithConfig(mime.Config{DefaultContentType: echo.MIMEApplicationJSONCharsetUTF8}), // add mime middleware
-			cachecontrol.New(),                 // add cache control middleware
-			ratelimit.DefaultRateLimiter(),     // add ratelimit middleware
-			middleware.Secure(),                // add XSS middleware
-			redirect.NewWithConfig(redirectMW), // add redirect middleware
+			cachecontrol.New(),                                   // add cache control middleware
+			ratelimit.DefaultRateLimiter(),                       // add ratelimit middleware
+			middleware.Secure(),                                  // add XSS middleware
+			cors.New(s.Config.Settings.Server.CORS.AllowOrigins), // add cors middleware
+			redirect.NewWithConfig(redirectMW),                   // add redirect middleware
 		)
 	})
 }

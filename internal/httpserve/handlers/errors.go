@@ -52,6 +52,12 @@ var (
 
 	// ErrPasswordTooWeak is returned when the password is too weak
 	ErrPasswordTooWeak = errors.New("password is too weak: use a combination of upper and lower case letters, numbers, and special characters")
+
+	// ErrMaxDeviceLimit is returned when the user has reached the max device limit
+	ErrMaxDeviceLimit = errors.New("max device limit reached")
+
+	// ErrDeviceAlreadyRegistered is returned when the device is already registered
+	ErrDeviceAlreadyRegistered = errors.New("device already registered")
 )
 
 // IsConstraintError returns true if the error resulted from a database constraint violation.

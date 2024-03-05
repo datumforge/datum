@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-webauthn/webauthn/webauthn"
+	gowebauthn "github.com/go-webauthn/webauthn/webauthn"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
 
@@ -161,13 +162,28 @@ func (h *Handler) getUserByID(ctx context.Context, id string, authProvider enums
 }
 
 // addCredentialToUser adds a new webauthn credential to the user
-func (h *Handler) addCredentialToUser(ctx context.Context, user *ent.User, credential webauthn.Credential) error {
+func (h *Handler) addCredentialToUser(ctx context.Context, user *ent.User, credential gowebauthn.Credential) error {
 	transports := []string{}
 	for _, t := range credential.Transport {
 		transports = append(transports, string(t))
 	}
 
-	_, err := transaction.FromContext(ctx).Webauthn.Create().
+	count, err := transaction.FromContext(ctx).Webauthn.Query().Where(
+		webauthn.OwnerID(user.ID),
+	).Count(ctx)
+	if err != nil {
+		h.Logger.Errorw("error checking existing webauthn credentials", "error", err)
+
+		return err
+	}
+
+	if count >= h.OauthProvider.Webauthn.MaxDevices {
+		h.Logger.Errorw("max devices reached", "error", err)
+
+		return ErrMaxDeviceLimit
+	}
+
+	_, err = transaction.FromContext(ctx).Webauthn.Create().
 		SetOwnerID(user.ID).
 		SetTransports(transports).
 		SetAttestationType(credential.AttestationType).

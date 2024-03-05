@@ -156,6 +156,10 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 
 	// save the credential to the database
 	if err := h.addCredentialToUser(userCtx, entUser, *credential); err != nil {
+		if IsConstraintError(err) {
+			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrDeviceAlreadyRegistered))
+		}
+
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 

@@ -43,7 +43,12 @@ auth:
       scopes:
         - user:email
         - read:user
-
+    webauthn:
+      debug: false
+      enabled: true
+      relying_party_id: "localhost"
+      request_origin: "http://localhost:3001"
+      
 # authz settings
 authz:
   enabled: true

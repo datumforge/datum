@@ -2,6 +2,7 @@ package handlers
 
 import (
 	echo "github.com/datumforge/echox"
+	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -42,4 +43,6 @@ type Handler struct {
 	OauthProvider OauthProviderConfig
 	// AuthMiddleware contains the middleware to be used for authenticated endpoints
 	AuthMiddleware []echo.MiddlewareFunc
+	// WebAuthn contains the configuration settings for the webauthn provider
+	WebAuthn *webauthn.WebAuthn
 }

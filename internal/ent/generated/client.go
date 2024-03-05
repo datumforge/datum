@@ -3482,8 +3482,7 @@ func (c *WebauthnClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *WebauthnClient) Interceptors() []Interceptor {
-	inters := c.inters.Webauthn
-	return append(inters[:len(inters):len(inters)], webauthn.Interceptors[:]...)
+	return c.inters.Webauthn
 }
 
 func (c *WebauthnClient) mutate(ctx context.Context, m *WebauthnMutation) (Value, error) {

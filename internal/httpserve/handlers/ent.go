@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	gowebauthn "github.com/go-webauthn/webauthn/webauthn"
+
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -12,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
 
@@ -138,6 +141,68 @@ func (h *Handler) getUserByEmail(ctx context.Context, email string, authProvider
 	}
 
 	return user, nil
+}
+
+// getUserByID returns the ent user with the user settings based on the email and auth provider in the request
+func (h *Handler) getUserByID(ctx context.Context, id string, authProvider enums.AuthProvider) (*ent.User, error) {
+	user, err := transaction.FromContext(ctx).User.Query().WithSetting().
+		Where(user.ID(id)).
+		Where(user.AuthProviderEQ(authProvider)).
+		Only(ctx)
+	if err != nil {
+		h.Logger.Errorw("error obtaining user from id", "error", err)
+
+		return nil, err
+	}
+
+	// Add webauthn to the response
+	user.Edges.Webauthn = user.QueryWebauthn().AllX(ctx)
+
+	return user, nil
+}
+
+// addCredentialToUser adds a new webauthn credential to the user
+func (h *Handler) addCredentialToUser(ctx context.Context, user *ent.User, credential gowebauthn.Credential) error {
+	transports := []string{}
+	for _, t := range credential.Transport {
+		transports = append(transports, string(t))
+	}
+
+	count, err := transaction.FromContext(ctx).Webauthn.Query().Where(
+		webauthn.OwnerID(user.ID),
+	).Count(ctx)
+	if err != nil {
+		h.Logger.Errorw("error checking existing webauthn credentials", "error", err)
+
+		return err
+	}
+
+	if count >= h.OauthProvider.Webauthn.MaxDevices {
+		h.Logger.Errorw("max devices reached", "error", err)
+
+		return ErrMaxDeviceLimit
+	}
+
+	_, err = transaction.FromContext(ctx).Webauthn.Create().
+		SetOwnerID(user.ID).
+		SetTransports(transports).
+		SetAttestationType(credential.AttestationType).
+		SetAaguid(credential.Authenticator.AAGUID).
+		SetCredentialID(credential.ID).
+		SetPublicKey(credential.PublicKey).
+		SetBackupState(credential.Flags.BackupEligible).
+		SetBackupEligible(credential.Flags.BackupEligible).
+		SetUserPresent(credential.Flags.UserPresent).
+		SetUserVerified(credential.Flags.UserVerified).
+		SetSignCount(int32(credential.Authenticator.SignCount)).
+		Save(ctx)
+	if err != nil {
+		h.Logger.Errorw("error creating email verification token", "error", err)
+
+		return err
+	}
+
+	return nil
 }
 
 // getUserBySub returns the ent user with the user settings based on the subject in the claim
@@ -275,4 +340,67 @@ func (h *Handler) addDefaultOrgToUserQuery(ctx context.Context, user *ent.User) 
 	user.Edges.Setting.Edges.DefaultOrg = org
 
 	return nil
+}
+
+// CheckAndCreateUser takes a user with an OauthTooToken set in the context and checks if the user is already created
+// if the user already exists, update last seen
+func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, provider enums.AuthProvider) (*ent.User, error) {
+	// check if users exists
+	entUser, err := h.getUserByEmail(ctx, email, provider)
+	if err != nil {
+		// if the user is not found, create now
+		if ent.IsNotFound(err) {
+			// create the input based on the provider
+			input := createUserInput(name, email, provider)
+
+			// create user in the database
+			entUser, err = h.createUser(ctx, input)
+			if err != nil {
+				h.Logger.Errorw("error creating new user", "error", err)
+
+				return nil, err
+			}
+
+			// return newly created user
+			return entUser, nil
+		}
+
+		return nil, err
+	}
+
+	// update last seen of user
+	if err := h.updateUserLastSeen(ctx, entUser.ID); err != nil {
+		h.Logger.Errorw("unable to update last seen", "error", err)
+
+		return nil, err
+	}
+
+	return entUser, nil
+}
+
+// createUserInput creates a new user input based on the name, email and provider
+func createUserInput(name, email string, provider enums.AuthProvider) ent.CreateUserInput {
+	isOAuthUser := false
+	isWebAuthnAllowed := false
+
+	switch provider {
+	case enums.GitHub:
+		isOAuthUser = true
+	case enums.Google:
+		isOAuthUser = true
+	case enums.Webauthn:
+		isWebAuthnAllowed = true
+	}
+
+	lastSeen := time.Now().UTC()
+
+	// create new user input
+	input := parseName(name)
+	input.Email = email
+	input.Oauth = &isOAuthUser
+	input.AuthProvider = &provider
+	input.LastSeen = &lastSeen
+	input.IsWebauthnAllowed = &isWebAuthnAllowed
+
+	return input
 }

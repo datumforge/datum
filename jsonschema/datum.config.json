@@ -365,6 +365,10 @@
         "google": {
           "$ref": "#/$defs/google.ProviderConfig",
           "description": "Google contains the configuration settings for the Google Oauth Provider"
+        },
+        "webauthn": {
+          "$ref": "#/$defs/webauthn.ProviderConfig",
+          "description": "Webauthn contains the configuration settings for the Webauthn Oauth Provider"
         }
       },
       "additionalProperties": false,
@@ -587,6 +591,50 @@
         "keys"
       ],
       "description": "Config defines the configuration settings for authentication tokens used in the server"
+    },
+    "webauthn.ProviderConfig": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is the provider enabled"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "DisplayName is the site display name"
+        },
+        "relying_party_id": {
+          "type": "string",
+          "description": "RelyingPartyID is the relying party identifier\nset to localhost for development, no port"
+        },
+        "request_origin": {
+          "type": "string",
+          "description": "RequestOrigin the origin domain for authentication requests\ninclude the scheme and port"
+        },
+        "max_devices": {
+          "type": "integer",
+          "description": "MaxDevices is the maximum number of devices that can be associated with a user"
+        },
+        "enforce": {
+          "type": "boolean",
+          "description": "EnforceTimeout at the Relying Party / Server. This means if enabled and the user takes too long that even if the browser does not\nenforce a timeout, the server will"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Timeout is the timeout in seconds"
+        },
+        "debug": {
+          "type": "boolean",
+          "description": "Debug enables debug mode"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "display_name",
+        "relying_party_id",
+        "request_origin"
+      ],
+      "description": "ProviderConfig represents the configuration settings for a Webauthn Provider"
     }
   },
   "properties": {

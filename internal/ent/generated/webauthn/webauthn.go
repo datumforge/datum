@@ -23,16 +23,8 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
-	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
-	FieldDeletedAt = "deleted_at"
-	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
-	FieldDeletedBy = "deleted_by"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
-	// FieldUserID holds the string denoting the user_id field in the database.
-	FieldUserID = "user_id"
 	// FieldCredentialID holds the string denoting the credential_id field in the database.
 	FieldCredentialID = "credential_id"
 	// FieldPublicKey holds the string denoting the public_key field in the database.
@@ -45,14 +37,14 @@ const (
 	FieldSignCount = "sign_count"
 	// FieldTransports holds the string denoting the transports field in the database.
 	FieldTransports = "transports"
-	// FieldFlags holds the string denoting the flags field in the database.
-	FieldFlags = "flags"
-	// FieldAuthenticator holds the string denoting the authenticator field in the database.
-	FieldAuthenticator = "authenticator"
 	// FieldBackupEligible holds the string denoting the backup_eligible field in the database.
 	FieldBackupEligible = "backup_eligible"
 	// FieldBackupState holds the string denoting the backup_state field in the database.
 	FieldBackupState = "backup_state"
+	// FieldUserPresent holds the string denoting the user_present field in the database.
+	FieldUserPresent = "user_present"
+	// FieldUserVerified holds the string denoting the user_verified field in the database.
+	FieldUserVerified = "user_verified"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// Table holds the table name of the webauthn in the database.
@@ -73,21 +65,17 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
-	FieldDeletedAt,
-	FieldDeletedBy,
 	FieldOwnerID,
-	FieldName,
-	FieldUserID,
 	FieldCredentialID,
 	FieldPublicKey,
 	FieldAttestationType,
 	FieldAaguid,
 	FieldSignCount,
 	FieldTransports,
-	FieldFlags,
-	FieldAuthenticator,
 	FieldBackupEligible,
 	FieldBackupState,
+	FieldUserPresent,
+	FieldUserVerified,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -106,16 +94,21 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [2]ent.Hook
-	Interceptors [1]ent.Interceptor
+	Hooks [1]ent.Hook
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
-	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
-	UserIDValidator func(string) error
+	// DefaultBackupEligible holds the default value on creation for the "backup_eligible" field.
+	DefaultBackupEligible bool
+	// DefaultBackupState holds the default value on creation for the "backup_state" field.
+	DefaultBackupState bool
+	// DefaultUserPresent holds the default value on creation for the "user_present" field.
+	DefaultUserPresent bool
+	// DefaultUserVerified holds the default value on creation for the "user_verified" field.
+	DefaultUserVerified bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -148,44 +141,14 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
-// ByDeletedAt orders the results by the deleted_at field.
-func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
-}
-
-// ByDeletedBy orders the results by the deleted_by field.
-func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
-}
-
 // ByOwnerID orders the results by the owner_id field.
 func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
 }
 
-// ByName orders the results by the name field.
-func ByName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldName, opts...).ToFunc()
-}
-
-// ByUserID orders the results by the user_id field.
-func ByUserID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUserID, opts...).ToFunc()
-}
-
-// ByCredentialID orders the results by the credential_id field.
-func ByCredentialID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCredentialID, opts...).ToFunc()
-}
-
 // ByAttestationType orders the results by the attestation_type field.
 func ByAttestationType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAttestationType, opts...).ToFunc()
-}
-
-// ByAaguid orders the results by the aaguid field.
-func ByAaguid(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAaguid, opts...).ToFunc()
 }
 
 // BySignCount orders the results by the sign_count field.
@@ -201,6 +164,16 @@ func ByBackupEligible(opts ...sql.OrderTermOption) OrderOption {
 // ByBackupState orders the results by the backup_state field.
 func ByBackupState(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBackupState, opts...).ToFunc()
+}
+
+// ByUserPresent orders the results by the user_present field.
+func ByUserPresent(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserPresent, opts...).ToFunc()
+}
+
+// ByUserVerified orders the results by the user_verified field.
+func ByUserVerified(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserVerified, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.

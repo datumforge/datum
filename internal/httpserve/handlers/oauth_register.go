@@ -72,10 +72,10 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	// set cokies for the user
+	// set cookies for the user
 	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
-	setSessionMap := map[string]string{}
+	setSessionMap := map[string]any{}
 	setSessionMap[sessions.ExternalUserIDKey] = fmt.Sprintf("%v", r.ExternalUserID)
 	setSessionMap[sessions.UsernameKey] = r.ExternalUserName
 	setSessionMap[sessions.UserTypeKey] = r.AuthProvider

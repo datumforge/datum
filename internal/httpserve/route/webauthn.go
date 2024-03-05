@@ -8,6 +8,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
+// registerWebauthnRegistrationHandler registers the webauthn registration handler
 func registerWebauthnRegistrationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
@@ -20,10 +21,11 @@ func registerWebauthnRegistrationHandler(router *echo.Echo, h *handlers.Handler)
 	return
 }
 
+// registerWebauthnVerificationsHandler registers the webauthn registration verification handler
 func registerWebauthnVerificationsHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
-		Path:   "/registration/verifications",
+		Path:   "/registration/verification",
 		Handler: func(c echo.Context) error {
 			return h.FinishWebauthnRegistration(c)
 		},
@@ -32,6 +34,7 @@ func registerWebauthnVerificationsHandler(router *echo.Echo, h *handlers.Handler
 	return
 }
 
+// registerWebauthnAuthenticationHandler registers the webauthn authentication handler
 func registerWebauthnAuthenticationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
@@ -44,10 +47,11 @@ func registerWebauthnAuthenticationHandler(router *echo.Echo, h *handlers.Handle
 	return
 }
 
+// registerWebauthnAuthVerificationHandler registers the webauthn authentication verification handler
 func registerWebauthnAuthVerificationHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
-		Path:   "/authentication/verifications",
+		Path:   "/authentication/verification",
 		Handler: func(c echo.Context) error {
 			return h.FinishWebauthnLogin(c)
 		},

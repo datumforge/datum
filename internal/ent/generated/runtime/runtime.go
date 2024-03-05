@@ -920,11 +920,7 @@ func init() {
 	usersetting.DefaultID = usersettingDescID.Default.(func() string)
 	webauthnMixin := schema.Webauthn{}.Mixin()
 	webauthnMixinHooks0 := webauthnMixin[0].Hooks()
-	webauthnMixinHooks2 := webauthnMixin[2].Hooks()
 	webauthn.Hooks[0] = webauthnMixinHooks0[0]
-	webauthn.Hooks[1] = webauthnMixinHooks2[0]
-	webauthnMixinInters2 := webauthnMixin[2].Interceptors()
-	webauthn.Interceptors[0] = webauthnMixinInters2[0]
 	webauthnMixinFields0 := webauthnMixin[0].Fields()
 	_ = webauthnMixinFields0
 	webauthnMixinFields1 := webauthnMixin[1].Fields()
@@ -941,10 +937,22 @@ func init() {
 	webauthn.DefaultUpdatedAt = webauthnDescUpdatedAt.Default.(func() time.Time)
 	// webauthn.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	webauthn.UpdateDefaultUpdatedAt = webauthnDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// webauthnDescUserID is the schema descriptor for user_id field.
-	webauthnDescUserID := webauthnFields[1].Descriptor()
-	// webauthn.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
-	webauthn.UserIDValidator = webauthnDescUserID.Validators[0].(func(string) error)
+	// webauthnDescBackupEligible is the schema descriptor for backup_eligible field.
+	webauthnDescBackupEligible := webauthnFields[6].Descriptor()
+	// webauthn.DefaultBackupEligible holds the default value on creation for the backup_eligible field.
+	webauthn.DefaultBackupEligible = webauthnDescBackupEligible.Default.(bool)
+	// webauthnDescBackupState is the schema descriptor for backup_state field.
+	webauthnDescBackupState := webauthnFields[7].Descriptor()
+	// webauthn.DefaultBackupState holds the default value on creation for the backup_state field.
+	webauthn.DefaultBackupState = webauthnDescBackupState.Default.(bool)
+	// webauthnDescUserPresent is the schema descriptor for user_present field.
+	webauthnDescUserPresent := webauthnFields[8].Descriptor()
+	// webauthn.DefaultUserPresent holds the default value on creation for the user_present field.
+	webauthn.DefaultUserPresent = webauthnDescUserPresent.Default.(bool)
+	// webauthnDescUserVerified is the schema descriptor for user_verified field.
+	webauthnDescUserVerified := webauthnFields[9].Descriptor()
+	// webauthn.DefaultUserVerified holds the default value on creation for the user_verified field.
+	webauthn.DefaultUserVerified = webauthnDescUserVerified.Default.(bool)
 	// webauthnDescID is the schema descriptor for id field.
 	webauthnDescID := webauthnMixinFields1[0].Descriptor()
 	// webauthn.DefaultID holds the default value on creation for the id field.

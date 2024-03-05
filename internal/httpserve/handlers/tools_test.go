@@ -174,11 +174,11 @@ func newRedisClient() *redis.Client {
 	return client
 }
 
-func createSessionManager() sessions.Store[map[string]string] {
+func createSessionManager() sessions.Store[map[string]any] {
 	hashKey := randomString(32)  //nolint:gomnd
 	blockKey := randomString(32) //nolint:gomnd
 
-	sm := sessions.NewCookieStore[map[string]string](sessions.DebugCookieConfig,
+	sm := sessions.NewCookieStore[map[string]any](sessions.DebugCookieConfig,
 		hashKey, blockKey,
 	)
 

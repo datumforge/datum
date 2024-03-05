@@ -142,6 +142,7 @@ OauthProviderConfig represents the configuration for OAuth providers such as Git
 |**redirect\_url**|`string`|RedirectURL is the URL that the OAuth2 client will redirect to after authentication with datum<br/>||
 |[**github**](#authprovidersgithub)|`object`|ProviderConfig represents the configuration settings for a Github Oauth Provider<br/>|yes|
 |[**google**](#authprovidersgoogle)|`object`|ProviderConfig represents the configuration settings for a Google Oauth Provider<br/>|yes|
+|[**webauthn**](#authproviderswebauthn)|`object`|ProviderConfig represents the configuration settings for a Webauthn Provider<br/>|yes|
 
 **Additional Properties:** not allowed  
 <a name="authprovidersgithub"></a>
@@ -190,6 +191,26 @@ ProviderConfig represents the configuration settings for a Google Oauth Provider
 **Items**
 
 **Item Type:** `string`  
+<a name="authproviderswebauthn"></a>
+#### auth\.providers\.webauthn: object
+
+ProviderConfig represents the configuration settings for a Webauthn Provider
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is the provider enabled<br/>|no|
+|**display\_name**|`string`|DisplayName is the site display name<br/>|yes|
+|**relying\_party\_id**|`string`|RelyingPartyID is the relying party identifier<br/>set to localhost for development, no port<br/>|yes|
+|**request\_origin**|`string`|RequestOrigin the origin domain for authentication requests<br/>include the scheme and port<br/>|yes|
+|**max\_devices**|`integer`|MaxDevices is the maximum number of devices that can be associated with a user<br/>|no|
+|**enforce**|`boolean`|EnforceTimeout at the Relying Party / Server. This means if enabled and the user takes too long that even if the browser does not<br/>enforce a timeout, the server will<br/>|no|
+|**timeout**|`integer`|Timeout is the timeout in seconds<br/>|no|
+|**debug**|`boolean`|Debug enables debug mode<br/>|no|
+
+**Additional Properties:** not allowed  
 <a name="authz"></a>
 ## authz: object
 

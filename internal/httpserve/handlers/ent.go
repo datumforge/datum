@@ -160,6 +160,7 @@ func (h *Handler) getUserByID(ctx context.Context, id string, authProvider enums
 	return user, nil
 }
 
+// addCredentialToUser adds a new webauthn credential to the user
 func (h *Handler) addCredentialToUser(ctx context.Context, user *ent.User, credential webauthn.Credential) error {
 	transports := []string{}
 	for _, t := range credential.Transport {

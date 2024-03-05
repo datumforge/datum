@@ -2,10 +2,10 @@ package totp
 
 import (
 	"encoding/base64"
-	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestString(t *testing.T) {
@@ -14,56 +14,34 @@ func TestString(t *testing.T) {
 	for i := 0; i <= 10; i++ {
 		ln := 50
 		random, err := String(ln, samples)
+		require.NoError(t, err, "failed to generate random string")
 
-		if err != nil {
-			t.Fatal("failed to generate random string", err)
-		}
-
-		if len(random) != 50 {
-			t.Error("incorrect character count", cmp.Diff(
-				len(random), 50,
-			))
-		}
+		assert.Len(t, random, 50, "incorrect character count")
 
 		for _, v := range random {
 			s := string(v)
-			if !strings.Contains(samples, s) {
-				t.Errorf("invalid character used in random string: %s", s)
-			}
+			assert.Contains(t, samples, s, "invalid character used in random string")
 		}
 	}
 }
 
 func TestStringB64(t *testing.T) {
 	b64str, err := StringB64(50)
-	if err != nil {
-		t.Error("error generating random string", err)
-	}
+	require.NoError(t, err, "failed to generate random string")
 
 	_, err = base64.StdEncoding.DecodeString(b64str)
-	if err != nil {
-		t.Error("failed to decode base64 encoded string")
-	}
+	require.NoError(t, err, "failed to decode base64 encoded string")
 }
 
 func TestOTPHash(t *testing.T) {
 	str := "the quick brown fox"
 	hash, err := OTPHash(str)
+	require.NoError(t, err, "error generating hash")
 
-	if err != nil {
-		t.Error("error generating hash", err)
-	}
-
-	if str == hash {
-		t.Error("string not hashed")
-	}
+	assert.NotEqual(t, str, hash, "string not hashed")
 
 	hash2, err := OTPHash(str)
-	if err != nil {
-		t.Error("error generating hash", err)
-	}
+	require.NoError(t, err, "error generating hash")
 
-	if hash != hash2 {
-		t.Error("hashes do not match", cmp.Diff(hash, hash2))
-	}
+	assert.Equal(t, hash, hash2, "hashes do not match")
 }

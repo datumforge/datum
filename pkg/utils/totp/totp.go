@@ -17,12 +17,21 @@ import (
 	"strings"
 	"time"
 
-	otpLib "github.com/pquerna/otp"
+	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 	"github.com/redis/go-redis/v9"
 )
 
-var thirty = 30
+const (
+	// keyTTL is the expiration time for a key in redis
+	keyTTL = 30 * time.Second
+	// otpExpiration is the expiration time for an OTP code
+	otpExpiration = 5 * time.Minute
+	// numericCode is a string of numbers
+	numericCode = "0123456"
+	// alphanumericCode is a string of numbers and letters
+	alphanumericCode = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+)
 
 // otpRedos is a minimal interface for go-redis with OTP codes
 type otpRedis interface {
@@ -48,15 +57,18 @@ type Hash struct {
 // OTP is a credential validator for User OTP codes
 type OTP struct {
 	// codeLength is the length of a randomly generated code
-	codeLength int
-	totpIssuer string
-	secrets    []Secret
-	db         otpRedis
+	codeLength         int
+	ttl                int
+	issuer             string
+	secrets            []Secret
+	db                 otpRedis
+	recoveryCodeCount  int
+	recoveryCodeLength int
 }
 
 // OTPCode creates a random code and hash
 func (o *OTP) OTPCode(address string, method DeliveryMethod) (code string, hash string, err error) {
-	c, err := String(o.codeLength, "0123456")
+	c, err := String(o.codeLength, numericCode)
 	if err != nil {
 		return "", "", ErrCannotGenerateRandomString
 	}
@@ -70,21 +82,20 @@ func (o *OTP) OTPCode(address string, method DeliveryMethod) (code string, hash 
 }
 
 // TOTPSecret assigns a TOTP secret for a user for use in code generation.
-// TOTP secrets are encrypted by a preconfigured secret key and decrypted
+// TOTP secrets are encrypted by a pre-configured secret key and decrypted
 // only during validation. Encrypted keys are versioned to assist with migrations
 // and backwards compatibility in the event an older secret ever needs to
 // be deprecated.
 func (o *OTP) TOTPSecret(u *User) (string, error) {
 	key, err := totp.Generate(totp.GenerateOpts{
-		Issuer:      o.totpIssuer,
+		Issuer:      o.issuer,
 		AccountName: u.DefaultName(),
 	})
 	if err != nil {
-		return "", ErrFailedtoGenerateSecret
+		return "", ErrFailedToGenerateSecret
 	}
 
 	encryptedKey, err := o.encrypt(key.Secret())
-
 	if err != nil {
 		return "", ErrCannotDecryptSecret
 	}
@@ -102,21 +113,22 @@ func (o *OTP) TOTPQRString(u *User) (string, error) {
 
 	v := url.Values{}
 	v.Set("secret", secret)
-	v.Set("issuer", o.totpIssuer)
-	v.Set("algorithm", otpLib.AlgorithmSHA1.String())
-	v.Set("period", strconv.Itoa(thirty))
+	v.Set("issuer", o.issuer)
+	v.Set("algorithm", otp.AlgorithmSHA1.String())
+	v.Set("period", strconv.Itoa(o.ttl))
 	v.Set("digits", "6")
 	otpauth := url.URL{
 		Scheme:   "otpauth",
 		Host:     "totp",
-		Path:     "/" + o.totpIssuer + ":" + u.DefaultName(),
+		Path:     "/" + o.issuer + ":" + u.DefaultName(),
 		RawQuery: v.Encode(),
 	}
 
 	return otpauth.String(), nil
 }
 
-// ValidateOTP checks if a User's OTP code is valid - users can input secrets sent by SMS or email (needs to be implemented separately)
+// ValidateOTP checks if a User's OTP code is valid
+// users can input secrets sent by SMS or email (needs to be implemented separately)
 func (o *OTP) ValidateOTP(code string, hash string) error {
 	otp, err := FromOTPHash(hash)
 	if err != nil {
@@ -145,7 +157,6 @@ func (o *OTP) ValidateOTP(code string, hash string) error {
 // codes that have been validated are cached to prevent immediate reuse
 func (o *OTP) ValidateTOTP(ctx context.Context, user *User, code string) error {
 	secret, err := o.decrypt(user.TFASecret)
-
 	if err != nil {
 		return ErrCannotDecryptSecret
 	}
@@ -156,24 +167,24 @@ func (o *OTP) ValidateTOTP(ctx context.Context, user *User, code string) error {
 
 	key := fmt.Sprintf("%s_%s", user.ID, code)
 
-	err = o.db.Get(ctx, key).Err()
-
 	// Validated code has previously been used in the past thirty seconds
-	if err == nil {
+	if err = o.db.Get(ctx, key).Err(); err == nil {
 		return ErrCodeIsNoLongerValid
 	}
 
 	// No code found in redis, indicating the code is valid. Set it to the
 	// DB to prevent reuse
 	if errors.Is(err, redis.Nil) {
-		return o.db.Set(ctx, key, true, time.Second*time.Duration(thirty)).Err()
+		return o.db.Set(ctx, key, true, keyTTL).Err()
 	}
 
 	return ErrFailedToValidateCode
 }
 
+// latestSecret returns the most recent versioned secret key
 func (o *OTP) latestSecret() (Secret, error) {
 	var secret Secret
+
 	for _, s := range o.secrets {
 		if s.Version >= secret.Version {
 			secret = s
@@ -187,6 +198,7 @@ func (o *OTP) latestSecret() (Secret, error) {
 	return secret, nil
 }
 
+// secretByVersion returns a versioned secret key
 func (o *OTP) secretByVersion(version int) (Secret, error) {
 	var secret Secret
 
@@ -215,8 +227,7 @@ func (o *OTP) encrypt(s string) (string, error) {
 
 	key := sha256.New()
 
-	_, err = key.Write([]byte(secret.Key))
-	if err != nil {
+	if _, err = key.Write([]byte(secret.Key)); err != nil {
 		return "", ErrCannotWriteSecret
 	}
 
@@ -225,19 +236,19 @@ func (o *OTP) encrypt(s string) (string, error) {
 		return "", ErrFailedToCreateCipherBlock
 	}
 
-	ciphertext := make([]byte, aes.BlockSize+len(s))
+	cipherText := make([]byte, aes.BlockSize+len(s))
 
-	iv := ciphertext[:aes.BlockSize]
+	iv := cipherText[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		return "", ErrFailedToCreateCipherText
 	}
 
 	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(ciphertext[aes.BlockSize:], []byte(s))
+	stream.XORKeyStream(cipherText[aes.BlockSize:], []byte(s))
 
 	return fmt.Sprintf("%v:%s",
 		secret.Version,
-		base64.StdEncoding.EncodeToString(ciphertext),
+		base64.StdEncoding.EncodeToString(cipherText),
 	), nil
 }
 
@@ -258,8 +269,7 @@ func (o *OTP) decrypt(encryptedTxt string) (string, error) {
 
 	key := sha256.New()
 
-	_, err = key.Write([]byte(secret.Key))
-	if err != nil {
+	if _, err = key.Write([]byte(secret.Key)); err != nil {
 		return "", ErrCannotWriteSecret
 	}
 
@@ -269,7 +279,7 @@ func (o *OTP) decrypt(encryptedTxt string) (string, error) {
 	}
 
 	if len(encryptedTxt) < aes.BlockSize {
-		return "", ErrCiphertextTooShort
+		return "", ErrCipherTextTooShort
 	}
 
 	decoded, err := base64.StdEncoding.DecodeString(encryptedTxt)
@@ -285,14 +295,14 @@ func (o *OTP) decrypt(encryptedTxt string) (string, error) {
 	return string(decoded), nil
 }
 
+// toOTPHash creates a hash from a OTP code
 func toOTPHash(code, address string, method DeliveryMethod) (string, error) {
 	codeHash, err := OTPHash(code)
-
 	if err != nil {
 		return "", ErrFailedToHashCode
 	}
 
-	expiresAt := time.Now().Add(time.Minute * 5).Unix() //nolint:gomnd
+	expiresAt := time.Now().Add(otpExpiration).Unix()
 
 	hash := &Hash{
 		CodeHash:       codeHash,
@@ -318,8 +328,7 @@ func FromOTPHash(otpHash string) (*Hash, error) {
 
 	var o Hash
 
-	err = json.Unmarshal(decoded, &o)
-	if err != nil {
+	if err = json.Unmarshal(decoded, &o); err != nil {
 		return nil, ErrInvalidOTPHashFormat
 	}
 
@@ -329,13 +338,14 @@ func FromOTPHash(otpHash string) (*Hash, error) {
 // GenerateOTP generates a Time-Based One-Time Password (TOTP).
 func GenerateOTP(secret string) (string, error) {
 	secretBytes := []byte(secret)
+
+	// TODO: not from env vars
 	key, err := totp.Generate(totp.GenerateOpts{
 		Issuer:      os.Getenv("ISSUER_NAME"),
 		AccountName: os.Getenv("ACCOUNT_NAME"),
 		Secret:      secretBytes,
 		// You can customize the TOTP options as needed.
 	})
-
 	if err != nil {
 		return "", err
 	}
@@ -346,4 +356,21 @@ func GenerateOTP(secret string) (string, error) {
 	}
 
 	return otpCode, nil
+}
+
+// GenerateRecoveryCodes generates a list of recovery codes
+func (o *OTP) GenerateRecoveryCodes() []string {
+	codes := []string{}
+
+	// for range o.recoveryCodeCount { // this works in go 1.22 but the linter barfs while its still on 1.21
+	for i := 1; i <= o.recoveryCodeCount; i++ {
+		code, err := String(o.recoveryCodeLength, alphanumericCode)
+		if err != nil {
+			continue
+		}
+
+		codes = append(codes, code)
+	}
+
+	return codes
 }

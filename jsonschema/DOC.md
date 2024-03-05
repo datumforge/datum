@@ -18,6 +18,7 @@ Config contains the configuration for the datum server
 |[**sessions**](#sessions)|`object`|Config contains the configuration for the session store<br/>||
 |[**sentry**](#sentry)|`object`|Config settings for the Sentry client<br/>||
 |[**posthog**](#posthog)|`object`|Config is the configuration for PostHog<br/>||
+|[**totp**](#totp)|`object`|||
 
 **Additional Properties:** not allowed  
 <a name="server"></a>
@@ -409,6 +410,22 @@ Config is the configuration for PostHog
 |**enabled**|`boolean`|Enabled is a flag to enable or disable PostHog<br/>||
 |**apiKey**|`string`|APIKey is the PostHog API Key<br/>||
 |**host**|`string`|Host is the PostHog API Host<br/>||
+
+**Additional Properties:** not allowed  
+<a name="totp"></a>
+## totp: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|**codeLength**|`integer`|||
+|**issuer**|`string`|||
+|**redis**|`boolean`|||
+|**secret**|`string`|||
+|**recoveryCodeCount**|`integer`|||
+|**recoveryCodeLength**|`integer`|||
 
 **Additional Properties:** not allowed  
 

@@ -1,0 +1,27 @@
+query GetTFASettings {
+  tfaSettings {
+    totpAllowed
+    recoveryCodes
+    verified
+  }
+}
+
+mutation CreateTFASettings($input: CreateTFASettingsInput!) {
+  createTFASettings(input: $input) {
+    tfaSettings {
+      totpAllowed
+      recoveryCodes
+      verified
+    }
+  }
+}
+
+mutation UpdateTFASettings($input: UpdateTFASettingsInput!) {
+  updateTFASettings(input: $input) {
+    tfaSettings {
+      totpAllowed
+      recoveryCodes
+      verified
+    }
+  }
+}

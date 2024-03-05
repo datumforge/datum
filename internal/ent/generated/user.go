@@ -51,8 +51,6 @@ type User struct {
 	Password *string `json:"-"`
 	// the Subject of the user JWT
 	Sub string `json:"sub,omitempty"`
-	// whether the user uses oauth for login or not
-	Oauth bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"auth_provider,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -65,6 +63,8 @@ type User struct {
 type UserEdges struct {
 	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
+	// TfaSettings holds the value of the tfa_settings edge.
+	TfaSettings []*TFASettings `json:"tfa_settings,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
@@ -83,11 +83,12 @@ type UserEdges struct {
 	OrgMemberships []*OrgMembership `json:"org_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 	// totalCount holds the count of the edges above.
-	totalCount [6]map[string]int
+	totalCount [7]map[string]int
 
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
+	namedTfaSettings             map[string][]*TFASettings
 	namedEmailVerificationTokens map[string][]*EmailVerificationToken
 	namedPasswordResetTokens     map[string][]*PasswordResetToken
 	namedGroups                  map[string][]*Group
@@ -106,12 +107,21 @@ func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
 	return nil, &NotLoadedError{edge: "personal_access_tokens"}
 }
 
+// TfaSettingsOrErr returns the TfaSettings value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TfaSettingsOrErr() ([]*TFASettings, error) {
+	if e.loadedTypes[1] {
+		return e.TfaSettings, nil
+	}
+	return nil, &NotLoadedError{edge: "tfa_settings"}
+}
+
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 	if e.Setting != nil {
 		return e.Setting, nil
-	} else if e.loadedTypes[1] {
+	} else if e.loadedTypes[2] {
 		return nil, &NotFoundError{label: usersetting.Label}
 	}
 	return nil, &NotLoadedError{edge: "setting"}
@@ -120,7 +130,7 @@ func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 // EmailVerificationTokensOrErr returns the EmailVerificationTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.EmailVerificationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "email_verification_tokens"}
@@ -129,7 +139,7 @@ func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, er
 // PasswordResetTokensOrErr returns the PasswordResetTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetToken, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.PasswordResetTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "password_reset_tokens"}
@@ -138,7 +148,7 @@ func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetToken, error) {
 // GroupsOrErr returns the Groups value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupsOrErr() ([]*Group, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
@@ -147,7 +157,7 @@ func (e UserEdges) GroupsOrErr() ([]*Group, error) {
 // OrganizationsOrErr returns the Organizations value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.Organizations, nil
 	}
 	return nil, &NotLoadedError{edge: "organizations"}
@@ -156,7 +166,7 @@ func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
 // WebauthnOrErr returns the Webauthn value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) WebauthnOrErr() ([]*Webauthn, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.Webauthn, nil
 	}
 	return nil, &NotLoadedError{edge: "webauthn"}
@@ -165,7 +175,7 @@ func (e UserEdges) WebauthnOrErr() ([]*Webauthn, error) {
 // GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.GroupMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "group_memberships"}
@@ -174,7 +184,7 @@ func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
 // OrgMembershipsOrErr returns the OrgMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OrgMembershipsOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.OrgMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "org_memberships"}
@@ -185,8 +195,6 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldOauth:
-			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub, user.FieldAuthProvider:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
@@ -313,12 +321,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Sub = value.String
 			}
-		case user.FieldOauth:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field oauth", values[i])
-			} else if value.Valid {
-				u.Oauth = value.Bool
-			}
 		case user.FieldAuthProvider:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_provider", values[i])
@@ -341,6 +343,11 @@ func (u *User) Value(name string) (ent.Value, error) {
 // QueryPersonalAccessTokens queries the "personal_access_tokens" edge of the User entity.
 func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 	return NewUserClient(u.config).QueryPersonalAccessTokens(u)
+}
+
+// QueryTfaSettings queries the "tfa_settings" edge of the User entity.
+func (u *User) QueryTfaSettings() *TFASettingsQuery {
+	return NewUserClient(u.config).QueryTfaSettings(u)
 }
 
 // QuerySetting queries the "setting" edge of the User entity.
@@ -461,9 +468,6 @@ func (u *User) String() string {
 	builder.WriteString("sub=")
 	builder.WriteString(u.Sub)
 	builder.WriteString(", ")
-	builder.WriteString("oauth=")
-	builder.WriteString(fmt.Sprintf("%v", u.Oauth))
-	builder.WriteString(", ")
 	builder.WriteString("auth_provider=")
 	builder.WriteString(fmt.Sprintf("%v", u.AuthProvider))
 	builder.WriteByte(')')
@@ -491,6 +495,30 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
 	} else {
 		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
+	}
+}
+
+// NamedTfaSettings returns the TfaSettings named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedTfaSettings(name string) ([]*TFASettings, error) {
+	if u.Edges.namedTfaSettings == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedTfaSettings[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedTfaSettings(name string, edges ...*TFASettings) {
+	if u.Edges.namedTfaSettings == nil {
+		u.Edges.namedTfaSettings = make(map[string][]*TFASettings)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedTfaSettings[name] = []*TFASettings{}
+	} else {
+		u.Edges.namedTfaSettings[name] = append(u.Edges.namedTfaSettings[name], edges...)
 	}
 }
 

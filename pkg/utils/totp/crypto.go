@@ -11,9 +11,8 @@ import (
 // Bytes returns securely generated random bytes
 func Bytes(length int) ([]byte, error) {
 	b := make([]byte, length)
-	_, err := rand.Read(b)
 
-	if err != nil {
+	if _, err := rand.Read(b); err != nil {
 		return nil, err
 	}
 
@@ -63,8 +62,8 @@ func StringB64(length int, samples ...string) (string, error) {
 // OTPHash returns a sha512 hash of a string
 func OTPHash(s string) (string, error) {
 	h := sha512.New()
-	_, err := h.Write([]byte(s))
 
+	_, err := h.Write([]byte(s))
 	if err != nil {
 		return "", err
 	}

@@ -23,60 +23,60 @@ func (e ErrInvalidCode) Error() string   { return fmt.Sprintf("[%s] %s", e.Code(
 func (e ErrInvalidCode) Message() string { return string(e) }
 
 var (
-	// ErrCannotDecodeOTPHash
+	// ErrCannotDecodeOTPHash is an error representing a failure to decode an OTP hash
 	ErrCannotDecodeOTPHash = errors.New("cannot decode otp hash")
 
-	// ErrInvalidOTPHashFormat
+	// ErrInvalidOTPHashFormat is an error representing an invalid OTP hash format
 	ErrInvalidOTPHashFormat = errors.New("invalid otp hash format")
 
-	// ErrFailedToHashCode
+	// ErrFailedToHashCode is an error representing a failure to hash code
 	ErrFailedToHashCode = errors.New("failed to hash code")
 
-	// ErrCiphertextTooShort
-	ErrCiphertextTooShort = errors.New("ciphertext too short")
+	// ErrCipherTextTooShort is an error representing a ciphertext that is too short
+	ErrCipherTextTooShort = errors.New("ciphertext too short")
 
-	// ErrFailedToCreateCipherBlock
+	// ErrFailedToCreateCipherBlock is an error representing a failure to create a cipher block
 	ErrFailedToCreateCipherBlock = errors.New("failed to create cipher block")
 
-	// ErrCannotDecodeSecret
+	// ErrCannotDecodeSecret is an error representing a failure to decode a secret
 	ErrCannotDecodeSecret = errors.New("cannot decode secret")
 
-	// ErrCannotWriteSecret
+	// ErrCannotWriteSecret is an error representing a failure to write a secret
 	ErrCannotWriteSecret = errors.New("cannot write secret")
 
-	// ErrFailedToDetermineSecretVersion
+	// ErrFailedToDetermineSecretVersion is an error representing a failure to determine secret version
 	ErrFailedToDetermineSecretVersion = errors.New("failed to determine secret version")
 
-	// ErrFailedToCreateCipherText
+	// ErrFailedToCreateCipherText is an error representing a failure to create cipher text
 	ErrFailedToCreateCipherText = errors.New("failed to create cipher text")
 
-	// ErrNoSecretKeyForVersion
+	// ErrNoSecretKeyForVersion is an error representing no secret key for version
 	ErrNoSecretKeyForVersion = errors.New("no secret key for version")
 
-	// ErrNoSecretKey
+	// ErrNoSecretKey is an error representing no secret key
 	ErrNoSecretKey = errors.New("no secret key")
 
-	// ErrFailedToValidateCode
+	// ErrFailedToValidateCode is an error representing a failure to validate code
 	ErrFailedToValidateCode = errors.New("failed to validate code")
 
-	// ErrCodeIsNoLongerValid
+	// ErrCodeIsNoLongerValid is an error representing a code that is no longer valid
 	ErrCodeIsNoLongerValid = errors.New("code is no longer valid")
 
-	// ErrIncorrectCodeProvided
+	// ErrIncorrectCodeProvided is an error representing an incorrect code provided
 	ErrIncorrectCodeProvided = errors.New("incorrect code provided")
 
-	// ErrCannotDecryptSecret
+	// ErrCannotDecryptSecret is an error representing a failure to decrypt secret
 	ErrCannotDecryptSecret = errors.New("cannot decrypt secret")
 
-	// ErrFailedToGetSecretForQR
+	// ErrFailedToGetSecretForQR is an error representing a failure to get secret for qr
 	ErrFailedToGetSecretForQR = errors.New("failed to get secret for qr")
 
-	// ErrFailedtoGenerateSecret
-	ErrFailedtoGenerateSecret = errors.New("failed to generate secret")
+	// ErrFailedToGenerateSecret is an error representing a failure to generate secret
+	ErrFailedToGenerateSecret = errors.New("failed to generate secret")
 
-	// ErrCannotHashOTPString
+	// ErrCannotHashOTPString is an error representing a failure to hash otp string
 	ErrCannotHashOTPString = errors.New("cannot hash otp string")
 
-	// ErrCannotGenerateRandomString
+	// ErrCannotGenerateRandomString is an error representing a failure to generate random string
 	ErrCannotGenerateRandomString = errors.New("cannot generate random string")
 )

@@ -281,6 +281,14 @@ func (pat *PersonalAccessToken) Organizations(ctx context.Context) (result []*Or
 	return result, err
 }
 
+func (ts *TFASettings) Owner(ctx context.Context) (*User, error) {
+	result, err := ts.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = ts.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAccessToken, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = u.NamedPersonalAccessTokens(graphql.GetFieldContext(ctx).Field.Alias)
@@ -289,6 +297,18 @@ func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAcce
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryPersonalAccessTokens().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) TfaSettings(ctx context.Context) (result []*TFASettings, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedTfaSettings(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.TfaSettingsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryTfaSettings().All(ctx)
 	}
 	return result, err
 }

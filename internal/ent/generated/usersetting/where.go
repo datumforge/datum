@@ -123,26 +123,6 @@ func EmailConfirmed(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldEmailConfirmed, v))
 }
 
-// TfaSecret applies equality check predicate on the "tfa_secret" field. It's identical to TfaSecretEQ.
-func TfaSecret(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldTfaSecret, v))
-}
-
-// IsPhoneOtpAllowed applies equality check predicate on the "is_phone_otp_allowed" field. It's identical to IsPhoneOtpAllowedEQ.
-func IsPhoneOtpAllowed(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldIsPhoneOtpAllowed, v))
-}
-
-// IsEmailOtpAllowed applies equality check predicate on the "is_email_otp_allowed" field. It's identical to IsEmailOtpAllowedEQ.
-func IsEmailOtpAllowed(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldIsEmailOtpAllowed, v))
-}
-
-// IsTotpAllowed applies equality check predicate on the "is_totp_allowed" field. It's identical to IsTotpAllowedEQ.
-func IsTotpAllowed(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldIsTotpAllowed, v))
-}
-
 // IsWebauthnAllowed applies equality check predicate on the "is_webauthn_allowed" field. It's identical to IsWebauthnAllowedEQ.
 func IsWebauthnAllowed(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldIsWebauthnAllowed, v))
@@ -151,6 +131,11 @@ func IsWebauthnAllowed(v bool) predicate.UserSetting {
 // IsTfaEnabled applies equality check predicate on the "is_tfa_enabled" field. It's identical to IsTfaEnabledEQ.
 func IsTfaEnabled(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldIsTfaEnabled, v))
+}
+
+// PhoneNumber applies equality check predicate on the "phone_number" field. It's identical to PhoneNumberEQ.
+func PhoneNumber(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEQ(FieldPhoneNumber, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -753,141 +738,6 @@ func EmailConfirmedNEQ(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldNEQ(FieldEmailConfirmed, v))
 }
 
-// TfaSecretEQ applies the EQ predicate on the "tfa_secret" field.
-func TfaSecretEQ(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldTfaSecret, v))
-}
-
-// TfaSecretNEQ applies the NEQ predicate on the "tfa_secret" field.
-func TfaSecretNEQ(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldTfaSecret, v))
-}
-
-// TfaSecretIn applies the In predicate on the "tfa_secret" field.
-func TfaSecretIn(vs ...string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIn(FieldTfaSecret, vs...))
-}
-
-// TfaSecretNotIn applies the NotIn predicate on the "tfa_secret" field.
-func TfaSecretNotIn(vs ...string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotIn(FieldTfaSecret, vs...))
-}
-
-// TfaSecretGT applies the GT predicate on the "tfa_secret" field.
-func TfaSecretGT(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldGT(FieldTfaSecret, v))
-}
-
-// TfaSecretGTE applies the GTE predicate on the "tfa_secret" field.
-func TfaSecretGTE(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldGTE(FieldTfaSecret, v))
-}
-
-// TfaSecretLT applies the LT predicate on the "tfa_secret" field.
-func TfaSecretLT(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldLT(FieldTfaSecret, v))
-}
-
-// TfaSecretLTE applies the LTE predicate on the "tfa_secret" field.
-func TfaSecretLTE(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldLTE(FieldTfaSecret, v))
-}
-
-// TfaSecretContains applies the Contains predicate on the "tfa_secret" field.
-func TfaSecretContains(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldContains(FieldTfaSecret, v))
-}
-
-// TfaSecretHasPrefix applies the HasPrefix predicate on the "tfa_secret" field.
-func TfaSecretHasPrefix(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldHasPrefix(FieldTfaSecret, v))
-}
-
-// TfaSecretHasSuffix applies the HasSuffix predicate on the "tfa_secret" field.
-func TfaSecretHasSuffix(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldHasSuffix(FieldTfaSecret, v))
-}
-
-// TfaSecretIsNil applies the IsNil predicate on the "tfa_secret" field.
-func TfaSecretIsNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIsNull(FieldTfaSecret))
-}
-
-// TfaSecretNotNil applies the NotNil predicate on the "tfa_secret" field.
-func TfaSecretNotNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotNull(FieldTfaSecret))
-}
-
-// TfaSecretEqualFold applies the EqualFold predicate on the "tfa_secret" field.
-func TfaSecretEqualFold(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEqualFold(FieldTfaSecret, v))
-}
-
-// TfaSecretContainsFold applies the ContainsFold predicate on the "tfa_secret" field.
-func TfaSecretContainsFold(v string) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldContainsFold(FieldTfaSecret, v))
-}
-
-// IsPhoneOtpAllowedEQ applies the EQ predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedEQ(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldIsPhoneOtpAllowed, v))
-}
-
-// IsPhoneOtpAllowedNEQ applies the NEQ predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedNEQ(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldIsPhoneOtpAllowed, v))
-}
-
-// IsPhoneOtpAllowedIsNil applies the IsNil predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedIsNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIsNull(FieldIsPhoneOtpAllowed))
-}
-
-// IsPhoneOtpAllowedNotNil applies the NotNil predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedNotNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotNull(FieldIsPhoneOtpAllowed))
-}
-
-// IsEmailOtpAllowedEQ applies the EQ predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedEQ(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldIsEmailOtpAllowed, v))
-}
-
-// IsEmailOtpAllowedNEQ applies the NEQ predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedNEQ(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldIsEmailOtpAllowed, v))
-}
-
-// IsEmailOtpAllowedIsNil applies the IsNil predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedIsNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIsNull(FieldIsEmailOtpAllowed))
-}
-
-// IsEmailOtpAllowedNotNil applies the NotNil predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedNotNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotNull(FieldIsEmailOtpAllowed))
-}
-
-// IsTotpAllowedEQ applies the EQ predicate on the "is_totp_allowed" field.
-func IsTotpAllowedEQ(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldIsTotpAllowed, v))
-}
-
-// IsTotpAllowedNEQ applies the NEQ predicate on the "is_totp_allowed" field.
-func IsTotpAllowedNEQ(v bool) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldIsTotpAllowed, v))
-}
-
-// IsTotpAllowedIsNil applies the IsNil predicate on the "is_totp_allowed" field.
-func IsTotpAllowedIsNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIsNull(FieldIsTotpAllowed))
-}
-
-// IsTotpAllowedNotNil applies the NotNil predicate on the "is_totp_allowed" field.
-func IsTotpAllowedNotNil() predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotNull(FieldIsTotpAllowed))
-}
-
 // IsWebauthnAllowedEQ applies the EQ predicate on the "is_webauthn_allowed" field.
 func IsWebauthnAllowedEQ(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldIsWebauthnAllowed, v))
@@ -926,6 +776,81 @@ func IsTfaEnabledIsNil() predicate.UserSetting {
 // IsTfaEnabledNotNil applies the NotNil predicate on the "is_tfa_enabled" field.
 func IsTfaEnabledNotNil() predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldNotNull(FieldIsTfaEnabled))
+}
+
+// PhoneNumberEQ applies the EQ predicate on the "phone_number" field.
+func PhoneNumberEQ(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEQ(FieldPhoneNumber, v))
+}
+
+// PhoneNumberNEQ applies the NEQ predicate on the "phone_number" field.
+func PhoneNumberNEQ(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNEQ(FieldPhoneNumber, v))
+}
+
+// PhoneNumberIn applies the In predicate on the "phone_number" field.
+func PhoneNumberIn(vs ...string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIn(FieldPhoneNumber, vs...))
+}
+
+// PhoneNumberNotIn applies the NotIn predicate on the "phone_number" field.
+func PhoneNumberNotIn(vs ...string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotIn(FieldPhoneNumber, vs...))
+}
+
+// PhoneNumberGT applies the GT predicate on the "phone_number" field.
+func PhoneNumberGT(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldGT(FieldPhoneNumber, v))
+}
+
+// PhoneNumberGTE applies the GTE predicate on the "phone_number" field.
+func PhoneNumberGTE(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldGTE(FieldPhoneNumber, v))
+}
+
+// PhoneNumberLT applies the LT predicate on the "phone_number" field.
+func PhoneNumberLT(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldLT(FieldPhoneNumber, v))
+}
+
+// PhoneNumberLTE applies the LTE predicate on the "phone_number" field.
+func PhoneNumberLTE(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldLTE(FieldPhoneNumber, v))
+}
+
+// PhoneNumberContains applies the Contains predicate on the "phone_number" field.
+func PhoneNumberContains(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldContains(FieldPhoneNumber, v))
+}
+
+// PhoneNumberHasPrefix applies the HasPrefix predicate on the "phone_number" field.
+func PhoneNumberHasPrefix(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldHasPrefix(FieldPhoneNumber, v))
+}
+
+// PhoneNumberHasSuffix applies the HasSuffix predicate on the "phone_number" field.
+func PhoneNumberHasSuffix(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldHasSuffix(FieldPhoneNumber, v))
+}
+
+// PhoneNumberIsNil applies the IsNil predicate on the "phone_number" field.
+func PhoneNumberIsNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIsNull(FieldPhoneNumber))
+}
+
+// PhoneNumberNotNil applies the NotNil predicate on the "phone_number" field.
+func PhoneNumberNotNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotNull(FieldPhoneNumber))
+}
+
+// PhoneNumberEqualFold applies the EqualFold predicate on the "phone_number" field.
+func PhoneNumberEqualFold(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEqualFold(FieldPhoneNumber, v))
+}
+
+// PhoneNumberContainsFold applies the ContainsFold predicate on the "phone_number" field.
+func PhoneNumberContainsFold(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldContainsFold(FieldPhoneNumber, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
+	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
 // Handler contains configuration options for handlers
@@ -45,4 +46,6 @@ type Handler struct {
 	AuthMiddleware []echo.MiddlewareFunc
 	// WebAuthn contains the configuration settings for the webauthn provider
 	WebAuthn *webauthn.WebAuthn
+	// OTPManager contains the configuration settings for the OTP provider
+	OTPManager *totp.OTPManager
 }

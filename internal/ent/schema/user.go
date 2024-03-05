@@ -120,10 +120,6 @@ func (User) Fields() []ent.Field {
 			Unique().
 			Annotations(entoas.Skip(true)).
 			Optional(),
-		field.Bool("oauth").
-			Comment("whether the user uses oauth for login or not").
-			Optional().
-			Default(false),
 		field.Enum("auth_provider").
 			GoType(enums.AuthProvider("")).
 			Comment("auth provider used to register the account").
@@ -145,6 +141,9 @@ func (User) Indexes() []ent.Index {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("personal_access_tokens", PersonalAccessToken.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("tfa_settings", TFASettings.Type).
+			Unique().
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("setting", UserSetting.Type).
 			Required().

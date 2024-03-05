@@ -49,6 +49,8 @@ type UserSetting struct {
 	Tags []string `json:"tags,omitempty"`
 	// TFA secret for the user
 	TfaSecret *string `json:"-"`
+	// recovery codes for 2fa
+	RecoveryCodes []string `json:"recovery_codes,omitempty"`
 	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
 	IsPhoneOtpAllowed bool `json:"is_phone_otp_allowed,omitempty"`
 	// specifies a user may complete authentication by verifying an OTP code delivered through email
@@ -59,6 +61,8 @@ type UserSetting struct {
 	IsWebauthnAllowed bool `json:"is_webauthn_allowed,omitempty"`
 	// whether the user has two factor authentication enabled
 	IsTfaEnabled bool `json:"is_tfa_enabled,omitempty"`
+	// phone number associated with the account, used 2factor SMS authentication
+	PhoneNumber *string `json:"phone_number,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserSettingQuery when eager-loading is set.
 	Edges                    UserSettingEdges `json:"edges"`
@@ -106,11 +110,11 @@ func (*UserSetting) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case usersetting.FieldTags:
+		case usersetting.FieldTags, usersetting.FieldRecoveryCodes:
 			values[i] = new([]byte)
 		case usersetting.FieldLocked, usersetting.FieldEmailConfirmed, usersetting.FieldIsPhoneOtpAllowed, usersetting.FieldIsEmailOtpAllowed, usersetting.FieldIsTotpAllowed, usersetting.FieldIsWebauthnAllowed, usersetting.FieldIsTfaEnabled:
 			values[i] = new(sql.NullBool)
-		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldDeletedBy, usersetting.FieldUserID, usersetting.FieldStatus, usersetting.FieldTfaSecret:
+		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldDeletedBy, usersetting.FieldUserID, usersetting.FieldStatus, usersetting.FieldTfaSecret, usersetting.FieldPhoneNumber:
 			values[i] = new(sql.NullString)
 		case usersetting.FieldCreatedAt, usersetting.FieldUpdatedAt, usersetting.FieldDeletedAt, usersetting.FieldSilencedAt, usersetting.FieldSuspendedAt:
 			values[i] = new(sql.NullTime)
@@ -226,6 +230,14 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 				us.TfaSecret = new(string)
 				*us.TfaSecret = value.String
 			}
+		case usersetting.FieldRecoveryCodes:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field recovery_codes", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &us.RecoveryCodes); err != nil {
+					return fmt.Errorf("unmarshal field recovery_codes: %w", err)
+				}
+			}
 		case usersetting.FieldIsPhoneOtpAllowed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_phone_otp_allowed", values[i])
@@ -255,6 +267,13 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field is_tfa_enabled", values[i])
 			} else if value.Valid {
 				us.IsTfaEnabled = value.Bool
+			}
+		case usersetting.FieldPhoneNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field phone_number", values[i])
+			} else if value.Valid {
+				us.PhoneNumber = new(string)
+				*us.PhoneNumber = value.String
 			}
 		case usersetting.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -354,6 +373,9 @@ func (us *UserSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tfa_secret=<sensitive>")
 	builder.WriteString(", ")
+	builder.WriteString("recovery_codes=")
+	builder.WriteString(fmt.Sprintf("%v", us.RecoveryCodes))
+	builder.WriteString(", ")
 	builder.WriteString("is_phone_otp_allowed=")
 	builder.WriteString(fmt.Sprintf("%v", us.IsPhoneOtpAllowed))
 	builder.WriteString(", ")
@@ -368,6 +390,11 @@ func (us *UserSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("is_tfa_enabled=")
 	builder.WriteString(fmt.Sprintf("%v", us.IsTfaEnabled))
+	builder.WriteString(", ")
+	if v := us.PhoneNumber; v != nil {
+		builder.WriteString("phone_number=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

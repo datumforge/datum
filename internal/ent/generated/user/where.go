@@ -148,11 +148,6 @@ func Sub(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldSub, v))
 }
 
-// Oauth applies equality check predicate on the "oauth" field. It's identical to OauthEQ.
-func Oauth(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldOauth, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -1188,26 +1183,6 @@ func SubContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldSub, v))
 }
 
-// OauthEQ applies the EQ predicate on the "oauth" field.
-func OauthEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldOauth, v))
-}
-
-// OauthNEQ applies the NEQ predicate on the "oauth" field.
-func OauthNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldOauth, v))
-}
-
-// OauthIsNil applies the IsNil predicate on the "oauth" field.
-func OauthIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldOauth))
-}
-
-// OauthNotNil applies the NotNil predicate on the "oauth" field.
-func OauthNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldOauth))
-}
-
 // AuthProviderEQ applies the EQ predicate on the "auth_provider" field.
 func AuthProviderEQ(v enums.AuthProvider) predicate.User {
 	vc := v
@@ -1259,6 +1234,35 @@ func HasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) predica
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.PersonalAccessToken
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTfaSettings applies the HasEdge predicate on the "tfa_settings" edge.
+func HasTfaSettings() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, TfaSettingsTable, TfaSettingsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TFASettings
+		step.Edge.Schema = schemaConfig.TFASettings
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTfaSettingsWith applies the HasEdge predicate on the "tfa_settings" edge with a given conditions (other predicates).
+func HasTfaSettingsWith(preds ...predicate.TFASettings) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newTfaSettingsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TFASettings
+		step.Edge.Schema = schemaConfig.TFASettings
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

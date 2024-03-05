@@ -46,6 +46,8 @@ const (
 	FieldTags = "tags"
 	// FieldTfaSecret holds the string denoting the tfa_secret field in the database.
 	FieldTfaSecret = "tfa_secret"
+	// FieldRecoveryCodes holds the string denoting the recovery_codes field in the database.
+	FieldRecoveryCodes = "recovery_codes"
 	// FieldIsPhoneOtpAllowed holds the string denoting the is_phone_otp_allowed field in the database.
 	FieldIsPhoneOtpAllowed = "is_phone_otp_allowed"
 	// FieldIsEmailOtpAllowed holds the string denoting the is_email_otp_allowed field in the database.
@@ -56,6 +58,8 @@ const (
 	FieldIsWebauthnAllowed = "is_webauthn_allowed"
 	// FieldIsTfaEnabled holds the string denoting the is_tfa_enabled field in the database.
 	FieldIsTfaEnabled = "is_tfa_enabled"
+	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
+	FieldPhoneNumber = "phone_number"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeDefaultOrg holds the string denoting the default_org edge name in mutations.
@@ -95,11 +99,13 @@ var Columns = []string{
 	FieldEmailConfirmed,
 	FieldTags,
 	FieldTfaSecret,
+	FieldRecoveryCodes,
 	FieldIsPhoneOtpAllowed,
 	FieldIsEmailOtpAllowed,
 	FieldIsTotpAllowed,
 	FieldIsWebauthnAllowed,
 	FieldIsTfaEnabled,
+	FieldPhoneNumber,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "user_settings"
@@ -266,6 +272,11 @@ func ByIsWebauthnAllowed(opts ...sql.OrderTermOption) OrderOption {
 // ByIsTfaEnabled orders the results by the is_tfa_enabled field.
 func ByIsTfaEnabled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsTfaEnabled, opts...).ToFunc()
+}
+
+// ByPhoneNumber orders the results by the phone_number field.
+func ByPhoneNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPhoneNumber, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

@@ -240,6 +240,24 @@ func (usu *UserSettingUpdate) ClearTfaSecret() *UserSettingUpdate {
 	return usu
 }
 
+// SetRecoveryCodes sets the "recovery_codes" field.
+func (usu *UserSettingUpdate) SetRecoveryCodes(s []string) *UserSettingUpdate {
+	usu.mutation.SetRecoveryCodes(s)
+	return usu
+}
+
+// AppendRecoveryCodes appends s to the "recovery_codes" field.
+func (usu *UserSettingUpdate) AppendRecoveryCodes(s []string) *UserSettingUpdate {
+	usu.mutation.AppendRecoveryCodes(s)
+	return usu
+}
+
+// ClearRecoveryCodes clears the value of the "recovery_codes" field.
+func (usu *UserSettingUpdate) ClearRecoveryCodes() *UserSettingUpdate {
+	usu.mutation.ClearRecoveryCodes()
+	return usu
+}
+
 // SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
 func (usu *UserSettingUpdate) SetIsPhoneOtpAllowed(b bool) *UserSettingUpdate {
 	usu.mutation.SetIsPhoneOtpAllowed(b)
@@ -337,6 +355,26 @@ func (usu *UserSettingUpdate) SetNillableIsTfaEnabled(b *bool) *UserSettingUpdat
 // ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
 func (usu *UserSettingUpdate) ClearIsTfaEnabled() *UserSettingUpdate {
 	usu.mutation.ClearIsTfaEnabled()
+	return usu
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (usu *UserSettingUpdate) SetPhoneNumber(s string) *UserSettingUpdate {
+	usu.mutation.SetPhoneNumber(s)
+	return usu
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillablePhoneNumber(s *string) *UserSettingUpdate {
+	if s != nil {
+		usu.SetPhoneNumber(*s)
+	}
+	return usu
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (usu *UserSettingUpdate) ClearPhoneNumber() *UserSettingUpdate {
+	usu.mutation.ClearPhoneNumber()
 	return usu
 }
 
@@ -510,6 +548,17 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if usu.mutation.TfaSecretCleared() {
 		_spec.ClearField(usersetting.FieldTfaSecret, field.TypeString)
 	}
+	if value, ok := usu.mutation.RecoveryCodes(); ok {
+		_spec.SetField(usersetting.FieldRecoveryCodes, field.TypeJSON, value)
+	}
+	if value, ok := usu.mutation.AppendedRecoveryCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersetting.FieldRecoveryCodes, value)
+		})
+	}
+	if usu.mutation.RecoveryCodesCleared() {
+		_spec.ClearField(usersetting.FieldRecoveryCodes, field.TypeJSON)
+	}
 	if value, ok := usu.mutation.IsPhoneOtpAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)
 	}
@@ -539,6 +588,12 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if usu.mutation.IsTfaEnabledCleared() {
 		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
+	}
+	if value, ok := usu.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+	}
+	if usu.mutation.PhoneNumberCleared() {
+		_spec.ClearField(usersetting.FieldPhoneNumber, field.TypeString)
 	}
 	if usu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -830,6 +885,24 @@ func (usuo *UserSettingUpdateOne) ClearTfaSecret() *UserSettingUpdateOne {
 	return usuo
 }
 
+// SetRecoveryCodes sets the "recovery_codes" field.
+func (usuo *UserSettingUpdateOne) SetRecoveryCodes(s []string) *UserSettingUpdateOne {
+	usuo.mutation.SetRecoveryCodes(s)
+	return usuo
+}
+
+// AppendRecoveryCodes appends s to the "recovery_codes" field.
+func (usuo *UserSettingUpdateOne) AppendRecoveryCodes(s []string) *UserSettingUpdateOne {
+	usuo.mutation.AppendRecoveryCodes(s)
+	return usuo
+}
+
+// ClearRecoveryCodes clears the value of the "recovery_codes" field.
+func (usuo *UserSettingUpdateOne) ClearRecoveryCodes() *UserSettingUpdateOne {
+	usuo.mutation.ClearRecoveryCodes()
+	return usuo
+}
+
 // SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
 func (usuo *UserSettingUpdateOne) SetIsPhoneOtpAllowed(b bool) *UserSettingUpdateOne {
 	usuo.mutation.SetIsPhoneOtpAllowed(b)
@@ -927,6 +1000,26 @@ func (usuo *UserSettingUpdateOne) SetNillableIsTfaEnabled(b *bool) *UserSettingU
 // ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
 func (usuo *UserSettingUpdateOne) ClearIsTfaEnabled() *UserSettingUpdateOne {
 	usuo.mutation.ClearIsTfaEnabled()
+	return usuo
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (usuo *UserSettingUpdateOne) SetPhoneNumber(s string) *UserSettingUpdateOne {
+	usuo.mutation.SetPhoneNumber(s)
+	return usuo
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillablePhoneNumber(s *string) *UserSettingUpdateOne {
+	if s != nil {
+		usuo.SetPhoneNumber(*s)
+	}
+	return usuo
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (usuo *UserSettingUpdateOne) ClearPhoneNumber() *UserSettingUpdateOne {
+	usuo.mutation.ClearPhoneNumber()
 	return usuo
 }
 
@@ -1130,6 +1223,17 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	if usuo.mutation.TfaSecretCleared() {
 		_spec.ClearField(usersetting.FieldTfaSecret, field.TypeString)
 	}
+	if value, ok := usuo.mutation.RecoveryCodes(); ok {
+		_spec.SetField(usersetting.FieldRecoveryCodes, field.TypeJSON, value)
+	}
+	if value, ok := usuo.mutation.AppendedRecoveryCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersetting.FieldRecoveryCodes, value)
+		})
+	}
+	if usuo.mutation.RecoveryCodesCleared() {
+		_spec.ClearField(usersetting.FieldRecoveryCodes, field.TypeJSON)
+	}
 	if value, ok := usuo.mutation.IsPhoneOtpAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)
 	}
@@ -1159,6 +1263,12 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	}
 	if usuo.mutation.IsTfaEnabledCleared() {
 		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+	}
+	if usuo.mutation.PhoneNumberCleared() {
+		_spec.ClearField(usersetting.FieldPhoneNumber, field.TypeString)
 	}
 	if usuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

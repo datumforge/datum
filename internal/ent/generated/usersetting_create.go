@@ -211,6 +211,12 @@ func (usc *UserSettingCreate) SetNillableTfaSecret(s *string) *UserSettingCreate
 	return usc
 }
 
+// SetRecoveryCodes sets the "recovery_codes" field.
+func (usc *UserSettingCreate) SetRecoveryCodes(s []string) *UserSettingCreate {
+	usc.mutation.SetRecoveryCodes(s)
+	return usc
+}
+
 // SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
 func (usc *UserSettingCreate) SetIsPhoneOtpAllowed(b bool) *UserSettingCreate {
 	usc.mutation.SetIsPhoneOtpAllowed(b)
@@ -277,6 +283,20 @@ func (usc *UserSettingCreate) SetIsTfaEnabled(b bool) *UserSettingCreate {
 func (usc *UserSettingCreate) SetNillableIsTfaEnabled(b *bool) *UserSettingCreate {
 	if b != nil {
 		usc.SetIsTfaEnabled(*b)
+	}
+	return usc
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (usc *UserSettingCreate) SetPhoneNumber(s string) *UserSettingCreate {
+	usc.mutation.SetPhoneNumber(s)
+	return usc
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillablePhoneNumber(s *string) *UserSettingCreate {
+	if s != nil {
+		usc.SetPhoneNumber(*s)
 	}
 	return usc
 }
@@ -523,6 +543,10 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 		_spec.SetField(usersetting.FieldTfaSecret, field.TypeString, value)
 		_node.TfaSecret = &value
 	}
+	if value, ok := usc.mutation.RecoveryCodes(); ok {
+		_spec.SetField(usersetting.FieldRecoveryCodes, field.TypeJSON, value)
+		_node.RecoveryCodes = value
+	}
 	if value, ok := usc.mutation.IsPhoneOtpAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)
 		_node.IsPhoneOtpAllowed = value
@@ -542,6 +566,10 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 	if value, ok := usc.mutation.IsTfaEnabled(); ok {
 		_spec.SetField(usersetting.FieldIsTfaEnabled, field.TypeBool, value)
 		_node.IsTfaEnabled = value
+	}
+	if value, ok := usc.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+		_node.PhoneNumber = &value
 	}
 	if nodes := usc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

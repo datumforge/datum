@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -1934,6 +1935,132 @@ func newPersonalAccessTokenPaginateArgs(rv map[string]any) *personalaccesstokenP
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ts *TFASettingsQuery) CollectFields(ctx context.Context, satisfies ...string) (*TFASettingsQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ts, nil
+	}
+	if err := ts.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ts, nil
+}
+
+func (ts *TFASettingsQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(tfasettings.Columns))
+		selectedFields = []string{tfasettings.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: ts.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			ts.withOwner = query
+			if _, ok := fieldSeen[tfasettings.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldOwnerID)
+				fieldSeen[tfasettings.FieldOwnerID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[tfasettings.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldCreatedAt)
+				fieldSeen[tfasettings.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[tfasettings.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldUpdatedAt)
+				fieldSeen[tfasettings.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[tfasettings.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldCreatedBy)
+				fieldSeen[tfasettings.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[tfasettings.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldUpdatedBy)
+				fieldSeen[tfasettings.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[tfasettings.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldDeletedAt)
+				fieldSeen[tfasettings.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[tfasettings.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldDeletedBy)
+				fieldSeen[tfasettings.FieldDeletedBy] = struct{}{}
+			}
+		case "recoveryCodes":
+			if _, ok := fieldSeen[tfasettings.FieldRecoveryCodes]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldRecoveryCodes)
+				fieldSeen[tfasettings.FieldRecoveryCodes] = struct{}{}
+			}
+		case "phoneOtpAllowed":
+			if _, ok := fieldSeen[tfasettings.FieldPhoneOtpAllowed]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldPhoneOtpAllowed)
+				fieldSeen[tfasettings.FieldPhoneOtpAllowed] = struct{}{}
+			}
+		case "emailOtpAllowed":
+			if _, ok := fieldSeen[tfasettings.FieldEmailOtpAllowed]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldEmailOtpAllowed)
+				fieldSeen[tfasettings.FieldEmailOtpAllowed] = struct{}{}
+			}
+		case "totpAllowed":
+			if _, ok := fieldSeen[tfasettings.FieldTotpAllowed]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldTotpAllowed)
+				fieldSeen[tfasettings.FieldTotpAllowed] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		ts.Select(selectedFields...)
+	}
+	return nil
+}
+
+type tfasettingsPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TFASettingsPaginateOption
+}
+
+func newTFASettingsPaginateArgs(rv map[string]any) *tfasettingsPaginateArgs {
+	args := &tfasettingsPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*TFASettingsWhereInput); ok {
+		args.opts = append(args.opts, WithTFASettingsFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1966,6 +2093,16 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			u.WithNamedPersonalAccessTokens(alias, func(wq *PersonalAccessTokenQuery) {
 				*wq = *query
 			})
+		case "tfaSettings":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TFASettingsClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.withTfaSettings = query
 		case "setting":
 			var (
 				alias = field.Alias
@@ -2098,11 +2235,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if _, ok := fieldSeen[user.FieldSub]; !ok {
 				selectedFields = append(selectedFields, user.FieldSub)
 				fieldSeen[user.FieldSub] = struct{}{}
-			}
-		case "oauth":
-			if _, ok := fieldSeen[user.FieldOauth]; !ok {
-				selectedFields = append(selectedFields, user.FieldOauth)
-				fieldSeen[user.FieldOauth] = struct{}{}
 			}
 		case "authProvider":
 			if _, ok := fieldSeen[user.FieldAuthProvider]; !ok {
@@ -2282,6 +2414,11 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, usersetting.FieldTags)
 				fieldSeen[usersetting.FieldTags] = struct{}{}
 			}
+		case "recoveryCodes":
+			if _, ok := fieldSeen[usersetting.FieldRecoveryCodes]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldRecoveryCodes)
+				fieldSeen[usersetting.FieldRecoveryCodes] = struct{}{}
+			}
 		case "isPhoneOtpAllowed":
 			if _, ok := fieldSeen[usersetting.FieldIsPhoneOtpAllowed]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldIsPhoneOtpAllowed)
@@ -2306,6 +2443,11 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			if _, ok := fieldSeen[usersetting.FieldIsTfaEnabled]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldIsTfaEnabled)
 				fieldSeen[usersetting.FieldIsTfaEnabled] = struct{}{}
+			}
+		case "phoneNumber":
+			if _, ok := fieldSeen[usersetting.FieldPhoneNumber]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldPhoneNumber)
+				fieldSeen[usersetting.FieldPhoneNumber] = struct{}{}
 			}
 		case "id":
 		case "__typename":

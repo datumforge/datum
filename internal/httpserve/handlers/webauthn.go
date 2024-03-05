@@ -59,6 +59,11 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	// set context for remaining request based on logged in user
 	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
 
+	// set webauthn allowed
+	if err := h.setWebauthnAllowed(userCtx, entUser); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
 	if err := h.addDefaultOrgToUserQuery(userCtx, entUser); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}

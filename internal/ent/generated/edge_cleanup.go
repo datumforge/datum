@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -132,11 +133,23 @@ func PersonalAccessTokenEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func TFASettingsEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func UserEdgeCleanup(ctx context.Context, id string) error {
 
 	if exists, err := FromContext(ctx).PersonalAccessToken.Query().Where((personalaccesstoken.HasOwnerWith(user.ID(id)))).Exist(ctx); err == nil && exists {
 		if personalaccesstokenCount, err := FromContext(ctx).PersonalAccessToken.Delete().Where(personalaccesstoken.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting personalaccesstoken", "count", personalaccesstokenCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).TFASettings.Query().Where((tfasettings.HasOwnerWith(user.ID(id)))).Exist(ctx); err == nil && exists {
+		if tfasettingsCount, err := FromContext(ctx).TFASettings.Delete().Where(tfasettings.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting tfasettings", "count", tfasettingsCount, "err", err)
 			return err
 		}
 	}

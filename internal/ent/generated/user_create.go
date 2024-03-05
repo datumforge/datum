@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -222,20 +223,6 @@ func (uc *UserCreate) SetNillableSub(s *string) *UserCreate {
 	return uc
 }
 
-// SetOauth sets the "oauth" field.
-func (uc *UserCreate) SetOauth(b bool) *UserCreate {
-	uc.mutation.SetOauth(b)
-	return uc
-}
-
-// SetNillableOauth sets the "oauth" field if the given value is not nil.
-func (uc *UserCreate) SetNillableOauth(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetOauth(*b)
-	}
-	return uc
-}
-
 // SetAuthProvider sets the "auth_provider" field.
 func (uc *UserCreate) SetAuthProvider(ep enums.AuthProvider) *UserCreate {
 	uc.mutation.SetAuthProvider(ep)
@@ -277,6 +264,25 @@ func (uc *UserCreate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserCr
 		ids[i] = p[i].ID
 	}
 	return uc.AddPersonalAccessTokenIDs(ids...)
+}
+
+// SetTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID.
+func (uc *UserCreate) SetTfaSettingsID(id string) *UserCreate {
+	uc.mutation.SetTfaSettingsID(id)
+	return uc
+}
+
+// SetNillableTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableTfaSettingsID(id *string) *UserCreate {
+	if id != nil {
+		uc = uc.SetTfaSettingsID(*id)
+	}
+	return uc
+}
+
+// SetTfaSettings sets the "tfa_settings" edge to the TFASettings entity.
+func (uc *UserCreate) SetTfaSettings(t *TFASettings) *UserCreate {
+	return uc.SetTfaSettingsID(t.ID)
 }
 
 // SetSettingID sets the "setting" edge to the UserSetting entity by ID.
@@ -445,10 +451,6 @@ func (uc *UserCreate) defaults() error {
 		}
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
-	}
-	if _, ok := uc.mutation.Oauth(); !ok {
-		v := user.DefaultOauth
-		uc.mutation.SetOauth(v)
 	}
 	if _, ok := uc.mutation.AuthProvider(); !ok {
 		v := user.DefaultAuthProvider
@@ -619,10 +621,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldSub, field.TypeString, value)
 		_node.Sub = value
 	}
-	if value, ok := uc.mutation.Oauth(); ok {
-		_spec.SetField(user.FieldOauth, field.TypeBool, value)
-		_node.Oauth = value
-	}
 	if value, ok := uc.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
 		_node.AuthProvider = value
@@ -639,6 +637,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.PersonalAccessToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.TfaSettingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.TFASettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

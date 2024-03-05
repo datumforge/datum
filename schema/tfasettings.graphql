@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up tfaSettings by ID
+    """
+     tfaSettings(
+        """
+        ID of the tfaSettings
+        """
+        id: ID!
+    ):  TFASettings!
+}
+
+extend type Mutation{
+    """
+    Create a new tfaSettings
+    """
+    createTFASettings(
+        """
+        values of the tfaSettings
+        """
+        input: CreateTFASettingsInput!
+    ): TFASettingsCreatePayload!
+    """
+    Update an existing tfaSettings
+    """
+    updateTFASettings(
+        """
+        ID of the tfaSettings
+        """
+        id: ID!
+        """
+        New values for the tfaSettings
+        """
+        input: UpdateTFASettingsInput!
+    ): TFASettingsUpdatePayload!
+    """
+    Delete an existing tfaSettings
+    """
+    deleteTFASettings(
+        """
+        ID of the tfaSettings
+        """
+        id: ID!
+    ): TFASettingsDeletePayload!
+}
+
+"""
+Return response for createTFASettings mutation
+"""
+type TFASettingsCreatePayload {
+    """
+    Created tfaSettings
+    """
+    tfaSettings: TFASettings!
+}
+
+"""
+Return response for updateTFASettings mutation
+"""
+type TFASettingsUpdatePayload {
+    """
+    Updated tfaSettings
+    """
+    tfaSettings: TFASettings!
+}
+
+"""
+Return response for deleteTFASettings mutation
+"""
+type TFASettingsDeletePayload {
+    """
+    Deleted tfaSettings ID
+    """
+    deletedID: ID!
+}

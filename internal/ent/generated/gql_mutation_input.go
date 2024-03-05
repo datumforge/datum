@@ -1628,6 +1628,140 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 	return c
 }
 
+// CreateTFASettingsInput represents a mutation input for creating tfasettingsslice.
+type CreateTFASettingsInput struct {
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	TfaSecret       *string
+	RecoveryCodes   []string
+	PhoneOtpAllowed *bool
+	EmailOtpAllowed *bool
+	TotpAllowed     *bool
+	OwnerID         *string
+}
+
+// Mutate applies the CreateTFASettingsInput on the TFASettingsMutation builder.
+func (i *CreateTFASettingsInput) Mutate(m *TFASettingsMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.TfaSecret; v != nil {
+		m.SetTfaSecret(*v)
+	}
+	if v := i.RecoveryCodes; v != nil {
+		m.SetRecoveryCodes(v)
+	}
+	if v := i.PhoneOtpAllowed; v != nil {
+		m.SetPhoneOtpAllowed(*v)
+	}
+	if v := i.EmailOtpAllowed; v != nil {
+		m.SetEmailOtpAllowed(*v)
+	}
+	if v := i.TotpAllowed; v != nil {
+		m.SetTotpAllowed(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateTFASettingsInput on the TFASettingsCreate builder.
+func (c *TFASettingsCreate) SetInput(i CreateTFASettingsInput) *TFASettingsCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTFASettingsInput represents a mutation input for updating tfasettingsslice.
+type UpdateTFASettingsInput struct {
+	ClearUpdatedAt       bool
+	UpdatedAt            *time.Time
+	ClearUpdatedBy       bool
+	UpdatedBy            *string
+	ClearTfaSecret       bool
+	TfaSecret            *string
+	ClearRecoveryCodes   bool
+	RecoveryCodes        []string
+	AppendRecoveryCodes  []string
+	ClearPhoneOtpAllowed bool
+	PhoneOtpAllowed      *bool
+	ClearEmailOtpAllowed bool
+	EmailOtpAllowed      *bool
+	ClearTotpAllowed     bool
+	TotpAllowed          *bool
+}
+
+// Mutate applies the UpdateTFASettingsInput on the TFASettingsMutation builder.
+func (i *UpdateTFASettingsInput) Mutate(m *TFASettingsMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if i.ClearTfaSecret {
+		m.ClearTfaSecret()
+	}
+	if v := i.TfaSecret; v != nil {
+		m.SetTfaSecret(*v)
+	}
+	if i.ClearRecoveryCodes {
+		m.ClearRecoveryCodes()
+	}
+	if v := i.RecoveryCodes; v != nil {
+		m.SetRecoveryCodes(v)
+	}
+	if i.AppendRecoveryCodes != nil {
+		m.AppendRecoveryCodes(i.RecoveryCodes)
+	}
+	if i.ClearPhoneOtpAllowed {
+		m.ClearPhoneOtpAllowed()
+	}
+	if v := i.PhoneOtpAllowed; v != nil {
+		m.SetPhoneOtpAllowed(*v)
+	}
+	if i.ClearEmailOtpAllowed {
+		m.ClearEmailOtpAllowed()
+	}
+	if v := i.EmailOtpAllowed; v != nil {
+		m.SetEmailOtpAllowed(*v)
+	}
+	if i.ClearTotpAllowed {
+		m.ClearTotpAllowed()
+	}
+	if v := i.TotpAllowed; v != nil {
+		m.SetTotpAllowed(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdate builder.
+func (c *TFASettingsUpdate) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdateOne builder.
+func (c *TFASettingsUpdateOne) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
 	CreatedAt                 *time.Time
@@ -1644,9 +1778,9 @@ type CreateUserInput struct {
 	LastSeen                  *time.Time
 	Password                  *string
 	Sub                       *string
-	Oauth                     *bool
 	AuthProvider              *enums.AuthProvider
 	PersonalAccessTokenIDs    []string
+	TfaSettingsID             *string
 	SettingID                 string
 	EmailVerificationTokenIDs []string
 	PasswordResetTokenIDs     []string
@@ -1691,14 +1825,14 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
 	}
-	if v := i.Oauth; v != nil {
-		m.SetOauth(*v)
-	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
 	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
+	}
+	if v := i.TfaSettingsID; v != nil {
+		m.SetTfaSettingsID(*v)
 	}
 	m.SetSettingID(i.SettingID)
 	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
@@ -1746,12 +1880,12 @@ type UpdateUserInput struct {
 	Password                        *string
 	ClearSub                        bool
 	Sub                             *string
-	ClearOauth                      bool
-	Oauth                           *bool
 	AuthProvider                    *enums.AuthProvider
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
+	ClearTfaSettings                bool
+	TfaSettingsID                   *string
 	SettingID                       *string
 	ClearEmailVerificationTokens    bool
 	AddEmailVerificationTokenIDs    []string
@@ -1832,12 +1966,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
 	}
-	if i.ClearOauth {
-		m.ClearOauth()
-	}
-	if v := i.Oauth; v != nil {
-		m.SetOauth(*v)
-	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
 	}
@@ -1849,6 +1977,12 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemovePersonalAccessTokenIDs; len(v) > 0 {
 		m.RemovePersonalAccessTokenIDs(v...)
+	}
+	if i.ClearTfaSettings {
+		m.ClearTfaSettings()
+	}
+	if v := i.TfaSettingsID; v != nil {
+		m.SetTfaSettingsID(*v)
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
@@ -1925,11 +2059,13 @@ type CreateUserSettingInput struct {
 	EmailConfirmed    *bool
 	Tags              []string
 	TfaSecret         *string
+	RecoveryCodes     []string
 	IsPhoneOtpAllowed *bool
 	IsEmailOtpAllowed *bool
 	IsTotpAllowed     *bool
 	IsWebauthnAllowed *bool
 	IsTfaEnabled      *bool
+	PhoneNumber       *string
 	UserID            *string
 	DefaultOrgID      *string
 }
@@ -1969,6 +2105,9 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.TfaSecret; v != nil {
 		m.SetTfaSecret(*v)
 	}
+	if v := i.RecoveryCodes; v != nil {
+		m.SetRecoveryCodes(v)
+	}
 	if v := i.IsPhoneOtpAllowed; v != nil {
 		m.SetIsPhoneOtpAllowed(*v)
 	}
@@ -1983,6 +2122,9 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.IsTfaEnabled; v != nil {
 		m.SetIsTfaEnabled(*v)
+	}
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
 	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)
@@ -2015,6 +2157,9 @@ type UpdateUserSettingInput struct {
 	AppendTags             []string
 	ClearTfaSecret         bool
 	TfaSecret              *string
+	ClearRecoveryCodes     bool
+	RecoveryCodes          []string
+	AppendRecoveryCodes    []string
 	ClearIsPhoneOtpAllowed bool
 	IsPhoneOtpAllowed      *bool
 	ClearIsEmailOtpAllowed bool
@@ -2025,6 +2170,8 @@ type UpdateUserSettingInput struct {
 	IsWebauthnAllowed      *bool
 	ClearIsTfaEnabled      bool
 	IsTfaEnabled           *bool
+	ClearPhoneNumber       bool
+	PhoneNumber            *string
 	ClearUser              bool
 	UserID                 *string
 	ClearDefaultOrg        bool
@@ -2078,6 +2225,15 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.TfaSecret; v != nil {
 		m.SetTfaSecret(*v)
 	}
+	if i.ClearRecoveryCodes {
+		m.ClearRecoveryCodes()
+	}
+	if v := i.RecoveryCodes; v != nil {
+		m.SetRecoveryCodes(v)
+	}
+	if i.AppendRecoveryCodes != nil {
+		m.AppendRecoveryCodes(i.RecoveryCodes)
+	}
 	if i.ClearIsPhoneOtpAllowed {
 		m.ClearIsPhoneOtpAllowed()
 	}
@@ -2107,6 +2263,12 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.IsTfaEnabled; v != nil {
 		m.SetIsTfaEnabled(*v)
+	}
+	if i.ClearPhoneNumber {
+		m.ClearPhoneNumber()
+	}
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
 	}
 	if i.ClearUser {
 		m.ClearUser()

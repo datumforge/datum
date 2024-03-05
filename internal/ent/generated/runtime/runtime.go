@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -705,6 +706,51 @@ func init() {
 	personalaccesstokenDescID := personalaccesstokenMixinFields2[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
+	tfasettingsMixin := schema.TFASettings{}.Mixin()
+	tfasettingsMixinHooks0 := tfasettingsMixin[0].Hooks()
+	tfasettingsMixinHooks2 := tfasettingsMixin[2].Hooks()
+	tfasettingsHooks := schema.TFASettings{}.Hooks()
+	tfasettings.Hooks[0] = tfasettingsMixinHooks0[0]
+	tfasettings.Hooks[1] = tfasettingsMixinHooks2[0]
+	tfasettings.Hooks[2] = tfasettingsHooks[0]
+	tfasettingsMixinInters2 := tfasettingsMixin[2].Interceptors()
+	tfasettings.Interceptors[0] = tfasettingsMixinInters2[0]
+	tfasettingsMixinFields0 := tfasettingsMixin[0].Fields()
+	_ = tfasettingsMixinFields0
+	tfasettingsMixinFields1 := tfasettingsMixin[1].Fields()
+	_ = tfasettingsMixinFields1
+	tfasettingsFields := schema.TFASettings{}.Fields()
+	_ = tfasettingsFields
+	// tfasettingsDescCreatedAt is the schema descriptor for created_at field.
+	tfasettingsDescCreatedAt := tfasettingsMixinFields0[0].Descriptor()
+	// tfasettings.DefaultCreatedAt holds the default value on creation for the created_at field.
+	tfasettings.DefaultCreatedAt = tfasettingsDescCreatedAt.Default.(func() time.Time)
+	// tfasettingsDescUpdatedAt is the schema descriptor for updated_at field.
+	tfasettingsDescUpdatedAt := tfasettingsMixinFields0[1].Descriptor()
+	// tfasettings.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	tfasettings.DefaultUpdatedAt = tfasettingsDescUpdatedAt.Default.(func() time.Time)
+	// tfasettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	tfasettings.UpdateDefaultUpdatedAt = tfasettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tfasettingsDescVerified is the schema descriptor for verified field.
+	tfasettingsDescVerified := tfasettingsFields[1].Descriptor()
+	// tfasettings.DefaultVerified holds the default value on creation for the verified field.
+	tfasettings.DefaultVerified = tfasettingsDescVerified.Default.(bool)
+	// tfasettingsDescPhoneOtpAllowed is the schema descriptor for phone_otp_allowed field.
+	tfasettingsDescPhoneOtpAllowed := tfasettingsFields[3].Descriptor()
+	// tfasettings.DefaultPhoneOtpAllowed holds the default value on creation for the phone_otp_allowed field.
+	tfasettings.DefaultPhoneOtpAllowed = tfasettingsDescPhoneOtpAllowed.Default.(bool)
+	// tfasettingsDescEmailOtpAllowed is the schema descriptor for email_otp_allowed field.
+	tfasettingsDescEmailOtpAllowed := tfasettingsFields[4].Descriptor()
+	// tfasettings.DefaultEmailOtpAllowed holds the default value on creation for the email_otp_allowed field.
+	tfasettings.DefaultEmailOtpAllowed = tfasettingsDescEmailOtpAllowed.Default.(bool)
+	// tfasettingsDescTotpAllowed is the schema descriptor for totp_allowed field.
+	tfasettingsDescTotpAllowed := tfasettingsFields[5].Descriptor()
+	// tfasettings.DefaultTotpAllowed holds the default value on creation for the totp_allowed field.
+	tfasettings.DefaultTotpAllowed = tfasettingsDescTotpAllowed.Default.(bool)
+	// tfasettingsDescID is the schema descriptor for id field.
+	tfasettingsDescID := tfasettingsMixinFields1[0].Descriptor()
+	// tfasettings.DefaultID holds the default value on creation for the id field.
+	tfasettings.DefaultID = tfasettingsDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -835,10 +881,6 @@ func init() {
 	userDescLastSeen := userFields[7].Descriptor()
 	// user.UpdateDefaultLastSeen holds the default value on update for the last_seen field.
 	user.UpdateDefaultLastSeen = userDescLastSeen.UpdateDefault.(func() time.Time)
-	// userDescOauth is the schema descriptor for oauth field.
-	userDescOauth := userFields[10].Descriptor()
-	// user.DefaultOauth holds the default value on creation for the oauth field.
-	user.DefaultOauth = userDescOauth.Default.(bool)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
@@ -895,23 +937,23 @@ func init() {
 	// usersetting.DefaultTags holds the default value on creation for the tags field.
 	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
 	// usersettingDescIsPhoneOtpAllowed is the schema descriptor for is_phone_otp_allowed field.
-	usersettingDescIsPhoneOtpAllowed := usersettingFields[8].Descriptor()
+	usersettingDescIsPhoneOtpAllowed := usersettingFields[9].Descriptor()
 	// usersetting.DefaultIsPhoneOtpAllowed holds the default value on creation for the is_phone_otp_allowed field.
 	usersetting.DefaultIsPhoneOtpAllowed = usersettingDescIsPhoneOtpAllowed.Default.(bool)
 	// usersettingDescIsEmailOtpAllowed is the schema descriptor for is_email_otp_allowed field.
-	usersettingDescIsEmailOtpAllowed := usersettingFields[9].Descriptor()
+	usersettingDescIsEmailOtpAllowed := usersettingFields[10].Descriptor()
 	// usersetting.DefaultIsEmailOtpAllowed holds the default value on creation for the is_email_otp_allowed field.
 	usersetting.DefaultIsEmailOtpAllowed = usersettingDescIsEmailOtpAllowed.Default.(bool)
 	// usersettingDescIsTotpAllowed is the schema descriptor for is_totp_allowed field.
-	usersettingDescIsTotpAllowed := usersettingFields[10].Descriptor()
+	usersettingDescIsTotpAllowed := usersettingFields[11].Descriptor()
 	// usersetting.DefaultIsTotpAllowed holds the default value on creation for the is_totp_allowed field.
 	usersetting.DefaultIsTotpAllowed = usersettingDescIsTotpAllowed.Default.(bool)
 	// usersettingDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
-	usersettingDescIsWebauthnAllowed := usersettingFields[11].Descriptor()
+	usersettingDescIsWebauthnAllowed := usersettingFields[12].Descriptor()
 	// usersetting.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.
 	usersetting.DefaultIsWebauthnAllowed = usersettingDescIsWebauthnAllowed.Default.(bool)
 	// usersettingDescIsTfaEnabled is the schema descriptor for is_tfa_enabled field.
-	usersettingDescIsTfaEnabled := usersettingFields[12].Descriptor()
+	usersettingDescIsTfaEnabled := usersettingFields[13].Descriptor()
 	// usersetting.DefaultIsTfaEnabled holds the default value on creation for the is_tfa_enabled field.
 	usersetting.DefaultIsTfaEnabled = usersettingDescIsTfaEnabled.Default.(bool)
 	// usersettingDescID is the schema descriptor for id field.

@@ -20,6 +20,7 @@ type TFAOptions string
 // MessageType describes a classification of a Message
 type MessageType string
 
+// OTPManager manages the protocol for SMS/Email 2FA codes and TOTP codes
 type OTPManager struct {
 	TOTPManager    TOTPManager
 	MessageType    string
@@ -54,9 +55,9 @@ const (
 type User struct {
 	// ID is a unique ID for the user
 	ID string
-	// Phone is a phone number associated with the account
+	// Phone number associated with the account
 	Phone sql.NullString
-	// Email is an email address associated with the account
+	// Email address associated with the account
 	Email sql.NullString
 	// TFASecret is a a secret string used to generate 2FA TOTP codes
 	TFASecret string
@@ -138,4 +139,6 @@ type TOTPManager interface {
 	ValidateOTP(code, hash string) error
 	// ValidateTOTP checks if a User TOTP code is valid
 	ValidateTOTP(ctx context.Context, user *User, code string) error
+	// GenerateRecoveryCodes creates a set of recovery codes for a user
+	GenerateRecoveryCodes() []string
 }

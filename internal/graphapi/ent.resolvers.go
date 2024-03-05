@@ -90,6 +90,11 @@ func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.
 	return withTransactionalMutation(ctx).PersonalAccessToken.Query().Paginate(ctx, after, first, before, last, generated.WithPersonalAccessTokenFilter(where.Filter))
 }
 
+// TfaSettingsSlice is the resolver for the tfaSettingsSlice field.
+func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error) {
+	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))

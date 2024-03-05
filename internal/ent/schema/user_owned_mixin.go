@@ -6,8 +6,10 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 )
 
@@ -17,6 +19,7 @@ type UserOwnedMixin struct {
 	Optional          bool
 	AllowUpdate       bool
 	SkipOASGeneration bool
+	SoftDeleteIndex   bool
 }
 
 // Fields of the UserOwnedMixin
@@ -68,5 +71,17 @@ func (userOwned UserOwnedMixin) Edges() []ent.Edge {
 
 	return []ent.Edge{
 		ownerEdge,
+	}
+}
+
+// Indexes of the UserOwnedMixin
+func (userOwned UserOwnedMixin) Indexes() []ent.Index {
+	if !userOwned.SoftDeleteIndex {
+		return []ent.Index{}
+	}
+
+	return []ent.Index{
+		index.Fields("owner_id").
+			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
 	}
 }

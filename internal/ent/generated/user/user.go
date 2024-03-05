@@ -50,12 +50,12 @@ const (
 	FieldPassword = "password"
 	// FieldSub holds the string denoting the sub field in the database.
 	FieldSub = "sub"
-	// FieldOauth holds the string denoting the oauth field in the database.
-	FieldOauth = "oauth"
 	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
 	FieldAuthProvider = "auth_provider"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
+	// EdgeTfaSettings holds the string denoting the tfa_settings edge name in mutations.
+	EdgeTfaSettings = "tfa_settings"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
 	// EdgeEmailVerificationTokens holds the string denoting the email_verification_tokens edge name in mutations.
@@ -81,6 +81,13 @@ const (
 	PersonalAccessTokensInverseTable = "personal_access_tokens"
 	// PersonalAccessTokensColumn is the table column denoting the personal_access_tokens relation/edge.
 	PersonalAccessTokensColumn = "owner_id"
+	// TfaSettingsTable is the table that holds the tfa_settings relation/edge.
+	TfaSettingsTable = "tfa_settings"
+	// TfaSettingsInverseTable is the table name for the TFASettings entity.
+	// It exists in this package in order to avoid circular dependency with the "tfasettings" package.
+	TfaSettingsInverseTable = "tfa_settings"
+	// TfaSettingsColumn is the table column denoting the tfa_settings relation/edge.
+	TfaSettingsColumn = "owner_id"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "user_settings"
 	// SettingInverseTable is the table name for the UserSetting entity.
@@ -154,7 +161,6 @@ var Columns = []string{
 	FieldLastSeen,
 	FieldPassword,
 	FieldSub,
-	FieldOauth,
 	FieldAuthProvider,
 }
 
@@ -208,8 +214,6 @@ var (
 	UpdateDefaultAvatarUpdatedAt func() time.Time
 	// UpdateDefaultLastSeen holds the default value on update for the "last_seen" field.
 	UpdateDefaultLastSeen func() time.Time
-	// DefaultOauth holds the default value on creation for the "oauth" field.
-	DefaultOauth bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -314,11 +318,6 @@ func BySub(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSub, opts...).ToFunc()
 }
 
-// ByOauth orders the results by the oauth field.
-func ByOauth(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOauth, opts...).ToFunc()
-}
-
 // ByAuthProvider orders the results by the auth_provider field.
 func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
@@ -335,6 +334,13 @@ func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
 func ByPersonalAccessTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newPersonalAccessTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTfaSettingsField orders the results by tfa_settings field.
+func ByTfaSettingsField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTfaSettingsStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -447,6 +453,13 @@ func newPersonalAccessTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PersonalAccessTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, PersonalAccessTokensTable, PersonalAccessTokensColumn),
+	)
+}
+func newTfaSettingsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TfaSettingsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, TfaSettingsTable, TfaSettingsColumn),
 	)
 }
 func newSettingStep() *sqlgraph.Step {

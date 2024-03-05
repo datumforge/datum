@@ -118,6 +118,7 @@ func (User) Fields() []ent.Field {
 		field.String("sub").
 			Comment("the Subject of the user JWT").
 			Unique().
+			Annotations(entoas.Skip(true)).
 			Optional(),
 		field.Bool("oauth").
 			Comment("whether the user uses oauth for login or not").
@@ -127,32 +128,6 @@ func (User) Fields() []ent.Field {
 			GoType(enums.AuthProvider("")).
 			Comment("auth provider used to register the account").
 			Default(string(enums.Credentials)),
-		field.String("tfa_secret").
-			Comment("TFA secret for the user").
-			Sensitive().
-			Annotations(entoas.Skip(true)).
-			Optional().
-			Nillable(),
-		field.Bool("is_phone_otp_allowed").
-			Comment("specifies a user may complete authentication by verifying an OTP code delivered through SMS").
-			Optional().
-			Default(true),
-		field.Bool("is_email_otp_allowed").
-			Comment("specifies a user may complete authentication by verifying an OTP code delivered through email").
-			Optional().
-			Default(true),
-		field.Bool("is_totp_allowed").
-			Comment("specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app").
-			Optional().
-			Default(true),
-		field.Bool("is_webauthn_allowed").
-			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
-			Optional().
-			Default(true),
-		field.Bool("is_tfa_enabled").
-			Comment("whether the user has two factor authentication enabled").
-			Optional().
-			Default(false),
 	}
 }
 

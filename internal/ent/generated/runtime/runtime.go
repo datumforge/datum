@@ -891,26 +891,6 @@ func init() {
 	userDescOauth := userFields[10].Descriptor()
 	// user.DefaultOauth holds the default value on creation for the oauth field.
 	user.DefaultOauth = userDescOauth.Default.(bool)
-	// userDescIsPhoneOtpAllowed is the schema descriptor for is_phone_otp_allowed field.
-	userDescIsPhoneOtpAllowed := userFields[13].Descriptor()
-	// user.DefaultIsPhoneOtpAllowed holds the default value on creation for the is_phone_otp_allowed field.
-	user.DefaultIsPhoneOtpAllowed = userDescIsPhoneOtpAllowed.Default.(bool)
-	// userDescIsEmailOtpAllowed is the schema descriptor for is_email_otp_allowed field.
-	userDescIsEmailOtpAllowed := userFields[14].Descriptor()
-	// user.DefaultIsEmailOtpAllowed holds the default value on creation for the is_email_otp_allowed field.
-	user.DefaultIsEmailOtpAllowed = userDescIsEmailOtpAllowed.Default.(bool)
-	// userDescIsTotpAllowed is the schema descriptor for is_totp_allowed field.
-	userDescIsTotpAllowed := userFields[15].Descriptor()
-	// user.DefaultIsTotpAllowed holds the default value on creation for the is_totp_allowed field.
-	user.DefaultIsTotpAllowed = userDescIsTotpAllowed.Default.(bool)
-	// userDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
-	userDescIsWebauthnAllowed := userFields[16].Descriptor()
-	// user.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.
-	user.DefaultIsWebauthnAllowed = userDescIsWebauthnAllowed.Default.(bool)
-	// userDescIsTfaEnabled is the schema descriptor for is_tfa_enabled field.
-	userDescIsTfaEnabled := userFields[17].Descriptor()
-	// user.DefaultIsTfaEnabled holds the default value on creation for the is_tfa_enabled field.
-	user.DefaultIsTfaEnabled = userDescIsTfaEnabled.Default.(bool)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
@@ -966,6 +946,26 @@ func init() {
 	usersettingDescTags := usersettingFields[6].Descriptor()
 	// usersetting.DefaultTags holds the default value on creation for the tags field.
 	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
+	// usersettingDescIsPhoneOtpAllowed is the schema descriptor for is_phone_otp_allowed field.
+	usersettingDescIsPhoneOtpAllowed := usersettingFields[8].Descriptor()
+	// usersetting.DefaultIsPhoneOtpAllowed holds the default value on creation for the is_phone_otp_allowed field.
+	usersetting.DefaultIsPhoneOtpAllowed = usersettingDescIsPhoneOtpAllowed.Default.(bool)
+	// usersettingDescIsEmailOtpAllowed is the schema descriptor for is_email_otp_allowed field.
+	usersettingDescIsEmailOtpAllowed := usersettingFields[9].Descriptor()
+	// usersetting.DefaultIsEmailOtpAllowed holds the default value on creation for the is_email_otp_allowed field.
+	usersetting.DefaultIsEmailOtpAllowed = usersettingDescIsEmailOtpAllowed.Default.(bool)
+	// usersettingDescIsTotpAllowed is the schema descriptor for is_totp_allowed field.
+	usersettingDescIsTotpAllowed := usersettingFields[10].Descriptor()
+	// usersetting.DefaultIsTotpAllowed holds the default value on creation for the is_totp_allowed field.
+	usersetting.DefaultIsTotpAllowed = usersettingDescIsTotpAllowed.Default.(bool)
+	// usersettingDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
+	usersettingDescIsWebauthnAllowed := usersettingFields[11].Descriptor()
+	// usersetting.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.
+	usersetting.DefaultIsWebauthnAllowed = usersettingDescIsWebauthnAllowed.Default.(bool)
+	// usersettingDescIsTfaEnabled is the schema descriptor for is_tfa_enabled field.
+	usersettingDescIsTfaEnabled := usersettingFields[12].Descriptor()
+	// usersetting.DefaultIsTfaEnabled holds the default value on creation for the is_tfa_enabled field.
+	usersetting.DefaultIsTfaEnabled = usersettingDescIsTfaEnabled.Default.(bool)
 	// usersettingDescID is the schema descriptor for id field.
 	usersettingDescID := usersettingMixinFields1[0].Descriptor()
 	// usersetting.DefaultID holds the default value on creation for the id field.

@@ -21,6 +21,7 @@ type LoginRequest struct {
 	Username    string `json:"username"`
 	Password    string `json:"password"`
 	InviteToken string `json:"invite_token,omitempty"`
+	OTPCode     string `json:"otp_code"`
 }
 
 // LoginReply holds response to successful authentication

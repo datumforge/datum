@@ -24,6 +24,7 @@ import (
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
+	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
 var (
@@ -131,6 +132,10 @@ func main() {
 		entc.Dependency(
 			entc.DependencyName("Analytics"),
 			entc.DependencyType(&analytics.EventManager{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("TOTP"),
+			entc.DependencyType(&totp.OTPManager{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

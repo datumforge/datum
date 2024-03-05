@@ -2117,31 +2117,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, user.FieldAuthProvider)
 				fieldSeen[user.FieldAuthProvider] = struct{}{}
 			}
-		case "isPhoneOtpAllowed":
-			if _, ok := fieldSeen[user.FieldIsPhoneOtpAllowed]; !ok {
-				selectedFields = append(selectedFields, user.FieldIsPhoneOtpAllowed)
-				fieldSeen[user.FieldIsPhoneOtpAllowed] = struct{}{}
-			}
-		case "isEmailOtpAllowed":
-			if _, ok := fieldSeen[user.FieldIsEmailOtpAllowed]; !ok {
-				selectedFields = append(selectedFields, user.FieldIsEmailOtpAllowed)
-				fieldSeen[user.FieldIsEmailOtpAllowed] = struct{}{}
-			}
-		case "isTotpAllowed":
-			if _, ok := fieldSeen[user.FieldIsTotpAllowed]; !ok {
-				selectedFields = append(selectedFields, user.FieldIsTotpAllowed)
-				fieldSeen[user.FieldIsTotpAllowed] = struct{}{}
-			}
-		case "isWebauthnAllowed":
-			if _, ok := fieldSeen[user.FieldIsWebauthnAllowed]; !ok {
-				selectedFields = append(selectedFields, user.FieldIsWebauthnAllowed)
-				fieldSeen[user.FieldIsWebauthnAllowed] = struct{}{}
-			}
-		case "isTfaEnabled":
-			if _, ok := fieldSeen[user.FieldIsTfaEnabled]; !ok {
-				selectedFields = append(selectedFields, user.FieldIsTfaEnabled)
-				fieldSeen[user.FieldIsTfaEnabled] = struct{}{}
-			}
 		case "id":
 		case "__typename":
 		default:
@@ -2314,6 +2289,31 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			if _, ok := fieldSeen[usersetting.FieldTags]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldTags)
 				fieldSeen[usersetting.FieldTags] = struct{}{}
+			}
+		case "isPhoneOtpAllowed":
+			if _, ok := fieldSeen[usersetting.FieldIsPhoneOtpAllowed]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldIsPhoneOtpAllowed)
+				fieldSeen[usersetting.FieldIsPhoneOtpAllowed] = struct{}{}
+			}
+		case "isEmailOtpAllowed":
+			if _, ok := fieldSeen[usersetting.FieldIsEmailOtpAllowed]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldIsEmailOtpAllowed)
+				fieldSeen[usersetting.FieldIsEmailOtpAllowed] = struct{}{}
+			}
+		case "isTotpAllowed":
+			if _, ok := fieldSeen[usersetting.FieldIsTotpAllowed]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldIsTotpAllowed)
+				fieldSeen[usersetting.FieldIsTotpAllowed] = struct{}{}
+			}
+		case "isWebauthnAllowed":
+			if _, ok := fieldSeen[usersetting.FieldIsWebauthnAllowed]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldIsWebauthnAllowed)
+				fieldSeen[usersetting.FieldIsWebauthnAllowed] = struct{}{}
+			}
+		case "isTfaEnabled":
+			if _, ok := fieldSeen[usersetting.FieldIsTfaEnabled]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldIsTfaEnabled)
+				fieldSeen[usersetting.FieldIsTfaEnabled] = struct{}{}
 			}
 		case "id":
 		case "__typename":

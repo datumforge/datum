@@ -67,6 +67,10 @@ func (r *mutationResolver) DeleteIntegration(ctx context.Context, id string) (*I
 		return nil, err
 	}
 
+	if err := generated.IntegrationEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
 	return &IntegrationDeletePayload{DeletedID: id}, nil
 }
 

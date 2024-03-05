@@ -84,6 +84,10 @@ func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id str
 		return nil, err
 	}
 
+	if err := generated.PersonalAccessTokenEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
 	return &PersonalAccessTokenDeletePayload{DeletedID: id}, nil
 }
 

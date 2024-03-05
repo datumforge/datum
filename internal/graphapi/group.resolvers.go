@@ -111,6 +111,10 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 		return nil, err
 	}
 
+	if err := generated.GroupEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
 	return &GroupDeletePayload{DeletedID: id}, nil
 }
 

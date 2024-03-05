@@ -63,5 +63,9 @@ func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.
 		return nil, ErrInternalServerError
 	}
 
+	if err := generated.UserSettingEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
 	return userSetting, nil
 }

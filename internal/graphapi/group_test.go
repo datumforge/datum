@@ -592,6 +592,7 @@ func TestMutationDeleteGroup(t *testing.T) {
 			if tc.allowed {
 				mock_fga.ReadAny(t, client.fga)
 				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.WriteAny(t, client.fga)
 			}
 
 			// delete group

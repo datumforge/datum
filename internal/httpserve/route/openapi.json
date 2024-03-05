@@ -5264,6 +5264,21 @@
                       "type": "string"
                     }
                   },
+                  "is_phone_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_email_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_totp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_webauthn_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_tfa_enabled": {
+                    "type": "boolean"
+                  },
                   "user": {
                     "type": "string"
                   },
@@ -5434,6 +5449,21 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "is_phone_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_email_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_totp_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_webauthn_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_tfa_enabled": {
+                    "type": "boolean"
                   },
                   "user": {
                     "type": "string"
@@ -5656,9 +5686,6 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "sub": {
-                    "type": "string"
-                  },
                   "oauth": {
                     "type": "boolean"
                   },
@@ -5671,21 +5698,6 @@
                       "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
-                  },
-                  "is_phone_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_email_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_totp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_webauthn_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_tfa_enabled": {
-                    "type": "boolean"
                   },
                   "personal_access_tokens": {
                     "type": "array",
@@ -5902,9 +5914,6 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "sub": {
-                    "type": "string"
-                  },
                   "oauth": {
                     "type": "boolean"
                   },
@@ -5917,21 +5926,6 @@
                       "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
-                  },
-                  "is_phone_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_email_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_totp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_webauthn_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_tfa_enabled": {
-                    "type": "boolean"
                   },
                   "personal_access_tokens": {
                     "type": "array",
@@ -7580,9 +7574,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "sub": {
-            "type": "string"
-          },
           "oauth": {
             "type": "boolean"
           },
@@ -7595,21 +7586,6 @@
               "WEBAUTHN"
             ],
             "default": "CREDENTIALS"
-          },
-          "is_phone_otp_allowed": {
-            "type": "boolean"
-          },
-          "is_email_otp_allowed": {
-            "type": "boolean"
-          },
-          "is_totp_allowed": {
-            "type": "boolean"
-          },
-          "is_webauthn_allowed": {
-            "type": "boolean"
-          },
-          "is_tfa_enabled": {
-            "type": "boolean"
           },
           "personal_access_tokens": {
             "type": "array",
@@ -7732,6 +7708,21 @@
             "items": {
               "type": "string"
             }
+          },
+          "is_phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_email_otp_allowed": {
+            "type": "boolean"
+          },
+          "is_totp_allowed": {
+            "type": "boolean"
+          },
+          "is_webauthn_allowed": {
+            "type": "boolean"
+          },
+          "is_tfa_enabled": {
+            "type": "boolean"
           },
           "user": {
             "$ref": "#/components/schemas/User"

@@ -250,90 +250,6 @@ func (uc *UserCreate) SetNillableAuthProvider(ep *enums.AuthProvider) *UserCreat
 	return uc
 }
 
-// SetTfaSecret sets the "tfa_secret" field.
-func (uc *UserCreate) SetTfaSecret(s string) *UserCreate {
-	uc.mutation.SetTfaSecret(s)
-	return uc
-}
-
-// SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
-func (uc *UserCreate) SetNillableTfaSecret(s *string) *UserCreate {
-	if s != nil {
-		uc.SetTfaSecret(*s)
-	}
-	return uc
-}
-
-// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
-func (uc *UserCreate) SetIsPhoneOtpAllowed(b bool) *UserCreate {
-	uc.mutation.SetIsPhoneOtpAllowed(b)
-	return uc
-}
-
-// SetNillableIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsPhoneOtpAllowed(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsPhoneOtpAllowed(*b)
-	}
-	return uc
-}
-
-// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
-func (uc *UserCreate) SetIsEmailOtpAllowed(b bool) *UserCreate {
-	uc.mutation.SetIsEmailOtpAllowed(b)
-	return uc
-}
-
-// SetNillableIsEmailOtpAllowed sets the "is_email_otp_allowed" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsEmailOtpAllowed(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsEmailOtpAllowed(*b)
-	}
-	return uc
-}
-
-// SetIsTotpAllowed sets the "is_totp_allowed" field.
-func (uc *UserCreate) SetIsTotpAllowed(b bool) *UserCreate {
-	uc.mutation.SetIsTotpAllowed(b)
-	return uc
-}
-
-// SetNillableIsTotpAllowed sets the "is_totp_allowed" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsTotpAllowed(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsTotpAllowed(*b)
-	}
-	return uc
-}
-
-// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
-func (uc *UserCreate) SetIsWebauthnAllowed(b bool) *UserCreate {
-	uc.mutation.SetIsWebauthnAllowed(b)
-	return uc
-}
-
-// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsWebauthnAllowed(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsWebauthnAllowed(*b)
-	}
-	return uc
-}
-
-// SetIsTfaEnabled sets the "is_tfa_enabled" field.
-func (uc *UserCreate) SetIsTfaEnabled(b bool) *UserCreate {
-	uc.mutation.SetIsTfaEnabled(b)
-	return uc
-}
-
-// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
-func (uc *UserCreate) SetNillableIsTfaEnabled(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetIsTfaEnabled(*b)
-	}
-	return uc
-}
-
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -538,26 +454,6 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultAuthProvider
 		uc.mutation.SetAuthProvider(v)
 	}
-	if _, ok := uc.mutation.IsPhoneOtpAllowed(); !ok {
-		v := user.DefaultIsPhoneOtpAllowed
-		uc.mutation.SetIsPhoneOtpAllowed(v)
-	}
-	if _, ok := uc.mutation.IsEmailOtpAllowed(); !ok {
-		v := user.DefaultIsEmailOtpAllowed
-		uc.mutation.SetIsEmailOtpAllowed(v)
-	}
-	if _, ok := uc.mutation.IsTotpAllowed(); !ok {
-		v := user.DefaultIsTotpAllowed
-		uc.mutation.SetIsTotpAllowed(v)
-	}
-	if _, ok := uc.mutation.IsWebauthnAllowed(); !ok {
-		v := user.DefaultIsWebauthnAllowed
-		uc.mutation.SetIsWebauthnAllowed(v)
-	}
-	if _, ok := uc.mutation.IsTfaEnabled(); !ok {
-		v := user.DefaultIsTfaEnabled
-		uc.mutation.SetIsTfaEnabled(v)
-	}
 	if _, ok := uc.mutation.ID(); !ok {
 		if user.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized user.DefaultID (forgotten import generated/runtime?)")
@@ -730,30 +626,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
 		_node.AuthProvider = value
-	}
-	if value, ok := uc.mutation.TfaSecret(); ok {
-		_spec.SetField(user.FieldTfaSecret, field.TypeString, value)
-		_node.TfaSecret = &value
-	}
-	if value, ok := uc.mutation.IsPhoneOtpAllowed(); ok {
-		_spec.SetField(user.FieldIsPhoneOtpAllowed, field.TypeBool, value)
-		_node.IsPhoneOtpAllowed = value
-	}
-	if value, ok := uc.mutation.IsEmailOtpAllowed(); ok {
-		_spec.SetField(user.FieldIsEmailOtpAllowed, field.TypeBool, value)
-		_node.IsEmailOtpAllowed = value
-	}
-	if value, ok := uc.mutation.IsTotpAllowed(); ok {
-		_spec.SetField(user.FieldIsTotpAllowed, field.TypeBool, value)
-		_node.IsTotpAllowed = value
-	}
-	if value, ok := uc.mutation.IsWebauthnAllowed(); ok {
-		_spec.SetField(user.FieldIsWebauthnAllowed, field.TypeBool, value)
-		_node.IsWebauthnAllowed = value
-	}
-	if value, ok := uc.mutation.IsTfaEnabled(); ok {
-		_spec.SetField(user.FieldIsTfaEnabled, field.TypeBool, value)
-		_node.IsTfaEnabled = value
 	}
 	if nodes := uc.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

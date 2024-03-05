@@ -604,11 +604,11 @@
         },
         "relying_party_id": {
           "type": "string",
-          "description": "RelyingPartyID is the relying party identifier"
+          "description": "RelyingPartyID is the relying party identifier\nset to localhost for development, no port"
         },
         "request_origin": {
           "type": "string",
-          "description": "RequestOrigin the origin domain for authentication requests"
+          "description": "RequestOrigin the origin domain for authentication requests\ninclude the scheme and port"
         },
         "max_devices": {
           "type": "integer",
@@ -632,8 +632,7 @@
       "required": [
         "display_name",
         "relying_party_id",
-        "request_origin",
-        "max_devices"
+        "request_origin"
       ],
       "description": "ProviderConfig represents the configuration settings for a Webauthn Provider"
     }

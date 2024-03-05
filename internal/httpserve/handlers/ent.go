@@ -154,12 +154,21 @@ func (h *Handler) getUserByID(ctx context.Context, id string, authProvider enums
 		return nil, err
 	}
 
+	// Add webauthn to the response
+	user.Edges.Webauthn = user.QueryWebauthn().AllX(ctx)
+
 	return user, nil
 }
 
 func (h *Handler) addCredentialToUser(ctx context.Context, user *ent.User, credential webauthn.Credential) error {
+	transports := []string{}
+	for _, t := range credential.Transport {
+		transports = append(transports, string(t))
+	}
+
 	_, err := transaction.FromContext(ctx).Webauthn.Create().
 		SetOwnerID(user.ID).
+		SetTransports(transports).
 		SetAttestationType(credential.AttestationType).
 		SetAaguid(credential.Authenticator.AAGUID).
 		SetCredentialID(credential.ID).

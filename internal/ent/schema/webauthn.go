@@ -19,8 +19,6 @@ type Webauthn struct {
 // Fields of the Webauthn
 func (Webauthn) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").
-			Comment("name of the credential"),
 		field.Bytes("credential_id").
 			Comment("A probabilistically-unique byte sequence identifying a public key credential source and its authentication assertions").
 			Unique().

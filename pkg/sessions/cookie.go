@@ -22,16 +22,16 @@ var DefaultCookieConfig = &CookieConfig{
 	MaxAge:   defaultMaxAge,
 	HTTPOnly: true,
 	Secure:   true,
-	SameSite: http.SameSiteStrictMode,
+	SameSite: http.SameSiteNoneMode,
 }
 
 // DebugCookieConfig configures http.Cookie creation for debugging
 var DebugCookieConfig = &CookieConfig{
 	Path:     "/",
 	MaxAge:   defaultMaxAge,
-	HTTPOnly: true,
-	Secure:   false,
-	SameSite: http.SameSiteLaxMode,
+	HTTPOnly: false,
+	Secure:   true,
+	SameSite: http.SameSiteNoneMode,
 }
 
 // DebugOnlyCookieConfig is different in that it's not a receiver and the name is set, so it can be called directly
@@ -39,9 +39,9 @@ var DebugOnlyCookieConfig = CookieConfig{
 	Name:     DevCookieName,
 	Path:     "/",
 	MaxAge:   600, // nolint: gomnd
-	HTTPOnly: true,
-	Secure:   false, // allows cookies to be send over HTTP
-	SameSite: http.SameSiteLaxMode,
+	HTTPOnly: false,
+	Secure:   true, // allows cookies to be send over HTTP
+	SameSite: http.SameSiteNoneMode,
 }
 
 // CookieConfig configures http.Cookie creation

@@ -25,8 +25,6 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldOwnerID holds the string denoting the owner_id field in the database.
 	FieldOwnerID = "owner_id"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
 	// FieldCredentialID holds the string denoting the credential_id field in the database.
 	FieldCredentialID = "credential_id"
 	// FieldPublicKey holds the string denoting the public_key field in the database.
@@ -68,7 +66,6 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldOwnerID,
-	FieldName,
 	FieldCredentialID,
 	FieldPublicKey,
 	FieldAttestationType,
@@ -147,11 +144,6 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByOwnerID orders the results by the owner_id field.
 func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
-}
-
-// ByName orders the results by the name field.
-func ByName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // ByAttestationType orders the results by the attestation_type field.

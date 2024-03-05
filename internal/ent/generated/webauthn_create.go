@@ -83,12 +83,6 @@ func (wc *WebauthnCreate) SetOwnerID(s string) *WebauthnCreate {
 	return wc
 }
 
-// SetName sets the "name" field.
-func (wc *WebauthnCreate) SetName(s string) *WebauthnCreate {
-	wc.mutation.SetName(s)
-	return wc
-}
-
 // SetCredentialID sets the "credential_id" field.
 func (wc *WebauthnCreate) SetCredentialID(b []byte) *WebauthnCreate {
 	wc.mutation.SetCredentialID(b)
@@ -290,9 +284,6 @@ func (wc *WebauthnCreate) check() error {
 	if _, ok := wc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Webauthn.owner_id"`)}
 	}
-	if _, ok := wc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Webauthn.name"`)}
-	}
 	if _, ok := wc.mutation.Aaguid(); !ok {
 		return &ValidationError{Name: "aaguid", err: errors.New(`generated: missing required field "Webauthn.aaguid"`)}
 	}
@@ -368,10 +359,6 @@ func (wc *WebauthnCreate) createSpec() (*Webauthn, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.UpdatedBy(); ok {
 		_spec.SetField(webauthn.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
-	}
-	if value, ok := wc.mutation.Name(); ok {
-		_spec.SetField(webauthn.FieldName, field.TypeString, value)
-		_node.Name = value
 	}
 	if value, ok := wc.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)

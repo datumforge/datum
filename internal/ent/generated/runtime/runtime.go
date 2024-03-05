@@ -938,19 +938,19 @@ func init() {
 	// webauthn.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	webauthn.UpdateDefaultUpdatedAt = webauthnDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// webauthnDescBackupEligible is the schema descriptor for backup_eligible field.
-	webauthnDescBackupEligible := webauthnFields[7].Descriptor()
+	webauthnDescBackupEligible := webauthnFields[6].Descriptor()
 	// webauthn.DefaultBackupEligible holds the default value on creation for the backup_eligible field.
 	webauthn.DefaultBackupEligible = webauthnDescBackupEligible.Default.(bool)
 	// webauthnDescBackupState is the schema descriptor for backup_state field.
-	webauthnDescBackupState := webauthnFields[8].Descriptor()
+	webauthnDescBackupState := webauthnFields[7].Descriptor()
 	// webauthn.DefaultBackupState holds the default value on creation for the backup_state field.
 	webauthn.DefaultBackupState = webauthnDescBackupState.Default.(bool)
 	// webauthnDescUserPresent is the schema descriptor for user_present field.
-	webauthnDescUserPresent := webauthnFields[9].Descriptor()
+	webauthnDescUserPresent := webauthnFields[8].Descriptor()
 	// webauthn.DefaultUserPresent holds the default value on creation for the user_present field.
 	webauthn.DefaultUserPresent = webauthnDescUserPresent.Default.(bool)
 	// webauthnDescUserVerified is the schema descriptor for user_verified field.
-	webauthnDescUserVerified := webauthnFields[10].Descriptor()
+	webauthnDescUserVerified := webauthnFields[9].Descriptor()
 	// webauthn.DefaultUserVerified holds the default value on creation for the user_verified field.
 	webauthn.DefaultUserVerified = webauthnDescUserVerified.Default.(bool)
 	// webauthnDescID is the schema descriptor for id field.

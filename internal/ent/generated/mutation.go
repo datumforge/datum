@@ -21271,7 +21271,6 @@ type WebauthnMutation struct {
 	updated_at       *time.Time
 	created_by       *string
 	updated_by       *string
-	name             *string
 	credential_id    *[]byte
 	public_key       *[]byte
 	attestation_type *string
@@ -21626,42 +21625,6 @@ func (m *WebauthnMutation) OldOwnerID(ctx context.Context) (v string, err error)
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *WebauthnMutation) ResetOwnerID() {
 	m.owner = nil
-}
-
-// SetName sets the "name" field.
-func (m *WebauthnMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the value of the "name" field in the mutation.
-func (m *WebauthnMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old "name" field's value of the Webauthn entity.
-// If the Webauthn object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WebauthnMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName resets all changes to the "name" field.
-func (m *WebauthnMutation) ResetName() {
-	m.name = nil
 }
 
 // SetCredentialID sets the "credential_id" field.
@@ -22159,7 +22122,7 @@ func (m *WebauthnMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WebauthnMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, webauthn.FieldCreatedAt)
 	}
@@ -22174,9 +22137,6 @@ func (m *WebauthnMutation) Fields() []string {
 	}
 	if m.owner != nil {
 		fields = append(fields, webauthn.FieldOwnerID)
-	}
-	if m.name != nil {
-		fields = append(fields, webauthn.FieldName)
 	}
 	if m.credential_id != nil {
 		fields = append(fields, webauthn.FieldCredentialID)
@@ -22226,8 +22186,6 @@ func (m *WebauthnMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case webauthn.FieldOwnerID:
 		return m.OwnerID()
-	case webauthn.FieldName:
-		return m.Name()
 	case webauthn.FieldCredentialID:
 		return m.CredentialID()
 	case webauthn.FieldPublicKey:
@@ -22267,8 +22225,6 @@ func (m *WebauthnMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldUpdatedBy(ctx)
 	case webauthn.FieldOwnerID:
 		return m.OldOwnerID(ctx)
-	case webauthn.FieldName:
-		return m.OldName(ctx)
 	case webauthn.FieldCredentialID:
 		return m.OldCredentialID(ctx)
 	case webauthn.FieldPublicKey:
@@ -22332,13 +22288,6 @@ func (m *WebauthnMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOwnerID(v)
-		return nil
-	case webauthn.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
 		return nil
 	case webauthn.FieldCredentialID:
 		v, ok := value.([]byte)
@@ -22533,9 +22482,6 @@ func (m *WebauthnMutation) ResetField(name string) error {
 		return nil
 	case webauthn.FieldOwnerID:
 		m.ResetOwnerID()
-		return nil
-	case webauthn.FieldName:
-		m.ResetName()
 		return nil
 	case webauthn.FieldCredentialID:
 		m.ResetCredentialID()

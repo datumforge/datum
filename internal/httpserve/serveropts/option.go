@@ -34,6 +34,7 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/middleware/redirect"
 	"github.com/datumforge/datum/pkg/middleware/sentry"
+	"github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
@@ -154,6 +155,8 @@ func WithAuth() ServerOption {
 			authmw.WithJWKSEndpoint(s.Config.Settings.Auth.Token.JWKSEndpoint),
 			authmw.WithDBClient(s.Config.Handler.DBClient),
 		)
+
+		s.Config.Handler.WebAuthn = webauthn.NewWithConfig(s.Config.Settings.Auth.Providers.Webauthn)
 
 		s.Config.GraphMiddleware = append(s.Config.GraphMiddleware, authmw.Authenticate(conf))
 		s.Config.Handler.AuthMiddleware = append(s.Config.Handler.AuthMiddleware, authmw.Authenticate(conf))

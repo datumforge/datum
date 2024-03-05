@@ -17,7 +17,6 @@ auth:
         webauthn:
             debug: false
             display_name: ""
-            domain: ""
             enabled: false
             enforce_timeout: false
             max_devices: 0

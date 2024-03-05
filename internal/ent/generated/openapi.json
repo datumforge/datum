@@ -7771,9 +7771,6 @@
           "owner_id": {
             "type": "string"
           },
-          "name": {
-            "type": "string"
-          },
           "credential_id": {
             "type": "string",
             "format": "byte"
@@ -7818,7 +7815,6 @@
         "required": [
           "id",
           "owner_id",
-          "name",
           "aaguid",
           "sign_count",
           "transports",

@@ -49,8 +49,8 @@ func NewWithConfig(config Config) (echo.MiddlewareFunc, error) {
 		conf := middleware.CORSConfig{
 			AllowOrigins:     origins,
 			AllowMethods:     []string{"GET", "HEAD", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"},
-			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
-			ExposeHeaders:    []string{"Content-Length"},
+			AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Set-Cookie", "temporary-cookie"},
+			ExposeHeaders:    []string{"Content-Length", "Set-Cookie"},
 			AllowCredentials: true,
 			MaxAge:           int((24 * time.Hour).Seconds()), //nolint:gomnd
 		}

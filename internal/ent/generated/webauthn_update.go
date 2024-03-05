@@ -78,20 +78,6 @@ func (wu *WebauthnUpdate) SetNillableOwnerID(s *string) *WebauthnUpdate {
 	return wu
 }
 
-// SetName sets the "name" field.
-func (wu *WebauthnUpdate) SetName(s string) *WebauthnUpdate {
-	wu.mutation.SetName(s)
-	return wu
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (wu *WebauthnUpdate) SetNillableName(s *string) *WebauthnUpdate {
-	if s != nil {
-		wu.SetName(*s)
-	}
-	return wu
-}
-
 // SetCredentialID sets the "credential_id" field.
 func (wu *WebauthnUpdate) SetCredentialID(b []byte) *WebauthnUpdate {
 	wu.mutation.SetCredentialID(b)
@@ -307,9 +293,6 @@ func (wu *WebauthnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if wu.mutation.UpdatedByCleared() {
 		_spec.ClearField(webauthn.FieldUpdatedBy, field.TypeString)
 	}
-	if value, ok := wu.mutation.Name(); ok {
-		_spec.SetField(webauthn.FieldName, field.TypeString, value)
-	}
 	if value, ok := wu.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)
 	}
@@ -446,20 +429,6 @@ func (wuo *WebauthnUpdateOne) SetOwnerID(s string) *WebauthnUpdateOne {
 func (wuo *WebauthnUpdateOne) SetNillableOwnerID(s *string) *WebauthnUpdateOne {
 	if s != nil {
 		wuo.SetOwnerID(*s)
-	}
-	return wuo
-}
-
-// SetName sets the "name" field.
-func (wuo *WebauthnUpdateOne) SetName(s string) *WebauthnUpdateOne {
-	wuo.mutation.SetName(s)
-	return wuo
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (wuo *WebauthnUpdateOne) SetNillableName(s *string) *WebauthnUpdateOne {
-	if s != nil {
-		wuo.SetName(*s)
 	}
 	return wuo
 }
@@ -708,9 +677,6 @@ func (wuo *WebauthnUpdateOne) sqlSave(ctx context.Context) (_node *Webauthn, err
 	}
 	if wuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(webauthn.FieldUpdatedBy, field.TypeString)
-	}
-	if value, ok := wuo.mutation.Name(); ok {
-		_spec.SetField(webauthn.FieldName, field.TypeString, value)
 	}
 	if value, ok := wuo.mutation.CredentialID(); ok {
 		_spec.SetField(webauthn.FieldCredentialID, field.TypeBytes, value)

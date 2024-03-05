@@ -460,7 +460,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			webauthn.FieldCreatedBy:       {Type: field.TypeString, Column: webauthn.FieldCreatedBy},
 			webauthn.FieldUpdatedBy:       {Type: field.TypeString, Column: webauthn.FieldUpdatedBy},
 			webauthn.FieldOwnerID:         {Type: field.TypeString, Column: webauthn.FieldOwnerID},
-			webauthn.FieldName:            {Type: field.TypeString, Column: webauthn.FieldName},
 			webauthn.FieldCredentialID:    {Type: field.TypeBytes, Column: webauthn.FieldCredentialID},
 			webauthn.FieldPublicKey:       {Type: field.TypeBytes, Column: webauthn.FieldPublicKey},
 			webauthn.FieldAttestationType: {Type: field.TypeString, Column: webauthn.FieldAttestationType},
@@ -3262,11 +3261,6 @@ func (f *WebauthnFilter) WhereUpdatedBy(p entql.StringP) {
 // WhereOwnerID applies the entql string predicate on the owner_id field.
 func (f *WebauthnFilter) WhereOwnerID(p entql.StringP) {
 	f.Where(p.Field(webauthn.FieldOwnerID))
-}
-
-// WhereName applies the entql string predicate on the name field.
-func (f *WebauthnFilter) WhereName(p entql.StringP) {
-	f.Where(p.Field(webauthn.FieldName))
 }
 
 // WhereCredentialID applies the entql []byte predicate on the credential_id field.

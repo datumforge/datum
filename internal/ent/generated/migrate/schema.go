@@ -608,7 +608,6 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString},
 		{Name: "credential_id", Type: field.TypeBytes, Unique: true, Nullable: true},
 		{Name: "public_key", Type: field.TypeBytes, Nullable: true},
 		{Name: "attestation_type", Type: field.TypeString, Nullable: true},
@@ -629,7 +628,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "webauthns_users_webauthn",
-				Columns:    []*schema.Column{WebauthnsColumns[16]},
+				Columns:    []*schema.Column{WebauthnsColumns[15]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

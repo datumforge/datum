@@ -606,10 +606,6 @@
           "type": "string",
           "description": "RelyingPartyID is the relying party identifier"
         },
-        "domain": {
-          "type": "string",
-          "description": "Domain is the domain of the site"
-        },
         "request_origin": {
           "type": "string",
           "description": "RequestOrigin the origin domain for authentication requests"
@@ -636,7 +632,6 @@
       "required": [
         "display_name",
         "relying_party_id",
-        "domain",
         "request_origin",
         "max_devices"
       ],

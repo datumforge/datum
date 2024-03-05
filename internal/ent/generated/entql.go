@@ -408,7 +408,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldLastSeen:        {Type: field.TypeTime, Column: user.FieldLastSeen},
 			user.FieldPassword:        {Type: field.TypeString, Column: user.FieldPassword},
 			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
-			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
 			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
 		},
 	}
@@ -2897,11 +2896,6 @@ func (f *UserFilter) WherePassword(p entql.StringP) {
 // WhereSub applies the entql string predicate on the sub field.
 func (f *UserFilter) WhereSub(p entql.StringP) {
 	f.Where(p.Field(user.FieldSub))
-}
-
-// WhereOauth applies the entql bool predicate on the oauth field.
-func (f *UserFilter) WhereOauth(p entql.BoolP) {
-	f.Where(p.Field(user.FieldOauth))
 }
 
 // WhereAuthProvider applies the entql string predicate on the auth_provider field.

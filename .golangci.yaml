@@ -16,6 +16,7 @@ run:
     - .github/*
     - docker/*
     - schema/*
+    - pkg/utils/totp/testing/*
 
 linters:
   enable:

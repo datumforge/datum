@@ -273,8 +273,6 @@ type CreateUserInput struct {
 	Password *string `json:"password,omitempty"`
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
-	// whether the user uses oauth for login or not
-	Oauth *bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider              *enums.AuthProvider `json:"authProvider,omitempty"`
 	PersonalAccessTokenIDs    []string            `json:"personalAccessTokenIDs,omitempty"`
@@ -3231,9 +3229,6 @@ type UpdateUserInput struct {
 	// the Subject of the user JWT
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
-	// whether the user uses oauth for login or not
-	Oauth      *bool `json:"oauth,omitempty"`
-	ClearOauth *bool `json:"clearOauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider                    *enums.AuthProvider `json:"authProvider,omitempty"`
 	AddPersonalAccessTokenIDs       []string            `json:"addPersonalAccessTokenIDs,omitempty"`
@@ -3324,8 +3319,6 @@ type User struct {
 	LastSeen *time.Time `json:"lastSeen,omitempty"`
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
-	// whether the user uses oauth for login or not
-	Oauth *bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider         enums.AuthProvider     `json:"authProvider"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
@@ -3846,11 +3839,6 @@ type UserWhereInput struct {
 	SubNotNil       *bool    `json:"subNotNil,omitempty"`
 	SubEqualFold    *string  `json:"subEqualFold,omitempty"`
 	SubContainsFold *string  `json:"subContainsFold,omitempty"`
-	// oauth field predicates
-	Oauth       *bool `json:"oauth,omitempty"`
-	OauthNeq    *bool `json:"oauthNEQ,omitempty"`
-	OauthIsNil  *bool `json:"oauthIsNil,omitempty"`
-	OauthNotNil *bool `json:"oauthNotNil,omitempty"`
 	// auth_provider field predicates
 	AuthProvider      *enums.AuthProvider  `json:"authProvider,omitempty"`
 	AuthProviderNeq   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`

@@ -17329,7 +17329,6 @@ type UserMutation struct {
 	last_seen                        *time.Time
 	password                         *string
 	sub                              *string
-	oauth                            *bool
 	auth_provider                    *enums.AuthProvider
 	clearedFields                    map[string]struct{}
 	personal_access_tokens           map[string]struct{}
@@ -18199,55 +18198,6 @@ func (m *UserMutation) ResetSub() {
 	delete(m.clearedFields, user.FieldSub)
 }
 
-// SetOauth sets the "oauth" field.
-func (m *UserMutation) SetOauth(b bool) {
-	m.oauth = &b
-}
-
-// Oauth returns the value of the "oauth" field in the mutation.
-func (m *UserMutation) Oauth() (r bool, exists bool) {
-	v := m.oauth
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOauth returns the old "oauth" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldOauth(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOauth is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOauth requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOauth: %w", err)
-	}
-	return oldValue.Oauth, nil
-}
-
-// ClearOauth clears the value of the "oauth" field.
-func (m *UserMutation) ClearOauth() {
-	m.oauth = nil
-	m.clearedFields[user.FieldOauth] = struct{}{}
-}
-
-// OauthCleared returns if the "oauth" field was cleared in this mutation.
-func (m *UserMutation) OauthCleared() bool {
-	_, ok := m.clearedFields[user.FieldOauth]
-	return ok
-}
-
-// ResetOauth resets all changes to the "oauth" field.
-func (m *UserMutation) ResetOauth() {
-	m.oauth = nil
-	delete(m.clearedFields, user.FieldOauth)
-}
-
 // SetAuthProvider sets the "auth_provider" field.
 func (m *UserMutation) SetAuthProvider(ep enums.AuthProvider) {
 	m.auth_provider = &ep
@@ -18789,7 +18739,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -18838,9 +18788,6 @@ func (m *UserMutation) Fields() []string {
 	if m.sub != nil {
 		fields = append(fields, user.FieldSub)
 	}
-	if m.oauth != nil {
-		fields = append(fields, user.FieldOauth)
-	}
 	if m.auth_provider != nil {
 		fields = append(fields, user.FieldAuthProvider)
 	}
@@ -18884,8 +18831,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Password()
 	case user.FieldSub:
 		return m.Sub()
-	case user.FieldOauth:
-		return m.Oauth()
 	case user.FieldAuthProvider:
 		return m.AuthProvider()
 	}
@@ -18929,8 +18874,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPassword(ctx)
 	case user.FieldSub:
 		return m.OldSub(ctx)
-	case user.FieldOauth:
-		return m.OldOauth(ctx)
 	case user.FieldAuthProvider:
 		return m.OldAuthProvider(ctx)
 	}
@@ -19054,13 +18997,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSub(v)
 		return nil
-	case user.FieldOauth:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOauth(v)
-		return nil
 	case user.FieldAuthProvider:
 		v, ok := value.(enums.AuthProvider)
 		if !ok {
@@ -19134,9 +19070,6 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldSub) {
 		fields = append(fields, user.FieldSub)
 	}
-	if m.FieldCleared(user.FieldOauth) {
-		fields = append(fields, user.FieldOauth)
-	}
 	return fields
 }
 
@@ -19186,9 +19119,6 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldSub:
 		m.ClearSub()
-		return nil
-	case user.FieldOauth:
-		m.ClearOauth()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -19245,9 +19175,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldSub:
 		m.ResetSub()
-		return nil
-	case user.FieldOauth:
-		m.ResetOauth()
 		return nil
 	case user.FieldAuthProvider:
 		m.ResetAuthProvider()

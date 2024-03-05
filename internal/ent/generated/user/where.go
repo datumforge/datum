@@ -148,11 +148,6 @@ func Sub(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldSub, v))
 }
 
-// Oauth applies equality check predicate on the "oauth" field. It's identical to OauthEQ.
-func Oauth(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldOauth, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -1186,26 +1181,6 @@ func SubEqualFold(v string) predicate.User {
 // SubContainsFold applies the ContainsFold predicate on the "sub" field.
 func SubContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldSub, v))
-}
-
-// OauthEQ applies the EQ predicate on the "oauth" field.
-func OauthEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldOauth, v))
-}
-
-// OauthNEQ applies the NEQ predicate on the "oauth" field.
-func OauthNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldOauth, v))
-}
-
-// OauthIsNil applies the IsNil predicate on the "oauth" field.
-func OauthIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldOauth))
-}
-
-// OauthNotNil applies the NotNil predicate on the "oauth" field.
-func OauthNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldOauth))
 }
 
 // AuthProviderEQ applies the EQ predicate on the "auth_provider" field.

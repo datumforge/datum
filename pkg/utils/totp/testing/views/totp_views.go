@@ -68,6 +68,7 @@ func GenerateTOTP(w http.ResponseWriter, r *http.Request) {
 		context["genKey"] = haveKey
 		context["haveKey"] = secretBase32
 	}
+
 	tmpl.Execute(w, context)
 }
 
@@ -76,6 +77,7 @@ func TOTPGenerator(secret string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return key, nil
 }
 
@@ -83,6 +85,7 @@ func CheckErr(w http.ResponseWriter, err error) {
 	if err != nil {
 		fmt.Println("Error:", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+
 		return
 	}
 }

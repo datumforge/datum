@@ -5686,9 +5686,6 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "oauth": {
-                    "type": "boolean"
-                  },
                   "auth_provider": {
                     "type": "string",
                     "enum": [
@@ -5913,9 +5910,6 @@
                   "avatar_updated_at": {
                     "type": "string",
                     "format": "date-time"
-                  },
-                  "oauth": {
-                    "type": "boolean"
                   },
                   "auth_provider": {
                     "type": "string",
@@ -7573,9 +7567,6 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
-          },
-          "oauth": {
-            "type": "boolean"
           },
           "auth_provider": {
             "type": "string",

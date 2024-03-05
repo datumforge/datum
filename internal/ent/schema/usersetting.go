@@ -69,19 +69,19 @@ func (UserSetting) Fields() []ent.Field {
 		field.Bool("is_phone_otp_allowed").
 			Comment("specifies a user may complete authentication by verifying an OTP code delivered through SMS").
 			Optional().
-			Default(true),
+			Default(false),
 		field.Bool("is_email_otp_allowed").
 			Comment("specifies a user may complete authentication by verifying an OTP code delivered through email").
 			Optional().
-			Default(true),
+			Default(false),
 		field.Bool("is_totp_allowed").
 			Comment("specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app").
 			Optional().
-			Default(true),
+			Default(false),
 		field.Bool("is_webauthn_allowed").
 			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
 			Optional().
-			Default(true),
+			Default(false),
 		field.Bool("is_tfa_enabled").
 			Comment("whether the user has two factor authentication enabled").
 			Optional().

@@ -222,20 +222,6 @@ func (uc *UserCreate) SetNillableSub(s *string) *UserCreate {
 	return uc
 }
 
-// SetOauth sets the "oauth" field.
-func (uc *UserCreate) SetOauth(b bool) *UserCreate {
-	uc.mutation.SetOauth(b)
-	return uc
-}
-
-// SetNillableOauth sets the "oauth" field if the given value is not nil.
-func (uc *UserCreate) SetNillableOauth(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetOauth(*b)
-	}
-	return uc
-}
-
 // SetAuthProvider sets the "auth_provider" field.
 func (uc *UserCreate) SetAuthProvider(ep enums.AuthProvider) *UserCreate {
 	uc.mutation.SetAuthProvider(ep)
@@ -446,10 +432,6 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := uc.mutation.Oauth(); !ok {
-		v := user.DefaultOauth
-		uc.mutation.SetOauth(v)
-	}
 	if _, ok := uc.mutation.AuthProvider(); !ok {
 		v := user.DefaultAuthProvider
 		uc.mutation.SetAuthProvider(v)
@@ -618,10 +600,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Sub(); ok {
 		_spec.SetField(user.FieldSub, field.TypeString, value)
 		_node.Sub = value
-	}
-	if value, ok := uc.mutation.Oauth(); ok {
-		_spec.SetField(user.FieldOauth, field.TypeBool, value)
-		_node.Oauth = value
 	}
 	if value, ok := uc.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)

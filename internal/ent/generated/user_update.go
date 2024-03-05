@@ -272,26 +272,6 @@ func (uu *UserUpdate) ClearSub() *UserUpdate {
 	return uu
 }
 
-// SetOauth sets the "oauth" field.
-func (uu *UserUpdate) SetOauth(b bool) *UserUpdate {
-	uu.mutation.SetOauth(b)
-	return uu
-}
-
-// SetNillableOauth sets the "oauth" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetOauth(*b)
-	}
-	return uu
-}
-
-// ClearOauth clears the value of the "oauth" field.
-func (uu *UserUpdate) ClearOauth() *UserUpdate {
-	uu.mutation.ClearOauth()
-	return uu
-}
-
 // SetAuthProvider sets the "auth_provider" field.
 func (uu *UserUpdate) SetAuthProvider(ep enums.AuthProvider) *UserUpdate {
 	uu.mutation.SetAuthProvider(ep)
@@ -804,12 +784,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.SubCleared() {
 		_spec.ClearField(user.FieldSub, field.TypeString)
-	}
-	if value, ok := uu.mutation.Oauth(); ok {
-		_spec.SetField(user.FieldOauth, field.TypeBool, value)
-	}
-	if uu.mutation.OauthCleared() {
-		_spec.ClearField(user.FieldOauth, field.TypeBool)
 	}
 	if value, ok := uu.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
@@ -1525,26 +1499,6 @@ func (uuo *UserUpdateOne) ClearSub() *UserUpdateOne {
 	return uuo
 }
 
-// SetOauth sets the "oauth" field.
-func (uuo *UserUpdateOne) SetOauth(b bool) *UserUpdateOne {
-	uuo.mutation.SetOauth(b)
-	return uuo
-}
-
-// SetNillableOauth sets the "oauth" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetOauth(*b)
-	}
-	return uuo
-}
-
-// ClearOauth clears the value of the "oauth" field.
-func (uuo *UserUpdateOne) ClearOauth() *UserUpdateOne {
-	uuo.mutation.ClearOauth()
-	return uuo
-}
-
 // SetAuthProvider sets the "auth_provider" field.
 func (uuo *UserUpdateOne) SetAuthProvider(ep enums.AuthProvider) *UserUpdateOne {
 	uuo.mutation.SetAuthProvider(ep)
@@ -2087,12 +2041,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.SubCleared() {
 		_spec.ClearField(user.FieldSub, field.TypeString)
-	}
-	if value, ok := uuo.mutation.Oauth(); ok {
-		_spec.SetField(user.FieldOauth, field.TypeBool, value)
-	}
-	if uuo.mutation.OauthCleared() {
-		_spec.ClearField(user.FieldOauth, field.TypeBool)
 	}
 	if value, ok := uuo.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)

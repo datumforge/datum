@@ -120,10 +120,6 @@ func (User) Fields() []ent.Field {
 			Unique().
 			Annotations(entoas.Skip(true)).
 			Optional(),
-		field.Bool("oauth").
-			Comment("whether the user uses oauth for login or not").
-			Optional().
-			Default(false),
 		field.Enum("auth_provider").
 			GoType(enums.AuthProvider("")).
 			Comment("auth provider used to register the account").

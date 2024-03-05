@@ -28,13 +28,11 @@ func TestCreateUserInput(t *testing.T) {
 			email:    email,
 			provider: enums.GitHub,
 			expected: ent.CreateUserInput{
-				FirstName:         "Walter",
-				LastName:          "White",
-				Email:             email,
-				AuthProvider:      &enums.GitHub,
-				LastSeen:          lo.ToPtr(time.Now().UTC()),
-				IsWebauthnAllowed: lo.ToPtr(false),
-				Oauth:             lo.ToPtr(true),
+				FirstName:    "Walter",
+				LastName:     "White",
+				Email:        email,
+				AuthProvider: &enums.GitHub,
+				LastSeen:     lo.ToPtr(time.Now().UTC()),
 			},
 		},
 		{
@@ -43,13 +41,11 @@ func TestCreateUserInput(t *testing.T) {
 			email:    email,
 			provider: enums.Google,
 			expected: ent.CreateUserInput{
-				FirstName:         "Walter",
-				LastName:          "White",
-				Email:             email,
-				AuthProvider:      &enums.Google,
-				LastSeen:          lo.ToPtr(time.Now().UTC()),
-				IsWebauthnAllowed: lo.ToPtr(false),
-				Oauth:             lo.ToPtr(true),
+				FirstName:    "Walter",
+				LastName:     "White",
+				Email:        email,
+				AuthProvider: &enums.Google,
+				LastSeen:     lo.ToPtr(time.Now().UTC()),
 			},
 		},
 		{
@@ -58,13 +54,11 @@ func TestCreateUserInput(t *testing.T) {
 			email:    email,
 			provider: enums.Webauthn,
 			expected: ent.CreateUserInput{
-				FirstName:         "Walter",
-				LastName:          "White",
-				Email:             email,
-				AuthProvider:      &enums.Webauthn,
-				LastSeen:          lo.ToPtr(time.Now().UTC()),
-				IsWebauthnAllowed: lo.ToPtr(true),
-				Oauth:             lo.ToPtr(false),
+				FirstName:    "Walter",
+				LastName:     "White",
+				Email:        email,
+				AuthProvider: &enums.Webauthn,
+				LastSeen:     lo.ToPtr(time.Now().UTC()),
 			},
 		},
 	}
@@ -76,8 +70,6 @@ func TestCreateUserInput(t *testing.T) {
 			assert.Equal(t, tc.expected.Email, input.Email)
 			assert.Equal(t, tc.expected.AuthProvider, input.AuthProvider)
 			assert.WithinDuration(t, *tc.expected.LastSeen, *input.LastSeen, 1*time.Minute) // allow for a reasonable drift while tests are running
-			assert.Equal(t, *tc.expected.IsWebauthnAllowed, *input.IsWebauthnAllowed)
-			assert.Equal(t, *tc.expected.Oauth, *input.Oauth)
 		})
 	}
 }

@@ -9,7 +9,6 @@ query GetUserByID($userId: ID!) {
     sub
     avatarRemoteURL
     avatarLocalFile
-    oauth
     authProvider
     setting {
       emailConfirmed
@@ -55,7 +54,6 @@ query GetUserByIDWithOrgs($userId: ID!) {
     sub
     avatarRemoteURL
     avatarLocalFile
-    oauth
     authProvider
     setting {
       emailConfirmed
@@ -102,7 +100,6 @@ query GetAllUsers {
         sub
         avatarRemoteURL
         avatarLocalFile
-        oauth
         authProvider
         setting {
           emailConfirmed
@@ -141,7 +138,6 @@ mutation CreateUser($input: CreateUserInput!) {
       avatarRemoteURL
       avatarLocalFile
       sub
-      oauth
       authProvider
       orgMemberships {
         id
@@ -183,7 +179,6 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
       avatarRemoteURL
       avatarLocalFile
       sub
-      oauth
       authProvider
       groupMemberships {
         id

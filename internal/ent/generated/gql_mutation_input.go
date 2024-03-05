@@ -1644,7 +1644,6 @@ type CreateUserInput struct {
 	LastSeen                  *time.Time
 	Password                  *string
 	Sub                       *string
-	Oauth                     *bool
 	AuthProvider              *enums.AuthProvider
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
@@ -1690,9 +1689,6 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
-	}
-	if v := i.Oauth; v != nil {
-		m.SetOauth(*v)
 	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
@@ -1746,8 +1742,6 @@ type UpdateUserInput struct {
 	Password                        *string
 	ClearSub                        bool
 	Sub                             *string
-	ClearOauth                      bool
-	Oauth                           *bool
 	AuthProvider                    *enums.AuthProvider
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
@@ -1831,12 +1825,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
-	}
-	if i.ClearOauth {
-		m.ClearOauth()
-	}
-	if v := i.Oauth; v != nil {
-		m.SetOauth(*v)
 	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)

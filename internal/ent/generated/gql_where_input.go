@@ -8567,12 +8567,6 @@ type UserWhereInput struct {
 	SubEqualFold    *string  `json:"subEqualFold,omitempty"`
 	SubContainsFold *string  `json:"subContainsFold,omitempty"`
 
-	// "oauth" field predicates.
-	Oauth       *bool `json:"oauth,omitempty"`
-	OauthNEQ    *bool `json:"oauthNEQ,omitempty"`
-	OauthIsNil  bool  `json:"oauthIsNil,omitempty"`
-	OauthNotNil bool  `json:"oauthNotNil,omitempty"`
-
 	// "auth_provider" field predicates.
 	AuthProvider      *enums.AuthProvider  `json:"authProvider,omitempty"`
 	AuthProviderNEQ   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`
@@ -9325,18 +9319,6 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.SubContainsFold != nil {
 		predicates = append(predicates, user.SubContainsFold(*i.SubContainsFold))
-	}
-	if i.Oauth != nil {
-		predicates = append(predicates, user.OauthEQ(*i.Oauth))
-	}
-	if i.OauthNEQ != nil {
-		predicates = append(predicates, user.OauthNEQ(*i.OauthNEQ))
-	}
-	if i.OauthIsNil {
-		predicates = append(predicates, user.OauthIsNil())
-	}
-	if i.OauthNotNil {
-		predicates = append(predicates, user.OauthNotNil())
 	}
 	if i.AuthProvider != nil {
 		predicates = append(predicates, user.AuthProviderEQ(*i.AuthProvider))

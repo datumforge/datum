@@ -533,8 +533,7 @@ var (
 		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "oauth", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB"}, Default: "CREDENTIALS"},
+		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN"}, Default: "CREDENTIALS"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -550,7 +549,7 @@ var (
 			{
 				Name:    "user_email_auth_provider",
 				Unique:  true,
-				Columns: []*schema.Column{UsersColumns[7], UsersColumns[18]},
+				Columns: []*schema.Column{UsersColumns[7], UsersColumns[17]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
@@ -573,10 +572,10 @@ var (
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON},
 		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
-		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_id", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "user_setting_default_org", Type: field.TypeString, Nullable: true},

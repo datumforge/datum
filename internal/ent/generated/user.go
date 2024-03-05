@@ -51,8 +51,6 @@ type User struct {
 	Password *string `json:"-"`
 	// the Subject of the user JWT
 	Sub string `json:"sub,omitempty"`
-	// whether the user uses oauth for login or not
-	Oauth bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"auth_provider,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -185,8 +183,6 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldOauth:
-			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub, user.FieldAuthProvider:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
@@ -312,12 +308,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field sub", values[i])
 			} else if value.Valid {
 				u.Sub = value.String
-			}
-		case user.FieldOauth:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field oauth", values[i])
-			} else if value.Valid {
-				u.Oauth = value.Bool
 			}
 		case user.FieldAuthProvider:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -460,9 +450,6 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("sub=")
 	builder.WriteString(u.Sub)
-	builder.WriteString(", ")
-	builder.WriteString("oauth=")
-	builder.WriteString(fmt.Sprintf("%v", u.Oauth))
 	builder.WriteString(", ")
 	builder.WriteString("auth_provider=")
 	builder.WriteString(fmt.Sprintf("%v", u.AuthProvider))

@@ -369,10 +369,6 @@ input CreateUserInput {
   """
   sub: String
   """
-  whether the user uses oauth for login or not
-  """
-  oauth: Boolean
-  """
   auth provider used to register the account
   """
   authProvider: UserAuthProvider
@@ -4299,11 +4295,6 @@ input UpdateUserInput {
   sub: String
   clearSub: Boolean
   """
-  whether the user uses oauth for login or not
-  """
-  oauth: Boolean
-  clearOauth: Boolean
-  """
   auth provider used to register the account
   """
   authProvider: UserAuthProvider
@@ -4427,10 +4418,6 @@ type User implements Node {
   the Subject of the user JWT
   """
   sub: String
-  """
-  whether the user uses oauth for login or not
-  """
-  oauth: Boolean
   """
   auth provider used to register the account
   """
@@ -5073,13 +5060,6 @@ input UserWhereInput {
   subNotNil: Boolean
   subEqualFold: String
   subContainsFold: String
-  """
-  oauth field predicates
-  """
-  oauth: Boolean
-  oauthNEQ: Boolean
-  oauthIsNil: Boolean
-  oauthNotNil: Boolean
   """
   auth_provider field predicates
   """

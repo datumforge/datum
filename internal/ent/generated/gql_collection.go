@@ -2099,11 +2099,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, user.FieldSub)
 				fieldSeen[user.FieldSub] = struct{}{}
 			}
-		case "oauth":
-			if _, ok := fieldSeen[user.FieldOauth]; !ok {
-				selectedFields = append(selectedFields, user.FieldOauth)
-				fieldSeen[user.FieldOauth] = struct{}{}
-			}
 		case "authProvider":
 			if _, ok := fieldSeen[user.FieldAuthProvider]; !ok {
 				selectedFields = append(selectedFields, user.FieldAuthProvider)

@@ -50,8 +50,6 @@ const (
 	FieldPassword = "password"
 	// FieldSub holds the string denoting the sub field in the database.
 	FieldSub = "sub"
-	// FieldOauth holds the string denoting the oauth field in the database.
-	FieldOauth = "oauth"
 	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
 	FieldAuthProvider = "auth_provider"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
@@ -154,7 +152,6 @@ var Columns = []string{
 	FieldLastSeen,
 	FieldPassword,
 	FieldSub,
-	FieldOauth,
 	FieldAuthProvider,
 }
 
@@ -208,8 +205,6 @@ var (
 	UpdateDefaultAvatarUpdatedAt func() time.Time
 	// UpdateDefaultLastSeen holds the default value on update for the "last_seen" field.
 	UpdateDefaultLastSeen func() time.Time
-	// DefaultOauth holds the default value on creation for the "oauth" field.
-	DefaultOauth bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -312,11 +307,6 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // BySub orders the results by the sub field.
 func BySub(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSub, opts...).ToFunc()
-}
-
-// ByOauth orders the results by the oauth field.
-func ByOauth(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOauth, opts...).ToFunc()
 }
 
 // ByAuthProvider orders the results by the auth_provider field.

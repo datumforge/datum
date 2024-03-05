@@ -333,28 +333,10 @@ func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, pr
 	if err != nil {
 		// if the user is not found, create now
 		if ent.IsNotFound(err) {
-			isOAuthUser := false
-			isWebAuthnAllowed := false
+			// create the input based on the provider
+			input := createUserInput(name, email, provider)
 
-			switch provider {
-			case enums.GitHub:
-				isOAuthUser = true
-			case enums.Google:
-				isOAuthUser = true
-			case enums.Webauthn:
-				isWebAuthnAllowed = true
-			}
-
-			lastSeen := time.Now()
-
-			// create new user input
-			input := parseName(name)
-			input.Email = email
-			input.Oauth = &isOAuthUser
-			input.AuthProvider = &provider
-			input.LastSeen = &lastSeen
-			input.IsWebauthnAllowed = &isWebAuthnAllowed
-
+			// create user in the database
 			entUser, err = h.createUser(ctx, input)
 			if err != nil {
 				h.Logger.Errorw("error creating new user", "error", err)
@@ -377,4 +359,31 @@ func (h *Handler) CheckAndCreateUser(ctx context.Context, name, email string, pr
 	}
 
 	return entUser, nil
+}
+
+// createUserInput creates a new user input based on the name, email and provider
+func createUserInput(name, email string, provider enums.AuthProvider) ent.CreateUserInput {
+	isOAuthUser := false
+	isWebAuthnAllowed := false
+
+	switch provider {
+	case enums.GitHub:
+		isOAuthUser = true
+	case enums.Google:
+		isOAuthUser = true
+	case enums.Webauthn:
+		isWebAuthnAllowed = true
+	}
+
+	lastSeen := time.Now().UTC()
+
+	// create new user input
+	input := parseName(name)
+	input.Email = email
+	input.Oauth = &isOAuthUser
+	input.AuthProvider = &provider
+	input.LastSeen = &lastSeen
+	input.IsWebauthnAllowed = &isWebAuthnAllowed
+
+	return input
 }

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
+	provider "github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/rout"
 	"github.com/datumforge/datum/pkg/sessions"
 )
@@ -61,18 +63,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	// create claims for verified user
-	claims := createClaims(entUser)
-
-	access, refresh, err := h.TM.CreateTokenPair(claims)
-	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
-	}
-
-	// set cookies for the user
-	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
-
-	user := &User{
+	user := &provider.User{
 		ID:    entUser.ID,
 		Email: entUser.Email,
 		Name:  entUser.FirstName + " " + entUser.LastName,
@@ -110,15 +101,18 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
+	// Get sessionID from cookie and check against redis
 	sessionID := h.SessionConfig.SessionManager.GetSessionIDFromCookie(session)
-	sessionData := h.SessionConfig.SessionManager.GetSessionDataFromCookie(session)
-
-	userIDFromCookie := sessionData.(map[string]any)[sessions.UserIDKey]
 
 	userID, err := h.SessionConfig.RedisStore.GetSession(ctx.Request().Context(), sessionID)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
+
+	// get session data from cookie to get the user id stored
+	sessionData := h.SessionConfig.SessionManager.GetSessionDataFromCookie(session)
+
+	userIDFromCookie := sessionData.(map[string]any)[sessions.UserIDKey]
 
 	// ensure the user is the same as the one who started the registration
 	if userIDFromCookie != userID {
@@ -131,6 +125,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
+	// set user in the viewer context for the rest of the request
 	userCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(entUser.ID, true))
 
 	// follows https://www.w3.org/TR/webauthn/#sctn-registering-a-new-credential
@@ -139,6 +134,7 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
+	// get webauthn session data from the session
 	webauthnData := sessionData.(map[string]any)[sessions.WebAuthnKey]
 
 	wd, ok := webauthnData.(webauthn.SessionData)
@@ -146,12 +142,13 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNoAuthUser))
 	}
 
-	user := &User{
+	user := &provider.User{
 		ID:    entUser.ID,
 		Email: entUser.Email,
 		Name:  entUser.FirstName + " " + entUser.LastName,
 	}
 
+	// validate the credential
 	credential, err := h.WebAuthn.CreateCredential(user, wd, response)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
@@ -220,13 +217,22 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	handler := func(rawID, userHandle []byte) (user webauthn.User, err error) {
-		u, err := h.getUserByID(ctx.Request().Context(), string(userHandle), enums.AuthProvider(webauthnProvider))
+	if _, err = h.WebAuthn.ValidateDiscoverableLogin(h.userHandler(ctx.Request().Context()), wd, response); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
+
+	return ctx.JSON(http.StatusOK, rout.Reply{Success: true})
+}
+
+// userHandler returns a webauthn.DiscoverableUserHandler that can be used to look up a user by their userHandle
+func (h *Handler) userHandler(ctx context.Context) webauthn.DiscoverableUserHandler {
+	return func(rawID, userHandle []byte) (user webauthn.User, err error) {
+		u, err := h.getUserByID(ctx, string(userHandle), enums.AuthProvider(webauthnProvider))
 		if err != nil {
 			return nil, err
 		}
 
-		authnUser := &User{
+		authnUser := &provider.User{
 			ID:                  u.ID,
 			Email:               u.Email,
 			Name:                u.FirstName + " " + u.LastName,
@@ -249,98 +255,4 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 
 		return authnUser, nil
 	}
-
-	if _, err = h.WebAuthn.ValidateDiscoverableLogin(handler, wd, response); err != nil {
-		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
-	}
-
-	return ctx.JSON(http.StatusOK, rout.Reply{Success: true})
-}
-
-// WebAuthnID is the user's webauthn ID
-func (u *User) WebAuthnID() []byte {
-	return []byte(u.ID)
-}
-
-// WebAuthnName is the user's webauthn name
-func (u *User) WebAuthnName() string {
-	return u.Name
-}
-
-// WebAuthnDisplayName is the user's webauthn display name
-func (u *User) WebAuthnDisplayName() string {
-	if u.DisplayName != "" {
-		return u.DisplayName
-	}
-
-	return u.Name
-}
-
-// WebAuthnCredentials is the user's webauthn credentials
-func (u *User) WebAuthnCredentials() []webauthn.Credential {
-	return u.WebauthnCredentials
-}
-
-// WebAuthnIcon is the user's webauthn icon
-func (u *User) WebAuthnIcon() string {
-	return ""
-}
-
-// CredentialExcludeList returns a list of credentials to exclude from the webauthn credential list
-func (u *User) CredentialExcludeList() []protocol.CredentialDescriptor {
-	credentialExcludeList := []protocol.CredentialDescriptor{}
-
-	for _, cred := range u.WebauthnCredentials {
-		descriptor := protocol.CredentialDescriptor{
-			Type:         protocol.PublicKeyCredentialType,
-			CredentialID: cred.ID,
-		}
-		credentialExcludeList = append(credentialExcludeList, descriptor)
-	}
-
-	return credentialExcludeList
-}
-
-var Sessions = map[string]*webauthn.SessionData{}
-var Users = map[string]*User{}
-
-// InsertSession adds the session to the Sessions map
-func InsertSession(id string, session *webauthn.SessionData) {
-	Sessions[id] = session
-}
-
-// GetSession returns the SessionData object for the given ID
-func GetSession(id string) (*webauthn.SessionData, error) {
-	s, ok := Sessions[id]
-	if !ok {
-		return nil, ErrNoAuthUser
-	}
-
-	return s, nil
-}
-
-// InsertUser adds the user to the Users map
-func InsertUser(id string, user *User) {
-	Users[id] = user
-}
-
-// GetUser returns the User object for the given name
-func GetUser(name string) (*User, error) {
-	u, ok := Users[name]
-	if !ok {
-		return nil, ErrNoAuthUser
-	}
-
-	return u, nil
-}
-
-// GetUserByID returns the User object for the given ID
-func GetUserByID(id []byte) (*User, error) {
-	for _, u := range Users {
-		if string(u.ID) == string(id) {
-			return u, nil
-		}
-	}
-
-	return nil, ErrNoAuthUser
 }

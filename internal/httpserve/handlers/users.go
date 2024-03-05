@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/oklog/ulid/v2"
 
 	"github.com/datumforge/datum/pkg/tokens"
@@ -16,7 +15,6 @@ type User struct {
 	ID                       string
 	FirstName                string
 	LastName                 string
-	DisplayName              string
 	Name                     string
 	Email                    string
 	Password                 *string
@@ -27,7 +25,6 @@ type User struct {
 	PasswordResetToken       sql.NullString
 	PasswordResetSecret      []byte
 	URLToken
-	WebauthnCredentials []webauthn.Credential `json:"-"`
 }
 
 // URLToken holds data specific to a future user of the system for invite logic

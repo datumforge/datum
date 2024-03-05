@@ -21,7 +21,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/pkg/providers/github"
 	"github.com/datumforge/datum/pkg/providers/google"
-	"github.com/datumforge/datum/pkg/providers/webauthn"
 )
 
 var loginCmd = &cobra.Command{
@@ -146,11 +145,6 @@ func providerAuth(ctx context.Context, client *datumclient.Client, provider stri
 		return datumclient.OauthLogin(u, isDev)
 	case github.ProviderName:
 		endpoint := "github/login"
-		u := fmt.Sprintf("%s%s/%s", client.Client.BaseURL, route.V1Version, endpoint)
-
-		return datumclient.OauthLogin(u, isDev)
-	case webauthn.ProviderName:
-		endpoint := "authentication/options"
 		u := fmt.Sprintf("%s%s/%s", client.Client.BaseURL, route.V1Version, endpoint)
 
 		return datumclient.OauthLogin(u, isDev)

@@ -220,6 +220,126 @@ func (usu *UserSettingUpdate) AppendTags(s []string) *UserSettingUpdate {
 	return usu
 }
 
+// SetTfaSecret sets the "tfa_secret" field.
+func (usu *UserSettingUpdate) SetTfaSecret(s string) *UserSettingUpdate {
+	usu.mutation.SetTfaSecret(s)
+	return usu
+}
+
+// SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableTfaSecret(s *string) *UserSettingUpdate {
+	if s != nil {
+		usu.SetTfaSecret(*s)
+	}
+	return usu
+}
+
+// ClearTfaSecret clears the value of the "tfa_secret" field.
+func (usu *UserSettingUpdate) ClearTfaSecret() *UserSettingUpdate {
+	usu.mutation.ClearTfaSecret()
+	return usu
+}
+
+// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
+func (usu *UserSettingUpdate) SetIsPhoneOtpAllowed(b bool) *UserSettingUpdate {
+	usu.mutation.SetIsPhoneOtpAllowed(b)
+	return usu
+}
+
+// SetNillableIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableIsPhoneOtpAllowed(b *bool) *UserSettingUpdate {
+	if b != nil {
+		usu.SetIsPhoneOtpAllowed(*b)
+	}
+	return usu
+}
+
+// ClearIsPhoneOtpAllowed clears the value of the "is_phone_otp_allowed" field.
+func (usu *UserSettingUpdate) ClearIsPhoneOtpAllowed() *UserSettingUpdate {
+	usu.mutation.ClearIsPhoneOtpAllowed()
+	return usu
+}
+
+// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
+func (usu *UserSettingUpdate) SetIsEmailOtpAllowed(b bool) *UserSettingUpdate {
+	usu.mutation.SetIsEmailOtpAllowed(b)
+	return usu
+}
+
+// SetNillableIsEmailOtpAllowed sets the "is_email_otp_allowed" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableIsEmailOtpAllowed(b *bool) *UserSettingUpdate {
+	if b != nil {
+		usu.SetIsEmailOtpAllowed(*b)
+	}
+	return usu
+}
+
+// ClearIsEmailOtpAllowed clears the value of the "is_email_otp_allowed" field.
+func (usu *UserSettingUpdate) ClearIsEmailOtpAllowed() *UserSettingUpdate {
+	usu.mutation.ClearIsEmailOtpAllowed()
+	return usu
+}
+
+// SetIsTotpAllowed sets the "is_totp_allowed" field.
+func (usu *UserSettingUpdate) SetIsTotpAllowed(b bool) *UserSettingUpdate {
+	usu.mutation.SetIsTotpAllowed(b)
+	return usu
+}
+
+// SetNillableIsTotpAllowed sets the "is_totp_allowed" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableIsTotpAllowed(b *bool) *UserSettingUpdate {
+	if b != nil {
+		usu.SetIsTotpAllowed(*b)
+	}
+	return usu
+}
+
+// ClearIsTotpAllowed clears the value of the "is_totp_allowed" field.
+func (usu *UserSettingUpdate) ClearIsTotpAllowed() *UserSettingUpdate {
+	usu.mutation.ClearIsTotpAllowed()
+	return usu
+}
+
+// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
+func (usu *UserSettingUpdate) SetIsWebauthnAllowed(b bool) *UserSettingUpdate {
+	usu.mutation.SetIsWebauthnAllowed(b)
+	return usu
+}
+
+// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableIsWebauthnAllowed(b *bool) *UserSettingUpdate {
+	if b != nil {
+		usu.SetIsWebauthnAllowed(*b)
+	}
+	return usu
+}
+
+// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
+func (usu *UserSettingUpdate) ClearIsWebauthnAllowed() *UserSettingUpdate {
+	usu.mutation.ClearIsWebauthnAllowed()
+	return usu
+}
+
+// SetIsTfaEnabled sets the "is_tfa_enabled" field.
+func (usu *UserSettingUpdate) SetIsTfaEnabled(b bool) *UserSettingUpdate {
+	usu.mutation.SetIsTfaEnabled(b)
+	return usu
+}
+
+// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableIsTfaEnabled(b *bool) *UserSettingUpdate {
+	if b != nil {
+		usu.SetIsTfaEnabled(*b)
+	}
+	return usu
+}
+
+// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
+func (usu *UserSettingUpdate) ClearIsTfaEnabled() *UserSettingUpdate {
+	usu.mutation.ClearIsTfaEnabled()
+	return usu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (usu *UserSettingUpdate) SetUser(u *User) *UserSettingUpdate {
 	return usu.SetUserID(u.ID)
@@ -383,6 +503,42 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, usersetting.FieldTags, value)
 		})
+	}
+	if value, ok := usu.mutation.TfaSecret(); ok {
+		_spec.SetField(usersetting.FieldTfaSecret, field.TypeString, value)
+	}
+	if usu.mutation.TfaSecretCleared() {
+		_spec.ClearField(usersetting.FieldTfaSecret, field.TypeString)
+	}
+	if value, ok := usu.mutation.IsPhoneOtpAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)
+	}
+	if usu.mutation.IsPhoneOtpAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool)
+	}
+	if value, ok := usu.mutation.IsEmailOtpAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsEmailOtpAllowed, field.TypeBool, value)
+	}
+	if usu.mutation.IsEmailOtpAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsEmailOtpAllowed, field.TypeBool)
+	}
+	if value, ok := usu.mutation.IsTotpAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsTotpAllowed, field.TypeBool, value)
+	}
+	if usu.mutation.IsTotpAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsTotpAllowed, field.TypeBool)
+	}
+	if value, ok := usu.mutation.IsWebauthnAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)
+	}
+	if usu.mutation.IsWebauthnAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsWebauthnAllowed, field.TypeBool)
+	}
+	if value, ok := usu.mutation.IsTfaEnabled(); ok {
+		_spec.SetField(usersetting.FieldIsTfaEnabled, field.TypeBool, value)
+	}
+	if usu.mutation.IsTfaEnabledCleared() {
+		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
 	}
 	if usu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -654,6 +810,126 @@ func (usuo *UserSettingUpdateOne) AppendTags(s []string) *UserSettingUpdateOne {
 	return usuo
 }
 
+// SetTfaSecret sets the "tfa_secret" field.
+func (usuo *UserSettingUpdateOne) SetTfaSecret(s string) *UserSettingUpdateOne {
+	usuo.mutation.SetTfaSecret(s)
+	return usuo
+}
+
+// SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableTfaSecret(s *string) *UserSettingUpdateOne {
+	if s != nil {
+		usuo.SetTfaSecret(*s)
+	}
+	return usuo
+}
+
+// ClearTfaSecret clears the value of the "tfa_secret" field.
+func (usuo *UserSettingUpdateOne) ClearTfaSecret() *UserSettingUpdateOne {
+	usuo.mutation.ClearTfaSecret()
+	return usuo
+}
+
+// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
+func (usuo *UserSettingUpdateOne) SetIsPhoneOtpAllowed(b bool) *UserSettingUpdateOne {
+	usuo.mutation.SetIsPhoneOtpAllowed(b)
+	return usuo
+}
+
+// SetNillableIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableIsPhoneOtpAllowed(b *bool) *UserSettingUpdateOne {
+	if b != nil {
+		usuo.SetIsPhoneOtpAllowed(*b)
+	}
+	return usuo
+}
+
+// ClearIsPhoneOtpAllowed clears the value of the "is_phone_otp_allowed" field.
+func (usuo *UserSettingUpdateOne) ClearIsPhoneOtpAllowed() *UserSettingUpdateOne {
+	usuo.mutation.ClearIsPhoneOtpAllowed()
+	return usuo
+}
+
+// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
+func (usuo *UserSettingUpdateOne) SetIsEmailOtpAllowed(b bool) *UserSettingUpdateOne {
+	usuo.mutation.SetIsEmailOtpAllowed(b)
+	return usuo
+}
+
+// SetNillableIsEmailOtpAllowed sets the "is_email_otp_allowed" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableIsEmailOtpAllowed(b *bool) *UserSettingUpdateOne {
+	if b != nil {
+		usuo.SetIsEmailOtpAllowed(*b)
+	}
+	return usuo
+}
+
+// ClearIsEmailOtpAllowed clears the value of the "is_email_otp_allowed" field.
+func (usuo *UserSettingUpdateOne) ClearIsEmailOtpAllowed() *UserSettingUpdateOne {
+	usuo.mutation.ClearIsEmailOtpAllowed()
+	return usuo
+}
+
+// SetIsTotpAllowed sets the "is_totp_allowed" field.
+func (usuo *UserSettingUpdateOne) SetIsTotpAllowed(b bool) *UserSettingUpdateOne {
+	usuo.mutation.SetIsTotpAllowed(b)
+	return usuo
+}
+
+// SetNillableIsTotpAllowed sets the "is_totp_allowed" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableIsTotpAllowed(b *bool) *UserSettingUpdateOne {
+	if b != nil {
+		usuo.SetIsTotpAllowed(*b)
+	}
+	return usuo
+}
+
+// ClearIsTotpAllowed clears the value of the "is_totp_allowed" field.
+func (usuo *UserSettingUpdateOne) ClearIsTotpAllowed() *UserSettingUpdateOne {
+	usuo.mutation.ClearIsTotpAllowed()
+	return usuo
+}
+
+// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
+func (usuo *UserSettingUpdateOne) SetIsWebauthnAllowed(b bool) *UserSettingUpdateOne {
+	usuo.mutation.SetIsWebauthnAllowed(b)
+	return usuo
+}
+
+// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableIsWebauthnAllowed(b *bool) *UserSettingUpdateOne {
+	if b != nil {
+		usuo.SetIsWebauthnAllowed(*b)
+	}
+	return usuo
+}
+
+// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
+func (usuo *UserSettingUpdateOne) ClearIsWebauthnAllowed() *UserSettingUpdateOne {
+	usuo.mutation.ClearIsWebauthnAllowed()
+	return usuo
+}
+
+// SetIsTfaEnabled sets the "is_tfa_enabled" field.
+func (usuo *UserSettingUpdateOne) SetIsTfaEnabled(b bool) *UserSettingUpdateOne {
+	usuo.mutation.SetIsTfaEnabled(b)
+	return usuo
+}
+
+// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableIsTfaEnabled(b *bool) *UserSettingUpdateOne {
+	if b != nil {
+		usuo.SetIsTfaEnabled(*b)
+	}
+	return usuo
+}
+
+// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
+func (usuo *UserSettingUpdateOne) ClearIsTfaEnabled() *UserSettingUpdateOne {
+	usuo.mutation.ClearIsTfaEnabled()
+	return usuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (usuo *UserSettingUpdateOne) SetUser(u *User) *UserSettingUpdateOne {
 	return usuo.SetUserID(u.ID)
@@ -847,6 +1123,42 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, usersetting.FieldTags, value)
 		})
+	}
+	if value, ok := usuo.mutation.TfaSecret(); ok {
+		_spec.SetField(usersetting.FieldTfaSecret, field.TypeString, value)
+	}
+	if usuo.mutation.TfaSecretCleared() {
+		_spec.ClearField(usersetting.FieldTfaSecret, field.TypeString)
+	}
+	if value, ok := usuo.mutation.IsPhoneOtpAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)
+	}
+	if usuo.mutation.IsPhoneOtpAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.IsEmailOtpAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsEmailOtpAllowed, field.TypeBool, value)
+	}
+	if usuo.mutation.IsEmailOtpAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsEmailOtpAllowed, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.IsTotpAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsTotpAllowed, field.TypeBool, value)
+	}
+	if usuo.mutation.IsTotpAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsTotpAllowed, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.IsWebauthnAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)
+	}
+	if usuo.mutation.IsWebauthnAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsWebauthnAllowed, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.IsTfaEnabled(); ok {
+		_spec.SetField(usersetting.FieldIsTfaEnabled, field.TypeBool, value)
+	}
+	if usuo.mutation.IsTfaEnabledCleared() {
+		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
 	}
 	if usuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

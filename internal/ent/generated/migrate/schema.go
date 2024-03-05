@@ -534,13 +534,7 @@ var (
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN"}, Default: "CREDENTIALS"},
-		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
-		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB"}, Default: "CREDENTIALS"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -578,6 +572,12 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON},
+		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
+		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "user_id", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "user_setting_default_org", Type: field.TypeString, Nullable: true},
 	}
@@ -589,13 +589,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_settings_users_setting",
-				Columns:    []*schema.Column{UserSettingsColumns[13]},
+				Columns:    []*schema.Column{UserSettingsColumns[19]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "user_settings_organizations_default_org",
-				Columns:    []*schema.Column{UserSettingsColumns[14]},
+				Columns:    []*schema.Column{UserSettingsColumns[20]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

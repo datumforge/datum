@@ -17331,12 +17331,6 @@ type UserMutation struct {
 	sub                              *string
 	oauth                            *bool
 	auth_provider                    *enums.AuthProvider
-	tfa_secret                       *string
-	is_phone_otp_allowed             *bool
-	is_email_otp_allowed             *bool
-	is_totp_allowed                  *bool
-	is_webauthn_allowed              *bool
-	is_tfa_enabled                   *bool
 	clearedFields                    map[string]struct{}
 	personal_access_tokens           map[string]struct{}
 	removedpersonal_access_tokens    map[string]struct{}
@@ -18290,300 +18284,6 @@ func (m *UserMutation) ResetAuthProvider() {
 	m.auth_provider = nil
 }
 
-// SetTfaSecret sets the "tfa_secret" field.
-func (m *UserMutation) SetTfaSecret(s string) {
-	m.tfa_secret = &s
-}
-
-// TfaSecret returns the value of the "tfa_secret" field in the mutation.
-func (m *UserMutation) TfaSecret() (r string, exists bool) {
-	v := m.tfa_secret
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTfaSecret returns the old "tfa_secret" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldTfaSecret(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTfaSecret is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTfaSecret requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTfaSecret: %w", err)
-	}
-	return oldValue.TfaSecret, nil
-}
-
-// ClearTfaSecret clears the value of the "tfa_secret" field.
-func (m *UserMutation) ClearTfaSecret() {
-	m.tfa_secret = nil
-	m.clearedFields[user.FieldTfaSecret] = struct{}{}
-}
-
-// TfaSecretCleared returns if the "tfa_secret" field was cleared in this mutation.
-func (m *UserMutation) TfaSecretCleared() bool {
-	_, ok := m.clearedFields[user.FieldTfaSecret]
-	return ok
-}
-
-// ResetTfaSecret resets all changes to the "tfa_secret" field.
-func (m *UserMutation) ResetTfaSecret() {
-	m.tfa_secret = nil
-	delete(m.clearedFields, user.FieldTfaSecret)
-}
-
-// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
-func (m *UserMutation) SetIsPhoneOtpAllowed(b bool) {
-	m.is_phone_otp_allowed = &b
-}
-
-// IsPhoneOtpAllowed returns the value of the "is_phone_otp_allowed" field in the mutation.
-func (m *UserMutation) IsPhoneOtpAllowed() (r bool, exists bool) {
-	v := m.is_phone_otp_allowed
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsPhoneOtpAllowed returns the old "is_phone_otp_allowed" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsPhoneOtpAllowed(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsPhoneOtpAllowed is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsPhoneOtpAllowed requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsPhoneOtpAllowed: %w", err)
-	}
-	return oldValue.IsPhoneOtpAllowed, nil
-}
-
-// ClearIsPhoneOtpAllowed clears the value of the "is_phone_otp_allowed" field.
-func (m *UserMutation) ClearIsPhoneOtpAllowed() {
-	m.is_phone_otp_allowed = nil
-	m.clearedFields[user.FieldIsPhoneOtpAllowed] = struct{}{}
-}
-
-// IsPhoneOtpAllowedCleared returns if the "is_phone_otp_allowed" field was cleared in this mutation.
-func (m *UserMutation) IsPhoneOtpAllowedCleared() bool {
-	_, ok := m.clearedFields[user.FieldIsPhoneOtpAllowed]
-	return ok
-}
-
-// ResetIsPhoneOtpAllowed resets all changes to the "is_phone_otp_allowed" field.
-func (m *UserMutation) ResetIsPhoneOtpAllowed() {
-	m.is_phone_otp_allowed = nil
-	delete(m.clearedFields, user.FieldIsPhoneOtpAllowed)
-}
-
-// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
-func (m *UserMutation) SetIsEmailOtpAllowed(b bool) {
-	m.is_email_otp_allowed = &b
-}
-
-// IsEmailOtpAllowed returns the value of the "is_email_otp_allowed" field in the mutation.
-func (m *UserMutation) IsEmailOtpAllowed() (r bool, exists bool) {
-	v := m.is_email_otp_allowed
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsEmailOtpAllowed returns the old "is_email_otp_allowed" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsEmailOtpAllowed(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsEmailOtpAllowed is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsEmailOtpAllowed requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsEmailOtpAllowed: %w", err)
-	}
-	return oldValue.IsEmailOtpAllowed, nil
-}
-
-// ClearIsEmailOtpAllowed clears the value of the "is_email_otp_allowed" field.
-func (m *UserMutation) ClearIsEmailOtpAllowed() {
-	m.is_email_otp_allowed = nil
-	m.clearedFields[user.FieldIsEmailOtpAllowed] = struct{}{}
-}
-
-// IsEmailOtpAllowedCleared returns if the "is_email_otp_allowed" field was cleared in this mutation.
-func (m *UserMutation) IsEmailOtpAllowedCleared() bool {
-	_, ok := m.clearedFields[user.FieldIsEmailOtpAllowed]
-	return ok
-}
-
-// ResetIsEmailOtpAllowed resets all changes to the "is_email_otp_allowed" field.
-func (m *UserMutation) ResetIsEmailOtpAllowed() {
-	m.is_email_otp_allowed = nil
-	delete(m.clearedFields, user.FieldIsEmailOtpAllowed)
-}
-
-// SetIsTotpAllowed sets the "is_totp_allowed" field.
-func (m *UserMutation) SetIsTotpAllowed(b bool) {
-	m.is_totp_allowed = &b
-}
-
-// IsTotpAllowed returns the value of the "is_totp_allowed" field in the mutation.
-func (m *UserMutation) IsTotpAllowed() (r bool, exists bool) {
-	v := m.is_totp_allowed
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsTotpAllowed returns the old "is_totp_allowed" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsTotpAllowed(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsTotpAllowed is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsTotpAllowed requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsTotpAllowed: %w", err)
-	}
-	return oldValue.IsTotpAllowed, nil
-}
-
-// ClearIsTotpAllowed clears the value of the "is_totp_allowed" field.
-func (m *UserMutation) ClearIsTotpAllowed() {
-	m.is_totp_allowed = nil
-	m.clearedFields[user.FieldIsTotpAllowed] = struct{}{}
-}
-
-// IsTotpAllowedCleared returns if the "is_totp_allowed" field was cleared in this mutation.
-func (m *UserMutation) IsTotpAllowedCleared() bool {
-	_, ok := m.clearedFields[user.FieldIsTotpAllowed]
-	return ok
-}
-
-// ResetIsTotpAllowed resets all changes to the "is_totp_allowed" field.
-func (m *UserMutation) ResetIsTotpAllowed() {
-	m.is_totp_allowed = nil
-	delete(m.clearedFields, user.FieldIsTotpAllowed)
-}
-
-// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
-func (m *UserMutation) SetIsWebauthnAllowed(b bool) {
-	m.is_webauthn_allowed = &b
-}
-
-// IsWebauthnAllowed returns the value of the "is_webauthn_allowed" field in the mutation.
-func (m *UserMutation) IsWebauthnAllowed() (r bool, exists bool) {
-	v := m.is_webauthn_allowed
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsWebauthnAllowed returns the old "is_webauthn_allowed" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsWebauthnAllowed(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsWebauthnAllowed is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsWebauthnAllowed requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsWebauthnAllowed: %w", err)
-	}
-	return oldValue.IsWebauthnAllowed, nil
-}
-
-// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
-func (m *UserMutation) ClearIsWebauthnAllowed() {
-	m.is_webauthn_allowed = nil
-	m.clearedFields[user.FieldIsWebauthnAllowed] = struct{}{}
-}
-
-// IsWebauthnAllowedCleared returns if the "is_webauthn_allowed" field was cleared in this mutation.
-func (m *UserMutation) IsWebauthnAllowedCleared() bool {
-	_, ok := m.clearedFields[user.FieldIsWebauthnAllowed]
-	return ok
-}
-
-// ResetIsWebauthnAllowed resets all changes to the "is_webauthn_allowed" field.
-func (m *UserMutation) ResetIsWebauthnAllowed() {
-	m.is_webauthn_allowed = nil
-	delete(m.clearedFields, user.FieldIsWebauthnAllowed)
-}
-
-// SetIsTfaEnabled sets the "is_tfa_enabled" field.
-func (m *UserMutation) SetIsTfaEnabled(b bool) {
-	m.is_tfa_enabled = &b
-}
-
-// IsTfaEnabled returns the value of the "is_tfa_enabled" field in the mutation.
-func (m *UserMutation) IsTfaEnabled() (r bool, exists bool) {
-	v := m.is_tfa_enabled
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIsTfaEnabled returns the old "is_tfa_enabled" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldIsTfaEnabled(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIsTfaEnabled is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIsTfaEnabled requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsTfaEnabled: %w", err)
-	}
-	return oldValue.IsTfaEnabled, nil
-}
-
-// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
-func (m *UserMutation) ClearIsTfaEnabled() {
-	m.is_tfa_enabled = nil
-	m.clearedFields[user.FieldIsTfaEnabled] = struct{}{}
-}
-
-// IsTfaEnabledCleared returns if the "is_tfa_enabled" field was cleared in this mutation.
-func (m *UserMutation) IsTfaEnabledCleared() bool {
-	_, ok := m.clearedFields[user.FieldIsTfaEnabled]
-	return ok
-}
-
-// ResetIsTfaEnabled resets all changes to the "is_tfa_enabled" field.
-func (m *UserMutation) ResetIsTfaEnabled() {
-	m.is_tfa_enabled = nil
-	delete(m.clearedFields, user.FieldIsTfaEnabled)
-}
-
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by ids.
 func (m *UserMutation) AddPersonalAccessTokenIDs(ids ...string) {
 	if m.personal_access_tokens == nil {
@@ -19089,7 +18789,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -19144,24 +18844,6 @@ func (m *UserMutation) Fields() []string {
 	if m.auth_provider != nil {
 		fields = append(fields, user.FieldAuthProvider)
 	}
-	if m.tfa_secret != nil {
-		fields = append(fields, user.FieldTfaSecret)
-	}
-	if m.is_phone_otp_allowed != nil {
-		fields = append(fields, user.FieldIsPhoneOtpAllowed)
-	}
-	if m.is_email_otp_allowed != nil {
-		fields = append(fields, user.FieldIsEmailOtpAllowed)
-	}
-	if m.is_totp_allowed != nil {
-		fields = append(fields, user.FieldIsTotpAllowed)
-	}
-	if m.is_webauthn_allowed != nil {
-		fields = append(fields, user.FieldIsWebauthnAllowed)
-	}
-	if m.is_tfa_enabled != nil {
-		fields = append(fields, user.FieldIsTfaEnabled)
-	}
 	return fields
 }
 
@@ -19206,18 +18888,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Oauth()
 	case user.FieldAuthProvider:
 		return m.AuthProvider()
-	case user.FieldTfaSecret:
-		return m.TfaSecret()
-	case user.FieldIsPhoneOtpAllowed:
-		return m.IsPhoneOtpAllowed()
-	case user.FieldIsEmailOtpAllowed:
-		return m.IsEmailOtpAllowed()
-	case user.FieldIsTotpAllowed:
-		return m.IsTotpAllowed()
-	case user.FieldIsWebauthnAllowed:
-		return m.IsWebauthnAllowed()
-	case user.FieldIsTfaEnabled:
-		return m.IsTfaEnabled()
 	}
 	return nil, false
 }
@@ -19263,18 +18933,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldOauth(ctx)
 	case user.FieldAuthProvider:
 		return m.OldAuthProvider(ctx)
-	case user.FieldTfaSecret:
-		return m.OldTfaSecret(ctx)
-	case user.FieldIsPhoneOtpAllowed:
-		return m.OldIsPhoneOtpAllowed(ctx)
-	case user.FieldIsEmailOtpAllowed:
-		return m.OldIsEmailOtpAllowed(ctx)
-	case user.FieldIsTotpAllowed:
-		return m.OldIsTotpAllowed(ctx)
-	case user.FieldIsWebauthnAllowed:
-		return m.OldIsWebauthnAllowed(ctx)
-	case user.FieldIsTfaEnabled:
-		return m.OldIsTfaEnabled(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -19410,48 +19068,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAuthProvider(v)
 		return nil
-	case user.FieldTfaSecret:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTfaSecret(v)
-		return nil
-	case user.FieldIsPhoneOtpAllowed:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsPhoneOtpAllowed(v)
-		return nil
-	case user.FieldIsEmailOtpAllowed:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsEmailOtpAllowed(v)
-		return nil
-	case user.FieldIsTotpAllowed:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsTotpAllowed(v)
-		return nil
-	case user.FieldIsWebauthnAllowed:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsWebauthnAllowed(v)
-		return nil
-	case user.FieldIsTfaEnabled:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIsTfaEnabled(v)
-		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -19521,24 +19137,6 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldOauth) {
 		fields = append(fields, user.FieldOauth)
 	}
-	if m.FieldCleared(user.FieldTfaSecret) {
-		fields = append(fields, user.FieldTfaSecret)
-	}
-	if m.FieldCleared(user.FieldIsPhoneOtpAllowed) {
-		fields = append(fields, user.FieldIsPhoneOtpAllowed)
-	}
-	if m.FieldCleared(user.FieldIsEmailOtpAllowed) {
-		fields = append(fields, user.FieldIsEmailOtpAllowed)
-	}
-	if m.FieldCleared(user.FieldIsTotpAllowed) {
-		fields = append(fields, user.FieldIsTotpAllowed)
-	}
-	if m.FieldCleared(user.FieldIsWebauthnAllowed) {
-		fields = append(fields, user.FieldIsWebauthnAllowed)
-	}
-	if m.FieldCleared(user.FieldIsTfaEnabled) {
-		fields = append(fields, user.FieldIsTfaEnabled)
-	}
 	return fields
 }
 
@@ -19591,24 +19189,6 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldOauth:
 		m.ClearOauth()
-		return nil
-	case user.FieldTfaSecret:
-		m.ClearTfaSecret()
-		return nil
-	case user.FieldIsPhoneOtpAllowed:
-		m.ClearIsPhoneOtpAllowed()
-		return nil
-	case user.FieldIsEmailOtpAllowed:
-		m.ClearIsEmailOtpAllowed()
-		return nil
-	case user.FieldIsTotpAllowed:
-		m.ClearIsTotpAllowed()
-		return nil
-	case user.FieldIsWebauthnAllowed:
-		m.ClearIsWebauthnAllowed()
-		return nil
-	case user.FieldIsTfaEnabled:
-		m.ClearIsTfaEnabled()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -19671,24 +19251,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldAuthProvider:
 		m.ResetAuthProvider()
-		return nil
-	case user.FieldTfaSecret:
-		m.ResetTfaSecret()
-		return nil
-	case user.FieldIsPhoneOtpAllowed:
-		m.ResetIsPhoneOtpAllowed()
-		return nil
-	case user.FieldIsEmailOtpAllowed:
-		m.ResetIsEmailOtpAllowed()
-		return nil
-	case user.FieldIsTotpAllowed:
-		m.ResetIsTotpAllowed()
-		return nil
-	case user.FieldIsWebauthnAllowed:
-		m.ResetIsWebauthnAllowed()
-		return nil
-	case user.FieldIsTfaEnabled:
-		m.ResetIsTfaEnabled()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -19981,30 +19543,36 @@ func (m *UserMutation) ResetEdge(name string) error {
 // UserSettingMutation represents an operation that mutates the UserSetting nodes in the graph.
 type UserSettingMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *string
-	created_at         *time.Time
-	updated_at         *time.Time
-	created_by         *string
-	updated_by         *string
-	deleted_at         *time.Time
-	deleted_by         *string
-	locked             *bool
-	silenced_at        *time.Time
-	suspended_at       *time.Time
-	status             *enums.UserStatus
-	email_confirmed    *bool
-	tags               *[]string
-	appendtags         []string
-	clearedFields      map[string]struct{}
-	user               *string
-	cleareduser        bool
-	default_org        *string
-	cleareddefault_org bool
-	done               bool
-	oldValue           func(context.Context) (*UserSetting, error)
-	predicates         []predicate.UserSetting
+	op                   Op
+	typ                  string
+	id                   *string
+	created_at           *time.Time
+	updated_at           *time.Time
+	created_by           *string
+	updated_by           *string
+	deleted_at           *time.Time
+	deleted_by           *string
+	locked               *bool
+	silenced_at          *time.Time
+	suspended_at         *time.Time
+	status               *enums.UserStatus
+	email_confirmed      *bool
+	tags                 *[]string
+	appendtags           []string
+	tfa_secret           *string
+	is_phone_otp_allowed *bool
+	is_email_otp_allowed *bool
+	is_totp_allowed      *bool
+	is_webauthn_allowed  *bool
+	is_tfa_enabled       *bool
+	clearedFields        map[string]struct{}
+	user                 *string
+	cleareduser          bool
+	default_org          *string
+	cleareddefault_org   bool
+	done                 bool
+	oldValue             func(context.Context) (*UserSetting, error)
+	predicates           []predicate.UserSetting
 }
 
 var _ ent.Mutation = (*UserSettingMutation)(nil)
@@ -20711,6 +20279,300 @@ func (m *UserSettingMutation) ResetTags() {
 	m.appendtags = nil
 }
 
+// SetTfaSecret sets the "tfa_secret" field.
+func (m *UserSettingMutation) SetTfaSecret(s string) {
+	m.tfa_secret = &s
+}
+
+// TfaSecret returns the value of the "tfa_secret" field in the mutation.
+func (m *UserSettingMutation) TfaSecret() (r string, exists bool) {
+	v := m.tfa_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTfaSecret returns the old "tfa_secret" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldTfaSecret(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTfaSecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTfaSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTfaSecret: %w", err)
+	}
+	return oldValue.TfaSecret, nil
+}
+
+// ClearTfaSecret clears the value of the "tfa_secret" field.
+func (m *UserSettingMutation) ClearTfaSecret() {
+	m.tfa_secret = nil
+	m.clearedFields[usersetting.FieldTfaSecret] = struct{}{}
+}
+
+// TfaSecretCleared returns if the "tfa_secret" field was cleared in this mutation.
+func (m *UserSettingMutation) TfaSecretCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldTfaSecret]
+	return ok
+}
+
+// ResetTfaSecret resets all changes to the "tfa_secret" field.
+func (m *UserSettingMutation) ResetTfaSecret() {
+	m.tfa_secret = nil
+	delete(m.clearedFields, usersetting.FieldTfaSecret)
+}
+
+// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
+func (m *UserSettingMutation) SetIsPhoneOtpAllowed(b bool) {
+	m.is_phone_otp_allowed = &b
+}
+
+// IsPhoneOtpAllowed returns the value of the "is_phone_otp_allowed" field in the mutation.
+func (m *UserSettingMutation) IsPhoneOtpAllowed() (r bool, exists bool) {
+	v := m.is_phone_otp_allowed
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsPhoneOtpAllowed returns the old "is_phone_otp_allowed" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldIsPhoneOtpAllowed(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsPhoneOtpAllowed is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsPhoneOtpAllowed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsPhoneOtpAllowed: %w", err)
+	}
+	return oldValue.IsPhoneOtpAllowed, nil
+}
+
+// ClearIsPhoneOtpAllowed clears the value of the "is_phone_otp_allowed" field.
+func (m *UserSettingMutation) ClearIsPhoneOtpAllowed() {
+	m.is_phone_otp_allowed = nil
+	m.clearedFields[usersetting.FieldIsPhoneOtpAllowed] = struct{}{}
+}
+
+// IsPhoneOtpAllowedCleared returns if the "is_phone_otp_allowed" field was cleared in this mutation.
+func (m *UserSettingMutation) IsPhoneOtpAllowedCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldIsPhoneOtpAllowed]
+	return ok
+}
+
+// ResetIsPhoneOtpAllowed resets all changes to the "is_phone_otp_allowed" field.
+func (m *UserSettingMutation) ResetIsPhoneOtpAllowed() {
+	m.is_phone_otp_allowed = nil
+	delete(m.clearedFields, usersetting.FieldIsPhoneOtpAllowed)
+}
+
+// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
+func (m *UserSettingMutation) SetIsEmailOtpAllowed(b bool) {
+	m.is_email_otp_allowed = &b
+}
+
+// IsEmailOtpAllowed returns the value of the "is_email_otp_allowed" field in the mutation.
+func (m *UserSettingMutation) IsEmailOtpAllowed() (r bool, exists bool) {
+	v := m.is_email_otp_allowed
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsEmailOtpAllowed returns the old "is_email_otp_allowed" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldIsEmailOtpAllowed(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsEmailOtpAllowed is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsEmailOtpAllowed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsEmailOtpAllowed: %w", err)
+	}
+	return oldValue.IsEmailOtpAllowed, nil
+}
+
+// ClearIsEmailOtpAllowed clears the value of the "is_email_otp_allowed" field.
+func (m *UserSettingMutation) ClearIsEmailOtpAllowed() {
+	m.is_email_otp_allowed = nil
+	m.clearedFields[usersetting.FieldIsEmailOtpAllowed] = struct{}{}
+}
+
+// IsEmailOtpAllowedCleared returns if the "is_email_otp_allowed" field was cleared in this mutation.
+func (m *UserSettingMutation) IsEmailOtpAllowedCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldIsEmailOtpAllowed]
+	return ok
+}
+
+// ResetIsEmailOtpAllowed resets all changes to the "is_email_otp_allowed" field.
+func (m *UserSettingMutation) ResetIsEmailOtpAllowed() {
+	m.is_email_otp_allowed = nil
+	delete(m.clearedFields, usersetting.FieldIsEmailOtpAllowed)
+}
+
+// SetIsTotpAllowed sets the "is_totp_allowed" field.
+func (m *UserSettingMutation) SetIsTotpAllowed(b bool) {
+	m.is_totp_allowed = &b
+}
+
+// IsTotpAllowed returns the value of the "is_totp_allowed" field in the mutation.
+func (m *UserSettingMutation) IsTotpAllowed() (r bool, exists bool) {
+	v := m.is_totp_allowed
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsTotpAllowed returns the old "is_totp_allowed" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldIsTotpAllowed(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsTotpAllowed is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsTotpAllowed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsTotpAllowed: %w", err)
+	}
+	return oldValue.IsTotpAllowed, nil
+}
+
+// ClearIsTotpAllowed clears the value of the "is_totp_allowed" field.
+func (m *UserSettingMutation) ClearIsTotpAllowed() {
+	m.is_totp_allowed = nil
+	m.clearedFields[usersetting.FieldIsTotpAllowed] = struct{}{}
+}
+
+// IsTotpAllowedCleared returns if the "is_totp_allowed" field was cleared in this mutation.
+func (m *UserSettingMutation) IsTotpAllowedCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldIsTotpAllowed]
+	return ok
+}
+
+// ResetIsTotpAllowed resets all changes to the "is_totp_allowed" field.
+func (m *UserSettingMutation) ResetIsTotpAllowed() {
+	m.is_totp_allowed = nil
+	delete(m.clearedFields, usersetting.FieldIsTotpAllowed)
+}
+
+// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
+func (m *UserSettingMutation) SetIsWebauthnAllowed(b bool) {
+	m.is_webauthn_allowed = &b
+}
+
+// IsWebauthnAllowed returns the value of the "is_webauthn_allowed" field in the mutation.
+func (m *UserSettingMutation) IsWebauthnAllowed() (r bool, exists bool) {
+	v := m.is_webauthn_allowed
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsWebauthnAllowed returns the old "is_webauthn_allowed" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldIsWebauthnAllowed(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsWebauthnAllowed is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsWebauthnAllowed requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsWebauthnAllowed: %w", err)
+	}
+	return oldValue.IsWebauthnAllowed, nil
+}
+
+// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
+func (m *UserSettingMutation) ClearIsWebauthnAllowed() {
+	m.is_webauthn_allowed = nil
+	m.clearedFields[usersetting.FieldIsWebauthnAllowed] = struct{}{}
+}
+
+// IsWebauthnAllowedCleared returns if the "is_webauthn_allowed" field was cleared in this mutation.
+func (m *UserSettingMutation) IsWebauthnAllowedCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldIsWebauthnAllowed]
+	return ok
+}
+
+// ResetIsWebauthnAllowed resets all changes to the "is_webauthn_allowed" field.
+func (m *UserSettingMutation) ResetIsWebauthnAllowed() {
+	m.is_webauthn_allowed = nil
+	delete(m.clearedFields, usersetting.FieldIsWebauthnAllowed)
+}
+
+// SetIsTfaEnabled sets the "is_tfa_enabled" field.
+func (m *UserSettingMutation) SetIsTfaEnabled(b bool) {
+	m.is_tfa_enabled = &b
+}
+
+// IsTfaEnabled returns the value of the "is_tfa_enabled" field in the mutation.
+func (m *UserSettingMutation) IsTfaEnabled() (r bool, exists bool) {
+	v := m.is_tfa_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsTfaEnabled returns the old "is_tfa_enabled" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldIsTfaEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsTfaEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsTfaEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsTfaEnabled: %w", err)
+	}
+	return oldValue.IsTfaEnabled, nil
+}
+
+// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
+func (m *UserSettingMutation) ClearIsTfaEnabled() {
+	m.is_tfa_enabled = nil
+	m.clearedFields[usersetting.FieldIsTfaEnabled] = struct{}{}
+}
+
+// IsTfaEnabledCleared returns if the "is_tfa_enabled" field was cleared in this mutation.
+func (m *UserSettingMutation) IsTfaEnabledCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldIsTfaEnabled]
+	return ok
+}
+
+// ResetIsTfaEnabled resets all changes to the "is_tfa_enabled" field.
+func (m *UserSettingMutation) ResetIsTfaEnabled() {
+	m.is_tfa_enabled = nil
+	delete(m.clearedFields, usersetting.FieldIsTfaEnabled)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *UserSettingMutation) ClearUser() {
 	m.cleareduser = true
@@ -20811,7 +20673,7 @@ func (m *UserSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSettingMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, usersetting.FieldCreatedAt)
 	}
@@ -20851,6 +20713,24 @@ func (m *UserSettingMutation) Fields() []string {
 	if m.tags != nil {
 		fields = append(fields, usersetting.FieldTags)
 	}
+	if m.tfa_secret != nil {
+		fields = append(fields, usersetting.FieldTfaSecret)
+	}
+	if m.is_phone_otp_allowed != nil {
+		fields = append(fields, usersetting.FieldIsPhoneOtpAllowed)
+	}
+	if m.is_email_otp_allowed != nil {
+		fields = append(fields, usersetting.FieldIsEmailOtpAllowed)
+	}
+	if m.is_totp_allowed != nil {
+		fields = append(fields, usersetting.FieldIsTotpAllowed)
+	}
+	if m.is_webauthn_allowed != nil {
+		fields = append(fields, usersetting.FieldIsWebauthnAllowed)
+	}
+	if m.is_tfa_enabled != nil {
+		fields = append(fields, usersetting.FieldIsTfaEnabled)
+	}
 	return fields
 }
 
@@ -20885,6 +20765,18 @@ func (m *UserSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.EmailConfirmed()
 	case usersetting.FieldTags:
 		return m.Tags()
+	case usersetting.FieldTfaSecret:
+		return m.TfaSecret()
+	case usersetting.FieldIsPhoneOtpAllowed:
+		return m.IsPhoneOtpAllowed()
+	case usersetting.FieldIsEmailOtpAllowed:
+		return m.IsEmailOtpAllowed()
+	case usersetting.FieldIsTotpAllowed:
+		return m.IsTotpAllowed()
+	case usersetting.FieldIsWebauthnAllowed:
+		return m.IsWebauthnAllowed()
+	case usersetting.FieldIsTfaEnabled:
+		return m.IsTfaEnabled()
 	}
 	return nil, false
 }
@@ -20920,6 +20812,18 @@ func (m *UserSettingMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldEmailConfirmed(ctx)
 	case usersetting.FieldTags:
 		return m.OldTags(ctx)
+	case usersetting.FieldTfaSecret:
+		return m.OldTfaSecret(ctx)
+	case usersetting.FieldIsPhoneOtpAllowed:
+		return m.OldIsPhoneOtpAllowed(ctx)
+	case usersetting.FieldIsEmailOtpAllowed:
+		return m.OldIsEmailOtpAllowed(ctx)
+	case usersetting.FieldIsTotpAllowed:
+		return m.OldIsTotpAllowed(ctx)
+	case usersetting.FieldIsWebauthnAllowed:
+		return m.OldIsWebauthnAllowed(ctx)
+	case usersetting.FieldIsTfaEnabled:
+		return m.OldIsTfaEnabled(ctx)
 	}
 	return nil, fmt.Errorf("unknown UserSetting field %s", name)
 }
@@ -21020,6 +20924,48 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTags(v)
 		return nil
+	case usersetting.FieldTfaSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTfaSecret(v)
+		return nil
+	case usersetting.FieldIsPhoneOtpAllowed:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsPhoneOtpAllowed(v)
+		return nil
+	case usersetting.FieldIsEmailOtpAllowed:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsEmailOtpAllowed(v)
+		return nil
+	case usersetting.FieldIsTotpAllowed:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsTotpAllowed(v)
+		return nil
+	case usersetting.FieldIsWebauthnAllowed:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsWebauthnAllowed(v)
+		return nil
+	case usersetting.FieldIsTfaEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsTfaEnabled(v)
+		return nil
 	}
 	return fmt.Errorf("unknown UserSetting field %s", name)
 }
@@ -21077,6 +21023,24 @@ func (m *UserSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(usersetting.FieldSuspendedAt) {
 		fields = append(fields, usersetting.FieldSuspendedAt)
 	}
+	if m.FieldCleared(usersetting.FieldTfaSecret) {
+		fields = append(fields, usersetting.FieldTfaSecret)
+	}
+	if m.FieldCleared(usersetting.FieldIsPhoneOtpAllowed) {
+		fields = append(fields, usersetting.FieldIsPhoneOtpAllowed)
+	}
+	if m.FieldCleared(usersetting.FieldIsEmailOtpAllowed) {
+		fields = append(fields, usersetting.FieldIsEmailOtpAllowed)
+	}
+	if m.FieldCleared(usersetting.FieldIsTotpAllowed) {
+		fields = append(fields, usersetting.FieldIsTotpAllowed)
+	}
+	if m.FieldCleared(usersetting.FieldIsWebauthnAllowed) {
+		fields = append(fields, usersetting.FieldIsWebauthnAllowed)
+	}
+	if m.FieldCleared(usersetting.FieldIsTfaEnabled) {
+		fields = append(fields, usersetting.FieldIsTfaEnabled)
+	}
 	return fields
 }
 
@@ -21117,6 +21081,24 @@ func (m *UserSettingMutation) ClearField(name string) error {
 		return nil
 	case usersetting.FieldSuspendedAt:
 		m.ClearSuspendedAt()
+		return nil
+	case usersetting.FieldTfaSecret:
+		m.ClearTfaSecret()
+		return nil
+	case usersetting.FieldIsPhoneOtpAllowed:
+		m.ClearIsPhoneOtpAllowed()
+		return nil
+	case usersetting.FieldIsEmailOtpAllowed:
+		m.ClearIsEmailOtpAllowed()
+		return nil
+	case usersetting.FieldIsTotpAllowed:
+		m.ClearIsTotpAllowed()
+		return nil
+	case usersetting.FieldIsWebauthnAllowed:
+		m.ClearIsWebauthnAllowed()
+		return nil
+	case usersetting.FieldIsTfaEnabled:
+		m.ClearIsTfaEnabled()
 		return nil
 	}
 	return fmt.Errorf("unknown UserSetting nullable field %s", name)
@@ -21164,6 +21146,24 @@ func (m *UserSettingMutation) ResetField(name string) error {
 		return nil
 	case usersetting.FieldTags:
 		m.ResetTags()
+		return nil
+	case usersetting.FieldTfaSecret:
+		m.ResetTfaSecret()
+		return nil
+	case usersetting.FieldIsPhoneOtpAllowed:
+		m.ResetIsPhoneOtpAllowed()
+		return nil
+	case usersetting.FieldIsEmailOtpAllowed:
+		m.ResetIsEmailOtpAllowed()
+		return nil
+	case usersetting.FieldIsTotpAllowed:
+		m.ResetIsTotpAllowed()
+		return nil
+	case usersetting.FieldIsWebauthnAllowed:
+		m.ResetIsWebauthnAllowed()
+		return nil
+	case usersetting.FieldIsTfaEnabled:
+		m.ResetIsTfaEnabled()
 		return nil
 	}
 	return fmt.Errorf("unknown UserSetting field %s", name)

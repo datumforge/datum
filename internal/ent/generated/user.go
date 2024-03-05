@@ -55,18 +55,6 @@ type User struct {
 	Oauth bool `json:"oauth,omitempty"`
 	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"auth_provider,omitempty"`
-	// TFA secret for the user
-	TfaSecret *string `json:"-"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	IsPhoneOtpAllowed bool `json:"is_phone_otp_allowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	IsEmailOtpAllowed bool `json:"is_email_otp_allowed,omitempty"`
-	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-	IsTotpAllowed bool `json:"is_totp_allowed,omitempty"`
-	// specifies a user may complete authentication by verifying a WebAuthn capable device
-	IsWebauthnAllowed bool `json:"is_webauthn_allowed,omitempty"`
-	// whether the user has two factor authentication enabled
-	IsTfaEnabled bool `json:"is_tfa_enabled,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -197,9 +185,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldOauth, user.FieldIsPhoneOtpAllowed, user.FieldIsEmailOtpAllowed, user.FieldIsTotpAllowed, user.FieldIsWebauthnAllowed, user.FieldIsTfaEnabled:
+		case user.FieldOauth:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub, user.FieldAuthProvider, user.FieldTfaSecret:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub, user.FieldAuthProvider:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -336,43 +324,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field auth_provider", values[i])
 			} else if value.Valid {
 				u.AuthProvider = enums.AuthProvider(value.String)
-			}
-		case user.FieldTfaSecret:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field tfa_secret", values[i])
-			} else if value.Valid {
-				u.TfaSecret = new(string)
-				*u.TfaSecret = value.String
-			}
-		case user.FieldIsPhoneOtpAllowed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_phone_otp_allowed", values[i])
-			} else if value.Valid {
-				u.IsPhoneOtpAllowed = value.Bool
-			}
-		case user.FieldIsEmailOtpAllowed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_email_otp_allowed", values[i])
-			} else if value.Valid {
-				u.IsEmailOtpAllowed = value.Bool
-			}
-		case user.FieldIsTotpAllowed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_totp_allowed", values[i])
-			} else if value.Valid {
-				u.IsTotpAllowed = value.Bool
-			}
-		case user.FieldIsWebauthnAllowed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_webauthn_allowed", values[i])
-			} else if value.Valid {
-				u.IsWebauthnAllowed = value.Bool
-			}
-		case user.FieldIsTfaEnabled:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_tfa_enabled", values[i])
-			} else if value.Valid {
-				u.IsTfaEnabled = value.Bool
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -515,23 +466,6 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("auth_provider=")
 	builder.WriteString(fmt.Sprintf("%v", u.AuthProvider))
-	builder.WriteString(", ")
-	builder.WriteString("tfa_secret=<sensitive>")
-	builder.WriteString(", ")
-	builder.WriteString("is_phone_otp_allowed=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsPhoneOtpAllowed))
-	builder.WriteString(", ")
-	builder.WriteString("is_email_otp_allowed=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsEmailOtpAllowed))
-	builder.WriteString(", ")
-	builder.WriteString("is_totp_allowed=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsTotpAllowed))
-	builder.WriteString(", ")
-	builder.WriteString("is_webauthn_allowed=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsWebauthnAllowed))
-	builder.WriteString(", ")
-	builder.WriteString("is_tfa_enabled=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsTfaEnabled))
 	builder.WriteByte(')')
 	return builder.String()
 }

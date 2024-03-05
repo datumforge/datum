@@ -38,6 +38,7 @@ import (
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
+	"github.com/datumforge/datum/pkg/utils/totp"
 	"github.com/datumforge/fgax"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
@@ -155,6 +156,7 @@ type (
 		Emails        *emails.EmailManager
 		Marionette    *marionette.TaskManager
 		Analytics     *analytics.EventManager
+		TOTP          *totp.OTPManager
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -246,6 +248,13 @@ func Marionette(v *marionette.TaskManager) Option {
 func Analytics(v *analytics.EventManager) Option {
 	return func(c *config) {
 		c.Analytics = v
+	}
+}
+
+// TOTP configures the TOTP.
+func TOTP(v *totp.OTPManager) Option {
+	return func(c *config) {
+		c.TOTP = v
 	}
 }
 

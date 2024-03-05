@@ -54,18 +54,6 @@ const (
 	FieldOauth = "oauth"
 	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
 	FieldAuthProvider = "auth_provider"
-	// FieldTfaSecret holds the string denoting the tfa_secret field in the database.
-	FieldTfaSecret = "tfa_secret"
-	// FieldIsPhoneOtpAllowed holds the string denoting the is_phone_otp_allowed field in the database.
-	FieldIsPhoneOtpAllowed = "is_phone_otp_allowed"
-	// FieldIsEmailOtpAllowed holds the string denoting the is_email_otp_allowed field in the database.
-	FieldIsEmailOtpAllowed = "is_email_otp_allowed"
-	// FieldIsTotpAllowed holds the string denoting the is_totp_allowed field in the database.
-	FieldIsTotpAllowed = "is_totp_allowed"
-	// FieldIsWebauthnAllowed holds the string denoting the is_webauthn_allowed field in the database.
-	FieldIsWebauthnAllowed = "is_webauthn_allowed"
-	// FieldIsTfaEnabled holds the string denoting the is_tfa_enabled field in the database.
-	FieldIsTfaEnabled = "is_tfa_enabled"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
@@ -168,12 +156,6 @@ var Columns = []string{
 	FieldSub,
 	FieldOauth,
 	FieldAuthProvider,
-	FieldTfaSecret,
-	FieldIsPhoneOtpAllowed,
-	FieldIsEmailOtpAllowed,
-	FieldIsTotpAllowed,
-	FieldIsWebauthnAllowed,
-	FieldIsTfaEnabled,
 }
 
 var (
@@ -228,16 +210,6 @@ var (
 	UpdateDefaultLastSeen func() time.Time
 	// DefaultOauth holds the default value on creation for the "oauth" field.
 	DefaultOauth bool
-	// DefaultIsPhoneOtpAllowed holds the default value on creation for the "is_phone_otp_allowed" field.
-	DefaultIsPhoneOtpAllowed bool
-	// DefaultIsEmailOtpAllowed holds the default value on creation for the "is_email_otp_allowed" field.
-	DefaultIsEmailOtpAllowed bool
-	// DefaultIsTotpAllowed holds the default value on creation for the "is_totp_allowed" field.
-	DefaultIsTotpAllowed bool
-	// DefaultIsWebauthnAllowed holds the default value on creation for the "is_webauthn_allowed" field.
-	DefaultIsWebauthnAllowed bool
-	// DefaultIsTfaEnabled holds the default value on creation for the "is_tfa_enabled" field.
-	DefaultIsTfaEnabled bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -350,36 +322,6 @@ func ByOauth(opts ...sql.OrderTermOption) OrderOption {
 // ByAuthProvider orders the results by the auth_provider field.
 func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
-}
-
-// ByTfaSecret orders the results by the tfa_secret field.
-func ByTfaSecret(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTfaSecret, opts...).ToFunc()
-}
-
-// ByIsPhoneOtpAllowed orders the results by the is_phone_otp_allowed field.
-func ByIsPhoneOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsPhoneOtpAllowed, opts...).ToFunc()
-}
-
-// ByIsEmailOtpAllowed orders the results by the is_email_otp_allowed field.
-func ByIsEmailOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsEmailOtpAllowed, opts...).ToFunc()
-}
-
-// ByIsTotpAllowed orders the results by the is_totp_allowed field.
-func ByIsTotpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsTotpAllowed, opts...).ToFunc()
-}
-
-// ByIsWebauthnAllowed orders the results by the is_webauthn_allowed field.
-func ByIsWebauthnAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsWebauthnAllowed, opts...).ToFunc()
-}
-
-// ByIsTfaEnabled orders the results by the is_tfa_enabled field.
-func ByIsTfaEnabled(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsTfaEnabled, opts...).ToFunc()
 }
 
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.

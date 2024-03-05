@@ -154,7 +154,7 @@ require (
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
-	github.com/rs/zerolog v1.29.1 // indirect
+	github.com/rs/zerolog v1.31.0 // indirect
 	github.com/shirou/gopsutil/v3 v3.23.12 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
@@ -243,7 +243,7 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/testcontainers/testcontainers-go v0.28.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.28.0
-	github.com/trisacrypto/directory v1.7.5
+	github.com/trisacrypto/directory v1.7.6
 	github.com/urfave/cli/v2 v2.27.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect

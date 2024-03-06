@@ -13,7 +13,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/fgax/entfga"
@@ -91,11 +90,11 @@ func (OrganizationSetting) Mixin() []ent.Mixin {
 }
 
 // Hooks of the OrganizationSetting
-func (OrganizationSetting) Hooks() []ent.Hook {
-	return []ent.Hook{
-		hooks.HookOrganizationSetting(),
-	}
-}
+//func (OrganizationSetting) Hooks() []ent.Hook {
+//	return []ent.Hook{
+//		hooks.HookOrganizationSetting(),
+//	}
+//}
 
 // Policy defines the privacy policy of the OrganizationSetting
 func (OrganizationSetting) Policy() ent.Policy {

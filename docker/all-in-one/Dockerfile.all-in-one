@@ -29,7 +29,7 @@ COPY --from=ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.24 /ko-app/grpc-health
 COPY docker/all-in-one/docker_entrypoint.sh /bin/docker_entrypoint.sh
 
 # Copy config 
-COPY ./config/config-dev.example.yaml ./config/.config.yaml
+COPY ./config/config-aio.example.yaml ./config/.config.yaml
 
 RUN chmod +x /bin/docker_entrypoint.sh
 

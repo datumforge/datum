@@ -45,7 +45,7 @@ The Taskfiles will also source a `.dotenv` files which match the naming conventi
 All settings in the `yaml` configuration can also be overwritten with environment variables prefixed with `DATUM_`. For example, to override the Google `client_secret` set in the yaml configuration with an environment variable you can use: 
 
 ```
-export DATUM_AUTH_PROVIDERS_GOOGLE_CLIENT_SECRET
+export DATUM_AUTH_PROVIDERS_GOOGLE_CLIENTSECRET
 ```
 
 Configuration precedence is as follows, the latter overriding the former:

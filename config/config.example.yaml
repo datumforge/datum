@@ -57,6 +57,11 @@ email:
     fromEmail: ""
     sendGridApiKey: ""
     testing: false
+    url:
+        base: ""
+        invite: ""
+        reset: ""
+        verify: ""
 posthog:
     apiKey: ""
     enabled: false

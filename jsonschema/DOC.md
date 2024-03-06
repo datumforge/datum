@@ -339,6 +339,23 @@ Config for sending emails via SendGrid and managing marketing contacts
 |**archive**|`string`|Archive is only supported in testing mode and is what is tied through the mock to write out fixtures<br/>||
 |**datumListId**|`string`|DatumListID is the UUID SendGrid spits out when you create marketing lists<br/>||
 |**adminEmail**|`string`|AdminEmail is an internal group email configured within datum for email testing and visibility<br/>||
+|[**url**](#emailurl)|`object`|URLConfig for the datum registration<br/>||
+
+**Additional Properties:** not allowed  
+<a name="emailurl"></a>
+### email\.url: object
+
+URLConfig for the datum registration
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**base**|`string`|Base is the base URL used for URL links in emails<br/>||
+|**verify**|`string`|Verify is the path to the verify endpoint used in verification emails<br/>||
+|**invite**|`string`|Invite is the path to the invite endpoint used in invite emails<br/>||
+|**reset**|`string`|Reset is the path to the reset endpoint used in password reset emails<br/>||
 
 **Additional Properties:** not allowed  
 <a name="sessions"></a>

@@ -206,11 +206,38 @@
         "adminEmail": {
           "type": "string",
           "description": "AdminEmail is an internal group email configured within datum for email testing and visibility"
+        },
+        "url": {
+          "$ref": "#/$defs/emails.URLConfig",
+          "description": "URLConfig is the configuration for the URLs used in emails"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "description": "Config for sending emails via SendGrid and managing marketing contacts"
+    },
+    "emails.URLConfig": {
+      "properties": {
+        "base": {
+          "type": "string",
+          "description": "Base is the base URL used for URL links in emails"
+        },
+        "verify": {
+          "type": "string",
+          "description": "Verify is the path to the verify endpoint used in verification emails"
+        },
+        "invite": {
+          "type": "string",
+          "description": "Invite is the path to the invite endpoint used in invite emails"
+        },
+        "reset": {
+          "type": "string",
+          "description": "Reset is the path to the reset endpoint used in password reset emails"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "URLConfig for the datum registration"
     },
     "entx.Config": {
       "properties": {

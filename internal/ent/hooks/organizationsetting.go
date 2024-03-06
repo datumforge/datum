@@ -17,19 +17,6 @@ func HookOrganizationSetting() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.OrganizationSettingFunc(func(ctx context.Context, mutation *generated.OrganizationSettingMutation) (generated.Value, error) {
 
-			//			if email, ok := mutation.BillingEmail(); ok {
-			//				url := gravatar.New(email, nil)
-			//				mutation.SetAvatarRemoteURL(url)
-			//
-			//				// use the email as the display name, if not provided on creation
-			//				if mutation.Op().Is(ent.OpCreate) {
-			//					displayName, _ := mutation.DisplayName()
-			//					if displayName == "" {
-			//						mutation.SetDisplayName(email)
-			//					}
-			//				}
-			//			}
-
 			userID, err := auth.GetUserIDFromContext(ctx)
 			if err != nil {
 				return nil, err

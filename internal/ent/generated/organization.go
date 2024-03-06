@@ -40,6 +40,8 @@ type Organization struct {
 	ParentOrganizationID string `json:"parent_organization_id,omitempty"`
 	// orgs directly associated with a user
 	PersonalOrg bool `json:"personal_org,omitempty"`
+	// URL of the user's remote avatar
+	AvatarRemoteURL *string `json:"avatar_remote_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationQuery when eager-loading is set.
 	Edges        OrganizationEdges `json:"edges"`
@@ -197,7 +199,7 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organization.FieldPersonalOrg:
 			values[i] = new(sql.NullBool)
-		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldDeletedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID:
+		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldDeletedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID, organization.FieldAvatarRemoteURL:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreatedAt, organization.FieldUpdatedAt, organization.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -287,6 +289,13 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field personal_org", values[i])
 			} else if value.Valid {
 				o.PersonalOrg = value.Bool
+			}
+		case organization.FieldAvatarRemoteURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar_remote_url", values[i])
+			} else if value.Valid {
+				o.AvatarRemoteURL = new(string)
+				*o.AvatarRemoteURL = value.String
 			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
@@ -411,6 +420,11 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("personal_org=")
 	builder.WriteString(fmt.Sprintf("%v", o.PersonalOrg))
+	builder.WriteString(", ")
+	if v := o.AvatarRemoteURL; v != nil {
+		builder.WriteString("avatar_remote_url=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

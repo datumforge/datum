@@ -99,7 +99,13 @@ input CreateGroupSettingInput {
   tags associated with the object
   """
   tags: [String!]
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   groupID: ID
 }
@@ -259,6 +265,10 @@ input CreateOrganizationInput {
   orgs directly associated with a user
   """
   personalOrg: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
   parentID: ID
   groupIDs: [ID!]
   integrationIDs: [ID!]
@@ -286,8 +296,17 @@ input CreateOrganizationSettingInput {
   Name of the person to contact for billing
   """
   billingContact: String
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   """
   Usually government-issued tax ID or business ID such as ABN in Australia
@@ -297,10 +316,6 @@ input CreateOrganizationSettingInput {
   tags associated with the object
   """
   tags: [String!]
-  """
-  URL of the user's remote avatar
-  """
-  avatarRemoteURL: String
   organizationID: ID
 }
 """
@@ -975,7 +990,13 @@ type GroupSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   group: Group
 }
@@ -2603,6 +2624,10 @@ type Organization implements Node {
   orgs directly associated with a user
   """
   personalOrg: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
   parent: Organization
   children(
     """
@@ -2711,8 +2736,17 @@ type OrganizationSetting implements Node {
   Name of the person to contact for billing
   """
   billingContact: String
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   """
   Usually government-issued tax ID or business ID such as ABN in Australia
@@ -2722,10 +2756,6 @@ type OrganizationSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
-  """
-  URL of the user's remote avatar
-  """
-  avatarRemoteURL: String
   organization: Organization
 }
 """
@@ -2963,24 +2993,6 @@ input OrganizationSettingWhereInput {
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
   """
-  avatar_remote_url field predicates
-  """
-  avatarRemoteURL: String
-  avatarRemoteURLNEQ: String
-  avatarRemoteURLIn: [String!]
-  avatarRemoteURLNotIn: [String!]
-  avatarRemoteURLGT: String
-  avatarRemoteURLGTE: String
-  avatarRemoteURLLT: String
-  avatarRemoteURLLTE: String
-  avatarRemoteURLContains: String
-  avatarRemoteURLHasPrefix: String
-  avatarRemoteURLHasSuffix: String
-  avatarRemoteURLIsNil: Boolean
-  avatarRemoteURLNotNil: Boolean
-  avatarRemoteURLEqualFold: String
-  avatarRemoteURLContainsFold: String
-  """
   organization edge predicates
   """
   hasOrganization: Boolean
@@ -3141,6 +3153,24 @@ input OrganizationWhereInput {
   personalOrgNEQ: Boolean
   personalOrgIsNil: Boolean
   personalOrgNotNil: Boolean
+  """
+  avatar_remote_url field predicates
+  """
+  avatarRemoteURL: String
+  avatarRemoteURLNEQ: String
+  avatarRemoteURLIn: [String!]
+  avatarRemoteURLNotIn: [String!]
+  avatarRemoteURLGT: String
+  avatarRemoteURLGTE: String
+  avatarRemoteURLLT: String
+  avatarRemoteURLLTE: String
+  avatarRemoteURLContains: String
+  avatarRemoteURLHasPrefix: String
+  avatarRemoteURLHasSuffix: String
+  avatarRemoteURLIsNil: Boolean
+  avatarRemoteURLNotNil: Boolean
+  avatarRemoteURLEqualFold: String
+  avatarRemoteURLContainsFold: String
   """
   parent edge predicates
   """
@@ -3958,8 +3988,14 @@ input UpdateGroupSettingInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
   clearSyncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   clearSyncToGithub: Boolean
   groupID: ID
@@ -4121,6 +4157,11 @@ input UpdateOrganizationInput {
   """
   description: String
   clearDescription: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
+  clearAvatarRemoteURL: Boolean
   addGroupIDs: [ID!]
   removeGroupIDs: [ID!]
   clearGroups: Boolean
@@ -4165,10 +4206,19 @@ input UpdateOrganizationSettingInput {
   """
   billingContact: String
   clearBillingContact: Boolean
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
   clearBillingEmail: Boolean
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
   clearBillingPhone: Boolean
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   clearBillingAddress: Boolean
   """
@@ -4182,11 +4232,6 @@ input UpdateOrganizationSettingInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
-  """
-  URL of the user's remote avatar
-  """
-  avatarRemoteURL: String
-  clearAvatarRemoteURL: Boolean
   organizationID: ID
   clearOrganization: Boolean
 }

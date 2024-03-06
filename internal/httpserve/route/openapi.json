@@ -3434,9 +3434,6 @@
                       "type": "string"
                     }
                   },
-                  "avatar_remote_url": {
-                    "type": "string"
-                  },
                   "organization": {
                     "type": "string"
                   }
@@ -3600,9 +3597,6 @@
                     "items": {
                       "type": "string"
                     }
-                  },
-                  "avatar_remote_url": {
-                    "type": "string"
                   },
                   "organization": {
                     "type": "string"
@@ -3769,6 +3763,9 @@
                   },
                   "personal_org": {
                     "type": "boolean"
+                  },
+                  "avatar_remote_url": {
+                    "type": "string"
                   },
                   "parent": {
                     "type": "string"
@@ -3975,6 +3972,9 @@
                     "type": "string"
                   },
                   "description": {
+                    "type": "string"
+                  },
+                  "avatar_remote_url": {
                     "type": "string"
                   },
                   "parent": {
@@ -7250,6 +7250,9 @@
           "personal_org": {
             "type": "boolean"
           },
+          "avatar_remote_url": {
+            "type": "string"
+          },
           "parent": {
             "$ref": "#/components/schemas/Organization"
           },
@@ -7370,9 +7373,6 @@
             "items": {
               "type": "string"
             }
-          },
-          "avatar_remote_url": {
-            "type": "string"
           },
           "organization": {
             "$ref": "#/components/schemas/Organization"

@@ -186,20 +186,6 @@ func (osc *OrganizationSettingCreate) SetTags(s []string) *OrganizationSettingCr
 	return osc
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (osc *OrganizationSettingCreate) SetAvatarRemoteURL(s string) *OrganizationSettingCreate {
-	osc.mutation.SetAvatarRemoteURL(s)
-	return osc
-}
-
-// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
-func (osc *OrganizationSettingCreate) SetNillableAvatarRemoteURL(s *string) *OrganizationSettingCreate {
-	if s != nil {
-		osc.SetAvatarRemoteURL(*s)
-	}
-	return osc
-}
-
 // SetID sets the "id" field.
 func (osc *OrganizationSettingCreate) SetID(s string) *OrganizationSettingCreate {
 	osc.mutation.SetID(s)
@@ -305,9 +291,9 @@ func (osc *OrganizationSettingCreate) check() error {
 			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
 		}
 	}
-	if v, ok := osc.mutation.AvatarRemoteURL(); ok {
-		if err := organizationsetting.AvatarRemoteURLValidator(v); err != nil {
-			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.avatar_remote_url": %w`, err)}
+	if v, ok := osc.mutation.BillingPhone(); ok {
+		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
+			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
 		}
 	}
 	return nil
@@ -397,10 +383,6 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 	if value, ok := osc.mutation.Tags(); ok {
 		_spec.SetField(organizationsetting.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
-	}
-	if value, ok := osc.mutation.AvatarRemoteURL(); ok {
-		_spec.SetField(organizationsetting.FieldAvatarRemoteURL, field.TypeString, value)
-		_node.AvatarRemoteURL = &value
 	}
 	if nodes := osc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

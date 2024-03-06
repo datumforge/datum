@@ -79,10 +79,12 @@ type CreateGroupSettingInput struct {
 	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
 	JoinPolicy *enums.JoinPolicy `json:"joinPolicy,omitempty"`
 	// tags associated with the object
-	Tags         []string `json:"tags,omitempty"`
-	SyncToSlack  *bool    `json:"syncToSlack,omitempty"`
-	SyncToGithub *bool    `json:"syncToGithub,omitempty"`
-	GroupID      *string  `json:"groupID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// whether to sync group members to slack groups
+	SyncToSlack *bool `json:"syncToSlack,omitempty"`
+	// whether to sync group members to github groups
+	SyncToGithub *bool   `json:"syncToGithub,omitempty"`
+	GroupID      *string `json:"groupID,omitempty"`
 }
 
 // CreateIntegrationInput is used for create Integration object.
@@ -193,7 +195,9 @@ type CreateOrganizationInput struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg            *bool                           `json:"personalOrg,omitempty"`
+	PersonalOrg *bool `json:"personalOrg,omitempty"`
+	// URL of the user's remote avatar
+	AvatarRemoteURL        *string                         `json:"avatarRemoteURL,omitempty"`
 	ParentID               *string                         `json:"parentID,omitempty"`
 	GroupIDs               []string                        `json:"groupIDs,omitempty"`
 	IntegrationIDs         []string                        `json:"integrationIDs,omitempty"`
@@ -217,16 +221,17 @@ type CreateOrganizationSettingInput struct {
 	Domains []string `json:"domains,omitempty"`
 	// Name of the person to contact for billing
 	BillingContact *string `json:"billingContact,omitempty"`
-	BillingEmail   *string `json:"billingEmail,omitempty"`
-	BillingPhone   *string `json:"billingPhone,omitempty"`
+	// Email address of the person to contact for billing
+	BillingEmail *string `json:"billingEmail,omitempty"`
+	// Phone number to contact for billing
+	BillingPhone *string `json:"billingPhone,omitempty"`
+	// Address to send billing information to
 	BillingAddress *string `json:"billingAddress,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
-	// URL of the user's remote avatar
-	AvatarRemoteURL *string `json:"avatarRemoteURL,omitempty"`
-	OrganizationID  *string `json:"organizationID,omitempty"`
+	Tags           []string `json:"tags,omitempty"`
+	OrganizationID *string  `json:"organizationID,omitempty"`
 }
 
 // CreatePersonalAccessTokenInput is used for create PersonalAccessToken object.
@@ -778,10 +783,12 @@ type GroupSetting struct {
 	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
 	JoinPolicy enums.JoinPolicy `json:"joinPolicy"`
 	// tags associated with the object
-	Tags         []string `json:"tags,omitempty"`
-	SyncToSlack  *bool    `json:"syncToSlack,omitempty"`
-	SyncToGithub *bool    `json:"syncToGithub,omitempty"`
-	Group        *Group   `json:"group,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// whether to sync group members to slack groups
+	SyncToSlack *bool `json:"syncToSlack,omitempty"`
+	// whether to sync group members to github groups
+	SyncToGithub *bool  `json:"syncToGithub,omitempty"`
+	Group        *Group `json:"group,omitempty"`
 }
 
 func (GroupSetting) IsNode() {}
@@ -2174,7 +2181,9 @@ type Organization struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg          *bool                   `json:"personalOrg,omitempty"`
+	PersonalOrg *bool `json:"personalOrg,omitempty"`
+	// URL of the user's remote avatar
+	AvatarRemoteURL      *string                 `json:"avatarRemoteURL,omitempty"`
 	Parent               *Organization           `json:"parent,omitempty"`
 	Children             *OrganizationConnection `json:"children"`
 	Groups               []*Group                `json:"groups,omitempty"`
@@ -2240,16 +2249,17 @@ type OrganizationSetting struct {
 	Domains []string `json:"domains,omitempty"`
 	// Name of the person to contact for billing
 	BillingContact *string `json:"billingContact,omitempty"`
-	BillingEmail   *string `json:"billingEmail,omitempty"`
-	BillingPhone   *string `json:"billingPhone,omitempty"`
+	// Email address of the person to contact for billing
+	BillingEmail *string `json:"billingEmail,omitempty"`
+	// Phone number to contact for billing
+	BillingPhone *string `json:"billingPhone,omitempty"`
+	// Address to send billing information to
 	BillingAddress *string `json:"billingAddress,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
-	// URL of the user's remote avatar
-	AvatarRemoteURL *string       `json:"avatarRemoteURL,omitempty"`
-	Organization    *Organization `json:"organization,omitempty"`
+	Tags         []string      `json:"tags,omitempty"`
+	Organization *Organization `json:"organization,omitempty"`
 }
 
 func (OrganizationSetting) IsNode() {}
@@ -2468,22 +2478,6 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierNotNil       *bool    `json:"taxIdentifierNotNil,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
-	// avatar_remote_url field predicates
-	AvatarRemoteURL             *string  `json:"avatarRemoteURL,omitempty"`
-	AvatarRemoteURLNeq          *string  `json:"avatarRemoteURLNEQ,omitempty"`
-	AvatarRemoteURLIn           []string `json:"avatarRemoteURLIn,omitempty"`
-	AvatarRemoteURLNotIn        []string `json:"avatarRemoteURLNotIn,omitempty"`
-	AvatarRemoteURLGt           *string  `json:"avatarRemoteURLGT,omitempty"`
-	AvatarRemoteURLGte          *string  `json:"avatarRemoteURLGTE,omitempty"`
-	AvatarRemoteURLLt           *string  `json:"avatarRemoteURLLT,omitempty"`
-	AvatarRemoteURLLte          *string  `json:"avatarRemoteURLLTE,omitempty"`
-	AvatarRemoteURLContains     *string  `json:"avatarRemoteURLContains,omitempty"`
-	AvatarRemoteURLHasPrefix    *string  `json:"avatarRemoteURLHasPrefix,omitempty"`
-	AvatarRemoteURLHasSuffix    *string  `json:"avatarRemoteURLHasSuffix,omitempty"`
-	AvatarRemoteURLIsNil        *bool    `json:"avatarRemoteURLIsNil,omitempty"`
-	AvatarRemoteURLNotNil       *bool    `json:"avatarRemoteURLNotNil,omitempty"`
-	AvatarRemoteURLEqualFold    *string  `json:"avatarRemoteURLEqualFold,omitempty"`
-	AvatarRemoteURLContainsFold *string  `json:"avatarRemoteURLContainsFold,omitempty"`
 	// organization edge predicates
 	HasOrganization     *bool                     `json:"hasOrganization,omitempty"`
 	HasOrganizationWith []*OrganizationWhereInput `json:"hasOrganizationWith,omitempty"`
@@ -2628,6 +2622,22 @@ type OrganizationWhereInput struct {
 	PersonalOrgNeq    *bool `json:"personalOrgNEQ,omitempty"`
 	PersonalOrgIsNil  *bool `json:"personalOrgIsNil,omitempty"`
 	PersonalOrgNotNil *bool `json:"personalOrgNotNil,omitempty"`
+	// avatar_remote_url field predicates
+	AvatarRemoteURL             *string  `json:"avatarRemoteURL,omitempty"`
+	AvatarRemoteURLNeq          *string  `json:"avatarRemoteURLNEQ,omitempty"`
+	AvatarRemoteURLIn           []string `json:"avatarRemoteURLIn,omitempty"`
+	AvatarRemoteURLNotIn        []string `json:"avatarRemoteURLNotIn,omitempty"`
+	AvatarRemoteURLGt           *string  `json:"avatarRemoteURLGT,omitempty"`
+	AvatarRemoteURLGte          *string  `json:"avatarRemoteURLGTE,omitempty"`
+	AvatarRemoteURLLt           *string  `json:"avatarRemoteURLLT,omitempty"`
+	AvatarRemoteURLLte          *string  `json:"avatarRemoteURLLTE,omitempty"`
+	AvatarRemoteURLContains     *string  `json:"avatarRemoteURLContains,omitempty"`
+	AvatarRemoteURLHasPrefix    *string  `json:"avatarRemoteURLHasPrefix,omitempty"`
+	AvatarRemoteURLHasSuffix    *string  `json:"avatarRemoteURLHasSuffix,omitempty"`
+	AvatarRemoteURLIsNil        *bool    `json:"avatarRemoteURLIsNil,omitempty"`
+	AvatarRemoteURLNotNil       *bool    `json:"avatarRemoteURLNotNil,omitempty"`
+	AvatarRemoteURLEqualFold    *string  `json:"avatarRemoteURLEqualFold,omitempty"`
+	AvatarRemoteURLContainsFold *string  `json:"avatarRemoteURLContainsFold,omitempty"`
 	// parent edge predicates
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`
@@ -2957,15 +2967,17 @@ type UpdateGroupSettingInput struct {
 	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
 	JoinPolicy *enums.JoinPolicy `json:"joinPolicy,omitempty"`
 	// tags associated with the object
-	Tags              []string `json:"tags,omitempty"`
-	AppendTags        []string `json:"appendTags,omitempty"`
-	ClearTags         *bool    `json:"clearTags,omitempty"`
-	SyncToSlack       *bool    `json:"syncToSlack,omitempty"`
-	ClearSyncToSlack  *bool    `json:"clearSyncToSlack,omitempty"`
-	SyncToGithub      *bool    `json:"syncToGithub,omitempty"`
-	ClearSyncToGithub *bool    `json:"clearSyncToGithub,omitempty"`
-	GroupID           *string  `json:"groupID,omitempty"`
-	ClearGroup        *bool    `json:"clearGroup,omitempty"`
+	Tags       []string `json:"tags,omitempty"`
+	AppendTags []string `json:"appendTags,omitempty"`
+	ClearTags  *bool    `json:"clearTags,omitempty"`
+	// whether to sync group members to slack groups
+	SyncToSlack      *bool `json:"syncToSlack,omitempty"`
+	ClearSyncToSlack *bool `json:"clearSyncToSlack,omitempty"`
+	// whether to sync group members to github groups
+	SyncToGithub      *bool   `json:"syncToGithub,omitempty"`
+	ClearSyncToGithub *bool   `json:"clearSyncToGithub,omitempty"`
+	GroupID           *string `json:"groupID,omitempty"`
+	ClearGroup        *bool   `json:"clearGroup,omitempty"`
 }
 
 // UpdateIntegrationInput is used for update Integration object.
@@ -3079,8 +3091,11 @@ type UpdateOrganizationInput struct {
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
-	Description                  *string                         `json:"description,omitempty"`
-	ClearDescription             *bool                           `json:"clearDescription,omitempty"`
+	Description      *string `json:"description,omitempty"`
+	ClearDescription *bool   `json:"clearDescription,omitempty"`
+	// URL of the user's remote avatar
+	AvatarRemoteURL              *string                         `json:"avatarRemoteURL,omitempty"`
+	ClearAvatarRemoteURL         *bool                           `json:"clearAvatarRemoteURL,omitempty"`
 	AddGroupIDs                  []string                        `json:"addGroupIDs,omitempty"`
 	RemoveGroupIDs               []string                        `json:"removeGroupIDs,omitempty"`
 	ClearGroups                  *bool                           `json:"clearGroups,omitempty"`
@@ -3122,24 +3137,24 @@ type UpdateOrganizationSettingInput struct {
 	// Name of the person to contact for billing
 	BillingContact      *string `json:"billingContact,omitempty"`
 	ClearBillingContact *bool   `json:"clearBillingContact,omitempty"`
-	BillingEmail        *string `json:"billingEmail,omitempty"`
-	ClearBillingEmail   *bool   `json:"clearBillingEmail,omitempty"`
-	BillingPhone        *string `json:"billingPhone,omitempty"`
-	ClearBillingPhone   *bool   `json:"clearBillingPhone,omitempty"`
+	// Email address of the person to contact for billing
+	BillingEmail      *string `json:"billingEmail,omitempty"`
+	ClearBillingEmail *bool   `json:"clearBillingEmail,omitempty"`
+	// Phone number to contact for billing
+	BillingPhone      *string `json:"billingPhone,omitempty"`
+	ClearBillingPhone *bool   `json:"clearBillingPhone,omitempty"`
+	// Address to send billing information to
 	BillingAddress      *string `json:"billingAddress,omitempty"`
 	ClearBillingAddress *bool   `json:"clearBillingAddress,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier      *string `json:"taxIdentifier,omitempty"`
 	ClearTaxIdentifier *bool   `json:"clearTaxIdentifier,omitempty"`
 	// tags associated with the object
-	Tags       []string `json:"tags,omitempty"`
-	AppendTags []string `json:"appendTags,omitempty"`
-	ClearTags  *bool    `json:"clearTags,omitempty"`
-	// URL of the user's remote avatar
-	AvatarRemoteURL      *string `json:"avatarRemoteURL,omitempty"`
-	ClearAvatarRemoteURL *bool   `json:"clearAvatarRemoteURL,omitempty"`
-	OrganizationID       *string `json:"organizationID,omitempty"`
-	ClearOrganization    *bool   `json:"clearOrganization,omitempty"`
+	Tags              []string `json:"tags,omitempty"`
+	AppendTags        []string `json:"appendTags,omitempty"`
+	ClearTags         *bool    `json:"clearTags,omitempty"`
+	OrganizationID    *string  `json:"organizationID,omitempty"`
+	ClearOrganization *bool    `json:"clearOrganization,omitempty"`
 }
 
 // UpdatePersonalAccessTokenInput is used for update PersonalAccessToken object.

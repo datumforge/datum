@@ -159,6 +159,26 @@ func (ou *OrganizationUpdate) ClearDescription() *OrganizationUpdate {
 	return ou
 }
 
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (ou *OrganizationUpdate) SetAvatarRemoteURL(s string) *OrganizationUpdate {
+	ou.mutation.SetAvatarRemoteURL(s)
+	return ou
+}
+
+// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableAvatarRemoteURL(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetAvatarRemoteURL(*s)
+	}
+	return ou
+}
+
+// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
+func (ou *OrganizationUpdate) ClearAvatarRemoteURL() *OrganizationUpdate {
+	ou.mutation.ClearAvatarRemoteURL()
+	return ou
+}
+
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
 func (ou *OrganizationUpdate) AddChildIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddChildIDs(ids...)
@@ -567,6 +587,11 @@ func (ou *OrganizationUpdate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
 	}
+	if v, ok := ou.mutation.AvatarRemoteURL(); ok {
+		if err := organization.AvatarRemoteURLValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "Organization.avatar_remote_url": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -626,6 +651,12 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.PersonalOrgCleared() {
 		_spec.ClearField(organization.FieldPersonalOrg, field.TypeBool)
+	}
+	if value, ok := ou.mutation.AvatarRemoteURL(); ok {
+		_spec.SetField(organization.FieldAvatarRemoteURL, field.TypeString, value)
+	}
+	if ou.mutation.AvatarRemoteURLCleared() {
+		_spec.ClearField(organization.FieldAvatarRemoteURL, field.TypeString)
 	}
 	if ou.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1253,6 +1284,26 @@ func (ouo *OrganizationUpdateOne) ClearDescription() *OrganizationUpdateOne {
 	return ouo
 }
 
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (ouo *OrganizationUpdateOne) SetAvatarRemoteURL(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetAvatarRemoteURL(s)
+	return ouo
+}
+
+// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableAvatarRemoteURL(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetAvatarRemoteURL(*s)
+	}
+	return ouo
+}
+
+// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
+func (ouo *OrganizationUpdateOne) ClearAvatarRemoteURL() *OrganizationUpdateOne {
+	ouo.mutation.ClearAvatarRemoteURL()
+	return ouo
+}
+
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
 func (ouo *OrganizationUpdateOne) AddChildIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddChildIDs(ids...)
@@ -1674,6 +1725,11 @@ func (ouo *OrganizationUpdateOne) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
 	}
+	if v, ok := ouo.mutation.AvatarRemoteURL(); ok {
+		if err := organization.AvatarRemoteURLValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "Organization.avatar_remote_url": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -1750,6 +1806,12 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if ouo.mutation.PersonalOrgCleared() {
 		_spec.ClearField(organization.FieldPersonalOrg, field.TypeBool)
+	}
+	if value, ok := ouo.mutation.AvatarRemoteURL(); ok {
+		_spec.SetField(organization.FieldAvatarRemoteURL, field.TypeString, value)
+	}
+	if ouo.mutation.AvatarRemoteURLCleared() {
+		_spec.ClearField(organization.FieldAvatarRemoteURL, field.TypeString)
 	}
 	if ouo.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{

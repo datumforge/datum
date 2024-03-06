@@ -3,7 +3,7 @@ package schema
 import (
 	"context"
 	"net/mail"
-	"net/url"
+	"regexp"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
@@ -34,14 +34,22 @@ func (OrganizationSetting) Fields() []ent.Field {
 			Comment("Name of the person to contact for billing").
 			Optional(),
 		field.String("billing_email").
+			Comment("Email address of the person to contact for billing").
 			Validate(func(email string) error {
 				_, err := mail.ParseAddress(email)
 				return err
 			}).
 			Optional(),
 		field.String("billing_phone").
+			Comment("Phone number to contact for billing").
+			Validate(func(phone string) error {
+				regex := `^\+[1-9]{1}[0-9]{3,14}$`
+				_, err := regexp.MatchString(regex, phone)
+				return err
+			}).
 			Optional(),
 		field.String("billing_address").
+			Comment("Address to send billing information to").
 			Optional(),
 		field.String("tax_identifier").
 			Comment("Usually government-issued tax ID or business ID such as ABN in Australia").
@@ -50,15 +58,6 @@ func (OrganizationSetting) Fields() []ent.Field {
 			Comment("tags associated with the object").
 			Default([]string{}).
 			Optional(),
-		field.String("avatar_remote_url").
-			Comment("URL of the user's remote avatar").
-			MaxLen(urlMaxLen).
-			Validate(func(s string) error {
-				_, err := url.Parse(s)
-				return err
-			}).
-			Optional().
-			Nillable(),
 	}
 }
 

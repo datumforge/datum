@@ -35,18 +35,16 @@ type OrganizationSetting struct {
 	Domains []string `json:"domains,omitempty"`
 	// Name of the person to contact for billing
 	BillingContact string `json:"billing_contact,omitempty"`
-	// BillingEmail holds the value of the "billing_email" field.
+	// Email address of the person to contact for billing
 	BillingEmail string `json:"billing_email,omitempty"`
-	// BillingPhone holds the value of the "billing_phone" field.
+	// Phone number to contact for billing
 	BillingPhone string `json:"billing_phone,omitempty"`
-	// BillingAddress holds the value of the "billing_address" field.
+	// Address to send billing information to
 	BillingAddress string `json:"billing_address,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// URL of the user's remote avatar
-	AvatarRemoteURL *string `json:"avatar_remote_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationSettingQuery when eager-loading is set.
 	Edges                OrganizationSettingEdges `json:"edges"`
@@ -83,7 +81,7 @@ func (*OrganizationSetting) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organizationsetting.FieldDomains, organizationsetting.FieldTags:
 			values[i] = new([]byte)
-		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier, organizationsetting.FieldAvatarRemoteURL:
+		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier:
 			values[i] = new(sql.NullString)
 		case organizationsetting.FieldCreatedAt, organizationsetting.FieldUpdatedAt, organizationsetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -192,13 +190,6 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
-		case organizationsetting.FieldAvatarRemoteURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field avatar_remote_url", values[i])
-			} else if value.Valid {
-				os.AvatarRemoteURL = new(string)
-				*os.AvatarRemoteURL = value.String
-			}
 		case organizationsetting.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_setting", values[i])
@@ -285,11 +276,6 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tags=")
 	builder.WriteString(fmt.Sprintf("%v", os.Tags))
-	builder.WriteString(", ")
-	if v := os.AvatarRemoteURL; v != nil {
-		builder.WriteString("avatar_remote_url=")
-		builder.WriteString(*v)
-	}
 	builder.WriteByte(')')
 	return builder.String()
 }

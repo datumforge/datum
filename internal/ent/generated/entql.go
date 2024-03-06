@@ -300,6 +300,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldDescription:          {Type: field.TypeString, Column: organization.FieldDescription},
 			organization.FieldParentOrganizationID: {Type: field.TypeString, Column: organization.FieldParentOrganizationID},
 			organization.FieldPersonalOrg:          {Type: field.TypeBool, Column: organization.FieldPersonalOrg},
+			organization.FieldAvatarRemoteURL:      {Type: field.TypeString, Column: organization.FieldAvatarRemoteURL},
 		},
 	}
 	graph.Nodes[11] = &sqlgraph.Node{
@@ -313,20 +314,19 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "OrganizationSetting",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			organizationsetting.FieldCreatedAt:       {Type: field.TypeTime, Column: organizationsetting.FieldCreatedAt},
-			organizationsetting.FieldUpdatedAt:       {Type: field.TypeTime, Column: organizationsetting.FieldUpdatedAt},
-			organizationsetting.FieldCreatedBy:       {Type: field.TypeString, Column: organizationsetting.FieldCreatedBy},
-			organizationsetting.FieldUpdatedBy:       {Type: field.TypeString, Column: organizationsetting.FieldUpdatedBy},
-			organizationsetting.FieldDeletedAt:       {Type: field.TypeTime, Column: organizationsetting.FieldDeletedAt},
-			organizationsetting.FieldDeletedBy:       {Type: field.TypeString, Column: organizationsetting.FieldDeletedBy},
-			organizationsetting.FieldDomains:         {Type: field.TypeJSON, Column: organizationsetting.FieldDomains},
-			organizationsetting.FieldBillingContact:  {Type: field.TypeString, Column: organizationsetting.FieldBillingContact},
-			organizationsetting.FieldBillingEmail:    {Type: field.TypeString, Column: organizationsetting.FieldBillingEmail},
-			organizationsetting.FieldBillingPhone:    {Type: field.TypeString, Column: organizationsetting.FieldBillingPhone},
-			organizationsetting.FieldBillingAddress:  {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
-			organizationsetting.FieldTaxIdentifier:   {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
-			organizationsetting.FieldTags:            {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
-			organizationsetting.FieldAvatarRemoteURL: {Type: field.TypeString, Column: organizationsetting.FieldAvatarRemoteURL},
+			organizationsetting.FieldCreatedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldCreatedAt},
+			organizationsetting.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldUpdatedAt},
+			organizationsetting.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldCreatedBy},
+			organizationsetting.FieldUpdatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldUpdatedBy},
+			organizationsetting.FieldDeletedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldDeletedAt},
+			organizationsetting.FieldDeletedBy:      {Type: field.TypeString, Column: organizationsetting.FieldDeletedBy},
+			organizationsetting.FieldDomains:        {Type: field.TypeJSON, Column: organizationsetting.FieldDomains},
+			organizationsetting.FieldBillingContact: {Type: field.TypeString, Column: organizationsetting.FieldBillingContact},
+			organizationsetting.FieldBillingEmail:   {Type: field.TypeString, Column: organizationsetting.FieldBillingEmail},
+			organizationsetting.FieldBillingPhone:   {Type: field.TypeString, Column: organizationsetting.FieldBillingPhone},
+			organizationsetting.FieldBillingAddress: {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
+			organizationsetting.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
+			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
 		},
 	}
 	graph.Nodes[12] = &sqlgraph.Node{
@@ -2247,6 +2247,11 @@ func (f *OrganizationFilter) WherePersonalOrg(p entql.BoolP) {
 	f.Where(p.Field(organization.FieldPersonalOrg))
 }
 
+// WhereAvatarRemoteURL applies the entql string predicate on the avatar_remote_url field.
+func (f *OrganizationFilter) WhereAvatarRemoteURL(p entql.StringP) {
+	f.Where(p.Field(organization.FieldAvatarRemoteURL))
+}
+
 // WhereHasParent applies a predicate to check if query has an edge parent.
 func (f *OrganizationFilter) WhereHasParent() {
 	f.Where(entql.HasEdge("parent"))
@@ -2504,11 +2509,6 @@ func (f *OrganizationSettingFilter) WhereTaxIdentifier(p entql.StringP) {
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
 func (f *OrganizationSettingFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldTags))
-}
-
-// WhereAvatarRemoteURL applies the entql string predicate on the avatar_remote_url field.
-func (f *OrganizationSettingFilter) WhereAvatarRemoteURL(p entql.StringP) {
-	f.Where(p.Field(organizationsetting.FieldAvatarRemoteURL))
 }
 
 // WhereHasOrganization applies a predicate to check if query has an edge organization.

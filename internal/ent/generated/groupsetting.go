@@ -38,9 +38,9 @@ type GroupSetting struct {
 	JoinPolicy enums.JoinPolicy `json:"join_policy,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// SyncToSlack holds the value of the "sync_to_slack" field.
+	// whether to sync group members to slack groups
 	SyncToSlack bool `json:"sync_to_slack,omitempty"`
-	// SyncToGithub holds the value of the "sync_to_github" field.
+	// whether to sync group members to github groups
 	SyncToGithub bool `json:"sync_to_github,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupSettingQuery when eager-loading is set.

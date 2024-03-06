@@ -467,6 +467,7 @@ type ComplexityRoot struct {
 	}
 
 	Organization struct {
+		AvatarRemoteURL      func(childComplexity int) int
 		Children             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
 		CreatedAt            func(childComplexity int) int
 		CreatedBy            func(childComplexity int) int
@@ -511,22 +512,21 @@ type ComplexityRoot struct {
 	}
 
 	OrganizationSetting struct {
-		AvatarRemoteURL func(childComplexity int) int
-		BillingAddress  func(childComplexity int) int
-		BillingContact  func(childComplexity int) int
-		BillingEmail    func(childComplexity int) int
-		BillingPhone    func(childComplexity int) int
-		CreatedAt       func(childComplexity int) int
-		CreatedBy       func(childComplexity int) int
-		DeletedAt       func(childComplexity int) int
-		DeletedBy       func(childComplexity int) int
-		Domains         func(childComplexity int) int
-		ID              func(childComplexity int) int
-		Organization    func(childComplexity int) int
-		Tags            func(childComplexity int) int
-		TaxIdentifier   func(childComplexity int) int
-		UpdatedAt       func(childComplexity int) int
-		UpdatedBy       func(childComplexity int) int
+		BillingAddress func(childComplexity int) int
+		BillingContact func(childComplexity int) int
+		BillingEmail   func(childComplexity int) int
+		BillingPhone   func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		CreatedBy      func(childComplexity int) int
+		DeletedAt      func(childComplexity int) int
+		DeletedBy      func(childComplexity int) int
+		Domains        func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Organization   func(childComplexity int) int
+		Tags           func(childComplexity int) int
+		TaxIdentifier  func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UpdatedBy      func(childComplexity int) int
 	}
 
 	OrganizationSettingConnection struct {
@@ -2741,6 +2741,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrgMembershipUpdatePayload.OrgMembership(childComplexity), true
 
+	case "Organization.avatarRemoteURL":
+		if e.complexity.Organization.AvatarRemoteURL == nil {
+			break
+		}
+
+		return e.complexity.Organization.AvatarRemoteURL(childComplexity), true
+
 	case "Organization.children":
 		if e.complexity.Organization.Children == nil {
 			break
@@ -2948,13 +2955,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrganizationEdge.Node(childComplexity), true
-
-	case "OrganizationSetting.avatarRemoteURL":
-		if e.complexity.OrganizationSetting.AvatarRemoteURL == nil {
-			break
-		}
-
-		return e.complexity.OrganizationSetting.AvatarRemoteURL(childComplexity), true
 
 	case "OrganizationSetting.billingAddress":
 		if e.complexity.OrganizationSetting.BillingAddress == nil {
@@ -4367,7 +4367,13 @@ input CreateGroupSettingInput {
   tags associated with the object
   """
   tags: [String!]
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   groupID: ID
 }
@@ -4527,6 +4533,10 @@ input CreateOrganizationInput {
   orgs directly associated with a user
   """
   personalOrg: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
   parentID: ID
   groupIDs: [ID!]
   integrationIDs: [ID!]
@@ -4554,8 +4564,17 @@ input CreateOrganizationSettingInput {
   Name of the person to contact for billing
   """
   billingContact: String
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   """
   Usually government-issued tax ID or business ID such as ABN in Australia
@@ -4565,10 +4584,6 @@ input CreateOrganizationSettingInput {
   tags associated with the object
   """
   tags: [String!]
-  """
-  URL of the user's remote avatar
-  """
-  avatarRemoteURL: String
   organizationID: ID
 }
 """
@@ -5243,7 +5258,13 @@ type GroupSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   group: Group
 }
@@ -6871,6 +6892,10 @@ type Organization implements Node {
   orgs directly associated with a user
   """
   personalOrg: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
   parent: Organization
   children(
     """
@@ -6979,8 +7004,17 @@ type OrganizationSetting implements Node {
   Name of the person to contact for billing
   """
   billingContact: String
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   """
   Usually government-issued tax ID or business ID such as ABN in Australia
@@ -6990,10 +7024,6 @@ type OrganizationSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
-  """
-  URL of the user's remote avatar
-  """
-  avatarRemoteURL: String
   organization: Organization
 }
 """
@@ -7231,24 +7261,6 @@ input OrganizationSettingWhereInput {
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
   """
-  avatar_remote_url field predicates
-  """
-  avatarRemoteURL: String
-  avatarRemoteURLNEQ: String
-  avatarRemoteURLIn: [String!]
-  avatarRemoteURLNotIn: [String!]
-  avatarRemoteURLGT: String
-  avatarRemoteURLGTE: String
-  avatarRemoteURLLT: String
-  avatarRemoteURLLTE: String
-  avatarRemoteURLContains: String
-  avatarRemoteURLHasPrefix: String
-  avatarRemoteURLHasSuffix: String
-  avatarRemoteURLIsNil: Boolean
-  avatarRemoteURLNotNil: Boolean
-  avatarRemoteURLEqualFold: String
-  avatarRemoteURLContainsFold: String
-  """
   organization edge predicates
   """
   hasOrganization: Boolean
@@ -7409,6 +7421,24 @@ input OrganizationWhereInput {
   personalOrgNEQ: Boolean
   personalOrgIsNil: Boolean
   personalOrgNotNil: Boolean
+  """
+  avatar_remote_url field predicates
+  """
+  avatarRemoteURL: String
+  avatarRemoteURLNEQ: String
+  avatarRemoteURLIn: [String!]
+  avatarRemoteURLNotIn: [String!]
+  avatarRemoteURLGT: String
+  avatarRemoteURLGTE: String
+  avatarRemoteURLLT: String
+  avatarRemoteURLLTE: String
+  avatarRemoteURLContains: String
+  avatarRemoteURLHasPrefix: String
+  avatarRemoteURLHasSuffix: String
+  avatarRemoteURLIsNil: Boolean
+  avatarRemoteURLNotNil: Boolean
+  avatarRemoteURLEqualFold: String
+  avatarRemoteURLContainsFold: String
   """
   parent edge predicates
   """
@@ -8226,8 +8256,14 @@ input UpdateGroupSettingInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
   clearSyncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   clearSyncToGithub: Boolean
   groupID: ID
@@ -8389,6 +8425,11 @@ input UpdateOrganizationInput {
   """
   description: String
   clearDescription: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
+  clearAvatarRemoteURL: Boolean
   addGroupIDs: [ID!]
   removeGroupIDs: [ID!]
   clearGroups: Boolean
@@ -8433,10 +8474,19 @@ input UpdateOrganizationSettingInput {
   """
   billingContact: String
   clearBillingContact: Boolean
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
   clearBillingEmail: Boolean
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
   clearBillingPhone: Boolean
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   clearBillingAddress: Boolean
   """
@@ -8450,11 +8500,6 @@ input UpdateOrganizationSettingInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
-  """
-  URL of the user's remote avatar
-  """
-  avatarRemoteURL: String
-  clearAvatarRemoteURL: Boolean
   organizationID: ID
   clearOrganization: Boolean
 }
@@ -13016,6 +13061,8 @@ func (ec *executionContext) fieldContext_Entitlement_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -14059,6 +14106,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -17373,6 +17422,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -18457,6 +18508,8 @@ func (ec *executionContext) fieldContext_Invite_owner(ctx context.Context, field
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -22097,6 +22150,8 @@ func (ec *executionContext) fieldContext_OauthProvider_owner(ctx context.Context
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -24088,6 +24143,8 @@ func (ec *executionContext) fieldContext_OrgMembership_organization(ctx context.
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -25121,6 +25178,47 @@ func (ec *executionContext) fieldContext_Organization_personalOrg(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _Organization_avatarRemoteURL(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AvatarRemoteURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_avatarRemoteURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Organization_parent(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Organization_parent(ctx, field)
 	if err != nil {
@@ -25179,6 +25277,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -25477,8 +25577,6 @@ func (ec *executionContext) fieldContext_Organization_setting(ctx context.Contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_OrganizationSetting_avatarRemoteURL(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -26154,6 +26252,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -26285,6 +26385,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -26935,47 +27037,6 @@ func (ec *executionContext) fieldContext_OrganizationSetting_tags(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSetting_avatarRemoteURL(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSetting_avatarRemoteURL(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AvatarRemoteURL, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_OrganizationSetting_avatarRemoteURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "OrganizationSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _OrganizationSetting_organization(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationSetting_organization(ctx, field)
 	if err != nil {
@@ -27034,6 +27095,8 @@ func (ec *executionContext) fieldContext_OrganizationSetting_organization(ctx co
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -27275,8 +27338,6 @@ func (ec *executionContext) fieldContext_OrganizationSettingCreatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_OrganizationSetting_avatarRemoteURL(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -27394,8 +27455,6 @@ func (ec *executionContext) fieldContext_OrganizationSettingEdge_node(ctx contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_OrganizationSetting_avatarRemoteURL(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -27516,8 +27575,6 @@ func (ec *executionContext) fieldContext_OrganizationSettingUpdatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_OrganizationSetting_avatarRemoteURL(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -27588,6 +27645,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -28494,6 +28553,8 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_organizations(ctx c
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -30709,6 +30770,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -30816,8 +30879,6 @@ func (ec *executionContext) fieldContext_Query_organizationSetting(ctx context.C
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_OrganizationSetting_avatarRemoteURL(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -32653,6 +32714,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -34002,6 +34065,8 @@ func (ec *executionContext) fieldContext_UserSetting_defaultOrg(ctx context.Cont
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "personalOrg":
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -37099,7 +37164,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "createOrgSettings"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "avatarRemoteURL", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "createOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37162,6 +37227,13 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.PersonalOrg = data
+		case "avatarRemoteURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURL = data
 		case "parentID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -37247,7 +37319,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "avatarRemoteURL", "organizationID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "organizationID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37331,13 +37403,6 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.Tags = data
-		case "avatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURL = data
 		case "organizationID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -46093,7 +46158,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "hasOrganization", "hasOrganizationWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47241,111 +47306,6 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.TaxIdentifierContainsFold = data
-		case "avatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURL = data
-		case "avatarRemoteURLNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLNEQ = data
-		case "avatarRemoteURLIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLIn = data
-		case "avatarRemoteURLNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLNotIn = data
-		case "avatarRemoteURLGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLGT = data
-		case "avatarRemoteURLGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLGTE = data
-		case "avatarRemoteURLLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLLT = data
-		case "avatarRemoteURLLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLLTE = data
-		case "avatarRemoteURLContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLContains = data
-		case "avatarRemoteURLHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLHasPrefix = data
-		case "avatarRemoteURLHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLHasSuffix = data
-		case "avatarRemoteURLIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLIsNil = data
-		case "avatarRemoteURLNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLNotNil = data
-		case "avatarRemoteURLEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLEqualFold = data
-		case "avatarRemoteURLContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURLContainsFold = data
 		case "hasOrganization":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrganization"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -47373,7 +47333,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "personalOrgIsNil", "personalOrgNotNil", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasInvites", "hasInvitesWith", "hasMembers", "hasMembersWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "personalOrgIsNil", "personalOrgNotNil", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasInvites", "hasInvitesWith", "hasMembers", "hasMembersWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -48220,6 +48180,111 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.PersonalOrgNotNil = data
+		case "avatarRemoteURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURL = data
+		case "avatarRemoteURLNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLNEQ = data
+		case "avatarRemoteURLIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLIn = data
+		case "avatarRemoteURLNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLNotIn = data
+		case "avatarRemoteURLGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLGT = data
+		case "avatarRemoteURLGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLGTE = data
+		case "avatarRemoteURLLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLLT = data
+		case "avatarRemoteURLLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLLTE = data
+		case "avatarRemoteURLContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLContains = data
+		case "avatarRemoteURLHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLHasPrefix = data
+		case "avatarRemoteURLHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLHasSuffix = data
+		case "avatarRemoteURLIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLIsNil = data
+		case "avatarRemoteURLNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLNotNil = data
+		case "avatarRemoteURLEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLEqualFold = data
+		case "avatarRemoteURLContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURLContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURLContainsFold = data
 		case "hasParent":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasParent"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -50238,7 +50303,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers", "addInviteIDs", "removeInviteIDs", "clearInvites", "addOrgMembers", "updateOrgSettings"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "avatarRemoteURL", "clearAvatarRemoteURL", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers", "addInviteIDs", "removeInviteIDs", "clearInvites", "addOrgMembers", "updateOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50301,6 +50366,20 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.ClearDescription = data
+		case "avatarRemoteURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AvatarRemoteURL = data
+		case "clearAvatarRemoteURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAvatarRemoteURL"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearAvatarRemoteURL = data
 		case "addGroupIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addGroupIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -50493,7 +50572,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "billingContact", "clearBillingContact", "billingEmail", "clearBillingEmail", "billingPhone", "clearBillingPhone", "billingAddress", "clearBillingAddress", "taxIdentifier", "clearTaxIdentifier", "tags", "appendTags", "clearTags", "avatarRemoteURL", "clearAvatarRemoteURL", "organizationID", "clearOrganization"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "billingContact", "clearBillingContact", "billingEmail", "clearBillingEmail", "billingPhone", "clearBillingPhone", "billingAddress", "clearBillingAddress", "taxIdentifier", "clearTaxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50640,20 +50719,6 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.ClearTags = data
-		case "avatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("avatarRemoteURL"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvatarRemoteURL = data
-		case "clearAvatarRemoteURL":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAvatarRemoteURL"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearAvatarRemoteURL = data
 		case "organizationID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -57568,6 +57633,8 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._Organization_description(ctx, field, obj)
 		case "personalOrg":
 			out.Values[i] = ec._Organization_personalOrg(ctx, field, obj)
+		case "avatarRemoteURL":
+			out.Values[i] = ec._Organization_avatarRemoteURL(ctx, field, obj)
 		case "parent":
 			field := field
 
@@ -58164,8 +58231,6 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._OrganizationSetting_taxIdentifier(ctx, field, obj)
 		case "tags":
 			out.Values[i] = ec._OrganizationSetting_tags(ctx, field, obj)
-		case "avatarRemoteURL":
-			out.Values[i] = ec._OrganizationSetting_avatarRemoteURL(ctx, field, obj)
 		case "organization":
 			field := field
 

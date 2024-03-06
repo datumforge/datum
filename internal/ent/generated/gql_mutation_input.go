@@ -1076,6 +1076,7 @@ type CreateOrganizationInput struct {
 	DisplayName            *string
 	Description            *string
 	PersonalOrg            *bool
+	AvatarRemoteURL        *string
 	ParentID               *string
 	GroupIDs               []string
 	IntegrationIDs         []string
@@ -1110,6 +1111,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.PersonalOrg; v != nil {
 		m.SetPersonalOrg(*v)
+	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
 	}
 	if v := i.ParentID; v != nil {
 		m.SetParentID(*v)
@@ -1156,6 +1160,8 @@ type UpdateOrganizationInput struct {
 	DisplayName                  *string
 	ClearDescription             bool
 	Description                  *string
+	ClearAvatarRemoteURL         bool
+	AvatarRemoteURL              *string
 	ClearGroups                  bool
 	AddGroupIDs                  []string
 	RemoveGroupIDs               []string
@@ -1206,6 +1212,12 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if i.ClearAvatarRemoteURL {
+		m.ClearAvatarRemoteURL()
+	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
 	}
 	if i.ClearGroups {
 		m.ClearGroups()
@@ -1292,19 +1304,18 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 
 // CreateOrganizationSettingInput represents a mutation input for creating organizationsettings.
 type CreateOrganizationSettingInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
-	Domains         []string
-	BillingContact  *string
-	BillingEmail    *string
-	BillingPhone    *string
-	BillingAddress  *string
-	TaxIdentifier   *string
-	Tags            []string
-	AvatarRemoteURL *string
-	OrganizationID  *string
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Domains        []string
+	BillingContact *string
+	BillingEmail   *string
+	BillingPhone   *string
+	BillingAddress *string
+	TaxIdentifier  *string
+	Tags           []string
+	OrganizationID *string
 }
 
 // Mutate applies the CreateOrganizationSettingInput on the OrganizationSettingMutation builder.
@@ -1342,9 +1353,6 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	if v := i.AvatarRemoteURL; v != nil {
-		m.SetAvatarRemoteURL(*v)
-	}
 	if v := i.OrganizationID; v != nil {
 		m.SetOrganizationID(*v)
 	}
@@ -1358,30 +1366,28 @@ func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *
 
 // UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
 type UpdateOrganizationSettingInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
-	ClearDomains         bool
-	Domains              []string
-	AppendDomains        []string
-	ClearBillingContact  bool
-	BillingContact       *string
-	ClearBillingEmail    bool
-	BillingEmail         *string
-	ClearBillingPhone    bool
-	BillingPhone         *string
-	ClearBillingAddress  bool
-	BillingAddress       *string
-	ClearTaxIdentifier   bool
-	TaxIdentifier        *string
-	ClearTags            bool
-	Tags                 []string
-	AppendTags           []string
-	ClearAvatarRemoteURL bool
-	AvatarRemoteURL      *string
-	ClearOrganization    bool
-	OrganizationID       *string
+	ClearUpdatedAt      bool
+	UpdatedAt           *time.Time
+	ClearUpdatedBy      bool
+	UpdatedBy           *string
+	ClearDomains        bool
+	Domains             []string
+	AppendDomains       []string
+	ClearBillingContact bool
+	BillingContact      *string
+	ClearBillingEmail   bool
+	BillingEmail        *string
+	ClearBillingPhone   bool
+	BillingPhone        *string
+	ClearBillingAddress bool
+	BillingAddress      *string
+	ClearTaxIdentifier  bool
+	TaxIdentifier       *string
+	ClearTags           bool
+	Tags                []string
+	AppendTags          []string
+	ClearOrganization   bool
+	OrganizationID      *string
 }
 
 // Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
@@ -1445,12 +1451,6 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
-	}
-	if i.ClearAvatarRemoteURL {
-		m.ClearAvatarRemoteURL()
-	}
-	if v := i.AvatarRemoteURL; v != nil {
-		m.SetAvatarRemoteURL(*v)
 	}
 	if i.ClearOrganization {
 		m.ClearOrganization()

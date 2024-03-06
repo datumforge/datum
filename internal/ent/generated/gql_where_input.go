@@ -6053,6 +6053,23 @@ type OrganizationWhereInput struct {
 	PersonalOrgIsNil  bool  `json:"personalOrgIsNil,omitempty"`
 	PersonalOrgNotNil bool  `json:"personalOrgNotNil,omitempty"`
 
+	// "avatar_remote_url" field predicates.
+	AvatarRemoteURL             *string  `json:"avatarRemoteURL,omitempty"`
+	AvatarRemoteURLNEQ          *string  `json:"avatarRemoteURLNEQ,omitempty"`
+	AvatarRemoteURLIn           []string `json:"avatarRemoteURLIn,omitempty"`
+	AvatarRemoteURLNotIn        []string `json:"avatarRemoteURLNotIn,omitempty"`
+	AvatarRemoteURLGT           *string  `json:"avatarRemoteURLGT,omitempty"`
+	AvatarRemoteURLGTE          *string  `json:"avatarRemoteURLGTE,omitempty"`
+	AvatarRemoteURLLT           *string  `json:"avatarRemoteURLLT,omitempty"`
+	AvatarRemoteURLLTE          *string  `json:"avatarRemoteURLLTE,omitempty"`
+	AvatarRemoteURLContains     *string  `json:"avatarRemoteURLContains,omitempty"`
+	AvatarRemoteURLHasPrefix    *string  `json:"avatarRemoteURLHasPrefix,omitempty"`
+	AvatarRemoteURLHasSuffix    *string  `json:"avatarRemoteURLHasSuffix,omitempty"`
+	AvatarRemoteURLIsNil        bool     `json:"avatarRemoteURLIsNil,omitempty"`
+	AvatarRemoteURLNotNil       bool     `json:"avatarRemoteURLNotNil,omitempty"`
+	AvatarRemoteURLEqualFold    *string  `json:"avatarRemoteURLEqualFold,omitempty"`
+	AvatarRemoteURLContainsFold *string  `json:"avatarRemoteURLContainsFold,omitempty"`
+
 	// "parent" edge predicates.
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`
@@ -6520,6 +6537,51 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	if i.PersonalOrgNotNil {
 		predicates = append(predicates, organization.PersonalOrgNotNil())
 	}
+	if i.AvatarRemoteURL != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLEQ(*i.AvatarRemoteURL))
+	}
+	if i.AvatarRemoteURLNEQ != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLNEQ(*i.AvatarRemoteURLNEQ))
+	}
+	if len(i.AvatarRemoteURLIn) > 0 {
+		predicates = append(predicates, organization.AvatarRemoteURLIn(i.AvatarRemoteURLIn...))
+	}
+	if len(i.AvatarRemoteURLNotIn) > 0 {
+		predicates = append(predicates, organization.AvatarRemoteURLNotIn(i.AvatarRemoteURLNotIn...))
+	}
+	if i.AvatarRemoteURLGT != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLGT(*i.AvatarRemoteURLGT))
+	}
+	if i.AvatarRemoteURLGTE != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLGTE(*i.AvatarRemoteURLGTE))
+	}
+	if i.AvatarRemoteURLLT != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLLT(*i.AvatarRemoteURLLT))
+	}
+	if i.AvatarRemoteURLLTE != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLLTE(*i.AvatarRemoteURLLTE))
+	}
+	if i.AvatarRemoteURLContains != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLContains(*i.AvatarRemoteURLContains))
+	}
+	if i.AvatarRemoteURLHasPrefix != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLHasPrefix(*i.AvatarRemoteURLHasPrefix))
+	}
+	if i.AvatarRemoteURLHasSuffix != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLHasSuffix(*i.AvatarRemoteURLHasSuffix))
+	}
+	if i.AvatarRemoteURLIsNil {
+		predicates = append(predicates, organization.AvatarRemoteURLIsNil())
+	}
+	if i.AvatarRemoteURLNotNil {
+		predicates = append(predicates, organization.AvatarRemoteURLNotNil())
+	}
+	if i.AvatarRemoteURLEqualFold != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLEqualFold(*i.AvatarRemoteURLEqualFold))
+	}
+	if i.AvatarRemoteURLContainsFold != nil {
+		predicates = append(predicates, organization.AvatarRemoteURLContainsFold(*i.AvatarRemoteURLContainsFold))
+	}
 
 	if i.HasParent != nil {
 		p := organization.HasParent()
@@ -6919,23 +6981,6 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierNotNil       bool     `json:"taxIdentifierNotNil,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
-
-	// "avatar_remote_url" field predicates.
-	AvatarRemoteURL             *string  `json:"avatarRemoteURL,omitempty"`
-	AvatarRemoteURLNEQ          *string  `json:"avatarRemoteURLNEQ,omitempty"`
-	AvatarRemoteURLIn           []string `json:"avatarRemoteURLIn,omitempty"`
-	AvatarRemoteURLNotIn        []string `json:"avatarRemoteURLNotIn,omitempty"`
-	AvatarRemoteURLGT           *string  `json:"avatarRemoteURLGT,omitempty"`
-	AvatarRemoteURLGTE          *string  `json:"avatarRemoteURLGTE,omitempty"`
-	AvatarRemoteURLLT           *string  `json:"avatarRemoteURLLT,omitempty"`
-	AvatarRemoteURLLTE          *string  `json:"avatarRemoteURLLTE,omitempty"`
-	AvatarRemoteURLContains     *string  `json:"avatarRemoteURLContains,omitempty"`
-	AvatarRemoteURLHasPrefix    *string  `json:"avatarRemoteURLHasPrefix,omitempty"`
-	AvatarRemoteURLHasSuffix    *string  `json:"avatarRemoteURLHasSuffix,omitempty"`
-	AvatarRemoteURLIsNil        bool     `json:"avatarRemoteURLIsNil,omitempty"`
-	AvatarRemoteURLNotNil       bool     `json:"avatarRemoteURLNotNil,omitempty"`
-	AvatarRemoteURLEqualFold    *string  `json:"avatarRemoteURLEqualFold,omitempty"`
-	AvatarRemoteURLContainsFold *string  `json:"avatarRemoteURLContainsFold,omitempty"`
 
 	// "organization" edge predicates.
 	HasOrganization     *bool                     `json:"hasOrganization,omitempty"`
@@ -7492,51 +7537,6 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.TaxIdentifierContainsFold != nil {
 		predicates = append(predicates, organizationsetting.TaxIdentifierContainsFold(*i.TaxIdentifierContainsFold))
-	}
-	if i.AvatarRemoteURL != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLEQ(*i.AvatarRemoteURL))
-	}
-	if i.AvatarRemoteURLNEQ != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLNEQ(*i.AvatarRemoteURLNEQ))
-	}
-	if len(i.AvatarRemoteURLIn) > 0 {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLIn(i.AvatarRemoteURLIn...))
-	}
-	if len(i.AvatarRemoteURLNotIn) > 0 {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLNotIn(i.AvatarRemoteURLNotIn...))
-	}
-	if i.AvatarRemoteURLGT != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLGT(*i.AvatarRemoteURLGT))
-	}
-	if i.AvatarRemoteURLGTE != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLGTE(*i.AvatarRemoteURLGTE))
-	}
-	if i.AvatarRemoteURLLT != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLLT(*i.AvatarRemoteURLLT))
-	}
-	if i.AvatarRemoteURLLTE != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLLTE(*i.AvatarRemoteURLLTE))
-	}
-	if i.AvatarRemoteURLContains != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLContains(*i.AvatarRemoteURLContains))
-	}
-	if i.AvatarRemoteURLHasPrefix != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLHasPrefix(*i.AvatarRemoteURLHasPrefix))
-	}
-	if i.AvatarRemoteURLHasSuffix != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLHasSuffix(*i.AvatarRemoteURLHasSuffix))
-	}
-	if i.AvatarRemoteURLIsNil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLIsNil())
-	}
-	if i.AvatarRemoteURLNotNil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLNotNil())
-	}
-	if i.AvatarRemoteURLEqualFold != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLEqualFold(*i.AvatarRemoteURLEqualFold))
-	}
-	if i.AvatarRemoteURLContainsFold != nil {
-		predicates = append(predicates, organizationsetting.AvatarRemoteURLContainsFold(*i.AvatarRemoteURLContainsFold))
 	}
 
 	if i.HasOrganization != nil {

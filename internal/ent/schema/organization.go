@@ -2,6 +2,7 @@ package schema
 
 import (
 	"context"
+	"net/url"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
@@ -69,6 +70,15 @@ func (Organization) Fields() []ent.Field {
 			Optional().
 			Default(false).
 			Immutable(),
+		field.String("avatar_remote_url").
+			Comment("URL of the user's remote avatar").
+			MaxLen(urlMaxLen).
+			Validate(func(s string) error {
+				_, err := url.Parse(s)
+				return err
+			}).
+			Optional().
+			Nillable(),
 	}
 }
 

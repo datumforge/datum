@@ -122,11 +122,6 @@ func TaxIdentifier(v string) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldTaxIdentifier, v))
 }
 
-// AvatarRemoteURL applies equality check predicate on the "avatar_remote_url" field. It's identical to AvatarRemoteURLEQ.
-func AvatarRemoteURL(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldAvatarRemoteURL, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldCreatedAt, v))
@@ -895,81 +890,6 @@ func TagsIsNil() predicate.OrganizationSetting {
 // TagsNotNil applies the NotNil predicate on the "tags" field.
 func TagsNotNil() predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldNotNull(FieldTags))
-}
-
-// AvatarRemoteURLEQ applies the EQ predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLNEQ applies the NEQ predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLNEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNEQ(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLIn applies the In predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIn(FieldAvatarRemoteURL, vs...))
-}
-
-// AvatarRemoteURLNotIn applies the NotIn predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLNotIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotIn(FieldAvatarRemoteURL, vs...))
-}
-
-// AvatarRemoteURLGT applies the GT predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLGT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGT(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLGTE applies the GTE predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLGTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGTE(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLLT applies the LT predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLLT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLT(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLLTE applies the LTE predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLLTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLTE(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLContains applies the Contains predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLContains(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContains(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLHasPrefix applies the HasPrefix predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLHasPrefix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasPrefix(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLHasSuffix applies the HasSuffix predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLHasSuffix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasSuffix(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLIsNil applies the IsNil predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLIsNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIsNull(FieldAvatarRemoteURL))
-}
-
-// AvatarRemoteURLNotNil applies the NotNil predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLNotNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotNull(FieldAvatarRemoteURL))
-}
-
-// AvatarRemoteURLEqualFold applies the EqualFold predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLEqualFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEqualFold(FieldAvatarRemoteURL, v))
-}
-
-// AvatarRemoteURLContainsFold applies the ContainsFold predicate on the "avatar_remote_url" field.
-func AvatarRemoteURLContainsFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContainsFold(FieldAvatarRemoteURL, v))
 }
 
 // HasOrganization applies the HasEdge predicate on the "organization" edge.

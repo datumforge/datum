@@ -41,8 +41,6 @@ const (
 	FieldTaxIdentifier = "tax_identifier"
 	// FieldTags holds the string denoting the tags field in the database.
 	FieldTags = "tags"
-	// FieldAvatarRemoteURL holds the string denoting the avatar_remote_url field in the database.
-	FieldAvatarRemoteURL = "avatar_remote_url"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
 	// Table holds the table name of the organizationsetting in the database.
@@ -72,7 +70,6 @@ var Columns = []string{
 	FieldBillingAddress,
 	FieldTaxIdentifier,
 	FieldTags,
-	FieldAvatarRemoteURL,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "organization_settings"
@@ -113,10 +110,10 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
 	BillingEmailValidator func(string) error
+	// BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.
+	BillingPhoneValidator func(string) error
 	// DefaultTags holds the default value on creation for the "tags" field.
 	DefaultTags []string
-	// AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
-	AvatarRemoteURLValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -182,11 +179,6 @@ func ByBillingAddress(opts ...sql.OrderTermOption) OrderOption {
 // ByTaxIdentifier orders the results by the tax_identifier field.
 func ByTaxIdentifier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTaxIdentifier, opts...).ToFunc()
-}
-
-// ByAvatarRemoteURL orders the results by the avatar_remote_url field.
-func ByAvatarRemoteURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAvatarRemoteURL, opts...).ToFunc()
 }
 
 // ByOrganizationField orders the results by organization field.

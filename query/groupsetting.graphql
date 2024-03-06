@@ -1,4 +1,4 @@
-query GetGroupSetting($groupSettingId: ID!) {
+query GetGroupSettingByID($groupSettingId: ID!) {
   groupSetting(id: $groupSettingId) {
     id
     createdAt
@@ -12,6 +12,73 @@ query GetGroupSetting($groupSettingId: ID!) {
     syncToGithub
     group {
       id
+    }
+  }
+}
+
+
+query GetGroupSettings() {
+  groupSettings() {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        visibility
+        joinPolicy
+        tags
+        syncToSlack
+        syncToGithub
+        group {
+          id
+        }
+      }
+    }
+  }
+}
+
+
+
+query GetGroupSettingWhere($where: GroupSettingWhereInput!) {
+  groupSettings(where: $where) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        visibility
+        joinPolicy
+        tags
+        syncToSlack
+        syncToGithub
+        group {
+          id
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateGroupSetting($updateGroupSettingId: ID!, $input: UpdateGroupSettingInput!) {
+  updateGroupSetting(id: $updateGroupSettingId, input: $input) {
+    groupSetting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      visibility
+      joinPolicy
+      tags
+      syncToSlack
+      syncToGithub
+      group {
+        id
+      }
     }
   }
 }

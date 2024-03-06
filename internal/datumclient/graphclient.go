@@ -22,7 +22,10 @@ type DatumClient interface {
 	AddUserToGroupWithRole(ctx context.Context, input CreateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToGroupWithRole, error)
 	UpdateUserRoleInGroup(ctx context.Context, updateGroupMemberID string, input UpdateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInGroup, error)
 	RemoveUserFromGroup(ctx context.Context, deleteGroupMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromGroup, error)
-	GetGroupSetting(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSetting, error)
+	GetGroupSettingByID(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettingByID, error)
+	GetGroupSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettings, error)
+	GetGroupSettingWhere(ctx context.Context, where GroupSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettingWhere, error)
+	UpdateGroupSetting(ctx context.Context, updateGroupSettingID string, input UpdateGroupSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateGroupSetting, error)
 	CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error)
 	DeleteInvite(ctx context.Context, deleteInviteID string, interceptors ...clientv2.RequestInterceptor) (*DeleteInvite, error)
 	GetInvite(ctx context.Context, inviteID string, interceptors ...clientv2.RequestInterceptor) (*GetInvite, error)
@@ -33,7 +36,10 @@ type DatumClient interface {
 	CreateOrganization(ctx context.Context, input CreateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*CreateOrganization, error)
 	UpdateOrganization(ctx context.Context, updateOrganizationID string, input UpdateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganization, error)
 	DeleteOrganization(ctx context.Context, deleteOrganizationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteOrganization, error)
-	GetOrganizationSetting(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSetting, error)
+	GetOrganizationSettingByID(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettingByID, error)
+	GetOrganizationSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettings, error)
+	GetOrganizationSettingWhere(ctx context.Context, where OrganizationSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettingWhere, error)
+	UpdateOrganizationSetting(ctx context.Context, updateOrganizationSettingID string, input UpdateOrganizationSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganizationSetting, error)
 	GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error)
 	AddUserToOrgWithRole(ctx context.Context, input CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToOrgWithRole, error)
 	UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error)
@@ -1413,96 +1419,427 @@ func (t *RemoveUserFromGroup_DeleteGroupMembership) GetDeletedID() string {
 	return t.DeletedID
 }
 
-type GetGroupSetting_GroupSetting_Group struct {
+type GetGroupSettingByID_GroupSetting_Group struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
 
-func (t *GetGroupSetting_GroupSetting_Group) GetID() string {
+func (t *GetGroupSettingByID_GroupSetting_Group) GetID() string {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting_Group{}
+		t = &GetGroupSettingByID_GroupSetting_Group{}
 	}
 	return t.ID
 }
 
-type GetGroupSetting_GroupSetting struct {
-	ID           string                              "json:\"id\" graphql:\"id\""
-	CreatedAt    *time.Time                          "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt    *time.Time                          "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy    *string                             "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                             "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Visibility   enums.Visibility                    "json:\"visibility\" graphql:\"visibility\""
-	JoinPolicy   enums.JoinPolicy                    "json:\"joinPolicy\" graphql:\"joinPolicy\""
-	Tags         []string                            "json:\"tags,omitempty\" graphql:\"tags\""
-	SyncToSlack  *bool                               "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
-	SyncToGithub *bool                               "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
-	Group        *GetGroupSetting_GroupSetting_Group "json:\"group,omitempty\" graphql:\"group\""
+type GetGroupSettingByID_GroupSetting struct {
+	ID           string                                  "json:\"id\" graphql:\"id\""
+	CreatedAt    *time.Time                              "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time                              "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy    *string                                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility                        "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy                        "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	Tags         []string                                "json:\"tags,omitempty\" graphql:\"tags\""
+	SyncToSlack  *bool                                   "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool                                   "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Group        *GetGroupSettingByID_GroupSetting_Group "json:\"group,omitempty\" graphql:\"group\""
 }
 
-func (t *GetGroupSetting_GroupSetting) GetID() string {
+func (t *GetGroupSettingByID_GroupSetting) GetID() string {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.ID
 }
-func (t *GetGroupSetting_GroupSetting) GetCreatedAt() *time.Time {
+func (t *GetGroupSettingByID_GroupSetting) GetCreatedAt() *time.Time {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.CreatedAt
 }
-func (t *GetGroupSetting_GroupSetting) GetUpdatedAt() *time.Time {
+func (t *GetGroupSettingByID_GroupSetting) GetUpdatedAt() *time.Time {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.UpdatedAt
 }
-func (t *GetGroupSetting_GroupSetting) GetCreatedBy() *string {
+func (t *GetGroupSettingByID_GroupSetting) GetCreatedBy() *string {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.CreatedBy
 }
-func (t *GetGroupSetting_GroupSetting) GetUpdatedBy() *string {
+func (t *GetGroupSettingByID_GroupSetting) GetUpdatedBy() *string {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.UpdatedBy
 }
-func (t *GetGroupSetting_GroupSetting) GetVisibility() *enums.Visibility {
+func (t *GetGroupSettingByID_GroupSetting) GetVisibility() *enums.Visibility {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return &t.Visibility
 }
-func (t *GetGroupSetting_GroupSetting) GetJoinPolicy() *enums.JoinPolicy {
+func (t *GetGroupSettingByID_GroupSetting) GetJoinPolicy() *enums.JoinPolicy {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return &t.JoinPolicy
 }
-func (t *GetGroupSetting_GroupSetting) GetTags() []string {
+func (t *GetGroupSettingByID_GroupSetting) GetTags() []string {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.Tags
 }
-func (t *GetGroupSetting_GroupSetting) GetSyncToSlack() *bool {
+func (t *GetGroupSettingByID_GroupSetting) GetSyncToSlack() *bool {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.SyncToSlack
 }
-func (t *GetGroupSetting_GroupSetting) GetSyncToGithub() *bool {
+func (t *GetGroupSettingByID_GroupSetting) GetSyncToGithub() *bool {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.SyncToGithub
 }
-func (t *GetGroupSetting_GroupSetting) GetGroup() *GetGroupSetting_GroupSetting_Group {
+func (t *GetGroupSettingByID_GroupSetting) GetGroup() *GetGroupSettingByID_GroupSetting_Group {
 	if t == nil {
-		t = &GetGroupSetting_GroupSetting{}
+		t = &GetGroupSettingByID_GroupSetting{}
 	}
 	return t.Group
+}
+
+type GetGroupSettings_GroupSettings_Edges_Node_Group struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetGroupSettings_GroupSettings_Edges_Node_Group) GetID() string {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node_Group{}
+	}
+	return t.ID
+}
+
+type GetGroupSettings_GroupSettings_Edges_Node struct {
+	ID           string                                           "json:\"id\" graphql:\"id\""
+	CreatedAt    *time.Time                                       "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time                                       "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy    *string                                          "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                                          "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility                                 "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy                                 "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	Tags         []string                                         "json:\"tags,omitempty\" graphql:\"tags\""
+	SyncToSlack  *bool                                            "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool                                            "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Group        *GetGroupSettings_GroupSettings_Edges_Node_Group "json:\"group,omitempty\" graphql:\"group\""
+}
+
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetVisibility() *enums.Visibility {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return &t.Visibility
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetJoinPolicy() *enums.JoinPolicy {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return &t.JoinPolicy
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetSyncToSlack() *bool {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.SyncToSlack
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetSyncToGithub() *bool {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.SyncToGithub
+}
+func (t *GetGroupSettings_GroupSettings_Edges_Node) GetGroup() *GetGroupSettings_GroupSettings_Edges_Node_Group {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges_Node{}
+	}
+	return t.Group
+}
+
+type GetGroupSettings_GroupSettings_Edges struct {
+	Node *GetGroupSettings_GroupSettings_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetGroupSettings_GroupSettings_Edges) GetNode() *GetGroupSettings_GroupSettings_Edges_Node {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings_Edges{}
+	}
+	return t.Node
+}
+
+type GetGroupSettings_GroupSettings struct {
+	Edges []*GetGroupSettings_GroupSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetGroupSettings_GroupSettings) GetEdges() []*GetGroupSettings_GroupSettings_Edges {
+	if t == nil {
+		t = &GetGroupSettings_GroupSettings{}
+	}
+	return t.Edges
+}
+
+type GetGroupSettingWhere_GroupSettings_Edges_Node_Group struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node_Group) GetID() string {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node_Group{}
+	}
+	return t.ID
+}
+
+type GetGroupSettingWhere_GroupSettings_Edges_Node struct {
+	ID           string                                               "json:\"id\" graphql:\"id\""
+	CreatedAt    *time.Time                                           "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time                                           "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy    *string                                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility                                     "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy                                     "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	Tags         []string                                             "json:\"tags,omitempty\" graphql:\"tags\""
+	SyncToSlack  *bool                                                "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool                                                "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Group        *GetGroupSettingWhere_GroupSettings_Edges_Node_Group "json:\"group,omitempty\" graphql:\"group\""
+}
+
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetVisibility() *enums.Visibility {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return &t.Visibility
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetJoinPolicy() *enums.JoinPolicy {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return &t.JoinPolicy
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetSyncToSlack() *bool {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.SyncToSlack
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetSyncToGithub() *bool {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.SyncToGithub
+}
+func (t *GetGroupSettingWhere_GroupSettings_Edges_Node) GetGroup() *GetGroupSettingWhere_GroupSettings_Edges_Node_Group {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges_Node{}
+	}
+	return t.Group
+}
+
+type GetGroupSettingWhere_GroupSettings_Edges struct {
+	Node *GetGroupSettingWhere_GroupSettings_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetGroupSettingWhere_GroupSettings_Edges) GetNode() *GetGroupSettingWhere_GroupSettings_Edges_Node {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings_Edges{}
+	}
+	return t.Node
+}
+
+type GetGroupSettingWhere_GroupSettings struct {
+	Edges []*GetGroupSettingWhere_GroupSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetGroupSettingWhere_GroupSettings) GetEdges() []*GetGroupSettingWhere_GroupSettings_Edges {
+	if t == nil {
+		t = &GetGroupSettingWhere_GroupSettings{}
+	}
+	return t.Edges
+}
+
+type UpdateGroupSetting_UpdateGroupSetting_GroupSetting_Group struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting_Group) GetID() string {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting_Group{}
+	}
+	return t.ID
+}
+
+type UpdateGroupSetting_UpdateGroupSetting_GroupSetting struct {
+	ID           string                                                    "json:\"id\" graphql:\"id\""
+	CreatedAt    *time.Time                                                "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt    *time.Time                                                "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy    *string                                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   enums.Visibility                                          "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   enums.JoinPolicy                                          "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	Tags         []string                                                  "json:\"tags,omitempty\" graphql:\"tags\""
+	SyncToSlack  *bool                                                     "json:\"syncToSlack,omitempty\" graphql:\"syncToSlack\""
+	SyncToGithub *bool                                                     "json:\"syncToGithub,omitempty\" graphql:\"syncToGithub\""
+	Group        *UpdateGroupSetting_UpdateGroupSetting_GroupSetting_Group "json:\"group,omitempty\" graphql:\"group\""
+}
+
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetID() string {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.ID
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetVisibility() *enums.Visibility {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return &t.Visibility
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetJoinPolicy() *enums.JoinPolicy {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return &t.JoinPolicy
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetTags() []string {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.Tags
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetSyncToSlack() *bool {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.SyncToSlack
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetSyncToGithub() *bool {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.SyncToGithub
+}
+func (t *UpdateGroupSetting_UpdateGroupSetting_GroupSetting) GetGroup() *UpdateGroupSetting_UpdateGroupSetting_GroupSetting_Group {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting_GroupSetting{}
+	}
+	return t.Group
+}
+
+type UpdateGroupSetting_UpdateGroupSetting struct {
+	GroupSetting UpdateGroupSetting_UpdateGroupSetting_GroupSetting "json:\"groupSetting\" graphql:\"groupSetting\""
+}
+
+func (t *UpdateGroupSetting_UpdateGroupSetting) GetGroupSetting() *UpdateGroupSetting_UpdateGroupSetting_GroupSetting {
+	if t == nil {
+		t = &UpdateGroupSetting_UpdateGroupSetting{}
+	}
+	return &t.GroupSetting
 }
 
 type CreateInvite_CreateInvite_Invite_Owner struct {
@@ -3172,96 +3509,539 @@ func (t *DeleteOrganization_DeleteOrganization) GetDeletedID() string {
 	return t.DeletedID
 }
 
-type GetOrganizationSetting_OrganizationSetting_Organization struct {
+type GetOrganizationSettingByID_OrganizationSetting_Organization struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
 
-func (t *GetOrganizationSetting_OrganizationSetting_Organization) GetID() string {
+func (t *GetOrganizationSettingByID_OrganizationSetting_Organization) GetID() string {
 	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting_Organization{}
+		t = &GetOrganizationSettingByID_OrganizationSetting_Organization{}
 	}
 	return t.ID
 }
 
-type GetOrganizationSetting_OrganizationSetting struct {
-	ID             string                                                   "json:\"id\" graphql:\"id\""
-	BillingAddress *string                                                  "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	BillingContact *string                                                  "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string                                                  "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string                                                  "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	CreatedAt      *time.Time                                               "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	CreatedBy      *string                                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Domains        []string                                                 "json:\"domains,omitempty\" graphql:\"domains\""
-	UpdatedAt      *time.Time                                               "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	UpdatedBy      *string                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Organization   *GetOrganizationSetting_OrganizationSetting_Organization "json:\"organization,omitempty\" graphql:\"organization\""
+type GetOrganizationSettingByID_OrganizationSetting struct {
+	ID             string                                                       "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time                                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time                                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string                                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string                                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt      *time.Time                                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Domains        []string                                                     "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string                                                      "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string                                                      "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string                                                      "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string                                                      "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string                                                      "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string                                                     "json:\"tags,omitempty\" graphql:\"tags\""
+	Organization   *GetOrganizationSettingByID_OrganizationSetting_Organization "json:\"organization,omitempty\" graphql:\"organization\""
 }
 
-func (t *GetOrganizationSetting_OrganizationSetting) GetID() string {
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetID() string {
 	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
 	}
 	return t.ID
 }
-func (t *GetOrganizationSetting_OrganizationSetting) GetBillingAddress() *string {
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetCreatedAt() *time.Time {
 	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.BillingAddress
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetBillingContact() *string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.BillingContact
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetBillingEmail() *string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.BillingEmail
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetBillingPhone() *string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.BillingPhone
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
 	}
 	return t.CreatedAt
 }
-func (t *GetOrganizationSetting_OrganizationSetting) GetCreatedBy() *string {
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetUpdatedAt() *time.Time {
 	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.CreatedBy
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetDomains() []string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.Domains
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
 	}
 	return t.UpdatedAt
 }
-func (t *GetOrganizationSetting_OrganizationSetting) GetUpdatedBy() *string {
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetCreatedBy() *string {
 	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
 	}
 	return t.UpdatedBy
 }
-func (t *GetOrganizationSetting_OrganizationSetting) GetOrganization() *GetOrganizationSetting_OrganizationSetting_Organization {
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetDeletedAt() *time.Time {
 	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.DeletedAt
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.DeletedBy
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetDomains() []string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.Domains
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetBillingContact() *string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.BillingContact
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetBillingEmail() *string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.BillingEmail
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetBillingPhone() *string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.BillingPhone
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetBillingAddress() *string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.BillingAddress
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetTaxIdentifier() *string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.TaxIdentifier
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetTags() []string {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.Tags
+}
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetOrganization() *GetOrganizationSettingByID_OrganizationSetting_Organization {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
 	}
 	return t.Organization
+}
+
+type GetOrganizationSettings_OrganizationSettings_Edges_Node_Organization struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node_Organization) GetID() string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node_Organization{}
+	}
+	return t.ID
+}
+
+type GetOrganizationSettings_OrganizationSettings_Edges_Node struct {
+	ID             string                                                                "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time                                                            "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time                                                            "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string                                                               "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string                                                               "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt      *time.Time                                                            "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                                               "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Domains        []string                                                              "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string                                                               "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string                                                               "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string                                                               "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string                                                               "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string                                                               "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string                                                              "json:\"tags,omitempty\" graphql:\"tags\""
+	Organization   *GetOrganizationSettings_OrganizationSettings_Edges_Node_Organization "json:\"organization,omitempty\" graphql:\"organization\""
+}
+
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.DeletedAt
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.DeletedBy
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetDomains() []string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.Domains
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetBillingContact() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingContact
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetBillingEmail() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingEmail
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetBillingPhone() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingPhone
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetBillingAddress() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingAddress
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetTaxIdentifier() *string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.TaxIdentifier
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetOrganization() *GetOrganizationSettings_OrganizationSettings_Edges_Node_Organization {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.Organization
+}
+
+type GetOrganizationSettings_OrganizationSettings_Edges struct {
+	Node *GetOrganizationSettings_OrganizationSettings_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetOrganizationSettings_OrganizationSettings_Edges) GetNode() *GetOrganizationSettings_OrganizationSettings_Edges_Node {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges{}
+	}
+	return t.Node
+}
+
+type GetOrganizationSettings_OrganizationSettings struct {
+	Edges []*GetOrganizationSettings_OrganizationSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetOrganizationSettings_OrganizationSettings) GetEdges() []*GetOrganizationSettings_OrganizationSettings_Edges {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings{}
+	}
+	return t.Edges
+}
+
+type GetOrganizationSettingWhere_OrganizationSettings_Edges_Node_Organization struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node_Organization) GetID() string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node_Organization{}
+	}
+	return t.ID
+}
+
+type GetOrganizationSettingWhere_OrganizationSettings_Edges_Node struct {
+	ID             string                                                                    "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time                                                                "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time                                                                "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string                                                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string                                                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt      *time.Time                                                                "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                                                   "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Domains        []string                                                                  "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string                                                                   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string                                                                   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string                                                                   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string                                                                   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string                                                                   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string                                                                  "json:\"tags,omitempty\" graphql:\"tags\""
+	Organization   *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node_Organization "json:\"organization,omitempty\" graphql:\"organization\""
+}
+
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.DeletedAt
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.DeletedBy
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetDomains() []string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.Domains
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetBillingContact() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingContact
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetBillingEmail() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingEmail
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetBillingPhone() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingPhone
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetBillingAddress() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.BillingAddress
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetTaxIdentifier() *string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.TaxIdentifier
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetTags() []string {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.Tags
+}
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetOrganization() *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node_Organization {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.Organization
+}
+
+type GetOrganizationSettingWhere_OrganizationSettings_Edges struct {
+	Node *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges) GetNode() *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges{}
+	}
+	return t.Node
+}
+
+type GetOrganizationSettingWhere_OrganizationSettings struct {
+	Edges []*GetOrganizationSettingWhere_OrganizationSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetOrganizationSettingWhere_OrganizationSettings) GetEdges() []*GetOrganizationSettingWhere_OrganizationSettings_Edges {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings{}
+	}
+	return t.Edges
+}
+
+type UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting_Organization struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting_Organization) GetID() string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting_Organization{}
+	}
+	return t.ID
+}
+
+type UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting struct {
+	ID             string                                                                                "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time                                                                            "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time                                                                            "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string                                                                               "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string                                                                               "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt      *time.Time                                                                            "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string                                                                               "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Domains        []string                                                                              "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string                                                                               "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string                                                                               "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string                                                                               "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string                                                                               "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string                                                                               "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string                                                                              "json:\"tags,omitempty\" graphql:\"tags\""
+	Organization   *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting_Organization "json:\"organization,omitempty\" graphql:\"organization\""
+}
+
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetID() string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.ID
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.DeletedAt
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetDeletedBy() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.DeletedBy
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetDomains() []string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.Domains
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetBillingContact() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingContact
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetBillingEmail() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingEmail
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetBillingPhone() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingPhone
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetBillingAddress() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingAddress
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetTaxIdentifier() *string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.TaxIdentifier
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetTags() []string {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.Tags
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetOrganization() *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting_Organization {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.Organization
+}
+
+type UpdateOrganizationSetting_UpdateOrganizationSetting struct {
+	OrganizationSetting UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting "json:\"organizationSetting\" graphql:\"organizationSetting\""
+}
+
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting) GetOrganizationSetting() *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting{}
+	}
+	return &t.OrganizationSetting
 }
 
 type GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User struct {
@@ -5973,15 +6753,48 @@ func (t *RemoveUserFromGroup) GetDeleteGroupMembership() *RemoveUserFromGroup_De
 	return &t.DeleteGroupMembership
 }
 
-type GetGroupSetting struct {
-	GroupSetting GetGroupSetting_GroupSetting "json:\"groupSetting\" graphql:\"groupSetting\""
+type GetGroupSettingByID struct {
+	GroupSetting GetGroupSettingByID_GroupSetting "json:\"groupSetting\" graphql:\"groupSetting\""
 }
 
-func (t *GetGroupSetting) GetGroupSetting() *GetGroupSetting_GroupSetting {
+func (t *GetGroupSettingByID) GetGroupSetting() *GetGroupSettingByID_GroupSetting {
 	if t == nil {
-		t = &GetGroupSetting{}
+		t = &GetGroupSettingByID{}
 	}
 	return &t.GroupSetting
+}
+
+type GetGroupSettings struct {
+	GroupSettings GetGroupSettings_GroupSettings "json:\"groupSettings\" graphql:\"groupSettings\""
+}
+
+func (t *GetGroupSettings) GetGroupSettings() *GetGroupSettings_GroupSettings {
+	if t == nil {
+		t = &GetGroupSettings{}
+	}
+	return &t.GroupSettings
+}
+
+type GetGroupSettingWhere struct {
+	GroupSettings GetGroupSettingWhere_GroupSettings "json:\"groupSettings\" graphql:\"groupSettings\""
+}
+
+func (t *GetGroupSettingWhere) GetGroupSettings() *GetGroupSettingWhere_GroupSettings {
+	if t == nil {
+		t = &GetGroupSettingWhere{}
+	}
+	return &t.GroupSettings
+}
+
+type UpdateGroupSetting struct {
+	UpdateGroupSetting UpdateGroupSetting_UpdateGroupSetting "json:\"updateGroupSetting\" graphql:\"updateGroupSetting\""
+}
+
+func (t *UpdateGroupSetting) GetUpdateGroupSetting() *UpdateGroupSetting_UpdateGroupSetting {
+	if t == nil {
+		t = &UpdateGroupSetting{}
+	}
+	return &t.UpdateGroupSetting
 }
 
 type CreateInvite struct {
@@ -6094,15 +6907,48 @@ func (t *DeleteOrganization) GetDeleteOrganization() *DeleteOrganization_DeleteO
 	return &t.DeleteOrganization
 }
 
-type GetOrganizationSetting struct {
-	OrganizationSetting GetOrganizationSetting_OrganizationSetting "json:\"organizationSetting\" graphql:\"organizationSetting\""
+type GetOrganizationSettingByID struct {
+	OrganizationSetting GetOrganizationSettingByID_OrganizationSetting "json:\"organizationSetting\" graphql:\"organizationSetting\""
 }
 
-func (t *GetOrganizationSetting) GetOrganizationSetting() *GetOrganizationSetting_OrganizationSetting {
+func (t *GetOrganizationSettingByID) GetOrganizationSetting() *GetOrganizationSettingByID_OrganizationSetting {
 	if t == nil {
-		t = &GetOrganizationSetting{}
+		t = &GetOrganizationSettingByID{}
 	}
 	return &t.OrganizationSetting
+}
+
+type GetOrganizationSettings struct {
+	OrganizationSettings GetOrganizationSettings_OrganizationSettings "json:\"organizationSettings\" graphql:\"organizationSettings\""
+}
+
+func (t *GetOrganizationSettings) GetOrganizationSettings() *GetOrganizationSettings_OrganizationSettings {
+	if t == nil {
+		t = &GetOrganizationSettings{}
+	}
+	return &t.OrganizationSettings
+}
+
+type GetOrganizationSettingWhere struct {
+	OrganizationSettings GetOrganizationSettingWhere_OrganizationSettings "json:\"organizationSettings\" graphql:\"organizationSettings\""
+}
+
+func (t *GetOrganizationSettingWhere) GetOrganizationSettings() *GetOrganizationSettingWhere_OrganizationSettings {
+	if t == nil {
+		t = &GetOrganizationSettingWhere{}
+	}
+	return &t.OrganizationSettings
+}
+
+type UpdateOrganizationSetting struct {
+	UpdateOrganizationSetting UpdateOrganizationSetting_UpdateOrganizationSetting "json:\"updateOrganizationSetting\" graphql:\"updateOrganizationSetting\""
+}
+
+func (t *UpdateOrganizationSetting) GetUpdateOrganizationSetting() *UpdateOrganizationSetting_UpdateOrganizationSetting {
+	if t == nil {
+		t = &UpdateOrganizationSetting{}
+	}
+	return &t.UpdateOrganizationSetting
 }
 
 type GetOrgMembersByOrgID struct {
@@ -6744,7 +7590,7 @@ func (c *Client) RemoveUserFromGroup(ctx context.Context, deleteGroupMembershipI
 	return &res, nil
 }
 
-const GetGroupSettingDocument = `query GetGroupSetting ($groupSettingId: ID!) {
+const GetGroupSettingByIDDocument = `query GetGroupSettingByID ($groupSettingId: ID!) {
 	groupSetting(id: $groupSettingId) {
 		id
 		createdAt
@@ -6763,13 +7609,130 @@ const GetGroupSettingDocument = `query GetGroupSetting ($groupSettingId: ID!) {
 }
 `
 
-func (c *Client) GetGroupSetting(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSetting, error) {
+func (c *Client) GetGroupSettingByID(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettingByID, error) {
 	vars := map[string]interface{}{
 		"groupSettingId": groupSettingID,
 	}
 
-	var res GetGroupSetting
-	if err := c.Client.Post(ctx, "GetGroupSetting", GetGroupSettingDocument, &res, vars, interceptors...); err != nil {
+	var res GetGroupSettingByID
+	if err := c.Client.Post(ctx, "GetGroupSettingByID", GetGroupSettingByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetGroupSettingsDocument = `query GetGroupSettings {
+	groupSettings {
+		edges {
+			node {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				visibility
+				joinPolicy
+				tags
+				syncToSlack
+				syncToGithub
+				group {
+					id
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetGroupSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettings, error) {
+	vars := map[string]interface{}{}
+
+	var res GetGroupSettings
+	if err := c.Client.Post(ctx, "GetGroupSettings", GetGroupSettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetGroupSettingWhereDocument = `query GetGroupSettingWhere ($where: GroupSettingWhereInput!) {
+	groupSettings(where: $where) {
+		edges {
+			node {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				visibility
+				joinPolicy
+				tags
+				syncToSlack
+				syncToGithub
+				group {
+					id
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetGroupSettingWhere(ctx context.Context, where GroupSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettingWhere, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res GetGroupSettingWhere
+	if err := c.Client.Post(ctx, "GetGroupSettingWhere", GetGroupSettingWhereDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateGroupSettingDocument = `mutation UpdateGroupSetting ($updateGroupSettingId: ID!, $input: UpdateGroupSettingInput!) {
+	updateGroupSetting(id: $updateGroupSettingId, input: $input) {
+		groupSetting {
+			id
+			createdAt
+			updatedAt
+			createdBy
+			updatedBy
+			visibility
+			joinPolicy
+			tags
+			syncToSlack
+			syncToGithub
+			group {
+				id
+			}
+		}
+	}
+}
+`
+
+func (c *Client) UpdateGroupSetting(ctx context.Context, updateGroupSettingID string, input UpdateGroupSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateGroupSetting, error) {
+	vars := map[string]interface{}{
+		"updateGroupSettingId": updateGroupSettingID,
+		"input":                input,
+	}
+
+	var res UpdateGroupSetting
+	if err := c.Client.Post(ctx, "UpdateGroupSetting", UpdateGroupSettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -7259,18 +8222,22 @@ func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID st
 	return &res, nil
 }
 
-const GetOrganizationSettingDocument = `query GetOrganizationSetting ($organizationSettingId: ID!) {
+const GetOrganizationSettingByIDDocument = `query GetOrganizationSettingByID ($organizationSettingId: ID!) {
 	organizationSetting(id: $organizationSettingId) {
 		id
-		billingAddress
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		deletedAt
+		deletedBy
+		domains
 		billingContact
 		billingEmail
 		billingPhone
-		createdAt
-		createdBy
-		domains
-		updatedAt
-		updatedBy
+		billingAddress
+		taxIdentifier
+		tags
 		organization {
 			id
 		}
@@ -7278,13 +8245,142 @@ const GetOrganizationSettingDocument = `query GetOrganizationSetting ($organizat
 }
 `
 
-func (c *Client) GetOrganizationSetting(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSetting, error) {
+func (c *Client) GetOrganizationSettingByID(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettingByID, error) {
 	vars := map[string]interface{}{
 		"organizationSettingId": organizationSettingID,
 	}
 
-	var res GetOrganizationSetting
-	if err := c.Client.Post(ctx, "GetOrganizationSetting", GetOrganizationSettingDocument, &res, vars, interceptors...); err != nil {
+	var res GetOrganizationSettingByID
+	if err := c.Client.Post(ctx, "GetOrganizationSettingByID", GetOrganizationSettingByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetOrganizationSettingsDocument = `query GetOrganizationSettings {
+	organizationSettings {
+		edges {
+			node {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				deletedAt
+				deletedBy
+				domains
+				billingContact
+				billingEmail
+				billingPhone
+				billingAddress
+				taxIdentifier
+				tags
+				organization {
+					id
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetOrganizationSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettings, error) {
+	vars := map[string]interface{}{}
+
+	var res GetOrganizationSettings
+	if err := c.Client.Post(ctx, "GetOrganizationSettings", GetOrganizationSettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetOrganizationSettingWhereDocument = `query GetOrganizationSettingWhere ($where: OrganizationSettingWhereInput!) {
+	organizationSettings(where: $where) {
+		edges {
+			node {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				deletedAt
+				deletedBy
+				domains
+				billingContact
+				billingEmail
+				billingPhone
+				billingAddress
+				taxIdentifier
+				tags
+				organization {
+					id
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetOrganizationSettingWhere(ctx context.Context, where OrganizationSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettingWhere, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res GetOrganizationSettingWhere
+	if err := c.Client.Post(ctx, "GetOrganizationSettingWhere", GetOrganizationSettingWhereDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateOrganizationSettingDocument = `mutation UpdateOrganizationSetting ($updateOrganizationSettingId: ID!, $input: UpdateOrganizationSettingInput!) {
+	updateOrganizationSetting(id: $updateOrganizationSettingId, input: $input) {
+		organizationSetting {
+			id
+			createdAt
+			updatedAt
+			createdBy
+			updatedBy
+			deletedAt
+			deletedBy
+			domains
+			billingContact
+			billingEmail
+			billingPhone
+			billingAddress
+			taxIdentifier
+			tags
+			organization {
+				id
+			}
+		}
+	}
+}
+`
+
+func (c *Client) UpdateOrganizationSetting(ctx context.Context, updateOrganizationSettingID string, input UpdateOrganizationSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganizationSetting, error) {
+	vars := map[string]interface{}{
+		"updateOrganizationSettingId": updateOrganizationSettingID,
+		"input":                       input,
+	}
+
+	var res UpdateOrganizationSetting
+	if err := c.Client.Post(ctx, "UpdateOrganizationSetting", UpdateOrganizationSettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -8112,45 +9208,51 @@ func (c *Client) UpdateUserSetting(ctx context.Context, updateUserSettingID stri
 }
 
 var DocumentOperationNames = map[string]string{
-	GetGroupByIDDocument:               "GetGroupByID",
-	GroupsWhereDocument:                "GroupsWhere",
-	GetAllGroupsDocument:               "GetAllGroups",
-	CreateGroupDocument:                "CreateGroup",
-	UpdateGroupDocument:                "UpdateGroup",
-	DeleteGroupDocument:                "DeleteGroup",
-	GetGroupMembersByGroupIDDocument:   "GetGroupMembersByGroupID",
-	AddUserToGroupWithRoleDocument:     "AddUserToGroupWithRole",
-	UpdateUserRoleInGroupDocument:      "UpdateUserRoleInGroup",
-	RemoveUserFromGroupDocument:        "RemoveUserFromGroup",
-	GetGroupSettingDocument:            "GetGroupSetting",
-	CreateInviteDocument:               "CreateInvite",
-	DeleteInviteDocument:               "DeleteInvite",
-	GetInviteDocument:                  "GetInvite",
-	InvitesByOrgIDDocument:             "InvitesByOrgID",
-	GetOrganizationByIDDocument:        "GetOrganizationByID",
-	GetAllOrganizationsDocument:        "GetAllOrganizations",
-	OrganizationsWhereDocument:         "OrganizationsWhere",
-	CreateOrganizationDocument:         "CreateOrganization",
-	UpdateOrganizationDocument:         "UpdateOrganization",
-	DeleteOrganizationDocument:         "DeleteOrganization",
-	GetOrganizationSettingDocument:     "GetOrganizationSetting",
-	GetOrgMembersByOrgIDDocument:       "GetOrgMembersByOrgID",
-	AddUserToOrgWithRoleDocument:       "AddUserToOrgWithRole",
-	UpdateUserRoleInOrgDocument:        "UpdateUserRoleInOrg",
-	RemoveUserFromOrgDocument:          "RemoveUserFromOrg",
-	CreatePersonalAccessTokenDocument:  "CreatePersonalAccessToken",
-	UpdatePersonalAccessTokenDocument:  "UpdatePersonalAccessToken",
-	GetAllPersonalAccessTokensDocument: "GetAllPersonalAccessTokens",
-	GetPersonalAccessTokenByIDDocument: "GetPersonalAccessTokenByID",
-	DeletePersonalAccessTokenDocument:  "DeletePersonalAccessToken",
-	GetUserByIDDocument:                "GetUserByID",
-	GetUserByIDWithOrgsDocument:        "GetUserByIDWithOrgs",
-	GetAllUsersDocument:                "GetAllUsers",
-	CreateUserDocument:                 "CreateUser",
-	UpdateUserDocument:                 "UpdateUser",
-	DeleteUserDocument:                 "DeleteUser",
-	GetUserSettingByIDDocument:         "GetUserSettingByID",
-	GetUserSettingsDocument:            "GetUserSettings",
-	GetUserSettingWhereDocument:        "GetUserSettingWhere",
-	UpdateUserSettingDocument:          "UpdateUserSetting",
+	GetGroupByIDDocument:                "GetGroupByID",
+	GroupsWhereDocument:                 "GroupsWhere",
+	GetAllGroupsDocument:                "GetAllGroups",
+	CreateGroupDocument:                 "CreateGroup",
+	UpdateGroupDocument:                 "UpdateGroup",
+	DeleteGroupDocument:                 "DeleteGroup",
+	GetGroupMembersByGroupIDDocument:    "GetGroupMembersByGroupID",
+	AddUserToGroupWithRoleDocument:      "AddUserToGroupWithRole",
+	UpdateUserRoleInGroupDocument:       "UpdateUserRoleInGroup",
+	RemoveUserFromGroupDocument:         "RemoveUserFromGroup",
+	GetGroupSettingByIDDocument:         "GetGroupSettingByID",
+	GetGroupSettingsDocument:            "GetGroupSettings",
+	GetGroupSettingWhereDocument:        "GetGroupSettingWhere",
+	UpdateGroupSettingDocument:          "UpdateGroupSetting",
+	CreateInviteDocument:                "CreateInvite",
+	DeleteInviteDocument:                "DeleteInvite",
+	GetInviteDocument:                   "GetInvite",
+	InvitesByOrgIDDocument:              "InvitesByOrgID",
+	GetOrganizationByIDDocument:         "GetOrganizationByID",
+	GetAllOrganizationsDocument:         "GetAllOrganizations",
+	OrganizationsWhereDocument:          "OrganizationsWhere",
+	CreateOrganizationDocument:          "CreateOrganization",
+	UpdateOrganizationDocument:          "UpdateOrganization",
+	DeleteOrganizationDocument:          "DeleteOrganization",
+	GetOrganizationSettingByIDDocument:  "GetOrganizationSettingByID",
+	GetOrganizationSettingsDocument:     "GetOrganizationSettings",
+	GetOrganizationSettingWhereDocument: "GetOrganizationSettingWhere",
+	UpdateOrganizationSettingDocument:   "UpdateOrganizationSetting",
+	GetOrgMembersByOrgIDDocument:        "GetOrgMembersByOrgID",
+	AddUserToOrgWithRoleDocument:        "AddUserToOrgWithRole",
+	UpdateUserRoleInOrgDocument:         "UpdateUserRoleInOrg",
+	RemoveUserFromOrgDocument:           "RemoveUserFromOrg",
+	CreatePersonalAccessTokenDocument:   "CreatePersonalAccessToken",
+	UpdatePersonalAccessTokenDocument:   "UpdatePersonalAccessToken",
+	GetAllPersonalAccessTokensDocument:  "GetAllPersonalAccessTokens",
+	GetPersonalAccessTokenByIDDocument:  "GetPersonalAccessTokenByID",
+	DeletePersonalAccessTokenDocument:   "DeletePersonalAccessToken",
+	GetUserByIDDocument:                 "GetUserByID",
+	GetUserByIDWithOrgsDocument:         "GetUserByIDWithOrgs",
+	GetAllUsersDocument:                 "GetAllUsers",
+	CreateUserDocument:                  "CreateUser",
+	UpdateUserDocument:                  "UpdateUser",
+	DeleteUserDocument:                  "DeleteUser",
+	GetUserSettingByIDDocument:          "GetUserSettingByID",
+	GetUserSettingsDocument:             "GetUserSettings",
+	GetUserSettingWhereDocument:         "GetUserSettingWhere",
+	UpdateUserSettingDocument:           "UpdateUserSetting",
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/utils/gravatar"
 )
 
 // HookGroup runs on group mutations to set default values that are not provided
@@ -40,6 +41,11 @@ func HookGroup() ent.Hook {
 					// add the group setting ID to the input
 					mutation.SetSettingID(groupSettingID)
 				}
+			}
+
+			if name, ok := mutation.Name(); ok {
+				url := gravatar.New(name, nil)
+				mutation.SetGravatarLogoURL(url)
 			}
 
 			return next.Mutate(ctx, mutation)

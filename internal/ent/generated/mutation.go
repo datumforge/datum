@@ -11499,6 +11499,7 @@ type OrganizationMutation struct {
 	display_name                  *string
 	description                   *string
 	personal_org                  *bool
+	avatar_remote_url             *string
 	clearedFields                 map[string]struct{}
 	parent                        *string
 	clearedparent                 bool
@@ -12153,6 +12154,55 @@ func (m *OrganizationMutation) ResetPersonalOrg() {
 	delete(m.clearedFields, organization.FieldPersonalOrg)
 }
 
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (m *OrganizationMutation) SetAvatarRemoteURL(s string) {
+	m.avatar_remote_url = &s
+}
+
+// AvatarRemoteURL returns the value of the "avatar_remote_url" field in the mutation.
+func (m *OrganizationMutation) AvatarRemoteURL() (r string, exists bool) {
+	v := m.avatar_remote_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatarRemoteURL returns the old "avatar_remote_url" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldAvatarRemoteURL(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatarRemoteURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatarRemoteURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatarRemoteURL: %w", err)
+	}
+	return oldValue.AvatarRemoteURL, nil
+}
+
+// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
+func (m *OrganizationMutation) ClearAvatarRemoteURL() {
+	m.avatar_remote_url = nil
+	m.clearedFields[organization.FieldAvatarRemoteURL] = struct{}{}
+}
+
+// AvatarRemoteURLCleared returns if the "avatar_remote_url" field was cleared in this mutation.
+func (m *OrganizationMutation) AvatarRemoteURLCleared() bool {
+	_, ok := m.clearedFields[organization.FieldAvatarRemoteURL]
+	return ok
+}
+
+// ResetAvatarRemoteURL resets all changes to the "avatar_remote_url" field.
+func (m *OrganizationMutation) ResetAvatarRemoteURL() {
+	m.avatar_remote_url = nil
+	delete(m.clearedFields, organization.FieldAvatarRemoteURL)
+}
+
 // SetParentID sets the "parent" edge to the Organization entity by id.
 func (m *OrganizationMutation) SetParentID(id string) {
 	m.parent = &id
@@ -12752,7 +12802,7 @@ func (m *OrganizationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, organization.FieldCreatedAt)
 	}
@@ -12786,6 +12836,9 @@ func (m *OrganizationMutation) Fields() []string {
 	if m.personal_org != nil {
 		fields = append(fields, organization.FieldPersonalOrg)
 	}
+	if m.avatar_remote_url != nil {
+		fields = append(fields, organization.FieldAvatarRemoteURL)
+	}
 	return fields
 }
 
@@ -12816,6 +12869,8 @@ func (m *OrganizationMutation) Field(name string) (ent.Value, bool) {
 		return m.ParentOrganizationID()
 	case organization.FieldPersonalOrg:
 		return m.PersonalOrg()
+	case organization.FieldAvatarRemoteURL:
+		return m.AvatarRemoteURL()
 	}
 	return nil, false
 }
@@ -12847,6 +12902,8 @@ func (m *OrganizationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldParentOrganizationID(ctx)
 	case organization.FieldPersonalOrg:
 		return m.OldPersonalOrg(ctx)
+	case organization.FieldAvatarRemoteURL:
+		return m.OldAvatarRemoteURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown Organization field %s", name)
 }
@@ -12933,6 +12990,13 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPersonalOrg(v)
 		return nil
+	case organization.FieldAvatarRemoteURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatarRemoteURL(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)
 }
@@ -12990,6 +13054,9 @@ func (m *OrganizationMutation) ClearedFields() []string {
 	if m.FieldCleared(organization.FieldPersonalOrg) {
 		fields = append(fields, organization.FieldPersonalOrg)
 	}
+	if m.FieldCleared(organization.FieldAvatarRemoteURL) {
+		fields = append(fields, organization.FieldAvatarRemoteURL)
+	}
 	return fields
 }
 
@@ -13031,6 +13098,9 @@ func (m *OrganizationMutation) ClearField(name string) error {
 	case organization.FieldPersonalOrg:
 		m.ClearPersonalOrg()
 		return nil
+	case organization.FieldAvatarRemoteURL:
+		m.ClearAvatarRemoteURL()
+		return nil
 	}
 	return fmt.Errorf("unknown Organization nullable field %s", name)
 }
@@ -13071,6 +13141,9 @@ func (m *OrganizationMutation) ResetField(name string) error {
 		return nil
 	case organization.FieldPersonalOrg:
 		m.ResetPersonalOrg()
+		return nil
+	case organization.FieldAvatarRemoteURL:
+		m.ResetAvatarRemoteURL()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)
@@ -13425,7 +13498,6 @@ type OrganizationSettingMutation struct {
 	tax_identifier      *string
 	tags                *[]string
 	appendtags          []string
-	avatar_remote_url   *string
 	clearedFields       map[string]struct{}
 	organization        *string
 	clearedorganization bool
@@ -14207,55 +14279,6 @@ func (m *OrganizationSettingMutation) ResetTags() {
 	delete(m.clearedFields, organizationsetting.FieldTags)
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (m *OrganizationSettingMutation) SetAvatarRemoteURL(s string) {
-	m.avatar_remote_url = &s
-}
-
-// AvatarRemoteURL returns the value of the "avatar_remote_url" field in the mutation.
-func (m *OrganizationSettingMutation) AvatarRemoteURL() (r string, exists bool) {
-	v := m.avatar_remote_url
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAvatarRemoteURL returns the old "avatar_remote_url" field's value of the OrganizationSetting entity.
-// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationSettingMutation) OldAvatarRemoteURL(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAvatarRemoteURL is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAvatarRemoteURL requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAvatarRemoteURL: %w", err)
-	}
-	return oldValue.AvatarRemoteURL, nil
-}
-
-// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
-func (m *OrganizationSettingMutation) ClearAvatarRemoteURL() {
-	m.avatar_remote_url = nil
-	m.clearedFields[organizationsetting.FieldAvatarRemoteURL] = struct{}{}
-}
-
-// AvatarRemoteURLCleared returns if the "avatar_remote_url" field was cleared in this mutation.
-func (m *OrganizationSettingMutation) AvatarRemoteURLCleared() bool {
-	_, ok := m.clearedFields[organizationsetting.FieldAvatarRemoteURL]
-	return ok
-}
-
-// ResetAvatarRemoteURL resets all changes to the "avatar_remote_url" field.
-func (m *OrganizationSettingMutation) ResetAvatarRemoteURL() {
-	m.avatar_remote_url = nil
-	delete(m.clearedFields, organizationsetting.FieldAvatarRemoteURL)
-}
-
 // SetOrganizationID sets the "organization" edge to the Organization entity by id.
 func (m *OrganizationSettingMutation) SetOrganizationID(id string) {
 	m.organization = &id
@@ -14329,7 +14352,7 @@ func (m *OrganizationSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationSettingMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, organizationsetting.FieldCreatedAt)
 	}
@@ -14369,9 +14392,6 @@ func (m *OrganizationSettingMutation) Fields() []string {
 	if m.tags != nil {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
-	if m.avatar_remote_url != nil {
-		fields = append(fields, organizationsetting.FieldAvatarRemoteURL)
-	}
 	return fields
 }
 
@@ -14406,8 +14426,6 @@ func (m *OrganizationSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.TaxIdentifier()
 	case organizationsetting.FieldTags:
 		return m.Tags()
-	case organizationsetting.FieldAvatarRemoteURL:
-		return m.AvatarRemoteURL()
 	}
 	return nil, false
 }
@@ -14443,8 +14461,6 @@ func (m *OrganizationSettingMutation) OldField(ctx context.Context, name string)
 		return m.OldTaxIdentifier(ctx)
 	case organizationsetting.FieldTags:
 		return m.OldTags(ctx)
-	case organizationsetting.FieldAvatarRemoteURL:
-		return m.OldAvatarRemoteURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrganizationSetting field %s", name)
 }
@@ -14545,13 +14561,6 @@ func (m *OrganizationSettingMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetTags(v)
 		return nil
-	case organizationsetting.FieldAvatarRemoteURL:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAvatarRemoteURL(v)
-		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting field %s", name)
 }
@@ -14621,9 +14630,6 @@ func (m *OrganizationSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(organizationsetting.FieldTags) {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
-	if m.FieldCleared(organizationsetting.FieldAvatarRemoteURL) {
-		fields = append(fields, organizationsetting.FieldAvatarRemoteURL)
-	}
 	return fields
 }
 
@@ -14677,9 +14683,6 @@ func (m *OrganizationSettingMutation) ClearField(name string) error {
 	case organizationsetting.FieldTags:
 		m.ClearTags()
 		return nil
-	case organizationsetting.FieldAvatarRemoteURL:
-		m.ClearAvatarRemoteURL()
-		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting nullable field %s", name)
 }
@@ -14726,9 +14729,6 @@ func (m *OrganizationSettingMutation) ResetField(name string) error {
 		return nil
 	case organizationsetting.FieldTags:
 		m.ResetTags()
-		return nil
-	case organizationsetting.FieldAvatarRemoteURL:
-		m.ResetAvatarRemoteURL()
 		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting field %s", name)

@@ -175,6 +175,20 @@ func (oc *OrganizationCreate) SetNillablePersonalOrg(b *bool) *OrganizationCreat
 	return oc
 }
 
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (oc *OrganizationCreate) SetAvatarRemoteURL(s string) *OrganizationCreate {
+	oc.mutation.SetAvatarRemoteURL(s)
+	return oc
+}
+
+// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableAvatarRemoteURL(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetAvatarRemoteURL(*s)
+	}
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrganizationCreate) SetID(s string) *OrganizationCreate {
 	oc.mutation.SetID(s)
@@ -449,6 +463,11 @@ func (oc *OrganizationCreate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
 	}
+	if v, ok := oc.mutation.AvatarRemoteURL(); ok {
+		if err := organization.AvatarRemoteURLValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "Organization.avatar_remote_url": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -524,6 +543,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.PersonalOrg(); ok {
 		_spec.SetField(organization.FieldPersonalOrg, field.TypeBool, value)
 		_node.PersonalOrg = value
+	}
+	if value, ok := oc.mutation.AvatarRemoteURL(); ok {
+		_spec.SetField(organization.FieldAvatarRemoteURL, field.TypeString, value)
+		_node.AvatarRemoteURL = &value
 	}
 	if nodes := oc.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

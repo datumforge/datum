@@ -240,26 +240,6 @@ func (osu *OrganizationSettingUpdate) ClearTags() *OrganizationSettingUpdate {
 	return osu
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (osu *OrganizationSettingUpdate) SetAvatarRemoteURL(s string) *OrganizationSettingUpdate {
-	osu.mutation.SetAvatarRemoteURL(s)
-	return osu
-}
-
-// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
-func (osu *OrganizationSettingUpdate) SetNillableAvatarRemoteURL(s *string) *OrganizationSettingUpdate {
-	if s != nil {
-		osu.SetAvatarRemoteURL(*s)
-	}
-	return osu
-}
-
-// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
-func (osu *OrganizationSettingUpdate) ClearAvatarRemoteURL() *OrganizationSettingUpdate {
-	osu.mutation.ClearAvatarRemoteURL()
-	return osu
-}
-
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
 func (osu *OrganizationSettingUpdate) SetOrganizationID(id string) *OrganizationSettingUpdate {
 	osu.mutation.SetOrganizationID(id)
@@ -339,9 +319,9 @@ func (osu *OrganizationSettingUpdate) check() error {
 			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
 		}
 	}
-	if v, ok := osu.mutation.AvatarRemoteURL(); ok {
-		if err := organizationsetting.AvatarRemoteURLValidator(v); err != nil {
-			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.avatar_remote_url": %w`, err)}
+	if v, ok := osu.mutation.BillingPhone(); ok {
+		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
+			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
 		}
 	}
 	return nil
@@ -440,12 +420,6 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if osu.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
-	}
-	if value, ok := osu.mutation.AvatarRemoteURL(); ok {
-		_spec.SetField(organizationsetting.FieldAvatarRemoteURL, field.TypeString, value)
-	}
-	if osu.mutation.AvatarRemoteURLCleared() {
-		_spec.ClearField(organizationsetting.FieldAvatarRemoteURL, field.TypeString)
 	}
 	if osu.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -708,26 +682,6 @@ func (osuo *OrganizationSettingUpdateOne) ClearTags() *OrganizationSettingUpdate
 	return osuo
 }
 
-// SetAvatarRemoteURL sets the "avatar_remote_url" field.
-func (osuo *OrganizationSettingUpdateOne) SetAvatarRemoteURL(s string) *OrganizationSettingUpdateOne {
-	osuo.mutation.SetAvatarRemoteURL(s)
-	return osuo
-}
-
-// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
-func (osuo *OrganizationSettingUpdateOne) SetNillableAvatarRemoteURL(s *string) *OrganizationSettingUpdateOne {
-	if s != nil {
-		osuo.SetAvatarRemoteURL(*s)
-	}
-	return osuo
-}
-
-// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
-func (osuo *OrganizationSettingUpdateOne) ClearAvatarRemoteURL() *OrganizationSettingUpdateOne {
-	osuo.mutation.ClearAvatarRemoteURL()
-	return osuo
-}
-
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
 func (osuo *OrganizationSettingUpdateOne) SetOrganizationID(id string) *OrganizationSettingUpdateOne {
 	osuo.mutation.SetOrganizationID(id)
@@ -820,9 +774,9 @@ func (osuo *OrganizationSettingUpdateOne) check() error {
 			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
 		}
 	}
-	if v, ok := osuo.mutation.AvatarRemoteURL(); ok {
-		if err := organizationsetting.AvatarRemoteURLValidator(v); err != nil {
-			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.avatar_remote_url": %w`, err)}
+	if v, ok := osuo.mutation.BillingPhone(); ok {
+		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
+			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
 		}
 	}
 	return nil
@@ -938,12 +892,6 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 	}
 	if osuo.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
-	}
-	if value, ok := osuo.mutation.AvatarRemoteURL(); ok {
-		_spec.SetField(organizationsetting.FieldAvatarRemoteURL, field.TypeString, value)
-	}
-	if osuo.mutation.AvatarRemoteURLCleared() {
-		_spec.ClearField(organizationsetting.FieldAvatarRemoteURL, field.TypeString)
 	}
 	if osuo.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{

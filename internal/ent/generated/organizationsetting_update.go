@@ -314,6 +314,11 @@ func (osu *OrganizationSettingUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (osu *OrganizationSettingUpdate) check() error {
+	if v, ok := osu.mutation.Domains(); ok {
+		if err := organizationsetting.DomainsValidator(v); err != nil {
+			return &ValidationError{Name: "domains", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.domains": %w`, err)}
+		}
+	}
 	if v, ok := osu.mutation.BillingEmail(); ok {
 		if err := organizationsetting.BillingEmailValidator(v); err != nil {
 			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
@@ -769,6 +774,11 @@ func (osuo *OrganizationSettingUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (osuo *OrganizationSettingUpdateOne) check() error {
+	if v, ok := osuo.mutation.Domains(); ok {
+		if err := organizationsetting.DomainsValidator(v); err != nil {
+			return &ValidationError{Name: "domains", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.domains": %w`, err)}
+		}
+	}
 	if v, ok := osuo.mutation.BillingEmail(); ok {
 		if err := organizationsetting.BillingEmailValidator(v); err != nil {
 			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}

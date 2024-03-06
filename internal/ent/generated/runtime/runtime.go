@@ -595,13 +595,10 @@ func init() {
 	}
 	organizationsettingMixinHooks0 := organizationsettingMixin[0].Hooks()
 	organizationsettingMixinHooks2 := organizationsettingMixin[2].Hooks()
-	organizationsettingHooks := schema.OrganizationSetting{}.Hooks()
 
 	organizationsetting.Hooks[1] = organizationsettingMixinHooks0[0]
 
 	organizationsetting.Hooks[2] = organizationsettingMixinHooks2[0]
-
-	organizationsetting.Hooks[3] = organizationsettingHooks[0]
 	organizationsettingMixinInters2 := organizationsettingMixin[2].Interceptors()
 	organizationsetting.Interceptors[0] = organizationsettingMixinInters2[0]
 	organizationsettingMixinFields0 := organizationsettingMixin[0].Fields()
@@ -620,6 +617,10 @@ func init() {
 	organizationsetting.DefaultUpdatedAt = organizationsettingDescUpdatedAt.Default.(func() time.Time)
 	// organizationsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	organizationsetting.UpdateDefaultUpdatedAt = organizationsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// organizationsettingDescDomains is the schema descriptor for domains field.
+	organizationsettingDescDomains := organizationsettingFields[0].Descriptor()
+	// organizationsetting.DomainsValidator is a validator for the "domains" field. It is called by the builders before save.
+	organizationsetting.DomainsValidator = organizationsettingDescDomains.Validators[0].(func([]string) error)
 	// organizationsettingDescBillingEmail is the schema descriptor for billing_email field.
 	organizationsettingDescBillingEmail := organizationsettingFields[2].Descriptor()
 	// organizationsetting.BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.

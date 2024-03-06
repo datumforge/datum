@@ -99,7 +99,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [4]ent.Hook
+	Hooks        [3]ent.Hook
 	Interceptors [1]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -108,6 +108,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DomainsValidator is a validator for the "domains" field. It is called by the builders before save.
+	DomainsValidator func([]string) error
 	// BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
 	BillingEmailValidator func(string) error
 	// BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.

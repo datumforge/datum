@@ -286,6 +286,11 @@ func (osc *OrganizationSettingCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (osc *OrganizationSettingCreate) check() error {
+	if v, ok := osc.mutation.Domains(); ok {
+		if err := organizationsetting.DomainsValidator(v); err != nil {
+			return &ValidationError{Name: "domains", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.domains": %w`, err)}
+		}
+	}
 	if v, ok := osc.mutation.BillingEmail(); ok {
 		if err := organizationsetting.BillingEmailValidator(v); err != nil {
 			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}

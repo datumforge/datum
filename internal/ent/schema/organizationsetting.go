@@ -2,7 +2,9 @@ package schema
 
 import (
 	"context"
+	"fmt"
 	"net/mail"
+	"net/url"
 	"regexp"
 
 	"entgo.io/contrib/entgql"
@@ -28,6 +30,15 @@ func (OrganizationSetting) Fields() []ent.Field {
 	return []ent.Field{
 		field.Strings("domains").
 			Comment("domains associated with the organization").
+			Validate(func(domains []string) error {
+				for _, domain := range domains {
+					u, err := url.Parse("http://" + domain)
+					if err != nil || u.Scheme == "" || u.Host == "" {
+						return fmt.Errorf("invalid domain: %s", domain)
+					}
+				}
+				return nil
+			}).
 			Optional(),
 		field.String("billing_contact").
 			Comment("Name of the person to contact for billing").
@@ -88,13 +99,6 @@ func (OrganizationSetting) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 	}
 }
-
-// Hooks of the OrganizationSetting
-//func (OrganizationSetting) Hooks() []ent.Hook {
-//	return []ent.Hook{
-//		hooks.HookOrganizationSetting(),
-//	}
-//}
 
 // Policy defines the privacy policy of the OrganizationSetting
 func (OrganizationSetting) Policy() ent.Policy {

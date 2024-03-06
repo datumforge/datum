@@ -21,6 +21,8 @@ type Config struct {
 	DatumListID string `json:"datumListId" koanf:"datumListId"`
 	// AdminEmail is an internal group email configured within datum for email testing and visibility
 	AdminEmail string `json:"adminEmail" koanf:"adminEmail" default:"admins@datum.net"`
+	// URLConfig is the configuration for the URLs used in emails
+	URLConfig URLConfig `json:"url" koanf:"url"`
 }
 
 // URLConfig for the datum registration

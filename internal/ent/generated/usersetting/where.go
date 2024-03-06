@@ -828,6 +828,16 @@ func TfaSecretContainsFold(v string) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldContainsFold(FieldTfaSecret, v))
 }
 
+// RecoveryCodesIsNil applies the IsNil predicate on the "recovery_codes" field.
+func RecoveryCodesIsNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIsNull(FieldRecoveryCodes))
+}
+
+// RecoveryCodesNotNil applies the NotNil predicate on the "recovery_codes" field.
+func RecoveryCodesNotNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotNull(FieldRecoveryCodes))
+}
+
 // IsPhoneOtpAllowedEQ applies the EQ predicate on the "is_phone_otp_allowed" field.
 func IsPhoneOtpAllowedEQ(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldIsPhoneOtpAllowed, v))

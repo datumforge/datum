@@ -211,6 +211,12 @@ func (usc *UserSettingCreate) SetNillableTfaSecret(s *string) *UserSettingCreate
 	return usc
 }
 
+// SetRecoveryCodes sets the "recovery_codes" field.
+func (usc *UserSettingCreate) SetRecoveryCodes(s []string) *UserSettingCreate {
+	usc.mutation.SetRecoveryCodes(s)
+	return usc
+}
+
 // SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
 func (usc *UserSettingCreate) SetIsPhoneOtpAllowed(b bool) *UserSettingCreate {
 	usc.mutation.SetIsPhoneOtpAllowed(b)
@@ -522,6 +528,10 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 	if value, ok := usc.mutation.TfaSecret(); ok {
 		_spec.SetField(usersetting.FieldTfaSecret, field.TypeString, value)
 		_node.TfaSecret = &value
+	}
+	if value, ok := usc.mutation.RecoveryCodes(); ok {
+		_spec.SetField(usersetting.FieldRecoveryCodes, field.TypeJSON, value)
+		_node.RecoveryCodes = value
 	}
 	if value, ok := usc.mutation.IsPhoneOtpAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)

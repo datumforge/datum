@@ -619,6 +619,22 @@
       ],
       "description": "Config defines the configuration settings for authentication tokens used in the server"
     },
+    "totp.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "code_length": {
+          "type": "integer"
+        },
+        "totp_issuer": {
+          "type": "string"
+        },
+        "redis": true
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "webauthn.ProviderConfig": {
       "properties": {
         "enabled": {
@@ -708,6 +724,10 @@
     "posthog": {
       "$ref": "#/$defs/posthog.Config",
       "description": "PostHog contains the configuration for the PostHog analytics"
+    },
+    "totp": {
+      "$ref": "#/$defs/totp.Config",
+      "description": "TOTP contains the configuration for the TOTP provider"
     }
   },
   "additionalProperties": false,

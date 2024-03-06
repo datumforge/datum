@@ -412,6 +412,10 @@ input CreateUserSettingInput {
   """
   tfaSecret: String
   """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
+  """
   specifies a user may complete authentication by verifying an OTP code delivered through SMS
   """
   isPhoneOtpAllowed: Boolean
@@ -4354,6 +4358,12 @@ input UpdateUserSettingInput {
   tfaSecret: String
   clearTfaSecret: Boolean
   """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
+  appendRecoveryCodes: [String!]
+  clearRecoveryCodes: Boolean
+  """
   specifies a user may complete authentication by verifying an OTP code delivered through SMS
   """
   isPhoneOtpAllowed: Boolean
@@ -4516,6 +4526,10 @@ type UserSetting implements Node {
   tags associated with the user
   """
   tags: [String!]!
+  """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
   """
   specifies a user may complete authentication by verifying an OTP code delivered through SMS
   """

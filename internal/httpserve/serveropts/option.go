@@ -38,6 +38,7 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
+	"github.com/datumforge/datum/pkg/utils/totp"
 	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
@@ -349,6 +350,32 @@ func WithAnalytics() ServerOption {
 		s.Config.Handler.AnalyticsClient = &analytics.EventManager{
 			Enabled: true,
 			Handler: ph,
+		}
+	})
+}
+
+// WithOTP sets up the OTP provider
+func WithOTP() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		if s.Config.Settings.TOTP.Enabled {
+			opts := []totp.ConfigOption{
+				totp.WithCodeLength(s.Config.Settings.TOTP.CodeLength),
+				totp.WithIssuer(s.Config.Settings.TOTP.TOTPIssuer),
+			}
+
+			// append redis client if enabed
+			if s.Config.Settings.TOTP.WithRedis {
+				opts = append(opts, totp.WithRedis(s.Config.Handler.RedisClient))
+			}
+
+			// setup new opt manager
+			otpMan := totp.NewOTP(
+				opts...,
+			)
+
+			s.Config.Handler.OTPManager = &totp.OTPManager{
+				TOTPManager: otpMan,
+			}
 		}
 	})
 }

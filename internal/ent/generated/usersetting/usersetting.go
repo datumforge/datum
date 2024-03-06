@@ -46,6 +46,8 @@ const (
 	FieldTags = "tags"
 	// FieldTfaSecret holds the string denoting the tfa_secret field in the database.
 	FieldTfaSecret = "tfa_secret"
+	// FieldRecoveryCodes holds the string denoting the recovery_codes field in the database.
+	FieldRecoveryCodes = "recovery_codes"
 	// FieldIsPhoneOtpAllowed holds the string denoting the is_phone_otp_allowed field in the database.
 	FieldIsPhoneOtpAllowed = "is_phone_otp_allowed"
 	// FieldIsEmailOtpAllowed holds the string denoting the is_email_otp_allowed field in the database.
@@ -95,6 +97,7 @@ var Columns = []string{
 	FieldEmailConfirmed,
 	FieldTags,
 	FieldTfaSecret,
+	FieldRecoveryCodes,
 	FieldIsPhoneOtpAllowed,
 	FieldIsEmailOtpAllowed,
 	FieldIsTotpAllowed,

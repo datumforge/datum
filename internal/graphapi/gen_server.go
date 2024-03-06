@@ -315,6 +315,7 @@ type ComplexityRoot struct {
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
 		CreateOrganizationSetting func(childComplexity int, input generated.CreateOrganizationSettingInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
+		CreateTFASetting          func(childComplexity int, id string, input CreateTFAInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
@@ -643,6 +644,23 @@ type ComplexityRoot struct {
 		Subscribe func(childComplexity int, subscriber string) int
 	}
 
+	TFASettingCreatePayload struct {
+		TfaSetting func(childComplexity int) int
+	}
+
+	TfaSetting struct {
+		CreatedAt         func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
+		ID                func(childComplexity int) int
+		IsEmailOtpAllowed func(childComplexity int) int
+		IsPhoneOtpAllowed func(childComplexity int) int
+		IsTfaEnabled      func(childComplexity int) int
+		IsTotpAllowed     func(childComplexity int) int
+		RecoveryCodes     func(childComplexity int) int
+		UpdatedAt         func(childComplexity int) int
+		UpdatedBy         func(childComplexity int) int
+	}
+
 	User struct {
 		AuthProvider         func(childComplexity int) int
 		AvatarLocalFile      func(childComplexity int) int
@@ -702,6 +720,7 @@ type ComplexityRoot struct {
 		IsTotpAllowed     func(childComplexity int) int
 		IsWebauthnAllowed func(childComplexity int) int
 		Locked            func(childComplexity int) int
+		RecoveryCodes     func(childComplexity int) int
 		SilencedAt        func(childComplexity int) int
 		Status            func(childComplexity int) int
 		SuspendedAt       func(childComplexity int) int
@@ -769,6 +788,7 @@ type MutationResolver interface {
 	CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error)
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
+	CreateTFASetting(ctx context.Context, id string, input CreateTFAInput) (*TFASettingCreatePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
@@ -1931,6 +1951,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreatePersonalAccessToken(childComplexity, args["input"].(generated.CreatePersonalAccessTokenInput)), true
+
+	case "Mutation.createTFASetting":
+		if e.complexity.Mutation.CreateTFASetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createTFASetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateTFASetting(childComplexity, args["id"].(string), args["input"].(CreateTFAInput)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -3700,6 +3732,83 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.Subscribe(childComplexity, args["subscriber"].(string)), true
 
+	case "TFASettingCreatePayload.tfaSetting":
+		if e.complexity.TFASettingCreatePayload.TfaSetting == nil {
+			break
+		}
+
+		return e.complexity.TFASettingCreatePayload.TfaSetting(childComplexity), true
+
+	case "TfaSetting.createdAt":
+		if e.complexity.TfaSetting.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.CreatedAt(childComplexity), true
+
+	case "TfaSetting.createdBy":
+		if e.complexity.TfaSetting.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.CreatedBy(childComplexity), true
+
+	case "TfaSetting.id":
+		if e.complexity.TfaSetting.ID == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.ID(childComplexity), true
+
+	case "TfaSetting.isEmailOtpAllowed":
+		if e.complexity.TfaSetting.IsEmailOtpAllowed == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.IsEmailOtpAllowed(childComplexity), true
+
+	case "TfaSetting.isPhoneOtpAllowed":
+		if e.complexity.TfaSetting.IsPhoneOtpAllowed == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.IsPhoneOtpAllowed(childComplexity), true
+
+	case "TfaSetting.isTfaEnabled":
+		if e.complexity.TfaSetting.IsTfaEnabled == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.IsTfaEnabled(childComplexity), true
+
+	case "TfaSetting.isTotpAllowed":
+		if e.complexity.TfaSetting.IsTotpAllowed == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.IsTotpAllowed(childComplexity), true
+
+	case "TfaSetting.recoveryCodes":
+		if e.complexity.TfaSetting.RecoveryCodes == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.RecoveryCodes(childComplexity), true
+
+	case "TfaSetting.updatedAt":
+		if e.complexity.TfaSetting.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.UpdatedAt(childComplexity), true
+
+	case "TfaSetting.updatedBy":
+		if e.complexity.TfaSetting.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.TfaSetting.UpdatedBy(childComplexity), true
+
 	case "User.authProvider":
 		if e.complexity.User.AuthProvider == nil {
 			break
@@ -4001,6 +4110,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSetting.Locked(childComplexity), true
 
+	case "UserSetting.recoveryCodes":
+		if e.complexity.UserSetting.RecoveryCodes == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.RecoveryCodes(childComplexity), true
+
 	case "UserSetting.silencedAt":
 		if e.complexity.UserSetting.SilencedAt == nil {
 			break
@@ -4126,6 +4242,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOrganizationInput,
 		ec.unmarshalInputCreateOrganizationSettingInput,
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
+		ec.unmarshalInputCreateTFAInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserSettingInput,
 		ec.unmarshalInputEntitlementWhereInput,
@@ -4687,6 +4804,10 @@ input CreateUserSettingInput {
   TFA secret for the user
   """
   tfaSecret: String
+  """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
   """
   specifies a user may complete authentication by verifying an OTP code delivered through SMS
   """
@@ -8630,6 +8751,12 @@ input UpdateUserSettingInput {
   tfaSecret: String
   clearTfaSecret: Boolean
   """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
+  appendRecoveryCodes: [String!]
+  clearRecoveryCodes: Boolean
+  """
   specifies a user may complete authentication by verifying an OTP code delivered through SMS
   """
   isPhoneOtpAllowed: Boolean
@@ -8792,6 +8919,10 @@ type UserSetting implements Node {
   tags associated with the user
   """
   tags: [String!]!
+  """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
   """
   specifies a user may complete authentication by verifying an OTP code delivered through SMS
   """
@@ -10301,6 +10432,98 @@ type PersonalAccessTokenDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
+	{Name: "../../schema/tfa.graphql", Input: `"""
+CreateTFAInput is used for create tfa settings.
+"""
+input CreateTFAInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  updatedBy: String
+  clearUpdatedBy: Boolean
+  """
+  TFA secret for the user
+  """
+  tfaSecret: String
+  resetTfaSecret: Boolean
+  """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
+  appendRecoveryCodes: [String!]
+  resetRecoveryCodes: Boolean
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through SMS
+  """
+  isPhoneOtpAllowed: Boolean
+  clearIsPhoneOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through email
+  """
+  isEmailOtpAllowed: Boolean
+  clearIsEmailOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+  """
+  isTotpAllowed: Boolean
+  clearIsTotpAllowed: Boolean
+  isTfaEnabled: Boolean
+  clearIsTfaEnabled: Boolean
+  userID: ID
+}
+
+extend type Mutation{
+    """ 
+    Create a new TFA setting
+    """
+    createTFASetting(
+        """
+        ID of the tfaSetting
+        """
+        id: ID!
+        """
+        New values for the tfaSetting
+        """
+        input: CreateTFAInput!
+    ): TFASettingCreatePayload!
+}
+
+"""
+Return response for createTFASetting mutation
+"""
+type TFASettingCreatePayload {
+    """
+    Create TFASetting
+    """
+    tfaSetting: TfaSetting!
+}
+
+type TfaSetting implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  createdBy: String
+  updatedBy: String
+  """
+  recovery codes for 2fa
+  """
+  recoveryCodes: [String!]
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through SMS
+  """
+  isPhoneOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying an OTP code delivered through email
+  """
+  isEmailOtpAllowed: Boolean
+  """
+  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
+  """
+  isTotpAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
+}`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `extend type Query {
     """
     Look up user by ID
@@ -10610,6 +10833,30 @@ func (ec *executionContext) field_Mutation_createPersonalAccessToken_args(ctx co
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createTFASetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 CreateTFAInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNCreateTFAInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐCreateTFAInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -21061,6 +21308,65 @@ func (ec *executionContext) fieldContext_Mutation_deletePersonalAccessToken(ctx 
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createTFASetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTFASetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTFASetting(rctx, fc.Args["id"].(string), fc.Args["input"].(CreateTFAInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*TFASettingCreatePayload)
+	fc.Result = res
+	return ec.marshalNTFASettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTFASetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "tfaSetting":
+				return ec.fieldContext_TFASettingCreatePayload_tfaSetting(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TFASettingCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTFASetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
 	if err != nil {
@@ -31241,6 +31547,8 @@ func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, 
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "recoveryCodes":
+				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
 			case "isPhoneOtpAllowed":
 				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
 			case "isEmailOtpAllowed":
@@ -31467,6 +31775,485 @@ func (ec *executionContext) fieldContext_Subscription_subscribe(ctx context.Cont
 	if fc.Args, err = ec.field_Subscription_subscribe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TFASettingCreatePayload_tfaSetting(ctx context.Context, field graphql.CollectedField, obj *TFASettingCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingCreatePayload_tfaSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TfaSetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*TfaSetting)
+	fc.Result = res
+	return ec.marshalNTfaSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTfaSetting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TFASettingCreatePayload_tfaSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TFASettingCreatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TfaSetting_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_TfaSetting_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_TfaSetting_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_TfaSetting_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_TfaSetting_updatedBy(ctx, field)
+			case "recoveryCodes":
+				return ec.fieldContext_TfaSetting_recoveryCodes(ctx, field)
+			case "isPhoneOtpAllowed":
+				return ec.fieldContext_TfaSetting_isPhoneOtpAllowed(ctx, field)
+			case "isEmailOtpAllowed":
+				return ec.fieldContext_TfaSetting_isEmailOtpAllowed(ctx, field)
+			case "isTotpAllowed":
+				return ec.fieldContext_TfaSetting_isTotpAllowed(ctx, field)
+			case "isTfaEnabled":
+				return ec.fieldContext_TfaSetting_isTfaEnabled(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TfaSetting", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_id(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_createdAt(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_updatedAt(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_createdBy(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_updatedBy(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_updatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_recoveryCodes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecoveryCodes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_recoveryCodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_isPhoneOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_isPhoneOtpAllowed(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsPhoneOtpAllowed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_isPhoneOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_isEmailOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_isEmailOtpAllowed(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsEmailOtpAllowed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_isEmailOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_isTotpAllowed(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_isTotpAllowed(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsTotpAllowed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_isTotpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TfaSetting_isTfaEnabled(ctx context.Context, field graphql.CollectedField, obj *TfaSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TfaSetting_isTfaEnabled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsTfaEnabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TfaSetting_isTfaEnabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TfaSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -32326,6 +33113,8 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "recoveryCodes":
+				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
 			case "isPhoneOtpAllowed":
 				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
 			case "isEmailOtpAllowed":
@@ -33646,6 +34435,47 @@ func (ec *executionContext) fieldContext_UserSetting_tags(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _UserSetting_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecoveryCodes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSetting_recoveryCodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserSetting_isPhoneOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
 	if err != nil {
@@ -34236,6 +35066,8 @@ func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Contex
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "recoveryCodes":
+				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
 			case "isPhoneOtpAllowed":
 				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
 			case "isEmailOtpAllowed":
@@ -34368,6 +35200,8 @@ func (ec *executionContext) fieldContext_UserSettingUpdatePayload_userSetting(ct
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "recoveryCodes":
+				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
 			case "isPhoneOtpAllowed":
 				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
 			case "isEmailOtpAllowed":
@@ -37466,6 +38300,152 @@ func (ec *executionContext) unmarshalInputCreatePersonalAccessTokenInput(ctx con
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateTFAInput(ctx context.Context, obj interface{}) (CreateTFAInput, error) {
+	var it CreateTFAInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "tfaSecret", "resetTfaSecret", "recoveryCodes", "appendRecoveryCodes", "resetRecoveryCodes", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isTfaEnabled", "clearIsTfaEnabled", "userID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
+		case "updatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "clearUpdatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedBy"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedBy = data
+		case "tfaSecret":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecret = data
+		case "resetTfaSecret":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resetTfaSecret"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ResetTfaSecret = data
+		case "recoveryCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RecoveryCodes = data
+		case "appendRecoveryCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendRecoveryCodes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendRecoveryCodes = data
+		case "resetRecoveryCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resetRecoveryCodes"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ResetRecoveryCodes = data
+		case "isPhoneOtpAllowed":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsPhoneOtpAllowed = data
+		case "clearIsPhoneOtpAllowed":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsPhoneOtpAllowed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearIsPhoneOtpAllowed = data
+		case "isEmailOtpAllowed":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEmailOtpAllowed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsEmailOtpAllowed = data
+		case "clearIsEmailOtpAllowed":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsEmailOtpAllowed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearIsEmailOtpAllowed = data
+		case "isTotpAllowed":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTotpAllowed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsTotpAllowed = data
+		case "clearIsTotpAllowed":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsTotpAllowed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearIsTotpAllowed = data
+		case "isTfaEnabled":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTfaEnabled"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsTfaEnabled = data
+		case "clearIsTfaEnabled":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsTfaEnabled"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearIsTfaEnabled = data
+		case "userID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj interface{}) (generated.CreateUserInput, error) {
 	var it generated.CreateUserInput
 	asMap := map[string]interface{}{}
@@ -37647,7 +38627,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "tfaSecret", "isPhoneOtpAllowed", "isEmailOtpAllowed", "isTotpAllowed", "isWebauthnAllowed", "isTfaEnabled", "userID", "defaultOrgID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "tfaSecret", "recoveryCodes", "isPhoneOtpAllowed", "isEmailOtpAllowed", "isTotpAllowed", "isWebauthnAllowed", "isTfaEnabled", "userID", "defaultOrgID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37731,6 +38711,13 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.TfaSecret = data
+		case "recoveryCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RecoveryCodes = data
 		case "isPhoneOtpAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -51355,7 +52342,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "tfaSecret", "clearTfaSecret", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51467,6 +52454,27 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.ClearTfaSecret = data
+		case "recoveryCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RecoveryCodes = data
+		case "appendRecoveryCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendRecoveryCodes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendRecoveryCodes = data
+		case "clearRecoveryCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearRecoveryCodes"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearRecoveryCodes = data
 		case "isPhoneOtpAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -54359,6 +55367,13 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._UserSetting(ctx, sel, obj)
+	case TfaSetting:
+		return ec._TfaSetting(ctx, sel, &obj)
+	case *TfaSetting:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TfaSetting(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -56671,6 +57686,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deletePersonalAccessToken":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deletePersonalAccessToken(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createTFASetting":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTFASetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -59796,6 +60818,102 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 }
 
+var tFASettingCreatePayloadImplementors = []string{"TFASettingCreatePayload"}
+
+func (ec *executionContext) _TFASettingCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingCreatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TFASettingCreatePayload")
+		case "tfaSetting":
+			out.Values[i] = ec._TFASettingCreatePayload_tfaSetting(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var tfaSettingImplementors = []string{"TfaSetting", "Node"}
+
+func (ec *executionContext) _TfaSetting(ctx context.Context, sel ast.SelectionSet, obj *TfaSetting) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tfaSettingImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TfaSetting")
+		case "id":
+			out.Values[i] = ec._TfaSetting_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._TfaSetting_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._TfaSetting_updatedAt(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._TfaSetting_createdBy(ctx, field, obj)
+		case "updatedBy":
+			out.Values[i] = ec._TfaSetting_updatedBy(ctx, field, obj)
+		case "recoveryCodes":
+			out.Values[i] = ec._TfaSetting_recoveryCodes(ctx, field, obj)
+		case "isPhoneOtpAllowed":
+			out.Values[i] = ec._TfaSetting_isPhoneOtpAllowed(ctx, field, obj)
+		case "isEmailOtpAllowed":
+			out.Values[i] = ec._TfaSetting_isEmailOtpAllowed(ctx, field, obj)
+		case "isTotpAllowed":
+			out.Values[i] = ec._TfaSetting_isTotpAllowed(ctx, field, obj)
+		case "isTfaEnabled":
+			out.Values[i] = ec._TfaSetting_isTfaEnabled(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var userImplementors = []string{"User", "Node"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *generated.User) graphql.Marshaler {
@@ -60302,6 +61420,8 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "recoveryCodes":
+			out.Values[i] = ec._UserSetting_recoveryCodes(ctx, field, obj)
 		case "isPhoneOtpAllowed":
 			out.Values[i] = ec._UserSetting_isPhoneOtpAllowed(ctx, field, obj)
 		case "isEmailOtpAllowed":
@@ -60974,6 +62094,11 @@ func (ec *executionContext) unmarshalNCreateOrganizationSettingInput2githubᚗco
 
 func (ec *executionContext) unmarshalNCreatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreatePersonalAccessTokenInput(ctx context.Context, v interface{}) (generated.CreatePersonalAccessTokenInput, error) {
 	res, err := ec.unmarshalInputCreatePersonalAccessTokenInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreateTFAInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐCreateTFAInput(ctx context.Context, v interface{}) (CreateTFAInput, error) {
+	res, err := ec.unmarshalInputCreateTFAInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -62169,6 +63294,30 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalNTFASettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingCreatePayload) graphql.Marshaler {
+	return ec._TFASettingCreatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTFASettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingCreatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TFASettingCreatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTfaSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTfaSetting(ctx context.Context, sel ast.SelectionSet, v *TfaSetting) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TfaSetting(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {

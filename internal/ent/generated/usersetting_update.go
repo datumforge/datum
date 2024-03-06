@@ -240,6 +240,24 @@ func (usu *UserSettingUpdate) ClearTfaSecret() *UserSettingUpdate {
 	return usu
 }
 
+// SetRecoveryCodes sets the "recovery_codes" field.
+func (usu *UserSettingUpdate) SetRecoveryCodes(s []string) *UserSettingUpdate {
+	usu.mutation.SetRecoveryCodes(s)
+	return usu
+}
+
+// AppendRecoveryCodes appends s to the "recovery_codes" field.
+func (usu *UserSettingUpdate) AppendRecoveryCodes(s []string) *UserSettingUpdate {
+	usu.mutation.AppendRecoveryCodes(s)
+	return usu
+}
+
+// ClearRecoveryCodes clears the value of the "recovery_codes" field.
+func (usu *UserSettingUpdate) ClearRecoveryCodes() *UserSettingUpdate {
+	usu.mutation.ClearRecoveryCodes()
+	return usu
+}
+
 // SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
 func (usu *UserSettingUpdate) SetIsPhoneOtpAllowed(b bool) *UserSettingUpdate {
 	usu.mutation.SetIsPhoneOtpAllowed(b)
@@ -509,6 +527,17 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if usu.mutation.TfaSecretCleared() {
 		_spec.ClearField(usersetting.FieldTfaSecret, field.TypeString)
+	}
+	if value, ok := usu.mutation.RecoveryCodes(); ok {
+		_spec.SetField(usersetting.FieldRecoveryCodes, field.TypeJSON, value)
+	}
+	if value, ok := usu.mutation.AppendedRecoveryCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersetting.FieldRecoveryCodes, value)
+		})
+	}
+	if usu.mutation.RecoveryCodesCleared() {
+		_spec.ClearField(usersetting.FieldRecoveryCodes, field.TypeJSON)
 	}
 	if value, ok := usu.mutation.IsPhoneOtpAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)
@@ -830,6 +859,24 @@ func (usuo *UserSettingUpdateOne) ClearTfaSecret() *UserSettingUpdateOne {
 	return usuo
 }
 
+// SetRecoveryCodes sets the "recovery_codes" field.
+func (usuo *UserSettingUpdateOne) SetRecoveryCodes(s []string) *UserSettingUpdateOne {
+	usuo.mutation.SetRecoveryCodes(s)
+	return usuo
+}
+
+// AppendRecoveryCodes appends s to the "recovery_codes" field.
+func (usuo *UserSettingUpdateOne) AppendRecoveryCodes(s []string) *UserSettingUpdateOne {
+	usuo.mutation.AppendRecoveryCodes(s)
+	return usuo
+}
+
+// ClearRecoveryCodes clears the value of the "recovery_codes" field.
+func (usuo *UserSettingUpdateOne) ClearRecoveryCodes() *UserSettingUpdateOne {
+	usuo.mutation.ClearRecoveryCodes()
+	return usuo
+}
+
 // SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
 func (usuo *UserSettingUpdateOne) SetIsPhoneOtpAllowed(b bool) *UserSettingUpdateOne {
 	usuo.mutation.SetIsPhoneOtpAllowed(b)
@@ -1129,6 +1176,17 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	}
 	if usuo.mutation.TfaSecretCleared() {
 		_spec.ClearField(usersetting.FieldTfaSecret, field.TypeString)
+	}
+	if value, ok := usuo.mutation.RecoveryCodes(); ok {
+		_spec.SetField(usersetting.FieldRecoveryCodes, field.TypeJSON, value)
+	}
+	if value, ok := usuo.mutation.AppendedRecoveryCodes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, usersetting.FieldRecoveryCodes, value)
+		})
+	}
+	if usuo.mutation.RecoveryCodesCleared() {
+		_spec.ClearField(usersetting.FieldRecoveryCodes, field.TypeJSON)
 	}
 	if value, ok := usuo.mutation.IsPhoneOtpAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)

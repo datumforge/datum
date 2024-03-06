@@ -572,6 +572,7 @@ var (
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON},
 		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
+		{Name: "recovery_codes", Type: field.TypeJSON, Nullable: true},
 		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
@@ -588,13 +589,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_settings_users_setting",
-				Columns:    []*schema.Column{UserSettingsColumns[19]},
+				Columns:    []*schema.Column{UserSettingsColumns[20]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "user_settings_organizations_default_org",
-				Columns:    []*schema.Column{UserSettingsColumns[20]},
+				Columns:    []*schema.Column{UserSettingsColumns[21]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

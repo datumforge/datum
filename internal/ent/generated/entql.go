@@ -436,6 +436,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldEmailConfirmed:    {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
 			usersetting.FieldTags:              {Type: field.TypeJSON, Column: usersetting.FieldTags},
 			usersetting.FieldTfaSecret:         {Type: field.TypeString, Column: usersetting.FieldTfaSecret},
+			usersetting.FieldRecoveryCodes:     {Type: field.TypeJSON, Column: usersetting.FieldRecoveryCodes},
 			usersetting.FieldIsPhoneOtpAllowed: {Type: field.TypeBool, Column: usersetting.FieldIsPhoneOtpAllowed},
 			usersetting.FieldIsEmailOtpAllowed: {Type: field.TypeBool, Column: usersetting.FieldIsEmailOtpAllowed},
 			usersetting.FieldIsTotpAllowed:     {Type: field.TypeBool, Column: usersetting.FieldIsTotpAllowed},
@@ -3137,6 +3138,11 @@ func (f *UserSettingFilter) WhereTags(p entql.BytesP) {
 // WhereTfaSecret applies the entql string predicate on the tfa_secret field.
 func (f *UserSettingFilter) WhereTfaSecret(p entql.StringP) {
 	f.Where(p.Field(usersetting.FieldTfaSecret))
+}
+
+// WhereRecoveryCodes applies the entql json.RawMessage predicate on the recovery_codes field.
+func (f *UserSettingFilter) WhereRecoveryCodes(p entql.BytesP) {
+	f.Where(p.Field(usersetting.FieldRecoveryCodes))
 }
 
 // WhereIsPhoneOtpAllowed applies the entql bool predicate on the is_phone_otp_allowed field.

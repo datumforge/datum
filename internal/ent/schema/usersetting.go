@@ -66,6 +66,10 @@ func (UserSetting) Fields() []ent.Field {
 			Annotations(entoas.Skip(true)).
 			Optional().
 			Nillable(),
+		field.Strings("recovery_codes").
+			Comment("recovery codes for 2fa").
+			Annotations(entoas.Skip(true)).
+			Optional(),
 		field.Bool("is_phone_otp_allowed").
 			Comment("specifies a user may complete authentication by verifying an OTP code delivered through SMS").
 			Optional().

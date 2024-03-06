@@ -2277,6 +2277,11 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, usersetting.FieldTags)
 				fieldSeen[usersetting.FieldTags] = struct{}{}
 			}
+		case "recoveryCodes":
+			if _, ok := fieldSeen[usersetting.FieldRecoveryCodes]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldRecoveryCodes)
+				fieldSeen[usersetting.FieldRecoveryCodes] = struct{}{}
+			}
 		case "isPhoneOtpAllowed":
 			if _, ok := fieldSeen[usersetting.FieldIsPhoneOtpAllowed]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldIsPhoneOtpAllowed)

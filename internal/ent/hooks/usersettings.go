@@ -28,3 +28,38 @@ func HookUserSetting() ent.Hook {
 		})
 	}, ent.OpUpdate|ent.OpUpdateOne)
 }
+
+// func HookTFA() ent.Hook {
+// 	return hook.On(func(next ent.Mutator) ent.Mutator {
+// 		return hook.UserSettingFunc(func(ctx context.Context, mutation *generated.UserSettingMutation) (generated.Value, error) {
+// 			tfaEnable, ok := mutation.IsTfaEnabled()
+// 			if ok && tfaEnable {
+// 				totp.Generate()
+// 			}
+
+// 			return next.Mutate(ctx, mutation)
+// 		})
+// 	}, ent.OpUpdate|ent.OpUpdateOne)
+// }
+
+const (
+	email = "EMAIL"
+	phone = "PHONE"
+	totp  = "TOTP"
+)
+
+func getTFAType(mutation *generated.UserSettingMutation) (string, error) {
+	if _, ok := mutation.IsEmailOtpAllowed(); ok {
+		return email, nil
+	}
+
+	if _, ok := mutation.IsPhoneOtpAllowed(); ok {
+		return phone, nil
+	}
+
+	if _, ok := mutation.IsTotpAllowed(); ok {
+		return totp, nil
+	}
+
+	return "", rout.InvalidField("tfa_type")
+}

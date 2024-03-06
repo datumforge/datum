@@ -19487,6 +19487,8 @@ type UserSettingMutation struct {
 	tags                 *[]string
 	appendtags           []string
 	tfa_secret           *string
+	recovery_codes       *[]string
+	appendrecovery_codes []string
 	is_phone_otp_allowed *bool
 	is_email_otp_allowed *bool
 	is_totp_allowed      *bool
@@ -20255,6 +20257,71 @@ func (m *UserSettingMutation) ResetTfaSecret() {
 	delete(m.clearedFields, usersetting.FieldTfaSecret)
 }
 
+// SetRecoveryCodes sets the "recovery_codes" field.
+func (m *UserSettingMutation) SetRecoveryCodes(s []string) {
+	m.recovery_codes = &s
+	m.appendrecovery_codes = nil
+}
+
+// RecoveryCodes returns the value of the "recovery_codes" field in the mutation.
+func (m *UserSettingMutation) RecoveryCodes() (r []string, exists bool) {
+	v := m.recovery_codes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRecoveryCodes returns the old "recovery_codes" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldRecoveryCodes(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRecoveryCodes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRecoveryCodes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRecoveryCodes: %w", err)
+	}
+	return oldValue.RecoveryCodes, nil
+}
+
+// AppendRecoveryCodes adds s to the "recovery_codes" field.
+func (m *UserSettingMutation) AppendRecoveryCodes(s []string) {
+	m.appendrecovery_codes = append(m.appendrecovery_codes, s...)
+}
+
+// AppendedRecoveryCodes returns the list of values that were appended to the "recovery_codes" field in this mutation.
+func (m *UserSettingMutation) AppendedRecoveryCodes() ([]string, bool) {
+	if len(m.appendrecovery_codes) == 0 {
+		return nil, false
+	}
+	return m.appendrecovery_codes, true
+}
+
+// ClearRecoveryCodes clears the value of the "recovery_codes" field.
+func (m *UserSettingMutation) ClearRecoveryCodes() {
+	m.recovery_codes = nil
+	m.appendrecovery_codes = nil
+	m.clearedFields[usersetting.FieldRecoveryCodes] = struct{}{}
+}
+
+// RecoveryCodesCleared returns if the "recovery_codes" field was cleared in this mutation.
+func (m *UserSettingMutation) RecoveryCodesCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldRecoveryCodes]
+	return ok
+}
+
+// ResetRecoveryCodes resets all changes to the "recovery_codes" field.
+func (m *UserSettingMutation) ResetRecoveryCodes() {
+	m.recovery_codes = nil
+	m.appendrecovery_codes = nil
+	delete(m.clearedFields, usersetting.FieldRecoveryCodes)
+}
+
 // SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
 func (m *UserSettingMutation) SetIsPhoneOtpAllowed(b bool) {
 	m.is_phone_otp_allowed = &b
@@ -20600,7 +20667,7 @@ func (m *UserSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSettingMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, usersetting.FieldCreatedAt)
 	}
@@ -20642,6 +20709,9 @@ func (m *UserSettingMutation) Fields() []string {
 	}
 	if m.tfa_secret != nil {
 		fields = append(fields, usersetting.FieldTfaSecret)
+	}
+	if m.recovery_codes != nil {
+		fields = append(fields, usersetting.FieldRecoveryCodes)
 	}
 	if m.is_phone_otp_allowed != nil {
 		fields = append(fields, usersetting.FieldIsPhoneOtpAllowed)
@@ -20694,6 +20764,8 @@ func (m *UserSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.Tags()
 	case usersetting.FieldTfaSecret:
 		return m.TfaSecret()
+	case usersetting.FieldRecoveryCodes:
+		return m.RecoveryCodes()
 	case usersetting.FieldIsPhoneOtpAllowed:
 		return m.IsPhoneOtpAllowed()
 	case usersetting.FieldIsEmailOtpAllowed:
@@ -20741,6 +20813,8 @@ func (m *UserSettingMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldTags(ctx)
 	case usersetting.FieldTfaSecret:
 		return m.OldTfaSecret(ctx)
+	case usersetting.FieldRecoveryCodes:
+		return m.OldRecoveryCodes(ctx)
 	case usersetting.FieldIsPhoneOtpAllowed:
 		return m.OldIsPhoneOtpAllowed(ctx)
 	case usersetting.FieldIsEmailOtpAllowed:
@@ -20858,6 +20932,13 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTfaSecret(v)
 		return nil
+	case usersetting.FieldRecoveryCodes:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRecoveryCodes(v)
+		return nil
 	case usersetting.FieldIsPhoneOtpAllowed:
 		v, ok := value.(bool)
 		if !ok {
@@ -20953,6 +21034,9 @@ func (m *UserSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(usersetting.FieldTfaSecret) {
 		fields = append(fields, usersetting.FieldTfaSecret)
 	}
+	if m.FieldCleared(usersetting.FieldRecoveryCodes) {
+		fields = append(fields, usersetting.FieldRecoveryCodes)
+	}
 	if m.FieldCleared(usersetting.FieldIsPhoneOtpAllowed) {
 		fields = append(fields, usersetting.FieldIsPhoneOtpAllowed)
 	}
@@ -21011,6 +21095,9 @@ func (m *UserSettingMutation) ClearField(name string) error {
 		return nil
 	case usersetting.FieldTfaSecret:
 		m.ClearTfaSecret()
+		return nil
+	case usersetting.FieldRecoveryCodes:
+		m.ClearRecoveryCodes()
 		return nil
 	case usersetting.FieldIsPhoneOtpAllowed:
 		m.ClearIsPhoneOtpAllowed()
@@ -21076,6 +21163,9 @@ func (m *UserSettingMutation) ResetField(name string) error {
 		return nil
 	case usersetting.FieldTfaSecret:
 		m.ResetTfaSecret()
+		return nil
+	case usersetting.FieldRecoveryCodes:
+		m.ResetRecoveryCodes()
 		return nil
 	case usersetting.FieldIsPhoneOtpAllowed:
 		m.ResetIsPhoneOtpAllowed()

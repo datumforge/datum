@@ -102,6 +102,11 @@ func serve(ctx context.Context) error {
 		serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient),
 	)
 
+	// add otp manager, after redis is setup
+	so.AddServerOptions(
+		serveropts.WithOTP(),
+	)
+
 	// add auth options
 	so.AddServerOptions(
 		serveropts.WithAuth(),

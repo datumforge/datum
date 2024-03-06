@@ -49,6 +49,8 @@ type UserSetting struct {
 	Tags []string `json:"tags,omitempty"`
 	// TFA secret for the user
 	TfaSecret *string `json:"-"`
+	// recovery codes for 2fa
+	RecoveryCodes []string `json:"recovery_codes,omitempty"`
 	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
 	IsPhoneOtpAllowed bool `json:"is_phone_otp_allowed,omitempty"`
 	// specifies a user may complete authentication by verifying an OTP code delivered through email
@@ -106,7 +108,7 @@ func (*UserSetting) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case usersetting.FieldTags:
+		case usersetting.FieldTags, usersetting.FieldRecoveryCodes:
 			values[i] = new([]byte)
 		case usersetting.FieldLocked, usersetting.FieldEmailConfirmed, usersetting.FieldIsPhoneOtpAllowed, usersetting.FieldIsEmailOtpAllowed, usersetting.FieldIsTotpAllowed, usersetting.FieldIsWebauthnAllowed, usersetting.FieldIsTfaEnabled:
 			values[i] = new(sql.NullBool)
@@ -225,6 +227,14 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				us.TfaSecret = new(string)
 				*us.TfaSecret = value.String
+			}
+		case usersetting.FieldRecoveryCodes:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field recovery_codes", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &us.RecoveryCodes); err != nil {
+					return fmt.Errorf("unmarshal field recovery_codes: %w", err)
+				}
 			}
 		case usersetting.FieldIsPhoneOtpAllowed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -353,6 +363,9 @@ func (us *UserSetting) String() string {
 	builder.WriteString(fmt.Sprintf("%v", us.Tags))
 	builder.WriteString(", ")
 	builder.WriteString("tfa_secret=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("recovery_codes=")
+	builder.WriteString(fmt.Sprintf("%v", us.RecoveryCodes))
 	builder.WriteString(", ")
 	builder.WriteString("is_phone_otp_allowed=")
 	builder.WriteString(fmt.Sprintf("%v", us.IsPhoneOtpAllowed))

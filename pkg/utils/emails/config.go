@@ -10,17 +10,17 @@ import (
 // Config for sending emails via SendGrid and managing marketing contacts
 type Config struct {
 	// SendGridAPIKey is the SendGrid API key to authenticate with the service
-	SendGridAPIKey string `json:"send_grid_api_key" koanf:"send_grid_api_key"`
+	SendGridAPIKey string `json:"sendGridApiKey" koanf:"sendGridApiKey"`
 	// FromEmail is the default email to send from
-	FromEmail string `json:"from_email" koanf:"from_email" default:"no-reply@datum.net"`
+	FromEmail string `json:"fromEmail" koanf:"fromEmail" default:"no-reply@datum.net"`
 	// Testing is a bool flag to indicate we shouldn't be sending live emails, and instead should be writing out fixtures
 	Testing bool `json:"testing" koanf:"testing" default:"true"`
 	// Archive is only supported in testing mode and is what is tied through the mock to write out fixtures
 	Archive string `json:"archive" koanf:"archive" `
 	// DatumListID is the UUID SendGrid spits out when you create marketing lists
-	DatumListID string `json:"datum_list_id" koanf:"datum_list_id"`
+	DatumListID string `json:"datumListId" koanf:"datumListId"`
 	// AdminEmail is an internal group email configured within datum for email testing and visibility
-	AdminEmail string `json:"admin_email" koanf:"admin_email" default:"admins@datum.net"`
+	AdminEmail string `json:"adminEmail" koanf:"adminEmail" default:"admins@datum.net"`
 }
 
 // URLConfig for the datum registration

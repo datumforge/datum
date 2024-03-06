@@ -109,10 +109,10 @@ github.com/datumforge/echox v0.0.0-20240204015542-90bd5e1f295d h1:vDsUY1d5fRqK3h
 github.com/datumforge/echox v0.0.0-20240204015542-90bd5e1f295d/go.mod h1:PIZalzJ+wD5P0bUHkn8wk0H+TsT94MoZUf0y1lTAwa4=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PBRCAXbE29GW+HJXm8a99x0mGtSSE8iHM=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
-github.com/datumforge/entx v0.0.6 h1:yBvVwJzjDS2uTrePVFa8e4yFbjWX7LxqcfcLbwKlG2E=
-github.com/datumforge/entx v0.0.6/go.mod h1:9wrE0lew1YvKXVTIIOU6p2nKlN8HQPKSoH8mgfOYrQI=
-github.com/datumforge/fgax v0.1.2 h1:mJDJO4WO5odc7Yl/GbVzDSBU9Hj02+sUFDUUqIxwXzY=
-github.com/datumforge/fgax v0.1.2/go.mod h1:kR9SdGFKRna0M+zgfPvu6sDffnNttyQ/ujlylZgFoFk=
+github.com/datumforge/entx v0.0.7-0.20240306174035-834c7c11bef4 h1:ArCGfeSzjvW7IPnZfy7AVN09oS9Cec7zVhWM6rlPrIQ=
+github.com/datumforge/entx v0.0.7-0.20240306174035-834c7c11bef4/go.mod h1:8uNQKKWgvxcPEqB4e8z89UzWhHvwjNBpY1Z3c79fbvk=
+github.com/datumforge/fgax v0.1.3-0.20240306173846-5a1a57b77f2d h1:IQlk7aVOiTxLyVI7KHGYjvZ1ISxAYSfaB7VEyU9gNTM=
+github.com/datumforge/fgax v0.1.3-0.20240306173846-5a1a57b77f2d/go.mod h1:lB/3MDCwTEP/c3WqeRNlxsa5dIgxDQRxp5LmF+OoT04=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
@@ -438,8 +438,8 @@ github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee h1:ZqeLB0dxo4XgR
 github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee/go.mod h1:XF/4W9je/FGBZQ2M5pbQnrzdKF4VcEEtds3ole9sW5E=
 github.com/openfga/go-sdk v0.3.5 h1:KQXhMREh+g/K7HNuZ/YmXuHkREkq0VMKteua4bYr3Uw=
 github.com/openfga/go-sdk v0.3.5/go.mod h1:u1iErzj5E9/bhe+8nsMv0gigcYbJtImcdgcE5DmpbBg=
-github.com/openfga/language/pkg/go v0.0.0-20240228042802-8a4d89e59751 h1:5bDl+7UilwiK9RuS4yvNjp8fVAu+pKi6itxDwcj74A0=
-github.com/openfga/language/pkg/go v0.0.0-20240228042802-8a4d89e59751/go.mod h1:JX39jFXAmm5xl0ZEpppt1/6FPQ9mUu0ebjERu7wurEE=
+github.com/openfga/language/pkg/go v0.0.0-20240304080135-81c3460c0a04 h1:P0ZosAtqnG4o2mP3ymeoL+aTN8n8QXmrTe2pHF4hKuU=
+github.com/openfga/language/pkg/go v0.0.0-20240304080135-81c3460c0a04/go.mod h1:XWYBSYB0DEBrKGG/E7FmLA6jC/q/f3bEN+rVNoMXETA=
 github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 github.com/pelletier/go-toml/v2 v2.1.1 h1:LWAJwfNvjQZCFIDKWYQaM62NcYeYViCmWIwmOStowAI=
 github.com/pelletier/go-toml/v2 v2.1.1/go.mod h1:tJU2Z3ZkXwnxa4DPO899bsyIoywizdUvyaeZurnPPDc=
@@ -753,8 +753,8 @@ google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod h1:EGpAD
 google.golang.org/protobuf v1.25.0/go.mod h1:9JNX74DMeImyA3h4bdi1ymwjUzf21/xIlbajtzgsN7c=
 google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
 google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
-google.golang.org/protobuf v1.32.0 h1:pPC6BG5ex8PDFnkbrGU3EixyhKcQ2aDuBS36lqK/C7I=
-google.golang.org/protobuf v1.32.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
+google.golang.org/protobuf v1.33.0 h1:uNO2rsAINq/JlFpSdYEKIZ0uKD/R9cpdv0T+yoGwGmI=
+google.golang.org/protobuf v1.33.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

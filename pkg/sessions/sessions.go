@@ -10,9 +10,9 @@ import (
 // Config contains the configuration for the session store
 type Config struct {
 	// SigningKey must be a 16, 32, or 64 character string used to encode the cookie
-	SigningKey string `json:"signing_key" koanf:"signing_key" default:"my-signing-secret"`
+	SigningKey string `json:"signingKey" koanf:"signingKey" default:"my-signing-secret"`
 	// EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie
-	EncryptionKey string `json:"encryption_key" koanf:"encryption_key" default:"encryptionsecret"`
+	EncryptionKey string `json:"encryptionKey" koanf:"encryptionKey" default:"encryptionsecret"`
 }
 
 // Session represents state values maintained in a sessions Store

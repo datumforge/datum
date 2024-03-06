@@ -9,7 +9,7 @@ require (
 	github.com/99designs/gqlgen v0.17.44
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
-	github.com/Yamashou/gqlgenc v0.19.2
+	github.com/Yamashou/gqlgenc v0.19.3
 	github.com/alicebob/miniredis/v2 v2.31.1
 	github.com/brianvoe/gofakeit/v7 v7.0.2
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58

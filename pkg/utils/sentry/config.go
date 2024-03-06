@@ -16,23 +16,23 @@ type Config struct {
 	// Environment is the environment in which the Sentry client is running
 	Environment string `json:"environment" koanf:"environment" default:"development"`
 	// EnableTracing indicates whether tracing is enabled for the Sentry client
-	EnableTracing bool `json:"enable_tracing" koanf:"enable_tracing" default:"false"`
+	EnableTracing bool `json:"enableTracing" koanf:"enableTracing" default:"false"`
 	// TracesSampler is the sampling rate for tracing in the Sentry client
-	TracesSampler float64 `json:"trace_sampler" koanf:"trace_sampler" default:"1.0"`
+	TracesSampler float64 `json:"traceSampler" koanf:"traceSampler" default:"1.0"`
 	// AttachStacktrace indicates whether to attach stack traces to events in the Sentry client
-	AttachStacktrace bool `json:"attach_stacktrace" koanf:"attach_stacktrace" default:"true"`
+	AttachStacktrace bool `json:"attachStacktrace" koanf:"attachStacktrace" default:"true"`
 	// SampleRate is the sampling rate for events in the Sentry client
-	SampleRate float64 `json:"sample_rate" koanf:"sample_rate" default:"0.2"`
+	SampleRate float64 `json:"sampleRate" koanf:"sampleRate" default:"0.2"`
 	// TracesSampleRate is the sampling rate for tracing events in the Sentry client
-	TracesSampleRate float64 `json:"trace_sample_rate" koanf:"trace_sample_rate" default:"0.2"`
+	TracesSampleRate float64 `json:"traceSampleRate" koanf:"traceSampleRate" default:"0.2"`
 	// ProfilesSampleRate is the sampling rate for profiling events in the Sentry client
-	ProfilesSampleRate float64 `json:"profile_sample_rate" koanf:"profile_sample_rate" default:"0.2"`
+	ProfilesSampleRate float64 `json:"profileSampleRate" koanf:"profileSampleRate" default:"0.2"`
 	// Repanic indicates whether to repanic after capturing an event in the Sentry client
 	Repanic bool `json:"repanic" koanf:"repanic" ignored:"true"`
 	// Debug indicates whether debug mode is enabled for the Sentry client
 	Debug bool `json:"debug" koanf:"debug" default:"false"`
 	// ServerName is the name of the server running the Sentry client
-	ServerName string `json:"server_name" koanf:"server_name"`
+	ServerName string `json:"serverName" koanf:"serverName"`
 }
 
 // UseSentry true if Sentry is enabled (e.g. a DSN is configured)

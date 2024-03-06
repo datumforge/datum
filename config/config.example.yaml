@@ -2,114 +2,114 @@ auth:
     enabled: false
     providers:
         github:
-            client_endpoint: ""
-            client_id: ""
-            client_secret: ""
-            redirect_url: ""
+            clientEndpoint: ""
+            clientId: ""
+            clientSecret: ""
+            redirectUrl: ""
             scopes: null
         google:
-            client_endpoint: ""
-            client_id: ""
-            client_secret: ""
-            redirect_url: ""
+            clientEndpoint: ""
+            clientId: ""
+            clientSecret: ""
+            redirectUrl: ""
             scopes: null
-        redirect_url: ""
+        redirectUrl: ""
         webauthn:
             debug: false
-            display_name: ""
+            displayName: ""
             enabled: false
-            enforce_timeout: false
-            max_devices: 0
-            relying_party_id: ""
-            request_origin: ""
+            enforceTimeout: false
+            maxDevices: 0
+            relyingPartyId: ""
+            requestOrigin: ""
             timeout: 0
-    supported_providers: null
+    supportedProviders: null
     token:
-        access_duration: 0
+        accessDuration: 0
         audience: ""
         issuer: ""
-        jwks_endpoint: ""
+        jwksEndpoint: ""
         keys: null
         kid: ""
-        refresh_audience: ""
-        refresh_duration: 0
-        refresh_overlap: 0
+        refreshAudience: ""
+        refreshDuration: 0
+        refreshOverlap: 0
 authz:
-    create_new_model: false
+    createNewModel: false
     enabled: false
-    host_url: ""
-    model_id: ""
-    store_id: ""
-    store_name: ""
+    hostUrl: ""
+    modelId: ""
+    storeId: ""
+    storeName: ""
 db:
-    catch_ttl: 0
-    database_name: ""
+    catchTTL: 0
+    databaseName: ""
     debug: false
-    driver_name: ""
-    multi_write: false
-    primary_db_source: ""
-    run_migrations: false
-    secondary_db_source: ""
+    driverName: ""
+    multiWrite: false
+    primaryDbSource: ""
+    runMigrations: false
+    secondaryDbSource: ""
 email:
-    admin_email: ""
+    adminEmail: ""
     archive: ""
-    datum_list_id: ""
-    from_email: ""
-    send_grid_api_key: ""
+    datumListId: ""
+    fromEmail: ""
+    sendGridApiKey: ""
     testing: false
 posthog:
-    api_key: ""
+    apiKey: ""
     enabled: false
     host: ""
 redis:
     address: ""
     db: 0
-    dial_timeout: 0
+    dialTimeout: 0
     enabled: false
-    max_active_conns: 0
-    max_idle_conns: 0
-    max_retries: 0
-    min_idle_conns: 0
+    maxActiveConns: 0
+    maxIdleConns: 0
+    maxRetries: 0
+    minIdleConns: 0
     name: ""
     password: ""
-    read_timeout: 0
+    readTimeout: 0
     username: ""
-    write_timeout: 0
-refresh_interval: 0
+    writeTimeout: 0
+refreshInterval: 0
 sentry:
-    attach_stacktrace: false
+    attachStacktrace: false
     debug: false
     dsn: ""
-    enable_tracing: false
+    enableTracing: false
     enabled: false
     environment: ""
-    profile_sample_rate: 0
+    profileSampleRate: 0
     repanic: false
-    sample_rate: 0
-    server_name: ""
-    trace_sample_rate: 0
-    trace_sampler: 0
+    sampleRate: 0
+    serverName: ""
+    traceSampleRate: 0
+    traceSampler: 0
 server:
     cors:
-        allow_origins: null
-        cookie_insecure: false
+        allowOrigins: null
+        cookieInsecure: false
     debug: false
     dev: false
-    idle_timeout: 0
+    idleTimeout: 0
     listen: ""
-    read_header_timeout: 0
-    read_timeout: 0
-    shutdown_grace_period: 0
+    readHeaderTimeout: 0
+    readTimeout: 0
+    shutdownGracePeriod: 0
     tls:
-        auto_cert: false
-        cert_file: ""
-        cert_key: ""
+        autoCert: false
+        certFile: ""
+        certKey: ""
         config: null
         enabled: false
-    write_timeout: 0
+    writeTimeout: 0
 sessions:
-    encryption_key: ""
-    signing_key: ""
+    encryptionKey: ""
+    signingKey: ""
 tracer:
     enabled: false
     environment: ""
@@ -122,5 +122,5 @@ tracer:
         timeout: 0
     provider: ""
     stdout:
-        disable_timestamp: false
+        disableTimestamp: false
         pretty: false

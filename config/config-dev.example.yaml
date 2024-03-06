@@ -3,7 +3,7 @@ server:
   debug: true
   dev: true
   cors:
-    allow_origins: 
+    allowOrigins: 
       - http://localhost:3001
       - http://localhost:5500
 
@@ -14,9 +14,9 @@ server:
 # db settings
 db: 
   debug: true
-  driver_name: libsql
-  primary_db_source: "file:datum.db"
-  multi_write: false
+  driverName: libsql
+  primaryDbSource: "file:datum.db"
+  multiWrite: false
 
 # auth settings
 auth:
@@ -24,49 +24,49 @@ auth:
   token:
     kid: "02GGBS68AM12178M0REW3CEAFF"
     audience: "http://localhost:17608"
-    refresh_audience: "http://localhost:17608"
+    refreshAudience: "http://localhost:17608"
     issuer: "http://localhost:17608"
-    jwks_endpoint: "http://localhost:17608/.well-known/jwks.json"
-  supported_providers:
+    jwksEndpoint: "http://localhost:17608/.well-known/jwks.json"
+  supportedProviders:
     - google
     - github
   providers:
     google:
-      client_id: "client_id_here.apps.googleusercontent.com"
-      client_secret: "client_secret_here"
+      clientId: "client_id_here.apps.googleusercontent.com"
+      clientSecret: "client_secret_here"
       scopes:
         - email
         - profile
     github:
-      client_id: "client_id_here"
-      client_secret: "client_secret_here"
+      clientId: "client_id_here"
+      clientSecret: "client_secret_here"
       scopes:
         - user:email
         - read:user
     webauthn:
       debug: false
       enabled: true
-      relying_party_id: "localhost"
-      request_origin: "http://localhost:3001"
+      relyingPartyId: "localhost"
+      requestOrigin: "http://localhost:3001"
       
 # authz settings
 authz:
   enabled: true
-  store_name: datum
-  host_url: http://localhost:8080
-  create_new_model: false
+  storeName: datum
+  hostUrl: http://localhost:8080
+  createNewModel: false
 
 # session settings
 sessions:
-  signing_key: "4N0txRe4PSBTIGhXpMEriFlfDEH9zTri"
-  encryption_key: "IF841pLk48ibOVo6w9UIkr9OBCkjXG2q"
+  signingKey: "4N0txRe4PSBTIGhXpMEriFlfDEH9zTri"
+  encryptionKey: "IF841pLk48ibOVo6w9UIkr9OBCkjXG2q"
 
 # email settings
 email:
   testing: true
   archive: "fixtures/email"
-  send_grid_api_key: "SG.FakeAPIKey"
-  url_base: "http://localhost:17608/"
+  sendGridApiKey: "SG.FakeAPIKey"
+  urlBase: "http://localhost:17608/"
 
 # sentry settings
 sentry:
@@ -76,4 +76,4 @@ sentry:
 # analytics settings
 posthog:
   enabled: false
-  api_key: "phc_FakeKey"
+  apiKey: "phc_FakeKey"

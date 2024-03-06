@@ -1699,21 +1699,6 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 				selectedFields = append(selectedFields, organizationsetting.FieldDomains)
 				fieldSeen[organizationsetting.FieldDomains] = struct{}{}
 			}
-		case "ssoCert":
-			if _, ok := fieldSeen[organizationsetting.FieldSSOCert]; !ok {
-				selectedFields = append(selectedFields, organizationsetting.FieldSSOCert)
-				fieldSeen[organizationsetting.FieldSSOCert] = struct{}{}
-			}
-		case "ssoEntrypoint":
-			if _, ok := fieldSeen[organizationsetting.FieldSSOEntrypoint]; !ok {
-				selectedFields = append(selectedFields, organizationsetting.FieldSSOEntrypoint)
-				fieldSeen[organizationsetting.FieldSSOEntrypoint] = struct{}{}
-			}
-		case "ssoIssuer":
-			if _, ok := fieldSeen[organizationsetting.FieldSSOIssuer]; !ok {
-				selectedFields = append(selectedFields, organizationsetting.FieldSSOIssuer)
-				fieldSeen[organizationsetting.FieldSSOIssuer] = struct{}{}
-			}
 		case "billingContact":
 			if _, ok := fieldSeen[organizationsetting.FieldBillingContact]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldBillingContact)
@@ -1743,6 +1728,11 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 			if _, ok := fieldSeen[organizationsetting.FieldTags]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldTags)
 				fieldSeen[organizationsetting.FieldTags] = struct{}{}
+			}
+		case "avatarRemoteURL":
+			if _, ok := fieldSeen[organizationsetting.FieldAvatarRemoteURL]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldAvatarRemoteURL)
+				fieldSeen[organizationsetting.FieldAvatarRemoteURL] = struct{}{}
 			}
 		case "id":
 		case "__typename":

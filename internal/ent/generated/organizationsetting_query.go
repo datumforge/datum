@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -369,6 +370,12 @@ func (osq *OrganizationSettingQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		osq.sql = prev
+	}
+	if organizationsetting.Policy == nil {
+		return errors.New("generated: uninitialized organizationsetting.Policy (forgotten import generated/runtime?)")
+	}
+	if err := organizationsetting.Policy.EvalQuery(ctx, osq); err != nil {
+		return err
 	}
 	return nil
 }

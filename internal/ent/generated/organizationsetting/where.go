@@ -97,21 +97,6 @@ func DeletedBy(v string) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldDeletedBy, v))
 }
 
-// SSOCert applies equality check predicate on the "sso_cert" field. It's identical to SSOCertEQ.
-func SSOCert(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldSSOCert, v))
-}
-
-// SSOEntrypoint applies equality check predicate on the "sso_entrypoint" field. It's identical to SSOEntrypointEQ.
-func SSOEntrypoint(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldSSOEntrypoint, v))
-}
-
-// SSOIssuer applies equality check predicate on the "sso_issuer" field. It's identical to SSOIssuerEQ.
-func SSOIssuer(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldSSOIssuer, v))
-}
-
 // BillingContact applies equality check predicate on the "billing_contact" field. It's identical to BillingContactEQ.
 func BillingContact(v string) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldBillingContact, v))
@@ -135,6 +120,11 @@ func BillingAddress(v string) predicate.OrganizationSetting {
 // TaxIdentifier applies equality check predicate on the "tax_identifier" field. It's identical to TaxIdentifierEQ.
 func TaxIdentifier(v string) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldTaxIdentifier, v))
+}
+
+// AvatarRemoteURL applies equality check predicate on the "avatar_remote_url" field. It's identical to AvatarRemoteURLEQ.
+func AvatarRemoteURL(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldEQ(FieldAvatarRemoteURL, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -522,231 +512,6 @@ func DomainsNotNil() predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldNotNull(FieldDomains))
 }
 
-// SSOCertEQ applies the EQ predicate on the "sso_cert" field.
-func SSOCertEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldSSOCert, v))
-}
-
-// SSOCertNEQ applies the NEQ predicate on the "sso_cert" field.
-func SSOCertNEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNEQ(FieldSSOCert, v))
-}
-
-// SSOCertIn applies the In predicate on the "sso_cert" field.
-func SSOCertIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIn(FieldSSOCert, vs...))
-}
-
-// SSOCertNotIn applies the NotIn predicate on the "sso_cert" field.
-func SSOCertNotIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotIn(FieldSSOCert, vs...))
-}
-
-// SSOCertGT applies the GT predicate on the "sso_cert" field.
-func SSOCertGT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGT(FieldSSOCert, v))
-}
-
-// SSOCertGTE applies the GTE predicate on the "sso_cert" field.
-func SSOCertGTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGTE(FieldSSOCert, v))
-}
-
-// SSOCertLT applies the LT predicate on the "sso_cert" field.
-func SSOCertLT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLT(FieldSSOCert, v))
-}
-
-// SSOCertLTE applies the LTE predicate on the "sso_cert" field.
-func SSOCertLTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLTE(FieldSSOCert, v))
-}
-
-// SSOCertContains applies the Contains predicate on the "sso_cert" field.
-func SSOCertContains(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContains(FieldSSOCert, v))
-}
-
-// SSOCertHasPrefix applies the HasPrefix predicate on the "sso_cert" field.
-func SSOCertHasPrefix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasPrefix(FieldSSOCert, v))
-}
-
-// SSOCertHasSuffix applies the HasSuffix predicate on the "sso_cert" field.
-func SSOCertHasSuffix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasSuffix(FieldSSOCert, v))
-}
-
-// SSOCertIsNil applies the IsNil predicate on the "sso_cert" field.
-func SSOCertIsNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIsNull(FieldSSOCert))
-}
-
-// SSOCertNotNil applies the NotNil predicate on the "sso_cert" field.
-func SSOCertNotNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotNull(FieldSSOCert))
-}
-
-// SSOCertEqualFold applies the EqualFold predicate on the "sso_cert" field.
-func SSOCertEqualFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEqualFold(FieldSSOCert, v))
-}
-
-// SSOCertContainsFold applies the ContainsFold predicate on the "sso_cert" field.
-func SSOCertContainsFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContainsFold(FieldSSOCert, v))
-}
-
-// SSOEntrypointEQ applies the EQ predicate on the "sso_entrypoint" field.
-func SSOEntrypointEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointNEQ applies the NEQ predicate on the "sso_entrypoint" field.
-func SSOEntrypointNEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNEQ(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointIn applies the In predicate on the "sso_entrypoint" field.
-func SSOEntrypointIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIn(FieldSSOEntrypoint, vs...))
-}
-
-// SSOEntrypointNotIn applies the NotIn predicate on the "sso_entrypoint" field.
-func SSOEntrypointNotIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotIn(FieldSSOEntrypoint, vs...))
-}
-
-// SSOEntrypointGT applies the GT predicate on the "sso_entrypoint" field.
-func SSOEntrypointGT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGT(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointGTE applies the GTE predicate on the "sso_entrypoint" field.
-func SSOEntrypointGTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGTE(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointLT applies the LT predicate on the "sso_entrypoint" field.
-func SSOEntrypointLT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLT(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointLTE applies the LTE predicate on the "sso_entrypoint" field.
-func SSOEntrypointLTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLTE(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointContains applies the Contains predicate on the "sso_entrypoint" field.
-func SSOEntrypointContains(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContains(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointHasPrefix applies the HasPrefix predicate on the "sso_entrypoint" field.
-func SSOEntrypointHasPrefix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasPrefix(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointHasSuffix applies the HasSuffix predicate on the "sso_entrypoint" field.
-func SSOEntrypointHasSuffix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasSuffix(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointIsNil applies the IsNil predicate on the "sso_entrypoint" field.
-func SSOEntrypointIsNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIsNull(FieldSSOEntrypoint))
-}
-
-// SSOEntrypointNotNil applies the NotNil predicate on the "sso_entrypoint" field.
-func SSOEntrypointNotNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotNull(FieldSSOEntrypoint))
-}
-
-// SSOEntrypointEqualFold applies the EqualFold predicate on the "sso_entrypoint" field.
-func SSOEntrypointEqualFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEqualFold(FieldSSOEntrypoint, v))
-}
-
-// SSOEntrypointContainsFold applies the ContainsFold predicate on the "sso_entrypoint" field.
-func SSOEntrypointContainsFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContainsFold(FieldSSOEntrypoint, v))
-}
-
-// SSOIssuerEQ applies the EQ predicate on the "sso_issuer" field.
-func SSOIssuerEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEQ(FieldSSOIssuer, v))
-}
-
-// SSOIssuerNEQ applies the NEQ predicate on the "sso_issuer" field.
-func SSOIssuerNEQ(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNEQ(FieldSSOIssuer, v))
-}
-
-// SSOIssuerIn applies the In predicate on the "sso_issuer" field.
-func SSOIssuerIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIn(FieldSSOIssuer, vs...))
-}
-
-// SSOIssuerNotIn applies the NotIn predicate on the "sso_issuer" field.
-func SSOIssuerNotIn(vs ...string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotIn(FieldSSOIssuer, vs...))
-}
-
-// SSOIssuerGT applies the GT predicate on the "sso_issuer" field.
-func SSOIssuerGT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGT(FieldSSOIssuer, v))
-}
-
-// SSOIssuerGTE applies the GTE predicate on the "sso_issuer" field.
-func SSOIssuerGTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldGTE(FieldSSOIssuer, v))
-}
-
-// SSOIssuerLT applies the LT predicate on the "sso_issuer" field.
-func SSOIssuerLT(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLT(FieldSSOIssuer, v))
-}
-
-// SSOIssuerLTE applies the LTE predicate on the "sso_issuer" field.
-func SSOIssuerLTE(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldLTE(FieldSSOIssuer, v))
-}
-
-// SSOIssuerContains applies the Contains predicate on the "sso_issuer" field.
-func SSOIssuerContains(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContains(FieldSSOIssuer, v))
-}
-
-// SSOIssuerHasPrefix applies the HasPrefix predicate on the "sso_issuer" field.
-func SSOIssuerHasPrefix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasPrefix(FieldSSOIssuer, v))
-}
-
-// SSOIssuerHasSuffix applies the HasSuffix predicate on the "sso_issuer" field.
-func SSOIssuerHasSuffix(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldHasSuffix(FieldSSOIssuer, v))
-}
-
-// SSOIssuerIsNil applies the IsNil predicate on the "sso_issuer" field.
-func SSOIssuerIsNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldIsNull(FieldSSOIssuer))
-}
-
-// SSOIssuerNotNil applies the NotNil predicate on the "sso_issuer" field.
-func SSOIssuerNotNil() predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldNotNull(FieldSSOIssuer))
-}
-
-// SSOIssuerEqualFold applies the EqualFold predicate on the "sso_issuer" field.
-func SSOIssuerEqualFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldEqualFold(FieldSSOIssuer, v))
-}
-
-// SSOIssuerContainsFold applies the ContainsFold predicate on the "sso_issuer" field.
-func SSOIssuerContainsFold(v string) predicate.OrganizationSetting {
-	return predicate.OrganizationSetting(sql.FieldContainsFold(FieldSSOIssuer, v))
-}
-
 // BillingContactEQ applies the EQ predicate on the "billing_contact" field.
 func BillingContactEQ(v string) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldBillingContact, v))
@@ -1130,6 +895,81 @@ func TagsIsNil() predicate.OrganizationSetting {
 // TagsNotNil applies the NotNil predicate on the "tags" field.
 func TagsNotNil() predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldNotNull(FieldTags))
+}
+
+// AvatarRemoteURLEQ applies the EQ predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLEQ(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldEQ(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLNEQ applies the NEQ predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLNEQ(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldNEQ(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLIn applies the In predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLIn(vs ...string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldIn(FieldAvatarRemoteURL, vs...))
+}
+
+// AvatarRemoteURLNotIn applies the NotIn predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLNotIn(vs ...string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldNotIn(FieldAvatarRemoteURL, vs...))
+}
+
+// AvatarRemoteURLGT applies the GT predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLGT(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldGT(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLGTE applies the GTE predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLGTE(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldGTE(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLLT applies the LT predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLLT(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldLT(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLLTE applies the LTE predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLLTE(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldLTE(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLContains applies the Contains predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLContains(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldContains(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLHasPrefix applies the HasPrefix predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLHasPrefix(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldHasPrefix(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLHasSuffix applies the HasSuffix predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLHasSuffix(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldHasSuffix(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLIsNil applies the IsNil predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLIsNil() predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldIsNull(FieldAvatarRemoteURL))
+}
+
+// AvatarRemoteURLNotNil applies the NotNil predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLNotNil() predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldNotNull(FieldAvatarRemoteURL))
+}
+
+// AvatarRemoteURLEqualFold applies the EqualFold predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLEqualFold(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldEqualFold(FieldAvatarRemoteURL, v))
+}
+
+// AvatarRemoteURLContainsFold applies the ContainsFold predicate on the "avatar_remote_url" field.
+func AvatarRemoteURLContainsFold(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldContainsFold(FieldAvatarRemoteURL, v))
 }
 
 // HasOrganization applies the HasEdge predicate on the "organization" edge.

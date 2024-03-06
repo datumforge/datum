@@ -13418,9 +13418,6 @@ type OrganizationSettingMutation struct {
 	deleted_by          *string
 	domains             *[]string
 	appenddomains       []string
-	sso_cert            *string
-	sso_entrypoint      *string
-	sso_issuer          *string
 	billing_contact     *string
 	billing_email       *string
 	billing_phone       *string
@@ -13428,6 +13425,7 @@ type OrganizationSettingMutation struct {
 	tax_identifier      *string
 	tags                *[]string
 	appendtags          []string
+	avatar_remote_url   *string
 	clearedFields       map[string]struct{}
 	organization        *string
 	clearedorganization bool
@@ -13899,153 +13897,6 @@ func (m *OrganizationSettingMutation) ResetDomains() {
 	delete(m.clearedFields, organizationsetting.FieldDomains)
 }
 
-// SetSSOCert sets the "sso_cert" field.
-func (m *OrganizationSettingMutation) SetSSOCert(s string) {
-	m.sso_cert = &s
-}
-
-// SSOCert returns the value of the "sso_cert" field in the mutation.
-func (m *OrganizationSettingMutation) SSOCert() (r string, exists bool) {
-	v := m.sso_cert
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSSOCert returns the old "sso_cert" field's value of the OrganizationSetting entity.
-// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationSettingMutation) OldSSOCert(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSSOCert is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSSOCert requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSSOCert: %w", err)
-	}
-	return oldValue.SSOCert, nil
-}
-
-// ClearSSOCert clears the value of the "sso_cert" field.
-func (m *OrganizationSettingMutation) ClearSSOCert() {
-	m.sso_cert = nil
-	m.clearedFields[organizationsetting.FieldSSOCert] = struct{}{}
-}
-
-// SSOCertCleared returns if the "sso_cert" field was cleared in this mutation.
-func (m *OrganizationSettingMutation) SSOCertCleared() bool {
-	_, ok := m.clearedFields[organizationsetting.FieldSSOCert]
-	return ok
-}
-
-// ResetSSOCert resets all changes to the "sso_cert" field.
-func (m *OrganizationSettingMutation) ResetSSOCert() {
-	m.sso_cert = nil
-	delete(m.clearedFields, organizationsetting.FieldSSOCert)
-}
-
-// SetSSOEntrypoint sets the "sso_entrypoint" field.
-func (m *OrganizationSettingMutation) SetSSOEntrypoint(s string) {
-	m.sso_entrypoint = &s
-}
-
-// SSOEntrypoint returns the value of the "sso_entrypoint" field in the mutation.
-func (m *OrganizationSettingMutation) SSOEntrypoint() (r string, exists bool) {
-	v := m.sso_entrypoint
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSSOEntrypoint returns the old "sso_entrypoint" field's value of the OrganizationSetting entity.
-// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationSettingMutation) OldSSOEntrypoint(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSSOEntrypoint is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSSOEntrypoint requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSSOEntrypoint: %w", err)
-	}
-	return oldValue.SSOEntrypoint, nil
-}
-
-// ClearSSOEntrypoint clears the value of the "sso_entrypoint" field.
-func (m *OrganizationSettingMutation) ClearSSOEntrypoint() {
-	m.sso_entrypoint = nil
-	m.clearedFields[organizationsetting.FieldSSOEntrypoint] = struct{}{}
-}
-
-// SSOEntrypointCleared returns if the "sso_entrypoint" field was cleared in this mutation.
-func (m *OrganizationSettingMutation) SSOEntrypointCleared() bool {
-	_, ok := m.clearedFields[organizationsetting.FieldSSOEntrypoint]
-	return ok
-}
-
-// ResetSSOEntrypoint resets all changes to the "sso_entrypoint" field.
-func (m *OrganizationSettingMutation) ResetSSOEntrypoint() {
-	m.sso_entrypoint = nil
-	delete(m.clearedFields, organizationsetting.FieldSSOEntrypoint)
-}
-
-// SetSSOIssuer sets the "sso_issuer" field.
-func (m *OrganizationSettingMutation) SetSSOIssuer(s string) {
-	m.sso_issuer = &s
-}
-
-// SSOIssuer returns the value of the "sso_issuer" field in the mutation.
-func (m *OrganizationSettingMutation) SSOIssuer() (r string, exists bool) {
-	v := m.sso_issuer
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSSOIssuer returns the old "sso_issuer" field's value of the OrganizationSetting entity.
-// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationSettingMutation) OldSSOIssuer(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSSOIssuer is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSSOIssuer requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSSOIssuer: %w", err)
-	}
-	return oldValue.SSOIssuer, nil
-}
-
-// ClearSSOIssuer clears the value of the "sso_issuer" field.
-func (m *OrganizationSettingMutation) ClearSSOIssuer() {
-	m.sso_issuer = nil
-	m.clearedFields[organizationsetting.FieldSSOIssuer] = struct{}{}
-}
-
-// SSOIssuerCleared returns if the "sso_issuer" field was cleared in this mutation.
-func (m *OrganizationSettingMutation) SSOIssuerCleared() bool {
-	_, ok := m.clearedFields[organizationsetting.FieldSSOIssuer]
-	return ok
-}
-
-// ResetSSOIssuer resets all changes to the "sso_issuer" field.
-func (m *OrganizationSettingMutation) ResetSSOIssuer() {
-	m.sso_issuer = nil
-	delete(m.clearedFields, organizationsetting.FieldSSOIssuer)
-}
-
 // SetBillingContact sets the "billing_contact" field.
 func (m *OrganizationSettingMutation) SetBillingContact(s string) {
 	m.billing_contact = &s
@@ -14356,6 +14207,55 @@ func (m *OrganizationSettingMutation) ResetTags() {
 	delete(m.clearedFields, organizationsetting.FieldTags)
 }
 
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (m *OrganizationSettingMutation) SetAvatarRemoteURL(s string) {
+	m.avatar_remote_url = &s
+}
+
+// AvatarRemoteURL returns the value of the "avatar_remote_url" field in the mutation.
+func (m *OrganizationSettingMutation) AvatarRemoteURL() (r string, exists bool) {
+	v := m.avatar_remote_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAvatarRemoteURL returns the old "avatar_remote_url" field's value of the OrganizationSetting entity.
+// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationSettingMutation) OldAvatarRemoteURL(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAvatarRemoteURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAvatarRemoteURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAvatarRemoteURL: %w", err)
+	}
+	return oldValue.AvatarRemoteURL, nil
+}
+
+// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
+func (m *OrganizationSettingMutation) ClearAvatarRemoteURL() {
+	m.avatar_remote_url = nil
+	m.clearedFields[organizationsetting.FieldAvatarRemoteURL] = struct{}{}
+}
+
+// AvatarRemoteURLCleared returns if the "avatar_remote_url" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) AvatarRemoteURLCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldAvatarRemoteURL]
+	return ok
+}
+
+// ResetAvatarRemoteURL resets all changes to the "avatar_remote_url" field.
+func (m *OrganizationSettingMutation) ResetAvatarRemoteURL() {
+	m.avatar_remote_url = nil
+	delete(m.clearedFields, organizationsetting.FieldAvatarRemoteURL)
+}
+
 // SetOrganizationID sets the "organization" edge to the Organization entity by id.
 func (m *OrganizationSettingMutation) SetOrganizationID(id string) {
 	m.organization = &id
@@ -14429,7 +14329,7 @@ func (m *OrganizationSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationSettingMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, organizationsetting.FieldCreatedAt)
 	}
@@ -14451,15 +14351,6 @@ func (m *OrganizationSettingMutation) Fields() []string {
 	if m.domains != nil {
 		fields = append(fields, organizationsetting.FieldDomains)
 	}
-	if m.sso_cert != nil {
-		fields = append(fields, organizationsetting.FieldSSOCert)
-	}
-	if m.sso_entrypoint != nil {
-		fields = append(fields, organizationsetting.FieldSSOEntrypoint)
-	}
-	if m.sso_issuer != nil {
-		fields = append(fields, organizationsetting.FieldSSOIssuer)
-	}
 	if m.billing_contact != nil {
 		fields = append(fields, organizationsetting.FieldBillingContact)
 	}
@@ -14477,6 +14368,9 @@ func (m *OrganizationSettingMutation) Fields() []string {
 	}
 	if m.tags != nil {
 		fields = append(fields, organizationsetting.FieldTags)
+	}
+	if m.avatar_remote_url != nil {
+		fields = append(fields, organizationsetting.FieldAvatarRemoteURL)
 	}
 	return fields
 }
@@ -14500,12 +14394,6 @@ func (m *OrganizationSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedBy()
 	case organizationsetting.FieldDomains:
 		return m.Domains()
-	case organizationsetting.FieldSSOCert:
-		return m.SSOCert()
-	case organizationsetting.FieldSSOEntrypoint:
-		return m.SSOEntrypoint()
-	case organizationsetting.FieldSSOIssuer:
-		return m.SSOIssuer()
 	case organizationsetting.FieldBillingContact:
 		return m.BillingContact()
 	case organizationsetting.FieldBillingEmail:
@@ -14518,6 +14406,8 @@ func (m *OrganizationSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.TaxIdentifier()
 	case organizationsetting.FieldTags:
 		return m.Tags()
+	case organizationsetting.FieldAvatarRemoteURL:
+		return m.AvatarRemoteURL()
 	}
 	return nil, false
 }
@@ -14541,12 +14431,6 @@ func (m *OrganizationSettingMutation) OldField(ctx context.Context, name string)
 		return m.OldDeletedBy(ctx)
 	case organizationsetting.FieldDomains:
 		return m.OldDomains(ctx)
-	case organizationsetting.FieldSSOCert:
-		return m.OldSSOCert(ctx)
-	case organizationsetting.FieldSSOEntrypoint:
-		return m.OldSSOEntrypoint(ctx)
-	case organizationsetting.FieldSSOIssuer:
-		return m.OldSSOIssuer(ctx)
 	case organizationsetting.FieldBillingContact:
 		return m.OldBillingContact(ctx)
 	case organizationsetting.FieldBillingEmail:
@@ -14559,6 +14443,8 @@ func (m *OrganizationSettingMutation) OldField(ctx context.Context, name string)
 		return m.OldTaxIdentifier(ctx)
 	case organizationsetting.FieldTags:
 		return m.OldTags(ctx)
+	case organizationsetting.FieldAvatarRemoteURL:
+		return m.OldAvatarRemoteURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrganizationSetting field %s", name)
 }
@@ -14617,27 +14503,6 @@ func (m *OrganizationSettingMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetDomains(v)
 		return nil
-	case organizationsetting.FieldSSOCert:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSSOCert(v)
-		return nil
-	case organizationsetting.FieldSSOEntrypoint:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSSOEntrypoint(v)
-		return nil
-	case organizationsetting.FieldSSOIssuer:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSSOIssuer(v)
-		return nil
 	case organizationsetting.FieldBillingContact:
 		v, ok := value.(string)
 		if !ok {
@@ -14679,6 +14544,13 @@ func (m *OrganizationSettingMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTags(v)
+		return nil
+	case organizationsetting.FieldAvatarRemoteURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAvatarRemoteURL(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting field %s", name)
@@ -14731,15 +14603,6 @@ func (m *OrganizationSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(organizationsetting.FieldDomains) {
 		fields = append(fields, organizationsetting.FieldDomains)
 	}
-	if m.FieldCleared(organizationsetting.FieldSSOCert) {
-		fields = append(fields, organizationsetting.FieldSSOCert)
-	}
-	if m.FieldCleared(organizationsetting.FieldSSOEntrypoint) {
-		fields = append(fields, organizationsetting.FieldSSOEntrypoint)
-	}
-	if m.FieldCleared(organizationsetting.FieldSSOIssuer) {
-		fields = append(fields, organizationsetting.FieldSSOIssuer)
-	}
 	if m.FieldCleared(organizationsetting.FieldBillingContact) {
 		fields = append(fields, organizationsetting.FieldBillingContact)
 	}
@@ -14757,6 +14620,9 @@ func (m *OrganizationSettingMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(organizationsetting.FieldTags) {
 		fields = append(fields, organizationsetting.FieldTags)
+	}
+	if m.FieldCleared(organizationsetting.FieldAvatarRemoteURL) {
+		fields = append(fields, organizationsetting.FieldAvatarRemoteURL)
 	}
 	return fields
 }
@@ -14793,15 +14659,6 @@ func (m *OrganizationSettingMutation) ClearField(name string) error {
 	case organizationsetting.FieldDomains:
 		m.ClearDomains()
 		return nil
-	case organizationsetting.FieldSSOCert:
-		m.ClearSSOCert()
-		return nil
-	case organizationsetting.FieldSSOEntrypoint:
-		m.ClearSSOEntrypoint()
-		return nil
-	case organizationsetting.FieldSSOIssuer:
-		m.ClearSSOIssuer()
-		return nil
 	case organizationsetting.FieldBillingContact:
 		m.ClearBillingContact()
 		return nil
@@ -14819,6 +14676,9 @@ func (m *OrganizationSettingMutation) ClearField(name string) error {
 		return nil
 	case organizationsetting.FieldTags:
 		m.ClearTags()
+		return nil
+	case organizationsetting.FieldAvatarRemoteURL:
+		m.ClearAvatarRemoteURL()
 		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting nullable field %s", name)
@@ -14849,15 +14709,6 @@ func (m *OrganizationSettingMutation) ResetField(name string) error {
 	case organizationsetting.FieldDomains:
 		m.ResetDomains()
 		return nil
-	case organizationsetting.FieldSSOCert:
-		m.ResetSSOCert()
-		return nil
-	case organizationsetting.FieldSSOEntrypoint:
-		m.ResetSSOEntrypoint()
-		return nil
-	case organizationsetting.FieldSSOIssuer:
-		m.ResetSSOIssuer()
-		return nil
 	case organizationsetting.FieldBillingContact:
 		m.ResetBillingContact()
 		return nil
@@ -14875,6 +14726,9 @@ func (m *OrganizationSettingMutation) ResetField(name string) error {
 		return nil
 	case organizationsetting.FieldTags:
 		m.ResetTags()
+		return nil
+	case organizationsetting.FieldAvatarRemoteURL:
+		m.ResetAvatarRemoteURL()
 		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting field %s", name)

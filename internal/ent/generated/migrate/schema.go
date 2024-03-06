@@ -412,15 +412,13 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "domains", Type: field.TypeJSON, Nullable: true},
-		{Name: "sso_cert", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "sso_entrypoint", Type: field.TypeString, Nullable: true},
-		{Name: "sso_issuer", Type: field.TypeString, Nullable: true},
 		{Name: "billing_contact", Type: field.TypeString, Nullable: true},
 		{Name: "billing_email", Type: field.TypeString, Nullable: true},
 		{Name: "billing_phone", Type: field.TypeString, Nullable: true},
 		{Name: "billing_address", Type: field.TypeString, Nullable: true},
 		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "organization_setting", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
@@ -431,7 +429,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organization_settings_organizations_setting",
-				Columns:    []*schema.Column{OrganizationSettingsColumns[17]},
+				Columns:    []*schema.Column{OrganizationSettingsColumns[15]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

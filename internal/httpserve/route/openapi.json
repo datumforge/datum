@@ -3413,15 +3413,6 @@
                       "type": "string"
                     }
                   },
-                  "sso_cert": {
-                    "type": "string"
-                  },
-                  "sso_entrypoint": {
-                    "type": "string"
-                  },
-                  "sso_issuer": {
-                    "type": "string"
-                  },
                   "billing_contact": {
                     "type": "string"
                   },
@@ -3442,6 +3433,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "avatar_remote_url": {
+                    "type": "string"
                   },
                   "organization": {
                     "type": "string"
@@ -3586,15 +3580,6 @@
                       "type": "string"
                     }
                   },
-                  "sso_cert": {
-                    "type": "string"
-                  },
-                  "sso_entrypoint": {
-                    "type": "string"
-                  },
-                  "sso_issuer": {
-                    "type": "string"
-                  },
                   "billing_contact": {
                     "type": "string"
                   },
@@ -3615,6 +3600,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "avatar_remote_url": {
+                    "type": "string"
                   },
                   "organization": {
                     "type": "string"
@@ -7362,15 +7350,6 @@
               "type": "string"
             }
           },
-          "sso_cert": {
-            "type": "string"
-          },
-          "sso_entrypoint": {
-            "type": "string"
-          },
-          "sso_issuer": {
-            "type": "string"
-          },
           "billing_contact": {
             "type": "string"
           },
@@ -7391,6 +7370,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "avatar_remote_url": {
+            "type": "string"
           },
           "organization": {
             "$ref": "#/components/schemas/Organization"

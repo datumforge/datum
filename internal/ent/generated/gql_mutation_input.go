@@ -1292,21 +1292,19 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 
 // CreateOrganizationSettingInput represents a mutation input for creating organizationsettings.
 type CreateOrganizationSettingInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Domains        []string
-	SSOCert        *string
-	SSOEntrypoint  *string
-	SSOIssuer      *string
-	BillingContact *string
-	BillingEmail   *string
-	BillingPhone   *string
-	BillingAddress *string
-	TaxIdentifier  *string
-	Tags           []string
-	OrganizationID *string
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	Domains         []string
+	BillingContact  *string
+	BillingEmail    *string
+	BillingPhone    *string
+	BillingAddress  *string
+	TaxIdentifier   *string
+	Tags            []string
+	AvatarRemoteURL *string
+	OrganizationID  *string
 }
 
 // Mutate applies the CreateOrganizationSettingInput on the OrganizationSettingMutation builder.
@@ -1326,15 +1324,6 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.Domains; v != nil {
 		m.SetDomains(v)
 	}
-	if v := i.SSOCert; v != nil {
-		m.SetSSOCert(*v)
-	}
-	if v := i.SSOEntrypoint; v != nil {
-		m.SetSSOEntrypoint(*v)
-	}
-	if v := i.SSOIssuer; v != nil {
-		m.SetSSOIssuer(*v)
-	}
 	if v := i.BillingContact; v != nil {
 		m.SetBillingContact(*v)
 	}
@@ -1353,6 +1342,9 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
+	}
 	if v := i.OrganizationID; v != nil {
 		m.SetOrganizationID(*v)
 	}
@@ -1366,34 +1358,30 @@ func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *
 
 // UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
 type UpdateOrganizationSettingInput struct {
-	ClearUpdatedAt      bool
-	UpdatedAt           *time.Time
-	ClearUpdatedBy      bool
-	UpdatedBy           *string
-	ClearDomains        bool
-	Domains             []string
-	AppendDomains       []string
-	ClearSSOCert        bool
-	SSOCert             *string
-	ClearSSOEntrypoint  bool
-	SSOEntrypoint       *string
-	ClearSSOIssuer      bool
-	SSOIssuer           *string
-	ClearBillingContact bool
-	BillingContact      *string
-	ClearBillingEmail   bool
-	BillingEmail        *string
-	ClearBillingPhone   bool
-	BillingPhone        *string
-	ClearBillingAddress bool
-	BillingAddress      *string
-	ClearTaxIdentifier  bool
-	TaxIdentifier       *string
-	ClearTags           bool
-	Tags                []string
-	AppendTags          []string
-	ClearOrganization   bool
-	OrganizationID      *string
+	ClearUpdatedAt       bool
+	UpdatedAt            *time.Time
+	ClearUpdatedBy       bool
+	UpdatedBy            *string
+	ClearDomains         bool
+	Domains              []string
+	AppendDomains        []string
+	ClearBillingContact  bool
+	BillingContact       *string
+	ClearBillingEmail    bool
+	BillingEmail         *string
+	ClearBillingPhone    bool
+	BillingPhone         *string
+	ClearBillingAddress  bool
+	BillingAddress       *string
+	ClearTaxIdentifier   bool
+	TaxIdentifier        *string
+	ClearTags            bool
+	Tags                 []string
+	AppendTags           []string
+	ClearAvatarRemoteURL bool
+	AvatarRemoteURL      *string
+	ClearOrganization    bool
+	OrganizationID       *string
 }
 
 // Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
@@ -1418,24 +1406,6 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if i.AppendDomains != nil {
 		m.AppendDomains(i.Domains)
-	}
-	if i.ClearSSOCert {
-		m.ClearSSOCert()
-	}
-	if v := i.SSOCert; v != nil {
-		m.SetSSOCert(*v)
-	}
-	if i.ClearSSOEntrypoint {
-		m.ClearSSOEntrypoint()
-	}
-	if v := i.SSOEntrypoint; v != nil {
-		m.SetSSOEntrypoint(*v)
-	}
-	if i.ClearSSOIssuer {
-		m.ClearSSOIssuer()
-	}
-	if v := i.SSOIssuer; v != nil {
-		m.SetSSOIssuer(*v)
 	}
 	if i.ClearBillingContact {
 		m.ClearBillingContact()
@@ -1475,6 +1445,12 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
+	}
+	if i.ClearAvatarRemoteURL {
+		m.ClearAvatarRemoteURL()
+	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
 	}
 	if i.ClearOrganization {
 		m.ClearOrganization()

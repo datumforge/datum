@@ -295,3 +295,18 @@ func (m *OrganizationMutation) CreateTuplesFromDelete(ctx context.Context) error
 
 	return nil
 }
+
+func (m *OrganizationSettingMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationSettingMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationSettingMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}

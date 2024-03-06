@@ -6835,57 +6835,6 @@ type OrganizationSettingWhereInput struct {
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 
-	// "sso_cert" field predicates.
-	SSOCert             *string  `json:"ssoCert,omitempty"`
-	SSOCertNEQ          *string  `json:"ssoCertNEQ,omitempty"`
-	SSOCertIn           []string `json:"ssoCertIn,omitempty"`
-	SSOCertNotIn        []string `json:"ssoCertNotIn,omitempty"`
-	SSOCertGT           *string  `json:"ssoCertGT,omitempty"`
-	SSOCertGTE          *string  `json:"ssoCertGTE,omitempty"`
-	SSOCertLT           *string  `json:"ssoCertLT,omitempty"`
-	SSOCertLTE          *string  `json:"ssoCertLTE,omitempty"`
-	SSOCertContains     *string  `json:"ssoCertContains,omitempty"`
-	SSOCertHasPrefix    *string  `json:"ssoCertHasPrefix,omitempty"`
-	SSOCertHasSuffix    *string  `json:"ssoCertHasSuffix,omitempty"`
-	SSOCertIsNil        bool     `json:"ssoCertIsNil,omitempty"`
-	SSOCertNotNil       bool     `json:"ssoCertNotNil,omitempty"`
-	SSOCertEqualFold    *string  `json:"ssoCertEqualFold,omitempty"`
-	SSOCertContainsFold *string  `json:"ssoCertContainsFold,omitempty"`
-
-	// "sso_entrypoint" field predicates.
-	SSOEntrypoint             *string  `json:"ssoEntrypoint,omitempty"`
-	SSOEntrypointNEQ          *string  `json:"ssoEntrypointNEQ,omitempty"`
-	SSOEntrypointIn           []string `json:"ssoEntrypointIn,omitempty"`
-	SSOEntrypointNotIn        []string `json:"ssoEntrypointNotIn,omitempty"`
-	SSOEntrypointGT           *string  `json:"ssoEntrypointGT,omitempty"`
-	SSOEntrypointGTE          *string  `json:"ssoEntrypointGTE,omitempty"`
-	SSOEntrypointLT           *string  `json:"ssoEntrypointLT,omitempty"`
-	SSOEntrypointLTE          *string  `json:"ssoEntrypointLTE,omitempty"`
-	SSOEntrypointContains     *string  `json:"ssoEntrypointContains,omitempty"`
-	SSOEntrypointHasPrefix    *string  `json:"ssoEntrypointHasPrefix,omitempty"`
-	SSOEntrypointHasSuffix    *string  `json:"ssoEntrypointHasSuffix,omitempty"`
-	SSOEntrypointIsNil        bool     `json:"ssoEntrypointIsNil,omitempty"`
-	SSOEntrypointNotNil       bool     `json:"ssoEntrypointNotNil,omitempty"`
-	SSOEntrypointEqualFold    *string  `json:"ssoEntrypointEqualFold,omitempty"`
-	SSOEntrypointContainsFold *string  `json:"ssoEntrypointContainsFold,omitempty"`
-
-	// "sso_issuer" field predicates.
-	SSOIssuer             *string  `json:"ssoIssuer,omitempty"`
-	SSOIssuerNEQ          *string  `json:"ssoIssuerNEQ,omitempty"`
-	SSOIssuerIn           []string `json:"ssoIssuerIn,omitempty"`
-	SSOIssuerNotIn        []string `json:"ssoIssuerNotIn,omitempty"`
-	SSOIssuerGT           *string  `json:"ssoIssuerGT,omitempty"`
-	SSOIssuerGTE          *string  `json:"ssoIssuerGTE,omitempty"`
-	SSOIssuerLT           *string  `json:"ssoIssuerLT,omitempty"`
-	SSOIssuerLTE          *string  `json:"ssoIssuerLTE,omitempty"`
-	SSOIssuerContains     *string  `json:"ssoIssuerContains,omitempty"`
-	SSOIssuerHasPrefix    *string  `json:"ssoIssuerHasPrefix,omitempty"`
-	SSOIssuerHasSuffix    *string  `json:"ssoIssuerHasSuffix,omitempty"`
-	SSOIssuerIsNil        bool     `json:"ssoIssuerIsNil,omitempty"`
-	SSOIssuerNotNil       bool     `json:"ssoIssuerNotNil,omitempty"`
-	SSOIssuerEqualFold    *string  `json:"ssoIssuerEqualFold,omitempty"`
-	SSOIssuerContainsFold *string  `json:"ssoIssuerContainsFold,omitempty"`
-
 	// "billing_contact" field predicates.
 	BillingContact             *string  `json:"billingContact,omitempty"`
 	BillingContactNEQ          *string  `json:"billingContactNEQ,omitempty"`
@@ -6970,6 +6919,23 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierNotNil       bool     `json:"taxIdentifierNotNil,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
+
+	// "avatar_remote_url" field predicates.
+	AvatarRemoteURL             *string  `json:"avatarRemoteURL,omitempty"`
+	AvatarRemoteURLNEQ          *string  `json:"avatarRemoteURLNEQ,omitempty"`
+	AvatarRemoteURLIn           []string `json:"avatarRemoteURLIn,omitempty"`
+	AvatarRemoteURLNotIn        []string `json:"avatarRemoteURLNotIn,omitempty"`
+	AvatarRemoteURLGT           *string  `json:"avatarRemoteURLGT,omitempty"`
+	AvatarRemoteURLGTE          *string  `json:"avatarRemoteURLGTE,omitempty"`
+	AvatarRemoteURLLT           *string  `json:"avatarRemoteURLLT,omitempty"`
+	AvatarRemoteURLLTE          *string  `json:"avatarRemoteURLLTE,omitempty"`
+	AvatarRemoteURLContains     *string  `json:"avatarRemoteURLContains,omitempty"`
+	AvatarRemoteURLHasPrefix    *string  `json:"avatarRemoteURLHasPrefix,omitempty"`
+	AvatarRemoteURLHasSuffix    *string  `json:"avatarRemoteURLHasSuffix,omitempty"`
+	AvatarRemoteURLIsNil        bool     `json:"avatarRemoteURLIsNil,omitempty"`
+	AvatarRemoteURLNotNil       bool     `json:"avatarRemoteURLNotNil,omitempty"`
+	AvatarRemoteURLEqualFold    *string  `json:"avatarRemoteURLEqualFold,omitempty"`
+	AvatarRemoteURLContainsFold *string  `json:"avatarRemoteURLContainsFold,omitempty"`
 
 	// "organization" edge predicates.
 	HasOrganization     *bool                     `json:"hasOrganization,omitempty"`
@@ -7302,141 +7268,6 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	if i.DeletedByContainsFold != nil {
 		predicates = append(predicates, organizationsetting.DeletedByContainsFold(*i.DeletedByContainsFold))
 	}
-	if i.SSOCert != nil {
-		predicates = append(predicates, organizationsetting.SSOCertEQ(*i.SSOCert))
-	}
-	if i.SSOCertNEQ != nil {
-		predicates = append(predicates, organizationsetting.SSOCertNEQ(*i.SSOCertNEQ))
-	}
-	if len(i.SSOCertIn) > 0 {
-		predicates = append(predicates, organizationsetting.SSOCertIn(i.SSOCertIn...))
-	}
-	if len(i.SSOCertNotIn) > 0 {
-		predicates = append(predicates, organizationsetting.SSOCertNotIn(i.SSOCertNotIn...))
-	}
-	if i.SSOCertGT != nil {
-		predicates = append(predicates, organizationsetting.SSOCertGT(*i.SSOCertGT))
-	}
-	if i.SSOCertGTE != nil {
-		predicates = append(predicates, organizationsetting.SSOCertGTE(*i.SSOCertGTE))
-	}
-	if i.SSOCertLT != nil {
-		predicates = append(predicates, organizationsetting.SSOCertLT(*i.SSOCertLT))
-	}
-	if i.SSOCertLTE != nil {
-		predicates = append(predicates, organizationsetting.SSOCertLTE(*i.SSOCertLTE))
-	}
-	if i.SSOCertContains != nil {
-		predicates = append(predicates, organizationsetting.SSOCertContains(*i.SSOCertContains))
-	}
-	if i.SSOCertHasPrefix != nil {
-		predicates = append(predicates, organizationsetting.SSOCertHasPrefix(*i.SSOCertHasPrefix))
-	}
-	if i.SSOCertHasSuffix != nil {
-		predicates = append(predicates, organizationsetting.SSOCertHasSuffix(*i.SSOCertHasSuffix))
-	}
-	if i.SSOCertIsNil {
-		predicates = append(predicates, organizationsetting.SSOCertIsNil())
-	}
-	if i.SSOCertNotNil {
-		predicates = append(predicates, organizationsetting.SSOCertNotNil())
-	}
-	if i.SSOCertEqualFold != nil {
-		predicates = append(predicates, organizationsetting.SSOCertEqualFold(*i.SSOCertEqualFold))
-	}
-	if i.SSOCertContainsFold != nil {
-		predicates = append(predicates, organizationsetting.SSOCertContainsFold(*i.SSOCertContainsFold))
-	}
-	if i.SSOEntrypoint != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointEQ(*i.SSOEntrypoint))
-	}
-	if i.SSOEntrypointNEQ != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointNEQ(*i.SSOEntrypointNEQ))
-	}
-	if len(i.SSOEntrypointIn) > 0 {
-		predicates = append(predicates, organizationsetting.SSOEntrypointIn(i.SSOEntrypointIn...))
-	}
-	if len(i.SSOEntrypointNotIn) > 0 {
-		predicates = append(predicates, organizationsetting.SSOEntrypointNotIn(i.SSOEntrypointNotIn...))
-	}
-	if i.SSOEntrypointGT != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointGT(*i.SSOEntrypointGT))
-	}
-	if i.SSOEntrypointGTE != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointGTE(*i.SSOEntrypointGTE))
-	}
-	if i.SSOEntrypointLT != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointLT(*i.SSOEntrypointLT))
-	}
-	if i.SSOEntrypointLTE != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointLTE(*i.SSOEntrypointLTE))
-	}
-	if i.SSOEntrypointContains != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointContains(*i.SSOEntrypointContains))
-	}
-	if i.SSOEntrypointHasPrefix != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointHasPrefix(*i.SSOEntrypointHasPrefix))
-	}
-	if i.SSOEntrypointHasSuffix != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointHasSuffix(*i.SSOEntrypointHasSuffix))
-	}
-	if i.SSOEntrypointIsNil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointIsNil())
-	}
-	if i.SSOEntrypointNotNil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointNotNil())
-	}
-	if i.SSOEntrypointEqualFold != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointEqualFold(*i.SSOEntrypointEqualFold))
-	}
-	if i.SSOEntrypointContainsFold != nil {
-		predicates = append(predicates, organizationsetting.SSOEntrypointContainsFold(*i.SSOEntrypointContainsFold))
-	}
-	if i.SSOIssuer != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerEQ(*i.SSOIssuer))
-	}
-	if i.SSOIssuerNEQ != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerNEQ(*i.SSOIssuerNEQ))
-	}
-	if len(i.SSOIssuerIn) > 0 {
-		predicates = append(predicates, organizationsetting.SSOIssuerIn(i.SSOIssuerIn...))
-	}
-	if len(i.SSOIssuerNotIn) > 0 {
-		predicates = append(predicates, organizationsetting.SSOIssuerNotIn(i.SSOIssuerNotIn...))
-	}
-	if i.SSOIssuerGT != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerGT(*i.SSOIssuerGT))
-	}
-	if i.SSOIssuerGTE != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerGTE(*i.SSOIssuerGTE))
-	}
-	if i.SSOIssuerLT != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerLT(*i.SSOIssuerLT))
-	}
-	if i.SSOIssuerLTE != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerLTE(*i.SSOIssuerLTE))
-	}
-	if i.SSOIssuerContains != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerContains(*i.SSOIssuerContains))
-	}
-	if i.SSOIssuerHasPrefix != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerHasPrefix(*i.SSOIssuerHasPrefix))
-	}
-	if i.SSOIssuerHasSuffix != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerHasSuffix(*i.SSOIssuerHasSuffix))
-	}
-	if i.SSOIssuerIsNil {
-		predicates = append(predicates, organizationsetting.SSOIssuerIsNil())
-	}
-	if i.SSOIssuerNotNil {
-		predicates = append(predicates, organizationsetting.SSOIssuerNotNil())
-	}
-	if i.SSOIssuerEqualFold != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerEqualFold(*i.SSOIssuerEqualFold))
-	}
-	if i.SSOIssuerContainsFold != nil {
-		predicates = append(predicates, organizationsetting.SSOIssuerContainsFold(*i.SSOIssuerContainsFold))
-	}
 	if i.BillingContact != nil {
 		predicates = append(predicates, organizationsetting.BillingContactEQ(*i.BillingContact))
 	}
@@ -7661,6 +7492,51 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.TaxIdentifierContainsFold != nil {
 		predicates = append(predicates, organizationsetting.TaxIdentifierContainsFold(*i.TaxIdentifierContainsFold))
+	}
+	if i.AvatarRemoteURL != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLEQ(*i.AvatarRemoteURL))
+	}
+	if i.AvatarRemoteURLNEQ != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLNEQ(*i.AvatarRemoteURLNEQ))
+	}
+	if len(i.AvatarRemoteURLIn) > 0 {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLIn(i.AvatarRemoteURLIn...))
+	}
+	if len(i.AvatarRemoteURLNotIn) > 0 {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLNotIn(i.AvatarRemoteURLNotIn...))
+	}
+	if i.AvatarRemoteURLGT != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLGT(*i.AvatarRemoteURLGT))
+	}
+	if i.AvatarRemoteURLGTE != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLGTE(*i.AvatarRemoteURLGTE))
+	}
+	if i.AvatarRemoteURLLT != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLLT(*i.AvatarRemoteURLLT))
+	}
+	if i.AvatarRemoteURLLTE != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLLTE(*i.AvatarRemoteURLLTE))
+	}
+	if i.AvatarRemoteURLContains != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLContains(*i.AvatarRemoteURLContains))
+	}
+	if i.AvatarRemoteURLHasPrefix != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLHasPrefix(*i.AvatarRemoteURLHasPrefix))
+	}
+	if i.AvatarRemoteURLHasSuffix != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLHasSuffix(*i.AvatarRemoteURLHasSuffix))
+	}
+	if i.AvatarRemoteURLIsNil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLIsNil())
+	}
+	if i.AvatarRemoteURLNotNil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLNotNil())
+	}
+	if i.AvatarRemoteURLEqualFold != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLEqualFold(*i.AvatarRemoteURLEqualFold))
+	}
+	if i.AvatarRemoteURLContainsFold != nil {
+		predicates = append(predicates, organizationsetting.AvatarRemoteURLContainsFold(*i.AvatarRemoteURLContainsFold))
 	}
 
 	if i.HasOrganization != nil {

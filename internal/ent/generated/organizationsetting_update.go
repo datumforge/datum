@@ -122,66 +122,6 @@ func (osu *OrganizationSettingUpdate) ClearDomains() *OrganizationSettingUpdate 
 	return osu
 }
 
-// SetSSOCert sets the "sso_cert" field.
-func (osu *OrganizationSettingUpdate) SetSSOCert(s string) *OrganizationSettingUpdate {
-	osu.mutation.SetSSOCert(s)
-	return osu
-}
-
-// SetNillableSSOCert sets the "sso_cert" field if the given value is not nil.
-func (osu *OrganizationSettingUpdate) SetNillableSSOCert(s *string) *OrganizationSettingUpdate {
-	if s != nil {
-		osu.SetSSOCert(*s)
-	}
-	return osu
-}
-
-// ClearSSOCert clears the value of the "sso_cert" field.
-func (osu *OrganizationSettingUpdate) ClearSSOCert() *OrganizationSettingUpdate {
-	osu.mutation.ClearSSOCert()
-	return osu
-}
-
-// SetSSOEntrypoint sets the "sso_entrypoint" field.
-func (osu *OrganizationSettingUpdate) SetSSOEntrypoint(s string) *OrganizationSettingUpdate {
-	osu.mutation.SetSSOEntrypoint(s)
-	return osu
-}
-
-// SetNillableSSOEntrypoint sets the "sso_entrypoint" field if the given value is not nil.
-func (osu *OrganizationSettingUpdate) SetNillableSSOEntrypoint(s *string) *OrganizationSettingUpdate {
-	if s != nil {
-		osu.SetSSOEntrypoint(*s)
-	}
-	return osu
-}
-
-// ClearSSOEntrypoint clears the value of the "sso_entrypoint" field.
-func (osu *OrganizationSettingUpdate) ClearSSOEntrypoint() *OrganizationSettingUpdate {
-	osu.mutation.ClearSSOEntrypoint()
-	return osu
-}
-
-// SetSSOIssuer sets the "sso_issuer" field.
-func (osu *OrganizationSettingUpdate) SetSSOIssuer(s string) *OrganizationSettingUpdate {
-	osu.mutation.SetSSOIssuer(s)
-	return osu
-}
-
-// SetNillableSSOIssuer sets the "sso_issuer" field if the given value is not nil.
-func (osu *OrganizationSettingUpdate) SetNillableSSOIssuer(s *string) *OrganizationSettingUpdate {
-	if s != nil {
-		osu.SetSSOIssuer(*s)
-	}
-	return osu
-}
-
-// ClearSSOIssuer clears the value of the "sso_issuer" field.
-func (osu *OrganizationSettingUpdate) ClearSSOIssuer() *OrganizationSettingUpdate {
-	osu.mutation.ClearSSOIssuer()
-	return osu
-}
-
 // SetBillingContact sets the "billing_contact" field.
 func (osu *OrganizationSettingUpdate) SetBillingContact(s string) *OrganizationSettingUpdate {
 	osu.mutation.SetBillingContact(s)
@@ -300,6 +240,26 @@ func (osu *OrganizationSettingUpdate) ClearTags() *OrganizationSettingUpdate {
 	return osu
 }
 
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (osu *OrganizationSettingUpdate) SetAvatarRemoteURL(s string) *OrganizationSettingUpdate {
+	osu.mutation.SetAvatarRemoteURL(s)
+	return osu
+}
+
+// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
+func (osu *OrganizationSettingUpdate) SetNillableAvatarRemoteURL(s *string) *OrganizationSettingUpdate {
+	if s != nil {
+		osu.SetAvatarRemoteURL(*s)
+	}
+	return osu
+}
+
+// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
+func (osu *OrganizationSettingUpdate) ClearAvatarRemoteURL() *OrganizationSettingUpdate {
+	osu.mutation.ClearAvatarRemoteURL()
+	return osu
+}
+
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
 func (osu *OrganizationSettingUpdate) SetOrganizationID(id string) *OrganizationSettingUpdate {
 	osu.mutation.SetOrganizationID(id)
@@ -372,7 +332,25 @@ func (osu *OrganizationSettingUpdate) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (osu *OrganizationSettingUpdate) check() error {
+	if v, ok := osu.mutation.BillingEmail(); ok {
+		if err := organizationsetting.BillingEmailValidator(v); err != nil {
+			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
+		}
+	}
+	if v, ok := osu.mutation.AvatarRemoteURL(); ok {
+		if err := organizationsetting.AvatarRemoteURLValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.avatar_remote_url": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := osu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(organizationsetting.Table, organizationsetting.Columns, sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString))
 	if ps := osu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -422,24 +400,6 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 	if osu.mutation.DomainsCleared() {
 		_spec.ClearField(organizationsetting.FieldDomains, field.TypeJSON)
 	}
-	if value, ok := osu.mutation.SSOCert(); ok {
-		_spec.SetField(organizationsetting.FieldSSOCert, field.TypeString, value)
-	}
-	if osu.mutation.SSOCertCleared() {
-		_spec.ClearField(organizationsetting.FieldSSOCert, field.TypeString)
-	}
-	if value, ok := osu.mutation.SSOEntrypoint(); ok {
-		_spec.SetField(organizationsetting.FieldSSOEntrypoint, field.TypeString, value)
-	}
-	if osu.mutation.SSOEntrypointCleared() {
-		_spec.ClearField(organizationsetting.FieldSSOEntrypoint, field.TypeString)
-	}
-	if value, ok := osu.mutation.SSOIssuer(); ok {
-		_spec.SetField(organizationsetting.FieldSSOIssuer, field.TypeString, value)
-	}
-	if osu.mutation.SSOIssuerCleared() {
-		_spec.ClearField(organizationsetting.FieldSSOIssuer, field.TypeString)
-	}
 	if value, ok := osu.mutation.BillingContact(); ok {
 		_spec.SetField(organizationsetting.FieldBillingContact, field.TypeString, value)
 	}
@@ -480,6 +440,12 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if osu.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
+	}
+	if value, ok := osu.mutation.AvatarRemoteURL(); ok {
+		_spec.SetField(organizationsetting.FieldAvatarRemoteURL, field.TypeString, value)
+	}
+	if osu.mutation.AvatarRemoteURLCleared() {
+		_spec.ClearField(organizationsetting.FieldAvatarRemoteURL, field.TypeString)
 	}
 	if osu.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -624,66 +590,6 @@ func (osuo *OrganizationSettingUpdateOne) ClearDomains() *OrganizationSettingUpd
 	return osuo
 }
 
-// SetSSOCert sets the "sso_cert" field.
-func (osuo *OrganizationSettingUpdateOne) SetSSOCert(s string) *OrganizationSettingUpdateOne {
-	osuo.mutation.SetSSOCert(s)
-	return osuo
-}
-
-// SetNillableSSOCert sets the "sso_cert" field if the given value is not nil.
-func (osuo *OrganizationSettingUpdateOne) SetNillableSSOCert(s *string) *OrganizationSettingUpdateOne {
-	if s != nil {
-		osuo.SetSSOCert(*s)
-	}
-	return osuo
-}
-
-// ClearSSOCert clears the value of the "sso_cert" field.
-func (osuo *OrganizationSettingUpdateOne) ClearSSOCert() *OrganizationSettingUpdateOne {
-	osuo.mutation.ClearSSOCert()
-	return osuo
-}
-
-// SetSSOEntrypoint sets the "sso_entrypoint" field.
-func (osuo *OrganizationSettingUpdateOne) SetSSOEntrypoint(s string) *OrganizationSettingUpdateOne {
-	osuo.mutation.SetSSOEntrypoint(s)
-	return osuo
-}
-
-// SetNillableSSOEntrypoint sets the "sso_entrypoint" field if the given value is not nil.
-func (osuo *OrganizationSettingUpdateOne) SetNillableSSOEntrypoint(s *string) *OrganizationSettingUpdateOne {
-	if s != nil {
-		osuo.SetSSOEntrypoint(*s)
-	}
-	return osuo
-}
-
-// ClearSSOEntrypoint clears the value of the "sso_entrypoint" field.
-func (osuo *OrganizationSettingUpdateOne) ClearSSOEntrypoint() *OrganizationSettingUpdateOne {
-	osuo.mutation.ClearSSOEntrypoint()
-	return osuo
-}
-
-// SetSSOIssuer sets the "sso_issuer" field.
-func (osuo *OrganizationSettingUpdateOne) SetSSOIssuer(s string) *OrganizationSettingUpdateOne {
-	osuo.mutation.SetSSOIssuer(s)
-	return osuo
-}
-
-// SetNillableSSOIssuer sets the "sso_issuer" field if the given value is not nil.
-func (osuo *OrganizationSettingUpdateOne) SetNillableSSOIssuer(s *string) *OrganizationSettingUpdateOne {
-	if s != nil {
-		osuo.SetSSOIssuer(*s)
-	}
-	return osuo
-}
-
-// ClearSSOIssuer clears the value of the "sso_issuer" field.
-func (osuo *OrganizationSettingUpdateOne) ClearSSOIssuer() *OrganizationSettingUpdateOne {
-	osuo.mutation.ClearSSOIssuer()
-	return osuo
-}
-
 // SetBillingContact sets the "billing_contact" field.
 func (osuo *OrganizationSettingUpdateOne) SetBillingContact(s string) *OrganizationSettingUpdateOne {
 	osuo.mutation.SetBillingContact(s)
@@ -802,6 +708,26 @@ func (osuo *OrganizationSettingUpdateOne) ClearTags() *OrganizationSettingUpdate
 	return osuo
 }
 
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (osuo *OrganizationSettingUpdateOne) SetAvatarRemoteURL(s string) *OrganizationSettingUpdateOne {
+	osuo.mutation.SetAvatarRemoteURL(s)
+	return osuo
+}
+
+// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
+func (osuo *OrganizationSettingUpdateOne) SetNillableAvatarRemoteURL(s *string) *OrganizationSettingUpdateOne {
+	if s != nil {
+		osuo.SetAvatarRemoteURL(*s)
+	}
+	return osuo
+}
+
+// ClearAvatarRemoteURL clears the value of the "avatar_remote_url" field.
+func (osuo *OrganizationSettingUpdateOne) ClearAvatarRemoteURL() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearAvatarRemoteURL()
+	return osuo
+}
+
 // SetOrganizationID sets the "organization" edge to the Organization entity by ID.
 func (osuo *OrganizationSettingUpdateOne) SetOrganizationID(id string) *OrganizationSettingUpdateOne {
 	osuo.mutation.SetOrganizationID(id)
@@ -887,7 +813,25 @@ func (osuo *OrganizationSettingUpdateOne) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (osuo *OrganizationSettingUpdateOne) check() error {
+	if v, ok := osuo.mutation.BillingEmail(); ok {
+		if err := organizationsetting.BillingEmailValidator(v); err != nil {
+			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
+		}
+	}
+	if v, ok := osuo.mutation.AvatarRemoteURL(); ok {
+		if err := organizationsetting.AvatarRemoteURLValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.avatar_remote_url": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *OrganizationSetting, err error) {
+	if err := osuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(organizationsetting.Table, organizationsetting.Columns, sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString))
 	id, ok := osuo.mutation.ID()
 	if !ok {
@@ -954,24 +898,6 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 	if osuo.mutation.DomainsCleared() {
 		_spec.ClearField(organizationsetting.FieldDomains, field.TypeJSON)
 	}
-	if value, ok := osuo.mutation.SSOCert(); ok {
-		_spec.SetField(organizationsetting.FieldSSOCert, field.TypeString, value)
-	}
-	if osuo.mutation.SSOCertCleared() {
-		_spec.ClearField(organizationsetting.FieldSSOCert, field.TypeString)
-	}
-	if value, ok := osuo.mutation.SSOEntrypoint(); ok {
-		_spec.SetField(organizationsetting.FieldSSOEntrypoint, field.TypeString, value)
-	}
-	if osuo.mutation.SSOEntrypointCleared() {
-		_spec.ClearField(organizationsetting.FieldSSOEntrypoint, field.TypeString)
-	}
-	if value, ok := osuo.mutation.SSOIssuer(); ok {
-		_spec.SetField(organizationsetting.FieldSSOIssuer, field.TypeString, value)
-	}
-	if osuo.mutation.SSOIssuerCleared() {
-		_spec.ClearField(organizationsetting.FieldSSOIssuer, field.TypeString)
-	}
 	if value, ok := osuo.mutation.BillingContact(); ok {
 		_spec.SetField(organizationsetting.FieldBillingContact, field.TypeString, value)
 	}
@@ -1012,6 +938,12 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 	}
 	if osuo.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
+	}
+	if value, ok := osuo.mutation.AvatarRemoteURL(); ok {
+		_spec.SetField(organizationsetting.FieldAvatarRemoteURL, field.TypeString, value)
+	}
+	if osuo.mutation.AvatarRemoteURLCleared() {
+		_spec.ClearField(organizationsetting.FieldAvatarRemoteURL, field.TypeString)
 	}
 	if osuo.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{

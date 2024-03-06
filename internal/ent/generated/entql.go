@@ -313,22 +313,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "OrganizationSetting",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			organizationsetting.FieldCreatedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldCreatedAt},
-			organizationsetting.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldUpdatedAt},
-			organizationsetting.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldCreatedBy},
-			organizationsetting.FieldUpdatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldUpdatedBy},
-			organizationsetting.FieldDeletedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldDeletedAt},
-			organizationsetting.FieldDeletedBy:      {Type: field.TypeString, Column: organizationsetting.FieldDeletedBy},
-			organizationsetting.FieldDomains:        {Type: field.TypeJSON, Column: organizationsetting.FieldDomains},
-			organizationsetting.FieldSSOCert:        {Type: field.TypeString, Column: organizationsetting.FieldSSOCert},
-			organizationsetting.FieldSSOEntrypoint:  {Type: field.TypeString, Column: organizationsetting.FieldSSOEntrypoint},
-			organizationsetting.FieldSSOIssuer:      {Type: field.TypeString, Column: organizationsetting.FieldSSOIssuer},
-			organizationsetting.FieldBillingContact: {Type: field.TypeString, Column: organizationsetting.FieldBillingContact},
-			organizationsetting.FieldBillingEmail:   {Type: field.TypeString, Column: organizationsetting.FieldBillingEmail},
-			organizationsetting.FieldBillingPhone:   {Type: field.TypeString, Column: organizationsetting.FieldBillingPhone},
-			organizationsetting.FieldBillingAddress: {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
-			organizationsetting.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
-			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
+			organizationsetting.FieldCreatedAt:       {Type: field.TypeTime, Column: organizationsetting.FieldCreatedAt},
+			organizationsetting.FieldUpdatedAt:       {Type: field.TypeTime, Column: organizationsetting.FieldUpdatedAt},
+			organizationsetting.FieldCreatedBy:       {Type: field.TypeString, Column: organizationsetting.FieldCreatedBy},
+			organizationsetting.FieldUpdatedBy:       {Type: field.TypeString, Column: organizationsetting.FieldUpdatedBy},
+			organizationsetting.FieldDeletedAt:       {Type: field.TypeTime, Column: organizationsetting.FieldDeletedAt},
+			organizationsetting.FieldDeletedBy:       {Type: field.TypeString, Column: organizationsetting.FieldDeletedBy},
+			organizationsetting.FieldDomains:         {Type: field.TypeJSON, Column: organizationsetting.FieldDomains},
+			organizationsetting.FieldBillingContact:  {Type: field.TypeString, Column: organizationsetting.FieldBillingContact},
+			organizationsetting.FieldBillingEmail:    {Type: field.TypeString, Column: organizationsetting.FieldBillingEmail},
+			organizationsetting.FieldBillingPhone:    {Type: field.TypeString, Column: organizationsetting.FieldBillingPhone},
+			organizationsetting.FieldBillingAddress:  {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
+			organizationsetting.FieldTaxIdentifier:   {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
+			organizationsetting.FieldTags:            {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
+			organizationsetting.FieldAvatarRemoteURL: {Type: field.TypeString, Column: organizationsetting.FieldAvatarRemoteURL},
 		},
 	}
 	graph.Nodes[12] = &sqlgraph.Node{
@@ -2478,21 +2476,6 @@ func (f *OrganizationSettingFilter) WhereDomains(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldDomains))
 }
 
-// WhereSSOCert applies the entql string predicate on the sso_cert field.
-func (f *OrganizationSettingFilter) WhereSSOCert(p entql.StringP) {
-	f.Where(p.Field(organizationsetting.FieldSSOCert))
-}
-
-// WhereSSOEntrypoint applies the entql string predicate on the sso_entrypoint field.
-func (f *OrganizationSettingFilter) WhereSSOEntrypoint(p entql.StringP) {
-	f.Where(p.Field(organizationsetting.FieldSSOEntrypoint))
-}
-
-// WhereSSOIssuer applies the entql string predicate on the sso_issuer field.
-func (f *OrganizationSettingFilter) WhereSSOIssuer(p entql.StringP) {
-	f.Where(p.Field(organizationsetting.FieldSSOIssuer))
-}
-
 // WhereBillingContact applies the entql string predicate on the billing_contact field.
 func (f *OrganizationSettingFilter) WhereBillingContact(p entql.StringP) {
 	f.Where(p.Field(organizationsetting.FieldBillingContact))
@@ -2521,6 +2504,11 @@ func (f *OrganizationSettingFilter) WhereTaxIdentifier(p entql.StringP) {
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
 func (f *OrganizationSettingFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldTags))
+}
+
+// WhereAvatarRemoteURL applies the entql string predicate on the avatar_remote_url field.
+func (f *OrganizationSettingFilter) WhereAvatarRemoteURL(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldAvatarRemoteURL))
 }
 
 // WhereHasOrganization applies a predicate to check if query has an edge organization.

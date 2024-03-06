@@ -29,12 +29,6 @@ const (
 	FieldDeletedBy = "deleted_by"
 	// FieldDomains holds the string denoting the domains field in the database.
 	FieldDomains = "domains"
-	// FieldSSOCert holds the string denoting the sso_cert field in the database.
-	FieldSSOCert = "sso_cert"
-	// FieldSSOEntrypoint holds the string denoting the sso_entrypoint field in the database.
-	FieldSSOEntrypoint = "sso_entrypoint"
-	// FieldSSOIssuer holds the string denoting the sso_issuer field in the database.
-	FieldSSOIssuer = "sso_issuer"
 	// FieldBillingContact holds the string denoting the billing_contact field in the database.
 	FieldBillingContact = "billing_contact"
 	// FieldBillingEmail holds the string denoting the billing_email field in the database.
@@ -47,6 +41,8 @@ const (
 	FieldTaxIdentifier = "tax_identifier"
 	// FieldTags holds the string denoting the tags field in the database.
 	FieldTags = "tags"
+	// FieldAvatarRemoteURL holds the string denoting the avatar_remote_url field in the database.
+	FieldAvatarRemoteURL = "avatar_remote_url"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
 	EdgeOrganization = "organization"
 	// Table holds the table name of the organizationsetting in the database.
@@ -70,15 +66,13 @@ var Columns = []string{
 	FieldDeletedAt,
 	FieldDeletedBy,
 	FieldDomains,
-	FieldSSOCert,
-	FieldSSOEntrypoint,
-	FieldSSOIssuer,
 	FieldBillingContact,
 	FieldBillingEmail,
 	FieldBillingPhone,
 	FieldBillingAddress,
 	FieldTaxIdentifier,
 	FieldTags,
+	FieldAvatarRemoteURL,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "organization_settings"
@@ -108,16 +102,21 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [2]ent.Hook
+	Hooks        [4]ent.Hook
 	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
+	BillingEmailValidator func(string) error
 	// DefaultTags holds the default value on creation for the "tags" field.
 	DefaultTags []string
+	// AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
+	AvatarRemoteURLValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -160,21 +159,6 @@ func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
 }
 
-// BySSOCert orders the results by the sso_cert field.
-func BySSOCert(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSSOCert, opts...).ToFunc()
-}
-
-// BySSOEntrypoint orders the results by the sso_entrypoint field.
-func BySSOEntrypoint(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSSOEntrypoint, opts...).ToFunc()
-}
-
-// BySSOIssuer orders the results by the sso_issuer field.
-func BySSOIssuer(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSSOIssuer, opts...).ToFunc()
-}
-
 // ByBillingContact orders the results by the billing_contact field.
 func ByBillingContact(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBillingContact, opts...).ToFunc()
@@ -198,6 +182,11 @@ func ByBillingAddress(opts ...sql.OrderTermOption) OrderOption {
 // ByTaxIdentifier orders the results by the tax_identifier field.
 func ByTaxIdentifier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTaxIdentifier, opts...).ToFunc()
+}
+
+// ByAvatarRemoteURL orders the results by the avatar_remote_url field.
+func ByAvatarRemoteURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAvatarRemoteURL, opts...).ToFunc()
 }
 
 // ByOrganizationField orders the results by organization field.

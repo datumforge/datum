@@ -284,9 +284,6 @@ input CreateOrganizationSettingInput {
 	domains associated with the organization
 	"""
 	domains: [String!]
-	ssoCert: String
-	ssoEntrypoint: String
-	ssoIssuer: String
 	"""
 	Name of the person to contact for billing
 	"""
@@ -302,6 +299,10 @@ input CreateOrganizationSettingInput {
 	tags associated with the object
 	"""
 	tags: [String!]
+	"""
+	URL of the user's remote avatar
+	"""
+	avatarRemoteURL: String
 	organizationID: ID
 }
 """
@@ -3411,9 +3412,6 @@ type OrganizationSetting implements Node {
 	domains associated with the organization
 	"""
 	domains: [String!]
-	ssoCert: String
-	ssoEntrypoint: String
-	ssoIssuer: String
 	"""
 	Name of the person to contact for billing
 	"""
@@ -3429,6 +3427,10 @@ type OrganizationSetting implements Node {
 	tags associated with the object
 	"""
 	tags: [String!]
+	"""
+	URL of the user's remote avatar
+	"""
+	avatarRemoteURL: String
 	organization: Organization
 }
 """
@@ -3603,60 +3605,6 @@ input OrganizationSettingWhereInput {
 	deletedByEqualFold: String
 	deletedByContainsFold: String
 	"""
-	sso_cert field predicates
-	"""
-	ssoCert: String
-	ssoCertNEQ: String
-	ssoCertIn: [String!]
-	ssoCertNotIn: [String!]
-	ssoCertGT: String
-	ssoCertGTE: String
-	ssoCertLT: String
-	ssoCertLTE: String
-	ssoCertContains: String
-	ssoCertHasPrefix: String
-	ssoCertHasSuffix: String
-	ssoCertIsNil: Boolean
-	ssoCertNotNil: Boolean
-	ssoCertEqualFold: String
-	ssoCertContainsFold: String
-	"""
-	sso_entrypoint field predicates
-	"""
-	ssoEntrypoint: String
-	ssoEntrypointNEQ: String
-	ssoEntrypointIn: [String!]
-	ssoEntrypointNotIn: [String!]
-	ssoEntrypointGT: String
-	ssoEntrypointGTE: String
-	ssoEntrypointLT: String
-	ssoEntrypointLTE: String
-	ssoEntrypointContains: String
-	ssoEntrypointHasPrefix: String
-	ssoEntrypointHasSuffix: String
-	ssoEntrypointIsNil: Boolean
-	ssoEntrypointNotNil: Boolean
-	ssoEntrypointEqualFold: String
-	ssoEntrypointContainsFold: String
-	"""
-	sso_issuer field predicates
-	"""
-	ssoIssuer: String
-	ssoIssuerNEQ: String
-	ssoIssuerIn: [String!]
-	ssoIssuerNotIn: [String!]
-	ssoIssuerGT: String
-	ssoIssuerGTE: String
-	ssoIssuerLT: String
-	ssoIssuerLTE: String
-	ssoIssuerContains: String
-	ssoIssuerHasPrefix: String
-	ssoIssuerHasSuffix: String
-	ssoIssuerIsNil: Boolean
-	ssoIssuerNotNil: Boolean
-	ssoIssuerEqualFold: String
-	ssoIssuerContainsFold: String
-	"""
 	billing_contact field predicates
 	"""
 	billingContact: String
@@ -3746,6 +3694,24 @@ input OrganizationSettingWhereInput {
 	taxIdentifierNotNil: Boolean
 	taxIdentifierEqualFold: String
 	taxIdentifierContainsFold: String
+	"""
+	avatar_remote_url field predicates
+	"""
+	avatarRemoteURL: String
+	avatarRemoteURLNEQ: String
+	avatarRemoteURLIn: [String!]
+	avatarRemoteURLNotIn: [String!]
+	avatarRemoteURLGT: String
+	avatarRemoteURLGTE: String
+	avatarRemoteURLLT: String
+	avatarRemoteURLLTE: String
+	avatarRemoteURLContains: String
+	avatarRemoteURLHasPrefix: String
+	avatarRemoteURLHasSuffix: String
+	avatarRemoteURLIsNil: Boolean
+	avatarRemoteURLNotNil: Boolean
+	avatarRemoteURLEqualFold: String
+	avatarRemoteURLContainsFold: String
 	"""
 	organization edge predicates
 	"""
@@ -5095,12 +5061,6 @@ input UpdateOrganizationSettingInput {
 	domains: [String!]
 	appendDomains: [String!]
 	clearDomains: Boolean
-	ssoCert: String
-	clearSSOCert: Boolean
-	ssoEntrypoint: String
-	clearSSOEntrypoint: Boolean
-	ssoIssuer: String
-	clearSSOIssuer: Boolean
 	"""
 	Name of the person to contact for billing
 	"""
@@ -5123,6 +5083,11 @@ input UpdateOrganizationSettingInput {
 	tags: [String!]
 	appendTags: [String!]
 	clearTags: Boolean
+	"""
+	URL of the user's remote avatar
+	"""
+	avatarRemoteURL: String
+	clearAvatarRemoteURL: Boolean
 	organizationID: ID
 	clearOrganization: Boolean
 }

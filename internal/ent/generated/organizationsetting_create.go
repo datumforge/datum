@@ -110,48 +110,6 @@ func (osc *OrganizationSettingCreate) SetDomains(s []string) *OrganizationSettin
 	return osc
 }
 
-// SetSSOCert sets the "sso_cert" field.
-func (osc *OrganizationSettingCreate) SetSSOCert(s string) *OrganizationSettingCreate {
-	osc.mutation.SetSSOCert(s)
-	return osc
-}
-
-// SetNillableSSOCert sets the "sso_cert" field if the given value is not nil.
-func (osc *OrganizationSettingCreate) SetNillableSSOCert(s *string) *OrganizationSettingCreate {
-	if s != nil {
-		osc.SetSSOCert(*s)
-	}
-	return osc
-}
-
-// SetSSOEntrypoint sets the "sso_entrypoint" field.
-func (osc *OrganizationSettingCreate) SetSSOEntrypoint(s string) *OrganizationSettingCreate {
-	osc.mutation.SetSSOEntrypoint(s)
-	return osc
-}
-
-// SetNillableSSOEntrypoint sets the "sso_entrypoint" field if the given value is not nil.
-func (osc *OrganizationSettingCreate) SetNillableSSOEntrypoint(s *string) *OrganizationSettingCreate {
-	if s != nil {
-		osc.SetSSOEntrypoint(*s)
-	}
-	return osc
-}
-
-// SetSSOIssuer sets the "sso_issuer" field.
-func (osc *OrganizationSettingCreate) SetSSOIssuer(s string) *OrganizationSettingCreate {
-	osc.mutation.SetSSOIssuer(s)
-	return osc
-}
-
-// SetNillableSSOIssuer sets the "sso_issuer" field if the given value is not nil.
-func (osc *OrganizationSettingCreate) SetNillableSSOIssuer(s *string) *OrganizationSettingCreate {
-	if s != nil {
-		osc.SetSSOIssuer(*s)
-	}
-	return osc
-}
-
 // SetBillingContact sets the "billing_contact" field.
 func (osc *OrganizationSettingCreate) SetBillingContact(s string) *OrganizationSettingCreate {
 	osc.mutation.SetBillingContact(s)
@@ -225,6 +183,20 @@ func (osc *OrganizationSettingCreate) SetNillableTaxIdentifier(s *string) *Organ
 // SetTags sets the "tags" field.
 func (osc *OrganizationSettingCreate) SetTags(s []string) *OrganizationSettingCreate {
 	osc.mutation.SetTags(s)
+	return osc
+}
+
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (osc *OrganizationSettingCreate) SetAvatarRemoteURL(s string) *OrganizationSettingCreate {
+	osc.mutation.SetAvatarRemoteURL(s)
+	return osc
+}
+
+// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableAvatarRemoteURL(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetAvatarRemoteURL(*s)
+	}
 	return osc
 }
 
@@ -328,6 +300,16 @@ func (osc *OrganizationSettingCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (osc *OrganizationSettingCreate) check() error {
+	if v, ok := osc.mutation.BillingEmail(); ok {
+		if err := organizationsetting.BillingEmailValidator(v); err != nil {
+			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
+		}
+	}
+	if v, ok := osc.mutation.AvatarRemoteURL(); ok {
+		if err := organizationsetting.AvatarRemoteURLValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.avatar_remote_url": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -392,18 +374,6 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 		_spec.SetField(organizationsetting.FieldDomains, field.TypeJSON, value)
 		_node.Domains = value
 	}
-	if value, ok := osc.mutation.SSOCert(); ok {
-		_spec.SetField(organizationsetting.FieldSSOCert, field.TypeString, value)
-		_node.SSOCert = value
-	}
-	if value, ok := osc.mutation.SSOEntrypoint(); ok {
-		_spec.SetField(organizationsetting.FieldSSOEntrypoint, field.TypeString, value)
-		_node.SSOEntrypoint = value
-	}
-	if value, ok := osc.mutation.SSOIssuer(); ok {
-		_spec.SetField(organizationsetting.FieldSSOIssuer, field.TypeString, value)
-		_node.SSOIssuer = value
-	}
 	if value, ok := osc.mutation.BillingContact(); ok {
 		_spec.SetField(organizationsetting.FieldBillingContact, field.TypeString, value)
 		_node.BillingContact = value
@@ -427,6 +397,10 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 	if value, ok := osc.mutation.Tags(); ok {
 		_spec.SetField(organizationsetting.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
+	}
+	if value, ok := osc.mutation.AvatarRemoteURL(); ok {
+		_spec.SetField(organizationsetting.FieldAvatarRemoteURL, field.TypeString, value)
+		_node.AvatarRemoteURL = &value
 	}
 	if nodes := osc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

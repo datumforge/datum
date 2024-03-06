@@ -1944,9 +1944,6 @@ type GetOrganizationByID_Organization_Setting struct {
 	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
 	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
 	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
 	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
@@ -1990,24 +1987,6 @@ func (t *GetOrganizationByID_Organization_Setting) GetDomains() []string {
 		t = &GetOrganizationByID_Organization_Setting{}
 	}
 	return t.Domains
-}
-func (t *GetOrganizationByID_Organization_Setting) GetSsoCert() *string {
-	if t == nil {
-		t = &GetOrganizationByID_Organization_Setting{}
-	}
-	return t.SsoCert
-}
-func (t *GetOrganizationByID_Organization_Setting) GetSsoEntrypoint() *string {
-	if t == nil {
-		t = &GetOrganizationByID_Organization_Setting{}
-	}
-	return t.SsoEntrypoint
-}
-func (t *GetOrganizationByID_Organization_Setting) GetSsoIssuer() *string {
-	if t == nil {
-		t = &GetOrganizationByID_Organization_Setting{}
-	}
-	return t.SsoIssuer
 }
 func (t *GetOrganizationByID_Organization_Setting) GetBillingContact() *string {
 	if t == nil {
@@ -2270,9 +2249,6 @@ type GetAllOrganizations_Organizations_Edges_Node_Setting struct {
 	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
 	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
 	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
 	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
@@ -2316,24 +2292,6 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetDomains() []st
 		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
 	}
 	return t.Domains
-}
-func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetSsoCert() *string {
-	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
-	}
-	return t.SsoCert
-}
-func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetSsoEntrypoint() *string {
-	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
-	}
-	return t.SsoEntrypoint
-}
-func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetSsoIssuer() *string {
-	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
-	}
-	return t.SsoIssuer
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetBillingContact() *string {
 	if t == nil {
@@ -2604,9 +2562,6 @@ type OrganizationsWhere_Organizations_Edges_Node_Setting struct {
 	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
 	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
 	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
 	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
@@ -2650,24 +2605,6 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetDomains() []str
 		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
 	}
 	return t.Domains
-}
-func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetSsoCert() *string {
-	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
-	}
-	return t.SsoCert
-}
-func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetSsoEntrypoint() *string {
-	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
-	}
-	return t.SsoEntrypoint
-}
-func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetSsoIssuer() *string {
-	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
-	}
-	return t.SsoIssuer
 }
 func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetBillingContact() *string {
 	if t == nil {
@@ -2816,9 +2753,6 @@ type CreateOrganization_CreateOrganization_Organization_Setting struct {
 	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
 	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
 	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
 	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
@@ -2862,24 +2796,6 @@ func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetDomains(
 		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
 	}
 	return t.Domains
-}
-func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetSsoCert() *string {
-	if t == nil {
-		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
-	}
-	return t.SsoCert
-}
-func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetSsoEntrypoint() *string {
-	if t == nil {
-		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
-	}
-	return t.SsoEntrypoint
-}
-func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetSsoIssuer() *string {
-	if t == nil {
-		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
-	}
-	return t.SsoIssuer
 }
 func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetBillingContact() *string {
 	if t == nil {
@@ -3107,9 +3023,6 @@ type UpdateOrganization_UpdateOrganization_Organization_Setting struct {
 	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	SsoCert        *string    "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	SsoEntrypoint  *string    "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	SsoIssuer      *string    "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
 	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
 	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
 	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
@@ -3153,24 +3066,6 @@ func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetDomains(
 		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
 	}
 	return t.Domains
-}
-func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetSsoCert() *string {
-	if t == nil {
-		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
-	}
-	return t.SsoCert
-}
-func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetSsoEntrypoint() *string {
-	if t == nil {
-		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
-	}
-	return t.SsoEntrypoint
-}
-func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetSsoIssuer() *string {
-	if t == nil {
-		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
-	}
-	return t.SsoIssuer
 }
 func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetBillingContact() *string {
 	if t == nil {
@@ -3290,11 +3185,6 @@ func (t *GetOrganizationSetting_OrganizationSetting_Organization) GetID() string
 
 type GetOrganizationSetting_OrganizationSetting struct {
 	ID             string                                                   "json:\"id\" graphql:\"id\""
-	SsoCert        *string                                                  "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	TaxIdentifier  *string                                                  "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string                                                 "json:\"tags,omitempty\" graphql:\"tags\""
-	SsoIssuer      *string                                                  "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
-	SsoEntrypoint  *string                                                  "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
 	BillingAddress *string                                                  "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	BillingContact *string                                                  "json:\"billingContact,omitempty\" graphql:\"billingContact\""
 	BillingEmail   *string                                                  "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
@@ -3312,36 +3202,6 @@ func (t *GetOrganizationSetting_OrganizationSetting) GetID() string {
 		t = &GetOrganizationSetting_OrganizationSetting{}
 	}
 	return t.ID
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetSsoCert() *string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.SsoCert
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetTaxIdentifier() *string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.TaxIdentifier
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetTags() []string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.Tags
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetSsoIssuer() *string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.SsoIssuer
-}
-func (t *GetOrganizationSetting_OrganizationSetting) GetSsoEntrypoint() *string {
-	if t == nil {
-		t = &GetOrganizationSetting_OrganizationSetting{}
-	}
-	return t.SsoEntrypoint
 }
 func (t *GetOrganizationSetting_OrganizationSetting) GetBillingAddress() *string {
 	if t == nil {
@@ -7094,9 +6954,6 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 			createdBy
 			updatedBy
 			domains
-			ssoCert
-			ssoEntrypoint
-			ssoIssuer
 			billingContact
 			billingEmail
 			billingPhone
@@ -7168,9 +7025,6 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 					createdBy
 					updatedBy
 					domains
-					ssoCert
-					ssoEntrypoint
-					ssoIssuer
 					billingContact
 					billingEmail
 					billingPhone
@@ -7240,9 +7094,6 @@ const OrganizationsWhereDocument = `query OrganizationsWhere ($where: Organizati
 					createdBy
 					updatedBy
 					domains
-					ssoCert
-					ssoEntrypoint
-					ssoIssuer
 					billingContact
 					billingEmail
 					billingPhone
@@ -7292,9 +7143,6 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 				createdBy
 				updatedBy
 				domains
-				ssoCert
-				ssoEntrypoint
-				ssoIssuer
 				billingContact
 				billingEmail
 				billingPhone
@@ -7357,9 +7205,6 @@ const UpdateOrganizationDocument = `mutation UpdateOrganization ($updateOrganiza
 				createdBy
 				updatedBy
 				domains
-				ssoCert
-				ssoEntrypoint
-				ssoIssuer
 				billingContact
 				billingEmail
 				billingPhone
@@ -7417,11 +7262,6 @@ func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID st
 const GetOrganizationSettingDocument = `query GetOrganizationSetting ($organizationSettingId: ID!) {
 	organizationSetting(id: $organizationSettingId) {
 		id
-		ssoCert
-		taxIdentifier
-		tags
-		ssoIssuer
-		ssoEntrypoint
 		billingAddress
 		billingContact
 		billingEmail

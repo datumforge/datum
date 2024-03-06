@@ -30,7 +30,7 @@ var DebugCookieConfig = &CookieConfig{
 	Path:     "/",
 	MaxAge:   defaultMaxAge,
 	HTTPOnly: true,
-	Secure:   true,
+	Secure:   false, // allow to work over http
 	SameSite: http.SameSiteLaxMode,
 }
 
@@ -40,7 +40,7 @@ var DebugOnlyCookieConfig = CookieConfig{
 	Path:     "/",
 	MaxAge:   600, // nolint: gomnd
 	HTTPOnly: true,
-	Secure:   true,
+	Secure:   false, // allow to work over http
 	SameSite: http.SameSiteLaxMode,
 }
 

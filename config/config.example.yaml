@@ -115,6 +115,11 @@ server:
 sessions:
     encryptionKey: ""
     signingKey: ""
+totp:
+    codeLength: 0
+    enabled: false
+    issuer: ""
+    redis: false
 tracer:
     enabled: false
     environment: ""

@@ -420,9 +420,9 @@ Config is the configuration for PostHog
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
 |**enabled**|`boolean`|||
-|**code\_length**|`integer`|||
-|**totp\_issuer**|`string`|||
-|**redis**||||
+|**codeLength**|`integer`|||
+|**issuer**|`string`|||
+|**redis**|`boolean`|||
 
 **Additional Properties:** not allowed  
 

@@ -624,13 +624,15 @@
         "enabled": {
           "type": "boolean"
         },
-        "code_length": {
+        "codeLength": {
           "type": "integer"
         },
-        "totp_issuer": {
+        "issuer": {
           "type": "string"
         },
-        "redis": true
+        "redis": {
+          "type": "boolean"
+        }
       },
       "additionalProperties": false,
       "type": "object"

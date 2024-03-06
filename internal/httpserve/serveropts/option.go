@@ -360,7 +360,7 @@ func WithOTP() ServerOption {
 		if s.Config.Settings.TOTP.Enabled {
 			opts := []totp.ConfigOption{
 				totp.WithCodeLength(s.Config.Settings.TOTP.CodeLength),
-				totp.WithIssuer(s.Config.Settings.TOTP.TOTPIssuer),
+				totp.WithIssuer(s.Config.Settings.TOTP.Issuer),
 			}
 
 			// append redis client if enabed

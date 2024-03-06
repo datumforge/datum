@@ -19,8 +19,9 @@ tasks:
   login:creds: 
     desc: a task to login the verified user
     aliases: [login]
+    env:
+      DATUM_PASSWORD: mattisthebest1234
     cmds:
-      - export DATUM_PASSWORD=mattisthebest1234
       - go run main.go login -u mitb@datum.net
 
   user:all:

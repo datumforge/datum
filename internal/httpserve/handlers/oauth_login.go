@@ -24,7 +24,7 @@ import (
 // OauthProviderConfig represents the configuration for OAuth providers such as Github and Google
 type OauthProviderConfig struct {
 	// RedirectURL is the URL that the OAuth2 client will redirect to after authentication with datum
-	RedirectURL string `json:"redirect_url" koanf:"redirect_url" default:"http://localhost:3001/api/auth/callback/datum"`
+	RedirectURL string `json:"redirectUrl" koanf:"redirectUrl" default:"http://localhost:3001/api/auth/callback/datum"`
 	// Github contains the configuration settings for the Github Oauth Provider
 	Github github.ProviderConfig `json:"github" koanf:"github"`
 	// Google contains the configuration settings for the Google Oauth Provider

@@ -34,31 +34,31 @@
           "type": "integer",
           "description": "DB to be selected after connecting to the server, 0 uses the default"
         },
-        "dial_timeout": {
+        "dialTimeout": {
           "type": "integer",
           "description": "Dial timeout for establishing new connections, defaults to 5s"
         },
-        "read_timeout": {
+        "readTimeout": {
           "type": "integer",
           "description": "Timeout for socket reads. If reached, commands will fail\nwith a timeout instead of blocking. Supported values:\n  - `0` - default timeout (3 seconds).\n  - `-1` - no timeout (block indefinitely).\n  - `-2` - disables SetReadDeadline calls completely."
         },
-        "write_timeout": {
+        "writeTimeout": {
           "type": "integer",
           "description": "Timeout for socket writes. If reached, commands will fail\nwith a timeout instead of blocking.  Supported values:\n  - `0` - default timeout (3 seconds).\n  - `-1` - no timeout (block indefinitely).\n  - `-2` - disables SetWriteDeadline calls completely."
         },
-        "max_retries": {
+        "maxRetries": {
           "type": "integer",
           "description": "MaxRetries before giving up.\nDefault is 3 retries; -1 (not 0) disables retries."
         },
-        "min_idle_conns": {
+        "minIdleConns": {
           "type": "integer",
           "description": "MinIdleConns is useful when establishing new connection is slow.\nDefault is 0. the idle connections are not closed by default."
         },
-        "max_idle_conns": {
+        "maxIdleConns": {
           "type": "integer",
           "description": "Maximum number of idle connections.\nDefault is 0. the idle connections are not closed by default."
         },
-        "max_active_conns": {
+        "maxActiveConns": {
           "type": "integer",
           "description": "Maximum number of connections allocated by the pool at a given time.\nWhen zero, there is no limit on the number of connections in the pool."
         }
@@ -77,7 +77,7 @@
           "$ref": "#/$defs/tokens.Config",
           "description": "Token contains the token config settings for Datum issued tokens"
         },
-        "supported_providers": {
+        "supportedProviders": {
           "$ref": "#/$defs/[]string",
           "description": "SupportedProviders are the supported oauth providers that have been configured"
         },
@@ -95,11 +95,11 @@
     },
     "config.CORS": {
       "properties": {
-        "allow_origins": {
+        "allowOrigins": {
           "$ref": "#/$defs/[]string",
           "description": "AllowOrigins is a list of allowed origin to indicate whether the response can be shared with\nrequesting code from the given origin"
         },
-        "cookie_insecure": {
+        "cookieInsecure": {
           "type": "boolean",
           "description": "CookieInsecure allows CSRF cookie to be sent to servers that the browser considers\nunsecured. Useful for cases where the connection is secured via VPN rather than\nHTTPS directly."
         }
@@ -122,23 +122,23 @@
           "type": "string",
           "description": "Listen sets the listen address to serve the echo server on"
         },
-        "shutdown_grace_period": {
+        "shutdownGracePeriod": {
           "type": "integer",
           "description": "ShutdownGracePeriod sets the grace period for in flight requests before shutting down"
         },
-        "read_timeout": {
+        "readTimeout": {
           "type": "integer",
           "description": "ReadTimeout sets the maximum duration for reading the entire request including the body"
         },
-        "write_timeout": {
+        "writeTimeout": {
           "type": "integer",
           "description": "WriteTimeout sets the maximum duration before timing out writes of the response"
         },
-        "idle_timeout": {
+        "idleTimeout": {
           "type": "integer",
           "description": "IdleTimeout sets the maximum amount of time to wait for the next request when keep-alives are enabled"
         },
-        "read_header_timeout": {
+        "readHeaderTimeout": {
           "type": "integer",
           "description": "ReadHeaderTimeout sets the amount of time allowed to read request headers"
         },
@@ -164,15 +164,15 @@
           "type": "boolean",
           "description": "Enabled turns on TLS settings for the server"
         },
-        "cert_file": {
+        "certFile": {
           "type": "string",
           "description": "CertFile location for the TLS server"
         },
-        "cert_key": {
+        "certKey": {
           "type": "string",
           "description": "CertKey file location for the TLS server"
         },
-        "auto_cert": {
+        "autoCert": {
           "type": "boolean",
           "description": "AutoCert generates the cert with letsencrypt, this does not work on localhost"
         }
@@ -183,11 +183,11 @@
     },
     "emails.Config": {
       "properties": {
-        "send_grid_api_key": {
+        "sendGridApiKey": {
           "type": "string",
           "description": "SendGridAPIKey is the SendGrid API key to authenticate with the service"
         },
-        "from_email": {
+        "fromEmail": {
           "type": "string",
           "description": "FromEmail is the default email to send from"
         },
@@ -199,11 +199,11 @@
           "type": "string",
           "description": "Archive is only supported in testing mode and is what is tied through the mock to write out fixtures"
         },
-        "datum_list_id": {
+        "datumListId": {
           "type": "string",
           "description": "DatumListID is the UUID SendGrid spits out when you create marketing lists"
         },
-        "admin_email": {
+        "adminEmail": {
           "type": "string",
           "description": "AdminEmail is an internal group email configured within datum for email testing and visibility"
         }
@@ -218,31 +218,31 @@
           "type": "boolean",
           "description": "debug enables printing the debug database logs"
         },
-        "database_name": {
+        "databaseName": {
           "type": "string",
           "description": "the name of the database to use with otel tracing"
         },
-        "driver_name": {
+        "driverName": {
           "type": "string",
           "description": "sql driver name"
         },
-        "multi_write": {
+        "multiWrite": {
           "type": "boolean",
           "description": "enables writing to two databases simultaneously"
         },
-        "primary_db_source": {
+        "primaryDbSource": {
           "type": "string",
           "description": "dsn of the primary database"
         },
-        "secondary_db_source": {
+        "secondaryDbSource": {
           "type": "string",
           "description": "dsn of the secondary database if multi-write is enabled"
         },
-        "cache_ttl": {
+        "cacheTTL": {
           "type": "integer",
           "description": "cache results for subsequent requests"
         },
-        "run_migrations": {
+        "runMigrations": {
           "type": "boolean",
           "description": "run migrations on startup"
         }
@@ -250,7 +250,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "primary_db_source"
+        "primaryDbSource"
       ]
     },
     "fgax.Config": {
@@ -259,23 +259,23 @@
           "type": "boolean",
           "description": "enables authorization checks with openFGA"
         },
-        "store_name": {
+        "storeName": {
           "type": "string",
           "description": "name of openFGA store"
         },
-        "host_url": {
+        "hostUrl": {
           "type": "string",
           "description": "host url with scheme of the openFGA API"
         },
-        "store_id": {
+        "storeId": {
           "type": "string",
           "description": "id of openFGA store"
         },
-        "model_id": {
+        "modelId": {
           "type": "string",
           "description": "id of openFGA model"
         },
-        "create_new_model": {
+        "createNewModel": {
           "type": "boolean",
           "description": "force create a new model"
         }
@@ -283,20 +283,20 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "host_url"
+        "hostUrl"
       ]
     },
     "github.ProviderConfig": {
       "properties": {
-        "client_id": {
+        "clientId": {
           "type": "string",
           "description": "ClientID is the public identifier for the GitHub oauth2 client"
         },
-        "client_secret": {
+        "clientSecret": {
           "type": "string",
           "description": "ClientSecret is the secret for the GitHub oauth2 client"
         },
-        "client_endpoint": {
+        "clientEndpoint": {
           "type": "string",
           "description": "ClientEndpoint is the endpoint for the GitHub oauth2 client"
         },
@@ -304,7 +304,7 @@
           "$ref": "#/$defs/[]string",
           "description": "Scopes are the scopes that the GitHub oauth2 client will request"
         },
-        "redirect_url": {
+        "redirectUrl": {
           "type": "string",
           "description": "RedirectURL is the URL that the GitHub oauth2 client will redirect to after authentication with Github"
         }
@@ -312,24 +312,24 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "client_id",
-        "client_secret",
+        "clientId",
+        "clientSecret",
         "scopes",
-        "redirect_url"
+        "redirectUrl"
       ],
       "description": "ProviderConfig represents the configuration settings for a Github Oauth Provider"
     },
     "google.ProviderConfig": {
       "properties": {
-        "client_id": {
+        "clientId": {
           "type": "string",
           "description": "ClientID is the public identifier for the Google oauth2 client"
         },
-        "client_secret": {
+        "clientSecret": {
           "type": "string",
           "description": "ClientSecret is the secret for the Google oauth2 client"
         },
-        "client_endpoint": {
+        "clientEndpoint": {
           "type": "string",
           "description": "ClientEndpoint is the endpoint for the Google oauth2 client"
         },
@@ -337,7 +337,7 @@
           "$ref": "#/$defs/[]string",
           "description": "Scopes are the scopes that the Google oauth2 client will request"
         },
-        "redirect_url": {
+        "redirectUrl": {
           "type": "string",
           "description": "RedirectURL is the URL that the Google oauth2 client will redirect to after authentication with Google"
         }
@@ -345,16 +345,16 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "client_id",
-        "client_secret",
+        "clientId",
+        "clientSecret",
         "scopes",
-        "redirect_url"
+        "redirectUrl"
       ],
       "description": "ProviderConfig represents the configuration settings for a Google Oauth Provider"
     },
     "handlers.OauthProviderConfig": {
       "properties": {
-        "redirect_url": {
+        "redirectUrl": {
           "type": "string",
           "description": "RedirectURL is the URL that the OAuth2 client will redirect to after authentication with datum"
         },
@@ -445,7 +445,7 @@
           "type": "boolean",
           "description": "Pretty enables pretty printing of the output"
         },
-        "disable_timestamp": {
+        "disableTimestamp": {
           "type": "boolean",
           "description": "DisableTimestamp disables the timestamp in the output"
         }
@@ -460,7 +460,7 @@
           "type": "boolean",
           "description": "Enabled is a flag to enable or disable PostHog"
         },
-        "api_key": {
+        "apiKey": {
           "type": "string",
           "description": "APIKey is the PostHog API Key"
         },
@@ -487,27 +487,27 @@
           "type": "string",
           "description": "Environment is the environment in which the Sentry client is running"
         },
-        "enable_tracing": {
+        "enableTracing": {
           "type": "boolean",
           "description": "EnableTracing indicates whether tracing is enabled for the Sentry client"
         },
-        "trace_sampler": {
+        "traceSampler": {
           "type": "number",
           "description": "TracesSampler is the sampling rate for tracing in the Sentry client"
         },
-        "attach_stacktrace": {
+        "attachStacktrace": {
           "type": "boolean",
           "description": "AttachStacktrace indicates whether to attach stack traces to events in the Sentry client"
         },
-        "sample_rate": {
+        "sampleRate": {
           "type": "number",
           "description": "SampleRate is the sampling rate for events in the Sentry client"
         },
-        "trace_sample_rate": {
+        "traceSampleRate": {
           "type": "number",
           "description": "TracesSampleRate is the sampling rate for tracing events in the Sentry client"
         },
-        "profile_sample_rate": {
+        "profileSampleRate": {
           "type": "number",
           "description": "ProfilesSampleRate is the sampling rate for profiling events in the Sentry client"
         },
@@ -519,7 +519,7 @@
           "type": "boolean",
           "description": "Debug indicates whether debug mode is enabled for the Sentry client"
         },
-        "server_name": {
+        "serverName": {
           "type": "string",
           "description": "ServerName is the name of the server running the Sentry client"
         }
@@ -530,11 +530,11 @@
     },
     "sessions.Config": {
       "properties": {
-        "signing_key": {
+        "signingKey": {
           "type": "string",
           "description": "SigningKey must be a 16, 32, or 64 character string used to encode the cookie"
         },
-        "encryption_key": {
+        "encryptionKey": {
           "type": "string",
           "description": "EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie"
         }
@@ -553,7 +553,7 @@
           "type": "string",
           "description": "Audience represents the target audience for the tokens."
         },
-        "refresh_audience": {
+        "refreshAudience": {
           "type": "string",
           "description": "RefreshAudience represents the audience for refreshing tokens."
         },
@@ -561,19 +561,19 @@
           "type": "string",
           "description": "Issuer represents the issuer of the tokens"
         },
-        "access_duration": {
+        "accessDuration": {
           "type": "integer",
           "description": "AccessDuration represents the duration of the access token is valid for"
         },
-        "refresh_duration": {
+        "refreshDuration": {
           "type": "integer",
           "description": "RefreshDuration represents the duration of the refresh token is valid for"
         },
-        "refresh_overlap": {
+        "refreshOverlap": {
           "type": "integer",
           "description": "RefreshOverlap represents the overlap time for a refresh and access token"
         },
-        "jwks_endpoint": {
+        "jwksEndpoint": {
           "type": "string",
           "description": "JWKSEndpoint represents the endpoint for the JSON Web Key Set"
         },
@@ -598,23 +598,23 @@
           "type": "boolean",
           "description": "Enabled is the provider enabled"
         },
-        "display_name": {
+        "displayName": {
           "type": "string",
           "description": "DisplayName is the site display name"
         },
-        "relying_party_id": {
+        "relyingPartyId": {
           "type": "string",
           "description": "RelyingPartyID is the relying party identifier\nset to localhost for development, no port"
         },
-        "request_origin": {
+        "requestOrigin": {
           "type": "string",
           "description": "RequestOrigin the origin domain for authentication requests\ninclude the scheme and port"
         },
-        "max_devices": {
+        "maxDevices": {
           "type": "integer",
           "description": "MaxDevices is the maximum number of devices that can be associated with a user"
         },
-        "enforce": {
+        "enforceTimeout": {
           "type": "boolean",
           "description": "EnforceTimeout at the Relying Party / Server. This means if enabled and the user takes too long that even if the browser does not\nenforce a timeout, the server will"
         },
@@ -630,15 +630,15 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "display_name",
-        "relying_party_id",
-        "request_origin"
+        "displayName",
+        "relyingPartyId",
+        "requestOrigin"
       ],
       "description": "ProviderConfig represents the configuration settings for a Webauthn Provider"
     }
   },
   "properties": {
-    "refresh_interval": {
+    "refreshInterval": {
       "type": "integer",
       "description": "RefreshInterval determines how often to reload the config"
     },

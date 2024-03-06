@@ -13,7 +13,7 @@ type Config struct {
 	// Enabled is a flag to enable or disable PostHog
 	Enabled bool `json:"enabled" koanf:"enabled" default:"false"`
 	// APIKey is the PostHog API Key
-	APIKey string `json:"api_key" koanf:"api_key"`
+	APIKey string `json:"apiKey" koanf:"apiKey"`
 	// Host is the PostHog API Host
 	Host string `json:"host" koanf:"host" default:"https://app.posthog.com"`
 }

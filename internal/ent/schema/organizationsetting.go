@@ -68,13 +68,15 @@ func (OrganizationSetting) Fields() []ent.Field {
 			Comment("tags associated with the object").
 			Default([]string{}).
 			Optional(),
+		field.String("organization_id").
+			Comment("the ID of the organizationt the settings belong to"),
 	}
 }
 
 // Edges of the OrganizationSetting
 func (OrganizationSetting) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("organization", Organization.Type).Ref("setting").Unique(),
+		edge.From("organization", Organization.Type).Ref("setting").Field("organization_id").Unique(),
 	}
 }
 
@@ -87,6 +89,7 @@ func (OrganizationSetting) Annotations() []schema.Annotation {
 		entfga.Annotations{
 			ObjectType:   "organization",
 			IncludeHooks: false,
+			//			IDField:      "OrganizationID",
 		},
 	}
 }

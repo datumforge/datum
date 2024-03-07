@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateGroupSetting is the resolver for the createGroupSetting field.
@@ -21,7 +22,35 @@ func (r *mutationResolver) CreateGroupSetting(ctx context.Context, input generat
 
 // UpdateGroupSetting is the resolver for the updateGroupSetting field.
 func (r *mutationResolver) UpdateGroupSetting(ctx context.Context, id string, input generated.UpdateGroupSettingInput) (*GroupSettingUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateGroupSetting - updateGroupSetting"))
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
+	groupSetting, err := withTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+		}
+
+		r.logger.Errorw("failed to get user setting", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	groupSetting, err = groupSetting.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			ve := err.(*generated.ValidationError)
+
+			return nil, rout.InvalidField(ve.Name)
+		}
+
+		r.logger.Errorw("failed to update user setting", "error", err)
+		return nil, err
+	}
+
+	return &GroupSettingUpdatePayload{GroupSetting: groupSetting}, nil
 }
 
 // DeleteGroupSetting is the resolver for the deleteGroupSetting field.

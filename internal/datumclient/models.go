@@ -2258,8 +2258,10 @@ type OrganizationSetting struct {
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
-	Tags         []string      `json:"tags,omitempty"`
-	Organization *Organization `json:"organization,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// the ID of the organizationt the settings belong to
+	OrganizationID *string       `json:"organizationID,omitempty"`
+	Organization   *Organization `json:"organization,omitempty"`
 }
 
 func (OrganizationSetting) IsNode() {}
@@ -2478,6 +2480,22 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierNotNil       *bool    `json:"taxIdentifierNotNil,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
+	// organization_id field predicates
+	OrganizationID             *string  `json:"organizationID,omitempty"`
+	OrganizationIDNeq          *string  `json:"organizationIDNEQ,omitempty"`
+	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
+	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
+	OrganizationIDGt           *string  `json:"organizationIDGT,omitempty"`
+	OrganizationIDGte          *string  `json:"organizationIDGTE,omitempty"`
+	OrganizationIDLt           *string  `json:"organizationIDLT,omitempty"`
+	OrganizationIDLte          *string  `json:"organizationIDLTE,omitempty"`
+	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
+	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
+	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDIsNil        *bool    `json:"organizationIDIsNil,omitempty"`
+	OrganizationIDNotNil       *bool    `json:"organizationIDNotNil,omitempty"`
+	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
+	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 	// organization edge predicates
 	HasOrganization     *bool                     `json:"hasOrganization,omitempty"`
 	HasOrganizationWith []*OrganizationWhereInput `json:"hasOrganizationWith,omitempty"`

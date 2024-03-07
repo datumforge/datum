@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateOrganizationSetting is the resolver for the createOrganizationSetting field.
@@ -21,7 +22,35 @@ func (r *mutationResolver) CreateOrganizationSetting(ctx context.Context, input 
 
 // UpdateOrganizationSetting is the resolver for the updateOrganizationSetting field.
 func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateOrganizationSetting - updateOrganizationSetting"))
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
+	organizationSetting, err := withTransactionalMutation(ctx).OrganizationSetting.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+		}
+
+		r.logger.Errorw("failed to get user setting", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	organizationSetting, err = organizationSetting.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			ve := err.(*generated.ValidationError)
+
+			return nil, rout.InvalidField(ve.Name)
+		}
+
+		r.logger.Errorw("failed to update user setting", "error", err)
+		return nil, err
+	}
+
+	return &OrganizationSettingUpdatePayload{OrganizationSetting: organizationSetting}, nil
 }
 
 // DeleteOrganizationSetting is the resolver for the deleteOrganizationSetting field.

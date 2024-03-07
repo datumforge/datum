@@ -327,6 +327,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organizationsetting.FieldBillingAddress: {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
 			organizationsetting.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
 			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
+			organizationsetting.FieldOrganizationID: {Type: field.TypeString, Column: organizationsetting.FieldOrganizationID},
 		},
 	}
 	graph.Nodes[12] = &sqlgraph.Node{
@@ -2509,6 +2510,11 @@ func (f *OrganizationSettingFilter) WhereTaxIdentifier(p entql.StringP) {
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
 func (f *OrganizationSettingFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldTags))
+}
+
+// WhereOrganizationID applies the entql string predicate on the organization_id field.
+func (f *OrganizationSettingFilter) WhereOrganizationID(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldOrganizationID))
 }
 
 // WhereHasOrganization applies a predicate to check if query has an edge organization.

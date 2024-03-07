@@ -419,7 +419,7 @@ var (
 		{Name: "billing_address", Type: field.TypeString, Nullable: true},
 		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "organization_setting", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "organization_id", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
 	OrganizationSettingsTable = &schema.Table{

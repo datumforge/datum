@@ -240,17 +240,23 @@ func (osu *OrganizationSettingUpdate) ClearTags() *OrganizationSettingUpdate {
 	return osu
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (osu *OrganizationSettingUpdate) SetOrganizationID(id string) *OrganizationSettingUpdate {
-	osu.mutation.SetOrganizationID(id)
+// SetOrganizationID sets the "organization_id" field.
+func (osu *OrganizationSettingUpdate) SetOrganizationID(s string) *OrganizationSettingUpdate {
+	osu.mutation.SetOrganizationID(s)
 	return osu
 }
 
-// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (osu *OrganizationSettingUpdate) SetNillableOrganizationID(id *string) *OrganizationSettingUpdate {
-	if id != nil {
-		osu = osu.SetOrganizationID(*id)
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (osu *OrganizationSettingUpdate) SetNillableOrganizationID(s *string) *OrganizationSettingUpdate {
+	if s != nil {
+		osu.SetOrganizationID(*s)
 	}
+	return osu
+}
+
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (osu *OrganizationSettingUpdate) ClearOrganizationID() *OrganizationSettingUpdate {
+	osu.mutation.ClearOrganizationID()
 	return osu
 }
 
@@ -687,17 +693,23 @@ func (osuo *OrganizationSettingUpdateOne) ClearTags() *OrganizationSettingUpdate
 	return osuo
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (osuo *OrganizationSettingUpdateOne) SetOrganizationID(id string) *OrganizationSettingUpdateOne {
-	osuo.mutation.SetOrganizationID(id)
+// SetOrganizationID sets the "organization_id" field.
+func (osuo *OrganizationSettingUpdateOne) SetOrganizationID(s string) *OrganizationSettingUpdateOne {
+	osuo.mutation.SetOrganizationID(s)
 	return osuo
 }
 
-// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (osuo *OrganizationSettingUpdateOne) SetNillableOrganizationID(id *string) *OrganizationSettingUpdateOne {
-	if id != nil {
-		osuo = osuo.SetOrganizationID(*id)
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (osuo *OrganizationSettingUpdateOne) SetNillableOrganizationID(s *string) *OrganizationSettingUpdateOne {
+	if s != nil {
+		osuo.SetOrganizationID(*s)
 	}
+	return osuo
+}
+
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (osuo *OrganizationSettingUpdateOne) ClearOrganizationID() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearOrganizationID()
 	return osuo
 }
 

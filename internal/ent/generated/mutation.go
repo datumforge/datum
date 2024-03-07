@@ -14279,27 +14279,64 @@ func (m *OrganizationSettingMutation) ResetTags() {
 	delete(m.clearedFields, organizationsetting.FieldTags)
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by id.
-func (m *OrganizationSettingMutation) SetOrganizationID(id string) {
-	m.organization = &id
+// SetOrganizationID sets the "organization_id" field.
+func (m *OrganizationSettingMutation) SetOrganizationID(s string) {
+	m.organization = &s
+}
+
+// OrganizationID returns the value of the "organization_id" field in the mutation.
+func (m *OrganizationSettingMutation) OrganizationID() (r string, exists bool) {
+	v := m.organization
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOrganizationID returns the old "organization_id" field's value of the OrganizationSetting entity.
+// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationSettingMutation) OldOrganizationID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOrganizationID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOrganizationID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOrganizationID: %w", err)
+	}
+	return oldValue.OrganizationID, nil
+}
+
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (m *OrganizationSettingMutation) ClearOrganizationID() {
+	m.organization = nil
+	m.clearedFields[organizationsetting.FieldOrganizationID] = struct{}{}
+}
+
+// OrganizationIDCleared returns if the "organization_id" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) OrganizationIDCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldOrganizationID]
+	return ok
+}
+
+// ResetOrganizationID resets all changes to the "organization_id" field.
+func (m *OrganizationSettingMutation) ResetOrganizationID() {
+	m.organization = nil
+	delete(m.clearedFields, organizationsetting.FieldOrganizationID)
 }
 
 // ClearOrganization clears the "organization" edge to the Organization entity.
 func (m *OrganizationSettingMutation) ClearOrganization() {
 	m.clearedorganization = true
+	m.clearedFields[organizationsetting.FieldOrganizationID] = struct{}{}
 }
 
 // OrganizationCleared reports if the "organization" edge to the Organization entity was cleared.
 func (m *OrganizationSettingMutation) OrganizationCleared() bool {
-	return m.clearedorganization
-}
-
-// OrganizationID returns the "organization" edge ID in the mutation.
-func (m *OrganizationSettingMutation) OrganizationID() (id string, exists bool) {
-	if m.organization != nil {
-		return *m.organization, true
-	}
-	return
+	return m.OrganizationIDCleared() || m.clearedorganization
 }
 
 // OrganizationIDs returns the "organization" edge IDs in the mutation.
@@ -14352,7 +14389,7 @@ func (m *OrganizationSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationSettingMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, organizationsetting.FieldCreatedAt)
 	}
@@ -14392,6 +14429,9 @@ func (m *OrganizationSettingMutation) Fields() []string {
 	if m.tags != nil {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
+	if m.organization != nil {
+		fields = append(fields, organizationsetting.FieldOrganizationID)
+	}
 	return fields
 }
 
@@ -14426,6 +14466,8 @@ func (m *OrganizationSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.TaxIdentifier()
 	case organizationsetting.FieldTags:
 		return m.Tags()
+	case organizationsetting.FieldOrganizationID:
+		return m.OrganizationID()
 	}
 	return nil, false
 }
@@ -14461,6 +14503,8 @@ func (m *OrganizationSettingMutation) OldField(ctx context.Context, name string)
 		return m.OldTaxIdentifier(ctx)
 	case organizationsetting.FieldTags:
 		return m.OldTags(ctx)
+	case organizationsetting.FieldOrganizationID:
+		return m.OldOrganizationID(ctx)
 	}
 	return nil, fmt.Errorf("unknown OrganizationSetting field %s", name)
 }
@@ -14561,6 +14605,13 @@ func (m *OrganizationSettingMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetTags(v)
 		return nil
+	case organizationsetting.FieldOrganizationID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOrganizationID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting field %s", name)
 }
@@ -14630,6 +14681,9 @@ func (m *OrganizationSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(organizationsetting.FieldTags) {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
+	if m.FieldCleared(organizationsetting.FieldOrganizationID) {
+		fields = append(fields, organizationsetting.FieldOrganizationID)
+	}
 	return fields
 }
 
@@ -14683,6 +14737,9 @@ func (m *OrganizationSettingMutation) ClearField(name string) error {
 	case organizationsetting.FieldTags:
 		m.ClearTags()
 		return nil
+	case organizationsetting.FieldOrganizationID:
+		m.ClearOrganizationID()
+		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting nullable field %s", name)
 }
@@ -14729,6 +14786,9 @@ func (m *OrganizationSettingMutation) ResetField(name string) error {
 		return nil
 	case organizationsetting.FieldTags:
 		m.ResetTags()
+		return nil
+	case organizationsetting.FieldOrganizationID:
+		m.ResetOrganizationID()
 		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting field %s", name)

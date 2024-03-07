@@ -91,7 +91,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "organizationsetting" package.
 	SettingInverseTable = "organization_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
-	SettingColumn = "organization_setting"
+	SettingColumn = "organization_id"
 	// EntitlementsTable is the table that holds the entitlements relation/edge.
 	EntitlementsTable = "entitlements"
 	// EntitlementsInverseTable is the table name for the Entitlement entity.

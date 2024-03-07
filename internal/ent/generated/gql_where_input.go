@@ -6982,6 +6982,23 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
 
+	// "organization_id" field predicates.
+	OrganizationID             *string  `json:"organizationID,omitempty"`
+	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
+	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
+	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
+	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
+	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
+	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
+	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
+	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
+	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
+	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDIsNil        bool     `json:"organizationIDIsNil,omitempty"`
+	OrganizationIDNotNil       bool     `json:"organizationIDNotNil,omitempty"`
+	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
+	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
+
 	// "organization" edge predicates.
 	HasOrganization     *bool                     `json:"hasOrganization,omitempty"`
 	HasOrganizationWith []*OrganizationWhereInput `json:"hasOrganizationWith,omitempty"`
@@ -7537,6 +7554,51 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.TaxIdentifierContainsFold != nil {
 		predicates = append(predicates, organizationsetting.TaxIdentifierContainsFold(*i.TaxIdentifierContainsFold))
+	}
+	if i.OrganizationID != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDEQ(*i.OrganizationID))
+	}
+	if i.OrganizationIDNEQ != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDNEQ(*i.OrganizationIDNEQ))
+	}
+	if len(i.OrganizationIDIn) > 0 {
+		predicates = append(predicates, organizationsetting.OrganizationIDIn(i.OrganizationIDIn...))
+	}
+	if len(i.OrganizationIDNotIn) > 0 {
+		predicates = append(predicates, organizationsetting.OrganizationIDNotIn(i.OrganizationIDNotIn...))
+	}
+	if i.OrganizationIDGT != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDGT(*i.OrganizationIDGT))
+	}
+	if i.OrganizationIDGTE != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDGTE(*i.OrganizationIDGTE))
+	}
+	if i.OrganizationIDLT != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDLT(*i.OrganizationIDLT))
+	}
+	if i.OrganizationIDLTE != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDLTE(*i.OrganizationIDLTE))
+	}
+	if i.OrganizationIDContains != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDContains(*i.OrganizationIDContains))
+	}
+	if i.OrganizationIDHasPrefix != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
+	}
+	if i.OrganizationIDHasSuffix != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
+	}
+	if i.OrganizationIDIsNil {
+		predicates = append(predicates, organizationsetting.OrganizationIDIsNil())
+	}
+	if i.OrganizationIDNotNil {
+		predicates = append(predicates, organizationsetting.OrganizationIDNotNil())
+	}
+	if i.OrganizationIDEqualFold != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
+	}
+	if i.OrganizationIDContainsFold != nil {
+		predicates = append(predicates, organizationsetting.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
 	}
 
 	if i.HasOrganization != nil {

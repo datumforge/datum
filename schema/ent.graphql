@@ -2756,6 +2756,10 @@ type OrganizationSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  the ID of the organizationt the settings belong to
+  """
+  organizationID: ID
   organization: Organization
 }
 """
@@ -2992,6 +2996,24 @@ input OrganizationSettingWhereInput {
   taxIdentifierNotNil: Boolean
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
+  """
+  organization_id field predicates
+  """
+  organizationID: ID
+  organizationIDNEQ: ID
+  organizationIDIn: [ID!]
+  organizationIDNotIn: [ID!]
+  organizationIDGT: ID
+  organizationIDGTE: ID
+  organizationIDLT: ID
+  organizationIDLTE: ID
+  organizationIDContains: ID
+  organizationIDHasPrefix: ID
+  organizationIDHasSuffix: ID
+  organizationIDIsNil: Boolean
+  organizationIDNotNil: Boolean
+  organizationIDEqualFold: ID
+  organizationIDContainsFold: ID
   """
   organization edge predicates
   """

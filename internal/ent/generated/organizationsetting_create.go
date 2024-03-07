@@ -186,6 +186,20 @@ func (osc *OrganizationSettingCreate) SetTags(s []string) *OrganizationSettingCr
 	return osc
 }
 
+// SetOrganizationID sets the "organization_id" field.
+func (osc *OrganizationSettingCreate) SetOrganizationID(s string) *OrganizationSettingCreate {
+	osc.mutation.SetOrganizationID(s)
+	return osc
+}
+
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableOrganizationID(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetOrganizationID(*s)
+	}
+	return osc
+}
+
 // SetID sets the "id" field.
 func (osc *OrganizationSettingCreate) SetID(s string) *OrganizationSettingCreate {
 	osc.mutation.SetID(s)
@@ -196,20 +210,6 @@ func (osc *OrganizationSettingCreate) SetID(s string) *OrganizationSettingCreate
 func (osc *OrganizationSettingCreate) SetNillableID(s *string) *OrganizationSettingCreate {
 	if s != nil {
 		osc.SetID(*s)
-	}
-	return osc
-}
-
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (osc *OrganizationSettingCreate) SetOrganizationID(id string) *OrganizationSettingCreate {
-	osc.mutation.SetOrganizationID(id)
-	return osc
-}
-
-// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
-func (osc *OrganizationSettingCreate) SetNillableOrganizationID(id *string) *OrganizationSettingCreate {
-	if id != nil {
-		osc = osc.SetOrganizationID(*id)
 	}
 	return osc
 }
@@ -404,7 +404,7 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_setting = &nodes[0]
+		_node.OrganizationID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

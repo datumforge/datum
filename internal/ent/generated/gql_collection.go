@@ -1669,6 +1669,10 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 				return err
 			}
 			os.withOrganization = query
+			if _, ok := fieldSeen[organizationsetting.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldOrganizationID)
+				fieldSeen[organizationsetting.FieldOrganizationID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[organizationsetting.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldCreatedAt)
@@ -1733,6 +1737,11 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 			if _, ok := fieldSeen[organizationsetting.FieldTags]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldTags)
 				fieldSeen[organizationsetting.FieldTags] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[organizationsetting.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldOrganizationID)
+				fieldSeen[organizationsetting.FieldOrganizationID] = struct{}{}
 			}
 		case "id":
 		case "__typename":

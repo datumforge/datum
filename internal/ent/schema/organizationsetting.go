@@ -69,7 +69,8 @@ func (OrganizationSetting) Fields() []ent.Field {
 			Default([]string{}).
 			Optional(),
 		field.String("organization_id").
-			Comment("the ID of the organizationt the settings belong to"),
+			Comment("the ID of the organizationt the settings belong to").
+			Optional(),
 	}
 }
 

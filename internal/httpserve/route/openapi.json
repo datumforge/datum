@@ -3434,6 +3434,9 @@
                       "type": "string"
                     }
                   },
+                  "organization_id": {
+                    "type": "string"
+                  },
                   "organization": {
                     "type": "string"
                   }
@@ -3597,6 +3600,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "organization_id": {
+                    "type": "string"
                   },
                   "organization": {
                     "type": "string"
@@ -7373,6 +7379,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "organization_id": {
+            "type": "string"
           },
           "organization": {
             "$ref": "#/components/schemas/Organization"

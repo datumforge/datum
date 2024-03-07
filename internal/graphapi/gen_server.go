@@ -523,6 +523,7 @@ type ComplexityRoot struct {
 		Domains        func(childComplexity int) int
 		ID             func(childComplexity int) int
 		Organization   func(childComplexity int) int
+		OrganizationID func(childComplexity int) int
 		Tags           func(childComplexity int) int
 		TaxIdentifier  func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
@@ -3032,6 +3033,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrganizationSetting.Organization(childComplexity), true
+
+	case "OrganizationSetting.organizationID":
+		if e.complexity.OrganizationSetting.OrganizationID == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetting.OrganizationID(childComplexity), true
 
 	case "OrganizationSetting.tags":
 		if e.complexity.OrganizationSetting.Tags == nil {
@@ -7024,6 +7032,10 @@ type OrganizationSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  the ID of the organizationt the settings belong to
+  """
+  organizationID: ID
   organization: Organization
 }
 """
@@ -7260,6 +7272,24 @@ input OrganizationSettingWhereInput {
   taxIdentifierNotNil: Boolean
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
+  """
+  organization_id field predicates
+  """
+  organizationID: ID
+  organizationIDNEQ: ID
+  organizationIDIn: [ID!]
+  organizationIDNotIn: [ID!]
+  organizationIDGT: ID
+  organizationIDGTE: ID
+  organizationIDLT: ID
+  organizationIDLTE: ID
+  organizationIDContains: ID
+  organizationIDHasPrefix: ID
+  organizationIDHasSuffix: ID
+  organizationIDIsNil: Boolean
+  organizationIDNotNil: Boolean
+  organizationIDEqualFold: ID
+  organizationIDContainsFold: ID
   """
   organization edge predicates
   """
@@ -25577,6 +25607,8 @@ func (ec *executionContext) fieldContext_Organization_setting(ctx context.Contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -27037,6 +27069,47 @@ func (ec *executionContext) fieldContext_OrganizationSetting_tags(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _OrganizationSetting_organizationID(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrganizationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetting_organizationID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrganizationSetting_organization(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationSetting_organization(ctx, field)
 	if err != nil {
@@ -27338,6 +27411,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingCreatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -27455,6 +27530,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingEdge_node(ctx contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -27575,6 +27652,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingUpdatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -30879,6 +30958,8 @@ func (ec *executionContext) fieldContext_Query_organizationSetting(ctx context.C
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
 				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
@@ -46158,7 +46239,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "organizationID", "organizationIDNEQ", "organizationIDIn", "organizationIDNotIn", "organizationIDGT", "organizationIDGTE", "organizationIDLT", "organizationIDLTE", "organizationIDContains", "organizationIDHasPrefix", "organizationIDHasSuffix", "organizationIDIsNil", "organizationIDNotNil", "organizationIDEqualFold", "organizationIDContainsFold", "hasOrganization", "hasOrganizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47306,6 +47387,111 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.TaxIdentifierContainsFold = data
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationID = data
+		case "organizationIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNEQ = data
+		case "organizationIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDIn = data
+		case "organizationIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNotIn = data
+		case "organizationIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDGT = data
+		case "organizationIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDGTE = data
+		case "organizationIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDLT = data
+		case "organizationIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDLTE = data
+		case "organizationIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDContains = data
+		case "organizationIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDHasPrefix = data
+		case "organizationIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDHasSuffix = data
+		case "organizationIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDIsNil = data
+		case "organizationIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNotNil = data
+		case "organizationIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDEqualFold = data
+		case "organizationIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDContainsFold = data
 		case "hasOrganization":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrganization"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -58231,6 +58417,8 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._OrganizationSetting_taxIdentifier(ctx, field, obj)
 		case "tags":
 			out.Values[i] = ec._OrganizationSetting_tags(ctx, field, obj)
+		case "organizationID":
+			out.Values[i] = ec._OrganizationSetting_organizationID(ctx, field, obj)
 		case "organization":
 			field := field
 

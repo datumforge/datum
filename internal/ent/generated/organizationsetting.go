@@ -45,11 +45,12 @@ type OrganizationSetting struct {
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
+	// the ID of the organizationt the settings belong to
+	OrganizationID string `json:"organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationSettingQuery when eager-loading is set.
-	Edges                OrganizationSettingEdges `json:"edges"`
-	organization_setting *string
-	selectValues         sql.SelectValues
+	Edges        OrganizationSettingEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // OrganizationSettingEdges holds the relations/edges for other nodes in the graph.
@@ -81,12 +82,10 @@ func (*OrganizationSetting) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organizationsetting.FieldDomains, organizationsetting.FieldTags:
 			values[i] = new([]byte)
-		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier:
+		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier, organizationsetting.FieldOrganizationID:
 			values[i] = new(sql.NullString)
 		case organizationsetting.FieldCreatedAt, organizationsetting.FieldUpdatedAt, organizationsetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case organizationsetting.ForeignKeys[0]: // organization_setting
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -190,12 +189,11 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
-		case organizationsetting.ForeignKeys[0]:
+		case organizationsetting.FieldOrganizationID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_setting", values[i])
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {
-				os.organization_setting = new(string)
-				*os.organization_setting = value.String
+				os.OrganizationID = value.String
 			}
 		default:
 			os.selectValues.Set(columns[i], values[i])
@@ -276,6 +274,9 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tags=")
 	builder.WriteString(fmt.Sprintf("%v", os.Tags))
+	builder.WriteString(", ")
+	builder.WriteString("organization_id=")
+	builder.WriteString(os.OrganizationID)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -122,6 +122,11 @@ func TaxIdentifier(v string) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldTaxIdentifier, v))
 }
 
+// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
+func OrganizationID(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldEQ(FieldOrganizationID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldEQ(FieldCreatedAt, v))
@@ -890,6 +895,81 @@ func TagsIsNil() predicate.OrganizationSetting {
 // TagsNotNil applies the NotNil predicate on the "tags" field.
 func TagsNotNil() predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldNotNull(FieldTags))
+}
+
+// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
+func OrganizationIDEQ(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
+func OrganizationIDNEQ(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldNEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDIn applies the In predicate on the "organization_id" field.
+func OrganizationIDIn(vs ...string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
+func OrganizationIDNotIn(vs ...string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldNotIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDGT applies the GT predicate on the "organization_id" field.
+func OrganizationIDGT(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldGT(FieldOrganizationID, v))
+}
+
+// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
+func OrganizationIDGTE(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldGTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDLT applies the LT predicate on the "organization_id" field.
+func OrganizationIDLT(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldLT(FieldOrganizationID, v))
+}
+
+// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
+func OrganizationIDLTE(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldLTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
+func OrganizationIDContains(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldContains(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
+func OrganizationIDHasPrefix(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldHasPrefix(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
+func OrganizationIDHasSuffix(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldHasSuffix(FieldOrganizationID, v))
+}
+
+// OrganizationIDIsNil applies the IsNil predicate on the "organization_id" field.
+func OrganizationIDIsNil() predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldIsNull(FieldOrganizationID))
+}
+
+// OrganizationIDNotNil applies the NotNil predicate on the "organization_id" field.
+func OrganizationIDNotNil() predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldNotNull(FieldOrganizationID))
+}
+
+// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
+func OrganizationIDEqualFold(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldEqualFold(FieldOrganizationID, v))
+}
+
+// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
+func OrganizationIDContainsFold(v string) predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // HasOrganization applies the HasEdge predicate on the "organization" edge.

@@ -358,9 +358,17 @@ func WithAnalytics() ServerOption {
 func WithOTP() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		if s.Config.Settings.TOTP.Enabled {
+			if s.Config.Settings.TOTP.Secret == "" {
+				s.Config.Settings.TOTP.Secret = ulids.New().String()
+			}
+
 			opts := []totp.ConfigOption{
 				totp.WithCodeLength(s.Config.Settings.TOTP.CodeLength),
 				totp.WithIssuer(s.Config.Settings.TOTP.Issuer),
+				totp.WithSecret(totp.Secret{
+					Version: 0,
+					Key:     s.Config.Settings.TOTP.Secret,
+				}),
 			}
 
 			// append redis client if enabed

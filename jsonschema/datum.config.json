@@ -632,6 +632,15 @@
         },
         "redis": {
           "type": "boolean"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "recoveryCodeCount": {
+          "type": "integer"
+        },
+        "recoveryCodeLength": {
+          "type": "integer"
         }
       },
       "additionalProperties": false,

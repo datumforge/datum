@@ -139,4 +139,6 @@ type TOTPManager interface {
 	ValidateOTP(code, hash string) error
 	// ValidateTOTP checks if a User TOTP code is valid
 	ValidateTOTP(ctx context.Context, user *User, code string) error
+	// GenerateRecoveryCodes creates a set of recovery codes for a user
+	GenerateRecoveryCodes() []string
 }

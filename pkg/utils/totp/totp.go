@@ -27,6 +27,10 @@ const (
 	keyTTL = 30 * time.Second
 	// otpExpiration is the expiration time for an OTP code
 	otpExpiration = 5 * time.Minute
+	// numericCode is a string of numbers
+	numericCode = "0123456"
+	// alphanumericCode is a string of numbers and letters
+	alphanumericCode = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 // otpRedos is a minimal interface for go-redis with OTP codes
@@ -53,16 +57,18 @@ type Hash struct {
 // OTP is a credential validator for User OTP codes
 type OTP struct {
 	// codeLength is the length of a randomly generated code
-	codeLength int
-	ttl        int
-	issuer     string
-	secrets    []Secret
-	db         otpRedis
+	codeLength         int
+	ttl                int
+	issuer             string
+	secrets            []Secret
+	db                 otpRedis
+	recoveryCodeCount  int
+	recoveryCodeLength int
 }
 
 // OTPCode creates a random code and hash
 func (o *OTP) OTPCode(address string, method DeliveryMethod) (code string, hash string, err error) {
-	c, err := String(o.codeLength, "0123456")
+	c, err := String(o.codeLength, numericCode)
 	if err != nil {
 		return "", "", ErrCannotGenerateRandomString
 	}
@@ -350,4 +356,20 @@ func GenerateOTP(secret string) (string, error) {
 	}
 
 	return otpCode, nil
+}
+
+// GenerateRecoveryCodes generates a list of recovery codes
+func (o *OTP) GenerateRecoveryCodes() []string {
+	codes := []string{}
+
+	for _ = range o.recoveryCodeCount {
+		code, err := String(o.recoveryCodeLength, alphanumericCode)
+		if err != nil {
+			continue
+		}
+
+		codes = append(codes, code)
+	}
+
+	return codes
 }

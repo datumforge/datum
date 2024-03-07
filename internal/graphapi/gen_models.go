@@ -3,37 +3,8 @@
 package graphapi
 
 import (
-	"time"
-
 	"github.com/datumforge/datum/internal/ent/generated"
 )
-
-// CreateTFAInput is used for create tfa settings.
-type CreateTFAInput struct {
-	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
-	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
-	UpdatedBy      *string    `json:"updatedBy,omitempty"`
-	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
-	// TFA secret for the user
-	TfaSecret      *string `json:"tfaSecret,omitempty"`
-	ResetTfaSecret *bool   `json:"resetTfaSecret,omitempty"`
-	// recovery codes for 2fa
-	RecoveryCodes       []string `json:"recoveryCodes,omitempty"`
-	AppendRecoveryCodes []string `json:"appendRecoveryCodes,omitempty"`
-	ResetRecoveryCodes  *bool    `json:"resetRecoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	IsPhoneOtpAllowed      *bool `json:"isPhoneOtpAllowed,omitempty"`
-	ClearIsPhoneOtpAllowed *bool `json:"clearIsPhoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	IsEmailOtpAllowed      *bool `json:"isEmailOtpAllowed,omitempty"`
-	ClearIsEmailOtpAllowed *bool `json:"clearIsEmailOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-	IsTotpAllowed      *bool   `json:"isTotpAllowed,omitempty"`
-	ClearIsTotpAllowed *bool   `json:"clearIsTotpAllowed,omitempty"`
-	IsTfaEnabled       *bool   `json:"isTfaEnabled,omitempty"`
-	ClearIsTfaEnabled  *bool   `json:"clearIsTfaEnabled,omitempty"`
-	UserID             *string `json:"userID,omitempty"`
-}
 
 type Dummy struct {
 	ID   string `json:"id"`
@@ -260,31 +231,23 @@ type PersonalAccessTokenUpdatePayload struct {
 type Subscription struct {
 }
 
-// Return response for createTFASetting mutation
-type TFASettingCreatePayload struct {
-	// Create TFASetting
-	TfaSetting *TfaSetting `json:"tfaSetting"`
+// Return response for createTFASettings mutation
+type TFASettingsCreatePayload struct {
+	// Created tfaSettings
+	TfaSettings *generated.TFASettings `json:"tfaSettings"`
 }
 
-type TfaSetting struct {
-	ID        string     `json:"id"`
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
-	CreatedBy *string    `json:"createdBy,omitempty"`
-	UpdatedBy *string    `json:"updatedBy,omitempty"`
-	// recovery codes for 2fa
-	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	IsPhoneOtpAllowed *bool `json:"isPhoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	IsEmailOtpAllowed *bool `json:"isEmailOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-	IsTotpAllowed *bool `json:"isTotpAllowed,omitempty"`
-	// whether the user has two factor authentication enabled
-	IsTfaEnabled *bool `json:"isTfaEnabled,omitempty"`
+// Return response for deleteTFASettings mutation
+type TFASettingsDeletePayload struct {
+	// Deleted tfaSettings ID
+	DeletedID string `json:"deletedID"`
 }
 
-func (TfaSetting) IsNode() {}
+// Return response for updateTFASettings mutation
+type TFASettingsUpdatePayload struct {
+	// Updated tfaSettings
+	TfaSettings *generated.TFASettings `json:"tfaSettings"`
+}
 
 // Return response for createUser mutation
 type UserCreatePayload struct {

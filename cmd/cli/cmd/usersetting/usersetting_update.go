@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -38,6 +39,12 @@ func init() {
 
 	userSettingUpdateCmd.Flags().BoolP("silence-notifications", "s", false, "silence notifications from datum")
 	datum.ViperBindFlag("usersetting.update.silence", userSettingUpdateCmd.Flags().Lookup("silence-notifications"))
+
+	userSettingUpdateCmd.Flags().Bool("enable-2fa", false, "enable 2fa authentication")
+	datum.ViperBindFlag("usersetting.update.enable-2fa", userSettingUpdateCmd.Flags().Lookup("enable-2fa"))
+
+	userSettingUpdateCmd.Flags().Bool("disable-2fa", false, "disable 2fa authentication")
+	datum.ViperBindFlag("usersetting.update.disable-2fa", userSettingUpdateCmd.Flags().Lookup("disable-2fa"))
 }
 
 func updateUserSetting(ctx context.Context) error {
@@ -70,6 +77,13 @@ func updateUserSetting(ctx context.Context) error {
 		input.SilencedAt = &now
 	} else {
 		input.SilencedAt = nil
+	}
+
+	// explicitly set 2fa if provided to avoid wiping setting unintentionally
+	if viper.GetBool("usersetting.update.enable-2fa") {
+		input.IsTfaEnabled = lo.ToPtr(true)
+	} else if viper.GetBool("usersetting.update.disable-2fa") {
+		input.IsTfaEnabled = lo.ToPtr(false)
 	}
 
 	// add tags to the input if provided

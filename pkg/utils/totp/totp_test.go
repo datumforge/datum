@@ -90,3 +90,17 @@ func TestEncryptsWithLatestSecret(t *testing.T) {
 
 	assert.Equal(t, secret, s, "value not decrypted")
 }
+func TestGenerateRecoveryCodes(t *testing.T) {
+	o := &OTP{
+		recoveryCodeCount:  5,
+		recoveryCodeLength: 8,
+	}
+
+	codes := o.GenerateRecoveryCodes()
+
+	assert.Len(t, codes, 5, "incorrect number of recovery codes generated")
+
+	for _, code := range codes {
+		assert.Len(t, code, 8, "incorrect recovery code length")
+	}
+}

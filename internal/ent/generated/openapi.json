@@ -5167,6 +5167,318 @@
         }
       }
     },
+    "/tfa-settings": {
+      "get": {
+        "tags": [
+          "TFASettings"
+        ],
+        "summary": "List TFASettings",
+        "description": "List TFASettings.",
+        "operationId": "listTFASettings",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result TFASettings list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TFASettings"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TFASettings"
+        ],
+        "summary": "Create a new TFASettings",
+        "description": "Creates a new TFASettings and persists it to storage.",
+        "operationId": "createTFASettings",
+        "requestBody": {
+          "description": "TFASettings to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "phone_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "email_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "totp_allowed": {
+                    "type": "boolean"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "TFASettings created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TFASettings"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/tfa-settings/{id}": {
+      "get": {
+        "tags": [
+          "TFASettings"
+        ],
+        "summary": "Find a TFASettings by ID",
+        "description": "Finds the TFASettings with the requested ID and returns it.",
+        "operationId": "readTFASettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the TFASettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TFASettings with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TFASettings"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TFASettings"
+        ],
+        "summary": "Deletes a TFASettings by ID",
+        "description": "Deletes the TFASettings with the requested ID.",
+        "operationId": "deleteTFASettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the TFASettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "TFASettings with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "TFASettings"
+        ],
+        "summary": "Updates a TFASettings",
+        "description": "Updates a TFASettings and persists changes to storage.",
+        "operationId": "updateTFASettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the TFASettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "TFASettings properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "phone_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "email_otp_allowed": {
+                    "type": "boolean"
+                  },
+                  "totp_allowed": {
+                    "type": "boolean"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "TFASettings updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TFASettings"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/tfa-settings/{id}/owner": {
+      "get": {
+        "tags": [
+          "TFASettings"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the TFASettings with the given ID",
+        "operationId": "readTFASettingsOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the TFASettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to TFASettings with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/user-settings": {
       "get": {
         "tags": [
@@ -5708,6 +6020,9 @@
                       "type": "string"
                     }
                   },
+                  "tfa_settings": {
+                    "type": "string"
+                  },
                   "setting": {
                     "type": "string"
                   },
@@ -5932,6 +6247,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "tfa_settings": {
+                    "type": "string"
                   },
                   "setting": {
                     "type": "string"
@@ -6484,6 +6802,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserSetting"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/{id}/tfa-settings": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Find the attached TFASettings",
+        "description": "Find the attached TFASettings of the User with the given ID",
+        "operationId": "readUserTfaSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TFASettings attached to User with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TFASettings"
                 }
               }
             }
@@ -7521,6 +7884,53 @@
           "owner"
         ]
       },
+      "TFASettings": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "phone_otp_allowed": {
+            "type": "boolean"
+          },
+          "email_otp_allowed": {
+            "type": "boolean"
+          },
+          "totp_allowed": {
+            "type": "boolean"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
       "User": {
         "type": "object",
         "properties": {
@@ -7589,6 +7999,9 @@
             "items": {
               "$ref": "#/components/schemas/PersonalAccessToken"
             }
+          },
+          "tfa_settings": {
+            "$ref": "#/components/schemas/TFASettings"
           },
           "setting": {
             "$ref": "#/components/schemas/UserSetting"

@@ -514,6 +514,37 @@ var (
 			},
 		},
 	}
+	// TfaSettingsColumns holds the columns for the "tfa_settings" table.
+	TfaSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
+		{Name: "verified", Type: field.TypeBool, Default: false},
+		{Name: "recovery_codes", Type: field.TypeJSON, Nullable: true},
+		{Name: "phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "owner_id", Type: field.TypeString, Unique: true, Nullable: true},
+	}
+	// TfaSettingsTable holds the schema information for the "tfa_settings" table.
+	TfaSettingsTable = &schema.Table{
+		Name:       "tfa_settings",
+		Columns:    TfaSettingsColumns,
+		PrimaryKey: []*schema.Column{TfaSettingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tfa_settings_users_tfa_settings",
+				Columns:    []*schema.Column{TfaSettingsColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -676,6 +707,7 @@ var (
 		OrganizationSettingsTable,
 		PasswordResetTokensTable,
 		PersonalAccessTokensTable,
+		TfaSettingsTable,
 		UsersTable,
 		UserSettingsTable,
 		WebauthnsTable,
@@ -699,6 +731,7 @@ func init() {
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
+	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable

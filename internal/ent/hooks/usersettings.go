@@ -8,6 +8,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -24,42 +26,21 @@ func HookUserSetting() ent.Hook {
 				}
 			}
 
+			// delete tfa settings if tfa is disabled
+			tfaEnabled, ok := mutation.IsTfaEnabled()
+			if ok && !tfaEnabled {
+				userID, err := auth.GetUserIDFromContext(ctx)
+				if err != nil {
+					return nil, err
+				}
+
+				_, err = mutation.Client().TFASettings.Delete().Where(tfasettings.OwnerID(userID)).Exec(ctx)
+				if err != nil {
+					return nil, err
+				}
+			}
+
 			return next.Mutate(ctx, mutation)
 		})
 	}, ent.OpUpdate|ent.OpUpdateOne)
 }
-
-// func HookTFA() ent.Hook {
-// 	return hook.On(func(next ent.Mutator) ent.Mutator {
-// 		return hook.UserSettingFunc(func(ctx context.Context, mutation *generated.UserSettingMutation) (generated.Value, error) {
-// 			tfaEnable, ok := mutation.IsTfaEnabled()
-// 			if ok && tfaEnable {
-// 				totp.Generate()
-// 			}
-
-// 			return next.Mutate(ctx, mutation)
-// 		})
-// 	}, ent.OpUpdate|ent.OpUpdateOne)
-// }
-
-// const (
-// 	email = "EMAIL"
-// 	phone = "PHONE"
-// 	totp  = "TOTP"
-// )
-
-// func getTFAType(mutation *generated.UserSettingMutation) (string, error) {
-// 	if _, ok := mutation.IsEmailOtpAllowed(); ok {
-// 		return email, nil
-// 	}
-
-// 	if _, ok := mutation.IsPhoneOtpAllowed(); ok {
-// 		return phone, nil
-// 	}
-
-// 	if _, ok := mutation.IsTotpAllowed(); ok {
-// 		return totp, nil
-// 	}
-
-// 	return "", rout.InvalidField("tfa_type")
-// }

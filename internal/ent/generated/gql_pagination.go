@@ -26,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -3255,6 +3256,252 @@ func (pat *PersonalAccessToken) ToEdge(order *PersonalAccessTokenOrder) *Persona
 	return &PersonalAccessTokenEdge{
 		Node:   pat,
 		Cursor: order.Field.toCursor(pat),
+	}
+}
+
+// TFASettingsEdge is the edge representation of TFASettings.
+type TFASettingsEdge struct {
+	Node   *TFASettings `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// TFASettingsConnection is the connection containing edges to TFASettings.
+type TFASettingsConnection struct {
+	Edges      []*TFASettingsEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+func (c *TFASettingsConnection) build(nodes []*TFASettings, pager *tfasettingsPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *TFASettings
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *TFASettings {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *TFASettings {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TFASettingsEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TFASettingsEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TFASettingsPaginateOption enables pagination customization.
+type TFASettingsPaginateOption func(*tfasettingsPager) error
+
+// WithTFASettingsOrder configures pagination ordering.
+func WithTFASettingsOrder(order *TFASettingsOrder) TFASettingsPaginateOption {
+	if order == nil {
+		order = DefaultTFASettingsOrder
+	}
+	o := *order
+	return func(pager *tfasettingsPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultTFASettingsOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithTFASettingsFilter configures pagination filter.
+func WithTFASettingsFilter(filter func(*TFASettingsQuery) (*TFASettingsQuery, error)) TFASettingsPaginateOption {
+	return func(pager *tfasettingsPager) error {
+		if filter == nil {
+			return errors.New("TFASettingsQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type tfasettingsPager struct {
+	reverse bool
+	order   *TFASettingsOrder
+	filter  func(*TFASettingsQuery) (*TFASettingsQuery, error)
+}
+
+func newTFASettingsPager(opts []TFASettingsPaginateOption, reverse bool) (*tfasettingsPager, error) {
+	pager := &tfasettingsPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultTFASettingsOrder
+	}
+	return pager, nil
+}
+
+func (p *tfasettingsPager) applyFilter(query *TFASettingsQuery) (*TFASettingsQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *tfasettingsPager) toCursor(ts *TFASettings) Cursor {
+	return p.order.Field.toCursor(ts)
+}
+
+func (p *tfasettingsPager) applyCursors(query *TFASettingsQuery, after, before *Cursor) (*TFASettingsQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultTFASettingsOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *tfasettingsPager) applyOrder(query *TFASettingsQuery) *TFASettingsQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultTFASettingsOrder.Field {
+		query = query.Order(DefaultTFASettingsOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *tfasettingsPager) orderExpr(query *TFASettingsQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTFASettingsOrder.Field {
+			b.Comma().Ident(DefaultTFASettingsOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to TFASettings.
+func (ts *TFASettingsQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TFASettingsPaginateOption,
+) (*TFASettingsConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTFASettingsPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if ts, err = pager.applyFilter(ts); err != nil {
+		return nil, err
+	}
+	conn := &TFASettingsConnection{Edges: []*TFASettingsEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = ts.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if ts, err = pager.applyCursors(ts, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		ts.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := ts.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	ts = pager.applyOrder(ts)
+	nodes, err := ts.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// TFASettingsOrderField defines the ordering field of TFASettings.
+type TFASettingsOrderField struct {
+	// Value extracts the ordering value from the given TFASettings.
+	Value    func(*TFASettings) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) tfasettings.OrderOption
+	toCursor func(*TFASettings) Cursor
+}
+
+// TFASettingsOrder defines the ordering of TFASettings.
+type TFASettingsOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *TFASettingsOrderField `json:"field"`
+}
+
+// DefaultTFASettingsOrder is the default ordering of TFASettings.
+var DefaultTFASettingsOrder = &TFASettingsOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TFASettingsOrderField{
+		Value: func(ts *TFASettings) (ent.Value, error) {
+			return ts.ID, nil
+		},
+		column: tfasettings.FieldID,
+		toTerm: tfasettings.ByID,
+		toCursor: func(ts *TFASettings) Cursor {
+			return Cursor{ID: ts.ID}
+		},
+	},
+}
+
+// ToEdge converts TFASettings into TFASettingsEdge.
+func (ts *TFASettings) ToEdge(order *TFASettingsOrder) *TFASettingsEdge {
+	if order == nil {
+		order = DefaultTFASettingsOrder
+	}
+	return &TFASettingsEdge{
+		Node:   ts,
+		Cursor: order.Field.toCursor(ts),
 	}
 }
 

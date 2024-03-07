@@ -70,6 +70,15 @@ func serve(ctx context.Context) error {
 		return err
 	}
 
+	// Setup Redis connection
+	redisClient := cache.New(so.Config.Settings.Redis)
+	defer redisClient.Close()
+
+	// add otp manager, after redis is setup
+	so.AddServerOptions(
+		serveropts.WithOTP(),
+	)
+
 	// add additional ent dependencies
 	entOpts = append(
 		entOpts,
@@ -77,6 +86,7 @@ func serve(ctx context.Context) error {
 		ent.Emails(so.Config.Handler.EmailManager),
 		ent.Marionette(so.Config.Handler.TaskMan),
 		ent.Analytics(so.Config.Handler.AnalyticsClient),
+		ent.TOTP(so.Config.Handler.OTPManager),
 	)
 
 	// Setup DB connection
@@ -87,10 +97,6 @@ func serve(ctx context.Context) error {
 
 	defer entdbClient.Close()
 
-	// Setup Redis connection
-	redisClient := cache.New(so.Config.Settings.Redis)
-	defer redisClient.Close()
-
 	// Add Driver to the Handlers Config
 	so.Config.Handler.DBClient = entdbClient
 
@@ -100,11 +106,6 @@ func serve(ctx context.Context) error {
 	// add ready checks
 	so.AddServerOptions(
 		serveropts.WithReadyChecks(dbConfig, fgaClient, redisClient),
-	)
-
-	// add otp manager, after redis is setup
-	so.AddServerOptions(
-		serveropts.WithOTP(),
 	)
 
 	// add auth options

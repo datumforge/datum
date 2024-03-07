@@ -119,7 +119,10 @@ totp:
     codeLength: 0
     enabled: false
     issuer: ""
+    recoveryCodeCount: 0
+    recoveryCodeLength: 0
     redis: false
+    secret: ""
 tracer:
     enabled: false
     environment: ""

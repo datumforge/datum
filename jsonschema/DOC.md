@@ -423,6 +423,9 @@ Config is the configuration for PostHog
 |**codeLength**|`integer`|||
 |**issuer**|`string`|||
 |**redis**|`boolean`|||
+|**secret**|`string`|||
+|**recoveryCodeCount**|`integer`|||
+|**recoveryCodeLength**|`integer`|||
 
 **Additional Properties:** not allowed  
 

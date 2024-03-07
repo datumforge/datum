@@ -27,16 +27,6 @@ extend type Mutation{
 }
 
 """
-Return response for createOrganizationSetting mutation
-"""
-type OrganizationSettingCreatePayload {
-    """
-    Created organizationSetting
-    """
-    organizationSetting: OrganizationSetting!
-}
-
-"""
 Return response for updateOrganizationSetting mutation
 """
 type OrganizationSettingUpdatePayload {
@@ -44,14 +34,4 @@ type OrganizationSettingUpdatePayload {
     Updated organizationSetting
     """
     organizationSetting: OrganizationSetting!
-}
-
-"""
-Return response for deleteOrganizationSetting mutation
-"""
-type OrganizationSettingDeletePayload {
-    """
-    Deleted organizationSetting ID
-    """
-    deletedID: ID!
 }

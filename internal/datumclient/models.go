@@ -2266,18 +2266,6 @@ type OrganizationSettingConnection struct {
 	TotalCount int64 `json:"totalCount"`
 }
 
-// Return response for createOrganizationSetting mutation
-type OrganizationSettingCreatePayload struct {
-	// Created organizationSetting
-	OrganizationSetting *OrganizationSetting `json:"organizationSetting"`
-}
-
-// Return response for deleteOrganizationSetting mutation
-type OrganizationSettingDeletePayload struct {
-	// Deleted organizationSetting ID
-	DeletedID string `json:"deletedID"`
-}
-
 // An edge in a connection.
 type OrganizationSettingEdge struct {
 	// The item at the end of the edge.

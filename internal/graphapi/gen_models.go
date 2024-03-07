@@ -186,18 +186,6 @@ type OrganizationDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response for createOrganizationSetting mutation
-type OrganizationSettingCreatePayload struct {
-	// Created organizationSetting
-	OrganizationSetting *generated.OrganizationSetting `json:"organizationSetting"`
-}
-
-// Return response for deleteOrganizationSetting mutation
-type OrganizationSettingDeletePayload struct {
-	// Deleted organizationSetting ID
-	DeletedID string `json:"deletedID"`
-}
-
 // Return response for updateOrganizationSetting mutation
 type OrganizationSettingUpdatePayload struct {
 	// Updated organizationSetting

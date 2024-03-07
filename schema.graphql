@@ -3431,24 +3431,6 @@ type OrganizationSettingConnection {
 	totalCount: Int!
 }
 """
-Return response for createOrganizationSetting mutation
-"""
-type OrganizationSettingCreatePayload {
-	"""
-	Created organizationSetting
-	"""
-	organizationSetting: OrganizationSetting!
-}
-"""
-Return response for deleteOrganizationSetting mutation
-"""
-type OrganizationSettingDeletePayload {
-	"""
-	Deleted organizationSetting ID
-	"""
-	deletedID: ID!
-}
-"""
 An edge in a connection.
 """
 type OrganizationSettingEdge {

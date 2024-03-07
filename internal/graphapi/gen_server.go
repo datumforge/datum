@@ -535,14 +535,6 @@ type ComplexityRoot struct {
 		TotalCount func(childComplexity int) int
 	}
 
-	OrganizationSettingCreatePayload struct {
-		OrganizationSetting func(childComplexity int) int
-	}
-
-	OrganizationSettingDeletePayload struct {
-		DeletedID func(childComplexity int) int
-	}
-
 	OrganizationSettingEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
@@ -3069,20 +3061,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrganizationSettingConnection.TotalCount(childComplexity), true
-
-	case "OrganizationSettingCreatePayload.organizationSetting":
-		if e.complexity.OrganizationSettingCreatePayload.OrganizationSetting == nil {
-			break
-		}
-
-		return e.complexity.OrganizationSettingCreatePayload.OrganizationSetting(childComplexity), true
-
-	case "OrganizationSettingDeletePayload.deletedID":
-		if e.complexity.OrganizationSettingDeletePayload.DeletedID == nil {
-			break
-		}
-
-		return e.complexity.OrganizationSettingDeletePayload.DeletedID(childComplexity), true
 
 	case "OrganizationSettingEdge.cursor":
 		if e.complexity.OrganizationSettingEdge.Cursor == nil {
@@ -10092,16 +10070,6 @@ extend type Mutation{
 }
 
 """
-Return response for createOrganizationSetting mutation
-"""
-type OrganizationSettingCreatePayload {
-    """
-    Created organizationSetting
-    """
-    organizationSetting: OrganizationSetting!
-}
-
-"""
 Return response for updateOrganizationSetting mutation
 """
 type OrganizationSettingUpdatePayload {
@@ -10110,16 +10078,7 @@ type OrganizationSettingUpdatePayload {
     """
     organizationSetting: OrganizationSetting!
 }
-
-"""
-Return response for deleteOrganizationSetting mutation
-"""
-type OrganizationSettingDeletePayload {
-    """
-    Deleted organizationSetting ID
-    """
-    deletedID: ID!
-}`, BuiltIn: false},
+`, BuiltIn: false},
 	{Name: "../../schema/orgextended.graphql", Input: `extend input CreateOrganizationInput {
   createOrgSettings: CreateOrganizationSettingInput
 }
@@ -27146,132 +27105,6 @@ func (ec *executionContext) fieldContext_OrganizationSettingConnection_totalCoun
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _OrganizationSettingCreatePayload_organizationSetting(ctx context.Context, field graphql.CollectedField, obj *OrganizationSettingCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettingCreatePayload_organizationSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.OrganizationSetting, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*generated.OrganizationSetting)
-	fc.Result = res
-	return ec.marshalNOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_OrganizationSettingCreatePayload_organizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettingCreatePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_OrganizationSetting_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_OrganizationSetting_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_OrganizationSetting_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_OrganizationSetting_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_OrganizationSetting_deletedBy(ctx, field)
-			case "domains":
-				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
-			case "ssoCert":
-				return ec.fieldContext_OrganizationSetting_ssoCert(ctx, field)
-			case "ssoEntrypoint":
-				return ec.fieldContext_OrganizationSetting_ssoEntrypoint(ctx, field)
-			case "ssoIssuer":
-				return ec.fieldContext_OrganizationSetting_ssoIssuer(ctx, field)
-			case "billingContact":
-				return ec.fieldContext_OrganizationSetting_billingContact(ctx, field)
-			case "billingEmail":
-				return ec.fieldContext_OrganizationSetting_billingEmail(ctx, field)
-			case "billingPhone":
-				return ec.fieldContext_OrganizationSetting_billingPhone(ctx, field)
-			case "billingAddress":
-				return ec.fieldContext_OrganizationSetting_billingAddress(ctx, field)
-			case "taxIdentifier":
-				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
-			case "tags":
-				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "organization":
-				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _OrganizationSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *OrganizationSettingDeletePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettingDeletePayload_deletedID(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_OrganizationSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettingDeletePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -58443,84 +58276,6 @@ func (ec *executionContext) _OrganizationSettingConnection(ctx context.Context, 
 			}
 		case "totalCount":
 			out.Values[i] = ec._OrganizationSettingConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var organizationSettingCreatePayloadImplementors = []string{"OrganizationSettingCreatePayload"}
-
-func (ec *executionContext) _OrganizationSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *OrganizationSettingCreatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingCreatePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("OrganizationSettingCreatePayload")
-		case "organizationSetting":
-			out.Values[i] = ec._OrganizationSettingCreatePayload_organizationSetting(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var organizationSettingDeletePayloadImplementors = []string{"OrganizationSettingDeletePayload"}
-
-func (ec *executionContext) _OrganizationSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *OrganizationSettingDeletePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingDeletePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("OrganizationSettingDeletePayload")
-		case "deletedID":
-			out.Values[i] = ec._OrganizationSettingDeletePayload_deletedID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

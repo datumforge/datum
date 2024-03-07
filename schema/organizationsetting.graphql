@@ -12,15 +12,6 @@ extend type Query {
 
 extend type Mutation{
     """
-    Create a new organizationSetting
-    """
-    createOrganizationSetting(
-        """
-        values of the organizationSetting
-        """
-        input: CreateOrganizationSettingInput!
-    ): OrganizationSettingCreatePayload!
-    """
     Update an existing organizationSetting
     """
     updateOrganizationSetting(
@@ -33,15 +24,6 @@ extend type Mutation{
         """
         input: UpdateOrganizationSettingInput!
     ): OrganizationSettingUpdatePayload!
-    """
-    Delete an existing organizationSetting
-    """
-    deleteOrganizationSetting(
-        """
-        ID of the organizationSetting
-        """
-        id: ID!
-    ): OrganizationSettingDeletePayload!
 }
 
 """

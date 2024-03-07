@@ -313,7 +313,6 @@ type ComplexityRoot struct {
 		CreateOhAuthTooToken      func(childComplexity int, input generated.CreateOhAuthTooTokenInput) int
 		CreateOrgMembership       func(childComplexity int, input generated.CreateOrgMembershipInput) int
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
-		CreateOrganizationSetting func(childComplexity int, input generated.CreateOrganizationSettingInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
@@ -326,7 +325,6 @@ type ComplexityRoot struct {
 		DeleteOhAuthTooToken      func(childComplexity int, id string) int
 		DeleteOrgMembership       func(childComplexity int, id string) int
 		DeleteOrganization        func(childComplexity int, id string) int
-		DeleteOrganizationSetting func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
@@ -760,9 +758,7 @@ type MutationResolver interface {
 	CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error)
 	UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error)
 	DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error)
-	CreateOrganizationSetting(ctx context.Context, input generated.CreateOrganizationSettingInput) (*OrganizationSettingCreatePayload, error)
 	UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error)
-	DeleteOrganizationSetting(ctx context.Context, id string) (*OrganizationSettingDeletePayload, error)
 	CreateOrgMembership(ctx context.Context, input generated.CreateOrgMembershipInput) (*OrgMembershipCreatePayload, error)
 	UpdateOrgMembership(ctx context.Context, id string, input generated.UpdateOrgMembershipInput) (*OrgMembershipUpdatePayload, error)
 	DeleteOrgMembership(ctx context.Context, id string) (*OrgMembershipDeletePayload, error)
@@ -1908,18 +1904,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateOrganization(childComplexity, args["input"].(generated.CreateOrganizationInput)), true
 
-	case "Mutation.createOrganizationSetting":
-		if e.complexity.Mutation.CreateOrganizationSetting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createOrganizationSetting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateOrganizationSetting(childComplexity, args["input"].(generated.CreateOrganizationSettingInput)), true
-
 	case "Mutation.createPersonalAccessToken":
 		if e.complexity.Mutation.CreatePersonalAccessToken == nil {
 			break
@@ -2063,18 +2047,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteOrganization(childComplexity, args["id"].(string)), true
-
-	case "Mutation.deleteOrganizationSetting":
-		if e.complexity.Mutation.DeleteOrganizationSetting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteOrganizationSetting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteOrganizationSetting(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deletePersonalAccessToken":
 		if e.complexity.Mutation.DeletePersonalAccessToken == nil {
@@ -10129,15 +10101,6 @@ type OrganizationDeletePayload {
 
 extend type Mutation{
     """
-    Create a new organizationSetting
-    """
-    createOrganizationSetting(
-        """
-        values of the organizationSetting
-        """
-        input: CreateOrganizationSettingInput!
-    ): OrganizationSettingCreatePayload!
-    """
     Update an existing organizationSetting
     """
     updateOrganizationSetting(
@@ -10150,15 +10113,6 @@ extend type Mutation{
         """
         input: UpdateOrganizationSettingInput!
     ): OrganizationSettingUpdatePayload!
-    """
-    Delete an existing organizationSetting
-    """
-    deleteOrganizationSetting(
-        """
-        ID of the organizationSetting
-        """
-        id: ID!
-    ): OrganizationSettingDeletePayload!
 }
 
 """
@@ -10620,21 +10574,6 @@ func (ec *executionContext) field_Mutation_createOrgMembership_args(ctx context.
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createOrganizationSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 generated.CreateOrganizationSettingInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateOrganizationSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_createOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -10801,21 +10740,6 @@ func (ec *executionContext) field_Mutation_deleteOhAuthTooToken_args(ctx context
 }
 
 func (ec *executionContext) field_Mutation_deleteOrgMembership_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_deleteOrganizationSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -20614,65 +20538,6 @@ func (ec *executionContext) fieldContext_Mutation_deleteOrganization(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createOrganizationSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createOrganizationSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateOrganizationSetting(rctx, fc.Args["input"].(generated.CreateOrganizationSettingInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*OrganizationSettingCreatePayload)
-	fc.Result = res
-	return ec.marshalNOrganizationSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingCreatePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createOrganizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "organizationSetting":
-				return ec.fieldContext_OrganizationSettingCreatePayload_organizationSetting(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingCreatePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createOrganizationSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_updateOrganizationSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_updateOrganizationSetting(ctx, field)
 	if err != nil {
@@ -20726,65 +20591,6 @@ func (ec *executionContext) fieldContext_Mutation_updateOrganizationSetting(ctx 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateOrganizationSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteOrganizationSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteOrganizationSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteOrganizationSetting(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*OrganizationSettingDeletePayload)
-	fc.Result = res
-	return ec.marshalNOrganizationSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingDeletePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteOrganizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "deletedID":
-				return ec.fieldContext_OrganizationSettingDeletePayload_deletedID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingDeletePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteOrganizationSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -56656,23 +56462,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createOrganizationSetting":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createOrganizationSetting(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "updateOrganizationSetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateOrganizationSetting(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deleteOrganizationSetting":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteOrganizationSetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -61011,11 +60803,6 @@ func (ec *executionContext) unmarshalNCreateOrganizationInput2githubᚗcomᚋdat
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateOrganizationSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx context.Context, v interface{}) (generated.CreateOrganizationSettingInput, error) {
-	res, err := ec.unmarshalInputCreateOrganizationSettingInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNCreatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreatePersonalAccessTokenInput(ctx context.Context, v interface{}) (generated.CreatePersonalAccessTokenInput, error) {
 	res, err := ec.unmarshalInputCreatePersonalAccessTokenInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -62021,34 +61808,6 @@ func (ec *executionContext) marshalNOrganizationSettingConnection2ᚖgithubᚗco
 		return graphql.Null
 	}
 	return ec._OrganizationSettingConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNOrganizationSettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v OrganizationSettingCreatePayload) graphql.Marshaler {
-	return ec._OrganizationSettingCreatePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNOrganizationSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *OrganizationSettingCreatePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._OrganizationSettingCreatePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNOrganizationSettingDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v OrganizationSettingDeletePayload) graphql.Marshaler {
-	return ec._OrganizationSettingDeletePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNOrganizationSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v *OrganizationSettingDeletePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._OrganizationSettingDeletePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNOrganizationSettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v OrganizationSettingUpdatePayload) graphql.Marshaler {

@@ -2334,15 +2334,6 @@ type Mutation {
 		id: ID!
 	): OrganizationDeletePayload!
 	"""
-	Create a new organizationSetting
-	"""
-	createOrganizationSetting(
-		"""
-		values of the organizationSetting
-		"""
-		input: CreateOrganizationSettingInput!
-	): OrganizationSettingCreatePayload!
-	"""
 	Update an existing organizationSetting
 	"""
 	updateOrganizationSetting(
@@ -2356,15 +2347,6 @@ type Mutation {
 		"""
 		input: UpdateOrganizationSettingInput!
 	): OrganizationSettingUpdatePayload!
-	"""
-	Delete an existing organizationSetting
-	"""
-	deleteOrganizationSetting(
-		"""
-		ID of the organizationSetting
-		"""
-		id: ID!
-	): OrganizationSettingDeletePayload!
 	"""
 	Create a new orgMembership
 	"""

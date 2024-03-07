@@ -15,11 +15,6 @@ import (
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// CreateOrganizationSetting is the resolver for the createOrganizationSetting field.
-func (r *mutationResolver) CreateOrganizationSetting(ctx context.Context, input generated.CreateOrganizationSettingInput) (*OrganizationSettingCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateOrganizationSetting - createOrganizationSetting"))
-}
-
 // UpdateOrganizationSetting is the resolver for the updateOrganizationSetting field.
 func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error) {
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
@@ -53,11 +48,6 @@ func (r *mutationResolver) UpdateOrganizationSetting(ctx context.Context, id str
 	return &OrganizationSettingUpdatePayload{OrganizationSetting: organizationSetting}, nil
 }
 
-// DeleteOrganizationSetting is the resolver for the deleteOrganizationSetting field.
-func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id string) (*OrganizationSettingDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteOrganizationSetting - deleteOrganizationSetting"))
-}
-
 // OrganizationSetting is the resolver for the organizationSetting field.
 func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error) {
 	// setup view context
@@ -83,4 +73,17 @@ func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*ge
 	}
 
 	return org, nil
+}
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) CreateOrganizationSetting(ctx context.Context, input generated.CreateOrganizationSettingInput) (*OrganizationSettingCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateOrganizationSetting - createOrganizationSetting"))
+}
+func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id string) (*OrganizationSettingDeletePayload, error) {
+	panic(fmt.Errorf("not implemented: DeleteOrganizationSetting - deleteOrganizationSetting"))
 }

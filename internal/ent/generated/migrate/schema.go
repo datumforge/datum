@@ -578,6 +578,7 @@ var (
 		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true},
 		{Name: "user_id", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "user_setting_default_org", Type: field.TypeString, Nullable: true},
 	}
@@ -589,13 +590,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_settings_users_setting",
-				Columns:    []*schema.Column{UserSettingsColumns[20]},
+				Columns:    []*schema.Column{UserSettingsColumns[21]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "user_settings_organizations_default_org",
-				Columns:    []*schema.Column{UserSettingsColumns[21]},
+				Columns:    []*schema.Column{UserSettingsColumns[22]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

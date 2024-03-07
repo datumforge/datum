@@ -2307,6 +2307,11 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, usersetting.FieldIsTfaEnabled)
 				fieldSeen[usersetting.FieldIsTfaEnabled] = struct{}{}
 			}
+		case "phoneNumber":
+			if _, ok := fieldSeen[usersetting.FieldPhoneNumber]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldPhoneNumber)
+				fieldSeen[usersetting.FieldPhoneNumber] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

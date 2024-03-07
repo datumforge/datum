@@ -720,6 +720,7 @@ type ComplexityRoot struct {
 		IsTotpAllowed     func(childComplexity int) int
 		IsWebauthnAllowed func(childComplexity int) int
 		Locked            func(childComplexity int) int
+		PhoneNumber       func(childComplexity int) int
 		RecoveryCodes     func(childComplexity int) int
 		SilencedAt        func(childComplexity int) int
 		Status            func(childComplexity int) int
@@ -4110,6 +4111,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSetting.Locked(childComplexity), true
 
+	case "UserSetting.phoneNumber":
+		if e.complexity.UserSetting.PhoneNumber == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.PhoneNumber(childComplexity), true
+
 	case "UserSetting.recoveryCodes":
 		if e.complexity.UserSetting.RecoveryCodes == nil {
 			break
@@ -4828,6 +4836,10 @@ input CreateUserSettingInput {
   whether the user has two factor authentication enabled
   """
   isTfaEnabled: Boolean
+  """
+  phone number associated with the account, used 2factor SMS authentication
+  """
+  phoneNumber: String
   userID: ID
   defaultOrgID: ID
 }
@@ -8781,6 +8793,11 @@ input UpdateUserSettingInput {
   """
   isTfaEnabled: Boolean
   clearIsTfaEnabled: Boolean
+  """
+  phone number associated with the account, used 2factor SMS authentication
+  """
+  phoneNumber: String
+  clearPhoneNumber: Boolean
   userID: ID
   clearUser: Boolean
   defaultOrgID: ID
@@ -8943,6 +8960,10 @@ type UserSetting implements Node {
   whether the user has two factor authentication enabled
   """
   isTfaEnabled: Boolean
+  """
+  phone number associated with the account, used 2factor SMS authentication
+  """
+  phoneNumber: String
   user: User
   """
   organization to load on user login
@@ -9198,6 +9219,24 @@ input UserSettingWhereInput {
   isTfaEnabledNEQ: Boolean
   isTfaEnabledIsNil: Boolean
   isTfaEnabledNotNil: Boolean
+  """
+  phone_number field predicates
+  """
+  phoneNumber: String
+  phoneNumberNEQ: String
+  phoneNumberIn: [String!]
+  phoneNumberNotIn: [String!]
+  phoneNumberGT: String
+  phoneNumberGTE: String
+  phoneNumberLT: String
+  phoneNumberLTE: String
+  phoneNumberContains: String
+  phoneNumberHasPrefix: String
+  phoneNumberHasSuffix: String
+  phoneNumberIsNil: Boolean
+  phoneNumberNotNil: Boolean
+  phoneNumberEqualFold: String
+  phoneNumberContainsFold: String
   """
   user edge predicates
   """
@@ -31559,6 +31598,8 @@ func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, 
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
 				return ec.fieldContext_UserSetting_isTfaEnabled(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_UserSetting_phoneNumber(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
 			case "defaultOrg":
@@ -33125,6 +33166,8 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
 				return ec.fieldContext_UserSetting_isTfaEnabled(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_UserSetting_phoneNumber(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
 			case "defaultOrg":
@@ -34681,6 +34724,47 @@ func (ec *executionContext) fieldContext_UserSetting_isTfaEnabled(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _UserSetting_phoneNumber(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_phoneNumber(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhoneNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSetting_phoneNumber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserSetting_user(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSetting_user(ctx, field)
 	if err != nil {
@@ -35078,6 +35162,8 @@ func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Contex
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
 				return ec.fieldContext_UserSetting_isTfaEnabled(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_UserSetting_phoneNumber(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
 			case "defaultOrg":
@@ -35212,6 +35298,8 @@ func (ec *executionContext) fieldContext_UserSettingUpdatePayload_userSetting(ct
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
 				return ec.fieldContext_UserSetting_isTfaEnabled(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_UserSetting_phoneNumber(ctx, field)
 			case "user":
 				return ec.fieldContext_UserSetting_user(ctx, field)
 			case "defaultOrg":
@@ -38627,7 +38715,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "tfaSecret", "recoveryCodes", "isPhoneOtpAllowed", "isEmailOtpAllowed", "isTotpAllowed", "isWebauthnAllowed", "isTfaEnabled", "userID", "defaultOrgID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "tfaSecret", "recoveryCodes", "isPhoneOtpAllowed", "isEmailOtpAllowed", "isTotpAllowed", "isWebauthnAllowed", "isTfaEnabled", "phoneNumber", "userID", "defaultOrgID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38753,6 +38841,13 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.IsTfaEnabled = data
+		case "phoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
 		case "userID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -52342,7 +52437,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "phoneNumber", "clearPhoneNumber", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -52545,6 +52640,20 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.ClearIsTfaEnabled = data
+		case "phoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
+		case "clearPhoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPhoneNumber"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearPhoneNumber = data
 		case "userID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -52624,7 +52733,7 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "userIDGT", "userIDGTE", "userIDLT", "userIDLTE", "userIDContains", "userIDHasPrefix", "userIDHasSuffix", "userIDIsNil", "userIDNotNil", "userIDEqualFold", "userIDContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "emailConfirmed", "emailConfirmedNEQ", "isPhoneOtpAllowed", "isPhoneOtpAllowedNEQ", "isPhoneOtpAllowedIsNil", "isPhoneOtpAllowedNotNil", "isEmailOtpAllowed", "isEmailOtpAllowedNEQ", "isEmailOtpAllowedIsNil", "isEmailOtpAllowedNotNil", "isTotpAllowed", "isTotpAllowedNEQ", "isTotpAllowedIsNil", "isTotpAllowedNotNil", "isWebauthnAllowed", "isWebauthnAllowedNEQ", "isWebauthnAllowedIsNil", "isWebauthnAllowedNotNil", "isTfaEnabled", "isTfaEnabledNEQ", "isTfaEnabledIsNil", "isTfaEnabledNotNil", "hasUser", "hasUserWith", "hasDefaultOrg", "hasDefaultOrgWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "userIDGT", "userIDGTE", "userIDLT", "userIDLTE", "userIDContains", "userIDHasPrefix", "userIDHasSuffix", "userIDIsNil", "userIDNotNil", "userIDEqualFold", "userIDContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "emailConfirmed", "emailConfirmedNEQ", "isPhoneOtpAllowed", "isPhoneOtpAllowedNEQ", "isPhoneOtpAllowedIsNil", "isPhoneOtpAllowedNotNil", "isEmailOtpAllowed", "isEmailOtpAllowedNEQ", "isEmailOtpAllowedIsNil", "isEmailOtpAllowedNotNil", "isTotpAllowed", "isTotpAllowedNEQ", "isTotpAllowedIsNil", "isTotpAllowedNotNil", "isWebauthnAllowed", "isWebauthnAllowedNEQ", "isWebauthnAllowedIsNil", "isWebauthnAllowedNotNil", "isTfaEnabled", "isTfaEnabledNEQ", "isTfaEnabledIsNil", "isTfaEnabledNotNil", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "hasUser", "hasUserWith", "hasDefaultOrg", "hasDefaultOrgWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -53688,6 +53797,111 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.IsTfaEnabledNotNil = data
+		case "phoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
+		case "phoneNumberNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberNEQ = data
+		case "phoneNumberIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberIn = data
+		case "phoneNumberNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberNotIn = data
+		case "phoneNumberGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberGT = data
+		case "phoneNumberGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberGTE = data
+		case "phoneNumberLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberLT = data
+		case "phoneNumberLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberLTE = data
+		case "phoneNumberContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberContains = data
+		case "phoneNumberHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberHasPrefix = data
+		case "phoneNumberHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberHasSuffix = data
+		case "phoneNumberIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberIsNil = data
+		case "phoneNumberNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberNotNil = data
+		case "phoneNumberEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberEqualFold = data
+		case "phoneNumberContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberContainsFold = data
 		case "hasUser":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUser"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -61432,6 +61646,8 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._UserSetting_isWebauthnAllowed(ctx, field, obj)
 		case "isTfaEnabled":
 			out.Values[i] = ec._UserSetting_isTfaEnabled(ctx, field, obj)
+		case "phoneNumber":
+			out.Values[i] = ec._UserSetting_phoneNumber(ctx, field, obj)
 		case "user":
 			field := field
 

@@ -435,6 +435,10 @@ input CreateUserSettingInput {
   whether the user has two factor authentication enabled
   """
   isTfaEnabled: Boolean
+  """
+  phone number associated with the account, used 2factor SMS authentication
+  """
+  phoneNumber: String
   userID: ID
   defaultOrgID: ID
 }
@@ -4388,6 +4392,11 @@ input UpdateUserSettingInput {
   """
   isTfaEnabled: Boolean
   clearIsTfaEnabled: Boolean
+  """
+  phone number associated with the account, used 2factor SMS authentication
+  """
+  phoneNumber: String
+  clearPhoneNumber: Boolean
   userID: ID
   clearUser: Boolean
   defaultOrgID: ID
@@ -4550,6 +4559,10 @@ type UserSetting implements Node {
   whether the user has two factor authentication enabled
   """
   isTfaEnabled: Boolean
+  """
+  phone number associated with the account, used 2factor SMS authentication
+  """
+  phoneNumber: String
   user: User
   """
   organization to load on user login
@@ -4805,6 +4818,24 @@ input UserSettingWhereInput {
   isTfaEnabledNEQ: Boolean
   isTfaEnabledIsNil: Boolean
   isTfaEnabledNotNil: Boolean
+  """
+  phone_number field predicates
+  """
+  phoneNumber: String
+  phoneNumberNEQ: String
+  phoneNumberIn: [String!]
+  phoneNumberNotIn: [String!]
+  phoneNumberGT: String
+  phoneNumberGTE: String
+  phoneNumberLT: String
+  phoneNumberLTE: String
+  phoneNumberContains: String
+  phoneNumberHasPrefix: String
+  phoneNumberHasSuffix: String
+  phoneNumberIsNil: Boolean
+  phoneNumberNotNil: Boolean
+  phoneNumberEqualFold: String
+  phoneNumberContainsFold: String
   """
   user edge predicates
   """

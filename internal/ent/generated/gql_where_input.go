@@ -9659,6 +9659,23 @@ type UserSettingWhereInput struct {
 	IsTfaEnabledIsNil  bool  `json:"isTfaEnabledIsNil,omitempty"`
 	IsTfaEnabledNotNil bool  `json:"isTfaEnabledNotNil,omitempty"`
 
+	// "phone_number" field predicates.
+	PhoneNumber             *string  `json:"phoneNumber,omitempty"`
+	PhoneNumberNEQ          *string  `json:"phoneNumberNEQ,omitempty"`
+	PhoneNumberIn           []string `json:"phoneNumberIn,omitempty"`
+	PhoneNumberNotIn        []string `json:"phoneNumberNotIn,omitempty"`
+	PhoneNumberGT           *string  `json:"phoneNumberGT,omitempty"`
+	PhoneNumberGTE          *string  `json:"phoneNumberGTE,omitempty"`
+	PhoneNumberLT           *string  `json:"phoneNumberLT,omitempty"`
+	PhoneNumberLTE          *string  `json:"phoneNumberLTE,omitempty"`
+	PhoneNumberContains     *string  `json:"phoneNumberContains,omitempty"`
+	PhoneNumberHasPrefix    *string  `json:"phoneNumberHasPrefix,omitempty"`
+	PhoneNumberHasSuffix    *string  `json:"phoneNumberHasSuffix,omitempty"`
+	PhoneNumberIsNil        bool     `json:"phoneNumberIsNil,omitempty"`
+	PhoneNumberNotNil       bool     `json:"phoneNumberNotNil,omitempty"`
+	PhoneNumberEqualFold    *string  `json:"phoneNumberEqualFold,omitempty"`
+	PhoneNumberContainsFold *string  `json:"phoneNumberContainsFold,omitempty"`
+
 	// "user" edge predicates.
 	HasUser     *bool             `json:"hasUser,omitempty"`
 	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
@@ -10227,6 +10244,51 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 	}
 	if i.IsTfaEnabledNotNil {
 		predicates = append(predicates, usersetting.IsTfaEnabledNotNil())
+	}
+	if i.PhoneNumber != nil {
+		predicates = append(predicates, usersetting.PhoneNumberEQ(*i.PhoneNumber))
+	}
+	if i.PhoneNumberNEQ != nil {
+		predicates = append(predicates, usersetting.PhoneNumberNEQ(*i.PhoneNumberNEQ))
+	}
+	if len(i.PhoneNumberIn) > 0 {
+		predicates = append(predicates, usersetting.PhoneNumberIn(i.PhoneNumberIn...))
+	}
+	if len(i.PhoneNumberNotIn) > 0 {
+		predicates = append(predicates, usersetting.PhoneNumberNotIn(i.PhoneNumberNotIn...))
+	}
+	if i.PhoneNumberGT != nil {
+		predicates = append(predicates, usersetting.PhoneNumberGT(*i.PhoneNumberGT))
+	}
+	if i.PhoneNumberGTE != nil {
+		predicates = append(predicates, usersetting.PhoneNumberGTE(*i.PhoneNumberGTE))
+	}
+	if i.PhoneNumberLT != nil {
+		predicates = append(predicates, usersetting.PhoneNumberLT(*i.PhoneNumberLT))
+	}
+	if i.PhoneNumberLTE != nil {
+		predicates = append(predicates, usersetting.PhoneNumberLTE(*i.PhoneNumberLTE))
+	}
+	if i.PhoneNumberContains != nil {
+		predicates = append(predicates, usersetting.PhoneNumberContains(*i.PhoneNumberContains))
+	}
+	if i.PhoneNumberHasPrefix != nil {
+		predicates = append(predicates, usersetting.PhoneNumberHasPrefix(*i.PhoneNumberHasPrefix))
+	}
+	if i.PhoneNumberHasSuffix != nil {
+		predicates = append(predicates, usersetting.PhoneNumberHasSuffix(*i.PhoneNumberHasSuffix))
+	}
+	if i.PhoneNumberIsNil {
+		predicates = append(predicates, usersetting.PhoneNumberIsNil())
+	}
+	if i.PhoneNumberNotNil {
+		predicates = append(predicates, usersetting.PhoneNumberNotNil())
+	}
+	if i.PhoneNumberEqualFold != nil {
+		predicates = append(predicates, usersetting.PhoneNumberEqualFold(*i.PhoneNumberEqualFold))
+	}
+	if i.PhoneNumberContainsFold != nil {
+		predicates = append(predicates, usersetting.PhoneNumberContainsFold(*i.PhoneNumberContainsFold))
 	}
 
 	if i.HasUser != nil {

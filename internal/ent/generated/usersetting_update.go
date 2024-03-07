@@ -358,6 +358,26 @@ func (usu *UserSettingUpdate) ClearIsTfaEnabled() *UserSettingUpdate {
 	return usu
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (usu *UserSettingUpdate) SetPhoneNumber(s string) *UserSettingUpdate {
+	usu.mutation.SetPhoneNumber(s)
+	return usu
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillablePhoneNumber(s *string) *UserSettingUpdate {
+	if s != nil {
+		usu.SetPhoneNumber(*s)
+	}
+	return usu
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (usu *UserSettingUpdate) ClearPhoneNumber() *UserSettingUpdate {
+	usu.mutation.ClearPhoneNumber()
+	return usu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (usu *UserSettingUpdate) SetUser(u *User) *UserSettingUpdate {
 	return usu.SetUserID(u.ID)
@@ -568,6 +588,12 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if usu.mutation.IsTfaEnabledCleared() {
 		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
+	}
+	if value, ok := usu.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+	}
+	if usu.mutation.PhoneNumberCleared() {
+		_spec.ClearField(usersetting.FieldPhoneNumber, field.TypeString)
 	}
 	if usu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -977,6 +1003,26 @@ func (usuo *UserSettingUpdateOne) ClearIsTfaEnabled() *UserSettingUpdateOne {
 	return usuo
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (usuo *UserSettingUpdateOne) SetPhoneNumber(s string) *UserSettingUpdateOne {
+	usuo.mutation.SetPhoneNumber(s)
+	return usuo
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillablePhoneNumber(s *string) *UserSettingUpdateOne {
+	if s != nil {
+		usuo.SetPhoneNumber(*s)
+	}
+	return usuo
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (usuo *UserSettingUpdateOne) ClearPhoneNumber() *UserSettingUpdateOne {
+	usuo.mutation.ClearPhoneNumber()
+	return usuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (usuo *UserSettingUpdateOne) SetUser(u *User) *UserSettingUpdateOne {
 	return usuo.SetUserID(u.ID)
@@ -1217,6 +1263,12 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	}
 	if usuo.mutation.IsTfaEnabledCleared() {
 		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+	}
+	if usuo.mutation.PhoneNumberCleared() {
+		_spec.ClearField(usersetting.FieldPhoneNumber, field.TypeString)
 	}
 	if usuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

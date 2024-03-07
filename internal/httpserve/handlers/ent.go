@@ -395,7 +395,7 @@ func createUserInput(name, email string, provider enums.AuthProvider) ent.Create
 func (h *Handler) setWebauthnAllowed(ctx context.Context, user *ent.User) error {
 	if _, err := transaction.FromContext(ctx).UserSetting.Update().SetIsWebauthnAllowed(true).
 		Where(
-			usersetting.ID(user.Edges.Setting.ID),
+			usersetting.UserID(user.ID),
 		).Save(ctx); err != nil {
 		h.Logger.Errorw("error setting webauthn allowed", "error", err)
 

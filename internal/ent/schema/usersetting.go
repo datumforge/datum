@@ -90,6 +90,10 @@ func (UserSetting) Fields() []ent.Field {
 			Comment("whether the user has two factor authentication enabled").
 			Optional().
 			Default(false),
+		field.String("phone_number").
+			Comment("phone number associated with the account, used 2factor SMS authentication").
+			Optional().
+			Nillable(),
 	}
 }
 

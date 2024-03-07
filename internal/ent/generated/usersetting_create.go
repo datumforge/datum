@@ -287,6 +287,20 @@ func (usc *UserSettingCreate) SetNillableIsTfaEnabled(b *bool) *UserSettingCreat
 	return usc
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (usc *UserSettingCreate) SetPhoneNumber(s string) *UserSettingCreate {
+	usc.mutation.SetPhoneNumber(s)
+	return usc
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillablePhoneNumber(s *string) *UserSettingCreate {
+	if s != nil {
+		usc.SetPhoneNumber(*s)
+	}
+	return usc
+}
+
 // SetID sets the "id" field.
 func (usc *UserSettingCreate) SetID(s string) *UserSettingCreate {
 	usc.mutation.SetID(s)
@@ -552,6 +566,10 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 	if value, ok := usc.mutation.IsTfaEnabled(); ok {
 		_spec.SetField(usersetting.FieldIsTfaEnabled, field.TypeBool, value)
 		_node.IsTfaEnabled = value
+	}
+	if value, ok := usc.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+		_node.PhoneNumber = &value
 	}
 	if nodes := usc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

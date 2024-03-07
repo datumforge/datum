@@ -341,7 +341,9 @@ type CreateUserSettingInput struct {
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
 	// whether the user has two factor authentication enabled
-	IsTfaEnabled *bool   `json:"isTfaEnabled,omitempty"`
+	IsTfaEnabled *bool `json:"isTfaEnabled,omitempty"`
+	// phone number associated with the account, used 2factor SMS authentication
+	PhoneNumber  *string `json:"phoneNumber,omitempty"`
 	UserID       *string `json:"userID,omitempty"`
 	DefaultOrgID *string `json:"defaultOrgID,omitempty"`
 }
@@ -3347,12 +3349,15 @@ type UpdateUserSettingInput struct {
 	IsWebauthnAllowed      *bool `json:"isWebauthnAllowed,omitempty"`
 	ClearIsWebauthnAllowed *bool `json:"clearIsWebauthnAllowed,omitempty"`
 	// whether the user has two factor authentication enabled
-	IsTfaEnabled      *bool   `json:"isTfaEnabled,omitempty"`
-	ClearIsTfaEnabled *bool   `json:"clearIsTfaEnabled,omitempty"`
-	UserID            *string `json:"userID,omitempty"`
-	ClearUser         *bool   `json:"clearUser,omitempty"`
-	DefaultOrgID      *string `json:"defaultOrgID,omitempty"`
-	ClearDefaultOrg   *bool   `json:"clearDefaultOrg,omitempty"`
+	IsTfaEnabled      *bool `json:"isTfaEnabled,omitempty"`
+	ClearIsTfaEnabled *bool `json:"clearIsTfaEnabled,omitempty"`
+	// phone number associated with the account, used 2factor SMS authentication
+	PhoneNumber      *string `json:"phoneNumber,omitempty"`
+	ClearPhoneNumber *bool   `json:"clearPhoneNumber,omitempty"`
+	UserID           *string `json:"userID,omitempty"`
+	ClearUser        *bool   `json:"clearUser,omitempty"`
+	DefaultOrgID     *string `json:"defaultOrgID,omitempty"`
+	ClearDefaultOrg  *bool   `json:"clearDefaultOrg,omitempty"`
 }
 
 type User struct {
@@ -3459,7 +3464,9 @@ type UserSetting struct {
 	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
 	// whether the user has two factor authentication enabled
 	IsTfaEnabled *bool `json:"isTfaEnabled,omitempty"`
-	User         *User `json:"user,omitempty"`
+	// phone number associated with the account, used 2factor SMS authentication
+	PhoneNumber *string `json:"phoneNumber,omitempty"`
+	User        *User   `json:"user,omitempty"`
 	// organization to load on user login
 	DefaultOrg *Organization `json:"defaultOrg,omitempty"`
 }
@@ -3662,6 +3669,22 @@ type UserSettingWhereInput struct {
 	IsTfaEnabledNeq    *bool `json:"isTfaEnabledNEQ,omitempty"`
 	IsTfaEnabledIsNil  *bool `json:"isTfaEnabledIsNil,omitempty"`
 	IsTfaEnabledNotNil *bool `json:"isTfaEnabledNotNil,omitempty"`
+	// phone_number field predicates
+	PhoneNumber             *string  `json:"phoneNumber,omitempty"`
+	PhoneNumberNeq          *string  `json:"phoneNumberNEQ,omitempty"`
+	PhoneNumberIn           []string `json:"phoneNumberIn,omitempty"`
+	PhoneNumberNotIn        []string `json:"phoneNumberNotIn,omitempty"`
+	PhoneNumberGt           *string  `json:"phoneNumberGT,omitempty"`
+	PhoneNumberGte          *string  `json:"phoneNumberGTE,omitempty"`
+	PhoneNumberLt           *string  `json:"phoneNumberLT,omitempty"`
+	PhoneNumberLte          *string  `json:"phoneNumberLTE,omitempty"`
+	PhoneNumberContains     *string  `json:"phoneNumberContains,omitempty"`
+	PhoneNumberHasPrefix    *string  `json:"phoneNumberHasPrefix,omitempty"`
+	PhoneNumberHasSuffix    *string  `json:"phoneNumberHasSuffix,omitempty"`
+	PhoneNumberIsNil        *bool    `json:"phoneNumberIsNil,omitempty"`
+	PhoneNumberNotNil       *bool    `json:"phoneNumberNotNil,omitempty"`
+	PhoneNumberEqualFold    *string  `json:"phoneNumberEqualFold,omitempty"`
+	PhoneNumberContainsFold *string  `json:"phoneNumberContainsFold,omitempty"`
 	// user edge predicates
 	HasUser     *bool             `json:"hasUser,omitempty"`
 	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`

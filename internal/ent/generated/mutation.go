@@ -19494,6 +19494,7 @@ type UserSettingMutation struct {
 	is_totp_allowed      *bool
 	is_webauthn_allowed  *bool
 	is_tfa_enabled       *bool
+	phone_number         *string
 	clearedFields        map[string]struct{}
 	user                 *string
 	cleareduser          bool
@@ -20567,6 +20568,55 @@ func (m *UserSettingMutation) ResetIsTfaEnabled() {
 	delete(m.clearedFields, usersetting.FieldIsTfaEnabled)
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (m *UserSettingMutation) SetPhoneNumber(s string) {
+	m.phone_number = &s
+}
+
+// PhoneNumber returns the value of the "phone_number" field in the mutation.
+func (m *UserSettingMutation) PhoneNumber() (r string, exists bool) {
+	v := m.phone_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhoneNumber returns the old "phone_number" field's value of the UserSetting entity.
+// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserSettingMutation) OldPhoneNumber(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPhoneNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPhoneNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhoneNumber: %w", err)
+	}
+	return oldValue.PhoneNumber, nil
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (m *UserSettingMutation) ClearPhoneNumber() {
+	m.phone_number = nil
+	m.clearedFields[usersetting.FieldPhoneNumber] = struct{}{}
+}
+
+// PhoneNumberCleared returns if the "phone_number" field was cleared in this mutation.
+func (m *UserSettingMutation) PhoneNumberCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldPhoneNumber]
+	return ok
+}
+
+// ResetPhoneNumber resets all changes to the "phone_number" field.
+func (m *UserSettingMutation) ResetPhoneNumber() {
+	m.phone_number = nil
+	delete(m.clearedFields, usersetting.FieldPhoneNumber)
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *UserSettingMutation) ClearUser() {
 	m.cleareduser = true
@@ -20667,7 +20717,7 @@ func (m *UserSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSettingMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.created_at != nil {
 		fields = append(fields, usersetting.FieldCreatedAt)
 	}
@@ -20728,6 +20778,9 @@ func (m *UserSettingMutation) Fields() []string {
 	if m.is_tfa_enabled != nil {
 		fields = append(fields, usersetting.FieldIsTfaEnabled)
 	}
+	if m.phone_number != nil {
+		fields = append(fields, usersetting.FieldPhoneNumber)
+	}
 	return fields
 }
 
@@ -20776,6 +20829,8 @@ func (m *UserSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.IsWebauthnAllowed()
 	case usersetting.FieldIsTfaEnabled:
 		return m.IsTfaEnabled()
+	case usersetting.FieldPhoneNumber:
+		return m.PhoneNumber()
 	}
 	return nil, false
 }
@@ -20825,6 +20880,8 @@ func (m *UserSettingMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldIsWebauthnAllowed(ctx)
 	case usersetting.FieldIsTfaEnabled:
 		return m.OldIsTfaEnabled(ctx)
+	case usersetting.FieldPhoneNumber:
+		return m.OldPhoneNumber(ctx)
 	}
 	return nil, fmt.Errorf("unknown UserSetting field %s", name)
 }
@@ -20974,6 +21031,13 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIsTfaEnabled(v)
 		return nil
+	case usersetting.FieldPhoneNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhoneNumber(v)
+		return nil
 	}
 	return fmt.Errorf("unknown UserSetting field %s", name)
 }
@@ -21052,6 +21116,9 @@ func (m *UserSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(usersetting.FieldIsTfaEnabled) {
 		fields = append(fields, usersetting.FieldIsTfaEnabled)
 	}
+	if m.FieldCleared(usersetting.FieldPhoneNumber) {
+		fields = append(fields, usersetting.FieldPhoneNumber)
+	}
 	return fields
 }
 
@@ -21113,6 +21180,9 @@ func (m *UserSettingMutation) ClearField(name string) error {
 		return nil
 	case usersetting.FieldIsTfaEnabled:
 		m.ClearIsTfaEnabled()
+		return nil
+	case usersetting.FieldPhoneNumber:
+		m.ClearPhoneNumber()
 		return nil
 	}
 	return fmt.Errorf("unknown UserSetting nullable field %s", name)
@@ -21181,6 +21251,9 @@ func (m *UserSettingMutation) ResetField(name string) error {
 		return nil
 	case usersetting.FieldIsTfaEnabled:
 		m.ResetIsTfaEnabled()
+		return nil
+	case usersetting.FieldPhoneNumber:
+		m.ResetPhoneNumber()
 		return nil
 	}
 	return fmt.Errorf("unknown UserSetting field %s", name)

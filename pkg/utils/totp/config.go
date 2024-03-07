@@ -2,6 +2,7 @@ package totp
 
 const (
 	defaultLength = 6
+	codePeriod    = 30
 )
 
 type Config struct {
@@ -10,7 +11,7 @@ type Config struct {
 	// CodeLength is the length of the OTP code
 	CodeLength int `json:"codeLength" koanf:"codeLength" default:"6"`
 	// Issuer is the issuer for TOTP codes
-	Issuer string `json:"issuer" koanf:"issuer" default:"Datum"`
+	Issuer string `json:"issuer" koanf:"issuer" default:"datum"`
 	// WithRedis configures the service with a redis client
 	WithRedis bool `json:"redis" koanf:"redis" default:"true"`
 }
@@ -19,6 +20,7 @@ type Config struct {
 func NewOTP(options ...ConfigOption) TOTPManager {
 	s := OTP{
 		codeLength: defaultLength,
+		ttl:        codePeriod,
 	}
 
 	for _, opt := range options {
@@ -41,7 +43,7 @@ func WithCodeLength(length int) ConfigOption {
 // WithIssuer configures the service with a TOTP issuing domain
 func WithIssuer(issuer string) ConfigOption {
 	return func(s *OTP) {
-		s.totpIssuer = issuer
+		s.issuer = issuer
 	}
 }
 

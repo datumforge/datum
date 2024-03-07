@@ -1,4 +1,4 @@
-## `otp` Supports:
+## `totp` Supports:
 
 * Generating QR Code images for easy user enrollment
 * Time-based One-time Password Algorithm (TOTP) (RFC 6238): Time based OTP, the most commonly used method

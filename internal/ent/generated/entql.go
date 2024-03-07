@@ -442,6 +442,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldIsTotpAllowed:     {Type: field.TypeBool, Column: usersetting.FieldIsTotpAllowed},
 			usersetting.FieldIsWebauthnAllowed: {Type: field.TypeBool, Column: usersetting.FieldIsWebauthnAllowed},
 			usersetting.FieldIsTfaEnabled:      {Type: field.TypeBool, Column: usersetting.FieldIsTfaEnabled},
+			usersetting.FieldPhoneNumber:       {Type: field.TypeString, Column: usersetting.FieldPhoneNumber},
 		},
 	}
 	graph.Nodes[16] = &sqlgraph.Node{
@@ -3168,6 +3169,11 @@ func (f *UserSettingFilter) WhereIsWebauthnAllowed(p entql.BoolP) {
 // WhereIsTfaEnabled applies the entql bool predicate on the is_tfa_enabled field.
 func (f *UserSettingFilter) WhereIsTfaEnabled(p entql.BoolP) {
 	f.Where(p.Field(usersetting.FieldIsTfaEnabled))
+}
+
+// WherePhoneNumber applies the entql string predicate on the phone_number field.
+func (f *UserSettingFilter) WherePhoneNumber(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldPhoneNumber))
 }
 
 // WhereHasUser applies a predicate to check if query has an edge user.

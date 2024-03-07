@@ -1919,6 +1919,7 @@ type CreateUserSettingInput struct {
 	IsTotpAllowed     *bool
 	IsWebauthnAllowed *bool
 	IsTfaEnabled      *bool
+	PhoneNumber       *string
 	UserID            *string
 	DefaultOrgID      *string
 }
@@ -1976,6 +1977,9 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.IsTfaEnabled; v != nil {
 		m.SetIsTfaEnabled(*v)
 	}
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
+	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)
 	}
@@ -2020,6 +2024,8 @@ type UpdateUserSettingInput struct {
 	IsWebauthnAllowed      *bool
 	ClearIsTfaEnabled      bool
 	IsTfaEnabled           *bool
+	ClearPhoneNumber       bool
+	PhoneNumber            *string
 	ClearUser              bool
 	UserID                 *string
 	ClearDefaultOrg        bool
@@ -2111,6 +2117,12 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.IsTfaEnabled; v != nil {
 		m.SetIsTfaEnabled(*v)
+	}
+	if i.ClearPhoneNumber {
+		m.ClearPhoneNumber()
+	}
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
 	}
 	if i.ClearUser {
 		m.ClearUser()

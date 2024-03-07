@@ -5,26 +5,23 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestOTPManager(t *testing.T) {
 	codeLength := 10
-	svc := NewOTP(WithCodeLength(codeLength))
+	svc := NewOTP(
+		WithCodeLength(codeLength),
+	)
+
 	code, hash, err := svc.OTPCode("mitb@datum.net", Email)
+	require.NoErrorf(t, err, "failed to create code: %v", err)
 
-	if err != nil {
-		t.Fatal("failed to create code:", err)
-	}
-
-	if len(code) != codeLength {
-		t.Errorf("incorrect code length, want %v got %v", len(code), codeLength)
-	}
+	assert.Len(t, code, codeLength, "incorrect code length")
 
 	err = svc.ValidateOTP(code, hash)
-	if err != nil {
-		t.Error("failed to validate code:", err)
-	}
+	require.NoErrorf(t, err, "failed to validate code: %v", err)
 }
 
 func TestTOTPSecret(t *testing.T) {
@@ -42,13 +39,8 @@ func TestTOTPSecret(t *testing.T) {
 	}
 
 	secret, err := svc.TOTPSecret(user)
-	if err != nil {
-		t.Error("expected nil error, received:", err)
-	}
-
-	if secret == "" {
-		t.Error("no secret generated")
-	}
+	require.NoError(t, err)
+	assert.NotNil(t, secret, "no secret generated")
 }
 
 func TestTOTPQRString(t *testing.T) {
@@ -68,19 +60,14 @@ func TestTOTPQRString(t *testing.T) {
 			Valid:  true,
 		},
 	}
-	qrString, err := svc.TOTPQRString(user)
 
-	if err != nil {
-		t.Error("expected nil error, received:", err)
-	}
+	qrString, err := svc.TOTPQRString(user)
+	require.NoError(t, err)
 
 	expectedString := "otpauth://totp/authenticator.local:+17853931234?algorithm=" +
 		"SHA1&digits=6&issuer=authenticator.local&period=30&secret=" +
 		"572JFGKOMDRA6KHE5O3ZV62I6BP352E7"
-	if !cmp.Equal(qrString, expectedString) {
-		t.Error("TOTP QR string does not match",
-			cmp.Diff(qrString, expectedString))
-	}
+	assert.Equal(t, expectedString, qrString, "TOTP QR string does not match")
 }
 
 func TestEncryptsWithLatestSecret(t *testing.T) {
@@ -93,26 +80,13 @@ func TestEncryptsWithLatestSecret(t *testing.T) {
 	}
 	secret := "some-secret-value"
 	s, err := svc.encrypt(secret)
+	require.NoError(t, err, "failed to encrypt secret")
 
-	if err != nil {
-		t.Error("failed to encrypt", err)
-	}
-
-	if s == secret {
-		t.Error("value not encrypted")
-	}
-
-	if !strings.HasPrefix(s, "2:") {
-		t.Error("value not encrypted with latest secret")
-	}
+	assert.NotEqual(t, secret, s, "value not encrypted")
+	assert.True(t, strings.HasPrefix(s, "2:"), "value not encrypted with latest secret")
 
 	s, err = svc.decrypt(s)
+	require.NoError(t, err, "failed to decrypt secret")
 
-	if err != nil {
-		t.Error("failed to decrypt secret", err)
-	}
-
-	if s != secret {
-		t.Error("value not decrypted")
-	}
+	assert.Equal(t, secret, s, "value not decrypted")
 }

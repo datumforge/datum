@@ -58,6 +58,8 @@ const (
 	FieldIsWebauthnAllowed = "is_webauthn_allowed"
 	// FieldIsTfaEnabled holds the string denoting the is_tfa_enabled field in the database.
 	FieldIsTfaEnabled = "is_tfa_enabled"
+	// FieldPhoneNumber holds the string denoting the phone_number field in the database.
+	FieldPhoneNumber = "phone_number"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeDefaultOrg holds the string denoting the default_org edge name in mutations.
@@ -103,6 +105,7 @@ var Columns = []string{
 	FieldIsTotpAllowed,
 	FieldIsWebauthnAllowed,
 	FieldIsTfaEnabled,
+	FieldPhoneNumber,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "user_settings"
@@ -269,6 +272,11 @@ func ByIsWebauthnAllowed(opts ...sql.OrderTermOption) OrderOption {
 // ByIsTfaEnabled orders the results by the is_tfa_enabled field.
 func ByIsTfaEnabled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIsTfaEnabled, opts...).ToFunc()
+}
+
+// ByPhoneNumber orders the results by the phone_number field.
+func ByPhoneNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPhoneNumber, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

@@ -2976,12 +2976,6 @@ type TFASettingsCreatePayload struct {
 	TfaSettings *TFASettings `json:"tfaSettings"`
 }
 
-// Return response for deleteTFASettings mutation
-type TFASettingsDeletePayload struct {
-	// Deleted tfaSettings ID
-	DeletedID string `json:"deletedID"`
-}
-
 // An edge in a connection.
 type TFASettingsEdge struct {
 	// The item at the end of the edge.
@@ -3422,6 +3416,8 @@ type UpdateTFASettingsInput struct {
 	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
 	TotpAllowed      *bool `json:"totpAllowed,omitempty"`
 	ClearTotpAllowed *bool `json:"clearTotpAllowed,omitempty"`
+	// Whether to regenerate backup codes
+	RegenBackupCodes *bool `json:"regenBackupCodes,omitempty"`
 }
 
 // UpdateUserInput is used for update User object.

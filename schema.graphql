@@ -2457,24 +2457,10 @@ type Mutation {
 	"""
 	updateTFASettings(
 		"""
-		ID of the tfaSettings
-		"""
-		id: ID!
-
-		"""
 		New values for the tfaSettings
 		"""
 		input: UpdateTFASettingsInput!
 	): TFASettingsUpdatePayload!
-	"""
-	Delete an existing tfaSettings
-	"""
-	deleteTFASettings(
-		"""
-		ID of the tfaSettings
-		"""
-		id: ID!
-	): TFASettingsDeletePayload!
 	"""
 	Create a new user
 	"""
@@ -4934,15 +4920,6 @@ type TFASettingsCreatePayload {
 	tfaSettings: TFASettings!
 }
 """
-Return response for deleteTFASettings mutation
-"""
-type TFASettingsDeletePayload {
-	"""
-	Deleted tfaSettings ID
-	"""
-	deletedID: ID!
-}
-"""
 An edge in a connection.
 """
 type TFASettingsEdge {
@@ -5515,6 +5492,10 @@ input UpdateTFASettingsInput {
 	"""
 	totpAllowed: Boolean
 	clearTotpAllowed: Boolean
+	"""
+	Whether to regenerate backup codes
+	"""
+	regenBackupCodes: Boolean
 }
 """
 UpdateUserInput is used for update User object.

@@ -6,12 +6,14 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/rout"
 )
 
 // CreateTFASettings is the resolver for the createTFASettings field.
@@ -35,20 +37,42 @@ func (r *mutationResolver) CreateTFASettings(ctx context.Context, input generate
 }
 
 // UpdateTFASettings is the resolver for the updateTFASettings field.
-func (r *mutationResolver) UpdateTFASettings(ctx context.Context, id string, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateTFASettings - updateTFASettings"))
-}
-
-// DeleteTFASettings is the resolver for the deleteTFASettings field.
-func (r *mutationResolver) DeleteTFASettings(ctx context.Context, id string) (*TFASettingsDeletePayload, error) {
+func (r *mutationResolver) UpdateTFASettings(ctx context.Context, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error) {
 	// setup view context
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
-	if err := withTransactionalMutation(ctx).TFASettings.DeleteOneID(id).Exec(ctx); err != nil {
+	userID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
 		return nil, err
 	}
 
-	return &TFASettingsDeletePayload{DeletedID: id}, nil
+	settings, err := withTransactionalMutation(ctx).TFASettings.Query().Where(tfasettings.OwnerID(userID)).Only(ctx)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+		}
+
+		r.logger.Errorw("failed to get tfa settings", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	settings, err = settings.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			ve := err.(*generated.ValidationError)
+
+			return nil, rout.InvalidField(ve.Name)
+		}
+
+		r.logger.Errorw("failed to update tfa settings", "error", err)
+		return nil, err
+	}
+
+	return &TFASettingsUpdatePayload{TfaSettings: settings}, nil
 }
 
 // TfaSettings is the resolver for the tfaSettings field.
@@ -78,4 +102,15 @@ func (r *queryResolver) TfaSettings(ctx context.Context, id string) (*generated.
 	}
 
 	return settings, nil
+}
+
+// RegenBackupCodes is the resolver for the regenBackupCodes field.
+func (r *updateTFASettingsInputResolver) RegenBackupCodes(ctx context.Context, obj *generated.UpdateTFASettingsInput, data *bool) error {
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
+	if data != nil && *data == true {
+		obj.ClearRecoveryCodes = true
+	}
+
+	return nil
 }

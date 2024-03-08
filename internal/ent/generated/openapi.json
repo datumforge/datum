@@ -5326,42 +5326,6 @@
           }
         }
       },
-      "delete": {
-        "tags": [
-          "TFASettings"
-        ],
-        "summary": "Deletes a TFASettings by ID",
-        "description": "Deletes the TFASettings with the requested ID.",
-        "operationId": "deleteTFASettings",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the TFASettings",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "TFASettings with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
       "patch": {
         "tags": [
           "TFASettings"

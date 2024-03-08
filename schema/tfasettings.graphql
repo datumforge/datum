@@ -25,23 +25,10 @@ extend type Mutation{
     """
     updateTFASettings(
         """
-        ID of the tfaSettings
-        """
-        id: ID!
-        """
         New values for the tfaSettings
         """
         input: UpdateTFASettingsInput!
     ): TFASettingsUpdatePayload!
-    """
-    Delete an existing tfaSettings
-    """
-    deleteTFASettings(
-        """
-        ID of the tfaSettings
-        """
-        id: ID!
-    ): TFASettingsDeletePayload!
 }
 
 """
@@ -64,12 +51,9 @@ type TFASettingsUpdatePayload {
     tfaSettings: TFASettings!
 }
 
-"""
-Return response for deleteTFASettings mutation
-"""
-type TFASettingsDeletePayload {
+extend input UpdateTFASettingsInput {
     """
-    Deleted tfaSettings ID
+    Whether to regenerate backup codes
     """
-    deletedID: ID!
+    regenBackupCodes: Boolean
 }

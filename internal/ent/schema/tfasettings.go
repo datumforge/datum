@@ -69,7 +69,8 @@ func (TFASettings) Mixin() []ent.Mixin {
 // Hooks of the TFASettings
 func (TFASettings) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hooks.HookTFA(),
+		hooks.HookEnableTFA(), // sets 2fa on user settings
+		hooks.HookTFAUpdate(), // sets recovery codes
 	}
 }
 
@@ -79,5 +80,6 @@ func (TFASettings) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)), // delete occurs by disabling 2fa
 	}
 }

@@ -13,21 +13,13 @@ import (
 	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
-func HookTFA() ent.Hook {
+func HookEnableTFA() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.TFASettingsFunc(func(ctx context.Context, mutation *generated.TFASettingsMutation) (generated.Value, error) {
 			u, err := constructTOTPUser(ctx, mutation)
 			if err != nil {
 				return nil, err
 			}
-
-			u.TFASecret, err = mutation.TOTP.TOTPManager.TOTPSecret(u)
-			if err != nil {
-				return nil, err
-			}
-
-			codes := mutation.TOTP.TOTPManager.GenerateRecoveryCodes()
-			mutation.SetRecoveryCodes(codes)
 
 			retVal, err := next.Mutate(ctx, mutation)
 			if err != nil {
@@ -43,6 +35,35 @@ func HookTFA() ent.Hook {
 			return retVal, err
 		})
 	}, ent.OpCreate)
+}
+
+func HookTFAUpdate() ent.Hook {
+	return hook.On(func(next ent.Mutator) ent.Mutator {
+		return hook.TFASettingsFunc(func(ctx context.Context, mutation *generated.TFASettingsMutation) (generated.Value, error) {
+			// once verified, create recovery codes
+			verified, ok := mutation.Verified()
+
+			// if recovery codes are cleared, generate new ones
+			cleared := mutation.RecoveryCodesCleared()
+
+			if (ok && verified) || cleared {
+				u, err := constructTOTPUser(ctx, mutation)
+				if err != nil {
+					return nil, err
+				}
+
+				u.TFASecret, err = mutation.TOTP.TOTPManager.TOTPSecret(u)
+				if err != nil {
+					return nil, err
+				}
+
+				codes := mutation.TOTP.TOTPManager.GenerateRecoveryCodes()
+				mutation.SetRecoveryCodes(codes)
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}, ent.OpUpdate|ent.OpUpdateOne)
 }
 
 func constructTOTPUser(ctx context.Context, mutation *generated.TFASettingsMutation) (*totp.User, error) {
@@ -72,10 +93,9 @@ func constructTOTPUser(ctx context.Context, mutation *generated.TFASettingsMutat
 		return nil, err
 	}
 
+	// set the TFA settings
 	u.IsEmailOTPAllowed, _ = mutation.EmailOtpAllowed()
-
 	u.IsPhoneOTPAllowed, _ = mutation.PhoneOtpAllowed()
-
 	u.IsTOTPAllowed, _ = mutation.TotpAllowed()
 
 	// setup account name fields
@@ -92,25 +112,3 @@ func constructTOTPUser(ctx context.Context, mutation *generated.TFASettingsMutat
 
 	return u, nil
 }
-
-// const (
-// 	emailType = "EMAIL"
-// 	phoneType = "PHONE"
-// 	totpType  = "TOTP"
-// )
-
-// func getTFAType(mutation *generated.UserSettingMutation) (string, error) {
-// 	if _, ok := mutation.IsEmailOtpAllowed(); ok {
-// 		return emailType, nil
-// 	}
-
-// 	if _, ok := mutation.IsPhoneOtpAllowed(); ok {
-// 		return phoneType, nil
-// 	}
-
-// 	if _, ok := mutation.IsTotpAllowed(); ok {
-// 		return totpType, nil
-// 	}
-
-// 	return "", rout.InvalidField("tfa_type")
-// }

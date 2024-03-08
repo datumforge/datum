@@ -196,6 +196,11 @@ func (r *Resolver) UpdateOrganizationInput() UpdateOrganizationInputResolver {
 	return &updateOrganizationInputResolver{r}
 }
 
+// UpdateTFASettingsInput returns UpdateTFASettingsInputResolver implementation.
+func (r *Resolver) UpdateTFASettingsInput() UpdateTFASettingsInputResolver {
+	return &updateTFASettingsInputResolver{r}
+}
+
 type oauthProviderResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type createGroupInputResolver struct{ *Resolver }
@@ -205,3 +210,4 @@ type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }
+type updateTFASettingsInputResolver struct{ *Resolver }

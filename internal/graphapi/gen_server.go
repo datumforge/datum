@@ -53,6 +53,7 @@ type ResolverRoot interface {
 	UpdateGroupInput() UpdateGroupInputResolver
 	UpdateOauthProviderInput() UpdateOauthProviderInputResolver
 	UpdateOrganizationInput() UpdateOrganizationInputResolver
+	UpdateTFASettingsInput() UpdateTFASettingsInputResolver
 }
 
 type DirectiveRoot struct {
@@ -329,7 +330,6 @@ type ComplexityRoot struct {
 		DeleteOrganization        func(childComplexity int, id string) int
 		DeleteOrganizationSetting func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
-		DeleteTFASettings         func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
@@ -344,7 +344,7 @@ type ComplexityRoot struct {
 		UpdateOrganization        func(childComplexity int, id string, input generated.UpdateOrganizationInput) int
 		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
-		UpdateTFASettings         func(childComplexity int, id string, input generated.UpdateTFASettingsInput) int
+		UpdateTFASettings         func(childComplexity int, input generated.UpdateTFASettingsInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
 		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
 	}
@@ -673,10 +673,6 @@ type ComplexityRoot struct {
 		TfaSettings func(childComplexity int) int
 	}
 
-	TFASettingsDeletePayload struct {
-		DeletedID func(childComplexity int) int
-	}
-
 	TFASettingsEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
@@ -816,8 +812,7 @@ type MutationResolver interface {
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
 	CreateTFASettings(ctx context.Context, input generated.CreateTFASettingsInput) (*TFASettingsCreatePayload, error)
-	UpdateTFASettings(ctx context.Context, id string, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error)
-	DeleteTFASettings(ctx context.Context, id string) (*TFASettingsDeletePayload, error)
+	UpdateTFASettings(ctx context.Context, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
@@ -894,6 +889,9 @@ type UpdateOauthProviderInputResolver interface {
 type UpdateOrganizationInputResolver interface {
 	AddOrgMembers(ctx context.Context, obj *generated.UpdateOrganizationInput, data []*generated.CreateOrgMembershipInput) error
 	UpdateOrgSettings(ctx context.Context, obj *generated.UpdateOrganizationInput, data *generated.UpdateOrganizationSettingInput) error
+}
+type UpdateTFASettingsInputResolver interface {
+	RegenBackupCodes(ctx context.Context, obj *generated.UpdateTFASettingsInput, data *bool) error
 }
 
 type executableSchema struct {
@@ -2151,18 +2149,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeletePersonalAccessToken(childComplexity, args["id"].(string)), true
 
-	case "Mutation.deleteTFASettings":
-		if e.complexity.Mutation.DeleteTFASettings == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteTFASettings_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteTFASettings(childComplexity, args["id"].(string)), true
-
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
 			break
@@ -2341,7 +2327,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTFASettings(childComplexity, args["id"].(string), args["input"].(generated.UpdateTFASettingsInput)), true
+		return e.complexity.Mutation.UpdateTFASettings(childComplexity, args["input"].(generated.UpdateTFASettingsInput)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -3922,13 +3908,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TFASettingsCreatePayload.TfaSettings(childComplexity), true
-
-	case "TFASettingsDeletePayload.deletedID":
-		if e.complexity.TFASettingsDeletePayload.DeletedID == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsDeletePayload.DeletedID(childComplexity), true
 
 	case "TFASettingsEdge.cursor":
 		if e.complexity.TFASettingsEdge.Cursor == nil {
@@ -10948,23 +10927,10 @@ extend type Mutation{
     """
     updateTFASettings(
         """
-        ID of the tfaSettings
-        """
-        id: ID!
-        """
         New values for the tfaSettings
         """
         input: UpdateTFASettingsInput!
     ): TFASettingsUpdatePayload!
-    """
-    Delete an existing tfaSettings
-    """
-    deleteTFASettings(
-        """
-        ID of the tfaSettings
-        """
-        id: ID!
-    ): TFASettingsDeletePayload!
 }
 
 """
@@ -10987,14 +10953,11 @@ type TFASettingsUpdatePayload {
     tfaSettings: TFASettings!
 }
 
-"""
-Return response for deleteTFASettings mutation
-"""
-type TFASettingsDeletePayload {
+extend input UpdateTFASettingsInput {
     """
-    Deleted tfaSettings ID
+    Whether to regenerate backup codes
     """
-    deletedID: ID!
+    regenBackupCodes: Boolean
 }`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `extend type Query {
     """
@@ -11518,21 +11481,6 @@ func (ec *executionContext) field_Mutation_deletePersonalAccessToken_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -11863,24 +11811,15 @@ func (ec *executionContext) field_Mutation_updatePersonalAccessToken_args(ctx co
 func (ec *executionContext) field_Mutation_updateTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 generated.UpdateTFASettingsInput
+	var arg0 generated.UpdateTFASettingsInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingsInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg1
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -21953,7 +21892,7 @@ func (ec *executionContext) _Mutation_updateTFASettings(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTFASettings(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateTFASettingsInput))
+		return ec.resolvers.Mutation().UpdateTFASettings(rctx, fc.Args["input"].(generated.UpdateTFASettingsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21992,65 +21931,6 @@ func (ec *executionContext) fieldContext_Mutation_updateTFASettings(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateTFASettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteTFASettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteTFASettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteTFASettings(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*TFASettingsDeletePayload)
-	fc.Result = res
-	return ec.marshalNTFASettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsDeletePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteTFASettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "deletedID":
-				return ec.fieldContext_TFASettingsDeletePayload_deletedID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsDeletePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteTFASettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -33378,50 +33258,6 @@ func (ec *executionContext) fieldContext_TFASettingsCreatePayload_tfaSettings(ct
 				return ec.fieldContext_TFASettings_owner(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *TFASettingsDeletePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsDeletePayload_deletedID(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsDeletePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -54206,7 +54042,7 @@ func (ec *executionContext) unmarshalInputUpdateTFASettingsInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "phoneOtpAllowed", "clearPhoneOtpAllowed", "emailOtpAllowed", "clearEmailOtpAllowed", "totpAllowed", "clearTotpAllowed"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "phoneOtpAllowed", "clearPhoneOtpAllowed", "emailOtpAllowed", "clearEmailOtpAllowed", "totpAllowed", "clearTotpAllowed", "regenBackupCodes"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54318,6 +54154,15 @@ func (ec *executionContext) unmarshalInputUpdateTFASettingsInput(ctx context.Con
 				return it, err
 			}
 			it.ClearTotpAllowed = data
+		case "regenBackupCodes":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("regenBackupCodes"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.UpdateTFASettingsInput().RegenBackupCodes(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -60145,13 +59990,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deleteTFASettings":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteTFASettings(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)
@@ -63494,45 +63332,6 @@ func (ec *executionContext) _TFASettingsCreatePayload(ctx context.Context, sel a
 	return out
 }
 
-var tFASettingsDeletePayloadImplementors = []string{"TFASettingsDeletePayload"}
-
-func (ec *executionContext) _TFASettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingsDeletePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsDeletePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsDeletePayload")
-		case "deletedID":
-			out.Values[i] = ec._TFASettingsDeletePayload_deletedID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var tFASettingsEdgeImplementors = []string{"TFASettingsEdge"}
 
 func (ec *executionContext) _TFASettingsEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettingsEdge) graphql.Marshaler {
@@ -66070,20 +65869,6 @@ func (ec *executionContext) marshalNTFASettingsCreatePayload2ᚖgithubᚗcomᚋd
 		return graphql.Null
 	}
 	return ec._TFASettingsCreatePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNTFASettingsDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingsDeletePayload) graphql.Marshaler {
-	return ec._TFASettingsDeletePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTFASettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingsDeletePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._TFASettingsDeletePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTFASettingsUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingsUpdatePayload) graphql.Marshaler {

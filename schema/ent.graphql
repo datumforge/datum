@@ -2757,7 +2757,7 @@ type OrganizationSetting implements Node {
   """
   tags: [String!]
   """
-  the ID of the organizationt the settings belong to
+  the ID of the organization the settings belong to
   """
   organizationID: ID
   organization: Organization

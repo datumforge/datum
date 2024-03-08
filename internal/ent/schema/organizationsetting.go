@@ -69,7 +69,7 @@ func (OrganizationSetting) Fields() []ent.Field {
 			Default([]string{}).
 			Optional(),
 		field.String("organization_id").
-			Comment("the ID of the organizationt the settings belong to").
+			Comment("the ID of the organization the settings belong to").
 			Optional(),
 	}
 }
@@ -88,9 +88,10 @@ func (OrganizationSetting) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:   "organization",
-			IncludeHooks: false,
-			//			IDField:      "OrganizationID",
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			IDField:         "OrganizationID",
+			NillableIDField: true,
 		},
 	}
 }

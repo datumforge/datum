@@ -45,7 +45,7 @@ type OrganizationSetting struct {
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// the ID of the organizationt the settings belong to
+	// the ID of the organization the settings belong to
 	OrganizationID string `json:"organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationSettingQuery when eager-loading is set.

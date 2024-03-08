@@ -262,6 +262,7 @@ func (m *GroupMembershipMutation) CheckAccessForEdit(ctx context.Context) error 
 	input, ok := gInput.(CreateGroupMembershipInput)
 	if ok {
 		ac.ObjectID = input.GroupID
+
 	}
 
 	// check the id from the args
@@ -597,6 +598,7 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 	input, ok := gInput.(CreateOrgMembershipInput)
 	if ok {
 		ac.ObjectID = input.OrganizationID
+
 	}
 
 	// check the id from the args
@@ -867,21 +869,21 @@ func (q *OrganizationSettingQuery) CheckAccess(ctx context.Context) error {
 		whereArg := gCtx.Args["where"]
 		if whereArg != nil {
 			where, ok := whereArg.(*OrganizationSettingWhereInput)
-			if ok && where != nil && where.ID != nil {
-				ac.ObjectID = *where.ID
+			if ok && where != nil && where.OrganizationID != nil {
+				ac.ObjectID = *where.OrganizationID
 			}
 		}
 
 		// if that doesn't work, check for the id in the args
 		if ac.ObjectID == "" {
-			ac.ObjectID, _ = gCtx.Args["id"].(string)
+			ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
 		}
 
 		// if we still don't have an object id, run the query and grab the object ID
 		// from the result
 		// this happens on join tables where we have the join ID (for updates and deletes)
 		// and not the actual object id
-		if ac.ObjectID == "" && "id" != "id" {
+		if ac.ObjectID == "" && "id" != "organizationid" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := q.Clone().Only(reqCtx)
@@ -889,7 +891,7 @@ func (q *OrganizationSettingQuery) CheckAccess(ctx context.Context) error {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
-			ac.ObjectID = ob.ID
+			ac.ObjectID = ob.OrganizationID
 		}
 
 		// request is for a list objects, will get filtered in interceptors
@@ -925,14 +927,24 @@ func (m *OrganizationSettingMutation) CheckAccessForEdit(ctx context.Context) er
 
 	gCtx := graphql.GetFieldContext(ctx)
 
+	// get the input from the context
+	gInput := gCtx.Args["input"]
+
+	// check if the input is a CreateOrganizationSettingInput
+	input, ok := gInput.(CreateOrganizationSettingInput)
+	if ok {
+		ac.ObjectID = *input.OrganizationID
+
+	}
+
 	// check the id from the args
 	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["id"].(string)
+		ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
 	}
 
 	// if this is still empty, we need to query the object to get the object id
 	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "id" {
+	if ac.ObjectID == "" && "id" != "organizationid" {
 		id, ok := gCtx.Args["id"].(string)
 		if ok {
 			// allow this query to run
@@ -942,7 +954,7 @@ func (m *OrganizationSettingMutation) CheckAccessForEdit(ctx context.Context) er
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
-			ac.ObjectID = ob.ID
+			ac.ObjectID = ob.OrganizationID
 		}
 	}
 

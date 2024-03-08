@@ -2259,7 +2259,7 @@ type OrganizationSetting struct {
 	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// the ID of the organizationt the settings belong to
+	// the ID of the organization the settings belong to
 	OrganizationID *string       `json:"organizationID,omitempty"`
 	Organization   *Organization `json:"organization,omitempty"`
 }

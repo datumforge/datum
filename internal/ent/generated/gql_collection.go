@@ -1999,20 +1999,20 @@ func (ts *TFASettingsQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, tfasettings.FieldDeletedBy)
 				fieldSeen[tfasettings.FieldDeletedBy] = struct{}{}
 			}
+		case "tfaSecret":
+			if _, ok := fieldSeen[tfasettings.FieldTfaSecret]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldTfaSecret)
+				fieldSeen[tfasettings.FieldTfaSecret] = struct{}{}
+			}
+		case "verified":
+			if _, ok := fieldSeen[tfasettings.FieldVerified]; !ok {
+				selectedFields = append(selectedFields, tfasettings.FieldVerified)
+				fieldSeen[tfasettings.FieldVerified] = struct{}{}
+			}
 		case "recoveryCodes":
 			if _, ok := fieldSeen[tfasettings.FieldRecoveryCodes]; !ok {
 				selectedFields = append(selectedFields, tfasettings.FieldRecoveryCodes)
 				fieldSeen[tfasettings.FieldRecoveryCodes] = struct{}{}
-			}
-		case "phoneOtpAllowed":
-			if _, ok := fieldSeen[tfasettings.FieldPhoneOtpAllowed]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldPhoneOtpAllowed)
-				fieldSeen[tfasettings.FieldPhoneOtpAllowed] = struct{}{}
-			}
-		case "emailOtpAllowed":
-			if _, ok := fieldSeen[tfasettings.FieldEmailOtpAllowed]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldEmailOtpAllowed)
-				fieldSeen[tfasettings.FieldEmailOtpAllowed] = struct{}{}
 			}
 		case "totpAllowed":
 			if _, ok := fieldSeen[tfasettings.FieldTotpAllowed]; !ok {

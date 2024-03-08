@@ -76,7 +76,7 @@ func (r *mutationResolver) UpdateTFASettings(ctx context.Context, input generate
 }
 
 // TfaSettings is the resolver for the tfaSettings field.
-func (r *queryResolver) TfaSettings(ctx context.Context, id string) (*generated.TFASettings, error) {
+func (r *queryResolver) TfaSettings(ctx context.Context, id *string) (*generated.TFASettings, error) {
 	// setup view context
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
@@ -89,8 +89,8 @@ func (r *queryResolver) TfaSettings(ctx context.Context, id string) (*generated.
 		settings *generated.TFASettings
 	)
 
-	if id != "" {
-		settings, err = withTransactionalMutation(ctx).TFASettings.Get(ctx, id)
+	if id != nil && *id != "" {
+		settings, err = withTransactionalMutation(ctx).TFASettings.Get(ctx, *id)
 		if err != nil {
 			return nil, err
 		}
@@ -106,11 +106,5 @@ func (r *queryResolver) TfaSettings(ctx context.Context, id string) (*generated.
 
 // RegenBackupCodes is the resolver for the regenBackupCodes field.
 func (r *updateTFASettingsInputResolver) RegenBackupCodes(ctx context.Context, obj *generated.UpdateTFASettingsInput, data *bool) error {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
-	if data != nil && *data == true {
-		obj.ClearRecoveryCodes = true
-	}
-
 	return nil
 }

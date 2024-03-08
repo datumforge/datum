@@ -636,7 +636,7 @@ type ComplexityRoot struct {
 		Organizations        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
 		PersonalAccessToken  func(childComplexity int, id string) int
 		PersonalAccessTokens func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
-		TfaSettings          func(childComplexity int, id string) int
+		TfaSettings          func(childComplexity int, id *string) int
 		TfaSettingsSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) int
 		User                 func(childComplexity int, id string) int
 		UserSetting          func(childComplexity int, id string) int
@@ -649,18 +649,18 @@ type ComplexityRoot struct {
 	}
 
 	TFASettings struct {
-		CreatedAt       func(childComplexity int) int
-		CreatedBy       func(childComplexity int) int
-		DeletedAt       func(childComplexity int) int
-		DeletedBy       func(childComplexity int) int
-		EmailOtpAllowed func(childComplexity int) int
-		ID              func(childComplexity int) int
-		Owner           func(childComplexity int) int
-		PhoneOtpAllowed func(childComplexity int) int
-		RecoveryCodes   func(childComplexity int) int
-		TotpAllowed     func(childComplexity int) int
-		UpdatedAt       func(childComplexity int) int
-		UpdatedBy       func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		CreatedBy     func(childComplexity int) int
+		DeletedAt     func(childComplexity int) int
+		DeletedBy     func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Owner         func(childComplexity int) int
+		RecoveryCodes func(childComplexity int) int
+		TfaSecret     func(childComplexity int) int
+		TotpAllowed   func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UpdatedBy     func(childComplexity int) int
+		Verified      func(childComplexity int) int
 	}
 
 	TFASettingsConnection struct {
@@ -852,7 +852,7 @@ type QueryResolver interface {
 	OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error)
 	OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error)
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
-	TfaSettings(ctx context.Context, id string) (*generated.TFASettings, error)
+	TfaSettings(ctx context.Context, id *string) (*generated.TFASettings, error)
 	User(ctx context.Context, id string) (*generated.User, error)
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
 }
@@ -3723,7 +3723,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TfaSettings(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.TfaSettings(childComplexity, args["id"].(*string)), true
 
 	case "Query.tfaSettingsSlice":
 		if e.complexity.Query.TfaSettingsSlice == nil {
@@ -3825,13 +3825,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TFASettings.DeletedBy(childComplexity), true
 
-	case "TFASettings.emailOtpAllowed":
-		if e.complexity.TFASettings.EmailOtpAllowed == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.EmailOtpAllowed(childComplexity), true
-
 	case "TFASettings.id":
 		if e.complexity.TFASettings.ID == nil {
 			break
@@ -3846,19 +3839,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TFASettings.Owner(childComplexity), true
 
-	case "TFASettings.phoneOtpAllowed":
-		if e.complexity.TFASettings.PhoneOtpAllowed == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.PhoneOtpAllowed(childComplexity), true
-
 	case "TFASettings.recoveryCodes":
 		if e.complexity.TFASettings.RecoveryCodes == nil {
 			break
 		}
 
 		return e.complexity.TFASettings.RecoveryCodes(childComplexity), true
+
+	case "TFASettings.tfaSecret":
+		if e.complexity.TFASettings.TfaSecret == nil {
+			break
+		}
+
+		return e.complexity.TFASettings.TfaSecret(childComplexity), true
 
 	case "TFASettings.totpAllowed":
 		if e.complexity.TFASettings.TotpAllowed == nil {
@@ -3880,6 +3873,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TFASettings.UpdatedBy(childComplexity), true
+
+	case "TFASettings.verified":
+		if e.complexity.TFASettings.Verified == nil {
+			break
+		}
+
+		return e.complexity.TFASettings.Verified(childComplexity), true
 
 	case "TFASettingsConnection.edges":
 		if e.complexity.TFASettingsConnection.Edges == nil {
@@ -4867,22 +4867,6 @@ input CreateTFASettingsInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
   """
   specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
   """
@@ -8482,17 +8466,17 @@ type TFASettings implements Node {
   deletedAt: Time
   deletedBy: String
   """
+  TFA secret for the user
+  """
+  tfaSecret: String
+  """
+  specifies if the TFA device has been verified
+  """
+  verified: Boolean!
+  """
   recovery codes for 2fa
   """
   recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
   """
   specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
   """
@@ -8644,19 +8628,28 @@ input TFASettingsWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
-  phone_otp_allowed field predicates
+  tfa_secret field predicates
   """
-  phoneOtpAllowed: Boolean
-  phoneOtpAllowedNEQ: Boolean
-  phoneOtpAllowedIsNil: Boolean
-  phoneOtpAllowedNotNil: Boolean
+  tfaSecret: String
+  tfaSecretNEQ: String
+  tfaSecretIn: [String!]
+  tfaSecretNotIn: [String!]
+  tfaSecretGT: String
+  tfaSecretGTE: String
+  tfaSecretLT: String
+  tfaSecretLTE: String
+  tfaSecretContains: String
+  tfaSecretHasPrefix: String
+  tfaSecretHasSuffix: String
+  tfaSecretIsNil: Boolean
+  tfaSecretNotNil: Boolean
+  tfaSecretEqualFold: String
+  tfaSecretContainsFold: String
   """
-  email_otp_allowed field predicates
+  verified field predicates
   """
-  emailOtpAllowed: Boolean
-  emailOtpAllowedNEQ: Boolean
-  emailOtpAllowedIsNil: Boolean
-  emailOtpAllowedNotNil: Boolean
+  verified: Boolean
+  verifiedNEQ: Boolean
   """
   totp_allowed field predicates
   """
@@ -9051,26 +9044,9 @@ input UpdateTFASettingsInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   """
-  TFA secret for the user
+  specifies if the TFA device has been verified
   """
-  tfaSecret: String
-  clearTfaSecret: Boolean
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  appendRecoveryCodes: [String!]
-  clearRecoveryCodes: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  clearPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
-  clearEmailOtpAllowed: Boolean
+  verified: Boolean
   """
   specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
   """
@@ -10902,13 +10878,13 @@ type PersonalAccessTokenDeletePayload {
 }`, BuiltIn: false},
 	{Name: "../../schema/tfasettings.graphql", Input: `extend type Query {
     """
-    Look up tfaSettings by ID
+    Look up tfaSettings for the current user
     """
      tfaSettings(
         """
         ID of the tfaSettings
         """
-        id: ID!
+        id: ID
     ):  TFASettings!
 }
 
@@ -12849,10 +12825,10 @@ func (ec *executionContext) field_Query_tfaSettingsSlice_args(ctx context.Contex
 func (ec *executionContext) field_Query_tfaSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 *string
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -32030,7 +32006,7 @@ func (ec *executionContext) _Query_tfaSettings(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TfaSettings(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().TfaSettings(rctx, fc.Args["id"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32069,12 +32045,12 @@ func (ec *executionContext) fieldContext_Query_tfaSettings(ctx context.Context, 
 				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+			case "tfaSecret":
+				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+			case "verified":
+				return ec.fieldContext_TFASettings_verified(ctx, field)
 			case "recoveryCodes":
 				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
 			case "totpAllowed":
 				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
 			case "owner":
@@ -32793,6 +32769,91 @@ func (ec *executionContext) fieldContext_TFASettings_deletedBy(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _TFASettings_tfaSecret(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TfaSecret, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TFASettings_tfaSecret(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TFASettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TFASettings_verified(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettings_verified(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Verified, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TFASettings_verified(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TFASettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TFASettings_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
 	if err != nil {
@@ -32829,88 +32890,6 @@ func (ec *executionContext) fieldContext_TFASettings_recoveryCodes(ctx context.C
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_phoneOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PhoneOtpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_phoneOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_emailOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EmailOtpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_emailOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -33246,12 +33225,12 @@ func (ec *executionContext) fieldContext_TFASettingsCreatePayload_tfaSettings(ct
 				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+			case "tfaSecret":
+				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+			case "verified":
+				return ec.fieldContext_TFASettings_verified(ctx, field)
 			case "recoveryCodes":
 				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
 			case "totpAllowed":
 				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
 			case "owner":
@@ -33313,12 +33292,12 @@ func (ec *executionContext) fieldContext_TFASettingsEdge_node(ctx context.Contex
 				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+			case "tfaSecret":
+				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+			case "verified":
+				return ec.fieldContext_TFASettings_verified(ctx, field)
 			case "recoveryCodes":
 				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
 			case "totpAllowed":
 				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
 			case "owner":
@@ -33427,12 +33406,12 @@ func (ec *executionContext) fieldContext_TFASettingsUpdatePayload_tfaSettings(ct
 				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+			case "tfaSecret":
+				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+			case "verified":
+				return ec.fieldContext_TFASettings_verified(ctx, field)
 			case "recoveryCodes":
 				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
 			case "totpAllowed":
 				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
 			case "owner":
@@ -34282,12 +34261,12 @@ func (ec *executionContext) fieldContext_User_tfaSettings(ctx context.Context, f
 				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+			case "tfaSecret":
+				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+			case "verified":
+				return ec.fieldContext_TFASettings_verified(ctx, field)
 			case "recoveryCodes":
 				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
 			case "totpAllowed":
 				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
 			case "owner":
@@ -39615,7 +39594,7 @@ func (ec *executionContext) unmarshalInputCreateTFASettingsInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "tfaSecret", "recoveryCodes", "phoneOtpAllowed", "emailOtpAllowed", "totpAllowed", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "totpAllowed", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39650,34 +39629,6 @@ func (ec *executionContext) unmarshalInputCreateTFASettingsInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedBy = data
-		case "tfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSecret = data
-		case "recoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCodes = data
-		case "phoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PhoneOtpAllowed = data
-		case "emailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowed = data
 		case "totpAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -51742,7 +51693,7 @@ func (ec *executionContext) unmarshalInputTFASettingsWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "phoneOtpAllowed", "phoneOtpAllowedNEQ", "phoneOtpAllowedIsNil", "phoneOtpAllowedNotNil", "emailOtpAllowed", "emailOtpAllowedNEQ", "emailOtpAllowedIsNil", "emailOtpAllowedNotNil", "totpAllowed", "totpAllowedNEQ", "totpAllowedIsNil", "totpAllowedNotNil", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "tfaSecret", "tfaSecretNEQ", "tfaSecretIn", "tfaSecretNotIn", "tfaSecretGT", "tfaSecretGTE", "tfaSecretLT", "tfaSecretLTE", "tfaSecretContains", "tfaSecretHasPrefix", "tfaSecretHasSuffix", "tfaSecretIsNil", "tfaSecretNotNil", "tfaSecretEqualFold", "tfaSecretContainsFold", "verified", "verifiedNEQ", "totpAllowed", "totpAllowedNEQ", "totpAllowedIsNil", "totpAllowedNotNil", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -52365,62 +52316,125 @@ func (ec *executionContext) unmarshalInputTFASettingsWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.DeletedByContainsFold = data
-		case "phoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+		case "tfaSecret":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.PhoneOtpAllowed = data
-		case "phoneOtpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			it.TfaSecret = data
+		case "tfaSecretNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.PhoneOtpAllowedNEQ = data
-		case "phoneOtpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowedIsNil"))
+			it.TfaSecretNEQ = data
+		case "tfaSecretIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretIn = data
+		case "tfaSecretNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretNotIn = data
+		case "tfaSecretGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretGT = data
+		case "tfaSecretGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretGTE = data
+		case "tfaSecretLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretLT = data
+		case "tfaSecretLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretLTE = data
+		case "tfaSecretContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretContains = data
+		case "tfaSecretHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretHasPrefix = data
+		case "tfaSecretHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretHasSuffix = data
+		case "tfaSecretIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.PhoneOtpAllowedIsNil = data
-		case "phoneOtpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowedNotNil"))
+			it.TfaSecretIsNil = data
+		case "tfaSecretNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretNotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.PhoneOtpAllowedNotNil = data
-		case "emailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowed"))
+			it.TfaSecretNotNil = data
+		case "tfaSecretEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretEqualFold = data
+		case "tfaSecretContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecretContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TfaSecretContainsFold = data
+		case "verified":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verified"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.EmailOtpAllowed = data
-		case "emailOtpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowedNEQ"))
+			it.Verified = data
+		case "verifiedNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedNEQ"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.EmailOtpAllowedNEQ = data
-		case "emailOtpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowedIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowedIsNil = data
-		case "emailOtpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowedNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowedNotNil = data
+			it.VerifiedNEQ = data
 		case "totpAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -54042,7 +54056,7 @@ func (ec *executionContext) unmarshalInputUpdateTFASettingsInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "phoneOtpAllowed", "clearPhoneOtpAllowed", "emailOtpAllowed", "clearEmailOtpAllowed", "totpAllowed", "clearTotpAllowed", "regenBackupCodes"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "verified", "totpAllowed", "clearTotpAllowed", "regenBackupCodes"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54077,69 +54091,13 @@ func (ec *executionContext) unmarshalInputUpdateTFASettingsInput(ctx context.Con
 				return it, err
 			}
 			it.ClearUpdatedBy = data
-		case "tfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSecret = data
-		case "clearTfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTfaSecret"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearTfaSecret = data
-		case "recoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCodes = data
-		case "appendRecoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendRecoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AppendRecoveryCodes = data
-		case "clearRecoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearRecoveryCodes"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearRecoveryCodes = data
-		case "phoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowed"))
+		case "verified":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verified"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.PhoneOtpAllowed = data
-		case "clearPhoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPhoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearPhoneOtpAllowed = data
-		case "emailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowed = data
-		case "clearEmailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearEmailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearEmailOtpAllowed = data
+			it.Verified = data
 		case "totpAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -63183,12 +63141,15 @@ func (ec *executionContext) _TFASettings(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._TFASettings_deletedAt(ctx, field, obj)
 		case "deletedBy":
 			out.Values[i] = ec._TFASettings_deletedBy(ctx, field, obj)
+		case "tfaSecret":
+			out.Values[i] = ec._TFASettings_tfaSecret(ctx, field, obj)
+		case "verified":
+			out.Values[i] = ec._TFASettings_verified(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "recoveryCodes":
 			out.Values[i] = ec._TFASettings_recoveryCodes(ctx, field, obj)
-		case "phoneOtpAllowed":
-			out.Values[i] = ec._TFASettings_phoneOtpAllowed(ctx, field, obj)
-		case "emailOtpAllowed":
-			out.Values[i] = ec._TFASettings_emailOtpAllowed(ctx, field, obj)
 		case "totpAllowed":
 			out.Values[i] = ec._TFASettings_totpAllowed(ctx, field, obj)
 		case "owner":

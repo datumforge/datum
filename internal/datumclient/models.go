@@ -256,14 +256,6 @@ type CreateTFASettingsInput struct {
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
-	// TFA secret for the user
-	TfaSecret *string `json:"tfaSecret,omitempty"`
-	// recovery codes for 2fa
-	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	PhoneOtpAllowed *bool `json:"phoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	EmailOtpAllowed *bool `json:"emailOtpAllowed,omitempty"`
 	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
 	TotpAllowed *bool   `json:"totpAllowed,omitempty"`
 	OwnerID     *string `json:"ownerID,omitempty"`
@@ -2947,12 +2939,12 @@ type TFASettings struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	// TFA secret for the user
+	TfaSecret *string `json:"tfaSecret,omitempty"`
+	// specifies if the TFA device has been verified
+	Verified bool `json:"verified"`
 	// recovery codes for 2fa
 	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	PhoneOtpAllowed *bool `json:"phoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	EmailOtpAllowed *bool `json:"emailOtpAllowed,omitempty"`
 	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
 	TotpAllowed *bool `json:"totpAllowed,omitempty"`
 	Owner       *User `json:"owner,omitempty"`
@@ -3088,16 +3080,25 @@ type TFASettingsWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
-	// phone_otp_allowed field predicates
-	PhoneOtpAllowed       *bool `json:"phoneOtpAllowed,omitempty"`
-	PhoneOtpAllowedNeq    *bool `json:"phoneOtpAllowedNEQ,omitempty"`
-	PhoneOtpAllowedIsNil  *bool `json:"phoneOtpAllowedIsNil,omitempty"`
-	PhoneOtpAllowedNotNil *bool `json:"phoneOtpAllowedNotNil,omitempty"`
-	// email_otp_allowed field predicates
-	EmailOtpAllowed       *bool `json:"emailOtpAllowed,omitempty"`
-	EmailOtpAllowedNeq    *bool `json:"emailOtpAllowedNEQ,omitempty"`
-	EmailOtpAllowedIsNil  *bool `json:"emailOtpAllowedIsNil,omitempty"`
-	EmailOtpAllowedNotNil *bool `json:"emailOtpAllowedNotNil,omitempty"`
+	// tfa_secret field predicates
+	TfaSecret             *string  `json:"tfaSecret,omitempty"`
+	TfaSecretNeq          *string  `json:"tfaSecretNEQ,omitempty"`
+	TfaSecretIn           []string `json:"tfaSecretIn,omitempty"`
+	TfaSecretNotIn        []string `json:"tfaSecretNotIn,omitempty"`
+	TfaSecretGt           *string  `json:"tfaSecretGT,omitempty"`
+	TfaSecretGte          *string  `json:"tfaSecretGTE,omitempty"`
+	TfaSecretLt           *string  `json:"tfaSecretLT,omitempty"`
+	TfaSecretLte          *string  `json:"tfaSecretLTE,omitempty"`
+	TfaSecretContains     *string  `json:"tfaSecretContains,omitempty"`
+	TfaSecretHasPrefix    *string  `json:"tfaSecretHasPrefix,omitempty"`
+	TfaSecretHasSuffix    *string  `json:"tfaSecretHasSuffix,omitempty"`
+	TfaSecretIsNil        *bool    `json:"tfaSecretIsNil,omitempty"`
+	TfaSecretNotNil       *bool    `json:"tfaSecretNotNil,omitempty"`
+	TfaSecretEqualFold    *string  `json:"tfaSecretEqualFold,omitempty"`
+	TfaSecretContainsFold *string  `json:"tfaSecretContainsFold,omitempty"`
+	// verified field predicates
+	Verified    *bool `json:"verified,omitempty"`
+	VerifiedNeq *bool `json:"verifiedNEQ,omitempty"`
 	// totp_allowed field predicates
 	TotpAllowed       *bool `json:"totpAllowed,omitempty"`
 	TotpAllowedNeq    *bool `json:"totpAllowedNEQ,omitempty"`
@@ -3400,19 +3401,8 @@ type UpdateTFASettingsInput struct {
 	ClearUpdatedAt *bool      `json:"clearUpdatedAt,omitempty"`
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
-	// TFA secret for the user
-	TfaSecret      *string `json:"tfaSecret,omitempty"`
-	ClearTfaSecret *bool   `json:"clearTfaSecret,omitempty"`
-	// recovery codes for 2fa
-	RecoveryCodes       []string `json:"recoveryCodes,omitempty"`
-	AppendRecoveryCodes []string `json:"appendRecoveryCodes,omitempty"`
-	ClearRecoveryCodes  *bool    `json:"clearRecoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	PhoneOtpAllowed      *bool `json:"phoneOtpAllowed,omitempty"`
-	ClearPhoneOtpAllowed *bool `json:"clearPhoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	EmailOtpAllowed      *bool `json:"emailOtpAllowed,omitempty"`
-	ClearEmailOtpAllowed *bool `json:"clearEmailOtpAllowed,omitempty"`
+	// specifies if the TFA device has been verified
+	Verified *bool `json:"verified,omitempty"`
 	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
 	TotpAllowed      *bool `json:"totpAllowed,omitempty"`
 	ClearTotpAllowed *bool `json:"clearTotpAllowed,omitempty"`

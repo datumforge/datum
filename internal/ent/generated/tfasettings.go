@@ -34,7 +34,7 @@ type TFASettings struct {
 	// OwnerID holds the value of the "owner_id" field.
 	OwnerID string `json:"owner_id,omitempty"`
 	// TFA secret for the user
-	TfaSecret *string `json:"-"`
+	TfaSecret *string `json:"tfa_secret,omitempty"`
 	// specifies if the TFA device has been verified
 	Verified bool `json:"verified,omitempty"`
 	// recovery codes for 2fa
@@ -250,7 +250,10 @@ func (ts *TFASettings) String() string {
 	builder.WriteString("owner_id=")
 	builder.WriteString(ts.OwnerID)
 	builder.WriteString(", ")
-	builder.WriteString("tfa_secret=<sensitive>")
+	if v := ts.TfaSecret; v != nil {
+		builder.WriteString("tfa_secret=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("verified=")
 	builder.WriteString(fmt.Sprintf("%v", ts.Verified))

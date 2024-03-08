@@ -43,6 +43,9 @@ type DatumClient interface {
 	GetAllPersonalAccessTokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllPersonalAccessTokens, error)
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
 	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
+	GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error)
+	CreateTFASettings(ctx context.Context, input CreateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASettings, error)
+	UpdateTFASettings(ctx context.Context, input UpdateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASettings, error)
 	GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error)
 	GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error)
 	GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error)
@@ -4180,6 +4183,103 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 	return t.DeletedID
 }
 
+type GetTFASettings_TfaSettings struct {
+	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	Verified      bool     "json:\"verified\" graphql:\"verified\""
+}
+
+func (t *GetTFASettings_TfaSettings) GetTotpAllowed() *bool {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings{}
+	}
+	return t.TotpAllowed
+}
+func (t *GetTFASettings_TfaSettings) GetRecoveryCodes() []string {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings{}
+	}
+	return t.RecoveryCodes
+}
+func (t *GetTFASettings_TfaSettings) GetVerified() bool {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings{}
+	}
+	return t.Verified
+}
+
+type CreateTFASettings_CreateTFASettings_TfaSettings struct {
+	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	Verified      bool     "json:\"verified\" graphql:\"verified\""
+}
+
+func (t *CreateTFASettings_CreateTFASettings_TfaSettings) GetTotpAllowed() *bool {
+	if t == nil {
+		t = &CreateTFASettings_CreateTFASettings_TfaSettings{}
+	}
+	return t.TotpAllowed
+}
+func (t *CreateTFASettings_CreateTFASettings_TfaSettings) GetRecoveryCodes() []string {
+	if t == nil {
+		t = &CreateTFASettings_CreateTFASettings_TfaSettings{}
+	}
+	return t.RecoveryCodes
+}
+func (t *CreateTFASettings_CreateTFASettings_TfaSettings) GetVerified() bool {
+	if t == nil {
+		t = &CreateTFASettings_CreateTFASettings_TfaSettings{}
+	}
+	return t.Verified
+}
+
+type CreateTFASettings_CreateTFASettings struct {
+	TfaSettings CreateTFASettings_CreateTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
+}
+
+func (t *CreateTFASettings_CreateTFASettings) GetTfaSettings() *CreateTFASettings_CreateTFASettings_TfaSettings {
+	if t == nil {
+		t = &CreateTFASettings_CreateTFASettings{}
+	}
+	return &t.TfaSettings
+}
+
+type UpdateTFASettings_UpdateTFASettings_TfaSettings struct {
+	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	Verified      bool     "json:\"verified\" graphql:\"verified\""
+}
+
+func (t *UpdateTFASettings_UpdateTFASettings_TfaSettings) GetTotpAllowed() *bool {
+	if t == nil {
+		t = &UpdateTFASettings_UpdateTFASettings_TfaSettings{}
+	}
+	return t.TotpAllowed
+}
+func (t *UpdateTFASettings_UpdateTFASettings_TfaSettings) GetRecoveryCodes() []string {
+	if t == nil {
+		t = &UpdateTFASettings_UpdateTFASettings_TfaSettings{}
+	}
+	return t.RecoveryCodes
+}
+func (t *UpdateTFASettings_UpdateTFASettings_TfaSettings) GetVerified() bool {
+	if t == nil {
+		t = &UpdateTFASettings_UpdateTFASettings_TfaSettings{}
+	}
+	return t.Verified
+}
+
+type UpdateTFASettings_UpdateTFASettings struct {
+	TfaSettings UpdateTFASettings_UpdateTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
+}
+
+func (t *UpdateTFASettings_UpdateTFASettings) GetTfaSettings() *UpdateTFASettings_UpdateTFASettings_TfaSettings {
+	if t == nil {
+		t = &UpdateTFASettings_UpdateTFASettings{}
+	}
+	return &t.TfaSettings
+}
+
 type GetUserByID_User_Setting_DefaultOrg struct {
 	ID          string "json:\"id\" graphql:\"id\""
 	Name        string "json:\"name\" graphql:\"name\""
@@ -5465,6 +5565,7 @@ type GetUserSettingByID_UserSetting struct {
 	DefaultOrg     *GetUserSettingByID_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Tags           []string                                   "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                       "json:\"locked\" graphql:\"locked\""
+	IsTfaEnabled   *bool                                      "json:\"isTfaEnabled,omitempty\" graphql:\"isTfaEnabled\""
 	EmailConfirmed bool                                       "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	CreatedAt      *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -5509,6 +5610,12 @@ func (t *GetUserSettingByID_UserSetting) GetLocked() bool {
 		t = &GetUserSettingByID_UserSetting{}
 	}
 	return t.Locked
+}
+func (t *GetUserSettingByID_UserSetting) GetIsTfaEnabled() *bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.IsTfaEnabled
 }
 func (t *GetUserSettingByID_UserSetting) GetEmailConfirmed() bool {
 	if t == nil {
@@ -5585,6 +5692,7 @@ type GetUserSettings_UserSettings_Edges_Node struct {
 	DefaultOrg     *GetUserSettings_UserSettings_Edges_Node_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Tags           []string                                            "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                                "json:\"locked\" graphql:\"locked\""
+	IsTfaEnabled   *bool                                               "json:\"isTfaEnabled,omitempty\" graphql:\"isTfaEnabled\""
 	EmailConfirmed bool                                                "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	CreatedAt      *time.Time                                          "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                             "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -5629,6 +5737,12 @@ func (t *GetUserSettings_UserSettings_Edges_Node) GetLocked() bool {
 		t = &GetUserSettings_UserSettings_Edges_Node{}
 	}
 	return t.Locked
+}
+func (t *GetUserSettings_UserSettings_Edges_Node) GetIsTfaEnabled() *bool {
+	if t == nil {
+		t = &GetUserSettings_UserSettings_Edges_Node{}
+	}
+	return t.IsTfaEnabled
 }
 func (t *GetUserSettings_UserSettings_Edges_Node) GetEmailConfirmed() bool {
 	if t == nil {
@@ -5727,6 +5841,7 @@ type GetUserSettingWhere_UserSettings_Edges_Node struct {
 	DefaultOrg     *GetUserSettingWhere_UserSettings_Edges_Node_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Tags           []string                                                "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                                    "json:\"locked\" graphql:\"locked\""
+	IsTfaEnabled   *bool                                                   "json:\"isTfaEnabled,omitempty\" graphql:\"isTfaEnabled\""
 	EmailConfirmed bool                                                    "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	CreatedAt      *time.Time                                              "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -5771,6 +5886,12 @@ func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetLocked() bool {
 		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
 	}
 	return t.Locked
+}
+func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetIsTfaEnabled() *bool {
+	if t == nil {
+		t = &GetUserSettingWhere_UserSettings_Edges_Node{}
+	}
+	return t.IsTfaEnabled
 }
 func (t *GetUserSettingWhere_UserSettings_Edges_Node) GetEmailConfirmed() bool {
 	if t == nil {
@@ -5869,6 +5990,7 @@ type UpdateUserSetting_UpdateUserSetting_UserSetting struct {
 	DefaultOrg     *UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Tags           []string                                                    "json:\"tags\" graphql:\"tags\""
 	Locked         bool                                                        "json:\"locked\" graphql:\"locked\""
+	IsTfaEnabled   *bool                                                       "json:\"isTfaEnabled,omitempty\" graphql:\"isTfaEnabled\""
 	EmailConfirmed bool                                                        "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
 	CreatedAt      *time.Time                                                  "json:\"createdAt,omitempty\" graphql:\"createdAt\""
 	CreatedBy      *string                                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -5913,6 +6035,12 @@ func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetLocked() bool {
 		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
 	}
 	return t.Locked
+}
+func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetIsTfaEnabled() *bool {
+	if t == nil {
+		t = &UpdateUserSetting_UpdateUserSetting_UserSetting{}
+	}
+	return t.IsTfaEnabled
 }
 func (t *UpdateUserSetting_UpdateUserSetting_UserSetting) GetEmailConfirmed() bool {
 	if t == nil {
@@ -6307,6 +6435,39 @@ func (t *DeletePersonalAccessToken) GetDeletePersonalAccessToken() *DeletePerson
 		t = &DeletePersonalAccessToken{}
 	}
 	return &t.DeletePersonalAccessToken
+}
+
+type GetTFASettings struct {
+	TfaSettings GetTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
+}
+
+func (t *GetTFASettings) GetTfaSettings() *GetTFASettings_TfaSettings {
+	if t == nil {
+		t = &GetTFASettings{}
+	}
+	return &t.TfaSettings
+}
+
+type CreateTFASettings struct {
+	CreateTFASettings CreateTFASettings_CreateTFASettings "json:\"createTFASettings\" graphql:\"createTFASettings\""
+}
+
+func (t *CreateTFASettings) GetCreateTFASettings() *CreateTFASettings_CreateTFASettings {
+	if t == nil {
+		t = &CreateTFASettings{}
+	}
+	return &t.CreateTFASettings
+}
+
+type UpdateTFASettings struct {
+	UpdateTFASettings UpdateTFASettings_UpdateTFASettings "json:\"updateTFASettings\" graphql:\"updateTFASettings\""
+}
+
+func (t *UpdateTFASettings) GetUpdateTFASettings() *UpdateTFASettings_UpdateTFASettings {
+	if t == nil {
+		t = &UpdateTFASettings{}
+	}
+	return &t.UpdateTFASettings
 }
 
 type GetUserByID struct {
@@ -7740,6 +7901,86 @@ func (c *Client) DeletePersonalAccessToken(ctx context.Context, deletePersonalAc
 	return &res, nil
 }
 
+const GetTFASettingsDocument = `query GetTFASettings {
+	tfaSettings {
+		totpAllowed
+		recoveryCodes
+		verified
+	}
+}
+`
+
+func (c *Client) GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error) {
+	vars := map[string]interface{}{}
+
+	var res GetTFASettings
+	if err := c.Client.Post(ctx, "GetTFASettings", GetTFASettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateTFASettingsDocument = `mutation CreateTFASettings ($input: CreateTFASettingsInput!) {
+	createTFASettings(input: $input) {
+		tfaSettings {
+			totpAllowed
+			recoveryCodes
+			verified
+		}
+	}
+}
+`
+
+func (c *Client) CreateTFASettings(ctx context.Context, input CreateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASettings, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res CreateTFASettings
+	if err := c.Client.Post(ctx, "CreateTFASettings", CreateTFASettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateTFASettingsDocument = `mutation UpdateTFASettings ($input: UpdateTFASettingsInput!) {
+	updateTFASettings(input: $input) {
+		tfaSettings {
+			totpAllowed
+			recoveryCodes
+			verified
+		}
+	}
+}
+`
+
+func (c *Client) UpdateTFASettings(ctx context.Context, input UpdateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASettings, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res UpdateTFASettings
+	if err := c.Client.Post(ctx, "UpdateTFASettings", UpdateTFASettingsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 	user(id: $userId) {
 		id
@@ -8074,6 +8315,7 @@ const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID
 		}
 		tags
 		locked
+		isTfaEnabled
 		emailConfirmed
 		createdAt
 		createdBy
@@ -8116,6 +8358,7 @@ const GetUserSettingsDocument = `query GetUserSettings {
 				}
 				tags
 				locked
+				isTfaEnabled
 				emailConfirmed
 				createdAt
 				createdBy
@@ -8158,6 +8401,7 @@ const GetUserSettingWhereDocument = `query GetUserSettingWhere ($where: UserSett
 				}
 				tags
 				locked
+				isTfaEnabled
 				emailConfirmed
 				createdAt
 				createdBy
@@ -8201,6 +8445,7 @@ const UpdateUserSettingDocument = `mutation UpdateUserSetting ($updateUserSettin
 			}
 			tags
 			locked
+			isTfaEnabled
 			emailConfirmed
 			createdAt
 			createdBy
@@ -8263,6 +8508,9 @@ var DocumentOperationNames = map[string]string{
 	GetAllPersonalAccessTokensDocument: "GetAllPersonalAccessTokens",
 	GetPersonalAccessTokenByIDDocument: "GetPersonalAccessTokenByID",
 	DeletePersonalAccessTokenDocument:  "DeletePersonalAccessToken",
+	GetTFASettingsDocument:             "GetTFASettings",
+	CreateTFASettingsDocument:          "CreateTFASettings",
+	UpdateTFASettingsDocument:          "UpdateTFASettings",
 	GetUserByIDDocument:                "GetUserByID",
 	GetUserByIDWithOrgsDocument:        "GetUserByIDWithOrgs",
 	GetAllUsersDocument:                "GetAllUsers",

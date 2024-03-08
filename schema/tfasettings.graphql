@@ -1,12 +1,12 @@
 extend type Query {
     """
-    Look up tfaSettings by ID
+    Look up tfaSettings for the current user
     """
      tfaSettings(
         """
         ID of the tfaSettings
         """
-        id: ID!
+        id: ID
     ):  TFASettings!
 }
 

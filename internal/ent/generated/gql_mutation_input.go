@@ -1630,16 +1630,12 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 
 // CreateTFASettingsInput represents a mutation input for creating tfasettingsslice.
 type CreateTFASettingsInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
-	TfaSecret       *string
-	RecoveryCodes   []string
-	PhoneOtpAllowed *bool
-	EmailOtpAllowed *bool
-	TotpAllowed     *bool
-	OwnerID         *string
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	TotpAllowed *bool
+	OwnerID     *string
 }
 
 // Mutate applies the CreateTFASettingsInput on the TFASettingsMutation builder.
@@ -1655,18 +1651,6 @@ func (i *CreateTFASettingsInput) Mutate(m *TFASettingsMutation) {
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
-	}
-	if v := i.TfaSecret; v != nil {
-		m.SetTfaSecret(*v)
-	}
-	if v := i.RecoveryCodes; v != nil {
-		m.SetRecoveryCodes(v)
-	}
-	if v := i.PhoneOtpAllowed; v != nil {
-		m.SetPhoneOtpAllowed(*v)
-	}
-	if v := i.EmailOtpAllowed; v != nil {
-		m.SetEmailOtpAllowed(*v)
 	}
 	if v := i.TotpAllowed; v != nil {
 		m.SetTotpAllowed(*v)
@@ -1684,21 +1668,13 @@ func (c *TFASettingsCreate) SetInput(i CreateTFASettingsInput) *TFASettingsCreat
 
 // UpdateTFASettingsInput represents a mutation input for updating tfasettingsslice.
 type UpdateTFASettingsInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
-	ClearTfaSecret       bool
-	TfaSecret            *string
-	ClearRecoveryCodes   bool
-	RecoveryCodes        []string
-	AppendRecoveryCodes  []string
-	ClearPhoneOtpAllowed bool
-	PhoneOtpAllowed      *bool
-	ClearEmailOtpAllowed bool
-	EmailOtpAllowed      *bool
-	ClearTotpAllowed     bool
-	TotpAllowed          *bool
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Verified         *bool
+	ClearTotpAllowed bool
+	TotpAllowed      *bool
 }
 
 // Mutate applies the UpdateTFASettingsInput on the TFASettingsMutation builder.
@@ -1715,32 +1691,8 @@ func (i *UpdateTFASettingsInput) Mutate(m *TFASettingsMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	if i.ClearTfaSecret {
-		m.ClearTfaSecret()
-	}
-	if v := i.TfaSecret; v != nil {
-		m.SetTfaSecret(*v)
-	}
-	if i.ClearRecoveryCodes {
-		m.ClearRecoveryCodes()
-	}
-	if v := i.RecoveryCodes; v != nil {
-		m.SetRecoveryCodes(v)
-	}
-	if i.AppendRecoveryCodes != nil {
-		m.AppendRecoveryCodes(i.RecoveryCodes)
-	}
-	if i.ClearPhoneOtpAllowed {
-		m.ClearPhoneOtpAllowed()
-	}
-	if v := i.PhoneOtpAllowed; v != nil {
-		m.SetPhoneOtpAllowed(*v)
-	}
-	if i.ClearEmailOtpAllowed {
-		m.ClearEmailOtpAllowed()
-	}
-	if v := i.EmailOtpAllowed; v != nil {
-		m.SetEmailOtpAllowed(*v)
+	if v := i.Verified; v != nil {
+		m.SetVerified(*v)
 	}
 	if i.ClearTotpAllowed {
 		m.ClearTotpAllowed()

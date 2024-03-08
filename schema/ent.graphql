@@ -338,22 +338,6 @@ input CreateTFASettingsInput {
   createdBy: String
   updatedBy: String
   """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
-  """
   specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
   """
   totpAllowed: Boolean
@@ -3952,17 +3936,17 @@ type TFASettings implements Node {
   deletedAt: Time
   deletedBy: String
   """
+  TFA secret for the user
+  """
+  tfaSecret: String
+  """
+  specifies if the TFA device has been verified
+  """
+  verified: Boolean!
+  """
   recovery codes for 2fa
   """
   recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
   """
   specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
   """
@@ -4114,19 +4098,28 @@ input TFASettingsWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
-  phone_otp_allowed field predicates
+  tfa_secret field predicates
   """
-  phoneOtpAllowed: Boolean
-  phoneOtpAllowedNEQ: Boolean
-  phoneOtpAllowedIsNil: Boolean
-  phoneOtpAllowedNotNil: Boolean
+  tfaSecret: String
+  tfaSecretNEQ: String
+  tfaSecretIn: [String!]
+  tfaSecretNotIn: [String!]
+  tfaSecretGT: String
+  tfaSecretGTE: String
+  tfaSecretLT: String
+  tfaSecretLTE: String
+  tfaSecretContains: String
+  tfaSecretHasPrefix: String
+  tfaSecretHasSuffix: String
+  tfaSecretIsNil: Boolean
+  tfaSecretNotNil: Boolean
+  tfaSecretEqualFold: String
+  tfaSecretContainsFold: String
   """
-  email_otp_allowed field predicates
+  verified field predicates
   """
-  emailOtpAllowed: Boolean
-  emailOtpAllowedNEQ: Boolean
-  emailOtpAllowedIsNil: Boolean
-  emailOtpAllowedNotNil: Boolean
+  verified: Boolean
+  verifiedNEQ: Boolean
   """
   totp_allowed field predicates
   """
@@ -4521,26 +4514,9 @@ input UpdateTFASettingsInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   """
-  TFA secret for the user
+  specifies if the TFA device has been verified
   """
-  tfaSecret: String
-  clearTfaSecret: Boolean
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  appendRecoveryCodes: [String!]
-  clearRecoveryCodes: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  clearPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
-  clearEmailOtpAllowed: Boolean
+  verified: Boolean
   """
   specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
   """

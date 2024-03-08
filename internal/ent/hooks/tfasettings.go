@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"entgo.io/ent"
+	"github.com/99designs/gqlgen/graphql"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -16,37 +17,14 @@ import (
 func HookEnableTFA() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.TFASettingsFunc(func(ctx context.Context, mutation *generated.TFASettingsMutation) (generated.Value, error) {
-			u, err := constructTOTPUser(ctx, mutation)
-			if err != nil {
-				return nil, err
-			}
-
-			retVal, err := next.Mutate(ctx, mutation)
-			if err != nil {
-				return nil, err
-			}
-
-			// update user settings
-			_, err = mutation.Client().UserSetting.Update().
-				Where(usersetting.UserID(u.ID)).
-				SetIsTfaEnabled(true). // set tfa enabled to true
-				Save(ctx)
-
-			return retVal, err
-		})
-	}, ent.OpCreate)
-}
-
-func HookTFAUpdate() ent.Hook {
-	return hook.On(func(next ent.Mutator) ent.Mutator {
-		return hook.TFASettingsFunc(func(ctx context.Context, mutation *generated.TFASettingsMutation) (generated.Value, error) {
 			// once verified, create recovery codes
 			verified, ok := mutation.Verified()
 
 			// if recovery codes are cleared, generate new ones
-			cleared := mutation.RecoveryCodesCleared()
+			gtx := graphql.GetOperationContext(ctx)
+			regenBackupCodes, _ := gtx.Variables["input"].(map[string]interface{})["regenBackupCodes"].(bool)
 
-			if (ok && verified) || cleared {
+			if (ok && verified) || regenBackupCodes {
 				u, err := constructTOTPUser(ctx, mutation)
 				if err != nil {
 					return nil, err
@@ -59,6 +37,17 @@ func HookTFAUpdate() ent.Hook {
 
 				codes := mutation.TOTP.TOTPManager.GenerateRecoveryCodes()
 				mutation.SetRecoveryCodes(codes)
+
+				if verified {
+					// update user settings
+					_, err := mutation.Client().UserSetting.Update().
+						Where(usersetting.UserID(u.ID)).
+						SetIsTfaEnabled(true). // set tfa enabled to true
+						Save(ctx)
+					if err != nil {
+						return nil, err
+					}
+				}
 			}
 
 			return next.Mutate(ctx, mutation)

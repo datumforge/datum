@@ -713,7 +713,6 @@ func init() {
 	tfasettings.Hooks[0] = tfasettingsMixinHooks0[0]
 	tfasettings.Hooks[1] = tfasettingsMixinHooks2[0]
 	tfasettings.Hooks[2] = tfasettingsHooks[0]
-	tfasettings.Hooks[3] = tfasettingsHooks[1]
 	tfasettingsMixinInters2 := tfasettingsMixin[2].Interceptors()
 	tfasettings.Interceptors[0] = tfasettingsMixinInters2[0]
 	tfasettingsMixinFields0 := tfasettingsMixin[0].Fields()

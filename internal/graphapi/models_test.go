@@ -65,6 +65,10 @@ type UserCleanup struct {
 	UserID string
 }
 
+type TFASettingBuilder struct {
+	client *client
+}
+
 type OrgMemberBuilder struct {
 	client *client
 
@@ -221,6 +225,14 @@ func (u *UserCleanup) MustDelete(ctx context.Context, t *testing.T) {
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(u.client.fga)
+}
+
+// MustNew user builder is used to create, without authz checks, org members in the database
+func (tf *TFASettingBuilder) MustNew(ctx context.Context, t *testing.T, userID string) *ent.TFASettings {
+	return tf.client.db.TFASettings.Create().
+		SetTotpAllowed(true).
+		SetOwnerID(userID).
+		SaveX(ctx)
 }
 
 // MustNew user builder is used to create, without authz checks, org members in the database

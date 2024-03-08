@@ -24,6 +24,8 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
+	"github.com/datumforge/datum/pkg/utils/totp"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/pkg/testutils"
@@ -86,12 +88,27 @@ func setupTest(t *testing.T) *client {
 
 	taskMan.Start()
 
+	// setup otp manager
+	otpOpts := []totp.ConfigOption{
+		totp.WithCodeLength(6),
+		totp.WithIssuer("datum"),
+		totp.WithSecret(totp.Secret{
+			Version: 0,
+			Key:     ulids.New().String(),
+		}),
+	}
+
+	otpMan := totp.NewOTP(otpOpts...)
+
 	opts := []ent.Option{
 		ent.Logger(*logger),
 		ent.Authz(*fc),
 		ent.Emails(em),
 		ent.Marionette(taskMan),
 		ent.Analytics(&analytics.EventManager{Enabled: false}),
+		ent.TOTP(&totp.OTPManager{
+			TOTPManager: otpMan,
+		}),
 	}
 
 	// create database connection

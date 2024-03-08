@@ -8433,17 +8433,9 @@ type TFASettingsWhereInput struct {
 	TfaSecretEqualFold    *string  `json:"tfaSecretEqualFold,omitempty"`
 	TfaSecretContainsFold *string  `json:"tfaSecretContainsFold,omitempty"`
 
-	// "phone_otp_allowed" field predicates.
-	PhoneOtpAllowed       *bool `json:"phoneOtpAllowed,omitempty"`
-	PhoneOtpAllowedNEQ    *bool `json:"phoneOtpAllowedNEQ,omitempty"`
-	PhoneOtpAllowedIsNil  bool  `json:"phoneOtpAllowedIsNil,omitempty"`
-	PhoneOtpAllowedNotNil bool  `json:"phoneOtpAllowedNotNil,omitempty"`
-
-	// "email_otp_allowed" field predicates.
-	EmailOtpAllowed       *bool `json:"emailOtpAllowed,omitempty"`
-	EmailOtpAllowedNEQ    *bool `json:"emailOtpAllowedNEQ,omitempty"`
-	EmailOtpAllowedIsNil  bool  `json:"emailOtpAllowedIsNil,omitempty"`
-	EmailOtpAllowedNotNil bool  `json:"emailOtpAllowedNotNil,omitempty"`
+	// "verified" field predicates.
+	Verified    *bool `json:"verified,omitempty"`
+	VerifiedNEQ *bool `json:"verifiedNEQ,omitempty"`
 
 	// "totp_allowed" field predicates.
 	TotpAllowed       *bool `json:"totpAllowed,omitempty"`
@@ -8827,29 +8819,11 @@ func (i *TFASettingsWhereInput) P() (predicate.TFASettings, error) {
 	if i.TfaSecretContainsFold != nil {
 		predicates = append(predicates, tfasettings.TfaSecretContainsFold(*i.TfaSecretContainsFold))
 	}
-	if i.PhoneOtpAllowed != nil {
-		predicates = append(predicates, tfasettings.PhoneOtpAllowedEQ(*i.PhoneOtpAllowed))
+	if i.Verified != nil {
+		predicates = append(predicates, tfasettings.VerifiedEQ(*i.Verified))
 	}
-	if i.PhoneOtpAllowedNEQ != nil {
-		predicates = append(predicates, tfasettings.PhoneOtpAllowedNEQ(*i.PhoneOtpAllowedNEQ))
-	}
-	if i.PhoneOtpAllowedIsNil {
-		predicates = append(predicates, tfasettings.PhoneOtpAllowedIsNil())
-	}
-	if i.PhoneOtpAllowedNotNil {
-		predicates = append(predicates, tfasettings.PhoneOtpAllowedNotNil())
-	}
-	if i.EmailOtpAllowed != nil {
-		predicates = append(predicates, tfasettings.EmailOtpAllowedEQ(*i.EmailOtpAllowed))
-	}
-	if i.EmailOtpAllowedNEQ != nil {
-		predicates = append(predicates, tfasettings.EmailOtpAllowedNEQ(*i.EmailOtpAllowedNEQ))
-	}
-	if i.EmailOtpAllowedIsNil {
-		predicates = append(predicates, tfasettings.EmailOtpAllowedIsNil())
-	}
-	if i.EmailOtpAllowedNotNil {
-		predicates = append(predicates, tfasettings.EmailOtpAllowedNotNil())
+	if i.VerifiedNEQ != nil {
+		predicates = append(predicates, tfasettings.VerifiedNEQ(*i.VerifiedNEQ))
 	}
 	if i.TotpAllowed != nil {
 		predicates = append(predicates, tfasettings.TotpAllowedEQ(*i.TotpAllowed))

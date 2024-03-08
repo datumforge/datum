@@ -5241,10 +5241,7 @@
                   "owner_id": {
                     "type": "string"
                   },
-                  "phone_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "email_otp_allowed": {
+                  "verified": {
                     "type": "boolean"
                   },
                   "totp_allowed": {
@@ -5253,7 +5250,10 @@
                   "owner": {
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "verified"
+                ]
               }
             }
           },
@@ -5354,10 +5354,7 @@
                   "owner_id": {
                     "type": "string"
                   },
-                  "phone_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "email_otp_allowed": {
+                  "verified": {
                     "type": "boolean"
                   },
                   "totp_allowed": {
@@ -7903,10 +7900,7 @@
           "owner_id": {
             "type": "string"
           },
-          "phone_otp_allowed": {
-            "type": "boolean"
-          },
-          "email_otp_allowed": {
+          "verified": {
             "type": "boolean"
           },
           "totp_allowed": {
@@ -7917,7 +7911,8 @@
           }
         },
         "required": [
-          "id"
+          "id",
+          "verified"
         ]
       },
       "User": {

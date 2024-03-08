@@ -260,6 +260,7 @@ func (m *GroupMembershipMutation) CheckAccessForEdit(ctx context.Context) error 
 	input, ok := gInput.(CreateGroupMembershipInput)
 	if ok {
 		ac.ObjectID = input.GroupID
+
 	}
 
 	// check the id from the args
@@ -432,6 +433,7 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 	input, ok := gInput.(CreateOrgMembershipInput)
 	if ok {
 		ac.ObjectID = input.OrganizationID
+
 	}
 
 	// check the id from the args

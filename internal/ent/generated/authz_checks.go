@@ -370,21 +370,21 @@ func (q *GroupSettingQuery) CheckAccess(ctx context.Context) error {
 		whereArg := gCtx.Args["where"]
 		if whereArg != nil {
 			where, ok := whereArg.(*GroupSettingWhereInput)
-			if ok && where != nil && where.ID != nil {
-				ac.ObjectID = *where.ID
+			if ok && where != nil && where.GroupID != nil {
+				ac.ObjectID = *where.GroupID
 			}
 		}
 
 		// if that doesn't work, check for the id in the args
 		if ac.ObjectID == "" {
-			ac.ObjectID, _ = gCtx.Args["id"].(string)
+			ac.ObjectID, _ = gCtx.Args["groupid"].(string)
 		}
 
 		// if we still don't have an object id, run the query and grab the object ID
 		// from the result
 		// this happens on join tables where we have the join ID (for updates and deletes)
 		// and not the actual object id
-		if ac.ObjectID == "" && "id" != "id" {
+		if ac.ObjectID == "" && "id" != "groupid" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := q.Clone().Only(reqCtx)
@@ -392,7 +392,7 @@ func (q *GroupSettingQuery) CheckAccess(ctx context.Context) error {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
-			ac.ObjectID = ob.ID
+			ac.ObjectID = ob.GroupID
 		}
 
 		// request is for a list objects, will get filtered in interceptors
@@ -428,14 +428,24 @@ func (m *GroupSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 
 	gCtx := graphql.GetFieldContext(ctx)
 
+	// get the input from the context
+	gInput := gCtx.Args["input"]
+
+	// check if the input is a CreateGroupSettingInput
+	input, ok := gInput.(CreateGroupSettingInput)
+	if ok {
+		ac.ObjectID = *input.GroupID
+
+	}
+
 	// check the id from the args
 	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["id"].(string)
+		ac.ObjectID, _ = gCtx.Args["groupid"].(string)
 	}
 
 	// if this is still empty, we need to query the object to get the object id
 	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "id" {
+	if ac.ObjectID == "" && "id" != "groupid" {
 		id, ok := gCtx.Args["id"].(string)
 		if ok {
 			// allow this query to run
@@ -445,7 +455,7 @@ func (m *GroupSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
-			ac.ObjectID = ob.ID
+			ac.ObjectID = ob.GroupID
 		}
 	}
 

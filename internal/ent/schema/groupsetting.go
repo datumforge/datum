@@ -65,8 +65,10 @@ func (GroupSetting) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:   "group",
-			IncludeHooks: false,
+			ObjectType:      "group",
+			IncludeHooks:    false,
+			IDField:         "GroupID",
+			NillableIDField: true,
 		},
 	}
 }

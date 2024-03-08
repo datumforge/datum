@@ -307,7 +307,6 @@ type ComplexityRoot struct {
 		CreateEntitlement         func(childComplexity int, input generated.CreateEntitlementInput) int
 		CreateGroup               func(childComplexity int, input generated.CreateGroupInput) int
 		CreateGroupMembership     func(childComplexity int, input generated.CreateGroupMembershipInput) int
-		CreateGroupSetting        func(childComplexity int, input generated.CreateGroupSettingInput) int
 		CreateIntegration         func(childComplexity int, input generated.CreateIntegrationInput) int
 		CreateInvite              func(childComplexity int, input generated.CreateInviteInput) int
 		CreateOauthProvider       func(childComplexity int, input generated.CreateOauthProviderInput) int
@@ -319,7 +318,6 @@ type ComplexityRoot struct {
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
 		DeleteGroupMembership     func(childComplexity int, id string) int
-		DeleteGroupSetting        func(childComplexity int, id string) int
 		DeleteIntegration         func(childComplexity int, id string) int
 		DeleteInvite              func(childComplexity int, id string) int
 		DeleteOauthProvider       func(childComplexity int, id string) int
@@ -741,9 +739,7 @@ type MutationResolver interface {
 	CreateGroupMembership(ctx context.Context, input generated.CreateGroupMembershipInput) (*GroupMembershipCreatePayload, error)
 	UpdateGroupMembership(ctx context.Context, id string, input generated.UpdateGroupMembershipInput) (*GroupMembershipUpdatePayload, error)
 	DeleteGroupMembership(ctx context.Context, id string) (*GroupMembershipDeletePayload, error)
-	CreateGroupSetting(ctx context.Context, input generated.CreateGroupSettingInput) (*GroupSettingCreatePayload, error)
 	UpdateGroupSetting(ctx context.Context, id string, input generated.UpdateGroupSettingInput) (*GroupSettingUpdatePayload, error)
-	DeleteGroupSetting(ctx context.Context, id string) (*GroupSettingDeletePayload, error)
 	CreateIntegration(ctx context.Context, input generated.CreateIntegrationInput) (*IntegrationCreatePayload, error)
 	UpdateIntegration(ctx context.Context, id string, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error)
 	DeleteIntegration(ctx context.Context, id string) (*IntegrationDeletePayload, error)
@@ -1828,18 +1824,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateGroupMembership(childComplexity, args["input"].(generated.CreateGroupMembershipInput)), true
 
-	case "Mutation.createGroupSetting":
-		if e.complexity.Mutation.CreateGroupSetting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createGroupSetting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateGroupSetting(childComplexity, args["input"].(generated.CreateGroupSettingInput)), true
-
 	case "Mutation.createIntegration":
 		if e.complexity.Mutation.CreateIntegration == nil {
 			break
@@ -1971,18 +1955,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteGroupMembership(childComplexity, args["id"].(string)), true
-
-	case "Mutation.deleteGroupSetting":
-		if e.complexity.Mutation.DeleteGroupSetting == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteGroupSetting_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteGroupSetting(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteIntegration":
 		if e.complexity.Mutation.DeleteIntegration == nil {
@@ -9681,15 +9653,6 @@ type GroupMembershipDeletePayload {
 
 extend type Mutation{
     """
-    Create a new groupSetting
-    """
-    createGroupSetting(
-        """
-        values of the groupSetting
-        """
-        input: CreateGroupSettingInput!
-    ): GroupSettingCreatePayload!
-    """
     Update an existing groupSetting
     """
     updateGroupSetting(
@@ -9702,15 +9665,6 @@ extend type Mutation{
         """
         input: UpdateGroupSettingInput!
     ): GroupSettingUpdatePayload!
-    """
-    Delete an existing groupSetting
-    """
-    deleteGroupSetting(
-        """
-        ID of the groupSetting
-        """
-        id: ID!
-    ): GroupSettingDeletePayload!
 }
 
 """
@@ -10499,21 +10453,6 @@ func (ec *executionContext) field_Mutation_createGroupMembership_args(ctx contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createGroupSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 generated.CreateGroupSettingInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateGroupSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupSettingInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_createGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -10665,21 +10604,6 @@ func (ec *executionContext) field_Mutation_deleteEntitlement_args(ctx context.Co
 }
 
 func (ec *executionContext) field_Mutation_deleteGroupMembership_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_deleteGroupSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -19555,65 +19479,6 @@ func (ec *executionContext) fieldContext_Mutation_deleteGroupMembership(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createGroupSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createGroupSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateGroupSetting(rctx, fc.Args["input"].(generated.CreateGroupSettingInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*GroupSettingCreatePayload)
-	fc.Result = res
-	return ec.marshalNGroupSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐGroupSettingCreatePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createGroupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "groupSetting":
-				return ec.fieldContext_GroupSettingCreatePayload_groupSetting(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GroupSettingCreatePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createGroupSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_updateGroupSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_updateGroupSetting(ctx, field)
 	if err != nil {
@@ -19667,65 +19532,6 @@ func (ec *executionContext) fieldContext_Mutation_updateGroupSetting(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateGroupSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteGroupSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteGroupSetting(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteGroupSetting(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*GroupSettingDeletePayload)
-	fc.Result = res
-	return ec.marshalNGroupSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐGroupSettingDeletePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteGroupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "deletedID":
-				return ec.fieldContext_GroupSettingDeletePayload_deletedID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type GroupSettingDeletePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteGroupSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -56524,23 +56330,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createGroupSetting":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createGroupSetting(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "updateGroupSetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateGroupSetting(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deleteGroupSetting":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteGroupSetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -60951,11 +60743,6 @@ func (ec *executionContext) unmarshalNCreateGroupMembershipInput2ᚖgithubᚗcom
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateGroupSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupSettingInput(ctx context.Context, v interface{}) (generated.CreateGroupSettingInput, error) {
-	res, err := ec.unmarshalInputCreateGroupSettingInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNCreateIntegrationInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateIntegrationInput(ctx context.Context, v interface{}) (generated.CreateIntegrationInput, error) {
 	res, err := ec.unmarshalInputCreateIntegrationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -61279,34 +61066,6 @@ func (ec *executionContext) marshalNGroupSettingConnection2ᚖgithubᚗcomᚋdat
 		return graphql.Null
 	}
 	return ec._GroupSettingConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNGroupSettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐGroupSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v GroupSettingCreatePayload) graphql.Marshaler {
-	return ec._GroupSettingCreatePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNGroupSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐGroupSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *GroupSettingCreatePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._GroupSettingCreatePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNGroupSettingDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐGroupSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v GroupSettingDeletePayload) graphql.Marshaler {
-	return ec._GroupSettingDeletePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNGroupSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐGroupSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v *GroupSettingDeletePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._GroupSettingDeletePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx context.Context, v interface{}) (enums.JoinPolicy, error) {

@@ -2164,15 +2164,6 @@ type Mutation {
 		id: ID!
 	): GroupMembershipDeletePayload!
 	"""
-	Create a new groupSetting
-	"""
-	createGroupSetting(
-		"""
-		values of the groupSetting
-		"""
-		input: CreateGroupSettingInput!
-	): GroupSettingCreatePayload!
-	"""
 	Update an existing groupSetting
 	"""
 	updateGroupSetting(
@@ -2186,15 +2177,6 @@ type Mutation {
 		"""
 		input: UpdateGroupSettingInput!
 	): GroupSettingUpdatePayload!
-	"""
-	Delete an existing groupSetting
-	"""
-	deleteGroupSetting(
-		"""
-		ID of the groupSetting
-		"""
-		id: ID!
-	): GroupSettingDeletePayload!
 	"""
 	Create a new integration
 	"""

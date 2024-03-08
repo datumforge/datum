@@ -315,7 +315,6 @@ type ComplexityRoot struct {
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
 		CreateOrganizationSetting func(childComplexity int, input generated.CreateOrganizationSettingInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
-		CreateTFASettings         func(childComplexity int, input generated.CreateTFASettingsInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
@@ -329,7 +328,6 @@ type ComplexityRoot struct {
 		DeleteOrganization        func(childComplexity int, id string) int
 		DeleteOrganizationSetting func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
-		DeleteTFASettings         func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
@@ -344,7 +342,6 @@ type ComplexityRoot struct {
 		UpdateOrganization        func(childComplexity int, id string, input generated.UpdateOrganizationInput) int
 		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
-		UpdateTFASettings         func(childComplexity int, id string, input generated.UpdateTFASettingsInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
 		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
 	}
@@ -636,8 +633,6 @@ type ComplexityRoot struct {
 		Organizations        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
 		PersonalAccessToken  func(childComplexity int, id string) int
 		PersonalAccessTokens func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
-		TfaSettings          func(childComplexity int, id string) int
-		TfaSettingsSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) int
 		User                 func(childComplexity int, id string) int
 		UserSetting          func(childComplexity int, id string) int
 		UserSettings         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) int
@@ -646,44 +641,6 @@ type ComplexityRoot struct {
 
 	Subscription struct {
 		Subscribe func(childComplexity int, subscriber string) int
-	}
-
-	TFASettings struct {
-		CreatedAt       func(childComplexity int) int
-		CreatedBy       func(childComplexity int) int
-		DeletedAt       func(childComplexity int) int
-		DeletedBy       func(childComplexity int) int
-		EmailOtpAllowed func(childComplexity int) int
-		ID              func(childComplexity int) int
-		Owner           func(childComplexity int) int
-		PhoneOtpAllowed func(childComplexity int) int
-		RecoveryCodes   func(childComplexity int) int
-		TotpAllowed     func(childComplexity int) int
-		UpdatedAt       func(childComplexity int) int
-		UpdatedBy       func(childComplexity int) int
-	}
-
-	TFASettingsConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	TFASettingsCreatePayload struct {
-		TfaSettings func(childComplexity int) int
-	}
-
-	TFASettingsDeletePayload struct {
-		DeletedID func(childComplexity int) int
-	}
-
-	TFASettingsEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
-	}
-
-	TFASettingsUpdatePayload struct {
-		TfaSettings func(childComplexity int) int
 	}
 
 	User struct {
@@ -708,7 +665,6 @@ type ComplexityRoot struct {
 		PersonalAccessTokens func(childComplexity int) int
 		Setting              func(childComplexity int) int
 		Sub                  func(childComplexity int) int
-		TfaSettings          func(childComplexity int) int
 		UpdatedAt            func(childComplexity int) int
 		UpdatedBy            func(childComplexity int) int
 	}
@@ -811,9 +767,6 @@ type MutationResolver interface {
 	CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error)
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
-	CreateTFASettings(ctx context.Context, input generated.CreateTFASettingsInput) (*TFASettingsCreatePayload, error)
-	UpdateTFASettings(ctx context.Context, id string, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error)
-	DeleteTFASettings(ctx context.Context, id string) (*TFASettingsDeletePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
@@ -838,7 +791,6 @@ type QueryResolver interface {
 	Organizations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error)
 	OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error)
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
-	TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
 	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
 	Entitlement(ctx context.Context, id string) (*generated.Entitlement, error)
@@ -853,7 +805,6 @@ type QueryResolver interface {
 	OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error)
 	OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error)
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
-	TfaSettings(ctx context.Context, id string) (*generated.TFASettings, error)
 	User(ctx context.Context, id string) (*generated.User, error)
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
 }
@@ -1979,18 +1930,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePersonalAccessToken(childComplexity, args["input"].(generated.CreatePersonalAccessTokenInput)), true
 
-	case "Mutation.createTFASettings":
-		if e.complexity.Mutation.CreateTFASettings == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createTFASettings_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateTFASettings(childComplexity, args["input"].(generated.CreateTFASettingsInput)), true
-
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
 			break
@@ -2146,18 +2085,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeletePersonalAccessToken(childComplexity, args["id"].(string)), true
-
-	case "Mutation.deleteTFASettings":
-		if e.complexity.Mutation.DeleteTFASettings == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteTFASettings_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteTFASettings(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
@@ -2326,18 +2253,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePersonalAccessToken(childComplexity, args["id"].(string), args["input"].(generated.UpdatePersonalAccessTokenInput)), true
-
-	case "Mutation.updateTFASettings":
-		if e.complexity.Mutation.UpdateTFASettings == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateTFASettings_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateTFASettings(childComplexity, args["id"].(string), args["input"].(generated.UpdateTFASettingsInput)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -3723,30 +3638,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PersonalAccessTokens(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.PersonalAccessTokenWhereInput)), true
 
-	case "Query.tfaSettings":
-		if e.complexity.Query.TfaSettings == nil {
-			break
-		}
-
-		args, err := ec.field_Query_tfaSettings_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.TfaSettings(childComplexity, args["id"].(string)), true
-
-	case "Query.tfaSettingsSlice":
-		if e.complexity.Query.TfaSettingsSlice == nil {
-			break
-		}
-
-		args, err := ec.field_Query_tfaSettingsSlice_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.TfaSettingsSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.TFASettingsWhereInput)), true
-
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -3806,146 +3697,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.Subscribe(childComplexity, args["subscriber"].(string)), true
-
-	case "TFASettings.createdAt":
-		if e.complexity.TFASettings.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.CreatedAt(childComplexity), true
-
-	case "TFASettings.createdBy":
-		if e.complexity.TFASettings.CreatedBy == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.CreatedBy(childComplexity), true
-
-	case "TFASettings.deletedAt":
-		if e.complexity.TFASettings.DeletedAt == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.DeletedAt(childComplexity), true
-
-	case "TFASettings.deletedBy":
-		if e.complexity.TFASettings.DeletedBy == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.DeletedBy(childComplexity), true
-
-	case "TFASettings.emailOtpAllowed":
-		if e.complexity.TFASettings.EmailOtpAllowed == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.EmailOtpAllowed(childComplexity), true
-
-	case "TFASettings.id":
-		if e.complexity.TFASettings.ID == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.ID(childComplexity), true
-
-	case "TFASettings.owner":
-		if e.complexity.TFASettings.Owner == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.Owner(childComplexity), true
-
-	case "TFASettings.phoneOtpAllowed":
-		if e.complexity.TFASettings.PhoneOtpAllowed == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.PhoneOtpAllowed(childComplexity), true
-
-	case "TFASettings.recoveryCodes":
-		if e.complexity.TFASettings.RecoveryCodes == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.RecoveryCodes(childComplexity), true
-
-	case "TFASettings.totpAllowed":
-		if e.complexity.TFASettings.TotpAllowed == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.TotpAllowed(childComplexity), true
-
-	case "TFASettings.updatedAt":
-		if e.complexity.TFASettings.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.UpdatedAt(childComplexity), true
-
-	case "TFASettings.updatedBy":
-		if e.complexity.TFASettings.UpdatedBy == nil {
-			break
-		}
-
-		return e.complexity.TFASettings.UpdatedBy(childComplexity), true
-
-	case "TFASettingsConnection.edges":
-		if e.complexity.TFASettingsConnection.Edges == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsConnection.Edges(childComplexity), true
-
-	case "TFASettingsConnection.pageInfo":
-		if e.complexity.TFASettingsConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsConnection.PageInfo(childComplexity), true
-
-	case "TFASettingsConnection.totalCount":
-		if e.complexity.TFASettingsConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsConnection.TotalCount(childComplexity), true
-
-	case "TFASettingsCreatePayload.tfaSettings":
-		if e.complexity.TFASettingsCreatePayload.TfaSettings == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsCreatePayload.TfaSettings(childComplexity), true
-
-	case "TFASettingsDeletePayload.deletedID":
-		if e.complexity.TFASettingsDeletePayload.DeletedID == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsDeletePayload.DeletedID(childComplexity), true
-
-	case "TFASettingsEdge.cursor":
-		if e.complexity.TFASettingsEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsEdge.Cursor(childComplexity), true
-
-	case "TFASettingsEdge.node":
-		if e.complexity.TFASettingsEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsEdge.Node(childComplexity), true
-
-	case "TFASettingsUpdatePayload.tfaSettings":
-		if e.complexity.TFASettingsUpdatePayload.TfaSettings == nil {
-			break
-		}
-
-		return e.complexity.TFASettingsUpdatePayload.TfaSettings(childComplexity), true
 
 	case "User.authProvider":
 		if e.complexity.User.AuthProvider == nil {
@@ -4093,13 +3844,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Sub(childComplexity), true
-
-	case "User.tfaSettings":
-		if e.complexity.User.TfaSettings == nil {
-			break
-		}
-
-		return e.complexity.User.TfaSettings(childComplexity), true
 
 	case "User.updatedAt":
 		if e.complexity.User.UpdatedAt == nil {
@@ -4366,7 +4110,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOrganizationInput,
 		ec.unmarshalInputCreateOrganizationSettingInput,
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
-		ec.unmarshalInputCreateTFASettingsInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserSettingInput,
 		ec.unmarshalInputEntitlementWhereInput,
@@ -4384,7 +4127,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputOrganizationSettingWhereInput,
 		ec.unmarshalInputOrganizationWhereInput,
 		ec.unmarshalInputPersonalAccessTokenWhereInput,
-		ec.unmarshalInputTFASettingsWhereInput,
 		ec.unmarshalInputUpdateEntitlementInput,
 		ec.unmarshalInputUpdateGroupInput,
 		ec.unmarshalInputUpdateGroupMembershipInput,
@@ -4397,7 +4139,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateOrganizationInput,
 		ec.unmarshalInputUpdateOrganizationSettingInput,
 		ec.unmarshalInputUpdatePersonalAccessTokenInput,
-		ec.unmarshalInputUpdateTFASettingsInput,
 		ec.unmarshalInputUpdateUserInput,
 		ec.unmarshalInputUpdateUserSettingInput,
 		ec.unmarshalInputUserOrder,
@@ -4848,37 +4589,6 @@ input CreatePersonalAccessTokenInput {
   organizationIDs: [ID!]
 }
 """
-CreateTFASettingsInput is used for create TFASettings object.
-Input was generated by ent.
-"""
-input CreateTFASettingsInput {
-  createdAt: Time
-  updatedAt: Time
-  createdBy: String
-  updatedBy: String
-  """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  totpAllowed: Boolean
-  ownerID: ID
-}
-"""
 CreateUserInput is used for create User object.
 Input was generated by ent.
 """
@@ -4923,7 +4633,6 @@ input CreateUserInput {
   """
   authProvider: UserAuthProvider
   personalAccessTokenIDs: [ID!]
-  tfaSettingsID: ID
   settingID: ID!
   emailVerificationTokenIDs: [ID!]
   passwordResetTokenIDs: [ID!]
@@ -8358,32 +8067,6 @@ type Query {
     """
     where: PersonalAccessTokenWhereInput
   ): PersonalAccessTokenConnection!
-  tfaSettingsSlice(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Filtering options for TFASettingsSlice returned from the connection.
-    """
-    where: TFASettingsWhereInput
-  ): TFASettingsConnection!
   users(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -8441,203 +8124,6 @@ type Query {
     """
     where: UserSettingWhereInput
   ): UserSettingConnection!
-}
-type TFASettings implements Node {
-  id: ID!
-  createdAt: Time
-  updatedAt: Time
-  createdBy: String
-  updatedBy: String
-  deletedAt: Time
-  deletedBy: String
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  totpAllowed: Boolean
-  owner: User
-}
-"""
-A connection to a list of items.
-"""
-type TFASettingsConnection {
-  """
-  A list of edges.
-  """
-  edges: [TFASettingsEdge]
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-"""
-An edge in a connection.
-"""
-type TFASettingsEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: TFASettings
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-"""
-TFASettingsWhereInput is used for filtering TFASettings objects.
-Input was generated by ent.
-"""
-input TFASettingsWhereInput {
-  not: TFASettingsWhereInput
-  and: [TFASettingsWhereInput!]
-  or: [TFASettingsWhereInput!]
-  """
-  id field predicates
-  """
-  id: ID
-  idNEQ: ID
-  idIn: [ID!]
-  idNotIn: [ID!]
-  idGT: ID
-  idGTE: ID
-  idLT: ID
-  idLTE: ID
-  idEqualFold: ID
-  idContainsFold: ID
-  """
-  created_at field predicates
-  """
-  createdAt: Time
-  createdAtNEQ: Time
-  createdAtIn: [Time!]
-  createdAtNotIn: [Time!]
-  createdAtGT: Time
-  createdAtGTE: Time
-  createdAtLT: Time
-  createdAtLTE: Time
-  createdAtIsNil: Boolean
-  createdAtNotNil: Boolean
-  """
-  updated_at field predicates
-  """
-  updatedAt: Time
-  updatedAtNEQ: Time
-  updatedAtIn: [Time!]
-  updatedAtNotIn: [Time!]
-  updatedAtGT: Time
-  updatedAtGTE: Time
-  updatedAtLT: Time
-  updatedAtLTE: Time
-  updatedAtIsNil: Boolean
-  updatedAtNotNil: Boolean
-  """
-  created_by field predicates
-  """
-  createdBy: String
-  createdByNEQ: String
-  createdByIn: [String!]
-  createdByNotIn: [String!]
-  createdByGT: String
-  createdByGTE: String
-  createdByLT: String
-  createdByLTE: String
-  createdByContains: String
-  createdByHasPrefix: String
-  createdByHasSuffix: String
-  createdByIsNil: Boolean
-  createdByNotNil: Boolean
-  createdByEqualFold: String
-  createdByContainsFold: String
-  """
-  updated_by field predicates
-  """
-  updatedBy: String
-  updatedByNEQ: String
-  updatedByIn: [String!]
-  updatedByNotIn: [String!]
-  updatedByGT: String
-  updatedByGTE: String
-  updatedByLT: String
-  updatedByLTE: String
-  updatedByContains: String
-  updatedByHasPrefix: String
-  updatedByHasSuffix: String
-  updatedByIsNil: Boolean
-  updatedByNotNil: Boolean
-  updatedByEqualFold: String
-  updatedByContainsFold: String
-  """
-  deleted_at field predicates
-  """
-  deletedAt: Time
-  deletedAtNEQ: Time
-  deletedAtIn: [Time!]
-  deletedAtNotIn: [Time!]
-  deletedAtGT: Time
-  deletedAtGTE: Time
-  deletedAtLT: Time
-  deletedAtLTE: Time
-  deletedAtIsNil: Boolean
-  deletedAtNotNil: Boolean
-  """
-  deleted_by field predicates
-  """
-  deletedBy: String
-  deletedByNEQ: String
-  deletedByIn: [String!]
-  deletedByNotIn: [String!]
-  deletedByGT: String
-  deletedByGTE: String
-  deletedByLT: String
-  deletedByLTE: String
-  deletedByContains: String
-  deletedByHasPrefix: String
-  deletedByHasSuffix: String
-  deletedByIsNil: Boolean
-  deletedByNotNil: Boolean
-  deletedByEqualFold: String
-  deletedByContainsFold: String
-  """
-  phone_otp_allowed field predicates
-  """
-  phoneOtpAllowed: Boolean
-  phoneOtpAllowedNEQ: Boolean
-  phoneOtpAllowedIsNil: Boolean
-  phoneOtpAllowedNotNil: Boolean
-  """
-  email_otp_allowed field predicates
-  """
-  emailOtpAllowed: Boolean
-  emailOtpAllowedNEQ: Boolean
-  emailOtpAllowedIsNil: Boolean
-  emailOtpAllowedNotNil: Boolean
-  """
-  totp_allowed field predicates
-  """
-  totpAllowed: Boolean
-  totpAllowedNEQ: Boolean
-  totpAllowedIsNil: Boolean
-  totpAllowedNotNil: Boolean
-  """
-  owner edge predicates
-  """
-  hasOwner: Boolean
-  hasOwnerWith: [UserWhereInput!]
 }
 """
 The builtin Time type
@@ -9011,42 +8497,6 @@ input UpdatePersonalAccessTokenInput {
   clearOrganizations: Boolean
 }
 """
-UpdateTFASettingsInput is used for update TFASettings object.
-Input was generated by ent.
-"""
-input UpdateTFASettingsInput {
-  updatedAt: Time
-  clearUpdatedAt: Boolean
-  updatedBy: String
-  clearUpdatedBy: Boolean
-  """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  clearTfaSecret: Boolean
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  appendRecoveryCodes: [String!]
-  clearRecoveryCodes: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  phoneOtpAllowed: Boolean
-  clearPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  emailOtpAllowed: Boolean
-  clearEmailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  totpAllowed: Boolean
-  clearTotpAllowed: Boolean
-}
-"""
 UpdateUserInput is used for update User object.
 Input was generated by ent.
 """
@@ -9099,8 +8549,6 @@ input UpdateUserInput {
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
-  tfaSettingsID: ID
-  clearTfaSettings: Boolean
   settingID: ID
   addEmailVerificationTokenIDs: [ID!]
   removeEmailVerificationTokenIDs: [ID!]
@@ -9208,7 +8656,6 @@ type User implements Node {
   """
   authProvider: UserAuthProvider!
   personalAccessTokens: [PersonalAccessToken!]
-  tfaSettings: TFASettings
   setting: UserSetting!
   groups: [Group!]
   organizations: [Organization!]
@@ -9847,11 +9294,6 @@ input UserWhereInput {
   """
   hasPersonalAccessTokens: Boolean
   hasPersonalAccessTokensWith: [PersonalAccessTokenWhereInput!]
-  """
-  tfa_settings edge predicates
-  """
-  hasTfaSettings: Boolean
-  hasTfaSettingsWith: [TFASettingsWhereInput!]
   """
   setting edge predicates
   """
@@ -10805,81 +10247,6 @@ type PersonalAccessTokenDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/tfasettings.graphql", Input: `extend type Query {
-    """
-    Look up tfaSettings by ID
-    """
-     tfaSettings(
-        """
-        ID of the tfaSettings
-        """
-        id: ID!
-    ):  TFASettings!
-}
-
-extend type Mutation{
-    """
-    Create a new tfaSettings
-    """
-    createTFASettings(
-        """
-        values of the tfaSettings
-        """
-        input: CreateTFASettingsInput!
-    ): TFASettingsCreatePayload!
-    """
-    Update an existing tfaSettings
-    """
-    updateTFASettings(
-        """
-        ID of the tfaSettings
-        """
-        id: ID!
-        """
-        New values for the tfaSettings
-        """
-        input: UpdateTFASettingsInput!
-    ): TFASettingsUpdatePayload!
-    """
-    Delete an existing tfaSettings
-    """
-    deleteTFASettings(
-        """
-        ID of the tfaSettings
-        """
-        id: ID!
-    ): TFASettingsDeletePayload!
-}
-
-"""
-Return response for createTFASettings mutation
-"""
-type TFASettingsCreatePayload {
-    """
-    Created tfaSettings
-    """
-    tfaSettings: TFASettings!
-}
-
-"""
-Return response for updateTFASettings mutation
-"""
-type TFASettingsUpdatePayload {
-    """
-    Updated tfaSettings
-    """
-    tfaSettings: TFASettings!
-}
-
-"""
-Return response for deleteTFASettings mutation
-"""
-type TFASettingsDeletePayload {
-    """
-    Deleted tfaSettings ID
-    """
-    deletedID: ID!
-}`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `extend type Query {
     """
     Look up user by ID
@@ -11192,21 +10559,6 @@ func (ec *executionContext) field_Mutation_createPersonalAccessToken_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 generated.CreateTFASettingsInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTFASettingsInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -11388,21 +10740,6 @@ func (ec *executionContext) field_Mutation_deleteOrganization_args(ctx context.C
 }
 
 func (ec *executionContext) field_Mutation_deletePersonalAccessToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_deleteTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -11736,30 +11073,6 @@ func (ec *executionContext) field_Mutation_updatePersonalAccessToken_args(ctx co
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNUpdatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdatePersonalAccessTokenInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_updateTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 generated.UpdateTFASettingsInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -12737,72 +12050,6 @@ func (ec *executionContext) field_Query_personalAccessTokens_args(ctx context.Co
 		}
 	}
 	args["where"] = arg4
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_tfaSettingsSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *entgql.Cursor[string]
-	if tmp, ok := rawArgs["after"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
-		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["after"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["first"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["first"] = arg1
-	var arg2 *entgql.Cursor[string]
-	if tmp, ok := rawArgs["before"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
-		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["before"] = arg2
-	var arg3 *int
-	if tmp, ok := rawArgs["last"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["last"] = arg3
-	var arg4 *generated.TFASettingsWhereInput
-	if tmp, ok := rawArgs["where"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["where"] = arg4
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_tfaSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -14954,8 +14201,6 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -16001,8 +15246,6 @@ func (ec *executionContext) fieldContext_GroupMembership_user(ctx context.Contex
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -21764,183 +21007,6 @@ func (ec *executionContext) fieldContext_Mutation_deletePersonalAccessToken(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createTFASettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTFASettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTFASettings(rctx, fc.Args["input"].(generated.CreateTFASettingsInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*TFASettingsCreatePayload)
-	fc.Result = res
-	return ec.marshalNTFASettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsCreatePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createTFASettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "tfaSettings":
-				return ec.fieldContext_TFASettingsCreatePayload_tfaSettings(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsCreatePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTFASettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateTFASettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateTFASettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTFASettings(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateTFASettingsInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*TFASettingsUpdatePayload)
-	fc.Result = res
-	return ec.marshalNTFASettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsUpdatePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateTFASettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "tfaSettings":
-				return ec.fieldContext_TFASettingsUpdatePayload_tfaSettings(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsUpdatePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateTFASettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_deleteTFASettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteTFASettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteTFASettings(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*TFASettingsDeletePayload)
-	fc.Result = res
-	return ec.marshalNTFASettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsDeletePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteTFASettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "deletedID":
-				return ec.fieldContext_TFASettingsDeletePayload_deletedID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsDeletePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteTFASettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
 	if err != nil {
@@ -25071,8 +24137,6 @@ func (ec *executionContext) fieldContext_OrgMembership_user(ctx context.Context,
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -26654,8 +25718,6 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -29364,8 +28426,6 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_owner(ctx context.C
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -30791,69 +29851,6 @@ func (ec *executionContext) fieldContext_Query_personalAccessTokens(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_tfaSettingsSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_tfaSettingsSlice(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TfaSettingsSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.TFASettingsWhereInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*generated.TFASettingsConnection)
-	fc.Result = res
-	return ec.marshalNTFASettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_tfaSettingsSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_TFASettingsConnection_edges(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_TFASettingsConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_TFASettingsConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_tfaSettingsSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_users(ctx, field)
 	if err != nil {
@@ -32020,87 +31017,6 @@ func (ec *executionContext) fieldContext_Query_personalAccessToken(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_tfaSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_tfaSettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TfaSettings(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*generated.TFASettings)
-	fc.Result = res
-	return ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
-			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
-			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_tfaSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_user(ctx, field)
 	if err != nil {
@@ -32176,8 +31092,6 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -32495,991 +31409,6 @@ func (ec *executionContext) fieldContext_Subscription_subscribe(ctx context.Cont
 	if fc.Args, err = ec.field_Subscription_subscribe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_id(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_createdAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_updatedAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_createdBy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_updatedBy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_deletedAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_deletedBy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RecoveryCodes, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_recoveryCodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_phoneOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PhoneOtpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_phoneOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_emailOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.EmailOtpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_emailOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_totpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_totpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_totpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettings_owner(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_owner(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Owner(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*generated.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettings_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_User_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_User_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_User_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_User_deletedBy(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "displayName":
-				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
-			case "avatarLocalFile":
-				return ec.fieldContext_User_avatarLocalFile(ctx, field)
-			case "avatarUpdatedAt":
-				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "lastSeen":
-				return ec.fieldContext_User_lastSeen(ctx, field)
-			case "sub":
-				return ec.fieldContext_User_sub(ctx, field)
-			case "authProvider":
-				return ec.fieldContext_User_authProvider(ctx, field)
-			case "personalAccessTokens":
-				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
-			case "setting":
-				return ec.fieldContext_User_setting(ctx, field)
-			case "groups":
-				return ec.fieldContext_User_groups(ctx, field)
-			case "organizations":
-				return ec.fieldContext_User_organizations(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_User_groupMemberships(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_User_orgMemberships(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsConnection_edges(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*generated.TFASettingsEdge)
-	fc.Result = res
-	return ec.marshalOTFASettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "node":
-				return ec.fieldContext_TFASettingsEdge_node(ctx, field)
-			case "cursor":
-				return ec.fieldContext_TFASettingsEdge_cursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsEdge", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsConnection_pageInfo(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(entgql.PageInfo[string])
-	fc.Result = res
-	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "hasNextPage":
-				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
-			case "hasPreviousPage":
-				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
-			case "startCursor":
-				return ec.fieldContext_PageInfo_startCursor(ctx, field)
-			case "endCursor":
-				return ec.fieldContext_PageInfo_endCursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsConnection_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsCreatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField, obj *TFASettingsCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsCreatePayload_tfaSettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TfaSettings, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*generated.TFASettings)
-	fc.Result = res
-	return ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsCreatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsCreatePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
-			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
-			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *TFASettingsDeletePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsDeletePayload_deletedID(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsDeletePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsEdge_node(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*generated.TFASettings)
-	fc.Result = res
-	return ec.marshalOTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
-			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
-			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsEdge_cursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(entgql.Cursor[string])
-	fc.Result = res
-	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Cursor does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TFASettingsUpdatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField, obj *TFASettingsUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsUpdatePayload_tfaSettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TfaSettings, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*generated.TFASettings)
-	fc.Result = res
-	return ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TFASettingsUpdatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TFASettingsUpdatePayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
-			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
-			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
-		},
 	}
 	return fc, nil
 }
@@ -34272,73 +32201,6 @@ func (ec *executionContext) fieldContext_User_personalAccessTokens(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _User_tfaSettings(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_tfaSettings(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TfaSettings(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*generated.TFASettings)
-	fc.Result = res
-	return ec.marshalOTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
-			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
-			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
-			case "phoneOtpAllowed":
-				return ec.fieldContext_TFASettings_phoneOtpAllowed(ctx, field)
-			case "emailOtpAllowed":
-				return ec.fieldContext_TFASettings_emailOtpAllowed(ctx, field)
-			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
-			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _User_setting(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_setting(ctx, field)
 	if err != nil {
@@ -34939,8 +32801,6 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -35074,8 +32934,6 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -35921,8 +33779,6 @@ func (ec *executionContext) fieldContext_UserSetting_user(ctx context.Context, f
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -36456,8 +34312,6 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_authProvider(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "tfaSettings":
-				return ec.fieldContext_User_tfaSettings(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
 			case "groups":
@@ -39460,96 +37314,6 @@ func (ec *executionContext) unmarshalInputCreatePersonalAccessTokenInput(ctx con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateTFASettingsInput(ctx context.Context, obj interface{}) (generated.CreateTFASettingsInput, error) {
-	var it generated.CreateTFASettingsInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "tfaSecret", "recoveryCodes", "phoneOtpAllowed", "emailOtpAllowed", "totpAllowed", "ownerID"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "createdAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAt = data
-		case "updatedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAt = data
-		case "createdBy":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedBy = data
-		case "updatedBy":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedBy = data
-		case "tfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSecret = data
-		case "recoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCodes = data
-		case "phoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PhoneOtpAllowed = data
-		case "emailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowed = data
-		case "totpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TotpAllowed = data
-		case "ownerID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerID = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj interface{}) (generated.CreateUserInput, error) {
 	var it generated.CreateUserInput
 	asMap := map[string]interface{}{}
@@ -39557,7 +37321,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "authProvider", "personalAccessTokenIDs", "tfaSettingsID", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs", "webauthnIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "authProvider", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs", "webauthnIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39676,13 +37440,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.PersonalAccessTokenIDs = data
-		case "tfaSettingsID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSettingsID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSettingsID = data
 		case "settingID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
 			data, err := ec.unmarshalNID2string(ctx, v)
@@ -51552,740 +49309,6 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputTFASettingsWhereInput(ctx context.Context, obj interface{}) (generated.TFASettingsWhereInput, error) {
-	var it generated.TFASettingsWhereInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "phoneOtpAllowed", "phoneOtpAllowedNEQ", "phoneOtpAllowedIsNil", "phoneOtpAllowedNotNil", "emailOtpAllowed", "emailOtpAllowedNEQ", "emailOtpAllowedIsNil", "emailOtpAllowedNotNil", "totpAllowed", "totpAllowedNEQ", "totpAllowedIsNil", "totpAllowedNotNil", "hasOwner", "hasOwnerWith"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "not":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Not = data
-		case "and":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.And = data
-		case "or":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Or = data
-		case "id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ID = data
-		case "idNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDNEQ = data
-		case "idIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDIn = data
-		case "idNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDNotIn = data
-		case "idGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDGT = data
-		case "idGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDGTE = data
-		case "idLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDLT = data
-		case "idLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDLTE = data
-		case "idEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idEqualFold"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDEqualFold = data
-		case "idContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idContainsFold"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IDContainsFold = data
-		case "createdAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAt = data
-		case "createdAtNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNEQ"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtNEQ = data
-		case "createdAtIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtIn = data
-		case "createdAtNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtNotIn = data
-		case "createdAtGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtGT = data
-		case "createdAtGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtGTE = data
-		case "createdAtLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtLT = data
-		case "createdAtLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtLTE = data
-		case "createdAtIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtIsNil = data
-		case "createdAtNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedAtNotNil = data
-		case "updatedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAt = data
-		case "updatedAtNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNEQ"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtNEQ = data
-		case "updatedAtIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtIn = data
-		case "updatedAtNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtNotIn = data
-		case "updatedAtGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtGT = data
-		case "updatedAtGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtGTE = data
-		case "updatedAtLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtLT = data
-		case "updatedAtLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtLTE = data
-		case "updatedAtIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtIsNil = data
-		case "updatedAtNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAtNotNil = data
-		case "createdBy":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedBy = data
-		case "createdByNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByNEQ = data
-		case "createdByIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByIn = data
-		case "createdByNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByNotIn = data
-		case "createdByGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByGT = data
-		case "createdByGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByGTE = data
-		case "createdByLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByLT = data
-		case "createdByLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByLTE = data
-		case "createdByContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByContains = data
-		case "createdByHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByHasPrefix = data
-		case "createdByHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByHasSuffix = data
-		case "createdByIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByIsNil = data
-		case "createdByNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByNotNil = data
-		case "createdByEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByEqualFold = data
-		case "createdByContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CreatedByContainsFold = data
-		case "updatedBy":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedBy = data
-		case "updatedByNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByNEQ = data
-		case "updatedByIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByIn = data
-		case "updatedByNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByNotIn = data
-		case "updatedByGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByGT = data
-		case "updatedByGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByGTE = data
-		case "updatedByLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByLT = data
-		case "updatedByLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByLTE = data
-		case "updatedByContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByContains = data
-		case "updatedByHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByHasPrefix = data
-		case "updatedByHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByHasSuffix = data
-		case "updatedByIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByIsNil = data
-		case "updatedByNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByNotNil = data
-		case "updatedByEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByEqualFold = data
-		case "updatedByContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedByContainsFold = data
-		case "deletedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAt = data
-		case "deletedAtNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtNEQ = data
-		case "deletedAtIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtIn = data
-		case "deletedAtNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtNotIn = data
-		case "deletedAtGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtGT = data
-		case "deletedAtGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtGTE = data
-		case "deletedAtLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtLT = data
-		case "deletedAtLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtLTE = data
-		case "deletedAtIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtIsNil = data
-		case "deletedAtNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedAtNotNil = data
-		case "deletedBy":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedBy = data
-		case "deletedByNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByNEQ = data
-		case "deletedByIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByIn = data
-		case "deletedByNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByNotIn = data
-		case "deletedByGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByGT = data
-		case "deletedByGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByGTE = data
-		case "deletedByLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByLT = data
-		case "deletedByLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByLTE = data
-		case "deletedByContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByContains = data
-		case "deletedByHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByHasPrefix = data
-		case "deletedByHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByHasSuffix = data
-		case "deletedByIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByIsNil = data
-		case "deletedByNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByNotNil = data
-		case "deletedByEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByEqualFold = data
-		case "deletedByContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DeletedByContainsFold = data
-		case "phoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PhoneOtpAllowed = data
-		case "phoneOtpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PhoneOtpAllowedNEQ = data
-		case "phoneOtpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowedIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PhoneOtpAllowedIsNil = data
-		case "phoneOtpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowedNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PhoneOtpAllowedNotNil = data
-		case "emailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowed = data
-		case "emailOtpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowedNEQ = data
-		case "emailOtpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowedIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowedIsNil = data
-		case "emailOtpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowedNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowedNotNil = data
-		case "totpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TotpAllowed = data
-		case "totpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TotpAllowedNEQ = data
-		case "totpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowedIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TotpAllowedIsNil = data
-		case "totpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowedNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TotpAllowedNotNil = data
-		case "hasOwner":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwner"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasOwner = data
-		case "hasOwnerWith":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwnerWith"))
-			data, err := ec.unmarshalOUserWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserWhereInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasOwnerWith = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Context, obj interface{}) (generated.UpdateEntitlementInput, error) {
 	var it generated.UpdateEntitlementInput
 	asMap := map[string]interface{}{}
@@ -53852,131 +50875,6 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateTFASettingsInput(ctx context.Context, obj interface{}) (generated.UpdateTFASettingsInput, error) {
-	var it generated.UpdateTFASettingsInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "phoneOtpAllowed", "clearPhoneOtpAllowed", "emailOtpAllowed", "clearEmailOtpAllowed", "totpAllowed", "clearTotpAllowed"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "updatedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedAt = data
-		case "clearUpdatedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearUpdatedAt = data
-		case "updatedBy":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpdatedBy = data
-		case "clearUpdatedBy":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedBy"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearUpdatedBy = data
-		case "tfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSecret = data
-		case "clearTfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTfaSecret"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearTfaSecret = data
-		case "recoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCodes = data
-		case "appendRecoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendRecoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AppendRecoveryCodes = data
-		case "clearRecoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearRecoveryCodes"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearRecoveryCodes = data
-		case "phoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PhoneOtpAllowed = data
-		case "clearPhoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPhoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearPhoneOtpAllowed = data
-		case "emailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.EmailOtpAllowed = data
-		case "clearEmailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearEmailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearEmailOtpAllowed = data
-		case "totpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("totpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TotpAllowed = data
-		case "clearTotpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTotpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearTotpAllowed = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, obj interface{}) (generated.UpdateUserInput, error) {
 	var it generated.UpdateUserInput
 	asMap := map[string]interface{}{}
@@ -53984,7 +50882,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "authProvider", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "tfaSettingsID", "clearTfaSettings", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addWebauthnIDs", "removeWebauthnIDs", "clearWebauthn"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "authProvider", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addWebauthnIDs", "removeWebauthnIDs", "clearWebauthn"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54159,20 +51057,6 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearPersonalAccessTokens = data
-		case "tfaSettingsID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSettingsID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSettingsID = data
-		case "clearTfaSettings":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTfaSettings"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearTfaSettings = data
 		case "settingID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -55643,7 +52527,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "authProvider", "authProviderNEQ", "authProviderIn", "authProviderNotIn", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasTfaSettings", "hasTfaSettingsWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "authProvider", "authProviderNEQ", "authProviderIn", "authProviderNotIn", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -57127,20 +54011,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.HasPersonalAccessTokensWith = data
-		case "hasTfaSettings":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTfaSettings"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasTfaSettings = data
-		case "hasTfaSettingsWith":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTfaSettingsWith"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasTfaSettingsWith = data
 		case "hasSetting":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSetting"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -57285,11 +54155,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._PersonalAccessToken(ctx, sel, obj)
-	case *generated.TFASettings:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._TFASettings(ctx, sel, obj)
 	case *generated.User:
 		if obj == nil {
 			return graphql.Null
@@ -59612,27 +56477,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deletePersonalAccessToken":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deletePersonalAccessToken(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "createTFASettings":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTFASettings(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "updateTFASettings":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateTFASettings(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "deleteTFASettings":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteTFASettings(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -62355,28 +59199,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "tfaSettingsSlice":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_tfaSettingsSlice(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "users":
 			field := field
 
@@ -62685,28 +59507,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "tfaSettings":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_tfaSettings(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "user":
 			field := field
 
@@ -62802,302 +59602,6 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 }
 
-var tFASettingsImplementors = []string{"TFASettings", "Node"}
-
-func (ec *executionContext) _TFASettings(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettings) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettings")
-		case "id":
-			out.Values[i] = ec._TFASettings_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "createdAt":
-			out.Values[i] = ec._TFASettings_createdAt(ctx, field, obj)
-		case "updatedAt":
-			out.Values[i] = ec._TFASettings_updatedAt(ctx, field, obj)
-		case "createdBy":
-			out.Values[i] = ec._TFASettings_createdBy(ctx, field, obj)
-		case "updatedBy":
-			out.Values[i] = ec._TFASettings_updatedBy(ctx, field, obj)
-		case "deletedAt":
-			out.Values[i] = ec._TFASettings_deletedAt(ctx, field, obj)
-		case "deletedBy":
-			out.Values[i] = ec._TFASettings_deletedBy(ctx, field, obj)
-		case "recoveryCodes":
-			out.Values[i] = ec._TFASettings_recoveryCodes(ctx, field, obj)
-		case "phoneOtpAllowed":
-			out.Values[i] = ec._TFASettings_phoneOtpAllowed(ctx, field, obj)
-		case "emailOtpAllowed":
-			out.Values[i] = ec._TFASettings_emailOtpAllowed(ctx, field, obj)
-		case "totpAllowed":
-			out.Values[i] = ec._TFASettings_totpAllowed(ctx, field, obj)
-		case "owner":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._TFASettings_owner(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var tFASettingsConnectionImplementors = []string{"TFASettingsConnection"}
-
-func (ec *executionContext) _TFASettingsConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettingsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsConnection")
-		case "edges":
-			out.Values[i] = ec._TFASettingsConnection_edges(ctx, field, obj)
-		case "pageInfo":
-			out.Values[i] = ec._TFASettingsConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "totalCount":
-			out.Values[i] = ec._TFASettingsConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var tFASettingsCreatePayloadImplementors = []string{"TFASettingsCreatePayload"}
-
-func (ec *executionContext) _TFASettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingsCreatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsCreatePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsCreatePayload")
-		case "tfaSettings":
-			out.Values[i] = ec._TFASettingsCreatePayload_tfaSettings(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var tFASettingsDeletePayloadImplementors = []string{"TFASettingsDeletePayload"}
-
-func (ec *executionContext) _TFASettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingsDeletePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsDeletePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsDeletePayload")
-		case "deletedID":
-			out.Values[i] = ec._TFASettingsDeletePayload_deletedID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var tFASettingsEdgeImplementors = []string{"TFASettingsEdge"}
-
-func (ec *executionContext) _TFASettingsEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettingsEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsEdge")
-		case "node":
-			out.Values[i] = ec._TFASettingsEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._TFASettingsEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var tFASettingsUpdatePayloadImplementors = []string{"TFASettingsUpdatePayload"}
-
-func (ec *executionContext) _TFASettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingsUpdatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsUpdatePayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsUpdatePayload")
-		case "tfaSettings":
-			out.Values[i] = ec._TFASettingsUpdatePayload_tfaSettings(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var userImplementors = []string{"User", "Node"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *generated.User) graphql.Marshaler {
@@ -63171,39 +59675,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._User_personalAccessTokens(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "tfaSettings":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_tfaSettings(ctx, field, obj)
 				return res
 			}
 
@@ -64305,11 +60776,6 @@ func (ec *executionContext) unmarshalNCreateOrganizationSettingInput2githubᚗco
 
 func (ec *executionContext) unmarshalNCreatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreatePersonalAccessTokenInput(ctx context.Context, v interface{}) (generated.CreatePersonalAccessTokenInput, error) {
 	res, err := ec.unmarshalInputCreatePersonalAccessTokenInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNCreateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTFASettingsInput(ctx context.Context, v interface{}) (generated.CreateTFASettingsInput, error) {
-	res, err := ec.unmarshalInputCreateTFASettingsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -65507,81 +61973,6 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNTFASettings2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v generated.TFASettings) graphql.Marshaler {
-	return ec._TFASettings(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettings) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._TFASettings(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNTFASettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.TFASettingsConnection) graphql.Marshaler {
-	return ec._TFASettingsConnection(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTFASettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsConnection(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettingsConnection) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._TFASettingsConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNTFASettingsCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingsCreatePayload) graphql.Marshaler {
-	return ec._TFASettingsCreatePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTFASettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingsCreatePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._TFASettingsCreatePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNTFASettingsDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingsDeletePayload) graphql.Marshaler {
-	return ec._TFASettingsDeletePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTFASettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingsDeletePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._TFASettingsDeletePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNTFASettingsUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingsUpdatePayload) graphql.Marshaler {
-	return ec._TFASettingsUpdatePayload(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNTFASettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingsUpdatePayload) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._TFASettingsUpdatePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx context.Context, v interface{}) (*generated.TFASettingsWhereInput, error) {
-	res, err := ec.unmarshalInputTFASettingsWhereInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
 	res, err := graphql.UnmarshalTime(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -65675,11 +62066,6 @@ func (ec *executionContext) unmarshalNUpdateOrganizationSettingInput2githubᚗco
 
 func (ec *executionContext) unmarshalNUpdatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdatePersonalAccessTokenInput(ctx context.Context, v interface{}) (generated.UpdatePersonalAccessTokenInput, error) {
 	res, err := ec.unmarshalInputUpdatePersonalAccessTokenInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUpdateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingsInput(ctx context.Context, v interface{}) (generated.UpdateTFASettingsInput, error) {
-	res, err := ec.unmarshalInputUpdateTFASettingsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -68413,89 +64799,6 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettings) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._TFASettings(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOTFASettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.TFASettingsEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOTFASettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOTFASettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettingsEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._TFASettingsEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.TFASettingsWhereInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*generated.TFASettingsWhereInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx context.Context, v interface{}) (*generated.TFASettingsWhereInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputTFASettingsWhereInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {

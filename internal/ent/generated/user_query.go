@@ -20,7 +20,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -36,7 +35,6 @@ type UserQuery struct {
 	inters                           []Interceptor
 	predicates                       []predicate.User
 	withPersonalAccessTokens         *PersonalAccessTokenQuery
-	withTfaSettings                  *TFASettingsQuery
 	withSetting                      *UserSettingQuery
 	withEmailVerificationTokens      *EmailVerificationTokenQuery
 	withPasswordResetTokens          *PasswordResetTokenQuery
@@ -110,31 +108,6 @@ func (uq *UserQuery) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.PersonalAccessToken
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryTfaSettings chains the current query on the "tfa_settings" edge.
-func (uq *UserQuery) QueryTfaSettings() *TFASettingsQuery {
-	query := (&TFASettingsClient{config: uq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(tfasettings.Table, tfasettings.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.TfaSettingsTable, user.TfaSettingsColumn),
-		)
-		schemaConfig := uq.schemaConfig
-		step.To.Schema = schemaConfig.TFASettings
-		step.Edge.Schema = schemaConfig.TFASettings
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -534,7 +507,6 @@ func (uq *UserQuery) Clone() *UserQuery {
 		inters:                      append([]Interceptor{}, uq.inters...),
 		predicates:                  append([]predicate.User{}, uq.predicates...),
 		withPersonalAccessTokens:    uq.withPersonalAccessTokens.Clone(),
-		withTfaSettings:             uq.withTfaSettings.Clone(),
 		withSetting:                 uq.withSetting.Clone(),
 		withEmailVerificationTokens: uq.withEmailVerificationTokens.Clone(),
 		withPasswordResetTokens:     uq.withPasswordResetTokens.Clone(),
@@ -557,17 +529,6 @@ func (uq *UserQuery) WithPersonalAccessTokens(opts ...func(*PersonalAccessTokenQ
 		opt(query)
 	}
 	uq.withPersonalAccessTokens = query
-	return uq
-}
-
-// WithTfaSettings tells the query-builder to eager-load the nodes that are connected to
-// the "tfa_settings" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithTfaSettings(opts ...func(*TFASettingsQuery)) *UserQuery {
-	query := (&TFASettingsClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withTfaSettings = query
 	return uq
 }
 
@@ -743,9 +704,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [10]bool{
+		loadedTypes = [9]bool{
 			uq.withPersonalAccessTokens != nil,
-			uq.withTfaSettings != nil,
 			uq.withSetting != nil,
 			uq.withEmailVerificationTokens != nil,
 			uq.withPasswordResetTokens != nil,
@@ -785,12 +745,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			func(n *User, e *PersonalAccessToken) {
 				n.Edges.PersonalAccessTokens = append(n.Edges.PersonalAccessTokens, e)
 			}); err != nil {
-			return nil, err
-		}
-	}
-	if query := uq.withTfaSettings; query != nil {
-		if err := uq.loadTfaSettings(ctx, query, nodes, nil,
-			func(n *User, e *TFASettings) { n.Edges.TfaSettings = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -932,33 +886,6 @@ func (uq *UserQuery) loadPersonalAccessTokens(ctx context.Context, query *Person
 	}
 	query.Where(predicate.PersonalAccessToken(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.PersonalAccessTokensColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.OwnerID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (uq *UserQuery) loadTfaSettings(ctx context.Context, query *TFASettingsQuery, nodes []*User, init func(*User), assign func(*User, *TFASettings)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[string]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(tfasettings.FieldOwnerID)
-	}
-	query.Where(predicate.TFASettings(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.TfaSettingsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {

@@ -20,7 +20,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -302,25 +301,6 @@ func (uu *UserUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserUp
 	return uu.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID.
-func (uu *UserUpdate) SetTfaSettingsID(id string) *UserUpdate {
-	uu.mutation.SetTfaSettingsID(id)
-	return uu
-}
-
-// SetNillableTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID if the given value is not nil.
-func (uu *UserUpdate) SetNillableTfaSettingsID(id *string) *UserUpdate {
-	if id != nil {
-		uu = uu.SetTfaSettingsID(*id)
-	}
-	return uu
-}
-
-// SetTfaSettings sets the "tfa_settings" edge to the TFASettings entity.
-func (uu *UserUpdate) SetTfaSettings(t *TFASettings) *UserUpdate {
-	return uu.SetTfaSettingsID(t.ID)
-}
-
 // SetSettingID sets the "setting" edge to the UserSetting entity by ID.
 func (uu *UserUpdate) SetSettingID(id string) *UserUpdate {
 	uu.mutation.SetSettingID(id)
@@ -461,12 +441,6 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 		ids[i] = p[i].ID
 	}
 	return uu.RemovePersonalAccessTokenIDs(ids...)
-}
-
-// ClearTfaSettings clears the "tfa_settings" edge to the TFASettings entity.
-func (uu *UserUpdate) ClearTfaSettings() *UserUpdate {
-	uu.mutation.ClearTfaSettings()
-	return uu
 }
 
 // ClearSetting clears the "setting" edge to the UserSetting entity.
@@ -857,37 +831,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = uu.schemaConfig.PersonalAccessToken
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uu.mutation.TfaSettingsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.TfaSettingsTable,
-			Columns: []string{user.TfaSettingsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.TFASettings
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.TfaSettingsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.TfaSettingsTable,
-			Columns: []string{user.TfaSettingsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.TFASettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1585,25 +1528,6 @@ func (uuo *UserUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessToken) *Us
 	return uuo.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID.
-func (uuo *UserUpdateOne) SetTfaSettingsID(id string) *UserUpdateOne {
-	uuo.mutation.SetTfaSettingsID(id)
-	return uuo
-}
-
-// SetNillableTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableTfaSettingsID(id *string) *UserUpdateOne {
-	if id != nil {
-		uuo = uuo.SetTfaSettingsID(*id)
-	}
-	return uuo
-}
-
-// SetTfaSettings sets the "tfa_settings" edge to the TFASettings entity.
-func (uuo *UserUpdateOne) SetTfaSettings(t *TFASettings) *UserUpdateOne {
-	return uuo.SetTfaSettingsID(t.ID)
-}
-
 // SetSettingID sets the "setting" edge to the UserSetting entity by ID.
 func (uuo *UserUpdateOne) SetSettingID(id string) *UserUpdateOne {
 	uuo.mutation.SetSettingID(id)
@@ -1744,12 +1668,6 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 		ids[i] = p[i].ID
 	}
 	return uuo.RemovePersonalAccessTokenIDs(ids...)
-}
-
-// ClearTfaSettings clears the "tfa_settings" edge to the TFASettings entity.
-func (uuo *UserUpdateOne) ClearTfaSettings() *UserUpdateOne {
-	uuo.mutation.ClearTfaSettings()
-	return uuo
 }
 
 // ClearSetting clears the "setting" edge to the UserSetting entity.
@@ -2170,37 +2088,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.PersonalAccessToken
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.TfaSettingsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.TfaSettingsTable,
-			Columns: []string{user.TfaSettingsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.TFASettings
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.TfaSettingsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
-			Inverse: false,
-			Table:   user.TfaSettingsTable,
-			Columns: []string{user.TfaSettingsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.TFASettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -447,30 +447,6 @@ func (f PersonalAccessTokenMutationRuleFunc) EvalMutation(ctx context.Context, m
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.PersonalAccessTokenMutation", m)
 }
 
-// The TFASettingsQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type TFASettingsQueryRuleFunc func(context.Context, *generated.TFASettingsQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f TFASettingsQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.TFASettingsQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.TFASettingsQuery", q)
-}
-
-// The TFASettingsMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type TFASettingsMutationRuleFunc func(context.Context, *generated.TFASettingsMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f TFASettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.TFASettingsMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TFASettingsMutation", m)
-}
-
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserQueryRuleFunc func(context.Context, *generated.UserQuery) error
@@ -606,8 +582,6 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.PersonalAccessTokenQuery:
 		return q.Filter(), nil
-	case *generated.TFASettingsQuery:
-		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
 	case *generated.UserSettingQuery:
@@ -648,8 +622,6 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.PasswordResetTokenMutation:
 		return m.Filter(), nil
 	case *generated.PersonalAccessTokenMutation:
-		return m.Filter(), nil
-	case *generated.TFASettingsMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
 		return m.Filter(), nil

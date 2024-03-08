@@ -1242,35 +1242,6 @@ func HasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) predica
 	})
 }
 
-// HasTfaSettings applies the HasEdge predicate on the "tfa_settings" edge.
-func HasTfaSettings() predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, TfaSettingsTable, TfaSettingsColumn),
-		)
-		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.TFASettings
-		step.Edge.Schema = schemaConfig.TFASettings
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasTfaSettingsWith applies the HasEdge predicate on the "tfa_settings" edge with a given conditions (other predicates).
-func HasTfaSettingsWith(preds ...predicate.TFASettings) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		step := newTfaSettingsStep()
-		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.TFASettings
-		step.Edge.Schema = schemaConfig.TFASettings
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasSetting applies the HasEdge predicate on the "setting" edge.
 func HasSetting() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

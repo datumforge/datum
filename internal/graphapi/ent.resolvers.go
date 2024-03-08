@@ -10,7 +10,6 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // AuthStyle is the resolver for the authStyle field.
@@ -30,32 +29,32 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.No
 
 // Entitlements is the resolver for the entitlements field.
 func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error) {
-	return withTransactionalMutation(ctx).Entitlement.Query().Paginate(ctx, after, first, before, last, generated.WithEntitlementFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: Entitlements - entitlements"))
 }
 
 // Groups is the resolver for the groups field.
 func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error) {
-	return withTransactionalMutation(ctx).Group.Query().Paginate(ctx, after, first, before, last, generated.WithGroupOrder(orderBy), generated.WithGroupFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: Groups - groups"))
 }
 
 // GroupMemberships is the resolver for the groupMemberships field.
 func (r *queryResolver) GroupMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) (*generated.GroupMembershipConnection, error) {
-	return withTransactionalMutation(ctx).GroupMembership.Query().Paginate(ctx, after, first, before, last, generated.WithGroupMembershipFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: GroupMemberships - groupMemberships"))
 }
 
 // GroupSettings is the resolver for the groupSettings field.
 func (r *queryResolver) GroupSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error) {
-	return withTransactionalMutation(ctx).GroupSetting.Query().Paginate(ctx, after, first, before, last, generated.WithGroupSettingFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: GroupSettings - groupSettings"))
 }
 
 // Integrations is the resolver for the integrations field.
 func (r *queryResolver) Integrations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) (*generated.IntegrationConnection, error) {
-	return withTransactionalMutation(ctx).Integration.Query().Paginate(ctx, after, first, before, last, generated.WithIntegrationOrder(orderBy), generated.WithIntegrationFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: Integrations - integrations"))
 }
 
 // Invites is the resolver for the invites field.
 func (r *queryResolver) Invites(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.InviteWhereInput) (*generated.InviteConnection, error) {
-	return r.client.Invite.Query().Paginate(ctx, after, first, before, last, generated.WithInviteFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: Invites - invites"))
 }
 
 // OauthProviders is the resolver for the oauthProviders field.
@@ -70,43 +69,32 @@ func (r *queryResolver) OhAuthTooTokens(ctx context.Context, after *entgql.Curso
 
 // OrgMemberships is the resolver for the orgMemberships field.
 func (r *queryResolver) OrgMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipWhereInput) (*generated.OrgMembershipConnection, error) {
-	return withTransactionalMutation(ctx).OrgMembership.Query().Paginate(ctx, after, first, before, last, generated.WithOrgMembershipFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: OrgMemberships - orgMemberships"))
 }
 
 // Organizations is the resolver for the organizations field.
 func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error) {
-	return withTransactionalMutation(ctx).Organization.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationOrder(orderBy), generated.WithOrganizationFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: Organizations - organizations"))
 }
 
 // OrganizationSettings is the resolver for the organizationSettings field.
 func (r *queryResolver) OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error) {
-	return withTransactionalMutation(ctx).OrganizationSetting.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationSettingFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: OrganizationSettings - organizationSettings"))
 }
 
 // PersonalAccessTokens is the resolver for the personalAccessTokens field.
 func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
-	return withTransactionalMutation(ctx).PersonalAccessToken.Query().Paginate(ctx, after, first, before, last, generated.WithPersonalAccessTokenFilter(where.Filter))
-}
-
-// TfaSettingsSlice is the resolver for the tfaSettingsSlice field.
-func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error) {
-	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))
+	panic(fmt.Errorf("not implemented: PersonalAccessTokens - personalAccessTokens"))
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
-	return withTransactionalMutation(ctx).User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: Users - users"))
 }
 
 // UserSettings is the resolver for the userSettings field.
 func (r *queryResolver) UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error) {
-	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
-
-	return withTransactionalMutation(ctx).UserSetting.Query().Paginate(ctx, after, first, before, last, generated.WithUserSettingFilter(where.Filter))
+	panic(fmt.Errorf("not implemented: UserSettings - userSettings"))
 }
 
 // AuthStyle is the resolver for the authStyle field.

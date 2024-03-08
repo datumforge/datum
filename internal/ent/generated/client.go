@@ -32,7 +32,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -80,8 +79,6 @@ type Client struct {
 	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
-	// TFASettings is the client for interacting with the TFASettings builders.
-	TFASettings *TFASettingsClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserSetting is the client for interacting with the UserSetting builders.
@@ -118,7 +115,6 @@ func (c *Client) init() {
 	c.OrganizationSetting = NewOrganizationSettingClient(c.config)
 	c.PasswordResetToken = NewPasswordResetTokenClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
-	c.TFASettings = NewTFASettingsClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserSetting = NewUserSettingClient(c.config)
 	c.Webauthn = NewWebauthnClient(c.config)
@@ -310,7 +306,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
 		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		TFASettings:            NewTFASettingsClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
 		Webauthn:               NewWebauthnClient(cfg),
@@ -347,7 +342,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
 		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		TFASettings:            NewTFASettingsClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
 		Webauthn:               NewWebauthnClient(cfg),
@@ -383,7 +377,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.TFASettings, c.User, c.UserSetting, c.Webauthn,
+		c.PersonalAccessToken, c.User, c.UserSetting, c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -396,7 +390,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.TFASettings, c.User, c.UserSetting, c.Webauthn,
+		c.PersonalAccessToken, c.User, c.UserSetting, c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -433,8 +427,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PasswordResetToken.mutate(ctx, m)
 	case *PersonalAccessTokenMutation:
 		return c.PersonalAccessToken.mutate(ctx, m)
-	case *TFASettingsMutation:
-		return c.TFASettings.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserSettingMutation:
@@ -2885,160 +2877,6 @@ func (c *PersonalAccessTokenClient) mutate(ctx context.Context, m *PersonalAcces
 	}
 }
 
-// TFASettingsClient is a client for the TFASettings schema.
-type TFASettingsClient struct {
-	config
-}
-
-// NewTFASettingsClient returns a client for the TFASettings from the given config.
-func NewTFASettingsClient(c config) *TFASettingsClient {
-	return &TFASettingsClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `tfasettings.Hooks(f(g(h())))`.
-func (c *TFASettingsClient) Use(hooks ...Hook) {
-	c.hooks.TFASettings = append(c.hooks.TFASettings, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `tfasettings.Intercept(f(g(h())))`.
-func (c *TFASettingsClient) Intercept(interceptors ...Interceptor) {
-	c.inters.TFASettings = append(c.inters.TFASettings, interceptors...)
-}
-
-// Create returns a builder for creating a TFASettings entity.
-func (c *TFASettingsClient) Create() *TFASettingsCreate {
-	mutation := newTFASettingsMutation(c.config, OpCreate)
-	return &TFASettingsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of TFASettings entities.
-func (c *TFASettingsClient) CreateBulk(builders ...*TFASettingsCreate) *TFASettingsCreateBulk {
-	return &TFASettingsCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *TFASettingsClient) MapCreateBulk(slice any, setFunc func(*TFASettingsCreate, int)) *TFASettingsCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &TFASettingsCreateBulk{err: fmt.Errorf("calling to TFASettingsClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*TFASettingsCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &TFASettingsCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for TFASettings.
-func (c *TFASettingsClient) Update() *TFASettingsUpdate {
-	mutation := newTFASettingsMutation(c.config, OpUpdate)
-	return &TFASettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *TFASettingsClient) UpdateOne(ts *TFASettings) *TFASettingsUpdateOne {
-	mutation := newTFASettingsMutation(c.config, OpUpdateOne, withTFASettings(ts))
-	return &TFASettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *TFASettingsClient) UpdateOneID(id string) *TFASettingsUpdateOne {
-	mutation := newTFASettingsMutation(c.config, OpUpdateOne, withTFASettingsID(id))
-	return &TFASettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for TFASettings.
-func (c *TFASettingsClient) Delete() *TFASettingsDelete {
-	mutation := newTFASettingsMutation(c.config, OpDelete)
-	return &TFASettingsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *TFASettingsClient) DeleteOne(ts *TFASettings) *TFASettingsDeleteOne {
-	return c.DeleteOneID(ts.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TFASettingsClient) DeleteOneID(id string) *TFASettingsDeleteOne {
-	builder := c.Delete().Where(tfasettings.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &TFASettingsDeleteOne{builder}
-}
-
-// Query returns a query builder for TFASettings.
-func (c *TFASettingsClient) Query() *TFASettingsQuery {
-	return &TFASettingsQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeTFASettings},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a TFASettings entity by its id.
-func (c *TFASettingsClient) Get(ctx context.Context, id string) (*TFASettings, error) {
-	return c.Query().Where(tfasettings.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *TFASettingsClient) GetX(ctx context.Context, id string) *TFASettings {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryOwner queries the owner edge of a TFASettings.
-func (c *TFASettingsClient) QueryOwner(ts *TFASettings) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := ts.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(tfasettings.Table, tfasettings.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, tfasettings.OwnerTable, tfasettings.OwnerColumn),
-		)
-		schemaConfig := ts.schemaConfig
-		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.TFASettings
-		fromV = sqlgraph.Neighbors(ts.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *TFASettingsClient) Hooks() []Hook {
-	hooks := c.hooks.TFASettings
-	return append(hooks[:len(hooks):len(hooks)], tfasettings.Hooks[:]...)
-}
-
-// Interceptors returns the client interceptors.
-func (c *TFASettingsClient) Interceptors() []Interceptor {
-	inters := c.inters.TFASettings
-	return append(inters[:len(inters):len(inters)], tfasettings.Interceptors[:]...)
-}
-
-func (c *TFASettingsClient) mutate(ctx context.Context, m *TFASettingsMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&TFASettingsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&TFASettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&TFASettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&TFASettingsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("generated: unknown TFASettings mutation op: %q", m.Op())
-	}
-}
-
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -3160,25 +2998,6 @@ func (c *UserClient) QueryPersonalAccessTokens(u *User) *PersonalAccessTokenQuer
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.PersonalAccessToken
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryTfaSettings queries the tfa_settings edge of a User.
-func (c *UserClient) QueryTfaSettings(u *User) *TFASettingsQuery {
-	query := (&TFASettingsClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(tfasettings.Table, tfasettings.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.TfaSettingsTable, user.TfaSettingsColumn),
-		)
-		schemaConfig := u.schemaConfig
-		step.To.Schema = schemaConfig.TFASettings
-		step.Edge.Schema = schemaConfig.TFASettings
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -3696,13 +3515,13 @@ type (
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		TFASettings, User, UserSetting, Webauthn []ent.Hook
+		User, UserSetting, Webauthn []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		TFASettings, User, UserSetting, Webauthn []ent.Interceptor
+		User, UserSetting, Webauthn []ent.Interceptor
 	}
 )
 

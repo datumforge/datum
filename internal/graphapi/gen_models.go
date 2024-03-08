@@ -231,24 +231,6 @@ type PersonalAccessTokenUpdatePayload struct {
 type Subscription struct {
 }
 
-// Return response for createTFASettings mutation
-type TFASettingsCreatePayload struct {
-	// Created tfaSettings
-	TfaSettings *generated.TFASettings `json:"tfaSettings"`
-}
-
-// Return response for deleteTFASettings mutation
-type TFASettingsDeletePayload struct {
-	// Deleted tfaSettings ID
-	DeletedID string `json:"deletedID"`
-}
-
-// Return response for updateTFASettings mutation
-type TFASettingsUpdatePayload struct {
-	// Updated tfaSettings
-	TfaSettings *generated.TFASettings `json:"tfaSettings"`
-}
-
 // Return response for createUser mutation
 type UserCreatePayload struct {
 	// Created user

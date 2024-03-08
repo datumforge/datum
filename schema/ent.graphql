@@ -998,6 +998,10 @@ type GroupSetting implements Node {
   whether to sync group members to github groups
   """
   syncToGithub: Boolean
+  """
+  the group id associated with the settings
+  """
+  groupID: ID
   group: Group
 }
 """
@@ -1188,6 +1192,24 @@ input GroupSettingWhereInput {
   syncToGithubNEQ: Boolean
   syncToGithubIsNil: Boolean
   syncToGithubNotNil: Boolean
+  """
+  group_id field predicates
+  """
+  groupID: ID
+  groupIDNEQ: ID
+  groupIDIn: [ID!]
+  groupIDNotIn: [ID!]
+  groupIDGT: ID
+  groupIDGTE: ID
+  groupIDLT: ID
+  groupIDLTE: ID
+  groupIDContains: ID
+  groupIDHasPrefix: ID
+  groupIDHasSuffix: ID
+  groupIDIsNil: Boolean
+  groupIDNotNil: Boolean
+  groupIDEqualFold: ID
+  groupIDContainsFold: ID
   """
   group edge predicates
   """

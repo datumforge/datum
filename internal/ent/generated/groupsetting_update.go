@@ -191,17 +191,23 @@ func (gsu *GroupSettingUpdate) ClearSyncToGithub() *GroupSettingUpdate {
 	return gsu
 }
 
-// SetGroupID sets the "group" edge to the Group entity by ID.
-func (gsu *GroupSettingUpdate) SetGroupID(id string) *GroupSettingUpdate {
-	gsu.mutation.SetGroupID(id)
+// SetGroupID sets the "group_id" field.
+func (gsu *GroupSettingUpdate) SetGroupID(s string) *GroupSettingUpdate {
+	gsu.mutation.SetGroupID(s)
 	return gsu
 }
 
-// SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gsu *GroupSettingUpdate) SetNillableGroupID(id *string) *GroupSettingUpdate {
-	if id != nil {
-		gsu = gsu.SetGroupID(*id)
+// SetNillableGroupID sets the "group_id" field if the given value is not nil.
+func (gsu *GroupSettingUpdate) SetNillableGroupID(s *string) *GroupSettingUpdate {
+	if s != nil {
+		gsu.SetGroupID(*s)
 	}
+	return gsu
+}
+
+// ClearGroupID clears the value of the "group_id" field.
+func (gsu *GroupSettingUpdate) ClearGroupID() *GroupSettingUpdate {
+	gsu.mutation.ClearGroupID()
 	return gsu
 }
 
@@ -560,17 +566,23 @@ func (gsuo *GroupSettingUpdateOne) ClearSyncToGithub() *GroupSettingUpdateOne {
 	return gsuo
 }
 
-// SetGroupID sets the "group" edge to the Group entity by ID.
-func (gsuo *GroupSettingUpdateOne) SetGroupID(id string) *GroupSettingUpdateOne {
-	gsuo.mutation.SetGroupID(id)
+// SetGroupID sets the "group_id" field.
+func (gsuo *GroupSettingUpdateOne) SetGroupID(s string) *GroupSettingUpdateOne {
+	gsuo.mutation.SetGroupID(s)
 	return gsuo
 }
 
-// SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gsuo *GroupSettingUpdateOne) SetNillableGroupID(id *string) *GroupSettingUpdateOne {
-	if id != nil {
-		gsuo = gsuo.SetGroupID(*id)
+// SetNillableGroupID sets the "group_id" field if the given value is not nil.
+func (gsuo *GroupSettingUpdateOne) SetNillableGroupID(s *string) *GroupSettingUpdateOne {
+	if s != nil {
+		gsuo.SetGroupID(*s)
 	}
+	return gsuo
+}
+
+// ClearGroupID clears the value of the "group_id" field.
+func (gsuo *GroupSettingUpdateOne) ClearGroupID() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearGroupID()
 	return gsuo
 }
 

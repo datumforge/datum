@@ -168,6 +168,20 @@ func (gsc *GroupSettingCreate) SetNillableSyncToGithub(b *bool) *GroupSettingCre
 	return gsc
 }
 
+// SetGroupID sets the "group_id" field.
+func (gsc *GroupSettingCreate) SetGroupID(s string) *GroupSettingCreate {
+	gsc.mutation.SetGroupID(s)
+	return gsc
+}
+
+// SetNillableGroupID sets the "group_id" field if the given value is not nil.
+func (gsc *GroupSettingCreate) SetNillableGroupID(s *string) *GroupSettingCreate {
+	if s != nil {
+		gsc.SetGroupID(*s)
+	}
+	return gsc
+}
+
 // SetID sets the "id" field.
 func (gsc *GroupSettingCreate) SetID(s string) *GroupSettingCreate {
 	gsc.mutation.SetID(s)
@@ -178,20 +192,6 @@ func (gsc *GroupSettingCreate) SetID(s string) *GroupSettingCreate {
 func (gsc *GroupSettingCreate) SetNillableID(s *string) *GroupSettingCreate {
 	if s != nil {
 		gsc.SetID(*s)
-	}
-	return gsc
-}
-
-// SetGroupID sets the "group" edge to the Group entity by ID.
-func (gsc *GroupSettingCreate) SetGroupID(id string) *GroupSettingCreate {
-	gsc.mutation.SetGroupID(id)
-	return gsc
-}
-
-// SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gsc *GroupSettingCreate) SetNillableGroupID(id *string) *GroupSettingCreate {
-	if id != nil {
-		gsc = gsc.SetGroupID(*id)
 	}
 	return gsc
 }
@@ -395,7 +395,7 @@ func (gsc *GroupSettingCreate) createSpec() (*GroupSetting, *sqlgraph.CreateSpec
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.group_setting = &nodes[0]
+		_node.GroupID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

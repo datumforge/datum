@@ -187,6 +187,7 @@ type ComplexityRoot struct {
 		DeletedAt    func(childComplexity int) int
 		DeletedBy    func(childComplexity int) int
 		Group        func(childComplexity int) int
+		GroupID      func(childComplexity int) int
 		ID           func(childComplexity int) int
 		JoinPolicy   func(childComplexity int) int
 		SyncToGithub func(childComplexity int) int
@@ -1370,6 +1371,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GroupSetting.Group(childComplexity), true
+
+	case "GroupSetting.groupID":
+		if e.complexity.GroupSetting.GroupID == nil {
+			break
+		}
+
+		return e.complexity.GroupSetting.GroupID(childComplexity), true
 
 	case "GroupSetting.id":
 		if e.complexity.GroupSetting.ID == nil {
@@ -5246,6 +5254,10 @@ type GroupSetting implements Node {
   whether to sync group members to github groups
   """
   syncToGithub: Boolean
+  """
+  the group id associated with the settings
+  """
+  groupID: ID
   group: Group
 }
 """
@@ -5436,6 +5448,24 @@ input GroupSettingWhereInput {
   syncToGithubNEQ: Boolean
   syncToGithubIsNil: Boolean
   syncToGithubNotNil: Boolean
+  """
+  group_id field predicates
+  """
+  groupID: ID
+  groupIDNEQ: ID
+  groupIDIn: [ID!]
+  groupIDNotIn: [ID!]
+  groupIDGT: ID
+  groupIDGTE: ID
+  groupIDLT: ID
+  groupIDLTE: ID
+  groupIDContains: ID
+  groupIDHasPrefix: ID
+  groupIDHasSuffix: ID
+  groupIDIsNil: Boolean
+  groupIDNotNil: Boolean
+  groupIDEqualFold: ID
+  groupIDContainsFold: ID
   """
   group edge predicates
   """
@@ -14154,6 +14184,8 @@ func (ec *executionContext) fieldContext_Group_setting(ctx context.Context, fiel
 				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 			case "syncToGithub":
 				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupSetting_groupID(ctx, field)
 			case "group":
 				return ec.fieldContext_GroupSetting_group(ctx, field)
 			}
@@ -16262,6 +16294,47 @@ func (ec *executionContext) fieldContext_GroupSetting_syncToGithub(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _GroupSetting_groupID(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_groupID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GroupID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSetting_groupID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _GroupSetting_group(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_GroupSetting_group(ctx, field)
 	if err != nil {
@@ -16545,6 +16618,8 @@ func (ec *executionContext) fieldContext_GroupSettingCreatePayload_groupSetting(
 				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 			case "syncToGithub":
 				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupSetting_groupID(ctx, field)
 			case "group":
 				return ec.fieldContext_GroupSetting_group(ctx, field)
 			}
@@ -16658,6 +16733,8 @@ func (ec *executionContext) fieldContext_GroupSettingEdge_node(ctx context.Conte
 				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 			case "syncToGithub":
 				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupSetting_groupID(ctx, field)
 			case "group":
 				return ec.fieldContext_GroupSetting_group(ctx, field)
 			}
@@ -16774,6 +16851,8 @@ func (ec *executionContext) fieldContext_GroupSettingUpdatePayload_groupSetting(
 				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 			case "syncToGithub":
 				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupSetting_groupID(ctx, field)
 			case "group":
 				return ec.fieldContext_GroupSetting_group(ctx, field)
 			}
@@ -30234,6 +30313,8 @@ func (ec *executionContext) fieldContext_Query_groupSetting(ctx context.Context,
 				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 			case "syncToGithub":
 				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupSetting_groupID(ctx, field)
 			case "group":
 				return ec.fieldContext_GroupSetting_group(ctx, field)
 			}
@@ -39436,7 +39517,7 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToSlackIsNil", "syncToSlackNotNil", "syncToGithub", "syncToGithubNEQ", "syncToGithubIsNil", "syncToGithubNotNil", "hasGroup", "hasGroupWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToSlackIsNil", "syncToSlackNotNil", "syncToGithub", "syncToGithubNEQ", "syncToGithubIsNil", "syncToGithubNotNil", "groupID", "groupIDNEQ", "groupIDIn", "groupIDNotIn", "groupIDGT", "groupIDGTE", "groupIDLT", "groupIDLTE", "groupIDContains", "groupIDHasPrefix", "groupIDHasSuffix", "groupIDIsNil", "groupIDNotNil", "groupIDEqualFold", "groupIDContainsFold", "hasGroup", "hasGroupWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40171,6 +40252,111 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 				return it, err
 			}
 			it.SyncToGithubNotNil = data
+		case "groupID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupID = data
+		case "groupIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDNEQ = data
+		case "groupIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDIn = data
+		case "groupIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDNotIn = data
+		case "groupIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDGT = data
+		case "groupIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDGTE = data
+		case "groupIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDLT = data
+		case "groupIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDLTE = data
+		case "groupIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDContains = data
+		case "groupIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDHasPrefix = data
+		case "groupIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDHasSuffix = data
+		case "groupIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDIsNil = data
+		case "groupIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDNotNil = data
+		case "groupIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDEqualFold = data
+		case "groupIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupIDContainsFold = data
 		case "hasGroup":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasGroup"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -55335,6 +55521,8 @@ func (ec *executionContext) _GroupSetting(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._GroupSetting_syncToSlack(ctx, field, obj)
 		case "syncToGithub":
 			out.Values[i] = ec._GroupSetting_syncToGithub(ctx, field, obj)
+		case "groupID":
+			out.Values[i] = ec._GroupSetting_groupID(ctx, field, obj)
 		case "group":
 			field := field
 

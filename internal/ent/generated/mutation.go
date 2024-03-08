@@ -5332,27 +5332,64 @@ func (m *GroupSettingMutation) ResetSyncToGithub() {
 	delete(m.clearedFields, groupsetting.FieldSyncToGithub)
 }
 
-// SetGroupID sets the "group" edge to the Group entity by id.
-func (m *GroupSettingMutation) SetGroupID(id string) {
-	m.group = &id
+// SetGroupID sets the "group_id" field.
+func (m *GroupSettingMutation) SetGroupID(s string) {
+	m.group = &s
+}
+
+// GroupID returns the value of the "group_id" field in the mutation.
+func (m *GroupSettingMutation) GroupID() (r string, exists bool) {
+	v := m.group
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupID returns the old "group_id" field's value of the GroupSetting entity.
+// If the GroupSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupSettingMutation) OldGroupID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupID: %w", err)
+	}
+	return oldValue.GroupID, nil
+}
+
+// ClearGroupID clears the value of the "group_id" field.
+func (m *GroupSettingMutation) ClearGroupID() {
+	m.group = nil
+	m.clearedFields[groupsetting.FieldGroupID] = struct{}{}
+}
+
+// GroupIDCleared returns if the "group_id" field was cleared in this mutation.
+func (m *GroupSettingMutation) GroupIDCleared() bool {
+	_, ok := m.clearedFields[groupsetting.FieldGroupID]
+	return ok
+}
+
+// ResetGroupID resets all changes to the "group_id" field.
+func (m *GroupSettingMutation) ResetGroupID() {
+	m.group = nil
+	delete(m.clearedFields, groupsetting.FieldGroupID)
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
 func (m *GroupSettingMutation) ClearGroup() {
 	m.clearedgroup = true
+	m.clearedFields[groupsetting.FieldGroupID] = struct{}{}
 }
 
 // GroupCleared reports if the "group" edge to the Group entity was cleared.
 func (m *GroupSettingMutation) GroupCleared() bool {
-	return m.clearedgroup
-}
-
-// GroupID returns the "group" edge ID in the mutation.
-func (m *GroupSettingMutation) GroupID() (id string, exists bool) {
-	if m.group != nil {
-		return *m.group, true
-	}
-	return
+	return m.GroupIDCleared() || m.clearedgroup
 }
 
 // GroupIDs returns the "group" edge IDs in the mutation.
@@ -5405,7 +5442,7 @@ func (m *GroupSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupSettingMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, groupsetting.FieldCreatedAt)
 	}
@@ -5439,6 +5476,9 @@ func (m *GroupSettingMutation) Fields() []string {
 	if m.sync_to_github != nil {
 		fields = append(fields, groupsetting.FieldSyncToGithub)
 	}
+	if m.group != nil {
+		fields = append(fields, groupsetting.FieldGroupID)
+	}
 	return fields
 }
 
@@ -5469,6 +5509,8 @@ func (m *GroupSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.SyncToSlack()
 	case groupsetting.FieldSyncToGithub:
 		return m.SyncToGithub()
+	case groupsetting.FieldGroupID:
+		return m.GroupID()
 	}
 	return nil, false
 }
@@ -5500,6 +5542,8 @@ func (m *GroupSettingMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldSyncToSlack(ctx)
 	case groupsetting.FieldSyncToGithub:
 		return m.OldSyncToGithub(ctx)
+	case groupsetting.FieldGroupID:
+		return m.OldGroupID(ctx)
 	}
 	return nil, fmt.Errorf("unknown GroupSetting field %s", name)
 }
@@ -5586,6 +5630,13 @@ func (m *GroupSettingMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSyncToGithub(v)
 		return nil
+	case groupsetting.FieldGroupID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown GroupSetting field %s", name)
 }
@@ -5643,6 +5694,9 @@ func (m *GroupSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(groupsetting.FieldSyncToGithub) {
 		fields = append(fields, groupsetting.FieldSyncToGithub)
 	}
+	if m.FieldCleared(groupsetting.FieldGroupID) {
+		fields = append(fields, groupsetting.FieldGroupID)
+	}
 	return fields
 }
 
@@ -5684,6 +5738,9 @@ func (m *GroupSettingMutation) ClearField(name string) error {
 	case groupsetting.FieldSyncToGithub:
 		m.ClearSyncToGithub()
 		return nil
+	case groupsetting.FieldGroupID:
+		m.ClearGroupID()
+		return nil
 	}
 	return fmt.Errorf("unknown GroupSetting nullable field %s", name)
 }
@@ -5724,6 +5781,9 @@ func (m *GroupSettingMutation) ResetField(name string) error {
 		return nil
 	case groupsetting.FieldSyncToGithub:
 		m.ResetSyncToGithub()
+		return nil
+	case groupsetting.FieldGroupID:
+		m.ResetGroupID()
 		return nil
 	}
 	return fmt.Errorf("unknown GroupSetting field %s", name)

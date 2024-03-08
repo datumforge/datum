@@ -150,6 +150,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			groupsetting.FieldTags:         {Type: field.TypeJSON, Column: groupsetting.FieldTags},
 			groupsetting.FieldSyncToSlack:  {Type: field.TypeBool, Column: groupsetting.FieldSyncToSlack},
 			groupsetting.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsetting.FieldSyncToGithub},
+			groupsetting.FieldGroupID:      {Type: field.TypeString, Column: groupsetting.FieldGroupID},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -1562,6 +1563,11 @@ func (f *GroupSettingFilter) WhereSyncToSlack(p entql.BoolP) {
 // WhereSyncToGithub applies the entql bool predicate on the sync_to_github field.
 func (f *GroupSettingFilter) WhereSyncToGithub(p entql.BoolP) {
 	f.Where(p.Field(groupsetting.FieldSyncToGithub))
+}
+
+// WhereGroupID applies the entql string predicate on the group_id field.
+func (f *GroupSettingFilter) WhereGroupID(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldGroupID))
 }
 
 // WhereHasGroup applies a predicate to check if query has an edge group.

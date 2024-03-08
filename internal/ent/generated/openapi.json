@@ -846,6 +846,9 @@
                   "sync_to_github": {
                     "type": "boolean"
                   },
+                  "group_id": {
+                    "type": "string"
+                  },
                   "group": {
                     "type": "string"
                   }
@@ -1016,6 +1019,9 @@
                   },
                   "sync_to_github": {
                     "type": "boolean"
+                  },
+                  "group_id": {
+                    "type": "string"
                   },
                   "group": {
                     "type": "string"
@@ -6880,6 +6886,9 @@
           },
           "sync_to_github": {
             "type": "boolean"
+          },
+          "group_id": {
+            "type": "string"
           },
           "group": {
             "$ref": "#/components/schemas/Group"

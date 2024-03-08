@@ -617,7 +617,9 @@ func (gq *GroupQuery) loadSetting(ctx context.Context, query *GroupSettingQuery,
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(groupsetting.FieldGroupID)
+	}
 	query.Where(predicate.GroupSetting(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(group.SettingColumn), fks...))
 	}))
@@ -626,13 +628,10 @@ func (gq *GroupQuery) loadSetting(ctx context.Context, query *GroupSettingQuery,
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.group_setting
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_setting" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.GroupID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "group_setting" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

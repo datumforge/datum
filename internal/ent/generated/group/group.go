@@ -62,7 +62,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "groupsetting" package.
 	SettingInverseTable = "group_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
-	SettingColumn = "group_setting"
+	SettingColumn = "group_id"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
 	UsersTable = "group_memberships"
 	// UsersInverseTable is the table name for the User entity.

@@ -787,8 +787,10 @@ type GroupSetting struct {
 	// whether to sync group members to slack groups
 	SyncToSlack *bool `json:"syncToSlack,omitempty"`
 	// whether to sync group members to github groups
-	SyncToGithub *bool  `json:"syncToGithub,omitempty"`
-	Group        *Group `json:"group,omitempty"`
+	SyncToGithub *bool `json:"syncToGithub,omitempty"`
+	// the group id associated with the settings
+	GroupID *string `json:"groupID,omitempty"`
+	Group   *Group  `json:"group,omitempty"`
 }
 
 func (GroupSetting) IsNode() {}
@@ -947,6 +949,22 @@ type GroupSettingWhereInput struct {
 	SyncToGithubNeq    *bool `json:"syncToGithubNEQ,omitempty"`
 	SyncToGithubIsNil  *bool `json:"syncToGithubIsNil,omitempty"`
 	SyncToGithubNotNil *bool `json:"syncToGithubNotNil,omitempty"`
+	// group_id field predicates
+	GroupID             *string  `json:"groupID,omitempty"`
+	GroupIDNeq          *string  `json:"groupIDNEQ,omitempty"`
+	GroupIDIn           []string `json:"groupIDIn,omitempty"`
+	GroupIDNotIn        []string `json:"groupIDNotIn,omitempty"`
+	GroupIDGt           *string  `json:"groupIDGT,omitempty"`
+	GroupIDGte          *string  `json:"groupIDGTE,omitempty"`
+	GroupIDLt           *string  `json:"groupIDLT,omitempty"`
+	GroupIDLte          *string  `json:"groupIDLTE,omitempty"`
+	GroupIDContains     *string  `json:"groupIDContains,omitempty"`
+	GroupIDHasPrefix    *string  `json:"groupIDHasPrefix,omitempty"`
+	GroupIDHasSuffix    *string  `json:"groupIDHasSuffix,omitempty"`
+	GroupIDIsNil        *bool    `json:"groupIDIsNil,omitempty"`
+	GroupIDNotNil       *bool    `json:"groupIDNotNil,omitempty"`
+	GroupIDEqualFold    *string  `json:"groupIDEqualFold,omitempty"`
+	GroupIDContainsFold *string  `json:"groupIDContainsFold,omitempty"`
 	// group edge predicates
 	HasGroup     *bool              `json:"hasGroup,omitempty"`
 	HasGroupWith []*GroupWhereInput `json:"hasGroupWith,omitempty"`

@@ -108,6 +108,11 @@ func SyncToGithub(v bool) predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldEQ(FieldSyncToGithub, v))
 }
 
+// GroupID applies equality check predicate on the "group_id" field. It's identical to GroupIDEQ.
+func GroupID(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldEQ(FieldGroupID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldEQ(FieldCreatedAt, v))
@@ -591,6 +596,81 @@ func SyncToGithubIsNil() predicate.GroupSetting {
 // SyncToGithubNotNil applies the NotNil predicate on the "sync_to_github" field.
 func SyncToGithubNotNil() predicate.GroupSetting {
 	return predicate.GroupSetting(sql.FieldNotNull(FieldSyncToGithub))
+}
+
+// GroupIDEQ applies the EQ predicate on the "group_id" field.
+func GroupIDEQ(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldEQ(FieldGroupID, v))
+}
+
+// GroupIDNEQ applies the NEQ predicate on the "group_id" field.
+func GroupIDNEQ(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldNEQ(FieldGroupID, v))
+}
+
+// GroupIDIn applies the In predicate on the "group_id" field.
+func GroupIDIn(vs ...string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldIn(FieldGroupID, vs...))
+}
+
+// GroupIDNotIn applies the NotIn predicate on the "group_id" field.
+func GroupIDNotIn(vs ...string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldNotIn(FieldGroupID, vs...))
+}
+
+// GroupIDGT applies the GT predicate on the "group_id" field.
+func GroupIDGT(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldGT(FieldGroupID, v))
+}
+
+// GroupIDGTE applies the GTE predicate on the "group_id" field.
+func GroupIDGTE(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldGTE(FieldGroupID, v))
+}
+
+// GroupIDLT applies the LT predicate on the "group_id" field.
+func GroupIDLT(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldLT(FieldGroupID, v))
+}
+
+// GroupIDLTE applies the LTE predicate on the "group_id" field.
+func GroupIDLTE(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldLTE(FieldGroupID, v))
+}
+
+// GroupIDContains applies the Contains predicate on the "group_id" field.
+func GroupIDContains(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldContains(FieldGroupID, v))
+}
+
+// GroupIDHasPrefix applies the HasPrefix predicate on the "group_id" field.
+func GroupIDHasPrefix(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldHasPrefix(FieldGroupID, v))
+}
+
+// GroupIDHasSuffix applies the HasSuffix predicate on the "group_id" field.
+func GroupIDHasSuffix(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldHasSuffix(FieldGroupID, v))
+}
+
+// GroupIDIsNil applies the IsNil predicate on the "group_id" field.
+func GroupIDIsNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldIsNull(FieldGroupID))
+}
+
+// GroupIDNotNil applies the NotNil predicate on the "group_id" field.
+func GroupIDNotNil() predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldNotNull(FieldGroupID))
+}
+
+// GroupIDEqualFold applies the EqualFold predicate on the "group_id" field.
+func GroupIDEqualFold(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldEqualFold(FieldGroupID, v))
+}
+
+// GroupIDContainsFold applies the ContainsFold predicate on the "group_id" field.
+func GroupIDContainsFold(v string) predicate.GroupSetting {
+	return predicate.GroupSetting(sql.FieldContainsFold(FieldGroupID, v))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

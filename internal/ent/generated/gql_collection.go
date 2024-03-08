@@ -515,6 +515,10 @@ func (gs *GroupSettingQuery) collectField(ctx context.Context, opCtx *graphql.Op
 				return err
 			}
 			gs.withGroup = query
+			if _, ok := fieldSeen[groupsetting.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupsetting.FieldGroupID)
+				fieldSeen[groupsetting.FieldGroupID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[groupsetting.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, groupsetting.FieldCreatedAt)
@@ -569,6 +573,11 @@ func (gs *GroupSettingQuery) collectField(ctx context.Context, opCtx *graphql.Op
 			if _, ok := fieldSeen[groupsetting.FieldSyncToGithub]; !ok {
 				selectedFields = append(selectedFields, groupsetting.FieldSyncToGithub)
 				fieldSeen[groupsetting.FieldSyncToGithub] = struct{}{}
+			}
+		case "groupID":
+			if _, ok := fieldSeen[groupsetting.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupsetting.FieldGroupID)
+				fieldSeen[groupsetting.FieldGroupID] = struct{}{}
 			}
 		case "id":
 		case "__typename":

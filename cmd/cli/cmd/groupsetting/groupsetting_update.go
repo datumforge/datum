@@ -27,8 +27,10 @@ func init() {
 	datum.ViperBindFlag("groupsetting.update.id", groupSettingUpdateCmd.Flags().Lookup("id"))
 
 	groupSettingUpdateCmd.Flags().StringP("visibility", "v", "", "visibility of the group")
+	datum.ViperBindFlag("groupsetting.update.visibility", groupSettingUpdateCmd.Flags().Lookup("visibility"))
 
 	groupSettingUpdateCmd.Flags().StringP("join-policy", "j", "", "join policy of the group")
+	datum.ViperBindFlag("groupsetting.update.joinpolicy", groupSettingUpdateCmd.Flags().Lookup("join-policy"))
 
 	groupSettingUpdateCmd.Flags().BoolP("sync-to-slack", "s", false, "sync group members to slack")
 	datum.ViperBindFlag("groupsetting.update.synctoslack", groupSettingUpdateCmd.Flags().Lookup("sync-to-slack"))

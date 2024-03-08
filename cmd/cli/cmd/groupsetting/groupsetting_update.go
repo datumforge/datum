@@ -54,6 +54,9 @@ func updateGroupSetting(ctx context.Context) error {
 	var s []byte
 
 	settingsID := viper.GetString("groupsetting.update.id")
+	if settingsID == "" {
+		return datum.NewRequiredFieldMissingError("setting id")
+	}
 
 	input := datumclient.UpdateGroupSettingInput{}
 
@@ -80,19 +83,6 @@ func updateGroupSetting(ctx context.Context) error {
 	syncToGithub := viper.GetBool("groupsetting.update.synctogithub")
 	if syncToGithub {
 		input.SyncToGithub = &syncToGithub
-	}
-
-	if settingsID == "" {
-		settings, err := cli.Client.GetGroupSettings(ctx, cli.Interceptor)
-		if err != nil {
-			return err
-		}
-
-		if len(settings.GetGroupSettings().Edges) == 0 {
-			return datum.ErrNotFound
-		}
-
-		settingsID = settings.GetGroupSettings().Edges[0].Node.ID
 	}
 
 	o, err := cli.Client.UpdateGroupSetting(ctx, settingsID, input, cli.Interceptor)

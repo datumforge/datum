@@ -59,6 +59,9 @@ func updateOrganizationSetting(ctx context.Context) error {
 	var s []byte
 
 	settingsID := viper.GetString("orgsetting.update.id")
+	if settingsID == "" {
+		return datum.NewRequiredFieldMissingError("setting id")
+	}
 
 	input := datumclient.UpdateOrganizationSettingInput{}
 
@@ -95,19 +98,6 @@ func updateOrganizationSetting(ctx context.Context) error {
 	domains := viper.GetStringSlice("orgsetting.update.domains")
 	if len(domains) > 0 {
 		input.Domains = domains
-	}
-
-	if settingsID == "" {
-		settings, err := cli.Client.GetOrganizationSettings(ctx, cli.Interceptor)
-		if err != nil {
-			return err
-		}
-
-		if len(settings.GetOrganizationSettings().Edges) == 0 {
-			return datum.ErrNotFound
-		}
-
-		settingsID = settings.GetOrganizationSettings().Edges[0].Node.ID
 	}
 
 	o, err := cli.Client.UpdateOrganizationSetting(ctx, settingsID, input, cli.Interceptor)

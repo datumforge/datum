@@ -322,16 +322,6 @@ type CreateUserSettingInput struct {
 	EmailConfirmed *bool             `json:"emailConfirmed,omitempty"`
 	// tags associated with the user
 	Tags []string `json:"tags,omitempty"`
-	// TFA secret for the user
-	TfaSecret *string `json:"tfaSecret,omitempty"`
-	// recovery codes for 2fa
-	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	IsPhoneOtpAllowed *bool `json:"isPhoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	IsEmailOtpAllowed *bool `json:"isEmailOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-	IsTotpAllowed *bool `json:"isTotpAllowed,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
 	// whether the user has two factor authentication enabled
@@ -3499,22 +3489,6 @@ type UpdateUserSettingInput struct {
 	// tags associated with the user
 	Tags       []string `json:"tags,omitempty"`
 	AppendTags []string `json:"appendTags,omitempty"`
-	// TFA secret for the user
-	TfaSecret      *string `json:"tfaSecret,omitempty"`
-	ClearTfaSecret *bool   `json:"clearTfaSecret,omitempty"`
-	// recovery codes for 2fa
-	RecoveryCodes       []string `json:"recoveryCodes,omitempty"`
-	AppendRecoveryCodes []string `json:"appendRecoveryCodes,omitempty"`
-	ClearRecoveryCodes  *bool    `json:"clearRecoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	IsPhoneOtpAllowed      *bool `json:"isPhoneOtpAllowed,omitempty"`
-	ClearIsPhoneOtpAllowed *bool `json:"clearIsPhoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	IsEmailOtpAllowed      *bool `json:"isEmailOtpAllowed,omitempty"`
-	ClearIsEmailOtpAllowed *bool `json:"clearIsEmailOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-	IsTotpAllowed      *bool `json:"isTotpAllowed,omitempty"`
-	ClearIsTotpAllowed *bool `json:"clearIsTotpAllowed,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed      *bool `json:"isWebauthnAllowed,omitempty"`
 	ClearIsWebauthnAllowed *bool `json:"clearIsWebauthnAllowed,omitempty"`
@@ -3623,14 +3597,6 @@ type UserSetting struct {
 	EmailConfirmed bool             `json:"emailConfirmed"`
 	// tags associated with the user
 	Tags []string `json:"tags"`
-	// recovery codes for 2fa
-	RecoveryCodes []string `json:"recoveryCodes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	IsPhoneOtpAllowed *bool `json:"isPhoneOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	IsEmailOtpAllowed *bool `json:"isEmailOtpAllowed,omitempty"`
-	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-	IsTotpAllowed *bool `json:"isTotpAllowed,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
 	// whether the user has two factor authentication enabled
@@ -3815,21 +3781,6 @@ type UserSettingWhereInput struct {
 	// email_confirmed field predicates
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
 	EmailConfirmedNeq *bool `json:"emailConfirmedNEQ,omitempty"`
-	// is_phone_otp_allowed field predicates
-	IsPhoneOtpAllowed       *bool `json:"isPhoneOtpAllowed,omitempty"`
-	IsPhoneOtpAllowedNeq    *bool `json:"isPhoneOtpAllowedNEQ,omitempty"`
-	IsPhoneOtpAllowedIsNil  *bool `json:"isPhoneOtpAllowedIsNil,omitempty"`
-	IsPhoneOtpAllowedNotNil *bool `json:"isPhoneOtpAllowedNotNil,omitempty"`
-	// is_email_otp_allowed field predicates
-	IsEmailOtpAllowed       *bool `json:"isEmailOtpAllowed,omitempty"`
-	IsEmailOtpAllowedNeq    *bool `json:"isEmailOtpAllowedNEQ,omitempty"`
-	IsEmailOtpAllowedIsNil  *bool `json:"isEmailOtpAllowedIsNil,omitempty"`
-	IsEmailOtpAllowedNotNil *bool `json:"isEmailOtpAllowedNotNil,omitempty"`
-	// is_totp_allowed field predicates
-	IsTotpAllowed       *bool `json:"isTotpAllowed,omitempty"`
-	IsTotpAllowedNeq    *bool `json:"isTotpAllowedNEQ,omitempty"`
-	IsTotpAllowedIsNil  *bool `json:"isTotpAllowedIsNil,omitempty"`
-	IsTotpAllowedNotNil *bool `json:"isTotpAllowedNotNil,omitempty"`
 	// is_webauthn_allowed field predicates
 	IsWebauthnAllowed       *bool `json:"isWebauthnAllowed,omitempty"`
 	IsWebauthnAllowedNeq    *bool `json:"isWebauthnAllowedNEQ,omitempty"`

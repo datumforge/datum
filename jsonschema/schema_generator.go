@@ -27,10 +27,9 @@ var includedPackages = []string{
 	"./pkg/otelx",
 	"./pkg/sessions",
 	"./pkg/tokens",
-	"./pkg/utils/emails",
-	"./pkg/utils/sentry",
 	"./pkg/providers",
 	"./pkg/analytics",
+	"./pkg/utils",
 }
 
 // schemaConfig represents the configuration for the schema generator

@@ -47,16 +47,6 @@ type UserSetting struct {
 	EmailConfirmed bool `json:"email_confirmed,omitempty"`
 	// tags associated with the user
 	Tags []string `json:"tags,omitempty"`
-	// TFA secret for the user
-	TfaSecret *string `json:"-"`
-	// recovery codes for 2fa
-	RecoveryCodes []string `json:"recovery_codes,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through SMS
-	IsPhoneOtpAllowed bool `json:"is_phone_otp_allowed,omitempty"`
-	// specifies a user may complete authentication by verifying an OTP code delivered through email
-	IsEmailOtpAllowed bool `json:"is_email_otp_allowed,omitempty"`
-	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-	IsTotpAllowed bool `json:"is_totp_allowed,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed bool `json:"is_webauthn_allowed,omitempty"`
 	// whether the user has two factor authentication enabled
@@ -110,11 +100,11 @@ func (*UserSetting) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case usersetting.FieldTags, usersetting.FieldRecoveryCodes:
+		case usersetting.FieldTags:
 			values[i] = new([]byte)
-		case usersetting.FieldLocked, usersetting.FieldEmailConfirmed, usersetting.FieldIsPhoneOtpAllowed, usersetting.FieldIsEmailOtpAllowed, usersetting.FieldIsTotpAllowed, usersetting.FieldIsWebauthnAllowed, usersetting.FieldIsTfaEnabled:
+		case usersetting.FieldLocked, usersetting.FieldEmailConfirmed, usersetting.FieldIsWebauthnAllowed, usersetting.FieldIsTfaEnabled:
 			values[i] = new(sql.NullBool)
-		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldDeletedBy, usersetting.FieldUserID, usersetting.FieldStatus, usersetting.FieldTfaSecret, usersetting.FieldPhoneNumber:
+		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldDeletedBy, usersetting.FieldUserID, usersetting.FieldStatus, usersetting.FieldPhoneNumber:
 			values[i] = new(sql.NullString)
 		case usersetting.FieldCreatedAt, usersetting.FieldUpdatedAt, usersetting.FieldDeletedAt, usersetting.FieldSilencedAt, usersetting.FieldSuspendedAt:
 			values[i] = new(sql.NullTime)
@@ -222,39 +212,6 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &us.Tags); err != nil {
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
-			}
-		case usersetting.FieldTfaSecret:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field tfa_secret", values[i])
-			} else if value.Valid {
-				us.TfaSecret = new(string)
-				*us.TfaSecret = value.String
-			}
-		case usersetting.FieldRecoveryCodes:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field recovery_codes", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &us.RecoveryCodes); err != nil {
-					return fmt.Errorf("unmarshal field recovery_codes: %w", err)
-				}
-			}
-		case usersetting.FieldIsPhoneOtpAllowed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_phone_otp_allowed", values[i])
-			} else if value.Valid {
-				us.IsPhoneOtpAllowed = value.Bool
-			}
-		case usersetting.FieldIsEmailOtpAllowed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_email_otp_allowed", values[i])
-			} else if value.Valid {
-				us.IsEmailOtpAllowed = value.Bool
-			}
-		case usersetting.FieldIsTotpAllowed:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_totp_allowed", values[i])
-			} else if value.Valid {
-				us.IsTotpAllowed = value.Bool
 			}
 		case usersetting.FieldIsWebauthnAllowed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -370,20 +327,6 @@ func (us *UserSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tags=")
 	builder.WriteString(fmt.Sprintf("%v", us.Tags))
-	builder.WriteString(", ")
-	builder.WriteString("tfa_secret=<sensitive>")
-	builder.WriteString(", ")
-	builder.WriteString("recovery_codes=")
-	builder.WriteString(fmt.Sprintf("%v", us.RecoveryCodes))
-	builder.WriteString(", ")
-	builder.WriteString("is_phone_otp_allowed=")
-	builder.WriteString(fmt.Sprintf("%v", us.IsPhoneOtpAllowed))
-	builder.WriteString(", ")
-	builder.WriteString("is_email_otp_allowed=")
-	builder.WriteString(fmt.Sprintf("%v", us.IsEmailOtpAllowed))
-	builder.WriteString(", ")
-	builder.WriteString("is_totp_allowed=")
-	builder.WriteString(fmt.Sprintf("%v", us.IsTotpAllowed))
 	builder.WriteString(", ")
 	builder.WriteString("is_webauthn_allowed=")
 	builder.WriteString(fmt.Sprintf("%v", us.IsWebauthnAllowed))

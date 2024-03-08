@@ -2414,26 +2414,6 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, usersetting.FieldTags)
 				fieldSeen[usersetting.FieldTags] = struct{}{}
 			}
-		case "recoveryCodes":
-			if _, ok := fieldSeen[usersetting.FieldRecoveryCodes]; !ok {
-				selectedFields = append(selectedFields, usersetting.FieldRecoveryCodes)
-				fieldSeen[usersetting.FieldRecoveryCodes] = struct{}{}
-			}
-		case "isPhoneOtpAllowed":
-			if _, ok := fieldSeen[usersetting.FieldIsPhoneOtpAllowed]; !ok {
-				selectedFields = append(selectedFields, usersetting.FieldIsPhoneOtpAllowed)
-				fieldSeen[usersetting.FieldIsPhoneOtpAllowed] = struct{}{}
-			}
-		case "isEmailOtpAllowed":
-			if _, ok := fieldSeen[usersetting.FieldIsEmailOtpAllowed]; !ok {
-				selectedFields = append(selectedFields, usersetting.FieldIsEmailOtpAllowed)
-				fieldSeen[usersetting.FieldIsEmailOtpAllowed] = struct{}{}
-			}
-		case "isTotpAllowed":
-			if _, ok := fieldSeen[usersetting.FieldIsTotpAllowed]; !ok {
-				selectedFields = append(selectedFields, usersetting.FieldIsTotpAllowed)
-				fieldSeen[usersetting.FieldIsTotpAllowed] = struct{}{}
-			}
 		case "isWebauthnAllowed":
 			if _, ok := fieldSeen[usersetting.FieldIsWebauthnAllowed]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldIsWebauthnAllowed)

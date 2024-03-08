@@ -197,68 +197,6 @@ func (usc *UserSettingCreate) SetTags(s []string) *UserSettingCreate {
 	return usc
 }
 
-// SetTfaSecret sets the "tfa_secret" field.
-func (usc *UserSettingCreate) SetTfaSecret(s string) *UserSettingCreate {
-	usc.mutation.SetTfaSecret(s)
-	return usc
-}
-
-// SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableTfaSecret(s *string) *UserSettingCreate {
-	if s != nil {
-		usc.SetTfaSecret(*s)
-	}
-	return usc
-}
-
-// SetRecoveryCodes sets the "recovery_codes" field.
-func (usc *UserSettingCreate) SetRecoveryCodes(s []string) *UserSettingCreate {
-	usc.mutation.SetRecoveryCodes(s)
-	return usc
-}
-
-// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
-func (usc *UserSettingCreate) SetIsPhoneOtpAllowed(b bool) *UserSettingCreate {
-	usc.mutation.SetIsPhoneOtpAllowed(b)
-	return usc
-}
-
-// SetNillableIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableIsPhoneOtpAllowed(b *bool) *UserSettingCreate {
-	if b != nil {
-		usc.SetIsPhoneOtpAllowed(*b)
-	}
-	return usc
-}
-
-// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
-func (usc *UserSettingCreate) SetIsEmailOtpAllowed(b bool) *UserSettingCreate {
-	usc.mutation.SetIsEmailOtpAllowed(b)
-	return usc
-}
-
-// SetNillableIsEmailOtpAllowed sets the "is_email_otp_allowed" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableIsEmailOtpAllowed(b *bool) *UserSettingCreate {
-	if b != nil {
-		usc.SetIsEmailOtpAllowed(*b)
-	}
-	return usc
-}
-
-// SetIsTotpAllowed sets the "is_totp_allowed" field.
-func (usc *UserSettingCreate) SetIsTotpAllowed(b bool) *UserSettingCreate {
-	usc.mutation.SetIsTotpAllowed(b)
-	return usc
-}
-
-// SetNillableIsTotpAllowed sets the "is_totp_allowed" field if the given value is not nil.
-func (usc *UserSettingCreate) SetNillableIsTotpAllowed(b *bool) *UserSettingCreate {
-	if b != nil {
-		usc.SetIsTotpAllowed(*b)
-	}
-	return usc
-}
-
 // SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
 func (usc *UserSettingCreate) SetIsWebauthnAllowed(b bool) *UserSettingCreate {
 	usc.mutation.SetIsWebauthnAllowed(b)
@@ -406,18 +344,6 @@ func (usc *UserSettingCreate) defaults() error {
 		v := usersetting.DefaultTags
 		usc.mutation.SetTags(v)
 	}
-	if _, ok := usc.mutation.IsPhoneOtpAllowed(); !ok {
-		v := usersetting.DefaultIsPhoneOtpAllowed
-		usc.mutation.SetIsPhoneOtpAllowed(v)
-	}
-	if _, ok := usc.mutation.IsEmailOtpAllowed(); !ok {
-		v := usersetting.DefaultIsEmailOtpAllowed
-		usc.mutation.SetIsEmailOtpAllowed(v)
-	}
-	if _, ok := usc.mutation.IsTotpAllowed(); !ok {
-		v := usersetting.DefaultIsTotpAllowed
-		usc.mutation.SetIsTotpAllowed(v)
-	}
 	if _, ok := usc.mutation.IsWebauthnAllowed(); !ok {
 		v := usersetting.DefaultIsWebauthnAllowed
 		usc.mutation.SetIsWebauthnAllowed(v)
@@ -538,26 +464,6 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 	if value, ok := usc.mutation.Tags(); ok {
 		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
-	}
-	if value, ok := usc.mutation.TfaSecret(); ok {
-		_spec.SetField(usersetting.FieldTfaSecret, field.TypeString, value)
-		_node.TfaSecret = &value
-	}
-	if value, ok := usc.mutation.RecoveryCodes(); ok {
-		_spec.SetField(usersetting.FieldRecoveryCodes, field.TypeJSON, value)
-		_node.RecoveryCodes = value
-	}
-	if value, ok := usc.mutation.IsPhoneOtpAllowed(); ok {
-		_spec.SetField(usersetting.FieldIsPhoneOtpAllowed, field.TypeBool, value)
-		_node.IsPhoneOtpAllowed = value
-	}
-	if value, ok := usc.mutation.IsEmailOtpAllowed(); ok {
-		_spec.SetField(usersetting.FieldIsEmailOtpAllowed, field.TypeBool, value)
-		_node.IsEmailOtpAllowed = value
-	}
-	if value, ok := usc.mutation.IsTotpAllowed(); ok {
-		_spec.SetField(usersetting.FieldIsTotpAllowed, field.TypeBool, value)
-		_node.IsTotpAllowed = value
 	}
 	if value, ok := usc.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)

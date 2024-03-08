@@ -440,26 +440,6 @@ input CreateUserSettingInput {
   """
   tags: [String!]
   """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  isPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  isEmailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  isTotpAllowed: Boolean
-  """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
   isWebauthnAllowed: Boolean
@@ -4650,32 +4630,6 @@ input UpdateUserSettingInput {
   tags: [String!]
   appendTags: [String!]
   """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  clearTfaSecret: Boolean
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  appendRecoveryCodes: [String!]
-  clearRecoveryCodes: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  isPhoneOtpAllowed: Boolean
-  clearIsPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  isEmailOtpAllowed: Boolean
-  clearIsEmailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  isTotpAllowed: Boolean
-  clearIsTotpAllowed: Boolean
-  """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
   isWebauthnAllowed: Boolean
@@ -4829,22 +4783,6 @@ type UserSetting implements Node {
   tags associated with the user
   """
   tags: [String!]!
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  isPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  isEmailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  isTotpAllowed: Boolean
   """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
@@ -5077,27 +5015,6 @@ input UserSettingWhereInput {
   """
   emailConfirmed: Boolean
   emailConfirmedNEQ: Boolean
-  """
-  is_phone_otp_allowed field predicates
-  """
-  isPhoneOtpAllowed: Boolean
-  isPhoneOtpAllowedNEQ: Boolean
-  isPhoneOtpAllowedIsNil: Boolean
-  isPhoneOtpAllowedNotNil: Boolean
-  """
-  is_email_otp_allowed field predicates
-  """
-  isEmailOtpAllowed: Boolean
-  isEmailOtpAllowedNEQ: Boolean
-  isEmailOtpAllowedIsNil: Boolean
-  isEmailOtpAllowedNotNil: Boolean
-  """
-  is_totp_allowed field predicates
-  """
-  isTotpAllowed: Boolean
-  isTotpAllowedNEQ: Boolean
-  isTotpAllowedIsNil: Boolean
-  isTotpAllowedNotNil: Boolean
   """
   is_webauthn_allowed field predicates
   """

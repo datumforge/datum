@@ -740,14 +740,10 @@ type ComplexityRoot struct {
 		DeletedBy         func(childComplexity int) int
 		EmailConfirmed    func(childComplexity int) int
 		ID                func(childComplexity int) int
-		IsEmailOtpAllowed func(childComplexity int) int
-		IsPhoneOtpAllowed func(childComplexity int) int
 		IsTfaEnabled      func(childComplexity int) int
-		IsTotpAllowed     func(childComplexity int) int
 		IsWebauthnAllowed func(childComplexity int) int
 		Locked            func(childComplexity int) int
 		PhoneNumber       func(childComplexity int) int
-		RecoveryCodes     func(childComplexity int) int
 		SilencedAt        func(childComplexity int) int
 		Status            func(childComplexity int) int
 		SuspendedAt       func(childComplexity int) int
@@ -4217,33 +4213,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSetting.ID(childComplexity), true
 
-	case "UserSetting.isEmailOtpAllowed":
-		if e.complexity.UserSetting.IsEmailOtpAllowed == nil {
-			break
-		}
-
-		return e.complexity.UserSetting.IsEmailOtpAllowed(childComplexity), true
-
-	case "UserSetting.isPhoneOtpAllowed":
-		if e.complexity.UserSetting.IsPhoneOtpAllowed == nil {
-			break
-		}
-
-		return e.complexity.UserSetting.IsPhoneOtpAllowed(childComplexity), true
-
 	case "UserSetting.isTfaEnabled":
 		if e.complexity.UserSetting.IsTfaEnabled == nil {
 			break
 		}
 
 		return e.complexity.UserSetting.IsTfaEnabled(childComplexity), true
-
-	case "UserSetting.isTotpAllowed":
-		if e.complexity.UserSetting.IsTotpAllowed == nil {
-			break
-		}
-
-		return e.complexity.UserSetting.IsTotpAllowed(childComplexity), true
 
 	case "UserSetting.isWebauthnAllowed":
 		if e.complexity.UserSetting.IsWebauthnAllowed == nil {
@@ -4265,13 +4240,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserSetting.PhoneNumber(childComplexity), true
-
-	case "UserSetting.recoveryCodes":
-		if e.complexity.UserSetting.RecoveryCodes == nil {
-			break
-		}
-
-		return e.complexity.UserSetting.RecoveryCodes(childComplexity), true
 
 	case "UserSetting.silencedAt":
 		if e.complexity.UserSetting.SilencedAt == nil {
@@ -4990,26 +4958,6 @@ input CreateUserSettingInput {
   tags associated with the user
   """
   tags: [String!]
-  """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  isPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  isEmailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  isTotpAllowed: Boolean
   """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
@@ -9201,32 +9149,6 @@ input UpdateUserSettingInput {
   tags: [String!]
   appendTags: [String!]
   """
-  TFA secret for the user
-  """
-  tfaSecret: String
-  clearTfaSecret: Boolean
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  appendRecoveryCodes: [String!]
-  clearRecoveryCodes: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  isPhoneOtpAllowed: Boolean
-  clearIsPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  isEmailOtpAllowed: Boolean
-  clearIsEmailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  isTotpAllowed: Boolean
-  clearIsTotpAllowed: Boolean
-  """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
   isWebauthnAllowed: Boolean
@@ -9380,22 +9302,6 @@ type UserSetting implements Node {
   tags associated with the user
   """
   tags: [String!]!
-  """
-  recovery codes for 2fa
-  """
-  recoveryCodes: [String!]
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through SMS
-  """
-  isPhoneOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying an OTP code delivered through email
-  """
-  isEmailOtpAllowed: Boolean
-  """
-  specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
-  """
-  isTotpAllowed: Boolean
   """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
@@ -9628,27 +9534,6 @@ input UserSettingWhereInput {
   """
   emailConfirmed: Boolean
   emailConfirmedNEQ: Boolean
-  """
-  is_phone_otp_allowed field predicates
-  """
-  isPhoneOtpAllowed: Boolean
-  isPhoneOtpAllowedNEQ: Boolean
-  isPhoneOtpAllowedIsNil: Boolean
-  isPhoneOtpAllowedNotNil: Boolean
-  """
-  is_email_otp_allowed field predicates
-  """
-  isEmailOtpAllowed: Boolean
-  isEmailOtpAllowedNEQ: Boolean
-  isEmailOtpAllowedIsNil: Boolean
-  isEmailOtpAllowedNotNil: Boolean
-  """
-  is_totp_allowed field predicates
-  """
-  isTotpAllowed: Boolean
-  isTotpAllowedNEQ: Boolean
-  isTotpAllowedIsNil: Boolean
-  isTotpAllowedNotNil: Boolean
   """
   is_webauthn_allowed field predicates
   """
@@ -32388,14 +32273,6 @@ func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, 
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
-			case "isPhoneOtpAllowed":
-				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
-			case "isEmailOtpAllowed":
-				return ec.fieldContext_UserSetting_isEmailOtpAllowed(ctx, field)
-			case "isTotpAllowed":
-				return ec.fieldContext_UserSetting_isTotpAllowed(ctx, field)
 			case "isWebauthnAllowed":
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
@@ -34529,14 +34406,6 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
-			case "isPhoneOtpAllowed":
-				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
-			case "isEmailOtpAllowed":
-				return ec.fieldContext_UserSetting_isEmailOtpAllowed(ctx, field)
-			case "isTotpAllowed":
-				return ec.fieldContext_UserSetting_isTotpAllowed(ctx, field)
 			case "isWebauthnAllowed":
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
@@ -35857,170 +35726,6 @@ func (ec *executionContext) fieldContext_UserSetting_tags(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSetting_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RecoveryCodes, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSetting_recoveryCodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UserSetting_isPhoneOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsPhoneOtpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSetting_isPhoneOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UserSetting_isEmailOtpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSetting_isEmailOtpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsEmailOtpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSetting_isEmailOtpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UserSetting_isTotpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSetting_isTotpAllowed(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsTotpAllowed, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSetting_isTotpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _UserSetting_isWebauthnAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 	if err != nil {
@@ -36531,14 +36236,6 @@ func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Contex
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
-			case "isPhoneOtpAllowed":
-				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
-			case "isEmailOtpAllowed":
-				return ec.fieldContext_UserSetting_isEmailOtpAllowed(ctx, field)
-			case "isTotpAllowed":
-				return ec.fieldContext_UserSetting_isTotpAllowed(ctx, field)
 			case "isWebauthnAllowed":
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
@@ -36667,14 +36364,6 @@ func (ec *executionContext) fieldContext_UserSettingUpdatePayload_userSetting(ct
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
 				return ec.fieldContext_UserSetting_tags(ctx, field)
-			case "recoveryCodes":
-				return ec.fieldContext_UserSetting_recoveryCodes(ctx, field)
-			case "isPhoneOtpAllowed":
-				return ec.fieldContext_UserSetting_isPhoneOtpAllowed(ctx, field)
-			case "isEmailOtpAllowed":
-				return ec.fieldContext_UserSetting_isEmailOtpAllowed(ctx, field)
-			case "isTotpAllowed":
-				return ec.fieldContext_UserSetting_isTotpAllowed(ctx, field)
 			case "isWebauthnAllowed":
 				return ec.fieldContext_UserSetting_isWebauthnAllowed(ctx, field)
 			case "isTfaEnabled":
@@ -40049,7 +39738,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "tfaSecret", "recoveryCodes", "isPhoneOtpAllowed", "isEmailOtpAllowed", "isTotpAllowed", "isWebauthnAllowed", "isTfaEnabled", "phoneNumber", "userID", "defaultOrgID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "isWebauthnAllowed", "isTfaEnabled", "phoneNumber", "userID", "defaultOrgID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40126,41 +39815,6 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.Tags = data
-		case "tfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSecret = data
-		case "recoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCodes = data
-		case "isPhoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsPhoneOtpAllowed = data
-		case "isEmailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEmailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsEmailOtpAllowed = data
-		case "isTotpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTotpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsTotpAllowed = data
 		case "isWebauthnAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWebauthnAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -54644,7 +54298,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "tfaSecret", "clearTfaSecret", "recoveryCodes", "appendRecoveryCodes", "clearRecoveryCodes", "isPhoneOtpAllowed", "clearIsPhoneOtpAllowed", "isEmailOtpAllowed", "clearIsEmailOtpAllowed", "isTotpAllowed", "clearIsTotpAllowed", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "phoneNumber", "clearPhoneNumber", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "phoneNumber", "clearPhoneNumber", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54742,83 +54396,6 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.AppendTags = data
-		case "tfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSecret"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TfaSecret = data
-		case "clearTfaSecret":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTfaSecret"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearTfaSecret = data
-		case "recoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RecoveryCodes = data
-		case "appendRecoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendRecoveryCodes"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AppendRecoveryCodes = data
-		case "clearRecoveryCodes":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearRecoveryCodes"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearRecoveryCodes = data
-		case "isPhoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsPhoneOtpAllowed = data
-		case "clearIsPhoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsPhoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearIsPhoneOtpAllowed = data
-		case "isEmailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEmailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsEmailOtpAllowed = data
-		case "clearIsEmailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsEmailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearIsEmailOtpAllowed = data
-		case "isTotpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTotpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsTotpAllowed = data
-		case "clearIsTotpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsTotpAllowed"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearIsTotpAllowed = data
 		case "isWebauthnAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWebauthnAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -54940,7 +54517,7 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "userIDGT", "userIDGTE", "userIDLT", "userIDLTE", "userIDContains", "userIDHasPrefix", "userIDHasSuffix", "userIDIsNil", "userIDNotNil", "userIDEqualFold", "userIDContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "emailConfirmed", "emailConfirmedNEQ", "isPhoneOtpAllowed", "isPhoneOtpAllowedNEQ", "isPhoneOtpAllowedIsNil", "isPhoneOtpAllowedNotNil", "isEmailOtpAllowed", "isEmailOtpAllowedNEQ", "isEmailOtpAllowedIsNil", "isEmailOtpAllowedNotNil", "isTotpAllowed", "isTotpAllowedNEQ", "isTotpAllowedIsNil", "isTotpAllowedNotNil", "isWebauthnAllowed", "isWebauthnAllowedNEQ", "isWebauthnAllowedIsNil", "isWebauthnAllowedNotNil", "isTfaEnabled", "isTfaEnabledNEQ", "isTfaEnabledIsNil", "isTfaEnabledNotNil", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "hasUser", "hasUserWith", "hasDefaultOrg", "hasDefaultOrgWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "userIDGT", "userIDGTE", "userIDLT", "userIDLTE", "userIDContains", "userIDHasPrefix", "userIDHasSuffix", "userIDIsNil", "userIDNotNil", "userIDEqualFold", "userIDContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "emailConfirmed", "emailConfirmedNEQ", "isWebauthnAllowed", "isWebauthnAllowedNEQ", "isWebauthnAllowedIsNil", "isWebauthnAllowedNotNil", "isTfaEnabled", "isTfaEnabledNEQ", "isTfaEnabledIsNil", "isTfaEnabledNotNil", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "hasUser", "hasUserWith", "hasDefaultOrg", "hasDefaultOrgWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -55864,90 +55441,6 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.EmailConfirmedNEQ = data
-		case "isPhoneOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsPhoneOtpAllowed = data
-		case "isPhoneOtpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsPhoneOtpAllowedNEQ = data
-		case "isPhoneOtpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowedIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsPhoneOtpAllowedIsNil = data
-		case "isPhoneOtpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isPhoneOtpAllowedNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsPhoneOtpAllowedNotNil = data
-		case "isEmailOtpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEmailOtpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsEmailOtpAllowed = data
-		case "isEmailOtpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEmailOtpAllowedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsEmailOtpAllowedNEQ = data
-		case "isEmailOtpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEmailOtpAllowedIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsEmailOtpAllowedIsNil = data
-		case "isEmailOtpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEmailOtpAllowedNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsEmailOtpAllowedNotNil = data
-		case "isTotpAllowed":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTotpAllowed"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsTotpAllowed = data
-		case "isTotpAllowedNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTotpAllowedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsTotpAllowedNEQ = data
-		case "isTotpAllowedIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTotpAllowedIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsTotpAllowedIsNil = data
-		case "isTotpAllowedNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTotpAllowedNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsTotpAllowedNotNil = data
 		case "isWebauthnAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWebauthnAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -64144,14 +63637,6 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "recoveryCodes":
-			out.Values[i] = ec._UserSetting_recoveryCodes(ctx, field, obj)
-		case "isPhoneOtpAllowed":
-			out.Values[i] = ec._UserSetting_isPhoneOtpAllowed(ctx, field, obj)
-		case "isEmailOtpAllowed":
-			out.Values[i] = ec._UserSetting_isEmailOtpAllowed(ctx, field, obj)
-		case "isTotpAllowed":
-			out.Values[i] = ec._UserSetting_isTotpAllowed(ctx, field, obj)
 		case "isWebauthnAllowed":
 			out.Values[i] = ec._UserSetting_isWebauthnAllowed(ctx, field, obj)
 		case "isTfaEnabled":

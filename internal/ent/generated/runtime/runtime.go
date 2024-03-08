@@ -936,24 +936,12 @@ func init() {
 	usersettingDescTags := usersettingFields[6].Descriptor()
 	// usersetting.DefaultTags holds the default value on creation for the tags field.
 	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
-	// usersettingDescIsPhoneOtpAllowed is the schema descriptor for is_phone_otp_allowed field.
-	usersettingDescIsPhoneOtpAllowed := usersettingFields[9].Descriptor()
-	// usersetting.DefaultIsPhoneOtpAllowed holds the default value on creation for the is_phone_otp_allowed field.
-	usersetting.DefaultIsPhoneOtpAllowed = usersettingDescIsPhoneOtpAllowed.Default.(bool)
-	// usersettingDescIsEmailOtpAllowed is the schema descriptor for is_email_otp_allowed field.
-	usersettingDescIsEmailOtpAllowed := usersettingFields[10].Descriptor()
-	// usersetting.DefaultIsEmailOtpAllowed holds the default value on creation for the is_email_otp_allowed field.
-	usersetting.DefaultIsEmailOtpAllowed = usersettingDescIsEmailOtpAllowed.Default.(bool)
-	// usersettingDescIsTotpAllowed is the schema descriptor for is_totp_allowed field.
-	usersettingDescIsTotpAllowed := usersettingFields[11].Descriptor()
-	// usersetting.DefaultIsTotpAllowed holds the default value on creation for the is_totp_allowed field.
-	usersetting.DefaultIsTotpAllowed = usersettingDescIsTotpAllowed.Default.(bool)
 	// usersettingDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
-	usersettingDescIsWebauthnAllowed := usersettingFields[12].Descriptor()
+	usersettingDescIsWebauthnAllowed := usersettingFields[7].Descriptor()
 	// usersetting.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.
 	usersetting.DefaultIsWebauthnAllowed = usersettingDescIsWebauthnAllowed.Default.(bool)
 	// usersettingDescIsTfaEnabled is the schema descriptor for is_tfa_enabled field.
-	usersettingDescIsTfaEnabled := usersettingFields[13].Descriptor()
+	usersettingDescIsTfaEnabled := usersettingFields[8].Descriptor()
 	// usersetting.DefaultIsTfaEnabled holds the default value on creation for the is_tfa_enabled field.
 	usersetting.DefaultIsTfaEnabled = usersettingDescIsTfaEnabled.Default.(bool)
 	// usersettingDescID is the schema descriptor for id field.

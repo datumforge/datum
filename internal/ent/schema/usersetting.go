@@ -60,28 +60,6 @@ func (UserSetting) Fields() []ent.Field {
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the user").
 			Default([]string{}),
-		field.String("tfa_secret").
-			Comment("TFA secret for the user").
-			Sensitive().
-			Annotations(entoas.Skip(true)).
-			Optional().
-			Nillable(),
-		field.Strings("recovery_codes").
-			Comment("recovery codes for 2fa").
-			Annotations(entoas.Skip(true)).
-			Optional(),
-		field.Bool("is_phone_otp_allowed").
-			Comment("specifies a user may complete authentication by verifying an OTP code delivered through SMS").
-			Optional().
-			Default(false),
-		field.Bool("is_email_otp_allowed").
-			Comment("specifies a user may complete authentication by verifying an OTP code delivered through email").
-			Optional().
-			Default(false),
-		field.Bool("is_totp_allowed").
-			Comment("specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app").
-			Optional().
-			Default(false),
 		field.Bool("is_webauthn_allowed").
 			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
 			Optional().

@@ -10217,41 +10217,6 @@ type UserSettingWhereInput struct {
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
 	EmailConfirmedNEQ *bool `json:"emailConfirmedNEQ,omitempty"`
 
-	// "tfa_secret" field predicates.
-	TfaSecret             *string  `json:"tfaSecret,omitempty"`
-	TfaSecretNEQ          *string  `json:"tfaSecretNEQ,omitempty"`
-	TfaSecretIn           []string `json:"tfaSecretIn,omitempty"`
-	TfaSecretNotIn        []string `json:"tfaSecretNotIn,omitempty"`
-	TfaSecretGT           *string  `json:"tfaSecretGT,omitempty"`
-	TfaSecretGTE          *string  `json:"tfaSecretGTE,omitempty"`
-	TfaSecretLT           *string  `json:"tfaSecretLT,omitempty"`
-	TfaSecretLTE          *string  `json:"tfaSecretLTE,omitempty"`
-	TfaSecretContains     *string  `json:"tfaSecretContains,omitempty"`
-	TfaSecretHasPrefix    *string  `json:"tfaSecretHasPrefix,omitempty"`
-	TfaSecretHasSuffix    *string  `json:"tfaSecretHasSuffix,omitempty"`
-	TfaSecretIsNil        bool     `json:"tfaSecretIsNil,omitempty"`
-	TfaSecretNotNil       bool     `json:"tfaSecretNotNil,omitempty"`
-	TfaSecretEqualFold    *string  `json:"tfaSecretEqualFold,omitempty"`
-	TfaSecretContainsFold *string  `json:"tfaSecretContainsFold,omitempty"`
-
-	// "is_phone_otp_allowed" field predicates.
-	IsPhoneOtpAllowed       *bool `json:"isPhoneOtpAllowed,omitempty"`
-	IsPhoneOtpAllowedNEQ    *bool `json:"isPhoneOtpAllowedNEQ,omitempty"`
-	IsPhoneOtpAllowedIsNil  bool  `json:"isPhoneOtpAllowedIsNil,omitempty"`
-	IsPhoneOtpAllowedNotNil bool  `json:"isPhoneOtpAllowedNotNil,omitempty"`
-
-	// "is_email_otp_allowed" field predicates.
-	IsEmailOtpAllowed       *bool `json:"isEmailOtpAllowed,omitempty"`
-	IsEmailOtpAllowedNEQ    *bool `json:"isEmailOtpAllowedNEQ,omitempty"`
-	IsEmailOtpAllowedIsNil  bool  `json:"isEmailOtpAllowedIsNil,omitempty"`
-	IsEmailOtpAllowedNotNil bool  `json:"isEmailOtpAllowedNotNil,omitempty"`
-
-	// "is_totp_allowed" field predicates.
-	IsTotpAllowed       *bool `json:"isTotpAllowed,omitempty"`
-	IsTotpAllowedNEQ    *bool `json:"isTotpAllowedNEQ,omitempty"`
-	IsTotpAllowedIsNil  bool  `json:"isTotpAllowedIsNil,omitempty"`
-	IsTotpAllowedNotNil bool  `json:"isTotpAllowedNotNil,omitempty"`
-
 	// "is_webauthn_allowed" field predicates.
 	IsWebauthnAllowed       *bool `json:"isWebauthnAllowed,omitempty"`
 	IsWebauthnAllowedNEQ    *bool `json:"isWebauthnAllowedNEQ,omitempty"`
@@ -10744,87 +10709,6 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 	}
 	if i.EmailConfirmedNEQ != nil {
 		predicates = append(predicates, usersetting.EmailConfirmedNEQ(*i.EmailConfirmedNEQ))
-	}
-	if i.TfaSecret != nil {
-		predicates = append(predicates, usersetting.TfaSecretEQ(*i.TfaSecret))
-	}
-	if i.TfaSecretNEQ != nil {
-		predicates = append(predicates, usersetting.TfaSecretNEQ(*i.TfaSecretNEQ))
-	}
-	if len(i.TfaSecretIn) > 0 {
-		predicates = append(predicates, usersetting.TfaSecretIn(i.TfaSecretIn...))
-	}
-	if len(i.TfaSecretNotIn) > 0 {
-		predicates = append(predicates, usersetting.TfaSecretNotIn(i.TfaSecretNotIn...))
-	}
-	if i.TfaSecretGT != nil {
-		predicates = append(predicates, usersetting.TfaSecretGT(*i.TfaSecretGT))
-	}
-	if i.TfaSecretGTE != nil {
-		predicates = append(predicates, usersetting.TfaSecretGTE(*i.TfaSecretGTE))
-	}
-	if i.TfaSecretLT != nil {
-		predicates = append(predicates, usersetting.TfaSecretLT(*i.TfaSecretLT))
-	}
-	if i.TfaSecretLTE != nil {
-		predicates = append(predicates, usersetting.TfaSecretLTE(*i.TfaSecretLTE))
-	}
-	if i.TfaSecretContains != nil {
-		predicates = append(predicates, usersetting.TfaSecretContains(*i.TfaSecretContains))
-	}
-	if i.TfaSecretHasPrefix != nil {
-		predicates = append(predicates, usersetting.TfaSecretHasPrefix(*i.TfaSecretHasPrefix))
-	}
-	if i.TfaSecretHasSuffix != nil {
-		predicates = append(predicates, usersetting.TfaSecretHasSuffix(*i.TfaSecretHasSuffix))
-	}
-	if i.TfaSecretIsNil {
-		predicates = append(predicates, usersetting.TfaSecretIsNil())
-	}
-	if i.TfaSecretNotNil {
-		predicates = append(predicates, usersetting.TfaSecretNotNil())
-	}
-	if i.TfaSecretEqualFold != nil {
-		predicates = append(predicates, usersetting.TfaSecretEqualFold(*i.TfaSecretEqualFold))
-	}
-	if i.TfaSecretContainsFold != nil {
-		predicates = append(predicates, usersetting.TfaSecretContainsFold(*i.TfaSecretContainsFold))
-	}
-	if i.IsPhoneOtpAllowed != nil {
-		predicates = append(predicates, usersetting.IsPhoneOtpAllowedEQ(*i.IsPhoneOtpAllowed))
-	}
-	if i.IsPhoneOtpAllowedNEQ != nil {
-		predicates = append(predicates, usersetting.IsPhoneOtpAllowedNEQ(*i.IsPhoneOtpAllowedNEQ))
-	}
-	if i.IsPhoneOtpAllowedIsNil {
-		predicates = append(predicates, usersetting.IsPhoneOtpAllowedIsNil())
-	}
-	if i.IsPhoneOtpAllowedNotNil {
-		predicates = append(predicates, usersetting.IsPhoneOtpAllowedNotNil())
-	}
-	if i.IsEmailOtpAllowed != nil {
-		predicates = append(predicates, usersetting.IsEmailOtpAllowedEQ(*i.IsEmailOtpAllowed))
-	}
-	if i.IsEmailOtpAllowedNEQ != nil {
-		predicates = append(predicates, usersetting.IsEmailOtpAllowedNEQ(*i.IsEmailOtpAllowedNEQ))
-	}
-	if i.IsEmailOtpAllowedIsNil {
-		predicates = append(predicates, usersetting.IsEmailOtpAllowedIsNil())
-	}
-	if i.IsEmailOtpAllowedNotNil {
-		predicates = append(predicates, usersetting.IsEmailOtpAllowedNotNil())
-	}
-	if i.IsTotpAllowed != nil {
-		predicates = append(predicates, usersetting.IsTotpAllowedEQ(*i.IsTotpAllowed))
-	}
-	if i.IsTotpAllowedNEQ != nil {
-		predicates = append(predicates, usersetting.IsTotpAllowedNEQ(*i.IsTotpAllowedNEQ))
-	}
-	if i.IsTotpAllowedIsNil {
-		predicates = append(predicates, usersetting.IsTotpAllowedIsNil())
-	}
-	if i.IsTotpAllowedNotNil {
-		predicates = append(predicates, usersetting.IsTotpAllowedNotNil())
 	}
 	if i.IsWebauthnAllowed != nil {
 		predicates = append(predicates, usersetting.IsWebauthnAllowedEQ(*i.IsWebauthnAllowed))

@@ -2058,11 +2058,6 @@ type CreateUserSettingInput struct {
 	Status            *enums.UserStatus
 	EmailConfirmed    *bool
 	Tags              []string
-	TfaSecret         *string
-	RecoveryCodes     []string
-	IsPhoneOtpAllowed *bool
-	IsEmailOtpAllowed *bool
-	IsTotpAllowed     *bool
 	IsWebauthnAllowed *bool
 	IsTfaEnabled      *bool
 	PhoneNumber       *string
@@ -2102,21 +2097,6 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	if v := i.TfaSecret; v != nil {
-		m.SetTfaSecret(*v)
-	}
-	if v := i.RecoveryCodes; v != nil {
-		m.SetRecoveryCodes(v)
-	}
-	if v := i.IsPhoneOtpAllowed; v != nil {
-		m.SetIsPhoneOtpAllowed(*v)
-	}
-	if v := i.IsEmailOtpAllowed; v != nil {
-		m.SetIsEmailOtpAllowed(*v)
-	}
-	if v := i.IsTotpAllowed; v != nil {
-		m.SetIsTotpAllowed(*v)
-	}
 	if v := i.IsWebauthnAllowed; v != nil {
 		m.SetIsWebauthnAllowed(*v)
 	}
@@ -2155,17 +2135,6 @@ type UpdateUserSettingInput struct {
 	EmailConfirmed         *bool
 	Tags                   []string
 	AppendTags             []string
-	ClearTfaSecret         bool
-	TfaSecret              *string
-	ClearRecoveryCodes     bool
-	RecoveryCodes          []string
-	AppendRecoveryCodes    []string
-	ClearIsPhoneOtpAllowed bool
-	IsPhoneOtpAllowed      *bool
-	ClearIsEmailOtpAllowed bool
-	IsEmailOtpAllowed      *bool
-	ClearIsTotpAllowed     bool
-	IsTotpAllowed          *bool
 	ClearIsWebauthnAllowed bool
 	IsWebauthnAllowed      *bool
 	ClearIsTfaEnabled      bool
@@ -2218,39 +2187,6 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
-	}
-	if i.ClearTfaSecret {
-		m.ClearTfaSecret()
-	}
-	if v := i.TfaSecret; v != nil {
-		m.SetTfaSecret(*v)
-	}
-	if i.ClearRecoveryCodes {
-		m.ClearRecoveryCodes()
-	}
-	if v := i.RecoveryCodes; v != nil {
-		m.SetRecoveryCodes(v)
-	}
-	if i.AppendRecoveryCodes != nil {
-		m.AppendRecoveryCodes(i.RecoveryCodes)
-	}
-	if i.ClearIsPhoneOtpAllowed {
-		m.ClearIsPhoneOtpAllowed()
-	}
-	if v := i.IsPhoneOtpAllowed; v != nil {
-		m.SetIsPhoneOtpAllowed(*v)
-	}
-	if i.ClearIsEmailOtpAllowed {
-		m.ClearIsEmailOtpAllowed()
-	}
-	if v := i.IsEmailOtpAllowed; v != nil {
-		m.SetIsEmailOtpAllowed(*v)
-	}
-	if i.ClearIsTotpAllowed {
-		m.ClearIsTotpAllowed()
-	}
-	if v := i.IsTotpAllowed; v != nil {
-		m.SetIsTotpAllowed(*v)
 	}
 	if i.ClearIsWebauthnAllowed {
 		m.ClearIsWebauthnAllowed()

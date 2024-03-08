@@ -5576,15 +5576,6 @@
                       "type": "string"
                     }
                   },
-                  "is_phone_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_email_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_totp_allowed": {
-                    "type": "boolean"
-                  },
                   "is_webauthn_allowed": {
                     "type": "boolean"
                   },
@@ -5764,15 +5755,6 @@
                     "items": {
                       "type": "string"
                     }
-                  },
-                  "is_phone_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_email_otp_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_totp_allowed": {
-                    "type": "boolean"
                   },
                   "is_webauthn_allowed": {
                     "type": "boolean"
@@ -8118,15 +8100,6 @@
             "items": {
               "type": "string"
             }
-          },
-          "is_phone_otp_allowed": {
-            "type": "boolean"
-          },
-          "is_email_otp_allowed": {
-            "type": "boolean"
-          },
-          "is_totp_allowed": {
-            "type": "boolean"
           },
           "is_webauthn_allowed": {
             "type": "boolean"

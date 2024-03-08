@@ -44,16 +44,6 @@ const (
 	FieldEmailConfirmed = "email_confirmed"
 	// FieldTags holds the string denoting the tags field in the database.
 	FieldTags = "tags"
-	// FieldTfaSecret holds the string denoting the tfa_secret field in the database.
-	FieldTfaSecret = "tfa_secret"
-	// FieldRecoveryCodes holds the string denoting the recovery_codes field in the database.
-	FieldRecoveryCodes = "recovery_codes"
-	// FieldIsPhoneOtpAllowed holds the string denoting the is_phone_otp_allowed field in the database.
-	FieldIsPhoneOtpAllowed = "is_phone_otp_allowed"
-	// FieldIsEmailOtpAllowed holds the string denoting the is_email_otp_allowed field in the database.
-	FieldIsEmailOtpAllowed = "is_email_otp_allowed"
-	// FieldIsTotpAllowed holds the string denoting the is_totp_allowed field in the database.
-	FieldIsTotpAllowed = "is_totp_allowed"
 	// FieldIsWebauthnAllowed holds the string denoting the is_webauthn_allowed field in the database.
 	FieldIsWebauthnAllowed = "is_webauthn_allowed"
 	// FieldIsTfaEnabled holds the string denoting the is_tfa_enabled field in the database.
@@ -98,11 +88,6 @@ var Columns = []string{
 	FieldStatus,
 	FieldEmailConfirmed,
 	FieldTags,
-	FieldTfaSecret,
-	FieldRecoveryCodes,
-	FieldIsPhoneOtpAllowed,
-	FieldIsEmailOtpAllowed,
-	FieldIsTotpAllowed,
 	FieldIsWebauthnAllowed,
 	FieldIsTfaEnabled,
 	FieldPhoneNumber,
@@ -150,12 +135,6 @@ var (
 	DefaultEmailConfirmed bool
 	// DefaultTags holds the default value on creation for the "tags" field.
 	DefaultTags []string
-	// DefaultIsPhoneOtpAllowed holds the default value on creation for the "is_phone_otp_allowed" field.
-	DefaultIsPhoneOtpAllowed bool
-	// DefaultIsEmailOtpAllowed holds the default value on creation for the "is_email_otp_allowed" field.
-	DefaultIsEmailOtpAllowed bool
-	// DefaultIsTotpAllowed holds the default value on creation for the "is_totp_allowed" field.
-	DefaultIsTotpAllowed bool
 	// DefaultIsWebauthnAllowed holds the default value on creation for the "is_webauthn_allowed" field.
 	DefaultIsWebauthnAllowed bool
 	// DefaultIsTfaEnabled holds the default value on creation for the "is_tfa_enabled" field.
@@ -242,26 +221,6 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByEmailConfirmed orders the results by the email_confirmed field.
 func ByEmailConfirmed(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmailConfirmed, opts...).ToFunc()
-}
-
-// ByTfaSecret orders the results by the tfa_secret field.
-func ByTfaSecret(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTfaSecret, opts...).ToFunc()
-}
-
-// ByIsPhoneOtpAllowed orders the results by the is_phone_otp_allowed field.
-func ByIsPhoneOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsPhoneOtpAllowed, opts...).ToFunc()
-}
-
-// ByIsEmailOtpAllowed orders the results by the is_email_otp_allowed field.
-func ByIsEmailOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsEmailOtpAllowed, opts...).ToFunc()
-}
-
-// ByIsTotpAllowed orders the results by the is_totp_allowed field.
-func ByIsTotpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsTotpAllowed, opts...).ToFunc()
 }
 
 // ByIsWebauthnAllowed orders the results by the is_webauthn_allowed field.

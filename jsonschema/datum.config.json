@@ -622,25 +622,32 @@
     "totp.Config": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable the OTP service"
         },
         "codeLength": {
-          "type": "integer"
+          "type": "integer",
+          "description": "CodeLength is the length of the OTP code"
         },
         "issuer": {
-          "type": "string"
+          "type": "string",
+          "description": "Issuer is the issuer for TOTP codes"
         },
         "redis": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "WithRedis configures the service with a redis client"
         },
         "secret": {
-          "type": "string"
+          "type": "string",
+          "description": "Secret stores a versioned secret key for cryptography functions"
         },
         "recoveryCodeCount": {
-          "type": "integer"
+          "type": "integer",
+          "description": "RecoveryCodeCount is the number of recovery codes to generate"
         },
         "recoveryCodeLength": {
-          "type": "integer"
+          "type": "integer",
+          "description": "RecoveryCodeLength is the length of a recovery code"
         }
       },
       "additionalProperties": false,

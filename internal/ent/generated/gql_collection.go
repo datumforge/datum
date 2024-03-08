@@ -515,6 +515,10 @@ func (gs *GroupSettingQuery) collectField(ctx context.Context, opCtx *graphql.Op
 				return err
 			}
 			gs.withGroup = query
+			if _, ok := fieldSeen[groupsetting.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupsetting.FieldGroupID)
+				fieldSeen[groupsetting.FieldGroupID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[groupsetting.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, groupsetting.FieldCreatedAt)
@@ -569,6 +573,11 @@ func (gs *GroupSettingQuery) collectField(ctx context.Context, opCtx *graphql.Op
 			if _, ok := fieldSeen[groupsetting.FieldSyncToGithub]; !ok {
 				selectedFields = append(selectedFields, groupsetting.FieldSyncToGithub)
 				fieldSeen[groupsetting.FieldSyncToGithub] = struct{}{}
+			}
+		case "groupID":
+			if _, ok := fieldSeen[groupsetting.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupsetting.FieldGroupID)
+				fieldSeen[groupsetting.FieldGroupID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1570,6 +1579,11 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, organization.FieldPersonalOrg)
 				fieldSeen[organization.FieldPersonalOrg] = struct{}{}
 			}
+		case "avatarRemoteURL":
+			if _, ok := fieldSeen[organization.FieldAvatarRemoteURL]; !ok {
+				selectedFields = append(selectedFields, organization.FieldAvatarRemoteURL)
+				fieldSeen[organization.FieldAvatarRemoteURL] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -1664,6 +1678,10 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 				return err
 			}
 			os.withOrganization = query
+			if _, ok := fieldSeen[organizationsetting.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldOrganizationID)
+				fieldSeen[organizationsetting.FieldOrganizationID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[organizationsetting.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldCreatedAt)
@@ -1699,21 +1717,6 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 				selectedFields = append(selectedFields, organizationsetting.FieldDomains)
 				fieldSeen[organizationsetting.FieldDomains] = struct{}{}
 			}
-		case "ssoCert":
-			if _, ok := fieldSeen[organizationsetting.FieldSSOCert]; !ok {
-				selectedFields = append(selectedFields, organizationsetting.FieldSSOCert)
-				fieldSeen[organizationsetting.FieldSSOCert] = struct{}{}
-			}
-		case "ssoEntrypoint":
-			if _, ok := fieldSeen[organizationsetting.FieldSSOEntrypoint]; !ok {
-				selectedFields = append(selectedFields, organizationsetting.FieldSSOEntrypoint)
-				fieldSeen[organizationsetting.FieldSSOEntrypoint] = struct{}{}
-			}
-		case "ssoIssuer":
-			if _, ok := fieldSeen[organizationsetting.FieldSSOIssuer]; !ok {
-				selectedFields = append(selectedFields, organizationsetting.FieldSSOIssuer)
-				fieldSeen[organizationsetting.FieldSSOIssuer] = struct{}{}
-			}
 		case "billingContact":
 			if _, ok := fieldSeen[organizationsetting.FieldBillingContact]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldBillingContact)
@@ -1743,6 +1746,11 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 			if _, ok := fieldSeen[organizationsetting.FieldTags]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldTags)
 				fieldSeen[organizationsetting.FieldTags] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[organizationsetting.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldOrganizationID)
+				fieldSeen[organizationsetting.FieldOrganizationID] = struct{}{}
 			}
 		case "id":
 		case "__typename":

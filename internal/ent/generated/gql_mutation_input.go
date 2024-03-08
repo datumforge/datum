@@ -1076,6 +1076,7 @@ type CreateOrganizationInput struct {
 	DisplayName            *string
 	Description            *string
 	PersonalOrg            *bool
+	AvatarRemoteURL        *string
 	ParentID               *string
 	GroupIDs               []string
 	IntegrationIDs         []string
@@ -1110,6 +1111,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.PersonalOrg; v != nil {
 		m.SetPersonalOrg(*v)
+	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
 	}
 	if v := i.ParentID; v != nil {
 		m.SetParentID(*v)
@@ -1156,6 +1160,8 @@ type UpdateOrganizationInput struct {
 	DisplayName                  *string
 	ClearDescription             bool
 	Description                  *string
+	ClearAvatarRemoteURL         bool
+	AvatarRemoteURL              *string
 	ClearGroups                  bool
 	AddGroupIDs                  []string
 	RemoveGroupIDs               []string
@@ -1206,6 +1212,12 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if i.ClearAvatarRemoteURL {
+		m.ClearAvatarRemoteURL()
+	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
 	}
 	if i.ClearGroups {
 		m.ClearGroups()
@@ -1297,9 +1309,6 @@ type CreateOrganizationSettingInput struct {
 	CreatedBy      *string
 	UpdatedBy      *string
 	Domains        []string
-	SSOCert        *string
-	SSOEntrypoint  *string
-	SSOIssuer      *string
 	BillingContact *string
 	BillingEmail   *string
 	BillingPhone   *string
@@ -1325,15 +1334,6 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if v := i.Domains; v != nil {
 		m.SetDomains(v)
-	}
-	if v := i.SSOCert; v != nil {
-		m.SetSSOCert(*v)
-	}
-	if v := i.SSOEntrypoint; v != nil {
-		m.SetSSOEntrypoint(*v)
-	}
-	if v := i.SSOIssuer; v != nil {
-		m.SetSSOIssuer(*v)
 	}
 	if v := i.BillingContact; v != nil {
 		m.SetBillingContact(*v)
@@ -1373,12 +1373,6 @@ type UpdateOrganizationSettingInput struct {
 	ClearDomains        bool
 	Domains             []string
 	AppendDomains       []string
-	ClearSSOCert        bool
-	SSOCert             *string
-	ClearSSOEntrypoint  bool
-	SSOEntrypoint       *string
-	ClearSSOIssuer      bool
-	SSOIssuer           *string
 	ClearBillingContact bool
 	BillingContact      *string
 	ClearBillingEmail   bool
@@ -1418,24 +1412,6 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if i.AppendDomains != nil {
 		m.AppendDomains(i.Domains)
-	}
-	if i.ClearSSOCert {
-		m.ClearSSOCert()
-	}
-	if v := i.SSOCert; v != nil {
-		m.SetSSOCert(*v)
-	}
-	if i.ClearSSOEntrypoint {
-		m.ClearSSOEntrypoint()
-	}
-	if v := i.SSOEntrypoint; v != nil {
-		m.SetSSOEntrypoint(*v)
-	}
-	if i.ClearSSOIssuer {
-		m.ClearSSOIssuer()
-	}
-	if v := i.SSOIssuer; v != nil {
-		m.SetSSOIssuer(*v)
 	}
 	if i.ClearBillingContact {
 		m.ClearBillingContact()

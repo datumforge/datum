@@ -150,6 +150,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			groupsetting.FieldTags:         {Type: field.TypeJSON, Column: groupsetting.FieldTags},
 			groupsetting.FieldSyncToSlack:  {Type: field.TypeBool, Column: groupsetting.FieldSyncToSlack},
 			groupsetting.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsetting.FieldSyncToGithub},
+			groupsetting.FieldGroupID:      {Type: field.TypeString, Column: groupsetting.FieldGroupID},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -300,6 +301,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldDescription:          {Type: field.TypeString, Column: organization.FieldDescription},
 			organization.FieldParentOrganizationID: {Type: field.TypeString, Column: organization.FieldParentOrganizationID},
 			organization.FieldPersonalOrg:          {Type: field.TypeBool, Column: organization.FieldPersonalOrg},
+			organization.FieldAvatarRemoteURL:      {Type: field.TypeString, Column: organization.FieldAvatarRemoteURL},
 		},
 	}
 	graph.Nodes[11] = &sqlgraph.Node{
@@ -320,15 +322,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organizationsetting.FieldDeletedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldDeletedAt},
 			organizationsetting.FieldDeletedBy:      {Type: field.TypeString, Column: organizationsetting.FieldDeletedBy},
 			organizationsetting.FieldDomains:        {Type: field.TypeJSON, Column: organizationsetting.FieldDomains},
-			organizationsetting.FieldSSOCert:        {Type: field.TypeString, Column: organizationsetting.FieldSSOCert},
-			organizationsetting.FieldSSOEntrypoint:  {Type: field.TypeString, Column: organizationsetting.FieldSSOEntrypoint},
-			organizationsetting.FieldSSOIssuer:      {Type: field.TypeString, Column: organizationsetting.FieldSSOIssuer},
 			organizationsetting.FieldBillingContact: {Type: field.TypeString, Column: organizationsetting.FieldBillingContact},
 			organizationsetting.FieldBillingEmail:   {Type: field.TypeString, Column: organizationsetting.FieldBillingEmail},
 			organizationsetting.FieldBillingPhone:   {Type: field.TypeString, Column: organizationsetting.FieldBillingPhone},
 			organizationsetting.FieldBillingAddress: {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
 			organizationsetting.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
 			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
+			organizationsetting.FieldOrganizationID: {Type: field.TypeString, Column: organizationsetting.FieldOrganizationID},
 		},
 	}
 	graph.Nodes[12] = &sqlgraph.Node{
@@ -1565,6 +1565,11 @@ func (f *GroupSettingFilter) WhereSyncToGithub(p entql.BoolP) {
 	f.Where(p.Field(groupsetting.FieldSyncToGithub))
 }
 
+// WhereGroupID applies the entql string predicate on the group_id field.
+func (f *GroupSettingFilter) WhereGroupID(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldGroupID))
+}
+
 // WhereHasGroup applies a predicate to check if query has an edge group.
 func (f *GroupSettingFilter) WhereHasGroup() {
 	f.Where(entql.HasEdge("group"))
@@ -2249,6 +2254,11 @@ func (f *OrganizationFilter) WherePersonalOrg(p entql.BoolP) {
 	f.Where(p.Field(organization.FieldPersonalOrg))
 }
 
+// WhereAvatarRemoteURL applies the entql string predicate on the avatar_remote_url field.
+func (f *OrganizationFilter) WhereAvatarRemoteURL(p entql.StringP) {
+	f.Where(p.Field(organization.FieldAvatarRemoteURL))
+}
+
 // WhereHasParent applies a predicate to check if query has an edge parent.
 func (f *OrganizationFilter) WhereHasParent() {
 	f.Where(entql.HasEdge("parent"))
@@ -2478,21 +2488,6 @@ func (f *OrganizationSettingFilter) WhereDomains(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldDomains))
 }
 
-// WhereSSOCert applies the entql string predicate on the sso_cert field.
-func (f *OrganizationSettingFilter) WhereSSOCert(p entql.StringP) {
-	f.Where(p.Field(organizationsetting.FieldSSOCert))
-}
-
-// WhereSSOEntrypoint applies the entql string predicate on the sso_entrypoint field.
-func (f *OrganizationSettingFilter) WhereSSOEntrypoint(p entql.StringP) {
-	f.Where(p.Field(organizationsetting.FieldSSOEntrypoint))
-}
-
-// WhereSSOIssuer applies the entql string predicate on the sso_issuer field.
-func (f *OrganizationSettingFilter) WhereSSOIssuer(p entql.StringP) {
-	f.Where(p.Field(organizationsetting.FieldSSOIssuer))
-}
-
 // WhereBillingContact applies the entql string predicate on the billing_contact field.
 func (f *OrganizationSettingFilter) WhereBillingContact(p entql.StringP) {
 	f.Where(p.Field(organizationsetting.FieldBillingContact))
@@ -2521,6 +2516,11 @@ func (f *OrganizationSettingFilter) WhereTaxIdentifier(p entql.StringP) {
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
 func (f *OrganizationSettingFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldTags))
+}
+
+// WhereOrganizationID applies the entql string predicate on the organization_id field.
+func (f *OrganizationSettingFilter) WhereOrganizationID(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldOrganizationID))
 }
 
 // WhereHasOrganization applies a predicate to check if query has an edge organization.

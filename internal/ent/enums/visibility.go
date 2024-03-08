@@ -3,6 +3,7 @@ package enums
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 type Visibility string
@@ -25,6 +26,18 @@ func (Visibility) Values() (kinds []string) {
 // String returns the visibility as a string
 func (r Visibility) String() string {
 	return string(r)
+}
+
+// ToGroupVisibility returns the user status enum based on string input
+func ToGroupVisibility(r string) *Visibility {
+	switch r := strings.ToUpper(r); r {
+	case Public.String():
+		return &Public
+	case Private.String():
+		return &Private
+	default:
+		return &Private
+	}
 }
 
 // MarshalGQL implement the Marshaler interface for gqlgen

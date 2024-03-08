@@ -846,6 +846,9 @@
                   "sync_to_github": {
                     "type": "boolean"
                   },
+                  "group_id": {
+                    "type": "string"
+                  },
                   "group": {
                     "type": "string"
                   }
@@ -1016,6 +1019,9 @@
                   },
                   "sync_to_github": {
                     "type": "boolean"
+                  },
+                  "group_id": {
+                    "type": "string"
                   },
                   "group": {
                     "type": "string"
@@ -3413,15 +3419,6 @@
                       "type": "string"
                     }
                   },
-                  "sso_cert": {
-                    "type": "string"
-                  },
-                  "sso_entrypoint": {
-                    "type": "string"
-                  },
-                  "sso_issuer": {
-                    "type": "string"
-                  },
                   "billing_contact": {
                     "type": "string"
                   },
@@ -3442,6 +3439,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "organization_id": {
+                    "type": "string"
                   },
                   "organization": {
                     "type": "string"
@@ -3586,15 +3586,6 @@
                       "type": "string"
                     }
                   },
-                  "sso_cert": {
-                    "type": "string"
-                  },
-                  "sso_entrypoint": {
-                    "type": "string"
-                  },
-                  "sso_issuer": {
-                    "type": "string"
-                  },
                   "billing_contact": {
                     "type": "string"
                   },
@@ -3615,6 +3606,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "organization_id": {
+                    "type": "string"
                   },
                   "organization": {
                     "type": "string"
@@ -3781,6 +3775,9 @@
                   },
                   "personal_org": {
                     "type": "boolean"
+                  },
+                  "avatar_remote_url": {
+                    "type": "string"
                   },
                   "parent": {
                     "type": "string"
@@ -3987,6 +3984,9 @@
                     "type": "string"
                   },
                   "description": {
+                    "type": "string"
+                  },
+                  "avatar_remote_url": {
                     "type": "string"
                   },
                   "parent": {
@@ -6887,6 +6887,9 @@
           "sync_to_github": {
             "type": "boolean"
           },
+          "group_id": {
+            "type": "string"
+          },
           "group": {
             "$ref": "#/components/schemas/Group"
           }
@@ -7262,6 +7265,9 @@
           "personal_org": {
             "type": "boolean"
           },
+          "avatar_remote_url": {
+            "type": "string"
+          },
           "parent": {
             "$ref": "#/components/schemas/Organization"
           },
@@ -7362,15 +7368,6 @@
               "type": "string"
             }
           },
-          "sso_cert": {
-            "type": "string"
-          },
-          "sso_entrypoint": {
-            "type": "string"
-          },
-          "sso_issuer": {
-            "type": "string"
-          },
           "billing_contact": {
             "type": "string"
           },
@@ -7391,6 +7388,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "organization_id": {
+            "type": "string"
           },
           "organization": {
             "$ref": "#/components/schemas/Organization"

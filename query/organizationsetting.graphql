@@ -1,22 +1,100 @@
-query GetOrganizationSetting($organizationSettingId: ID!) {
+query GetOrganizationSettingByID($organizationSettingId: ID!) {
   organizationSetting(id: $organizationSettingId) {
     id
-    ssoCert
-    taxIdentifier
-    tags
-    ssoIssuer
-    ssoEntrypoint
-    billingAddress
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    deletedAt
+    deletedBy
+    domains
     billingContact
     billingEmail
     billingPhone
-    createdAt
-    createdBy
-    domains
-    updatedAt
-    updatedBy
+    billingAddress
+    taxIdentifier
+    tags
     organization {
       id
+    }
+  }
+}
+
+
+query GetOrganizationSettings() {
+  organizationSettings() {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        domains
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        tags
+        organization {
+          id
+        }
+      }
+    }
+  }
+}
+
+
+
+query GetOrganizationSettingWhere($where: OrganizationSettingWhereInput!) {
+  organizationSettings(where: $where) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        domains
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        tags
+        organization {
+          id
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateOrganizationSetting($updateOrganizationSettingId: ID!, $input: UpdateOrganizationSettingInput!) {
+  updateOrganizationSetting(id: $updateOrganizationSettingId, input: $input) {
+    organizationSetting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      domains
+      billingContact
+      billingEmail
+      billingPhone
+      billingAddress
+      taxIdentifier
+      tags
+      organization {
+        id
+      }
     }
   }
 }

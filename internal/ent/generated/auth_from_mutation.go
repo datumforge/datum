@@ -154,6 +154,21 @@ func (m *GroupMembershipMutation) CreateTuplesFromDelete(ctx context.Context) er
 	return nil
 }
 
+func (m *GroupSettingMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *GroupSettingMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *GroupSettingMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
 func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	// Get fields for tuple creation
@@ -292,6 +307,21 @@ func (m *OrganizationMutation) CreateTuplesFromUpdate(ctx context.Context) error
 }
 
 func (m *OrganizationMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationSettingMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationSettingMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *OrganizationSettingMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }

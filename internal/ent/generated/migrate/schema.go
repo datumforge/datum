@@ -176,7 +176,7 @@ var (
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "group_setting", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "group_id", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// GroupSettingsTable holds the schema information for the "group_settings" table.
 	GroupSettingsTable = &schema.Table{
@@ -376,6 +376,7 @@ var (
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "personal_org", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -386,7 +387,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organizations_organizations_children",
-				Columns:    []*schema.Column{OrganizationsColumns[11]},
+				Columns:    []*schema.Column{OrganizationsColumns[12]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -412,16 +413,13 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "domains", Type: field.TypeJSON, Nullable: true},
-		{Name: "sso_cert", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "sso_entrypoint", Type: field.TypeString, Nullable: true},
-		{Name: "sso_issuer", Type: field.TypeString, Nullable: true},
 		{Name: "billing_contact", Type: field.TypeString, Nullable: true},
 		{Name: "billing_email", Type: field.TypeString, Nullable: true},
 		{Name: "billing_phone", Type: field.TypeString, Nullable: true},
 		{Name: "billing_address", Type: field.TypeString, Nullable: true},
 		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "organization_setting", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "organization_id", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
 	OrganizationSettingsTable = &schema.Table{
@@ -431,7 +429,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organization_settings_organizations_setting",
-				Columns:    []*schema.Column{OrganizationSettingsColumns[17]},
+				Columns:    []*schema.Column{OrganizationSettingsColumns[14]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

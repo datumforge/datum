@@ -33,29 +33,24 @@ type OrganizationSetting struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// domains associated with the organization
 	Domains []string `json:"domains,omitempty"`
-	// SSOCert holds the value of the "sso_cert" field.
-	SSOCert string `json:"sso_cert,omitempty"`
-	// SSOEntrypoint holds the value of the "sso_entrypoint" field.
-	SSOEntrypoint string `json:"sso_entrypoint,omitempty"`
-	// SSOIssuer holds the value of the "sso_issuer" field.
-	SSOIssuer string `json:"sso_issuer,omitempty"`
 	// Name of the person to contact for billing
 	BillingContact string `json:"billing_contact,omitempty"`
-	// BillingEmail holds the value of the "billing_email" field.
+	// Email address of the person to contact for billing
 	BillingEmail string `json:"billing_email,omitempty"`
-	// BillingPhone holds the value of the "billing_phone" field.
+	// Phone number to contact for billing
 	BillingPhone string `json:"billing_phone,omitempty"`
-	// BillingAddress holds the value of the "billing_address" field.
+	// Address to send billing information to
 	BillingAddress string `json:"billing_address,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
+	// the ID of the organization the settings belong to
+	OrganizationID string `json:"organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationSettingQuery when eager-loading is set.
-	Edges                OrganizationSettingEdges `json:"edges"`
-	organization_setting *string
-	selectValues         sql.SelectValues
+	Edges        OrganizationSettingEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // OrganizationSettingEdges holds the relations/edges for other nodes in the graph.
@@ -87,12 +82,10 @@ func (*OrganizationSetting) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organizationsetting.FieldDomains, organizationsetting.FieldTags:
 			values[i] = new([]byte)
-		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldSSOCert, organizationsetting.FieldSSOEntrypoint, organizationsetting.FieldSSOIssuer, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier:
+		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier, organizationsetting.FieldOrganizationID:
 			values[i] = new(sql.NullString)
 		case organizationsetting.FieldCreatedAt, organizationsetting.FieldUpdatedAt, organizationsetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case organizationsetting.ForeignKeys[0]: // organization_setting
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -158,24 +151,6 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 					return fmt.Errorf("unmarshal field domains: %w", err)
 				}
 			}
-		case organizationsetting.FieldSSOCert:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field sso_cert", values[i])
-			} else if value.Valid {
-				os.SSOCert = value.String
-			}
-		case organizationsetting.FieldSSOEntrypoint:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field sso_entrypoint", values[i])
-			} else if value.Valid {
-				os.SSOEntrypoint = value.String
-			}
-		case organizationsetting.FieldSSOIssuer:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field sso_issuer", values[i])
-			} else if value.Valid {
-				os.SSOIssuer = value.String
-			}
 		case organizationsetting.FieldBillingContact:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field billing_contact", values[i])
@@ -214,12 +189,11 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
-		case organizationsetting.ForeignKeys[0]:
+		case organizationsetting.FieldOrganizationID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_setting", values[i])
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {
-				os.organization_setting = new(string)
-				*os.organization_setting = value.String
+				os.OrganizationID = value.String
 			}
 		default:
 			os.selectValues.Set(columns[i], values[i])
@@ -283,15 +257,6 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString("domains=")
 	builder.WriteString(fmt.Sprintf("%v", os.Domains))
 	builder.WriteString(", ")
-	builder.WriteString("sso_cert=")
-	builder.WriteString(os.SSOCert)
-	builder.WriteString(", ")
-	builder.WriteString("sso_entrypoint=")
-	builder.WriteString(os.SSOEntrypoint)
-	builder.WriteString(", ")
-	builder.WriteString("sso_issuer=")
-	builder.WriteString(os.SSOIssuer)
-	builder.WriteString(", ")
 	builder.WriteString("billing_contact=")
 	builder.WriteString(os.BillingContact)
 	builder.WriteString(", ")
@@ -309,6 +274,9 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tags=")
 	builder.WriteString(fmt.Sprintf("%v", os.Tags))
+	builder.WriteString(", ")
+	builder.WriteString("organization_id=")
+	builder.WriteString(os.OrganizationID)
 	builder.WriteByte(')')
 	return builder.String()
 }

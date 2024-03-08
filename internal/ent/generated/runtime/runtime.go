@@ -232,10 +232,21 @@ func init() {
 	// groupmembership.DefaultID holds the default value on creation for the id field.
 	groupmembership.DefaultID = groupmembershipDescID.Default.(func() string)
 	groupsettingMixin := schema.GroupSetting{}.Mixin()
+	groupsetting.Policy = privacy.NewPolicies(schema.GroupSetting{})
+	groupsetting.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := groupsetting.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	groupsettingMixinHooks0 := groupsettingMixin[0].Hooks()
 	groupsettingMixinHooks2 := groupsettingMixin[2].Hooks()
-	groupsetting.Hooks[0] = groupsettingMixinHooks0[0]
-	groupsetting.Hooks[1] = groupsettingMixinHooks2[0]
+
+	groupsetting.Hooks[1] = groupsettingMixinHooks0[0]
+
+	groupsetting.Hooks[2] = groupsettingMixinHooks2[0]
 	groupsettingMixinInters2 := groupsettingMixin[2].Interceptors()
 	groupsetting.Interceptors[0] = groupsettingMixinInters2[0]
 	groupsettingMixinFields0 := groupsettingMixin[0].Fields()
@@ -550,15 +561,44 @@ func init() {
 	organizationDescPersonalOrg := organizationFields[4].Descriptor()
 	// organization.DefaultPersonalOrg holds the default value on creation for the personal_org field.
 	organization.DefaultPersonalOrg = organizationDescPersonalOrg.Default.(bool)
+	// organizationDescAvatarRemoteURL is the schema descriptor for avatar_remote_url field.
+	organizationDescAvatarRemoteURL := organizationFields[5].Descriptor()
+	// organization.AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
+	organization.AvatarRemoteURLValidator = func() func(string) error {
+		validators := organizationDescAvatarRemoteURL.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(avatar_remote_url string) error {
+			for _, fn := range fns {
+				if err := fn(avatar_remote_url); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
 	organization.DefaultID = organizationDescID.Default.(func() string)
 	organizationsettingMixin := schema.OrganizationSetting{}.Mixin()
+	organizationsetting.Policy = privacy.NewPolicies(schema.OrganizationSetting{})
+	organizationsetting.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := organizationsetting.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	organizationsettingMixinHooks0 := organizationsettingMixin[0].Hooks()
 	organizationsettingMixinHooks2 := organizationsettingMixin[2].Hooks()
-	organizationsetting.Hooks[0] = organizationsettingMixinHooks0[0]
-	organizationsetting.Hooks[1] = organizationsettingMixinHooks2[0]
+
+	organizationsetting.Hooks[1] = organizationsettingMixinHooks0[0]
+
+	organizationsetting.Hooks[2] = organizationsettingMixinHooks2[0]
 	organizationsettingMixinInters2 := organizationsettingMixin[2].Interceptors()
 	organizationsetting.Interceptors[0] = organizationsettingMixinInters2[0]
 	organizationsettingMixinFields0 := organizationsettingMixin[0].Fields()
@@ -577,8 +617,20 @@ func init() {
 	organizationsetting.DefaultUpdatedAt = organizationsettingDescUpdatedAt.Default.(func() time.Time)
 	// organizationsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	organizationsetting.UpdateDefaultUpdatedAt = organizationsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// organizationsettingDescDomains is the schema descriptor for domains field.
+	organizationsettingDescDomains := organizationsettingFields[0].Descriptor()
+	// organizationsetting.DomainsValidator is a validator for the "domains" field. It is called by the builders before save.
+	organizationsetting.DomainsValidator = organizationsettingDescDomains.Validators[0].(func([]string) error)
+	// organizationsettingDescBillingEmail is the schema descriptor for billing_email field.
+	organizationsettingDescBillingEmail := organizationsettingFields[2].Descriptor()
+	// organizationsetting.BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
+	organizationsetting.BillingEmailValidator = organizationsettingDescBillingEmail.Validators[0].(func(string) error)
+	// organizationsettingDescBillingPhone is the schema descriptor for billing_phone field.
+	organizationsettingDescBillingPhone := organizationsettingFields[3].Descriptor()
+	// organizationsetting.BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.
+	organizationsetting.BillingPhoneValidator = organizationsettingDescBillingPhone.Validators[0].(func(string) error)
 	// organizationsettingDescTags is the schema descriptor for tags field.
-	organizationsettingDescTags := organizationsettingFields[9].Descriptor()
+	organizationsettingDescTags := organizationsettingFields[6].Descriptor()
 	// organizationsetting.DefaultTags holds the default value on creation for the tags field.
 	organizationsetting.DefaultTags = organizationsettingDescTags.Default.([]string)
 	// organizationsettingDescID is the schema descriptor for id field.

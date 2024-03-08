@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type GroupSettingQuery struct {
 	inters     []Interceptor
 	predicates []predicate.GroupSetting
 	withGroup  *GroupQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*GroupSetting) error
 	// intermediate query (i.e. traversal path).
@@ -370,24 +370,23 @@ func (gsq *GroupSettingQuery) prepareQuery(ctx context.Context) error {
 		}
 		gsq.sql = prev
 	}
+	if groupsetting.Policy == nil {
+		return errors.New("generated: uninitialized groupsetting.Policy (forgotten import generated/runtime?)")
+	}
+	if err := groupsetting.Policy.EvalQuery(ctx, gsq); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (gsq *GroupSettingQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*GroupSetting, error) {
 	var (
 		nodes       = []*GroupSetting{}
-		withFKs     = gsq.withFKs
 		_spec       = gsq.querySpec()
 		loadedTypes = [1]bool{
 			gsq.withGroup != nil,
 		}
 	)
-	if gsq.withGroup != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, groupsetting.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*GroupSetting).scanValues(nil, columns)
 	}
@@ -429,10 +428,7 @@ func (gsq *GroupSettingQuery) loadGroup(ctx context.Context, query *GroupQuery, 
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*GroupSetting)
 	for i := range nodes {
-		if nodes[i].group_setting == nil {
-			continue
-		}
-		fk := *nodes[i].group_setting
+		fk := nodes[i].GroupID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +445,7 @@ func (gsq *GroupSettingQuery) loadGroup(ctx context.Context, query *GroupQuery, 
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "group_setting" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "group_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +483,9 @@ func (gsq *GroupSettingQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != groupsetting.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if gsq.withGroup != nil {
+			_spec.Node.AddColumnOnce(groupsetting.FieldGroupID)
 		}
 	}
 	if ps := gsq.predicates; len(ps) > 0 {

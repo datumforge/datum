@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type OrganizationSettingQuery struct {
 	inters           []Interceptor
 	predicates       []predicate.OrganizationSetting
 	withOrganization *OrganizationQuery
-	withFKs          bool
 	modifiers        []func(*sql.Selector)
 	loadTotal        []func(context.Context, []*OrganizationSetting) error
 	// intermediate query (i.e. traversal path).
@@ -370,24 +370,23 @@ func (osq *OrganizationSettingQuery) prepareQuery(ctx context.Context) error {
 		}
 		osq.sql = prev
 	}
+	if organizationsetting.Policy == nil {
+		return errors.New("generated: uninitialized organizationsetting.Policy (forgotten import generated/runtime?)")
+	}
+	if err := organizationsetting.Policy.EvalQuery(ctx, osq); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (osq *OrganizationSettingQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*OrganizationSetting, error) {
 	var (
 		nodes       = []*OrganizationSetting{}
-		withFKs     = osq.withFKs
 		_spec       = osq.querySpec()
 		loadedTypes = [1]bool{
 			osq.withOrganization != nil,
 		}
 	)
-	if osq.withOrganization != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, organizationsetting.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*OrganizationSetting).scanValues(nil, columns)
 	}
@@ -429,10 +428,7 @@ func (osq *OrganizationSettingQuery) loadOrganization(ctx context.Context, query
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*OrganizationSetting)
 	for i := range nodes {
-		if nodes[i].organization_setting == nil {
-			continue
-		}
-		fk := *nodes[i].organization_setting
+		fk := nodes[i].OrganizationID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +445,7 @@ func (osq *OrganizationSettingQuery) loadOrganization(ctx context.Context, query
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "organization_setting" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "organization_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +483,9 @@ func (osq *OrganizationSettingQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != organizationsetting.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if osq.withOrganization != nil {
+			_spec.Node.AddColumnOnce(organizationsetting.FieldOrganizationID)
 		}
 	}
 	if ps := osq.predicates; len(ps) > 0 {

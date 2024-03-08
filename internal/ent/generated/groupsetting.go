@@ -38,15 +38,16 @@ type GroupSetting struct {
 	JoinPolicy enums.JoinPolicy `json:"join_policy,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
-	// SyncToSlack holds the value of the "sync_to_slack" field.
+	// whether to sync group members to slack groups
 	SyncToSlack bool `json:"sync_to_slack,omitempty"`
-	// SyncToGithub holds the value of the "sync_to_github" field.
+	// whether to sync group members to github groups
 	SyncToGithub bool `json:"sync_to_github,omitempty"`
+	// the group id associated with the settings
+	GroupID string `json:"group_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupSettingQuery when eager-loading is set.
-	Edges         GroupSettingEdges `json:"edges"`
-	group_setting *string
-	selectValues  sql.SelectValues
+	Edges        GroupSettingEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // GroupSettingEdges holds the relations/edges for other nodes in the graph.
@@ -80,12 +81,10 @@ func (*GroupSetting) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case groupsetting.FieldSyncToSlack, groupsetting.FieldSyncToGithub:
 			values[i] = new(sql.NullBool)
-		case groupsetting.FieldID, groupsetting.FieldCreatedBy, groupsetting.FieldUpdatedBy, groupsetting.FieldDeletedBy, groupsetting.FieldVisibility, groupsetting.FieldJoinPolicy:
+		case groupsetting.FieldID, groupsetting.FieldCreatedBy, groupsetting.FieldUpdatedBy, groupsetting.FieldDeletedBy, groupsetting.FieldVisibility, groupsetting.FieldJoinPolicy, groupsetting.FieldGroupID:
 			values[i] = new(sql.NullString)
 		case groupsetting.FieldCreatedAt, groupsetting.FieldUpdatedAt, groupsetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case groupsetting.ForeignKeys[0]: // group_setting
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -175,12 +174,11 @@ func (gs *GroupSetting) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gs.SyncToGithub = value.Bool
 			}
-		case groupsetting.ForeignKeys[0]:
+		case groupsetting.FieldGroupID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field group_setting", values[i])
+				return fmt.Errorf("unexpected type %T for field group_id", values[i])
 			} else if value.Valid {
-				gs.group_setting = new(string)
-				*gs.group_setting = value.String
+				gs.GroupID = value.String
 			}
 		default:
 			gs.selectValues.Set(columns[i], values[i])
@@ -255,6 +253,9 @@ func (gs *GroupSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("sync_to_github=")
 	builder.WriteString(fmt.Sprintf("%v", gs.SyncToGithub))
+	builder.WriteString(", ")
+	builder.WriteString("group_id=")
+	builder.WriteString(gs.GroupID)
 	builder.WriteByte(')')
 	return builder.String()
 }

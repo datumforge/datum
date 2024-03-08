@@ -252,8 +252,10 @@ func TestMutationCreateOrganization(t *testing.T) {
 			if tc.parentOrgID != "" {
 				input.ParentID = &tc.parentOrgID
 
-				// There is a check to ensure user has write access to parent org
-				mock_fga.CheckAny(t, client.fga, true)
+				if tc.errorMsg != "" {
+					mock_fga.CheckAny(t, client.fga, true)
+				}
+
 				// There is a check to ensure the parent org is not a parent org
 				mock_fga.ListTimes(t, client.fga, listObjects, 1)
 			}
@@ -264,6 +266,7 @@ func TestMutationCreateOrganization(t *testing.T) {
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
+				mock_fga.CheckAny(t, client.fga, true)
 				mock_fga.WriteAny(t, client.fga)
 				mock_fga.ListTimes(t, client.fga, listObjects, 2)
 			}

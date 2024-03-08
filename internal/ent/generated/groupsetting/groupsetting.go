@@ -40,6 +40,8 @@ const (
 	FieldSyncToSlack = "sync_to_slack"
 	// FieldSyncToGithub holds the string denoting the sync_to_github field in the database.
 	FieldSyncToGithub = "sync_to_github"
+	// FieldGroupID holds the string denoting the group_id field in the database.
+	FieldGroupID = "group_id"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// Table holds the table name of the groupsetting in the database.
@@ -50,7 +52,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupInverseTable = "groups"
 	// GroupColumn is the table column denoting the group relation/edge.
-	GroupColumn = "group_setting"
+	GroupColumn = "group_id"
 )
 
 // Columns holds all SQL columns for groupsetting fields.
@@ -67,23 +69,13 @@ var Columns = []string{
 	FieldTags,
 	FieldSyncToSlack,
 	FieldSyncToGithub,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "group_settings"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"group_setting",
+	FieldGroupID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -96,8 +88,9 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [2]ent.Hook
+	Hooks        [3]ent.Hook
 	Interceptors [1]ent.Interceptor
+	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -194,6 +187,11 @@ func BySyncToSlack(opts ...sql.OrderTermOption) OrderOption {
 // BySyncToGithub orders the results by the sync_to_github field.
 func BySyncToGithub(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSyncToGithub, opts...).ToFunc()
+}
+
+// ByGroupID orders the results by the group_id field.
+func ByGroupID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGroupID, opts...).ToFunc()
 }
 
 // ByGroupField orders the results by group field.

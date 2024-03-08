@@ -80,7 +80,10 @@ func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("setting", GroupSetting.Type).
 			Required().
-			Unique(),
+			Unique().
+			Annotations(
+				entx.CascadeAnnotationField("Group"),
+			),
 		edge.From("users", User.Type).
 			Ref("groups").
 			Through("members", GroupMembership.Type),

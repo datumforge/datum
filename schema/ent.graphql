@@ -99,7 +99,13 @@ input CreateGroupSettingInput {
   tags associated with the object
   """
   tags: [String!]
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   groupID: ID
 }
@@ -259,6 +265,10 @@ input CreateOrganizationInput {
   orgs directly associated with a user
   """
   personalOrg: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
   parentID: ID
   groupIDs: [ID!]
   integrationIDs: [ID!]
@@ -282,15 +292,21 @@ input CreateOrganizationSettingInput {
   domains associated with the organization
   """
   domains: [String!]
-  ssoCert: String
-  ssoEntrypoint: String
-  ssoIssuer: String
   """
   Name of the person to contact for billing
   """
   billingContact: String
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   """
   Usually government-issued tax ID or business ID such as ABN in Australia
@@ -974,8 +990,18 @@ type GroupSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
+  """
+  the group id associated with the settings
+  """
+  groupID: ID
   group: Group
 }
 """
@@ -1166,6 +1192,24 @@ input GroupSettingWhereInput {
   syncToGithubNEQ: Boolean
   syncToGithubIsNil: Boolean
   syncToGithubNotNil: Boolean
+  """
+  group_id field predicates
+  """
+  groupID: ID
+  groupIDNEQ: ID
+  groupIDIn: [ID!]
+  groupIDNotIn: [ID!]
+  groupIDGT: ID
+  groupIDGTE: ID
+  groupIDLT: ID
+  groupIDLTE: ID
+  groupIDContains: ID
+  groupIDHasPrefix: ID
+  groupIDHasSuffix: ID
+  groupIDIsNil: Boolean
+  groupIDNotNil: Boolean
+  groupIDEqualFold: ID
+  groupIDContainsFold: ID
   """
   group edge predicates
   """
@@ -2602,6 +2646,10 @@ type Organization implements Node {
   orgs directly associated with a user
   """
   personalOrg: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
   parent: Organization
   children(
     """
@@ -2706,15 +2754,21 @@ type OrganizationSetting implements Node {
   domains associated with the organization
   """
   domains: [String!]
-  ssoCert: String
-  ssoEntrypoint: String
-  ssoIssuer: String
   """
   Name of the person to contact for billing
   """
   billingContact: String
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   """
   Usually government-issued tax ID or business ID such as ABN in Australia
@@ -2724,6 +2778,10 @@ type OrganizationSetting implements Node {
   tags associated with the object
   """
   tags: [String!]
+  """
+  the ID of the organization the settings belong to
+  """
+  organizationID: ID
   organization: Organization
 }
 """
@@ -2871,60 +2929,6 @@ input OrganizationSettingWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
-  sso_cert field predicates
-  """
-  ssoCert: String
-  ssoCertNEQ: String
-  ssoCertIn: [String!]
-  ssoCertNotIn: [String!]
-  ssoCertGT: String
-  ssoCertGTE: String
-  ssoCertLT: String
-  ssoCertLTE: String
-  ssoCertContains: String
-  ssoCertHasPrefix: String
-  ssoCertHasSuffix: String
-  ssoCertIsNil: Boolean
-  ssoCertNotNil: Boolean
-  ssoCertEqualFold: String
-  ssoCertContainsFold: String
-  """
-  sso_entrypoint field predicates
-  """
-  ssoEntrypoint: String
-  ssoEntrypointNEQ: String
-  ssoEntrypointIn: [String!]
-  ssoEntrypointNotIn: [String!]
-  ssoEntrypointGT: String
-  ssoEntrypointGTE: String
-  ssoEntrypointLT: String
-  ssoEntrypointLTE: String
-  ssoEntrypointContains: String
-  ssoEntrypointHasPrefix: String
-  ssoEntrypointHasSuffix: String
-  ssoEntrypointIsNil: Boolean
-  ssoEntrypointNotNil: Boolean
-  ssoEntrypointEqualFold: String
-  ssoEntrypointContainsFold: String
-  """
-  sso_issuer field predicates
-  """
-  ssoIssuer: String
-  ssoIssuerNEQ: String
-  ssoIssuerIn: [String!]
-  ssoIssuerNotIn: [String!]
-  ssoIssuerGT: String
-  ssoIssuerGTE: String
-  ssoIssuerLT: String
-  ssoIssuerLTE: String
-  ssoIssuerContains: String
-  ssoIssuerHasPrefix: String
-  ssoIssuerHasSuffix: String
-  ssoIssuerIsNil: Boolean
-  ssoIssuerNotNil: Boolean
-  ssoIssuerEqualFold: String
-  ssoIssuerContainsFold: String
-  """
   billing_contact field predicates
   """
   billingContact: String
@@ -3014,6 +3018,24 @@ input OrganizationSettingWhereInput {
   taxIdentifierNotNil: Boolean
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
+  """
+  organization_id field predicates
+  """
+  organizationID: ID
+  organizationIDNEQ: ID
+  organizationIDIn: [ID!]
+  organizationIDNotIn: [ID!]
+  organizationIDGT: ID
+  organizationIDGTE: ID
+  organizationIDLT: ID
+  organizationIDLTE: ID
+  organizationIDContains: ID
+  organizationIDHasPrefix: ID
+  organizationIDHasSuffix: ID
+  organizationIDIsNil: Boolean
+  organizationIDNotNil: Boolean
+  organizationIDEqualFold: ID
+  organizationIDContainsFold: ID
   """
   organization edge predicates
   """
@@ -3175,6 +3197,24 @@ input OrganizationWhereInput {
   personalOrgNEQ: Boolean
   personalOrgIsNil: Boolean
   personalOrgNotNil: Boolean
+  """
+  avatar_remote_url field predicates
+  """
+  avatarRemoteURL: String
+  avatarRemoteURLNEQ: String
+  avatarRemoteURLIn: [String!]
+  avatarRemoteURLNotIn: [String!]
+  avatarRemoteURLGT: String
+  avatarRemoteURLGTE: String
+  avatarRemoteURLLT: String
+  avatarRemoteURLLTE: String
+  avatarRemoteURLContains: String
+  avatarRemoteURLHasPrefix: String
+  avatarRemoteURLHasSuffix: String
+  avatarRemoteURLIsNil: Boolean
+  avatarRemoteURLNotNil: Boolean
+  avatarRemoteURLEqualFold: String
+  avatarRemoteURLContainsFold: String
   """
   parent edge predicates
   """
@@ -3992,8 +4032,14 @@ input UpdateGroupSettingInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
+  """
+  whether to sync group members to slack groups
+  """
   syncToSlack: Boolean
   clearSyncToSlack: Boolean
+  """
+  whether to sync group members to github groups
+  """
   syncToGithub: Boolean
   clearSyncToGithub: Boolean
   groupID: ID
@@ -4155,6 +4201,11 @@ input UpdateOrganizationInput {
   """
   description: String
   clearDescription: Boolean
+  """
+  URL of the user's remote avatar
+  """
+  avatarRemoteURL: String
+  clearAvatarRemoteURL: Boolean
   addGroupIDs: [ID!]
   removeGroupIDs: [ID!]
   clearGroups: Boolean
@@ -4194,21 +4245,24 @@ input UpdateOrganizationSettingInput {
   domains: [String!]
   appendDomains: [String!]
   clearDomains: Boolean
-  ssoCert: String
-  clearSSOCert: Boolean
-  ssoEntrypoint: String
-  clearSSOEntrypoint: Boolean
-  ssoIssuer: String
-  clearSSOIssuer: Boolean
   """
   Name of the person to contact for billing
   """
   billingContact: String
   clearBillingContact: Boolean
+  """
+  Email address of the person to contact for billing
+  """
   billingEmail: String
   clearBillingEmail: Boolean
+  """
+  Phone number to contact for billing
+  """
   billingPhone: String
   clearBillingPhone: Boolean
+  """
+  Address to send billing information to
+  """
   billingAddress: String
   clearBillingAddress: Boolean
   """

@@ -35,9 +35,6 @@ query GetOrganizationByID($organizationId: ID!) {
       createdBy
       updatedBy
       domains
-      ssoCert
-      ssoEntrypoint
-      ssoIssuer
       billingContact
       billingEmail
       billingPhone
@@ -91,9 +88,6 @@ query GetAllOrganizations {
           createdBy
           updatedBy
           domains
-          ssoCert
-          ssoEntrypoint
-          ssoIssuer
           billingContact
           billingEmail
           billingPhone
@@ -147,9 +141,6 @@ query OrganizationsWhere($where: OrganizationWhereInput) {
           createdBy
           updatedBy
           domains
-          ssoCert
-          ssoEntrypoint
-          ssoIssuer
           billingContact
           billingEmail
           billingPhone
@@ -181,9 +172,6 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
         createdBy
         updatedBy
         domains
-        ssoCert
-        ssoEntrypoint
-        ssoIssuer
         billingContact
         billingEmail
         billingPhone
@@ -228,9 +216,6 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
         createdBy
         updatedBy
         domains
-        ssoCert
-        ssoEntrypoint
-        ssoIssuer
         billingContact
         billingEmail
         billingPhone

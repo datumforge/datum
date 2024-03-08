@@ -3,6 +3,7 @@ package enums
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 type JoinPolicy string
@@ -27,6 +28,22 @@ func (JoinPolicy) Values() (kinds []string) {
 // String returns the JoinPolicy as a string
 func (r JoinPolicy) String() string {
 	return string(r)
+}
+
+// ToGroupJoinPolicy returns the user status enum based on string input
+func ToGroupJoinPolicy(r string) *JoinPolicy {
+	switch r := strings.ToUpper(r); r {
+	case Open.String():
+		return &Open
+	case InviteOnly.String():
+		return &InviteOnly
+	case ApplicationOnly.String():
+		return &ApplicationOnly
+	case InviteOrApplication.String():
+		return &InviteOrApplication
+	default:
+		return &InviteOnly
+	}
 }
 
 // MarshalGQL implement the Marshaler interface for gqlgen

@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/utils/gravatar"
 )
 
 // HookOrganization runs on org mutations to set default values that are not provided
@@ -42,6 +43,8 @@ func HookOrganization() ent.Hook {
 				if displayName, ok := mutation.DisplayName(); ok {
 					if displayName == "" {
 						mutation.SetDisplayName(name)
+						url := gravatar.New(name, nil)
+						mutation.SetAvatarRemoteURL(url)
 					}
 				}
 			}

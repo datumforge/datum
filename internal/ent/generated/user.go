@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -65,7 +64,7 @@ type UserEdges struct {
 	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// TfaSettings holds the value of the tfa_settings edge.
-	TfaSettings *TFASettings `json:"tfa_settings,omitempty"`
+	TfaSettings []*TFASettings `json:"tfa_settings,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
@@ -89,6 +88,7 @@ type UserEdges struct {
 	totalCount [7]map[string]int
 
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
+	namedTfaSettings             map[string][]*TFASettings
 	namedEmailVerificationTokens map[string][]*EmailVerificationToken
 	namedPasswordResetTokens     map[string][]*PasswordResetToken
 	namedGroups                  map[string][]*Group
@@ -108,12 +108,10 @@ func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
 }
 
 // TfaSettingsOrErr returns the TfaSettings value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e UserEdges) TfaSettingsOrErr() (*TFASettings, error) {
-	if e.TfaSettings != nil {
+// was not loaded in eager-loading.
+func (e UserEdges) TfaSettingsOrErr() ([]*TFASettings, error) {
+	if e.loadedTypes[1] {
 		return e.TfaSettings, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: tfasettings.Label}
 	}
 	return nil, &NotLoadedError{edge: "tfa_settings"}
 }
@@ -497,6 +495,30 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
 	} else {
 		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
+	}
+}
+
+// NamedTfaSettings returns the TfaSettings named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedTfaSettings(name string) ([]*TFASettings, error) {
+	if u.Edges.namedTfaSettings == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedTfaSettings[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedTfaSettings(name string, edges ...*TFASettings) {
+	if u.Edges.namedTfaSettings == nil {
+		u.Edges.namedTfaSettings = make(map[string][]*TFASettings)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedTfaSettings[name] = []*TFASettings{}
+	} else {
+		u.Edges.namedTfaSettings[name] = append(u.Edges.namedTfaSettings[name], edges...)
 	}
 }
 

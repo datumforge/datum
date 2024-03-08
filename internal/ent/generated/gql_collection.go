@@ -2102,7 +2102,9 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			u.withTfaSettings = query
+			u.WithNamedTfaSettings(alias, func(wq *TFASettingsQuery) {
+				*wq = *query
+			})
 		case "setting":
 			var (
 				alias = field.Alias

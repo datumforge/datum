@@ -337,10 +337,17 @@ func ByPersonalAccessTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 	}
 }
 
-// ByTfaSettingsField orders the results by tfa_settings field.
-func ByTfaSettingsField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByTfaSettingsCount orders the results by tfa_settings count.
+func ByTfaSettingsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTfaSettingsStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newTfaSettingsStep(), opts...)
+	}
+}
+
+// ByTfaSettings orders the results by tfa_settings terms.
+func ByTfaSettings(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTfaSettingsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -459,7 +466,7 @@ func newTfaSettingsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TfaSettingsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, TfaSettingsTable, TfaSettingsColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, TfaSettingsTable, TfaSettingsColumn),
 	)
 }
 func newSettingStep() *sqlgraph.Step {

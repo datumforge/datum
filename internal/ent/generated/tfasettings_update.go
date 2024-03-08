@@ -373,7 +373,7 @@ func (tsu *TFASettingsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tsu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   tfasettings.OwnerTable,
 			Columns: []string{tfasettings.OwnerColumn},
@@ -387,7 +387,7 @@ func (tsu *TFASettingsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := tsu.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   tfasettings.OwnerTable,
 			Columns: []string{tfasettings.OwnerColumn},
@@ -795,7 +795,7 @@ func (tsuo *TFASettingsUpdateOne) sqlSave(ctx context.Context) (_node *TFASettin
 	}
 	if tsuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   tfasettings.OwnerTable,
 			Columns: []string{tfasettings.OwnerColumn},
@@ -809,7 +809,7 @@ func (tsuo *TFASettingsUpdateOne) sqlSave(ctx context.Context) (_node *TFASettin
 	}
 	if nodes := tsuo.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   tfasettings.OwnerTable,
 			Columns: []string{tfasettings.OwnerColumn},

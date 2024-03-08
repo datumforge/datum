@@ -266,23 +266,19 @@ func (uc *UserCreate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserCr
 	return uc.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID.
-func (uc *UserCreate) SetTfaSettingsID(id string) *UserCreate {
-	uc.mutation.SetTfaSettingsID(id)
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by IDs.
+func (uc *UserCreate) AddTfaSettingIDs(ids ...string) *UserCreate {
+	uc.mutation.AddTfaSettingIDs(ids...)
 	return uc
 }
 
-// SetNillableTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by ID if the given value is not nil.
-func (uc *UserCreate) SetNillableTfaSettingsID(id *string) *UserCreate {
-	if id != nil {
-		uc = uc.SetTfaSettingsID(*id)
+// AddTfaSettings adds the "tfa_settings" edges to the TFASettings entity.
+func (uc *UserCreate) AddTfaSettings(t ...*TFASettings) *UserCreate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
 	}
-	return uc
-}
-
-// SetTfaSettings sets the "tfa_settings" edge to the TFASettings entity.
-func (uc *UserCreate) SetTfaSettings(t *TFASettings) *UserCreate {
-	return uc.SetTfaSettingsID(t.ID)
+	return uc.AddTfaSettingIDs(ids...)
 }
 
 // SetSettingID sets the "setting" edge to the UserSetting entity by ID.
@@ -644,7 +640,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if nodes := uc.mutation.TfaSettingsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.TfaSettingsTable,
 			Columns: []string{user.TfaSettingsColumn},

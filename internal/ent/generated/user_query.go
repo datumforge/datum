@@ -48,6 +48,7 @@ type UserQuery struct {
 	modifiers                        []func(*sql.Selector)
 	loadTotal                        []func(context.Context, []*User) error
 	withNamedPersonalAccessTokens    map[string]*PersonalAccessTokenQuery
+	withNamedTfaSettings             map[string]*TFASettingsQuery
 	withNamedEmailVerificationTokens map[string]*EmailVerificationTokenQuery
 	withNamedPasswordResetTokens     map[string]*PasswordResetTokenQuery
 	withNamedGroups                  map[string]*GroupQuery
@@ -130,7 +131,7 @@ func (uq *UserQuery) QueryTfaSettings() *TFASettingsQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(tfasettings.Table, tfasettings.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.TfaSettingsTable, user.TfaSettingsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.TfaSettingsTable, user.TfaSettingsColumn),
 		)
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.TFASettings
@@ -789,8 +790,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		}
 	}
 	if query := uq.withTfaSettings; query != nil {
-		if err := uq.loadTfaSettings(ctx, query, nodes, nil,
-			func(n *User, e *TFASettings) { n.Edges.TfaSettings = e }); err != nil {
+		if err := uq.loadTfaSettings(ctx, query, nodes,
+			func(n *User) { n.Edges.TfaSettings = []*TFASettings{} },
+			func(n *User, e *TFASettings) { n.Edges.TfaSettings = append(n.Edges.TfaSettings, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -857,6 +859,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadPersonalAccessTokens(ctx, query, nodes,
 			func(n *User) { n.appendNamedPersonalAccessTokens(name) },
 			func(n *User, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedTfaSettings {
+		if err := uq.loadTfaSettings(ctx, query, nodes,
+			func(n *User) { n.appendNamedTfaSettings(name) },
+			func(n *User, e *TFASettings) { n.appendNamedTfaSettings(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -953,6 +962,9 @@ func (uq *UserQuery) loadTfaSettings(ctx context.Context, query *TFASettingsQuer
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
 	}
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(tfasettings.FieldOwnerID)
@@ -1377,6 +1389,20 @@ func (uq *UserQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*Pe
 		uq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
 	}
 	uq.withNamedPersonalAccessTokens[name] = query
+	return uq
+}
+
+// WithNamedTfaSettings tells the query-builder to eager-load the nodes that are connected to the "tfa_settings"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedTfaSettings(name string, opts ...func(*TFASettingsQuery)) *UserQuery {
+	query := (&TFASettingsClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedTfaSettings == nil {
+		uq.withNamedTfaSettings = make(map[string]*TFASettingsQuery)
+	}
+	uq.withNamedTfaSettings[name] = query
 	return uq
 }
 

@@ -301,12 +301,16 @@ func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAcce
 	return result, err
 }
 
-func (u *User) TfaSettings(ctx context.Context) (*TFASettings, error) {
-	result, err := u.Edges.TfaSettingsOrErr()
-	if IsNotLoaded(err) {
-		result, err = u.QueryTfaSettings().Only(ctx)
+func (u *User) TfaSettings(ctx context.Context) (result []*TFASettings, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedTfaSettings(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.TfaSettingsOrErr()
 	}
-	return result, MaskNotFound(err)
+	if IsNotLoaded(err) {
+		result, err = u.QueryTfaSettings().All(ctx)
+	}
+	return result, err
 }
 
 func (u *User) Setting(ctx context.Context) (*UserSetting, error) {

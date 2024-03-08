@@ -529,7 +529,7 @@ var (
 		{Name: "phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "owner_id", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// TfaSettingsTable holds the schema information for the "tfa_settings" table.
 	TfaSettingsTable = &schema.Table{

@@ -4955,7 +4955,7 @@ input CreateUserInput {
   """
   authProvider: UserAuthProvider
   personalAccessTokenIDs: [ID!]
-  tfaSettingsID: ID
+  tfaSettingIDs: [ID!]
   settingID: ID!
   emailVerificationTokenIDs: [ID!]
   passwordResetTokenIDs: [ID!]
@@ -9151,7 +9151,8 @@ input UpdateUserInput {
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
-  tfaSettingsID: ID
+  addTfaSettingIDs: [ID!]
+  removeTfaSettingIDs: [ID!]
   clearTfaSettings: Boolean
   settingID: ID
   addEmailVerificationTokenIDs: [ID!]
@@ -9286,7 +9287,7 @@ type User implements Node {
   """
   authProvider: UserAuthProvider!
   personalAccessTokens: [PersonalAccessToken!]
-  tfaSettings: TFASettings
+  tfaSettings: [TFASettings!]
   setting: UserSetting!
   groups: [Group!]
   organizations: [Organization!]
@@ -34418,9 +34419,9 @@ func (ec *executionContext) _User_tfaSettings(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.TFASettings)
+	res := resTmp.([]*generated.TFASettings)
 	fc.Result = res
-	return ec.marshalOTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
+	return ec.marshalOTFASettings2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -39868,7 +39869,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "authProvider", "personalAccessTokenIDs", "tfaSettingsID", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs", "webauthnIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "authProvider", "personalAccessTokenIDs", "tfaSettingIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs", "webauthnIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39987,13 +39988,13 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.PersonalAccessTokenIDs = data
-		case "tfaSettingsID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSettingsID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+		case "tfaSettingIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSettingIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TfaSettingsID = data
+			it.TfaSettingIDs = data
 		case "settingID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
 			data, err := ec.unmarshalNID2string(ctx, v)
@@ -54330,7 +54331,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "authProvider", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "tfaSettingsID", "clearTfaSettings", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addWebauthnIDs", "removeWebauthnIDs", "clearWebauthn"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "authProvider", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "addTfaSettingIDs", "removeTfaSettingIDs", "clearTfaSettings", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addWebauthnIDs", "removeWebauthnIDs", "clearWebauthn"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54505,13 +54506,20 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearPersonalAccessTokens = data
-		case "tfaSettingsID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tfaSettingsID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+		case "addTfaSettingIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTfaSettingIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TfaSettingsID = data
+			it.AddTfaSettingIDs = data
+		case "removeTfaSettingIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeTfaSettingIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveTfaSettingIDs = data
 		case "clearTfaSettings":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTfaSettings"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
@@ -68928,6 +68936,53 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTFASettings2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.TFASettings) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettings) graphql.Marshaler {

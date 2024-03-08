@@ -18618,7 +18618,8 @@ type UserMutation struct {
 	personal_access_tokens           map[string]struct{}
 	removedpersonal_access_tokens    map[string]struct{}
 	clearedpersonal_access_tokens    bool
-	tfa_settings                     *string
+	tfa_settings                     map[string]struct{}
+	removedtfa_settings              map[string]struct{}
 	clearedtfa_settings              bool
 	setting                          *string
 	clearedsetting                   bool
@@ -19574,9 +19575,14 @@ func (m *UserMutation) ResetPersonalAccessTokens() {
 	m.removedpersonal_access_tokens = nil
 }
 
-// SetTfaSettingsID sets the "tfa_settings" edge to the TFASettings entity by id.
-func (m *UserMutation) SetTfaSettingsID(id string) {
-	m.tfa_settings = &id
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by ids.
+func (m *UserMutation) AddTfaSettingIDs(ids ...string) {
+	if m.tfa_settings == nil {
+		m.tfa_settings = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.tfa_settings[ids[i]] = struct{}{}
+	}
 }
 
 // ClearTfaSettings clears the "tfa_settings" edge to the TFASettings entity.
@@ -19589,20 +19595,29 @@ func (m *UserMutation) TfaSettingsCleared() bool {
 	return m.clearedtfa_settings
 }
 
-// TfaSettingsID returns the "tfa_settings" edge ID in the mutation.
-func (m *UserMutation) TfaSettingsID() (id string, exists bool) {
-	if m.tfa_settings != nil {
-		return *m.tfa_settings, true
+// RemoveTfaSettingIDs removes the "tfa_settings" edge to the TFASettings entity by IDs.
+func (m *UserMutation) RemoveTfaSettingIDs(ids ...string) {
+	if m.removedtfa_settings == nil {
+		m.removedtfa_settings = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.tfa_settings, ids[i])
+		m.removedtfa_settings[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTfaSettings returns the removed IDs of the "tfa_settings" edge to the TFASettings entity.
+func (m *UserMutation) RemovedTfaSettingsIDs() (ids []string) {
+	for id := range m.removedtfa_settings {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // TfaSettingsIDs returns the "tfa_settings" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// TfaSettingsID instead. It exists only for internal usage by the builders.
 func (m *UserMutation) TfaSettingsIDs() (ids []string) {
-	if id := m.tfa_settings; id != nil {
-		ids = append(ids, *id)
+	for id := range m.tfa_settings {
+		ids = append(ids, id)
 	}
 	return
 }
@@ -19611,6 +19626,7 @@ func (m *UserMutation) TfaSettingsIDs() (ids []string) {
 func (m *UserMutation) ResetTfaSettings() {
 	m.tfa_settings = nil
 	m.clearedtfa_settings = false
+	m.removedtfa_settings = nil
 }
 
 // SetSettingID sets the "setting" edge to the UserSetting entity by id.
@@ -20555,9 +20571,11 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		}
 		return ids
 	case user.EdgeTfaSettings:
-		if id := m.tfa_settings; id != nil {
-			return []ent.Value{*id}
+		ids := make([]ent.Value, 0, len(m.tfa_settings))
+		for id := range m.tfa_settings {
+			ids = append(ids, id)
 		}
+		return ids
 	case user.EdgeSetting:
 		if id := m.setting; id != nil {
 			return []ent.Value{*id}
@@ -20614,6 +20632,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedpersonal_access_tokens != nil {
 		edges = append(edges, user.EdgePersonalAccessTokens)
 	}
+	if m.removedtfa_settings != nil {
+		edges = append(edges, user.EdgeTfaSettings)
+	}
 	if m.removedemail_verification_tokens != nil {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
 	}
@@ -20645,6 +20666,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	case user.EdgePersonalAccessTokens:
 		ids := make([]ent.Value, 0, len(m.removedpersonal_access_tokens))
 		for id := range m.removedpersonal_access_tokens {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeTfaSettings:
+		ids := make([]ent.Value, 0, len(m.removedtfa_settings))
+		for id := range m.removedtfa_settings {
 			ids = append(ids, id)
 		}
 		return ids
@@ -20762,9 +20789,6 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UserMutation) ClearEdge(name string) error {
 	switch name {
-	case user.EdgeTfaSettings:
-		m.ClearTfaSettings()
-		return nil
 	case user.EdgeSetting:
 		m.ClearSetting()
 		return nil

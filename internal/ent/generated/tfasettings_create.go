@@ -382,7 +382,7 @@ func (tsc *TFASettingsCreate) createSpec() (*TFASettings, *sqlgraph.CreateSpec) 
 	}
 	if nodes := tsc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   tfasettings.OwnerTable,
 			Columns: []string{tfasettings.OwnerColumn},

@@ -77,7 +77,7 @@ func (tsq *TFASettingsQuery) QueryOwner() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tfasettings.Table, tfasettings.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, tfasettings.OwnerTable, tfasettings.OwnerColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, tfasettings.OwnerTable, tfasettings.OwnerColumn),
 		)
 		schemaConfig := tsq.schemaConfig
 		step.To.Schema = schemaConfig.User

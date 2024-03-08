@@ -404,7 +404,7 @@ input CreateUserInput {
   """
   authProvider: UserAuthProvider
   personalAccessTokenIDs: [ID!]
-  tfaSettingsID: ID
+  tfaSettingIDs: [ID!]
   settingID: ID!
   emailVerificationTokenIDs: [ID!]
   passwordResetTokenIDs: [ID!]
@@ -4600,7 +4600,8 @@ input UpdateUserInput {
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
-  tfaSettingsID: ID
+  addTfaSettingIDs: [ID!]
+  removeTfaSettingIDs: [ID!]
   clearTfaSettings: Boolean
   settingID: ID
   addEmailVerificationTokenIDs: [ID!]
@@ -4735,7 +4736,7 @@ type User implements Node {
   """
   authProvider: UserAuthProvider!
   personalAccessTokens: [PersonalAccessToken!]
-  tfaSettings: TFASettings
+  tfaSettings: [TFASettings!]
   setting: UserSetting!
   groups: [Group!]
   organizations: [Organization!]

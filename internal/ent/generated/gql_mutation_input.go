@@ -1780,7 +1780,7 @@ type CreateUserInput struct {
 	Sub                       *string
 	AuthProvider              *enums.AuthProvider
 	PersonalAccessTokenIDs    []string
-	TfaSettingsID             *string
+	TfaSettingIDs             []string
 	SettingID                 string
 	EmailVerificationTokenIDs []string
 	PasswordResetTokenIDs     []string
@@ -1831,8 +1831,8 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
-	if v := i.TfaSettingsID; v != nil {
-		m.SetTfaSettingsID(*v)
+	if v := i.TfaSettingIDs; len(v) > 0 {
+		m.AddTfaSettingIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
 	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
@@ -1885,7 +1885,8 @@ type UpdateUserInput struct {
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
 	ClearTfaSettings                bool
-	TfaSettingsID                   *string
+	AddTfaSettingIDs                []string
+	RemoveTfaSettingIDs             []string
 	SettingID                       *string
 	ClearEmailVerificationTokens    bool
 	AddEmailVerificationTokenIDs    []string
@@ -1981,8 +1982,11 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if i.ClearTfaSettings {
 		m.ClearTfaSettings()
 	}
-	if v := i.TfaSettingsID; v != nil {
-		m.SetTfaSettingsID(*v)
+	if v := i.AddTfaSettingIDs; len(v) > 0 {
+		m.AddTfaSettingIDs(v...)
+	}
+	if v := i.RemoveTfaSettingIDs; len(v) > 0 {
+		m.RemoveTfaSettingIDs(v...)
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)

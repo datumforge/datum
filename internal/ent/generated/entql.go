@@ -851,7 +851,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph.MustAddE(
 		"owner",
 		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   tfasettings.OwnerTable,
 			Columns: []string{tfasettings.OwnerColumn},
@@ -875,7 +875,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph.MustAddE(
 		"tfa_settings",
 		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.TfaSettingsTable,
 			Columns: []string{user.TfaSettingsColumn},

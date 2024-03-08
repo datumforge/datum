@@ -3001,7 +3001,7 @@ func (c *TFASettingsClient) QueryOwner(ts *TFASettings) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(tfasettings.Table, tfasettings.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, tfasettings.OwnerTable, tfasettings.OwnerColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, tfasettings.OwnerTable, tfasettings.OwnerColumn),
 		)
 		schemaConfig := ts.schemaConfig
 		step.To.Schema = schemaConfig.User
@@ -3174,7 +3174,7 @@ func (c *UserClient) QueryTfaSettings(u *User) *TFASettingsQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(tfasettings.Table, tfasettings.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.TfaSettingsTable, user.TfaSettingsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.TfaSettingsTable, user.TfaSettingsColumn),
 		)
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.TFASettings

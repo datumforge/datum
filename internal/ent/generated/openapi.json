@@ -6021,7 +6021,10 @@
                     }
                   },
                   "tfa_settings": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "setting": {
                     "type": "string"
@@ -6249,7 +6252,10 @@
                     }
                   },
                   "tfa_settings": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "setting": {
                     "type": "string"
@@ -6826,9 +6832,9 @@
         "tags": [
           "User"
         ],
-        "summary": "Find the attached TFASettings",
-        "description": "Find the attached TFASettings of the User with the given ID",
-        "operationId": "readUserTfaSettings",
+        "summary": "List attached TfaSettings",
+        "description": "List attached TfaSettings.",
+        "operationId": "listUserTfaSettings",
         "parameters": [
           {
             "name": "id",
@@ -6838,15 +6844,34 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "TFASettings attached to User with requested ID was found",
+            "description": "result Users list",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TFASettings"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TFASettings"
+                  }
                 }
               }
             }
@@ -8001,7 +8026,10 @@
             }
           },
           "tfa_settings": {
-            "$ref": "#/components/schemas/TFASettings"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TFASettings"
+            }
           },
           "setting": {
             "$ref": "#/components/schemas/UserSetting"

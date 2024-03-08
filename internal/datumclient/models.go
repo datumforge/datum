@@ -296,7 +296,7 @@ type CreateUserInput struct {
 	// auth provider used to register the account
 	AuthProvider              *enums.AuthProvider `json:"authProvider,omitempty"`
 	PersonalAccessTokenIDs    []string            `json:"personalAccessTokenIDs,omitempty"`
-	TfaSettingsID             *string             `json:"tfaSettingsID,omitempty"`
+	TfaSettingIDs             []string            `json:"tfaSettingIDs,omitempty"`
 	SettingID                 string              `json:"settingID"`
 	EmailVerificationTokenIDs []string            `json:"emailVerificationTokenIDs,omitempty"`
 	PasswordResetTokenIDs     []string            `json:"passwordResetTokenIDs,omitempty"`
@@ -3459,7 +3459,8 @@ type UpdateUserInput struct {
 	AddPersonalAccessTokenIDs       []string            `json:"addPersonalAccessTokenIDs,omitempty"`
 	RemovePersonalAccessTokenIDs    []string            `json:"removePersonalAccessTokenIDs,omitempty"`
 	ClearPersonalAccessTokens       *bool               `json:"clearPersonalAccessTokens,omitempty"`
-	TfaSettingsID                   *string             `json:"tfaSettingsID,omitempty"`
+	AddTfaSettingIDs                []string            `json:"addTfaSettingIDs,omitempty"`
+	RemoveTfaSettingIDs             []string            `json:"removeTfaSettingIDs,omitempty"`
 	ClearTfaSettings                *bool               `json:"clearTfaSettings,omitempty"`
 	SettingID                       *string             `json:"settingID,omitempty"`
 	AddEmailVerificationTokenIDs    []string            `json:"addEmailVerificationTokenIDs,omitempty"`
@@ -3556,7 +3557,7 @@ type User struct {
 	// auth provider used to register the account
 	AuthProvider         enums.AuthProvider     `json:"authProvider"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
-	TfaSettings          *TFASettings           `json:"tfaSettings,omitempty"`
+	TfaSettings          []*TFASettings         `json:"tfaSettings,omitempty"`
 	Setting              *UserSetting           `json:"setting"`
 	Groups               []*Group               `json:"groups,omitempty"`
 	Organizations        []*Organization        `json:"organizations,omitempty"`

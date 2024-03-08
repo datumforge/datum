@@ -7,7 +7,6 @@ package graphapi
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"

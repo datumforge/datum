@@ -381,7 +381,7 @@ func WithOTP() ServerOption {
 				opts...,
 			)
 
-			s.Config.Handler.OTPManager = &totp.OTPManager{
+			s.Config.Handler.OTPManager = &totp.Manager{
 				TOTPManager: otpMan,
 			}
 		}

@@ -135,7 +135,7 @@ func main() {
 		),
 		entc.Dependency(
 			entc.DependencyName("TOTP"),
-			entc.DependencyType(&totp.OTPManager{}),
+			entc.DependencyType(&totp.Manager{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

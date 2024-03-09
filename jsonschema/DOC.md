@@ -419,13 +419,13 @@ Config is the configuration for PostHog
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
-|**enabled**|`boolean`|||
-|**codeLength**|`integer`|||
-|**issuer**|`string`|||
-|**redis**|`boolean`|||
-|**secret**|`string`|||
-|**recoveryCodeCount**|`integer`|||
-|**recoveryCodeLength**|`integer`|||
+|**enabled**|`boolean`|Enabled is a flag to enable or disable the OTP service<br/>||
+|**codeLength**|`integer`|CodeLength is the length of the OTP code<br/>||
+|**issuer**|`string`|Issuer is the issuer for TOTP codes<br/>||
+|**redis**|`boolean`|WithRedis configures the service with a redis client<br/>||
+|**secret**|`string`|Secret stores a versioned secret key for cryptography functions<br/>||
+|**recoveryCodeCount**|`integer`|RecoveryCodeCount is the number of recovery codes to generate<br/>||
+|**recoveryCodeLength**|`integer`|RecoveryCodeLength is the length of a recovery code<br/>||
 
 **Additional Properties:** not allowed  
 

@@ -319,9 +319,11 @@ type CreateUserSettingInput struct {
 	// tags associated with the user
 	Tags []string `json:"tags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
-	IsWebauthnAllowed *bool   `json:"isWebauthnAllowed,omitempty"`
-	UserID            *string `json:"userID,omitempty"`
-	DefaultOrgID      *string `json:"defaultOrgID,omitempty"`
+	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
+	// whether the user has two factor authentication enabled
+	IsTfaEnabled *bool   `json:"isTfaEnabled,omitempty"`
+	UserID       *string `json:"userID,omitempty"`
+	DefaultOrgID *string `json:"defaultOrgID,omitempty"`
 }
 
 type Dummy struct {
@@ -3487,12 +3489,15 @@ type UpdateUserSettingInput struct {
 	Tags       []string `json:"tags,omitempty"`
 	AppendTags []string `json:"appendTags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
-	IsWebauthnAllowed      *bool   `json:"isWebauthnAllowed,omitempty"`
-	ClearIsWebauthnAllowed *bool   `json:"clearIsWebauthnAllowed,omitempty"`
-	UserID                 *string `json:"userID,omitempty"`
-	ClearUser              *bool   `json:"clearUser,omitempty"`
-	DefaultOrgID           *string `json:"defaultOrgID,omitempty"`
-	ClearDefaultOrg        *bool   `json:"clearDefaultOrg,omitempty"`
+	IsWebauthnAllowed      *bool `json:"isWebauthnAllowed,omitempty"`
+	ClearIsWebauthnAllowed *bool `json:"clearIsWebauthnAllowed,omitempty"`
+	// whether the user has two factor authentication enabled
+	IsTfaEnabled      *bool   `json:"isTfaEnabled,omitempty"`
+	ClearIsTfaEnabled *bool   `json:"clearIsTfaEnabled,omitempty"`
+	UserID            *string `json:"userID,omitempty"`
+	ClearUser         *bool   `json:"clearUser,omitempty"`
+	DefaultOrgID      *string `json:"defaultOrgID,omitempty"`
+	ClearDefaultOrg   *bool   `json:"clearDefaultOrg,omitempty"`
 }
 
 type User struct {

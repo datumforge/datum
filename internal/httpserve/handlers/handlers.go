@@ -47,5 +47,5 @@ type Handler struct {
 	// WebAuthn contains the configuration settings for the webauthn provider
 	WebAuthn *webauthn.WebAuthn
 	// OTPManager contains the configuration settings for the OTP provider
-	OTPManager *totp.OTPManager
+	OTPManager *totp.Manager
 }

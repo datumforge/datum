@@ -443,6 +443,10 @@ input CreateUserSettingInput {
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
   isWebauthnAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
   userID: ID
   defaultOrgID: ID
 }
@@ -4657,6 +4661,11 @@ input UpdateUserSettingInput {
   """
   isWebauthnAllowed: Boolean
   clearIsWebauthnAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
+  clearIsTfaEnabled: Boolean
   userID: ID
   clearUser: Boolean
   defaultOrgID: ID

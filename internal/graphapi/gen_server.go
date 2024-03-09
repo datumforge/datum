@@ -4877,6 +4877,10 @@ input CreateUserSettingInput {
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
   isWebauthnAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
   userID: ID
   defaultOrgID: ID
 }
@@ -9091,6 +9095,11 @@ input UpdateUserSettingInput {
   """
   isWebauthnAllowed: Boolean
   clearIsWebauthnAllowed: Boolean
+  """
+  whether the user has two factor authentication enabled
+  """
+  isTfaEnabled: Boolean
+  clearIsTfaEnabled: Boolean
   userID: ID
   clearUser: Boolean
   defaultOrgID: ID
@@ -39101,7 +39110,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "isWebauthnAllowed", "userID", "defaultOrgID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "status", "emailConfirmed", "tags", "isWebauthnAllowed", "isTfaEnabled", "userID", "defaultOrgID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39185,6 +39194,13 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.IsWebauthnAllowed = data
+		case "isTfaEnabled":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTfaEnabled"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsTfaEnabled = data
 		case "userID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -53642,7 +53658,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "isWebauthnAllowed", "clearIsWebauthnAllowed", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -53754,6 +53770,20 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.ClearIsWebauthnAllowed = data
+		case "isTfaEnabled":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isTfaEnabled"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsTfaEnabled = data
+		case "clearIsTfaEnabled":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIsTfaEnabled"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearIsTfaEnabled = data
 		case "userID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)

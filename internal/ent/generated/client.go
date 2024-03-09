@@ -160,7 +160,7 @@ type (
 		Emails        *emails.EmailManager
 		Marionette    *marionette.TaskManager
 		Analytics     *analytics.EventManager
-		TOTP          *totp.OTPManager
+		TOTP          *totp.Manager
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -256,7 +256,7 @@ func Analytics(v *analytics.EventManager) Option {
 }
 
 // TOTP configures the TOTP.
-func TOTP(v *totp.OTPManager) Option {
+func TOTP(v *totp.Manager) Option {
 	return func(c *config) {
 		c.TOTP = v
 	}

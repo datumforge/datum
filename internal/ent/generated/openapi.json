@@ -5540,6 +5540,9 @@
                   "is_webauthn_allowed": {
                     "type": "boolean"
                   },
+                  "is_tfa_enabled": {
+                    "type": "boolean"
+                  },
                   "user": {
                     "type": "string"
                   },
@@ -5712,6 +5715,9 @@
                     }
                   },
                   "is_webauthn_allowed": {
+                    "type": "boolean"
+                  },
+                  "is_tfa_enabled": {
                     "type": "boolean"
                   },
                   "user": {

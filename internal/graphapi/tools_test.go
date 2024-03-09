@@ -106,7 +106,7 @@ func setupTest(t *testing.T) *client {
 		ent.Emails(em),
 		ent.Marionette(taskMan),
 		ent.Analytics(&analytics.EventManager{Enabled: false}),
-		ent.TOTP(&totp.OTPManager{
+		ent.TOTP(&totp.Manager{
 			TOTPManager: otpMan,
 		}),
 	}

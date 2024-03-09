@@ -20,23 +20,18 @@ type TFAOptions string
 // MessageType describes a classification of a Message
 type MessageType string
 
-// OTPManager manages the protocol for SMS/Email 2FA codes and TOTP codes
-type OTPManager struct {
-	TOTPManager    TOTPManager
-	MessageType    string
-	TFAOptions     string
-	DeliveryMethod string
-	TokenDuration  time.Duration
-	User           User
+// Manager manages the protocol for SMS/Email 2FA codes and TOTP codes
+type Manager struct {
+	TOTPManager TOTPManager
 }
 
 const (
 	// OTPEmail allows a user to complete TFA with an OTP code delivered via email
 	OTPEmail TFAOptions = "otp_email"
 	// OTPPhone allows a user to complete TFA with an OTP code delivered via phone
-	OTPPhone = "otp_phone"
+	OTPPhone TFAOptions = "otp_phone"
 	// TOTP allows a user to complete TFA with a TOTP device or application
-	TOTP = "totp"
+	TOTP TFAOptions = "totp"
 	// Phone is a delivery method for text messages
 	Phone DeliveryMethod = "phone"
 	// Email is a delivery method for email

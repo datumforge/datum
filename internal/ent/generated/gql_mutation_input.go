@@ -1991,6 +1991,7 @@ type CreateUserSettingInput struct {
 	EmailConfirmed    *bool
 	Tags              []string
 	IsWebauthnAllowed *bool
+	IsTfaEnabled      *bool
 	UserID            *string
 	DefaultOrgID      *string
 }
@@ -2030,6 +2031,9 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.IsWebauthnAllowed; v != nil {
 		m.SetIsWebauthnAllowed(*v)
 	}
+	if v := i.IsTfaEnabled; v != nil {
+		m.SetIsTfaEnabled(*v)
+	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)
 	}
@@ -2061,6 +2065,8 @@ type UpdateUserSettingInput struct {
 	AppendTags             []string
 	ClearIsWebauthnAllowed bool
 	IsWebauthnAllowed      *bool
+	ClearIsTfaEnabled      bool
+	IsTfaEnabled           *bool
 	ClearUser              bool
 	UserID                 *string
 	ClearDefaultOrg        bool
@@ -2113,6 +2119,12 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.IsWebauthnAllowed; v != nil {
 		m.SetIsWebauthnAllowed(*v)
+	}
+	if i.ClearIsTfaEnabled {
+		m.ClearIsTfaEnabled()
+	}
+	if v := i.IsTfaEnabled; v != nil {
+		m.SetIsTfaEnabled(*v)
 	}
 	if i.ClearUser {
 		m.ClearUser()

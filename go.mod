@@ -14,7 +14,7 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.0.2
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
-	github.com/datumforge/fgax v0.1.3-0.20240308153825-05b2f127ef34
+	github.com/datumforge/fgax v0.1.3
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
 	github.com/golang-jwt/jwt/v5 v5.2.1
@@ -203,7 +203,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.9.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/datumforge/echox v0.0.0-20240204015542-90bd5e1f295d
-	github.com/datumforge/entx v0.0.7-0.20240308153242-bc60b1785150
+	github.com/datumforge/entx v0.0.7
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect

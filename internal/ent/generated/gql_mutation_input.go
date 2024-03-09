@@ -1604,6 +1604,92 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 	return c
 }
 
+// CreateTFASettingsInput represents a mutation input for creating tfasettingsslice.
+type CreateTFASettingsInput struct {
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	TotpAllowed *bool
+	OwnerID     *string
+}
+
+// Mutate applies the CreateTFASettingsInput on the TFASettingsMutation builder.
+func (i *CreateTFASettingsInput) Mutate(m *TFASettingsMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.TotpAllowed; v != nil {
+		m.SetTotpAllowed(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateTFASettingsInput on the TFASettingsCreate builder.
+func (c *TFASettingsCreate) SetInput(i CreateTFASettingsInput) *TFASettingsCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTFASettingsInput represents a mutation input for updating tfasettingsslice.
+type UpdateTFASettingsInput struct {
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Verified         *bool
+	ClearTotpAllowed bool
+	TotpAllowed      *bool
+}
+
+// Mutate applies the UpdateTFASettingsInput on the TFASettingsMutation builder.
+func (i *UpdateTFASettingsInput) Mutate(m *TFASettingsMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Verified; v != nil {
+		m.SetVerified(*v)
+	}
+	if i.ClearTotpAllowed {
+		m.ClearTotpAllowed()
+	}
+	if v := i.TotpAllowed; v != nil {
+		m.SetTotpAllowed(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdate builder.
+func (c *TFASettingsUpdate) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdateOne builder.
+func (c *TFASettingsUpdateOne) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
 	CreatedAt                 *time.Time
@@ -1620,15 +1706,9 @@ type CreateUserInput struct {
 	LastSeen                  *time.Time
 	Password                  *string
 	Sub                       *string
-	Oauth                     *bool
 	AuthProvider              *enums.AuthProvider
-	TfaSecret                 *string
-	IsPhoneOtpAllowed         *bool
-	IsEmailOtpAllowed         *bool
-	IsTotpAllowed             *bool
-	IsWebauthnAllowed         *bool
-	IsTfaEnabled              *bool
 	PersonalAccessTokenIDs    []string
+	TfaSettingIDs             []string
 	SettingID                 string
 	EmailVerificationTokenIDs []string
 	PasswordResetTokenIDs     []string
@@ -1673,32 +1753,14 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
 	}
-	if v := i.Oauth; v != nil {
-		m.SetOauth(*v)
-	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
 	}
-	if v := i.TfaSecret; v != nil {
-		m.SetTfaSecret(*v)
-	}
-	if v := i.IsPhoneOtpAllowed; v != nil {
-		m.SetIsPhoneOtpAllowed(*v)
-	}
-	if v := i.IsEmailOtpAllowed; v != nil {
-		m.SetIsEmailOtpAllowed(*v)
-	}
-	if v := i.IsTotpAllowed; v != nil {
-		m.SetIsTotpAllowed(*v)
-	}
-	if v := i.IsWebauthnAllowed; v != nil {
-		m.SetIsWebauthnAllowed(*v)
-	}
-	if v := i.IsTfaEnabled; v != nil {
-		m.SetIsTfaEnabled(*v)
-	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
+	}
+	if v := i.TfaSettingIDs; len(v) > 0 {
+		m.AddTfaSettingIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
 	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
@@ -1746,24 +1808,13 @@ type UpdateUserInput struct {
 	Password                        *string
 	ClearSub                        bool
 	Sub                             *string
-	ClearOauth                      bool
-	Oauth                           *bool
 	AuthProvider                    *enums.AuthProvider
-	ClearTfaSecret                  bool
-	TfaSecret                       *string
-	ClearIsPhoneOtpAllowed          bool
-	IsPhoneOtpAllowed               *bool
-	ClearIsEmailOtpAllowed          bool
-	IsEmailOtpAllowed               *bool
-	ClearIsTotpAllowed              bool
-	IsTotpAllowed                   *bool
-	ClearIsWebauthnAllowed          bool
-	IsWebauthnAllowed               *bool
-	ClearIsTfaEnabled               bool
-	IsTfaEnabled                    *bool
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
+	ClearTfaSettings                bool
+	AddTfaSettingIDs                []string
+	RemoveTfaSettingIDs             []string
 	SettingID                       *string
 	ClearEmailVerificationTokens    bool
 	AddEmailVerificationTokenIDs    []string
@@ -1844,50 +1895,8 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.Sub; v != nil {
 		m.SetSub(*v)
 	}
-	if i.ClearOauth {
-		m.ClearOauth()
-	}
-	if v := i.Oauth; v != nil {
-		m.SetOauth(*v)
-	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
-	}
-	if i.ClearTfaSecret {
-		m.ClearTfaSecret()
-	}
-	if v := i.TfaSecret; v != nil {
-		m.SetTfaSecret(*v)
-	}
-	if i.ClearIsPhoneOtpAllowed {
-		m.ClearIsPhoneOtpAllowed()
-	}
-	if v := i.IsPhoneOtpAllowed; v != nil {
-		m.SetIsPhoneOtpAllowed(*v)
-	}
-	if i.ClearIsEmailOtpAllowed {
-		m.ClearIsEmailOtpAllowed()
-	}
-	if v := i.IsEmailOtpAllowed; v != nil {
-		m.SetIsEmailOtpAllowed(*v)
-	}
-	if i.ClearIsTotpAllowed {
-		m.ClearIsTotpAllowed()
-	}
-	if v := i.IsTotpAllowed; v != nil {
-		m.SetIsTotpAllowed(*v)
-	}
-	if i.ClearIsWebauthnAllowed {
-		m.ClearIsWebauthnAllowed()
-	}
-	if v := i.IsWebauthnAllowed; v != nil {
-		m.SetIsWebauthnAllowed(*v)
-	}
-	if i.ClearIsTfaEnabled {
-		m.ClearIsTfaEnabled()
-	}
-	if v := i.IsTfaEnabled; v != nil {
-		m.SetIsTfaEnabled(*v)
 	}
 	if i.ClearPersonalAccessTokens {
 		m.ClearPersonalAccessTokens()
@@ -1897,6 +1906,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemovePersonalAccessTokenIDs; len(v) > 0 {
 		m.RemovePersonalAccessTokenIDs(v...)
+	}
+	if i.ClearTfaSettings {
+		m.ClearTfaSettings()
+	}
+	if v := i.AddTfaSettingIDs; len(v) > 0 {
+		m.AddTfaSettingIDs(v...)
+	}
+	if v := i.RemoveTfaSettingIDs; len(v) > 0 {
+		m.RemoveTfaSettingIDs(v...)
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
@@ -1962,18 +1980,20 @@ func (c *UserUpdateOne) SetInput(i UpdateUserInput) *UserUpdateOne {
 
 // CreateUserSettingInput represents a mutation input for creating usersettings.
 type CreateUserSettingInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Locked         *bool
-	SilencedAt     *time.Time
-	SuspendedAt    *time.Time
-	Status         *enums.UserStatus
-	EmailConfirmed *bool
-	Tags           []string
-	UserID         *string
-	DefaultOrgID   *string
+	CreatedAt         *time.Time
+	UpdatedAt         *time.Time
+	CreatedBy         *string
+	UpdatedBy         *string
+	Locked            *bool
+	SilencedAt        *time.Time
+	SuspendedAt       *time.Time
+	Status            *enums.UserStatus
+	EmailConfirmed    *bool
+	Tags              []string
+	IsWebauthnAllowed *bool
+	IsTfaEnabled      *bool
+	UserID            *string
+	DefaultOrgID      *string
 }
 
 // Mutate applies the CreateUserSettingInput on the UserSettingMutation builder.
@@ -2008,6 +2028,12 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
+	if v := i.IsWebauthnAllowed; v != nil {
+		m.SetIsWebauthnAllowed(*v)
+	}
+	if v := i.IsTfaEnabled; v != nil {
+		m.SetIsTfaEnabled(*v)
+	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)
 	}
@@ -2024,23 +2050,27 @@ func (c *UserSettingCreate) SetInput(i CreateUserSettingInput) *UserSettingCreat
 
 // UpdateUserSettingInput represents a mutation input for updating usersettings.
 type UpdateUserSettingInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
-	Locked           *bool
-	ClearSilencedAt  bool
-	SilencedAt       *time.Time
-	ClearSuspendedAt bool
-	SuspendedAt      *time.Time
-	Status           *enums.UserStatus
-	EmailConfirmed   *bool
-	Tags             []string
-	AppendTags       []string
-	ClearUser        bool
-	UserID           *string
-	ClearDefaultOrg  bool
-	DefaultOrgID     *string
+	ClearUpdatedAt         bool
+	UpdatedAt              *time.Time
+	ClearUpdatedBy         bool
+	UpdatedBy              *string
+	Locked                 *bool
+	ClearSilencedAt        bool
+	SilencedAt             *time.Time
+	ClearSuspendedAt       bool
+	SuspendedAt            *time.Time
+	Status                 *enums.UserStatus
+	EmailConfirmed         *bool
+	Tags                   []string
+	AppendTags             []string
+	ClearIsWebauthnAllowed bool
+	IsWebauthnAllowed      *bool
+	ClearIsTfaEnabled      bool
+	IsTfaEnabled           *bool
+	ClearUser              bool
+	UserID                 *string
+	ClearDefaultOrg        bool
+	DefaultOrgID           *string
 }
 
 // Mutate applies the UpdateUserSettingInput on the UserSettingMutation builder.
@@ -2083,6 +2113,18 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
+	}
+	if i.ClearIsWebauthnAllowed {
+		m.ClearIsWebauthnAllowed()
+	}
+	if v := i.IsWebauthnAllowed; v != nil {
+		m.SetIsWebauthnAllowed(*v)
+	}
+	if i.ClearIsTfaEnabled {
+		m.ClearIsTfaEnabled()
+	}
+	if v := i.IsTfaEnabled; v != nil {
+		m.SetIsTfaEnabled(*v)
 	}
 	if i.ClearUser {
 		m.ClearUser()

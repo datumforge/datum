@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -30,7 +31,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 17)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 18)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -383,6 +384,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[14] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   tfasettings.Table,
+			Columns: tfasettings.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: tfasettings.FieldID,
+			},
+		},
+		Type: "TFASettings",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			tfasettings.FieldCreatedAt:       {Type: field.TypeTime, Column: tfasettings.FieldCreatedAt},
+			tfasettings.FieldUpdatedAt:       {Type: field.TypeTime, Column: tfasettings.FieldUpdatedAt},
+			tfasettings.FieldCreatedBy:       {Type: field.TypeString, Column: tfasettings.FieldCreatedBy},
+			tfasettings.FieldUpdatedBy:       {Type: field.TypeString, Column: tfasettings.FieldUpdatedBy},
+			tfasettings.FieldDeletedAt:       {Type: field.TypeTime, Column: tfasettings.FieldDeletedAt},
+			tfasettings.FieldDeletedBy:       {Type: field.TypeString, Column: tfasettings.FieldDeletedBy},
+			tfasettings.FieldOwnerID:         {Type: field.TypeString, Column: tfasettings.FieldOwnerID},
+			tfasettings.FieldTfaSecret:       {Type: field.TypeString, Column: tfasettings.FieldTfaSecret},
+			tfasettings.FieldVerified:        {Type: field.TypeBool, Column: tfasettings.FieldVerified},
+			tfasettings.FieldRecoveryCodes:   {Type: field.TypeJSON, Column: tfasettings.FieldRecoveryCodes},
+			tfasettings.FieldPhoneOtpAllowed: {Type: field.TypeBool, Column: tfasettings.FieldPhoneOtpAllowed},
+			tfasettings.FieldEmailOtpAllowed: {Type: field.TypeBool, Column: tfasettings.FieldEmailOtpAllowed},
+			tfasettings.FieldTotpAllowed:     {Type: field.TypeBool, Column: tfasettings.FieldTotpAllowed},
+		},
+	}
+	graph.Nodes[15] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -392,33 +419,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "User",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			user.FieldCreatedAt:         {Type: field.TypeTime, Column: user.FieldCreatedAt},
-			user.FieldUpdatedAt:         {Type: field.TypeTime, Column: user.FieldUpdatedAt},
-			user.FieldCreatedBy:         {Type: field.TypeString, Column: user.FieldCreatedBy},
-			user.FieldUpdatedBy:         {Type: field.TypeString, Column: user.FieldUpdatedBy},
-			user.FieldDeletedAt:         {Type: field.TypeTime, Column: user.FieldDeletedAt},
-			user.FieldDeletedBy:         {Type: field.TypeString, Column: user.FieldDeletedBy},
-			user.FieldEmail:             {Type: field.TypeString, Column: user.FieldEmail},
-			user.FieldFirstName:         {Type: field.TypeString, Column: user.FieldFirstName},
-			user.FieldLastName:          {Type: field.TypeString, Column: user.FieldLastName},
-			user.FieldDisplayName:       {Type: field.TypeString, Column: user.FieldDisplayName},
-			user.FieldAvatarRemoteURL:   {Type: field.TypeString, Column: user.FieldAvatarRemoteURL},
-			user.FieldAvatarLocalFile:   {Type: field.TypeString, Column: user.FieldAvatarLocalFile},
-			user.FieldAvatarUpdatedAt:   {Type: field.TypeTime, Column: user.FieldAvatarUpdatedAt},
-			user.FieldLastSeen:          {Type: field.TypeTime, Column: user.FieldLastSeen},
-			user.FieldPassword:          {Type: field.TypeString, Column: user.FieldPassword},
-			user.FieldSub:               {Type: field.TypeString, Column: user.FieldSub},
-			user.FieldOauth:             {Type: field.TypeBool, Column: user.FieldOauth},
-			user.FieldAuthProvider:      {Type: field.TypeEnum, Column: user.FieldAuthProvider},
-			user.FieldTfaSecret:         {Type: field.TypeString, Column: user.FieldTfaSecret},
-			user.FieldIsPhoneOtpAllowed: {Type: field.TypeBool, Column: user.FieldIsPhoneOtpAllowed},
-			user.FieldIsEmailOtpAllowed: {Type: field.TypeBool, Column: user.FieldIsEmailOtpAllowed},
-			user.FieldIsTotpAllowed:     {Type: field.TypeBool, Column: user.FieldIsTotpAllowed},
-			user.FieldIsWebauthnAllowed: {Type: field.TypeBool, Column: user.FieldIsWebauthnAllowed},
-			user.FieldIsTfaEnabled:      {Type: field.TypeBool, Column: user.FieldIsTfaEnabled},
+			user.FieldCreatedAt:       {Type: field.TypeTime, Column: user.FieldCreatedAt},
+			user.FieldUpdatedAt:       {Type: field.TypeTime, Column: user.FieldUpdatedAt},
+			user.FieldCreatedBy:       {Type: field.TypeString, Column: user.FieldCreatedBy},
+			user.FieldUpdatedBy:       {Type: field.TypeString, Column: user.FieldUpdatedBy},
+			user.FieldDeletedAt:       {Type: field.TypeTime, Column: user.FieldDeletedAt},
+			user.FieldDeletedBy:       {Type: field.TypeString, Column: user.FieldDeletedBy},
+			user.FieldEmail:           {Type: field.TypeString, Column: user.FieldEmail},
+			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
+			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
+			user.FieldDisplayName:     {Type: field.TypeString, Column: user.FieldDisplayName},
+			user.FieldAvatarRemoteURL: {Type: field.TypeString, Column: user.FieldAvatarRemoteURL},
+			user.FieldAvatarLocalFile: {Type: field.TypeString, Column: user.FieldAvatarLocalFile},
+			user.FieldAvatarUpdatedAt: {Type: field.TypeTime, Column: user.FieldAvatarUpdatedAt},
+			user.FieldLastSeen:        {Type: field.TypeTime, Column: user.FieldLastSeen},
+			user.FieldPassword:        {Type: field.TypeString, Column: user.FieldPassword},
+			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
+			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
 		},
 	}
-	graph.Nodes[15] = &sqlgraph.Node{
+	graph.Nodes[16] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -429,22 +449,25 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "UserSetting",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			usersetting.FieldCreatedAt:      {Type: field.TypeTime, Column: usersetting.FieldCreatedAt},
-			usersetting.FieldUpdatedAt:      {Type: field.TypeTime, Column: usersetting.FieldUpdatedAt},
-			usersetting.FieldCreatedBy:      {Type: field.TypeString, Column: usersetting.FieldCreatedBy},
-			usersetting.FieldUpdatedBy:      {Type: field.TypeString, Column: usersetting.FieldUpdatedBy},
-			usersetting.FieldDeletedAt:      {Type: field.TypeTime, Column: usersetting.FieldDeletedAt},
-			usersetting.FieldDeletedBy:      {Type: field.TypeString, Column: usersetting.FieldDeletedBy},
-			usersetting.FieldUserID:         {Type: field.TypeString, Column: usersetting.FieldUserID},
-			usersetting.FieldLocked:         {Type: field.TypeBool, Column: usersetting.FieldLocked},
-			usersetting.FieldSilencedAt:     {Type: field.TypeTime, Column: usersetting.FieldSilencedAt},
-			usersetting.FieldSuspendedAt:    {Type: field.TypeTime, Column: usersetting.FieldSuspendedAt},
-			usersetting.FieldStatus:         {Type: field.TypeEnum, Column: usersetting.FieldStatus},
-			usersetting.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
-			usersetting.FieldTags:           {Type: field.TypeJSON, Column: usersetting.FieldTags},
+			usersetting.FieldCreatedAt:         {Type: field.TypeTime, Column: usersetting.FieldCreatedAt},
+			usersetting.FieldUpdatedAt:         {Type: field.TypeTime, Column: usersetting.FieldUpdatedAt},
+			usersetting.FieldCreatedBy:         {Type: field.TypeString, Column: usersetting.FieldCreatedBy},
+			usersetting.FieldUpdatedBy:         {Type: field.TypeString, Column: usersetting.FieldUpdatedBy},
+			usersetting.FieldDeletedAt:         {Type: field.TypeTime, Column: usersetting.FieldDeletedAt},
+			usersetting.FieldDeletedBy:         {Type: field.TypeString, Column: usersetting.FieldDeletedBy},
+			usersetting.FieldUserID:            {Type: field.TypeString, Column: usersetting.FieldUserID},
+			usersetting.FieldLocked:            {Type: field.TypeBool, Column: usersetting.FieldLocked},
+			usersetting.FieldSilencedAt:        {Type: field.TypeTime, Column: usersetting.FieldSilencedAt},
+			usersetting.FieldSuspendedAt:       {Type: field.TypeTime, Column: usersetting.FieldSuspendedAt},
+			usersetting.FieldStatus:            {Type: field.TypeEnum, Column: usersetting.FieldStatus},
+			usersetting.FieldEmailConfirmed:    {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
+			usersetting.FieldTags:              {Type: field.TypeJSON, Column: usersetting.FieldTags},
+			usersetting.FieldIsWebauthnAllowed: {Type: field.TypeBool, Column: usersetting.FieldIsWebauthnAllowed},
+			usersetting.FieldIsTfaEnabled:      {Type: field.TypeBool, Column: usersetting.FieldIsTfaEnabled},
+			usersetting.FieldPhoneNumber:       {Type: field.TypeString, Column: usersetting.FieldPhoneNumber},
 		},
 	}
-	graph.Nodes[16] = &sqlgraph.Node{
+	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   webauthn.Table,
 			Columns: webauthn.Columns,
@@ -821,6 +844,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Organization",
 	)
 	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   tfasettings.OwnerTable,
+			Columns: []string{tfasettings.OwnerColumn},
+			Bidi:    false,
+		},
+		"TFASettings",
+		"User",
+	)
+	graph.MustAddE(
 		"personal_access_tokens",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -831,6 +866,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"PersonalAccessToken",
+	)
+	graph.MustAddE(
+		"tfa_settings",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+		},
+		"User",
+		"TFASettings",
 	)
 	graph.MustAddE(
 		"setting",
@@ -2780,6 +2827,125 @@ func (f *PersonalAccessTokenFilter) WhereHasOrganizationsWith(preds ...predicate
 }
 
 // addPredicate implements the predicateAdder interface.
+func (tsq *TFASettingsQuery) addPredicate(pred func(s *sql.Selector)) {
+	tsq.predicates = append(tsq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the TFASettingsQuery builder.
+func (tsq *TFASettingsQuery) Filter() *TFASettingsFilter {
+	return &TFASettingsFilter{config: tsq.config, predicateAdder: tsq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *TFASettingsMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the TFASettingsMutation builder.
+func (m *TFASettingsMutation) Filter() *TFASettingsFilter {
+	return &TFASettingsFilter{config: m.config, predicateAdder: m}
+}
+
+// TFASettingsFilter provides a generic filtering capability at runtime for TFASettingsQuery.
+type TFASettingsFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *TFASettingsFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *TFASettingsFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(tfasettings.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *TFASettingsFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(tfasettings.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *TFASettingsFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(tfasettings.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *TFASettingsFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(tfasettings.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *TFASettingsFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(tfasettings.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *TFASettingsFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(tfasettings.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *TFASettingsFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(tfasettings.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *TFASettingsFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(tfasettings.FieldOwnerID))
+}
+
+// WhereTfaSecret applies the entql string predicate on the tfa_secret field.
+func (f *TFASettingsFilter) WhereTfaSecret(p entql.StringP) {
+	f.Where(p.Field(tfasettings.FieldTfaSecret))
+}
+
+// WhereVerified applies the entql bool predicate on the verified field.
+func (f *TFASettingsFilter) WhereVerified(p entql.BoolP) {
+	f.Where(p.Field(tfasettings.FieldVerified))
+}
+
+// WhereRecoveryCodes applies the entql json.RawMessage predicate on the recovery_codes field.
+func (f *TFASettingsFilter) WhereRecoveryCodes(p entql.BytesP) {
+	f.Where(p.Field(tfasettings.FieldRecoveryCodes))
+}
+
+// WherePhoneOtpAllowed applies the entql bool predicate on the phone_otp_allowed field.
+func (f *TFASettingsFilter) WherePhoneOtpAllowed(p entql.BoolP) {
+	f.Where(p.Field(tfasettings.FieldPhoneOtpAllowed))
+}
+
+// WhereEmailOtpAllowed applies the entql bool predicate on the email_otp_allowed field.
+func (f *TFASettingsFilter) WhereEmailOtpAllowed(p entql.BoolP) {
+	f.Where(p.Field(tfasettings.FieldEmailOtpAllowed))
+}
+
+// WhereTotpAllowed applies the entql bool predicate on the totp_allowed field.
+func (f *TFASettingsFilter) WhereTotpAllowed(p entql.BoolP) {
+	f.Where(p.Field(tfasettings.FieldTotpAllowed))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *TFASettingsFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *TFASettingsFilter) WhereHasOwnerWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (uq *UserQuery) addPredicate(pred func(s *sql.Selector)) {
 	uq.predicates = append(uq.predicates, pred)
 }
@@ -2808,7 +2974,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2899,44 +3065,9 @@ func (f *UserFilter) WhereSub(p entql.StringP) {
 	f.Where(p.Field(user.FieldSub))
 }
 
-// WhereOauth applies the entql bool predicate on the oauth field.
-func (f *UserFilter) WhereOauth(p entql.BoolP) {
-	f.Where(p.Field(user.FieldOauth))
-}
-
 // WhereAuthProvider applies the entql string predicate on the auth_provider field.
 func (f *UserFilter) WhereAuthProvider(p entql.StringP) {
 	f.Where(p.Field(user.FieldAuthProvider))
-}
-
-// WhereTfaSecret applies the entql string predicate on the tfa_secret field.
-func (f *UserFilter) WhereTfaSecret(p entql.StringP) {
-	f.Where(p.Field(user.FieldTfaSecret))
-}
-
-// WhereIsPhoneOtpAllowed applies the entql bool predicate on the is_phone_otp_allowed field.
-func (f *UserFilter) WhereIsPhoneOtpAllowed(p entql.BoolP) {
-	f.Where(p.Field(user.FieldIsPhoneOtpAllowed))
-}
-
-// WhereIsEmailOtpAllowed applies the entql bool predicate on the is_email_otp_allowed field.
-func (f *UserFilter) WhereIsEmailOtpAllowed(p entql.BoolP) {
-	f.Where(p.Field(user.FieldIsEmailOtpAllowed))
-}
-
-// WhereIsTotpAllowed applies the entql bool predicate on the is_totp_allowed field.
-func (f *UserFilter) WhereIsTotpAllowed(p entql.BoolP) {
-	f.Where(p.Field(user.FieldIsTotpAllowed))
-}
-
-// WhereIsWebauthnAllowed applies the entql bool predicate on the is_webauthn_allowed field.
-func (f *UserFilter) WhereIsWebauthnAllowed(p entql.BoolP) {
-	f.Where(p.Field(user.FieldIsWebauthnAllowed))
-}
-
-// WhereIsTfaEnabled applies the entql bool predicate on the is_tfa_enabled field.
-func (f *UserFilter) WhereIsTfaEnabled(p entql.BoolP) {
-	f.Where(p.Field(user.FieldIsTfaEnabled))
 }
 
 // WhereHasPersonalAccessTokens applies a predicate to check if query has an edge personal_access_tokens.
@@ -2947,6 +3078,20 @@ func (f *UserFilter) WhereHasPersonalAccessTokens() {
 // WhereHasPersonalAccessTokensWith applies a predicate to check if query has an edge personal_access_tokens with a given conditions (other predicates).
 func (f *UserFilter) WhereHasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) {
 	f.Where(entql.HasEdgeWith("personal_access_tokens", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasTfaSettings applies a predicate to check if query has an edge tfa_settings.
+func (f *UserFilter) WhereHasTfaSettings() {
+	f.Where(entql.HasEdge("tfa_settings"))
+}
+
+// WhereHasTfaSettingsWith applies a predicate to check if query has an edge tfa_settings with a given conditions (other predicates).
+func (f *UserFilter) WhereHasTfaSettingsWith(preds ...predicate.TFASettings) {
+	f.Where(entql.HasEdgeWith("tfa_settings", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -3094,7 +3239,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -3170,6 +3315,21 @@ func (f *UserSettingFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(usersetting.FieldTags))
 }
 
+// WhereIsWebauthnAllowed applies the entql bool predicate on the is_webauthn_allowed field.
+func (f *UserSettingFilter) WhereIsWebauthnAllowed(p entql.BoolP) {
+	f.Where(p.Field(usersetting.FieldIsWebauthnAllowed))
+}
+
+// WhereIsTfaEnabled applies the entql bool predicate on the is_tfa_enabled field.
+func (f *UserSettingFilter) WhereIsTfaEnabled(p entql.BoolP) {
+	f.Where(p.Field(usersetting.FieldIsTfaEnabled))
+}
+
+// WherePhoneNumber applies the entql string predicate on the phone_number field.
+func (f *UserSettingFilter) WherePhoneNumber(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldPhoneNumber))
+}
+
 // WhereHasUser applies a predicate to check if query has an edge user.
 func (f *UserSettingFilter) WhereHasUser() {
 	f.Where(entql.HasEdge("user"))
@@ -3227,7 +3387,7 @@ type WebauthnFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *WebauthnFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

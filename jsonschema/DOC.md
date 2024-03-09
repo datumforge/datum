@@ -18,6 +18,7 @@ Config contains the configuration for the datum server
 |[**sessions**](#sessions)|`object`|Config contains the configuration for the session store<br/>||
 |[**sentry**](#sentry)|`object`|Config settings for the Sentry client<br/>||
 |[**posthog**](#posthog)|`object`|Config is the configuration for PostHog<br/>||
+|[**totp**](#totp)|`object`|||
 
 **Additional Properties:** not allowed  
 <a name="server"></a>
@@ -409,6 +410,22 @@ Config is the configuration for PostHog
 |**enabled**|`boolean`|Enabled is a flag to enable or disable PostHog<br/>||
 |**apiKey**|`string`|APIKey is the PostHog API Key<br/>||
 |**host**|`string`|Host is the PostHog API Host<br/>||
+
+**Additional Properties:** not allowed  
+<a name="totp"></a>
+## totp: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to enable or disable the OTP service<br/>||
+|**codeLength**|`integer`|CodeLength is the length of the OTP code<br/>||
+|**issuer**|`string`|Issuer is the issuer for TOTP codes<br/>||
+|**redis**|`boolean`|WithRedis configures the service with a redis client<br/>||
+|**secret**|`string`|Secret stores a versioned secret key for cryptography functions<br/>||
+|**recoveryCodeCount**|`integer`|RecoveryCodeCount is the number of recovery codes to generate<br/>||
+|**recoveryCodeLength**|`integer`|RecoveryCodeLength is the length of a recovery code<br/>||
 
 **Additional Properties:** not allowed  
 

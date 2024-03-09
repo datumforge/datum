@@ -148,41 +148,6 @@ func Sub(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldSub, v))
 }
 
-// Oauth applies equality check predicate on the "oauth" field. It's identical to OauthEQ.
-func Oauth(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldOauth, v))
-}
-
-// TfaSecret applies equality check predicate on the "tfa_secret" field. It's identical to TfaSecretEQ.
-func TfaSecret(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldTfaSecret, v))
-}
-
-// IsPhoneOtpAllowed applies equality check predicate on the "is_phone_otp_allowed" field. It's identical to IsPhoneOtpAllowedEQ.
-func IsPhoneOtpAllowed(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsPhoneOtpAllowed, v))
-}
-
-// IsEmailOtpAllowed applies equality check predicate on the "is_email_otp_allowed" field. It's identical to IsEmailOtpAllowedEQ.
-func IsEmailOtpAllowed(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsEmailOtpAllowed, v))
-}
-
-// IsTotpAllowed applies equality check predicate on the "is_totp_allowed" field. It's identical to IsTotpAllowedEQ.
-func IsTotpAllowed(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsTotpAllowed, v))
-}
-
-// IsWebauthnAllowed applies equality check predicate on the "is_webauthn_allowed" field. It's identical to IsWebauthnAllowedEQ.
-func IsWebauthnAllowed(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsWebauthnAllowed, v))
-}
-
-// IsTfaEnabled applies equality check predicate on the "is_tfa_enabled" field. It's identical to IsTfaEnabledEQ.
-func IsTfaEnabled(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsTfaEnabled, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -1218,26 +1183,6 @@ func SubContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldSub, v))
 }
 
-// OauthEQ applies the EQ predicate on the "oauth" field.
-func OauthEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldOauth, v))
-}
-
-// OauthNEQ applies the NEQ predicate on the "oauth" field.
-func OauthNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldOauth, v))
-}
-
-// OauthIsNil applies the IsNil predicate on the "oauth" field.
-func OauthIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldOauth))
-}
-
-// OauthNotNil applies the NotNil predicate on the "oauth" field.
-func OauthNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldOauth))
-}
-
 // AuthProviderEQ applies the EQ predicate on the "auth_provider" field.
 func AuthProviderEQ(v enums.AuthProvider) predicate.User {
 	vc := v
@@ -1268,181 +1213,6 @@ func AuthProviderNotIn(vs ...enums.AuthProvider) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldAuthProvider, v...))
 }
 
-// TfaSecretEQ applies the EQ predicate on the "tfa_secret" field.
-func TfaSecretEQ(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldTfaSecret, v))
-}
-
-// TfaSecretNEQ applies the NEQ predicate on the "tfa_secret" field.
-func TfaSecretNEQ(v string) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldTfaSecret, v))
-}
-
-// TfaSecretIn applies the In predicate on the "tfa_secret" field.
-func TfaSecretIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldIn(FieldTfaSecret, vs...))
-}
-
-// TfaSecretNotIn applies the NotIn predicate on the "tfa_secret" field.
-func TfaSecretNotIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldTfaSecret, vs...))
-}
-
-// TfaSecretGT applies the GT predicate on the "tfa_secret" field.
-func TfaSecretGT(v string) predicate.User {
-	return predicate.User(sql.FieldGT(FieldTfaSecret, v))
-}
-
-// TfaSecretGTE applies the GTE predicate on the "tfa_secret" field.
-func TfaSecretGTE(v string) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldTfaSecret, v))
-}
-
-// TfaSecretLT applies the LT predicate on the "tfa_secret" field.
-func TfaSecretLT(v string) predicate.User {
-	return predicate.User(sql.FieldLT(FieldTfaSecret, v))
-}
-
-// TfaSecretLTE applies the LTE predicate on the "tfa_secret" field.
-func TfaSecretLTE(v string) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldTfaSecret, v))
-}
-
-// TfaSecretContains applies the Contains predicate on the "tfa_secret" field.
-func TfaSecretContains(v string) predicate.User {
-	return predicate.User(sql.FieldContains(FieldTfaSecret, v))
-}
-
-// TfaSecretHasPrefix applies the HasPrefix predicate on the "tfa_secret" field.
-func TfaSecretHasPrefix(v string) predicate.User {
-	return predicate.User(sql.FieldHasPrefix(FieldTfaSecret, v))
-}
-
-// TfaSecretHasSuffix applies the HasSuffix predicate on the "tfa_secret" field.
-func TfaSecretHasSuffix(v string) predicate.User {
-	return predicate.User(sql.FieldHasSuffix(FieldTfaSecret, v))
-}
-
-// TfaSecretIsNil applies the IsNil predicate on the "tfa_secret" field.
-func TfaSecretIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldTfaSecret))
-}
-
-// TfaSecretNotNil applies the NotNil predicate on the "tfa_secret" field.
-func TfaSecretNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldTfaSecret))
-}
-
-// TfaSecretEqualFold applies the EqualFold predicate on the "tfa_secret" field.
-func TfaSecretEqualFold(v string) predicate.User {
-	return predicate.User(sql.FieldEqualFold(FieldTfaSecret, v))
-}
-
-// TfaSecretContainsFold applies the ContainsFold predicate on the "tfa_secret" field.
-func TfaSecretContainsFold(v string) predicate.User {
-	return predicate.User(sql.FieldContainsFold(FieldTfaSecret, v))
-}
-
-// IsPhoneOtpAllowedEQ applies the EQ predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsPhoneOtpAllowed, v))
-}
-
-// IsPhoneOtpAllowedNEQ applies the NEQ predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsPhoneOtpAllowed, v))
-}
-
-// IsPhoneOtpAllowedIsNil applies the IsNil predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldIsPhoneOtpAllowed))
-}
-
-// IsPhoneOtpAllowedNotNil applies the NotNil predicate on the "is_phone_otp_allowed" field.
-func IsPhoneOtpAllowedNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldIsPhoneOtpAllowed))
-}
-
-// IsEmailOtpAllowedEQ applies the EQ predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsEmailOtpAllowed, v))
-}
-
-// IsEmailOtpAllowedNEQ applies the NEQ predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsEmailOtpAllowed, v))
-}
-
-// IsEmailOtpAllowedIsNil applies the IsNil predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldIsEmailOtpAllowed))
-}
-
-// IsEmailOtpAllowedNotNil applies the NotNil predicate on the "is_email_otp_allowed" field.
-func IsEmailOtpAllowedNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldIsEmailOtpAllowed))
-}
-
-// IsTotpAllowedEQ applies the EQ predicate on the "is_totp_allowed" field.
-func IsTotpAllowedEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsTotpAllowed, v))
-}
-
-// IsTotpAllowedNEQ applies the NEQ predicate on the "is_totp_allowed" field.
-func IsTotpAllowedNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsTotpAllowed, v))
-}
-
-// IsTotpAllowedIsNil applies the IsNil predicate on the "is_totp_allowed" field.
-func IsTotpAllowedIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldIsTotpAllowed))
-}
-
-// IsTotpAllowedNotNil applies the NotNil predicate on the "is_totp_allowed" field.
-func IsTotpAllowedNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldIsTotpAllowed))
-}
-
-// IsWebauthnAllowedEQ applies the EQ predicate on the "is_webauthn_allowed" field.
-func IsWebauthnAllowedEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsWebauthnAllowed, v))
-}
-
-// IsWebauthnAllowedNEQ applies the NEQ predicate on the "is_webauthn_allowed" field.
-func IsWebauthnAllowedNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsWebauthnAllowed, v))
-}
-
-// IsWebauthnAllowedIsNil applies the IsNil predicate on the "is_webauthn_allowed" field.
-func IsWebauthnAllowedIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldIsWebauthnAllowed))
-}
-
-// IsWebauthnAllowedNotNil applies the NotNil predicate on the "is_webauthn_allowed" field.
-func IsWebauthnAllowedNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldIsWebauthnAllowed))
-}
-
-// IsTfaEnabledEQ applies the EQ predicate on the "is_tfa_enabled" field.
-func IsTfaEnabledEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldIsTfaEnabled, v))
-}
-
-// IsTfaEnabledNEQ applies the NEQ predicate on the "is_tfa_enabled" field.
-func IsTfaEnabledNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldIsTfaEnabled, v))
-}
-
-// IsTfaEnabledIsNil applies the IsNil predicate on the "is_tfa_enabled" field.
-func IsTfaEnabledIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldIsTfaEnabled))
-}
-
-// IsTfaEnabledNotNil applies the NotNil predicate on the "is_tfa_enabled" field.
-func IsTfaEnabledNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldIsTfaEnabled))
-}
-
 // HasPersonalAccessTokens applies the HasEdge predicate on the "personal_access_tokens" edge.
 func HasPersonalAccessTokens() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -1464,6 +1234,35 @@ func HasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) predica
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.PersonalAccessToken
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTfaSettings applies the HasEdge predicate on the "tfa_settings" edge.
+func HasTfaSettings() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TfaSettingsTable, TfaSettingsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TFASettings
+		step.Edge.Schema = schemaConfig.TFASettings
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTfaSettingsWith applies the HasEdge predicate on the "tfa_settings" edge with a given conditions (other predicates).
+func HasTfaSettingsWith(preds ...predicate.TFASettings) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newTfaSettingsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.TFASettings
+		step.Edge.Schema = schemaConfig.TFASettings
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -18,6 +18,7 @@ type User struct {
 	Name                     string
 	Email                    string
 	Password                 *string
+	OTPSecret                string `json:"-"`
 	EmailVerificationExpires sql.NullString
 	EmailVerificationToken   sql.NullString
 	EmailVerificationSecret  []byte

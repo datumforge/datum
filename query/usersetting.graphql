@@ -10,6 +10,7 @@ query GetUserSettingByID($userSettingId: ID!) {
     }
     tags
     locked
+    isTfaEnabled
     emailConfirmed
     createdAt
     createdBy
@@ -35,6 +36,7 @@ query GetUserSettings() {
         }
         tags
         locked
+        isTfaEnabled
         emailConfirmed
         createdAt
         createdBy
@@ -62,6 +64,7 @@ query GetUserSettingWhere($where: UserSettingWhereInput!) {
         }
         tags
         locked
+        isTfaEnabled
         emailConfirmed
         createdAt
         createdBy
@@ -87,6 +90,7 @@ mutation UpdateUserSetting($updateUserSettingId: ID!, $input: UpdateUserSettingI
       }
       tags
       locked
+      isTfaEnabled
       emailConfirmed
       createdAt
       createdBy

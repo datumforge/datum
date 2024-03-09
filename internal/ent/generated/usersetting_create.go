@@ -197,6 +197,48 @@ func (usc *UserSettingCreate) SetTags(s []string) *UserSettingCreate {
 	return usc
 }
 
+// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
+func (usc *UserSettingCreate) SetIsWebauthnAllowed(b bool) *UserSettingCreate {
+	usc.mutation.SetIsWebauthnAllowed(b)
+	return usc
+}
+
+// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillableIsWebauthnAllowed(b *bool) *UserSettingCreate {
+	if b != nil {
+		usc.SetIsWebauthnAllowed(*b)
+	}
+	return usc
+}
+
+// SetIsTfaEnabled sets the "is_tfa_enabled" field.
+func (usc *UserSettingCreate) SetIsTfaEnabled(b bool) *UserSettingCreate {
+	usc.mutation.SetIsTfaEnabled(b)
+	return usc
+}
+
+// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillableIsTfaEnabled(b *bool) *UserSettingCreate {
+	if b != nil {
+		usc.SetIsTfaEnabled(*b)
+	}
+	return usc
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (usc *UserSettingCreate) SetPhoneNumber(s string) *UserSettingCreate {
+	usc.mutation.SetPhoneNumber(s)
+	return usc
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillablePhoneNumber(s *string) *UserSettingCreate {
+	if s != nil {
+		usc.SetPhoneNumber(*s)
+	}
+	return usc
+}
+
 // SetID sets the "id" field.
 func (usc *UserSettingCreate) SetID(s string) *UserSettingCreate {
 	usc.mutation.SetID(s)
@@ -301,6 +343,14 @@ func (usc *UserSettingCreate) defaults() error {
 	if _, ok := usc.mutation.Tags(); !ok {
 		v := usersetting.DefaultTags
 		usc.mutation.SetTags(v)
+	}
+	if _, ok := usc.mutation.IsWebauthnAllowed(); !ok {
+		v := usersetting.DefaultIsWebauthnAllowed
+		usc.mutation.SetIsWebauthnAllowed(v)
+	}
+	if _, ok := usc.mutation.IsTfaEnabled(); !ok {
+		v := usersetting.DefaultIsTfaEnabled
+		usc.mutation.SetIsTfaEnabled(v)
 	}
 	if _, ok := usc.mutation.ID(); !ok {
 		if usersetting.DefaultID == nil {
@@ -414,6 +464,18 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 	if value, ok := usc.mutation.Tags(); ok {
 		_spec.SetField(usersetting.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
+	}
+	if value, ok := usc.mutation.IsWebauthnAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)
+		_node.IsWebauthnAllowed = value
+	}
+	if value, ok := usc.mutation.IsTfaEnabled(); ok {
+		_spec.SetField(usersetting.FieldIsTfaEnabled, field.TypeBool, value)
+		_node.IsTfaEnabled = value
+	}
+	if value, ok := usc.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+		_node.PhoneNumber = &value
 	}
 	if nodes := usc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

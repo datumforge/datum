@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/css/totp.css">
+  <title>Generate TOTP</title>
+</head>
+
+<body>
+  <h1>TOTP Generator</h1>
+  <button id="btn-key__generator" onclick="displayDetails()">Generate Key</button>
+  <button onclick="showKeyInput()">Already have a Key?</button>
+
+  <div class="input-for__key">
+    <form method="post">
+      <label for="key-input">Please type your Key:</label>
+      <input type="hidden" name="data_action" value="HAVE A KEY">
+      <input type="text" id="key-input" name="haveKey" placeholder="Ex: 1A2B3C4D5E6F7G8H">
+      <button type="submit">Submit Key</button>
+    </form>
+  </div>
+
+  <div class="details-container">
+    <form method="post">
+      <input type="text" name="issuer" id="name-text" placeholder="Name">
+      <input type="email" name="accountName" id="email-text" placeholder="Email">
+      <input type="hidden" name="data_action" value="GENERATE KEY">
+      <button type="submit" id="submit-details" onclick="submitDetails()">Submit</button>
+    </form>
+  </div>
+
+  {{ if .generateSecret }}
+  <div class="row">
+    <div class="col-sm-12">
+      <hr>
+      <h3>Generated Key:</h3>
+      <p>Secret: {{ .generateSecret }}</p>
+      <img src="data:image/png;base64,{{ .qrCode }}" alt="QR Code">
+    </div>
+  </div>
+  {{ end }}
+
+  <div class="totp-generate__container">
+    <form method="post">
+      <input type="hidden" name="data_action" value="GENERATE TOTP">
+      <button type="submit">Generate TOTP</button>
+    </form>
+  </div>
+
+  <div class="data-container">
+    {{ if .generateTOTP }}
+    <div class="data-wrapper" id="printDV">
+      <hr>
+      <h2>Secret Key</h2>
+      <p>{{ .key }}</p>
+      <h2>QR Code</h2>
+      <img src="data:image/png;base64,{{ .qr }}" alt="QR code" id="imge">
+    </div>
+    <h2>TOTP</h2>
+    <p id="otp-input">{{ .generateTOTP }}</p>
+    <div id="timer"></div>
+
+    <h2>Validation</h2>
+    <input type="text" id="totp">
+    <p id="otp-status"></p>
+    <button onclick="validateOTP()" data-action="validate">Validate</button>
+    <button class="export-btn" onclick="printQR()">Print QR Code</button>
+    {{ end }}
+  </div>
+
+
+  <div class="data-container">
+    {{ if .haveTOTP }}
+    <div class="data-wrapper" id="printDV">
+      <h2>Secret Key</h2>
+      <p>{{ .genKey }}</p>
+    </div>
+    <h2>TOTP</h2>
+    <p id="otp-input">{{ .haveTOTP }}</p>
+    <div id="timer"></div>
+
+    <h2>Validation</h2>
+    <input type="text" id="totp">
+    <p id="otp-status"></p>
+    <button onclick="validateOTP()" data-action="validate">Validate</button>
+    {{ end }}
+  </div>
+
+</body>
+<script>
+
+</script>
+
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+<script src="/static/js/totp.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+</html>

@@ -619,6 +619,40 @@
       ],
       "description": "Config defines the configuration settings for authentication tokens used in the server"
     },
+    "totp.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable the OTP service"
+        },
+        "codeLength": {
+          "type": "integer",
+          "description": "CodeLength is the length of the OTP code"
+        },
+        "issuer": {
+          "type": "string",
+          "description": "Issuer is the issuer for TOTP codes"
+        },
+        "redis": {
+          "type": "boolean",
+          "description": "WithRedis configures the service with a redis client"
+        },
+        "secret": {
+          "type": "string",
+          "description": "Secret stores a versioned secret key for cryptography functions"
+        },
+        "recoveryCodeCount": {
+          "type": "integer",
+          "description": "RecoveryCodeCount is the number of recovery codes to generate"
+        },
+        "recoveryCodeLength": {
+          "type": "integer",
+          "description": "RecoveryCodeLength is the length of a recovery code"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "webauthn.ProviderConfig": {
       "properties": {
         "enabled": {
@@ -708,6 +742,10 @@
     "posthog": {
       "$ref": "#/$defs/posthog.Config",
       "description": "PostHog contains the configuration for the PostHog analytics"
+    },
+    "totp": {
+      "$ref": "#/$defs/totp.Config",
+      "description": "TOTP contains the configuration for the TOTP provider"
     }
   },
   "additionalProperties": false,

@@ -60,6 +60,23 @@ func (UserSetting) Fields() []ent.Field {
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the user").
 			Default([]string{}),
+		field.Bool("is_webauthn_allowed").
+			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
+			Optional().
+			Default(false),
+		field.Bool("is_tfa_enabled").
+			Comment("whether the user has two factor authentication enabled").
+			Optional().
+			Default(false),
+		field.String("phone_number").
+			Comment("phone number associated with the account, used 2factor SMS authentication").
+			Optional().
+			Annotations(
+				// skip until SMS 2fa feature is implemented
+				entoas.Skip(true),
+				entgql.Skip(entgql.SkipAll),
+			).
+			Nillable(),
 	}
 }
 

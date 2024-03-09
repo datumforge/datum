@@ -220,6 +220,66 @@ func (usu *UserSettingUpdate) AppendTags(s []string) *UserSettingUpdate {
 	return usu
 }
 
+// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
+func (usu *UserSettingUpdate) SetIsWebauthnAllowed(b bool) *UserSettingUpdate {
+	usu.mutation.SetIsWebauthnAllowed(b)
+	return usu
+}
+
+// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableIsWebauthnAllowed(b *bool) *UserSettingUpdate {
+	if b != nil {
+		usu.SetIsWebauthnAllowed(*b)
+	}
+	return usu
+}
+
+// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
+func (usu *UserSettingUpdate) ClearIsWebauthnAllowed() *UserSettingUpdate {
+	usu.mutation.ClearIsWebauthnAllowed()
+	return usu
+}
+
+// SetIsTfaEnabled sets the "is_tfa_enabled" field.
+func (usu *UserSettingUpdate) SetIsTfaEnabled(b bool) *UserSettingUpdate {
+	usu.mutation.SetIsTfaEnabled(b)
+	return usu
+}
+
+// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableIsTfaEnabled(b *bool) *UserSettingUpdate {
+	if b != nil {
+		usu.SetIsTfaEnabled(*b)
+	}
+	return usu
+}
+
+// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
+func (usu *UserSettingUpdate) ClearIsTfaEnabled() *UserSettingUpdate {
+	usu.mutation.ClearIsTfaEnabled()
+	return usu
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (usu *UserSettingUpdate) SetPhoneNumber(s string) *UserSettingUpdate {
+	usu.mutation.SetPhoneNumber(s)
+	return usu
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillablePhoneNumber(s *string) *UserSettingUpdate {
+	if s != nil {
+		usu.SetPhoneNumber(*s)
+	}
+	return usu
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (usu *UserSettingUpdate) ClearPhoneNumber() *UserSettingUpdate {
+	usu.mutation.ClearPhoneNumber()
+	return usu
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (usu *UserSettingUpdate) SetUser(u *User) *UserSettingUpdate {
 	return usu.SetUserID(u.ID)
@@ -383,6 +443,24 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, usersetting.FieldTags, value)
 		})
+	}
+	if value, ok := usu.mutation.IsWebauthnAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)
+	}
+	if usu.mutation.IsWebauthnAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsWebauthnAllowed, field.TypeBool)
+	}
+	if value, ok := usu.mutation.IsTfaEnabled(); ok {
+		_spec.SetField(usersetting.FieldIsTfaEnabled, field.TypeBool, value)
+	}
+	if usu.mutation.IsTfaEnabledCleared() {
+		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
+	}
+	if value, ok := usu.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+	}
+	if usu.mutation.PhoneNumberCleared() {
+		_spec.ClearField(usersetting.FieldPhoneNumber, field.TypeString)
 	}
 	if usu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -654,6 +732,66 @@ func (usuo *UserSettingUpdateOne) AppendTags(s []string) *UserSettingUpdateOne {
 	return usuo
 }
 
+// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
+func (usuo *UserSettingUpdateOne) SetIsWebauthnAllowed(b bool) *UserSettingUpdateOne {
+	usuo.mutation.SetIsWebauthnAllowed(b)
+	return usuo
+}
+
+// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableIsWebauthnAllowed(b *bool) *UserSettingUpdateOne {
+	if b != nil {
+		usuo.SetIsWebauthnAllowed(*b)
+	}
+	return usuo
+}
+
+// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
+func (usuo *UserSettingUpdateOne) ClearIsWebauthnAllowed() *UserSettingUpdateOne {
+	usuo.mutation.ClearIsWebauthnAllowed()
+	return usuo
+}
+
+// SetIsTfaEnabled sets the "is_tfa_enabled" field.
+func (usuo *UserSettingUpdateOne) SetIsTfaEnabled(b bool) *UserSettingUpdateOne {
+	usuo.mutation.SetIsTfaEnabled(b)
+	return usuo
+}
+
+// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableIsTfaEnabled(b *bool) *UserSettingUpdateOne {
+	if b != nil {
+		usuo.SetIsTfaEnabled(*b)
+	}
+	return usuo
+}
+
+// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
+func (usuo *UserSettingUpdateOne) ClearIsTfaEnabled() *UserSettingUpdateOne {
+	usuo.mutation.ClearIsTfaEnabled()
+	return usuo
+}
+
+// SetPhoneNumber sets the "phone_number" field.
+func (usuo *UserSettingUpdateOne) SetPhoneNumber(s string) *UserSettingUpdateOne {
+	usuo.mutation.SetPhoneNumber(s)
+	return usuo
+}
+
+// SetNillablePhoneNumber sets the "phone_number" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillablePhoneNumber(s *string) *UserSettingUpdateOne {
+	if s != nil {
+		usuo.SetPhoneNumber(*s)
+	}
+	return usuo
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (usuo *UserSettingUpdateOne) ClearPhoneNumber() *UserSettingUpdateOne {
+	usuo.mutation.ClearPhoneNumber()
+	return usuo
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (usuo *UserSettingUpdateOne) SetUser(u *User) *UserSettingUpdateOne {
 	return usuo.SetUserID(u.ID)
@@ -847,6 +985,24 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, usersetting.FieldTags, value)
 		})
+	}
+	if value, ok := usuo.mutation.IsWebauthnAllowed(); ok {
+		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)
+	}
+	if usuo.mutation.IsWebauthnAllowedCleared() {
+		_spec.ClearField(usersetting.FieldIsWebauthnAllowed, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.IsTfaEnabled(); ok {
+		_spec.SetField(usersetting.FieldIsTfaEnabled, field.TypeBool, value)
+	}
+	if usuo.mutation.IsTfaEnabledCleared() {
+		_spec.ClearField(usersetting.FieldIsTfaEnabled, field.TypeBool)
+	}
+	if value, ok := usuo.mutation.PhoneNumber(); ok {
+		_spec.SetField(usersetting.FieldPhoneNumber, field.TypeString, value)
+	}
+	if usuo.mutation.PhoneNumberCleared() {
+		_spec.ClearField(usersetting.FieldPhoneNumber, field.TypeString)
 	}
 	if usuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

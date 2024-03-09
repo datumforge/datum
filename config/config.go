@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/sentry"
+	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
 var (
@@ -61,6 +62,9 @@ type Config struct {
 
 	// PostHog contains the configuration for the PostHog analytics
 	PostHog posthog.Config `json:"posthog" koanf:"posthog"`
+
+	// TOTP contains the configuration for the TOTP provider
+	TOTP totp.Config `json:"totp" koanf:"totp"`
 }
 
 // Server settings for the echo server

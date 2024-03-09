@@ -50,24 +50,12 @@ const (
 	FieldPassword = "password"
 	// FieldSub holds the string denoting the sub field in the database.
 	FieldSub = "sub"
-	// FieldOauth holds the string denoting the oauth field in the database.
-	FieldOauth = "oauth"
 	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
 	FieldAuthProvider = "auth_provider"
-	// FieldTfaSecret holds the string denoting the tfa_secret field in the database.
-	FieldTfaSecret = "tfa_secret"
-	// FieldIsPhoneOtpAllowed holds the string denoting the is_phone_otp_allowed field in the database.
-	FieldIsPhoneOtpAllowed = "is_phone_otp_allowed"
-	// FieldIsEmailOtpAllowed holds the string denoting the is_email_otp_allowed field in the database.
-	FieldIsEmailOtpAllowed = "is_email_otp_allowed"
-	// FieldIsTotpAllowed holds the string denoting the is_totp_allowed field in the database.
-	FieldIsTotpAllowed = "is_totp_allowed"
-	// FieldIsWebauthnAllowed holds the string denoting the is_webauthn_allowed field in the database.
-	FieldIsWebauthnAllowed = "is_webauthn_allowed"
-	// FieldIsTfaEnabled holds the string denoting the is_tfa_enabled field in the database.
-	FieldIsTfaEnabled = "is_tfa_enabled"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
+	// EdgeTfaSettings holds the string denoting the tfa_settings edge name in mutations.
+	EdgeTfaSettings = "tfa_settings"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
 	// EdgeEmailVerificationTokens holds the string denoting the email_verification_tokens edge name in mutations.
@@ -93,6 +81,13 @@ const (
 	PersonalAccessTokensInverseTable = "personal_access_tokens"
 	// PersonalAccessTokensColumn is the table column denoting the personal_access_tokens relation/edge.
 	PersonalAccessTokensColumn = "owner_id"
+	// TfaSettingsTable is the table that holds the tfa_settings relation/edge.
+	TfaSettingsTable = "tfa_settings"
+	// TfaSettingsInverseTable is the table name for the TFASettings entity.
+	// It exists in this package in order to avoid circular dependency with the "tfasettings" package.
+	TfaSettingsInverseTable = "tfa_settings"
+	// TfaSettingsColumn is the table column denoting the tfa_settings relation/edge.
+	TfaSettingsColumn = "owner_id"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "user_settings"
 	// SettingInverseTable is the table name for the UserSetting entity.
@@ -166,14 +161,7 @@ var Columns = []string{
 	FieldLastSeen,
 	FieldPassword,
 	FieldSub,
-	FieldOauth,
 	FieldAuthProvider,
-	FieldTfaSecret,
-	FieldIsPhoneOtpAllowed,
-	FieldIsEmailOtpAllowed,
-	FieldIsTotpAllowed,
-	FieldIsWebauthnAllowed,
-	FieldIsTfaEnabled,
 }
 
 var (
@@ -226,18 +214,6 @@ var (
 	UpdateDefaultAvatarUpdatedAt func() time.Time
 	// UpdateDefaultLastSeen holds the default value on update for the "last_seen" field.
 	UpdateDefaultLastSeen func() time.Time
-	// DefaultOauth holds the default value on creation for the "oauth" field.
-	DefaultOauth bool
-	// DefaultIsPhoneOtpAllowed holds the default value on creation for the "is_phone_otp_allowed" field.
-	DefaultIsPhoneOtpAllowed bool
-	// DefaultIsEmailOtpAllowed holds the default value on creation for the "is_email_otp_allowed" field.
-	DefaultIsEmailOtpAllowed bool
-	// DefaultIsTotpAllowed holds the default value on creation for the "is_totp_allowed" field.
-	DefaultIsTotpAllowed bool
-	// DefaultIsWebauthnAllowed holds the default value on creation for the "is_webauthn_allowed" field.
-	DefaultIsWebauthnAllowed bool
-	// DefaultIsTfaEnabled holds the default value on creation for the "is_tfa_enabled" field.
-	DefaultIsTfaEnabled bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -342,44 +318,9 @@ func BySub(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSub, opts...).ToFunc()
 }
 
-// ByOauth orders the results by the oauth field.
-func ByOauth(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOauth, opts...).ToFunc()
-}
-
 // ByAuthProvider orders the results by the auth_provider field.
 func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
-}
-
-// ByTfaSecret orders the results by the tfa_secret field.
-func ByTfaSecret(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTfaSecret, opts...).ToFunc()
-}
-
-// ByIsPhoneOtpAllowed orders the results by the is_phone_otp_allowed field.
-func ByIsPhoneOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsPhoneOtpAllowed, opts...).ToFunc()
-}
-
-// ByIsEmailOtpAllowed orders the results by the is_email_otp_allowed field.
-func ByIsEmailOtpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsEmailOtpAllowed, opts...).ToFunc()
-}
-
-// ByIsTotpAllowed orders the results by the is_totp_allowed field.
-func ByIsTotpAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsTotpAllowed, opts...).ToFunc()
-}
-
-// ByIsWebauthnAllowed orders the results by the is_webauthn_allowed field.
-func ByIsWebauthnAllowed(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsWebauthnAllowed, opts...).ToFunc()
-}
-
-// ByIsTfaEnabled orders the results by the is_tfa_enabled field.
-func ByIsTfaEnabled(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIsTfaEnabled, opts...).ToFunc()
 }
 
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
@@ -393,6 +334,20 @@ func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
 func ByPersonalAccessTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newPersonalAccessTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTfaSettingsCount orders the results by tfa_settings count.
+func ByTfaSettingsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTfaSettingsStep(), opts...)
+	}
+}
+
+// ByTfaSettings orders the results by tfa_settings terms.
+func ByTfaSettings(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTfaSettingsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -505,6 +460,13 @@ func newPersonalAccessTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PersonalAccessTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, PersonalAccessTokensTable, PersonalAccessTokensColumn),
+	)
+}
+func newTfaSettingsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TfaSettingsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TfaSettingsTable, TfaSettingsColumn),
 	)
 }
 func newSettingStep() *sqlgraph.Step {

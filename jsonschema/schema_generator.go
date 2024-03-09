@@ -27,8 +27,7 @@ var includedPackages = []string{
 	"./pkg/otelx",
 	"./pkg/sessions",
 	"./pkg/tokens",
-	"./pkg/utils/emails",
-	"./pkg/utils/sentry",
+	"./pkg/utils",
 	"./pkg/providers",
 	"./pkg/analytics",
 }

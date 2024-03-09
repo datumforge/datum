@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -272,26 +273,6 @@ func (uu *UserUpdate) ClearSub() *UserUpdate {
 	return uu
 }
 
-// SetOauth sets the "oauth" field.
-func (uu *UserUpdate) SetOauth(b bool) *UserUpdate {
-	uu.mutation.SetOauth(b)
-	return uu
-}
-
-// SetNillableOauth sets the "oauth" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetOauth(*b)
-	}
-	return uu
-}
-
-// ClearOauth clears the value of the "oauth" field.
-func (uu *UserUpdate) ClearOauth() *UserUpdate {
-	uu.mutation.ClearOauth()
-	return uu
-}
-
 // SetAuthProvider sets the "auth_provider" field.
 func (uu *UserUpdate) SetAuthProvider(ep enums.AuthProvider) *UserUpdate {
 	uu.mutation.SetAuthProvider(ep)
@@ -303,126 +284,6 @@ func (uu *UserUpdate) SetNillableAuthProvider(ep *enums.AuthProvider) *UserUpdat
 	if ep != nil {
 		uu.SetAuthProvider(*ep)
 	}
-	return uu
-}
-
-// SetTfaSecret sets the "tfa_secret" field.
-func (uu *UserUpdate) SetTfaSecret(s string) *UserUpdate {
-	uu.mutation.SetTfaSecret(s)
-	return uu
-}
-
-// SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableTfaSecret(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetTfaSecret(*s)
-	}
-	return uu
-}
-
-// ClearTfaSecret clears the value of the "tfa_secret" field.
-func (uu *UserUpdate) ClearTfaSecret() *UserUpdate {
-	uu.mutation.ClearTfaSecret()
-	return uu
-}
-
-// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
-func (uu *UserUpdate) SetIsPhoneOtpAllowed(b bool) *UserUpdate {
-	uu.mutation.SetIsPhoneOtpAllowed(b)
-	return uu
-}
-
-// SetNillableIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsPhoneOtpAllowed(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsPhoneOtpAllowed(*b)
-	}
-	return uu
-}
-
-// ClearIsPhoneOtpAllowed clears the value of the "is_phone_otp_allowed" field.
-func (uu *UserUpdate) ClearIsPhoneOtpAllowed() *UserUpdate {
-	uu.mutation.ClearIsPhoneOtpAllowed()
-	return uu
-}
-
-// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
-func (uu *UserUpdate) SetIsEmailOtpAllowed(b bool) *UserUpdate {
-	uu.mutation.SetIsEmailOtpAllowed(b)
-	return uu
-}
-
-// SetNillableIsEmailOtpAllowed sets the "is_email_otp_allowed" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsEmailOtpAllowed(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsEmailOtpAllowed(*b)
-	}
-	return uu
-}
-
-// ClearIsEmailOtpAllowed clears the value of the "is_email_otp_allowed" field.
-func (uu *UserUpdate) ClearIsEmailOtpAllowed() *UserUpdate {
-	uu.mutation.ClearIsEmailOtpAllowed()
-	return uu
-}
-
-// SetIsTotpAllowed sets the "is_totp_allowed" field.
-func (uu *UserUpdate) SetIsTotpAllowed(b bool) *UserUpdate {
-	uu.mutation.SetIsTotpAllowed(b)
-	return uu
-}
-
-// SetNillableIsTotpAllowed sets the "is_totp_allowed" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsTotpAllowed(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsTotpAllowed(*b)
-	}
-	return uu
-}
-
-// ClearIsTotpAllowed clears the value of the "is_totp_allowed" field.
-func (uu *UserUpdate) ClearIsTotpAllowed() *UserUpdate {
-	uu.mutation.ClearIsTotpAllowed()
-	return uu
-}
-
-// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
-func (uu *UserUpdate) SetIsWebauthnAllowed(b bool) *UserUpdate {
-	uu.mutation.SetIsWebauthnAllowed(b)
-	return uu
-}
-
-// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsWebauthnAllowed(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsWebauthnAllowed(*b)
-	}
-	return uu
-}
-
-// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
-func (uu *UserUpdate) ClearIsWebauthnAllowed() *UserUpdate {
-	uu.mutation.ClearIsWebauthnAllowed()
-	return uu
-}
-
-// SetIsTfaEnabled sets the "is_tfa_enabled" field.
-func (uu *UserUpdate) SetIsTfaEnabled(b bool) *UserUpdate {
-	uu.mutation.SetIsTfaEnabled(b)
-	return uu
-}
-
-// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableIsTfaEnabled(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetIsTfaEnabled(*b)
-	}
-	return uu
-}
-
-// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
-func (uu *UserUpdate) ClearIsTfaEnabled() *UserUpdate {
-	uu.mutation.ClearIsTfaEnabled()
 	return uu
 }
 
@@ -439,6 +300,21 @@ func (uu *UserUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserUp
 		ids[i] = p[i].ID
 	}
 	return uu.AddPersonalAccessTokenIDs(ids...)
+}
+
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by IDs.
+func (uu *UserUpdate) AddTfaSettingIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddTfaSettingIDs(ids...)
+	return uu
+}
+
+// AddTfaSettings adds the "tfa_settings" edges to the TFASettings entity.
+func (uu *UserUpdate) AddTfaSettings(t ...*TFASettings) *UserUpdate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddTfaSettingIDs(ids...)
 }
 
 // SetSettingID sets the "setting" edge to the UserSetting entity by ID.
@@ -581,6 +457,27 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 		ids[i] = p[i].ID
 	}
 	return uu.RemovePersonalAccessTokenIDs(ids...)
+}
+
+// ClearTfaSettings clears all "tfa_settings" edges to the TFASettings entity.
+func (uu *UserUpdate) ClearTfaSettings() *UserUpdate {
+	uu.mutation.ClearTfaSettings()
+	return uu
+}
+
+// RemoveTfaSettingIDs removes the "tfa_settings" edge to TFASettings entities by IDs.
+func (uu *UserUpdate) RemoveTfaSettingIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveTfaSettingIDs(ids...)
+	return uu
+}
+
+// RemoveTfaSettings removes "tfa_settings" edges to TFASettings entities.
+func (uu *UserUpdate) RemoveTfaSettings(t ...*TFASettings) *UserUpdate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveTfaSettingIDs(ids...)
 }
 
 // ClearSetting clears the "setting" edge to the UserSetting entity.
@@ -925,50 +822,8 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.SubCleared() {
 		_spec.ClearField(user.FieldSub, field.TypeString)
 	}
-	if value, ok := uu.mutation.Oauth(); ok {
-		_spec.SetField(user.FieldOauth, field.TypeBool, value)
-	}
-	if uu.mutation.OauthCleared() {
-		_spec.ClearField(user.FieldOauth, field.TypeBool)
-	}
 	if value, ok := uu.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
-	}
-	if value, ok := uu.mutation.TfaSecret(); ok {
-		_spec.SetField(user.FieldTfaSecret, field.TypeString, value)
-	}
-	if uu.mutation.TfaSecretCleared() {
-		_spec.ClearField(user.FieldTfaSecret, field.TypeString)
-	}
-	if value, ok := uu.mutation.IsPhoneOtpAllowed(); ok {
-		_spec.SetField(user.FieldIsPhoneOtpAllowed, field.TypeBool, value)
-	}
-	if uu.mutation.IsPhoneOtpAllowedCleared() {
-		_spec.ClearField(user.FieldIsPhoneOtpAllowed, field.TypeBool)
-	}
-	if value, ok := uu.mutation.IsEmailOtpAllowed(); ok {
-		_spec.SetField(user.FieldIsEmailOtpAllowed, field.TypeBool, value)
-	}
-	if uu.mutation.IsEmailOtpAllowedCleared() {
-		_spec.ClearField(user.FieldIsEmailOtpAllowed, field.TypeBool)
-	}
-	if value, ok := uu.mutation.IsTotpAllowed(); ok {
-		_spec.SetField(user.FieldIsTotpAllowed, field.TypeBool, value)
-	}
-	if uu.mutation.IsTotpAllowedCleared() {
-		_spec.ClearField(user.FieldIsTotpAllowed, field.TypeBool)
-	}
-	if value, ok := uu.mutation.IsWebauthnAllowed(); ok {
-		_spec.SetField(user.FieldIsWebauthnAllowed, field.TypeBool, value)
-	}
-	if uu.mutation.IsWebauthnAllowedCleared() {
-		_spec.ClearField(user.FieldIsWebauthnAllowed, field.TypeBool)
-	}
-	if value, ok := uu.mutation.IsTfaEnabled(); ok {
-		_spec.SetField(user.FieldIsTfaEnabled, field.TypeBool, value)
-	}
-	if uu.mutation.IsTfaEnabledCleared() {
-		_spec.ClearField(user.FieldIsTfaEnabled, field.TypeBool)
 	}
 	if uu.mutation.PersonalAccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1013,6 +868,54 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = uu.schemaConfig.PersonalAccessToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.TfaSettingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.TFASettings
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedTfaSettingsIDs(); len(nodes) > 0 && !uu.mutation.TfaSettingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.TFASettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.TfaSettingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.TFASettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1681,26 +1584,6 @@ func (uuo *UserUpdateOne) ClearSub() *UserUpdateOne {
 	return uuo
 }
 
-// SetOauth sets the "oauth" field.
-func (uuo *UserUpdateOne) SetOauth(b bool) *UserUpdateOne {
-	uuo.mutation.SetOauth(b)
-	return uuo
-}
-
-// SetNillableOauth sets the "oauth" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetOauth(*b)
-	}
-	return uuo
-}
-
-// ClearOauth clears the value of the "oauth" field.
-func (uuo *UserUpdateOne) ClearOauth() *UserUpdateOne {
-	uuo.mutation.ClearOauth()
-	return uuo
-}
-
 // SetAuthProvider sets the "auth_provider" field.
 func (uuo *UserUpdateOne) SetAuthProvider(ep enums.AuthProvider) *UserUpdateOne {
 	uuo.mutation.SetAuthProvider(ep)
@@ -1712,126 +1595,6 @@ func (uuo *UserUpdateOne) SetNillableAuthProvider(ep *enums.AuthProvider) *UserU
 	if ep != nil {
 		uuo.SetAuthProvider(*ep)
 	}
-	return uuo
-}
-
-// SetTfaSecret sets the "tfa_secret" field.
-func (uuo *UserUpdateOne) SetTfaSecret(s string) *UserUpdateOne {
-	uuo.mutation.SetTfaSecret(s)
-	return uuo
-}
-
-// SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableTfaSecret(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetTfaSecret(*s)
-	}
-	return uuo
-}
-
-// ClearTfaSecret clears the value of the "tfa_secret" field.
-func (uuo *UserUpdateOne) ClearTfaSecret() *UserUpdateOne {
-	uuo.mutation.ClearTfaSecret()
-	return uuo
-}
-
-// SetIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field.
-func (uuo *UserUpdateOne) SetIsPhoneOtpAllowed(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsPhoneOtpAllowed(b)
-	return uuo
-}
-
-// SetNillableIsPhoneOtpAllowed sets the "is_phone_otp_allowed" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsPhoneOtpAllowed(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsPhoneOtpAllowed(*b)
-	}
-	return uuo
-}
-
-// ClearIsPhoneOtpAllowed clears the value of the "is_phone_otp_allowed" field.
-func (uuo *UserUpdateOne) ClearIsPhoneOtpAllowed() *UserUpdateOne {
-	uuo.mutation.ClearIsPhoneOtpAllowed()
-	return uuo
-}
-
-// SetIsEmailOtpAllowed sets the "is_email_otp_allowed" field.
-func (uuo *UserUpdateOne) SetIsEmailOtpAllowed(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsEmailOtpAllowed(b)
-	return uuo
-}
-
-// SetNillableIsEmailOtpAllowed sets the "is_email_otp_allowed" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsEmailOtpAllowed(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsEmailOtpAllowed(*b)
-	}
-	return uuo
-}
-
-// ClearIsEmailOtpAllowed clears the value of the "is_email_otp_allowed" field.
-func (uuo *UserUpdateOne) ClearIsEmailOtpAllowed() *UserUpdateOne {
-	uuo.mutation.ClearIsEmailOtpAllowed()
-	return uuo
-}
-
-// SetIsTotpAllowed sets the "is_totp_allowed" field.
-func (uuo *UserUpdateOne) SetIsTotpAllowed(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsTotpAllowed(b)
-	return uuo
-}
-
-// SetNillableIsTotpAllowed sets the "is_totp_allowed" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsTotpAllowed(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsTotpAllowed(*b)
-	}
-	return uuo
-}
-
-// ClearIsTotpAllowed clears the value of the "is_totp_allowed" field.
-func (uuo *UserUpdateOne) ClearIsTotpAllowed() *UserUpdateOne {
-	uuo.mutation.ClearIsTotpAllowed()
-	return uuo
-}
-
-// SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
-func (uuo *UserUpdateOne) SetIsWebauthnAllowed(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsWebauthnAllowed(b)
-	return uuo
-}
-
-// SetNillableIsWebauthnAllowed sets the "is_webauthn_allowed" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsWebauthnAllowed(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsWebauthnAllowed(*b)
-	}
-	return uuo
-}
-
-// ClearIsWebauthnAllowed clears the value of the "is_webauthn_allowed" field.
-func (uuo *UserUpdateOne) ClearIsWebauthnAllowed() *UserUpdateOne {
-	uuo.mutation.ClearIsWebauthnAllowed()
-	return uuo
-}
-
-// SetIsTfaEnabled sets the "is_tfa_enabled" field.
-func (uuo *UserUpdateOne) SetIsTfaEnabled(b bool) *UserUpdateOne {
-	uuo.mutation.SetIsTfaEnabled(b)
-	return uuo
-}
-
-// SetNillableIsTfaEnabled sets the "is_tfa_enabled" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableIsTfaEnabled(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetIsTfaEnabled(*b)
-	}
-	return uuo
-}
-
-// ClearIsTfaEnabled clears the value of the "is_tfa_enabled" field.
-func (uuo *UserUpdateOne) ClearIsTfaEnabled() *UserUpdateOne {
-	uuo.mutation.ClearIsTfaEnabled()
 	return uuo
 }
 
@@ -1848,6 +1611,21 @@ func (uuo *UserUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessToken) *Us
 		ids[i] = p[i].ID
 	}
 	return uuo.AddPersonalAccessTokenIDs(ids...)
+}
+
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by IDs.
+func (uuo *UserUpdateOne) AddTfaSettingIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddTfaSettingIDs(ids...)
+	return uuo
+}
+
+// AddTfaSettings adds the "tfa_settings" edges to the TFASettings entity.
+func (uuo *UserUpdateOne) AddTfaSettings(t ...*TFASettings) *UserUpdateOne {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddTfaSettingIDs(ids...)
 }
 
 // SetSettingID sets the "setting" edge to the UserSetting entity by ID.
@@ -1990,6 +1768,27 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 		ids[i] = p[i].ID
 	}
 	return uuo.RemovePersonalAccessTokenIDs(ids...)
+}
+
+// ClearTfaSettings clears all "tfa_settings" edges to the TFASettings entity.
+func (uuo *UserUpdateOne) ClearTfaSettings() *UserUpdateOne {
+	uuo.mutation.ClearTfaSettings()
+	return uuo
+}
+
+// RemoveTfaSettingIDs removes the "tfa_settings" edge to TFASettings entities by IDs.
+func (uuo *UserUpdateOne) RemoveTfaSettingIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveTfaSettingIDs(ids...)
+	return uuo
+}
+
+// RemoveTfaSettings removes "tfa_settings" edges to TFASettings entities.
+func (uuo *UserUpdateOne) RemoveTfaSettings(t ...*TFASettings) *UserUpdateOne {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveTfaSettingIDs(ids...)
 }
 
 // ClearSetting clears the "setting" edge to the UserSetting entity.
@@ -2364,50 +2163,8 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.SubCleared() {
 		_spec.ClearField(user.FieldSub, field.TypeString)
 	}
-	if value, ok := uuo.mutation.Oauth(); ok {
-		_spec.SetField(user.FieldOauth, field.TypeBool, value)
-	}
-	if uuo.mutation.OauthCleared() {
-		_spec.ClearField(user.FieldOauth, field.TypeBool)
-	}
 	if value, ok := uuo.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
-	}
-	if value, ok := uuo.mutation.TfaSecret(); ok {
-		_spec.SetField(user.FieldTfaSecret, field.TypeString, value)
-	}
-	if uuo.mutation.TfaSecretCleared() {
-		_spec.ClearField(user.FieldTfaSecret, field.TypeString)
-	}
-	if value, ok := uuo.mutation.IsPhoneOtpAllowed(); ok {
-		_spec.SetField(user.FieldIsPhoneOtpAllowed, field.TypeBool, value)
-	}
-	if uuo.mutation.IsPhoneOtpAllowedCleared() {
-		_spec.ClearField(user.FieldIsPhoneOtpAllowed, field.TypeBool)
-	}
-	if value, ok := uuo.mutation.IsEmailOtpAllowed(); ok {
-		_spec.SetField(user.FieldIsEmailOtpAllowed, field.TypeBool, value)
-	}
-	if uuo.mutation.IsEmailOtpAllowedCleared() {
-		_spec.ClearField(user.FieldIsEmailOtpAllowed, field.TypeBool)
-	}
-	if value, ok := uuo.mutation.IsTotpAllowed(); ok {
-		_spec.SetField(user.FieldIsTotpAllowed, field.TypeBool, value)
-	}
-	if uuo.mutation.IsTotpAllowedCleared() {
-		_spec.ClearField(user.FieldIsTotpAllowed, field.TypeBool)
-	}
-	if value, ok := uuo.mutation.IsWebauthnAllowed(); ok {
-		_spec.SetField(user.FieldIsWebauthnAllowed, field.TypeBool, value)
-	}
-	if uuo.mutation.IsWebauthnAllowedCleared() {
-		_spec.ClearField(user.FieldIsWebauthnAllowed, field.TypeBool)
-	}
-	if value, ok := uuo.mutation.IsTfaEnabled(); ok {
-		_spec.SetField(user.FieldIsTfaEnabled, field.TypeBool, value)
-	}
-	if uuo.mutation.IsTfaEnabledCleared() {
-		_spec.ClearField(user.FieldIsTfaEnabled, field.TypeBool)
 	}
 	if uuo.mutation.PersonalAccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -2452,6 +2209,54 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.PersonalAccessToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.TfaSettingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.TFASettings
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedTfaSettingsIDs(); len(nodes) > 0 && !uuo.mutation.TfaSettingsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.TFASettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.TfaSettingsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TfaSettingsTable,
+			Columns: []string{user.TfaSettingsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.TFASettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

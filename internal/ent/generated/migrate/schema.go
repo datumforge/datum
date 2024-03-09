@@ -512,6 +512,47 @@ var (
 			},
 		},
 	}
+	// TfaSettingsColumns holds the columns for the "tfa_settings" table.
+	TfaSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
+		{Name: "verified", Type: field.TypeBool, Default: false},
+		{Name: "recovery_codes", Type: field.TypeJSON, Nullable: true},
+		{Name: "phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "totp_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// TfaSettingsTable holds the schema information for the "tfa_settings" table.
+	TfaSettingsTable = &schema.Table{
+		Name:       "tfa_settings",
+		Columns:    TfaSettingsColumns,
+		PrimaryKey: []*schema.Column{TfaSettingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tfa_settings_users_tfa_settings",
+				Columns:    []*schema.Column{TfaSettingsColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "tfasettings_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{TfaSettingsColumns[13]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -531,14 +572,7 @@ var (
 		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "oauth", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN"}, Default: "CREDENTIALS"},
-		{Name: "tfa_secret", Type: field.TypeString, Nullable: true},
-		{Name: "is_phone_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_email_otp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_totp_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: true},
-		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -554,7 +588,7 @@ var (
 			{
 				Name:    "user_email_auth_provider",
 				Unique:  true,
-				Columns: []*schema.Column{UsersColumns[7], UsersColumns[18]},
+				Columns: []*schema.Column{UsersColumns[7], UsersColumns[17]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
@@ -576,6 +610,9 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON},
+		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "is_tfa_enabled", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true},
 		{Name: "user_id", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "user_setting_default_org", Type: field.TypeString, Nullable: true},
 	}
@@ -587,13 +624,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_settings_users_setting",
-				Columns:    []*schema.Column{UserSettingsColumns[13]},
+				Columns:    []*schema.Column{UserSettingsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "user_settings_organizations_default_org",
-				Columns:    []*schema.Column{UserSettingsColumns[14]},
+				Columns:    []*schema.Column{UserSettingsColumns[17]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -673,6 +710,7 @@ var (
 		OrganizationSettingsTable,
 		PasswordResetTokensTable,
 		PersonalAccessTokensTable,
+		TfaSettingsTable,
 		UsersTable,
 		UserSettingsTable,
 		WebauthnsTable,
@@ -696,6 +734,7 @@ func init() {
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
+	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable

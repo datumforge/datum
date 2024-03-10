@@ -10,6 +10,4 @@ done
 
 /bin/redis-server --save 20 1 --loglevel warning --daemonize yes
 
-export $(cat .env | xargs)
-
 /bin/datum serve --debug --pretty

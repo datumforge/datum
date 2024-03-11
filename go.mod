@@ -30,7 +30,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v0.82.0
+	github.com/ogen-go/ogen v0.83.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.0
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e
@@ -205,7 +205,7 @@ require (
 	github.com/datumforge/echox v0.0.0-20240204015542-90bd5e1f295d
 	github.com/datumforge/entx v0.0.7
 	github.com/denisbrodbeck/machineid v1.0.1
-	github.com/dlclark/regexp2 v1.10.0 // indirect
+	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/getsentry/sentry-go v0.27.0
@@ -265,7 +265,7 @@ require (
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.18.0 // indirect
+	golang.org/x/tools v0.19.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

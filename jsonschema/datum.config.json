@@ -500,6 +500,24 @@
       "type": "object",
       "description": "Config is the configuration for PostHog"
     },
+    "ratelimit.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "burst": {
+          "type": "integer"
+        },
+        "expires": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "sentry.Config": {
       "properties": {
         "enabled": {
@@ -746,6 +764,10 @@
     "totp": {
       "$ref": "#/$defs/totp.Config",
       "description": "TOTP contains the configuration for the TOTP provider"
+    },
+    "ratelimit": {
+      "$ref": "#/$defs/ratelimit.Config",
+      "description": "Ratelimit contains the configuration for the rate limiter"
     }
   },
   "additionalProperties": false,

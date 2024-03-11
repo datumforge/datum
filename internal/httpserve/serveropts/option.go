@@ -228,7 +228,7 @@ func WithMiddleware() ServerOption {
 			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
 			mime.NewWithConfig(mime.Config{DefaultContentType: echo.MIMEApplicationJSONCharsetUTF8}), // add mime middleware
 			cachecontrol.New(), // add cache control middleware
-			middleware.GzipWithConfig(middleware.GzipConfig{Level: 5}), // add gzip middleware
+			middleware.GzipWithConfig(middleware.GzipConfig{}), // add gzip middleware
 			middleware.Secure(), // add XSS middleware
 			cors.New(s.Config.Settings.Server.CORS.AllowOrigins), // add cors middleware
 			redirect.NewWithConfig(redirectMW),                   // add redirect middleware
@@ -386,7 +386,7 @@ func WithOTP() ServerOption {
 func WithRateLimiter() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		if s.Config.Settings.Ratelimit.Enabled {
-			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, ratelimit.DefaultRateLimiter())
+			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, ratelimit.RateLimiterWithConfig(&s.Config.Settings.Ratelimit))
 		}
 	})
 }

@@ -5,7 +5,6 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
-	"github.com/kelseyhightower/envconfig"
 )
 
 // Config defines the configuration settings for the default rate limiter
@@ -14,18 +13,6 @@ type Config struct {
 	RateLimit  float64       `json:"limit" koanf:"limit" default:"10"`
 	BurstLimit int           `json:"burst" koanf:"burst" default:"30"`
 	ExpiresIn  time.Duration `json:"expires" koanf:"expires" default:"10m"`
-}
-
-// DefaultRateLimiter returns a middleware function for rate limiting requests
-func DefaultRateLimiter() echo.MiddlewareFunc {
-	conf := &Config{}
-
-	err := envconfig.Process("datum", conf)
-	if err != nil {
-		panic(err)
-	}
-
-	return RateLimiterWithConfig(conf)
 }
 
 // RateLimiterWithConfig returns a middleware function for rate limiting requests with a config supplied

@@ -15,7 +15,6 @@ import (
 	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
 	sentrygo "github.com/getsentry/sentry-go"
-	"github.com/kelseyhightower/envconfig"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 
@@ -246,16 +245,11 @@ func WithEmailManager() ServerOption {
 			panic(err)
 		}
 
-		urlConfig := &emails.URLConfig{}
-		if err := envconfig.Process("datum_email_url", urlConfig); err != nil {
+		if err := s.Config.Settings.Email.URLConfig.Validate(); err != nil {
 			panic(err)
 		}
 
-		if err := urlConfig.Validate(); err != nil {
-			panic(err)
-		}
-
-		em.URLConfig = *urlConfig
+		em.URLConfig = s.Config.Settings.Email.URLConfig
 
 		s.Config.Handler.EmailManager = em
 	})

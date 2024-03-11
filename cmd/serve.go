@@ -52,6 +52,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithTaskManager(),
 		serveropts.WithSentry(),
 		serveropts.WithMiddleware(),
+		serveropts.WithRateLimiter(),
 		serveropts.WithAnalytics(),
 	)
 

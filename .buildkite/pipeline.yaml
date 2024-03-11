@@ -149,6 +149,19 @@ steps:
             - GOARCH=arm64
           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
 
+  - group: ":graphql: graphql schema checks"
+  key: "graphql"
+  # depends_on: ["tests", "go-builds"]
+  steps:
+  - label: ":graphql: subgraph check"
+    key: "rover_check"
+    env:
+      BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
+    plugins:
+      - datumforge/apollo#main:
+          graph-ref: Datum@current
+          subgraph: datum
+
 - group: ":database: atlas migrate"
   key: "database"
   depends_on: ["tests", "go-builds"]

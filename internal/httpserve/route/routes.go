@@ -19,11 +19,7 @@ const (
 var (
 	mw = []echo.MiddlewareFunc{middleware.Recover()}
 
-	restrictedRateLimit = &ratelimit.Config{
-		RateLimit:  1,
-		BurstLimit: 1,
-		ExpiresIn:  15 * time.Minute, //nolint:gomnd
-	}
+	restrictedRateLimit   = &ratelimit.Config{RateLimit: 10, BurstLimit: 10, ExpiresIn: 15 * time.Minute} //nolint:gomnd
 	restrictedEndpointsMW = []echo.MiddlewareFunc{}
 )
 

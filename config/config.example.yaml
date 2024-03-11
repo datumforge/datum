@@ -66,6 +66,11 @@ posthog:
     apiKey: ""
     enabled: false
     host: ""
+ratelimit:
+    burst: 0
+    enabled: false
+    expires: 0
+    limit: 0
 redis:
     address: ""
     db: 0

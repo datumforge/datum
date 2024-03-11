@@ -5,29 +5,17 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
-	"github.com/kelseyhightower/envconfig"
 )
 
 // Config defines the configuration settings for the default rate limiter
 type Config struct {
-	RateLimit  float64       `split_words:"true" default:"10"` // DATUM_RATE_LIMIT
-	BurstLimit int           `split_words:"true" default:"30"` // DATUM_BURST_LIMIT
-	ExpiresIn  time.Duration `split_words:"true" default:"1m"` // DATUM_EXPIRES_IN
+	Enabled    bool          `json:"enabled" koanf:"enabled" default:"false"`
+	RateLimit  float64       `json:"limit" koanf:"limit" default:"10"`
+	BurstLimit int           `json:"burst" koanf:"burst" default:"30"`
+	ExpiresIn  time.Duration `json:"expires" koanf:"expires" default:"10m"`
 }
 
-// DefaultRateLimiter returns a middleware function for rate limiting requests, see https://echo.labstack.com/docs/middleware/rate-limiter
-func DefaultRateLimiter() echo.MiddlewareFunc {
-	conf := &Config{}
-
-	err := envconfig.Process("datum", conf)
-	if err != nil {
-		panic(err)
-	}
-
-	return RateLimiterWithConfig(conf)
-}
-
-// RateLimiterWithConfig returns a middleware function for rate limiting requests with a config supplied, see https://echo.labstack.com/docs/middleware/rate-limiter
+// RateLimiterWithConfig returns a middleware function for rate limiting requests with a config supplied
 func RateLimiterWithConfig(conf *Config) echo.MiddlewareFunc {
 	rateLimitConfig := middleware.RateLimiterConfig{
 		Skipper: middleware.DefaultSkipper,

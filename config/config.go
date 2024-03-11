@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/analytics/posthog"
 	"github.com/datumforge/datum/pkg/cache"
+	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/otelx"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -65,6 +66,9 @@ type Config struct {
 
 	// TOTP contains the configuration for the TOTP provider
 	TOTP totp.Config `json:"totp" koanf:"totp"`
+
+	// Ratelimit contains the configuration for the rate limiter
+	Ratelimit ratelimit.Config `json:"ratelimit" koanf:"ratelimit"`
 }
 
 // Server settings for the echo server

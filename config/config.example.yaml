@@ -100,15 +100,35 @@ sentry:
     traceSampleRate: 0
     traceSampler: 0
 server:
+    cacheControl:
+        enabled: false
+        etagHeaders: null
+        noCacheHeaders: null
     cors:
         allowOrigins: null
         cookieInsecure: false
+        enabled: false
+        prefixes: null
     debug: false
     dev: false
     idleTimeout: 0
     listen: ""
     readHeaderTimeout: 0
     readTimeout: 0
+    redirect:
+        code: 0
+        enabled: false
+        redirects: null
+    secure:
+        contentsecuritypolicy: ""
+        contenttypenosniff: ""
+        cspreportonly: false
+        enabled: false
+        hstsmaxage: 0
+        hstspreloadenabled: false
+        referrerpolicy: ""
+        xframeoptions: ""
+        xssprotection: ""
     shutdownGracePeriod: 0
     tls:
         autoCert: false

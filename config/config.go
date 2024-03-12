@@ -16,7 +16,11 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/analytics/posthog"
 	"github.com/datumforge/datum/pkg/cache"
+	"github.com/datumforge/datum/pkg/middleware/cachecontrol"
+	"github.com/datumforge/datum/pkg/middleware/cors"
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
+	"github.com/datumforge/datum/pkg/middleware/redirect"
+	"github.com/datumforge/datum/pkg/middleware/secure"
 	"github.com/datumforge/datum/pkg/otelx"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
@@ -92,7 +96,13 @@ type Server struct {
 	// TLS contains the tls configuration settings
 	TLS TLS `json:"tls" koanf:"tls"`
 	// CORS contains settings to allow cross origin settings and insecure cookies
-	CORS CORS `json:"cors" koanf:"cors"`
+	CORS cors.Config `json:"cors" koanf:"cors"`
+	// Secure contains settings for the secure middleware
+	Secure secure.Config `json:"secure" koanf:"secure"`
+	// Redirect contains settings for the redirect middleware
+	Redirects redirect.Config `json:"redirect" koanf:"redirects"`
+	// CacheControl contains settings for the cache control middleware
+	CacheControl cachecontrol.Config `json:"cacheControl" koanf:"cacheControl"`
 }
 
 // Auth settings including oauth2 providers and datum token configuration
@@ -105,17 +115,6 @@ type Auth struct {
 	SupportedProviders []string `json:"supportedProviders" koanf:"supportedProviders"`
 	// Providers contains supported oauth2 providers configuration
 	Providers handlers.OauthProviderConfig `json:"providers" koanf:"providers"`
-}
-
-// CORS settings for the server to allow cross origin requests
-type CORS struct {
-	// AllowOrigins is a list of allowed origin to indicate whether the response can be shared with
-	// requesting code from the given origin
-	AllowOrigins []string `json:"allowOrigins" koanf:"allowOrigins"`
-	// CookieInsecure allows CSRF cookie to be sent to servers that the browser considers
-	// unsecured. Useful for cases where the connection is secured via VPN rather than
-	// HTTPS directly.
-	CookieInsecure bool `json:"cookieInsecure" koanf:"cookieInsecure"`
 }
 
 // TLS settings for the server for secure connections

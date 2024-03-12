@@ -9,10 +9,11 @@ import (
 
 // Config contains the types used in executing redirects via the redirect middleware
 type Config struct {
-	// Skipper defines a function to skip middleware.
-	Skipper   middleware.Skipper
-	Redirects map[string]string
-	Code      int
+	Enabled bool `json:"enabled" koanf:"enabled" default:"true"`
+	// Skipper defines a function to skip middleware
+	Skipper   middleware.Skipper `json:"-" koanf:"-"`
+	Redirects map[string]string  `json:"redirects" koanf:"redirects"`
+	Code      int                `json:"code" koanf:"code"`
 }
 
 // DefaultConfig is the default configuration of the redirect middleware

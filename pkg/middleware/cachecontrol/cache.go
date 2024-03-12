@@ -11,26 +11,25 @@ var epoch = time.Unix(0, 0).Format(time.RFC1123)
 
 // Config is the config values for the cache-control middleware
 type Config struct {
+	Enabled bool `json:"enabled" koanf:"enabled" default:"true"`
 	// Skipper defines a function to skip middleware
-	Skipper middleware.Skipper
-
+	Skipper middleware.Skipper `json:"-" koanf:"-"`
 	// noCacheHeaders is the header <-> match map pair to match in http for entity headers to remove
-	noCacheHeaders map[string]string
-
+	NoCacheHeaders map[string]string `json:"noCacheHeaders" koanf:"noCacheHeaders"`
 	// etagHeaders is the string of entity headers to remove
-	etagHeaders []string
+	EtagHeaders []string `json:"etagHeaders" koanf:"etagHeaders"`
 }
 
 // DefaultConfig is the default configuration of the middleware
 var DefaultConfig = Config{
 	Skipper: middleware.DefaultSkipper,
-	noCacheHeaders: map[string]string{
+	NoCacheHeaders: map[string]string{
 		"Expires":         epoch,
 		"Cache-Control":   "no-cache, private, max-age=0",
 		"Pragma":          "no-cache",
 		"X-Accel-Expires": "0",
 	},
-	etagHeaders: []string{
+	EtagHeaders: []string{
 		"ETag",
 		"If-Modified-Since",
 		"If-Match",
@@ -59,7 +58,7 @@ func NewWithConfig(config Config) echo.MiddlewareFunc {
 
 			req := c.Request()
 			// Delete any ETag headers that may have been set
-			for _, v := range DefaultConfig.etagHeaders {
+			for _, v := range DefaultConfig.EtagHeaders {
 				if req.Header.Get(v) != "" {
 					req.Header.Del(v)
 				}
@@ -67,7 +66,7 @@ func NewWithConfig(config Config) echo.MiddlewareFunc {
 
 			// Set our NoCache headers
 			res := c.Response()
-			for k, v := range DefaultConfig.noCacheHeaders {
+			for k, v := range DefaultConfig.NoCacheHeaders {
 				res.Header().Set(k, v)
 			}
 

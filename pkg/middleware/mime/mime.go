@@ -10,13 +10,13 @@ import (
 	"github.com/datumforge/echox/middleware"
 )
 
-// Config defines the config for Mime middleware.
+// Config defines the config for Mime middleware
 type Config struct {
-	// Skipper defines a function to skip middleware.
-	Skipper middleware.Skipper
-
-	MimeTypesFile      string
-	DefaultContentType string
+	// Skipper defines a function to skip middleware
+	Enabled            bool               `json:"enabled" koanf:"enabled" default:"true"`
+	Skipper            middleware.Skipper `json:"-" koanf:"-"`
+	MimeTypesFile      string             `json:"mimeTypesFile" koanf:"mimeTypesFile" default:""`
+	DefaultContentType string             `json:"defaultContentType" koanf:"defaultContentType" default:"application/data"`
 }
 
 // DefaultConfig is the default Gzip middleware config.
@@ -42,6 +42,10 @@ func NewWithConfig(config Config) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			if config.Skipper(c) {
+				return next(c)
+			}
+
+			if !config.Enabled {
 				return next(c)
 			}
 

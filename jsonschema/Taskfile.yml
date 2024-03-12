@@ -7,6 +7,12 @@ tasks:
       - npm install jsonschema2mk --global
 
   generate:
+    desc: generate the jsonschema and documentation
+    cmds:
+      - task: schema
+      - task: docs
+  
+  schema: 
     desc: generate a new jsonschema and corresponding config/config.example.yaml
     cmds:
       - go run jsonschema/schema_generator.go

@@ -12,11 +12,14 @@ import (
 
 // Config defines the config for Mime middleware
 type Config struct {
+	// Enabled indicates if the mime middleware should be enabled
+	Enabled bool `json:"enabled" koanf:"enabled" default:"true"`
 	// Skipper defines a function to skip middleware
-	Enabled            bool               `json:"enabled" koanf:"enabled" default:"true"`
-	Skipper            middleware.Skipper `json:"-" koanf:"-"`
-	MimeTypesFile      string             `json:"mimeTypesFile" koanf:"mimeTypesFile" default:""`
-	DefaultContentType string             `json:"defaultContentType" koanf:"defaultContentType" default:"application/data"`
+	Skipper middleware.Skipper `json:"-" koanf:"-"`
+	// MimeTypesFile is the file to load mime types from
+	MimeTypesFile string `json:"mimeTypesFile" koanf:"mimeTypesFile" default:""`
+	// DefaultContentType is the default content type to set if no mime type is found
+	DefaultContentType string `json:"defaultContentType" koanf:"defaultContentType" default:"application/data"`
 }
 
 // DefaultConfig is the default Gzip middleware config.

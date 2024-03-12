@@ -409,6 +409,7 @@ func WithCacheHeaders() ServerOption {
 	})
 }
 
+// WithCORS sets up the CORS middleware for the server
 func WithCORS() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		if s.Config.Settings.Server.CORS.Enabled {

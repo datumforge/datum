@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/pkg/cache"
 	"github.com/datumforge/datum/pkg/middleware/cachecontrol"
 	"github.com/datumforge/datum/pkg/middleware/cors"
+	"github.com/datumforge/datum/pkg/middleware/mime"
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/middleware/redirect"
 	"github.com/datumforge/datum/pkg/middleware/secure"
@@ -103,6 +104,8 @@ type Server struct {
 	Redirects redirect.Config `json:"redirect" koanf:"redirects"`
 	// CacheControl contains settings for the cache control middleware
 	CacheControl cachecontrol.Config `json:"cacheControl" koanf:"cacheControl"`
+	// Mime contains settings for the mime middleware
+	Mime mime.Config `json:"mime" koanf:"mime"`
 }
 
 // Auth settings including oauth2 providers and datum token configuration

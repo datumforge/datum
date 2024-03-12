@@ -30,6 +30,7 @@ var includedPackages = []string{
 	"./pkg/utils",
 	"./pkg/providers",
 	"./pkg/analytics",
+	"./pkg/middleware",
 }
 
 // schemaConfig represents the configuration for the schema generator

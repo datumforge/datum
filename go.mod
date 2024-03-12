@@ -1,6 +1,6 @@
 module github.com/datumforge/datum
 
-go 1.22.0
+go 1.22.1
 
 require (
 	ariga.io/entcache v0.1.0

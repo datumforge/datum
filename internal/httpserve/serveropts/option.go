@@ -32,6 +32,7 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/mime"
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/middleware/redirect"
+	"github.com/datumforge/datum/pkg/middleware/secure"
 	"github.com/datumforge/datum/pkg/middleware/sentry"
 	"github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/sessions"
@@ -208,13 +209,6 @@ func WithMiddleware() ServerOption {
 			s.Config.DefaultMiddleware = []echo.MiddlewareFunc{}
 		}
 
-		redirectMW := redirect.Config{
-			Redirects: map[string]string{
-				"/.well-known/change-password": "/v1/forgot-password",
-				"/security.txt":                "/.well-known/security.txt",
-			},
-			Code: 302, // nolint: gomnd
-		}
 		// default middleware
 		s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware,
 			middleware.RequestID(), // add request id
@@ -222,16 +216,11 @@ func WithMiddleware() ServerOption {
 			middleware.LoggerWithConfig(middleware.LoggerConfig{
 				Format: "remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}, session=${header:Set-Cookie}, host=${host}, referer=${referer}, user_agent=${user_agent}, route=${route}, path=${path}, auth=${header:Authorization}\n",
 			}),
-			sentry.New(),
-			echoprometheus.MetricsMiddleware(),           // add prometheus metrics
-			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
-			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
+			echoprometheus.MetricsMiddleware(),                                                       // add prometheus metrics
+			echozap.ZapLogger(s.Config.Logger.Desugar()),                                             // add zap logger, middleware requires the "regular" zap logger
+			echocontext.EchoContextToContextMiddleware(),                                             // adds echo context to parent
 			mime.NewWithConfig(mime.Config{DefaultContentType: echo.MIMEApplicationJSONCharsetUTF8}), // add mime middleware
-			cachecontrol.New(), // add cache control middleware
-			middleware.GzipWithConfig(middleware.GzipConfig{}), // add gzip middleware
-			middleware.Secure(), // add XSS middleware
-			cors.New(s.Config.Settings.Server.CORS.AllowOrigins), // add cors middleware
-			redirect.NewWithConfig(redirectMW),                   // add redirect middleware
+			middleware.GzipWithConfig(middleware.GzipConfig{}),                                       // add gzip middleware
 		)
 	})
 }
@@ -387,6 +376,44 @@ func WithRateLimiter() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		if s.Config.Settings.Ratelimit.Enabled {
 			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, ratelimit.RateLimiterWithConfig(&s.Config.Settings.Ratelimit))
+		}
+	})
+}
+
+// WithSecureMW sets up the secure middleware for the server
+func WithSecureMW() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		if s.Config.Settings.Server.Secure.Enabled {
+			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, secure.Secure(&s.Config.Settings.Server.Secure))
+		}
+	})
+}
+
+// WithRedirects sets up the redirects for the server
+func WithRedirects() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		if s.Config.Settings.Server.Redirects.Enabled {
+			redirects := s.Config.Settings.Server.Redirects
+			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, redirect.NewWithConfig(redirects))
+		}
+	})
+}
+
+// WithCacheHeaders sets up the cache control headers for the server
+func WithCacheHeaders() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		if s.Config.Settings.Server.CacheControl.Enabled {
+			cacheConfig := s.Config.Settings.Server.CacheControl
+			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, cachecontrol.NewWithConfig(cacheConfig))
+		}
+	})
+}
+
+// WithCORS sets up the CORS middleware for the server
+func WithCORS() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		if s.Config.Settings.Server.CORS.Enabled {
+			s.Config.DefaultMiddleware = append(s.Config.DefaultMiddleware, cors.New(s.Config.Settings.Server.CORS.AllowOrigins))
 		}
 	})
 }

@@ -10,13 +10,16 @@ import (
 	"github.com/datumforge/echox/middleware"
 )
 
-// Config defines the config for Mime middleware.
+// Config defines the config for Mime middleware
 type Config struct {
-	// Skipper defines a function to skip middleware.
-	Skipper middleware.Skipper
-
-	MimeTypesFile      string
-	DefaultContentType string
+	// Enabled indicates if the mime middleware should be enabled
+	Enabled bool `json:"enabled" koanf:"enabled" default:"true"`
+	// Skipper defines a function to skip middleware
+	Skipper middleware.Skipper `json:"-" koanf:"-"`
+	// MimeTypesFile is the file to load mime types from
+	MimeTypesFile string `json:"mimeTypesFile" koanf:"mimeTypesFile" default:""`
+	// DefaultContentType is the default content type to set if no mime type is found
+	DefaultContentType string `json:"defaultContentType" koanf:"defaultContentType" default:"application/data"`
 }
 
 // DefaultConfig is the default Gzip middleware config.

@@ -11,9 +11,15 @@ import (
 
 // Config holds the cors configuration settings
 type Config struct {
-	// Skipper defines a function to skip middleware.
-	Skipper  middleware.Skipper
-	Prefixes map[string][]string
+	// Enable or disable the CORS middleware
+	Enabled bool               `json:"enabled" koanf:"enabled" default:"true"`
+	Skipper middleware.Skipper `json:"-" koanf:"-"`
+	// Prefixes is a map of prefixes to allowed origins
+	Prefixes map[string][]string `json:"prefixes" koanf:"prefixes"`
+	// AllowOrigins is a list of allowed origins
+	AllowOrigins []string `json:"allowOrigins" koanf:"allowOrigins"`
+	// CookieInsecure sets the cookie to be insecure
+	CookieInsecure bool `json:"cookieInsecure" koanf:"cookieInsecure"`
 }
 
 // DefaultConfig creates a default config

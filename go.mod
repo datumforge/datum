@@ -1,6 +1,6 @@
 module github.com/datumforge/datum
 
-go 1.22.0
+go 1.22.1
 
 require (
 	ariga.io/entcache v0.1.0
@@ -200,7 +200,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/coreos/go-oidc/v3 v3.9.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
-	github.com/datumforge/echox v0.0.0-20240204015542-90bd5e1f295d
+	github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e
 	github.com/datumforge/entx v0.0.7
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/dlclark/regexp2 v1.11.0 // indirect

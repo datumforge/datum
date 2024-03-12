@@ -13,7 +13,7 @@ steps:
     key: "generate"
     plugins:
       - docker#v5.10.0:
-          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
+          image: "ghcr.io/datumforge/base-ci-image:28-5226be2e"
           command: ["task", "ci"]
           environment: 
             - "GOTOOLCHAIN=auto"
@@ -21,7 +21,7 @@ steps:
     key: "generate_config"
     plugins:
       - docker#v5.10.0:
-          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
+          image: "ghcr.io/datumforge/base-ci-image:28-5226be2e"
           command: ["task", "config:ci"]
           environment: 
             - "GOTOOLCHAIN=auto"

@@ -107,8 +107,8 @@ github.com/danieljoos/wincred v1.2.1 h1:dl9cBrupW8+r5250DYkYxocLeZ1Y4vB1kxgtjxw8
 github.com/danieljoos/wincred v1.2.1/go.mod h1:uGaFL9fDn3OLTvzCGulzE+SzjEe5NGlh5FdCcyfPwps=
 github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58 h1:/coVSf+8DmRkPRYaH2pWn/DhvcMNbHSb1IgqjFb5GUg=
 github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58/go.mod h1:nXVOsuzExmWX51klS2y/qQe0EUee4gALCOe3CP6BIjE=
-github.com/datumforge/echox v0.0.0-20240204015542-90bd5e1f295d h1:vDsUY1d5fRqK3hjpLZ1H7VSIoDNo9uP6BQSmI4MXc1w=
-github.com/datumforge/echox v0.0.0-20240204015542-90bd5e1f295d/go.mod h1:PIZalzJ+wD5P0bUHkn8wk0H+TsT94MoZUf0y1lTAwa4=
+github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e h1:anHN8Bsa8x80oCYCuC3EC5kY+GO8ymIQOWvgAKZujlo=
+github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e/go.mod h1:ZCbNvIShUhAHKlURvgedaGUAghCNZli2I87uLJSPiZ0=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PBRCAXbE29GW+HJXm8a99x0mGtSSE8iHM=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
 github.com/datumforge/entx v0.0.7 h1:G5DEJIa9X434OPiHRaoDEWADei+XrWD5LjeqFXDXqVk=

@@ -19,6 +19,7 @@ Config contains the configuration for the datum server
 |[**sentry**](#sentry)|`object`|Config settings for the Sentry client<br/>||
 |[**posthog**](#posthog)|`object`|Config is the configuration for PostHog<br/>||
 |[**totp**](#totp)|`object`|||
+|[**ratelimit**](#ratelimit)|`object`|Config defines the configuration settings for the default rate limiter<br/>||
 
 **Additional Properties:** not allowed  
 <a name="server"></a>
@@ -40,7 +41,11 @@ Server settings for the echo server
 |**idleTimeout**|`integer`|IdleTimeout sets the maximum amount of time to wait for the next request when keep-alives are enabled<br/>|no|
 |**readHeaderTimeout**|`integer`|ReadHeaderTimeout sets the amount of time allowed to read request headers<br/>|no|
 |[**tls**](#servertls)|`object`|TLS settings for the server for secure connections<br/>|no|
-|[**cors**](#servercors)|`object`|CORS settings for the server to allow cross origin requests<br/>|no|
+|[**cors**](#servercors)|`object`|Config holds the cors configuration settings<br/>|no|
+|[**secure**](#serversecure)|`object`|Config contains the types used in the mw middleware<br/>|no|
+|[**redirects**](#serverredirects)|`object`|Config contains the types used in executing redirects via the redirect middleware<br/>|no|
+|[**cacheControl**](#servercachecontrol)|`object`|Config is the config values for the cache-control middleware<br/>|no|
+|[**mime**](#servermime)|`object`|Config defines the config for Mime middleware<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="servertls"></a>
@@ -62,23 +67,121 @@ TLS settings for the server for secure connections
 <a name="servercors"></a>
 ### server\.cors: object
 
-CORS settings for the server to allow cross origin requests
+Config holds the cors configuration settings
 
 
 **Properties**
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
+|**enabled**|`boolean`|Enable or disable the CORS middleware<br/>||
+|[**prefixes**](#servercorsprefixes)|`object`|||
 |[**allowOrigins**](#servercorsalloworigins)|`string[]`|||
-|**cookieInsecure**|`boolean`|CookieInsecure allows CSRF cookie to be sent to servers that the browser considers<br/>unsecured. Useful for cases where the connection is secured via VPN rather than<br/>HTTPS directly.<br/>||
+|**cookieInsecure**|`boolean`|CookieInsecure sets the cookie to be insecure<br/>||
 
 **Additional Properties:** not allowed  
+<a name="servercorsprefixes"></a>
+#### server\.cors\.prefixes: object
+
+**Additional Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+
 <a name="servercorsalloworigins"></a>
 #### server\.cors\.allowOrigins: array
 
 **Items**
 
 **Item Type:** `string`  
+<a name="serversecure"></a>
+### server\.secure: object
+
+Config contains the types used in the mw middleware
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled indicates if the secure middleware should be enabled<br/>||
+|**xssprotection**|`string`|XSSProtection is the value to set the X-XSS-Protection header to - default is 1; mode=block<br/>||
+|**contenttypenosniff**|`string`|ContentTypeNosniff is the value to set the X-Content-Type-Options header to - default is nosniff<br/>||
+|**xframeoptions**|`string`|XFrameOptions is the value to set the X-Frame-Options header to - default is SAMEORIGIN<br/>||
+|**hstspreloadenabled**|`boolean`|HSTSPreloadEnabled is a boolean to enable HSTS preloading - default is false<br/>||
+|**hstsmaxage**|`integer`|HSTSMaxAge is the max age to set the HSTS header to - default is 31536000<br/>||
+|**contentsecuritypolicy**|`string`|ContentSecurityPolicy is the value to set the Content-Security-Policy header to - default is default-src 'self'<br/>||
+|**referrerpolicy**|`string`|ReferrerPolicy is the value to set the Referrer-Policy header to - default is same-origin<br/>||
+|**cspreportonly**|`boolean`|CSPReportOnly is a boolean to enable the Content-Security-Policy-Report-Only header - default is false<br/>||
+
+**Additional Properties:** not allowed  
+<a name="serverredirects"></a>
+### server\.redirects: object
+
+Config contains the types used in executing redirects via the redirect middleware
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled indicates if the redirect middleware should be enabled<br/>||
+|[**redirects**](#serverredirectsredirects)|`object`|||
+|**code**|`integer`|Code is the HTTP status code to use for the redirect<br/>||
+
+**Additional Properties:** not allowed  
+<a name="serverredirectsredirects"></a>
+#### server\.redirects\.redirects: object
+
+**Additional Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+
+<a name="servercachecontrol"></a>
+### server\.cacheControl: object
+
+Config is the config values for the cache-control middleware
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|[**noCacheHeaders**](#servercachecontrolnocacheheaders)|`object`|||
+|[**etagHeaders**](#servercachecontroletagheaders)|`string[]`|||
+
+**Additional Properties:** not allowed  
+<a name="servercachecontrolnocacheheaders"></a>
+#### server\.cacheControl\.noCacheHeaders: object
+
+**Additional Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+
+<a name="servercachecontroletagheaders"></a>
+#### server\.cacheControl\.etagHeaders: array
+
+**Items**
+
+**Item Type:** `string`  
+<a name="servermime"></a>
+### server\.mime: object
+
+Config defines the config for Mime middleware
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled indicates if the mime middleware should be enabled<br/>||
+|**mimeTypesFile**|`string`|MimeTypesFile is the file to load mime types from<br/>||
+|**defaultContentType**|`string`|DefaultContentType is the default content type to set if no mime type is found<br/>||
+
+**Additional Properties:** not allowed  
 <a name="auth"></a>
 ## auth: object
 
@@ -426,6 +529,22 @@ Config is the configuration for PostHog
 |**secret**|`string`|Secret stores a versioned secret key for cryptography functions<br/>||
 |**recoveryCodeCount**|`integer`|RecoveryCodeCount is the number of recovery codes to generate<br/>||
 |**recoveryCodeLength**|`integer`|RecoveryCodeLength is the length of a recovery code<br/>||
+
+**Additional Properties:** not allowed  
+<a name="ratelimit"></a>
+## ratelimit: object
+
+Config defines the configuration settings for the default rate limiter
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|**limit**|`number`|||
+|**burst**|`integer`|||
+|**expires**|`integer`|||
 
 **Additional Properties:** not allowed  
 

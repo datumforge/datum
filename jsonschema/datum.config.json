@@ -73,14 +73,17 @@
           "type": "boolean"
         },
         "noCacheHeaders": {
-          "$ref": "#/$defs/map[string]string"
+          "$ref": "#/$defs/map[string]string",
+          "description": "noCacheHeaders is the header \u003c-\u003e match map pair to match in http for entity headers to remove"
         },
         "etagHeaders": {
-          "$ref": "#/$defs/[]string"
+          "$ref": "#/$defs/[]string",
+          "description": "etagHeaders is the string of entity headers to remove"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Config is the config values for the cache-control middleware"
     },
     "config.Auth": {
       "properties": {
@@ -200,20 +203,25 @@
     "cors.Config": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable or disable the CORS middleware"
         },
         "prefixes": {
-          "$ref": "#/$defs/map[string][]string"
+          "$ref": "#/$defs/map[string][]string",
+          "description": "Prefixes is a map of prefixes to allowed origins"
         },
         "allowOrigins": {
-          "$ref": "#/$defs/[]string"
+          "$ref": "#/$defs/[]string",
+          "description": "AllowOrigins is a list of allowed origins"
         },
         "cookieInsecure": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "CookieInsecure sets the cookie to be insecure"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Config holds the cors configuration settings"
     },
     "emails.Config": {
       "properties": {
@@ -451,17 +459,21 @@
     "mime.Config": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enabled indicates if the mime middleware should be enabled"
         },
         "mimeTypesFile": {
-          "type": "string"
+          "type": "string",
+          "description": "MimeTypesFile is the file to load mime types from"
         },
         "defaultContentType": {
-          "type": "string"
+          "type": "string",
+          "description": "DefaultContentType is the default content type to set if no mime type is found"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Config defines the config for Mime middleware"
     },
     "otelx.Config": {
       "properties": {
@@ -571,55 +583,70 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Config defines the configuration settings for the default rate limiter"
     },
     "redirect.Config": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enabled indicates if the redirect middleware should be enabled"
         },
         "redirects": {
-          "$ref": "#/$defs/map[string]string"
+          "$ref": "#/$defs/map[string]string",
+          "description": "Redirects is a map of paths to redirect to"
         },
         "code": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Code is the HTTP status code to use for the redirect"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Config contains the types used in executing redirects via the redirect middleware"
     },
     "secure.Config": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enabled indicates if the secure middleware should be enabled"
         },
         "xssprotection": {
-          "type": "string"
+          "type": "string",
+          "description": "XSSProtection is the value to set the X-XSS-Protection header to - default is 1; mode=block"
         },
         "contenttypenosniff": {
-          "type": "string"
+          "type": "string",
+          "description": "ContentTypeNosniff is the value to set the X-Content-Type-Options header to - default is nosniff"
         },
         "xframeoptions": {
-          "type": "string"
+          "type": "string",
+          "description": "XFrameOptions is the value to set the X-Frame-Options header to - default is SAMEORIGIN"
         },
         "hstspreloadenabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "HSTSPreloadEnabled is a boolean to enable HSTS preloading - default is false"
         },
         "hstsmaxage": {
-          "type": "integer"
+          "type": "integer",
+          "description": "HSTSMaxAge is the max age to set the HSTS header to - default is 31536000"
         },
         "contentsecuritypolicy": {
-          "type": "string"
+          "type": "string",
+          "description": "ContentSecurityPolicy is the value to set the Content-Security-Policy header to - default is default-src 'self'"
         },
         "referrerpolicy": {
-          "type": "string"
+          "type": "string",
+          "description": "ReferrerPolicy is the value to set the Referrer-Policy header to - default is same-origin"
         },
         "cspreportonly": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "CSPReportOnly is a boolean to enable the Content-Security-Policy-Report-Only header - default is false"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "Config contains the types used in the mw middleware"
     },
     "sentry.Config": {
       "properties": {

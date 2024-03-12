@@ -19,6 +19,7 @@ Config contains the configuration for the datum server
 |[**sentry**](#sentry)|`object`|Config settings for the Sentry client<br/>||
 |[**posthog**](#posthog)|`object`|Config is the configuration for PostHog<br/>||
 |[**totp**](#totp)|`object`|||
+|[**ratelimit**](#ratelimit)|`object`|||
 
 **Additional Properties:** not allowed  
 <a name="server"></a>
@@ -40,7 +41,11 @@ Server settings for the echo server
 |**idleTimeout**|`integer`|IdleTimeout sets the maximum amount of time to wait for the next request when keep-alives are enabled<br/>|no|
 |**readHeaderTimeout**|`integer`|ReadHeaderTimeout sets the amount of time allowed to read request headers<br/>|no|
 |[**tls**](#servertls)|`object`|TLS settings for the server for secure connections<br/>|no|
-|[**cors**](#servercors)|`object`|CORS settings for the server to allow cross origin requests<br/>|no|
+|[**cors**](#servercors)|`object`||no|
+|[**secure**](#serversecure)|`object`||no|
+|[**redirects**](#serverredirects)|`object`||no|
+|[**cacheControl**](#servercachecontrol)|`object`||no|
+|[**mime**](#servermime)|`object`||no|
 
 **Additional Properties:** not allowed  
 <a name="servertls"></a>
@@ -62,23 +67,106 @@ TLS settings for the server for secure connections
 <a name="servercors"></a>
 ### server\.cors: object
 
-CORS settings for the server to allow cross origin requests
-
-
 **Properties**
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|[**prefixes**](#servercorsprefixes)|`object`|||
 |[**allowOrigins**](#servercorsalloworigins)|`string[]`|||
-|**cookieInsecure**|`boolean`|CookieInsecure allows CSRF cookie to be sent to servers that the browser considers<br/>unsecured. Useful for cases where the connection is secured via VPN rather than<br/>HTTPS directly.<br/>||
+|**cookieInsecure**|`boolean`|||
 
 **Additional Properties:** not allowed  
+<a name="servercorsprefixes"></a>
+#### server\.cors\.prefixes: object
+
+**Additional Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+
 <a name="servercorsalloworigins"></a>
 #### server\.cors\.allowOrigins: array
 
 **Items**
 
 **Item Type:** `string`  
+<a name="serversecure"></a>
+### server\.secure: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|**xssprotection**|`string`|||
+|**contenttypenosniff**|`string`|||
+|**xframeoptions**|`string`|||
+|**hstspreloadenabled**|`boolean`|||
+|**hstsmaxage**|`integer`|||
+|**contentsecuritypolicy**|`string`|||
+|**referrerpolicy**|`string`|||
+|**cspreportonly**|`boolean`|||
+
+**Additional Properties:** not allowed  
+<a name="serverredirects"></a>
+### server\.redirects: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|[**redirects**](#serverredirectsredirects)|`object`|||
+|**code**|`integer`|||
+
+**Additional Properties:** not allowed  
+<a name="serverredirectsredirects"></a>
+#### server\.redirects\.redirects: object
+
+**Additional Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+
+<a name="servercachecontrol"></a>
+### server\.cacheControl: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|[**noCacheHeaders**](#servercachecontrolnocacheheaders)|`object`|||
+|[**etagHeaders**](#servercachecontroletagheaders)|`string[]`|||
+
+**Additional Properties:** not allowed  
+<a name="servercachecontrolnocacheheaders"></a>
+#### server\.cacheControl\.noCacheHeaders: object
+
+**Additional Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+
+<a name="servercachecontroletagheaders"></a>
+#### server\.cacheControl\.etagHeaders: array
+
+**Items**
+
+**Item Type:** `string`  
+<a name="servermime"></a>
+### server\.mime: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|**mimeTypesFile**|`string`|||
+|**defaultContentType**|`string`|||
+
+**Additional Properties:** not allowed  
 <a name="auth"></a>
 ## auth: object
 
@@ -426,6 +514,19 @@ Config is the configuration for PostHog
 |**secret**|`string`|Secret stores a versioned secret key for cryptography functions<br/>||
 |**recoveryCodeCount**|`integer`|RecoveryCodeCount is the number of recovery codes to generate<br/>||
 |**recoveryCodeLength**|`integer`|RecoveryCodeLength is the length of a recovery code<br/>||
+
+**Additional Properties:** not allowed  
+<a name="ratelimit"></a>
+## ratelimit: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|||
+|**limit**|`number`|||
+|**burst**|`integer`|||
+|**expires**|`integer`|||
 
 **Additional Properties:** not allowed  
 

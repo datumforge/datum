@@ -227,8 +227,7 @@ func WithMiddleware() ServerOption {
 			echozap.ZapLogger(s.Config.Logger.Desugar()), // add zap logger, middleware requires the "regular" zap logger
 			echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
 			mime.NewWithConfig(mime.Config{DefaultContentType: echo.MIMEApplicationJSONCharsetUTF8}), // add mime middleware
-			cachecontrol.New(), // add cache control middleware
-			middleware.GzipWithConfig(middleware.GzipConfig{}), // add gzip middleware
+			cachecontrol.New(),  // add cache control middleware
 			middleware.Secure(), // add XSS middleware
 			cors.New(s.Config.Settings.Server.CORS.AllowOrigins), // add cors middleware
 			redirect.NewWithConfig(redirectMW),                   // add redirect middleware

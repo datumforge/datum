@@ -161,6 +161,10 @@
         "cacheControl": {
           "$ref": "#/$defs/cachecontrol.Config",
           "description": "CacheControl contains settings for the cache control middleware"
+        },
+        "mime": {
+          "$ref": "#/$defs/mime.Config",
+          "description": "Mime contains settings for the mime middleware"
         }
       },
       "additionalProperties": false,
@@ -442,6 +446,21 @@
       "additionalProperties": {
         "type": "string"
       },
+      "type": "object"
+    },
+    "mime.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "mimeTypesFile": {
+          "type": "string"
+        },
+        "defaultContentType": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
       "type": "object"
     },
     "otelx.Config": {

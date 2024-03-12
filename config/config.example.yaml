@@ -113,6 +113,10 @@ server:
     dev: false
     idleTimeout: 0
     listen: ""
+    mime:
+        defaultContentType: ""
+        enabled: false
+        mimeTypesFile: ""
     readHeaderTimeout: 0
     readTimeout: 0
     redirect:

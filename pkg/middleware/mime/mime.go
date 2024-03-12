@@ -45,10 +45,6 @@ func NewWithConfig(config Config) echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			if !config.Enabled {
-				return next(c)
-			}
-
 			ext := filepath.Ext(c.Request().URL.Path)
 			mimeType := mimeTypes[ext]
 

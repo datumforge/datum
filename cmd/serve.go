@@ -53,6 +53,10 @@ func serve(ctx context.Context) error {
 		serveropts.WithSentry(),
 		serveropts.WithMiddleware(),
 		serveropts.WithRateLimiter(),
+		serveropts.WithSecureMW(),
+		serveropts.WithSentry(),
+		serveropts.WithCacheHeaders(),
+		serveropts.WithCORS(),
 		serveropts.WithAnalytics(),
 	)
 

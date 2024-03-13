@@ -131,15 +131,17 @@ func (c *client) createEntDBClient(db *entsql.Driver) *ent.Client {
 	return ent.NewClient(cOpts...)
 }
 
-// NewTestClient creates a entdb client that can be used for TEST purposes ONLY
-func NewTestClient(ctx context.Context, entOpts []ent.Option) (*ent.Client, *testutils.TC, error) {
-	// setup logger
-	logger := zap.NewNop().Sugar()
-
+func NewTestContainer(ctx context.Context) *testutils.TC {
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
 
-	ctr := testutils.GetTestURI(ctx, testDBURI)
+	return testutils.GetTestURI(ctx, testDBURI)
+}
+
+// NewTestClient creates a entdb client that can be used for TEST purposes ONLY
+func NewTestClient(ctx context.Context, ctr *testutils.TC, entOpts []ent.Option) (*ent.Client, error) {
+	// setup logger
+	logger := zap.NewNop().Sugar()
 
 	dbconf := entx.Config{
 		Debug:           true,
@@ -152,12 +154,12 @@ func NewTestClient(ctx context.Context, entOpts []ent.Option) (*ent.Client, *tes
 
 	db, _, err := NewMultiDriverDBClient(ctx, dbconf, logger, entOpts)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if err := db.Schema.Create(ctx); err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return db, ctr, nil
+	return db, nil
 }

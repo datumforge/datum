@@ -26,15 +26,12 @@ import (
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 	"github.com/datumforge/datum/pkg/sessions"
-	"github.com/datumforge/datum/pkg/testutils"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
 var (
-	dbContainer *testutils.TC
-
 	// commonly used vars in tests
 	emptyResponse = "null\n"
 	validPassword = "sup3rs3cu7e!"
@@ -141,14 +138,15 @@ func setupTest(t *testing.T) *client {
 		ent.Analytics(&analytics.EventManager{Enabled: false}),
 	}
 
+	ctr := entdb.NewTestContainer(ctx)
+
 	// create database connection
-	db, ctr, err := entdb.NewTestClient(ctx, opts)
+	db, err := entdb.NewTestClient(ctx, ctr, opts)
 	if err != nil {
 		require.NoError(t, err, "failed opening connection to database")
 	}
 
 	// add db to test client
-	dbContainer = ctr
 	c.db = db
 
 	// setup handler

@@ -34,8 +34,7 @@ import (
 )
 
 var (
-	dbContainer *testutils.TC
-	testUser    *ent.User
+	testUser *ent.User
 )
 
 // TestGraphTestSuite runs all the tests in the GraphTestSuite
@@ -47,6 +46,7 @@ func TestGraphTestSuite(t *testing.T) {
 type GraphTestSuite struct {
 	suite.Suite
 	client *client
+	tc     *testutils.TC
 }
 
 // client contains all the clients the test need to interact with
@@ -67,6 +67,12 @@ type graphClient struct {
 }
 
 func (suite *GraphTestSuite) SetupSuite() {
+	ctx := context.Background()
+
+	suite.tc = entdb.NewTestContainer(ctx)
+}
+
+func (suite *GraphTestSuite) SetupTest() {
 	t := suite.T()
 
 	ctx := context.Background()
@@ -127,13 +133,12 @@ func (suite *GraphTestSuite) SetupSuite() {
 	}
 
 	// create database connection
-	db, ctr, err := entdb.NewTestClient(ctx, opts)
+	db, err := entdb.NewTestClient(ctx, suite.tc, opts)
 	if err != nil {
 		require.NoError(t, err, "failed opening connection to database")
 	}
 
 	// assign values
-	dbContainer = ctr
 	c.db = db
 	c.datum = graphTestClient(t, c.db)
 
@@ -146,15 +151,15 @@ func (suite *GraphTestSuite) SetupSuite() {
 func (suite *GraphTestSuite) TearDownTest() {
 	// clear all fga mocks
 	mock_fga.ClearMocks(suite.client.fga)
-}
 
-func (suite *GraphTestSuite) TearDownSuite() {
 	if err := suite.client.db.Close(); err != nil {
 		log.Fatalf("failed to close database: %s", err)
 	}
+}
 
-	if dbContainer.Container != nil {
-		if err := dbContainer.Container.Terminate(context.Background()); err != nil {
+func (suite *GraphTestSuite) TearDownSuite() {
+	if suite.tc.Container != nil {
+		if err := suite.tc.Container.Terminate(context.Background()); err != nil {
 			log.Fatalf("failed to terminate container: %s", err)
 		}
 	}

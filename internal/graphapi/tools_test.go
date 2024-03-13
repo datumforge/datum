@@ -2,12 +2,14 @@ package graphapi_test
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Yamashou/gqlgenc/clientv2"
@@ -36,6 +38,16 @@ var (
 	testUser    *ent.User
 )
 
+func TestGraphTestSuite(t *testing.T) {
+	suite.Run(t, new(GraphTestSuite))
+}
+
+// GraphTestSuite handles the setup and teardown between tests
+type GraphTestSuite struct {
+	suite.Suite
+	client *client
+}
+
 // client contains all the clients the test need to interact with
 type client struct {
 	db    *ent.Client
@@ -53,16 +65,16 @@ type graphClient struct {
 	httpClient *http.Client
 }
 
-func setupTest(t *testing.T) *client {
+func (suite *GraphTestSuite) SetupTest() {
 	ctx := context.Background()
 
 	// setup fga mock
 	c := &client{
-		fga: mock_fga.NewMockSdkClient(t),
+		fga: mock_fga.NewMockSdkClient(suite.T()),
 	}
 
 	// create mock FGA client
-	fc := fgax.NewMockFGAClient(t, c.fga)
+	fc := fgax.NewMockFGAClient(suite.T(), c.fga)
 
 	// setup logger
 	logger := zap.NewNop().Sugar()
@@ -76,7 +88,7 @@ func setupTest(t *testing.T) *client {
 
 	em, err := emails.New(emConfig)
 	if err != nil {
-		t.Fatal("error creating email manager")
+		suite.T().Fatal("error creating email manager")
 	}
 
 	// setup task manager
@@ -114,18 +126,30 @@ func setupTest(t *testing.T) *client {
 	// create database connection
 	db, ctr, err := entdb.NewTestClient(ctx, opts)
 	if err != nil {
-		require.NoError(t, err, "failed opening connection to database")
+		require.NoError(suite.T(), err, "failed opening connection to database")
 	}
 
 	// assign values
 	dbContainer = ctr
 	c.db = db
-	c.datum = graphTestClient(t, c.db)
+	c.datum = graphTestClient(suite.T(), c.db)
 
 	// create test user
-	testUser = (&UserBuilder{client: c}).MustNew(context.Background(), t)
+	testUser = (&UserBuilder{client: c}).MustNew(context.Background(), suite.T())
 
-	return c
+	suite.client = c
+}
+
+func (suite *GraphTestSuite) TearDownTest() {
+	if err := suite.client.db.Close(); err != nil {
+		log.Fatalf("failed to close database: %s", err)
+	}
+
+	if dbContainer.Container != nil {
+		if err := dbContainer.Container.Terminate(context.Background()); err != nil {
+			log.Fatalf("failed to terminate container: %s", err)
+		}
+	}
 }
 
 func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {

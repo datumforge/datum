@@ -21,15 +21,14 @@ const (
 	organization = "organization"
 )
 
-func TestQueryOrganization(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryOrganization() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("%s:%s", organization, org1.ID)}
 
@@ -53,12 +52,12 @@ func TestQueryOrganization(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
-			mock_fga.CheckAny(t, client.fga, true)
-			mock_fga.ListAny(t, client.fga, listObjects)
+			mock_fga.CheckAny(t, suite.client.fga, true)
+			mock_fga.ListAny(t, suite.client.fga, listObjects)
 
-			resp, err := client.datum.GetOrganizationByID(reqCtx, tc.queryID)
+			resp, err := suite.client.datum.GetOrganizationByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -75,28 +74,27 @@ func TestQueryOrganization(t *testing.T) {
 	}
 
 	// delete created org
-	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryOrganizations(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryOrganizations() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	org2 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	t.Run("Get Organizations", func(t *testing.T) {
-		defer mock_fga.ClearMocks(client.fga)
+		defer mock_fga.ClearMocks(suite.client.fga)
 		// check tuple per org
 		listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", org2.ID)}
 
-		mock_fga.ListTimes(t, client.fga, listObjects, 5)
+		mock_fga.ListTimes(t, suite.client.fga, listObjects, 5)
 
-		resp, err := client.datum.GetAllOrganizations(reqCtx)
+		resp, err := suite.client.datum.GetAllOrganizations(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -122,9 +120,9 @@ func TestQueryOrganizations(t *testing.T) {
 		}
 
 		// Check user with no relations, gets no orgs back
-		mock_fga.ListTimes(t, client.fga, []string{}, 1)
+		mock_fga.ListTimes(t, suite.client.fga, []string{}, 1)
 
-		resp, err = client.datum.GetAllOrganizations(reqCtx)
+		resp, err = suite.client.datum.GetAllOrganizations(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -134,23 +132,22 @@ func TestQueryOrganizations(t *testing.T) {
 	})
 }
 
-func TestMutationCreateOrganization(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationCreateOrganization() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	parentOrg := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	parentPersonalOrg := (&OrganizationBuilder{client: client, PersonalOrg: true}).MustNew(reqCtx, t)
+	parentOrg := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	parentPersonalOrg := (&OrganizationBuilder{client: suite.client, PersonalOrg: true}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("organization:%s", parentOrg.ID), fmt.Sprintf("organization:%s", parentPersonalOrg.ID)}
 
 	// setup deleted org
-	orgToDelete := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	orgToDelete := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 	// delete said org
-	(&OrganizationCleanup{client: client, OrgID: orgToDelete.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: orgToDelete.ID}).MustDelete(reqCtx, t)
 
 	testCases := []struct {
 		name           string
@@ -237,7 +234,7 @@ func TestMutationCreateOrganization(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			tc := tc
 			input := datumclient.CreateOrganizationInput{
@@ -253,11 +250,11 @@ func TestMutationCreateOrganization(t *testing.T) {
 				input.ParentID = &tc.parentOrgID
 
 				if tc.errorMsg != "" {
-					mock_fga.CheckAny(t, client.fga, true)
+					mock_fga.CheckAny(t, suite.client.fga, true)
 				}
 
 				// There is a check to ensure the parent org is not a parent org
-				mock_fga.ListTimes(t, client.fga, listObjects, 1)
+				mock_fga.ListTimes(t, suite.client.fga, listObjects, 1)
 			}
 
 			if tc.settings != nil {
@@ -266,12 +263,12 @@ func TestMutationCreateOrganization(t *testing.T) {
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
-				mock_fga.CheckAny(t, client.fga, true)
-				mock_fga.WriteAny(t, client.fga)
-				mock_fga.ListTimes(t, client.fga, listObjects, 2)
+				mock_fga.CheckAny(t, suite.client.fga, true)
+				mock_fga.WriteAny(t, suite.client.fga)
+				mock_fga.ListTimes(t, suite.client.fga, listObjects, 2)
 			}
 
-			resp, err := client.datum.CreateOrganization(reqCtx, input)
+			resp, err := suite.client.datum.CreateOrganization(reqCtx, input)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -307,17 +304,16 @@ func TestMutationCreateOrganization(t *testing.T) {
 			}
 
 			// cleanup org
-			(&OrganizationCleanup{client: client, OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx, t)
+			(&OrganizationCleanup{client: suite.client, OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx, t)
 		})
 	}
 
-	(&OrganizationCleanup{client: client, OrgID: parentOrg.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: client, OrgID: parentPersonalOrg.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: parentOrg.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: parentPersonalOrg.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutationUpdateOrganization(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationUpdateOrganization() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -328,8 +324,8 @@ func TestMutationUpdateOrganization(t *testing.T) {
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 	nameUpdateLong := gofakeit.LetterN(200)
 
-	org := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
@@ -426,19 +422,19 @@ func TestMutationUpdateOrganization(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			// mock checks of tuple
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 			// get and update  organization
-			mock_fga.CheckAny(t, client.fga, true)
+			mock_fga.CheckAny(t, suite.client.fga, true)
 
 			// check access
-			mock_fga.ListAny(t, client.fga, listObjects)
+			mock_fga.ListAny(t, suite.client.fga, listObjects)
 
 			if tc.updateInput.AddOrgMembers != nil {
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			// update org
-			resp, err := client.datum.UpdateOrganization(reqCtx, org.ID, tc.updateInput)
+			resp, err := suite.client.datum.UpdateOrganization(reqCtx, org.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -472,19 +468,18 @@ func TestMutationUpdateOrganization(t *testing.T) {
 		})
 	}
 
-	(&OrganizationCleanup{client: client, OrgID: org.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutationDeleteOrganization(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
@@ -515,19 +510,19 @@ func TestMutationDeleteOrganization(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			// mock read of tuple
-			mock_fga.CheckAny(t, client.fga, tc.accessAllowed)
+			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
 
 			// additional check happens when the resource is found
 			if tc.errorMsg == "" {
-				mock_fga.ListAny(t, client.fga, listObjects)
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			// delete org
-			resp, err := client.datum.DeleteOrganization(reqCtx, tc.orgID)
+			resp, err := suite.client.datum.DeleteOrganization(reqCtx, tc.orgID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -544,7 +539,7 @@ func TestMutationDeleteOrganization(t *testing.T) {
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.orgID, resp.DeleteOrganization.DeletedID)
 
-			o, err := client.datum.GetOrganizationByID(reqCtx, tc.orgID)
+			o, err := suite.client.datum.GetOrganizationByID(reqCtx, tc.orgID)
 
 			require.Nil(t, o)
 			require.Error(t, err)
@@ -552,7 +547,7 @@ func TestMutationDeleteOrganization(t *testing.T) {
 
 			ctx := entx.SkipSoftDelete(reqCtx)
 
-			o, err = client.datum.GetOrganizationByID(ctx, tc.orgID)
+			o, err = suite.client.datum.GetOrganizationByID(ctx, tc.orgID)
 
 			require.Equal(t, o.Organization.ID, tc.orgID)
 			require.NoError(t, err)
@@ -560,34 +555,33 @@ func TestMutationDeleteOrganization(t *testing.T) {
 	}
 }
 
-func TestMutationOrganizationCascadeDelete(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listOrgs := []string{fmt.Sprintf("organization:%s", org.ID)}
 
-	group1 := (&GroupBuilder{client: client, Owner: org.ID}).MustNew(reqCtx, t)
+	group1 := (&GroupBuilder{client: suite.client, Owner: org.ID}).MustNew(reqCtx, t)
 
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
 
 	// mocks checks for all calls
-	mock_fga.CheckAny(t, client.fga, true)
+	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	mock_fga.ListTimes(t, client.fga, listOrgs, 5)
-	mock_fga.ListTimes(t, client.fga, listGroups, 1)
-	mock_fga.ListTimes(t, client.fga, listOrgs, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 5)
+	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 
 	// mock writes to delete member of org
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.client.fga)
 
 	// delete org
-	resp, err := client.datum.DeleteOrganization(reqCtx, org.ID)
+	resp, err := suite.client.datum.DeleteOrganization(reqCtx, org.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -596,13 +590,13 @@ func TestMutationOrganizationCascadeDelete(t *testing.T) {
 	// make sure the deletedID matches the ID we wanted to delete
 	assert.Equal(t, org.ID, resp.DeleteOrganization.DeletedID)
 
-	o, err := client.datum.GetOrganizationByID(reqCtx, org.ID)
+	o, err := suite.client.datum.GetOrganizationByID(reqCtx, org.ID)
 
 	require.Nil(t, o)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
-	g, err := client.datum.GetGroupByID(reqCtx, group1.ID)
+	g, err := suite.client.datum.GetGroupByID(reqCtx, group1.ID)
 
 	require.Nil(t, g)
 	require.Error(t, err)
@@ -613,7 +607,7 @@ func TestMutationOrganizationCascadeDelete(t *testing.T) {
 
 	ctx = entx.SkipSoftDelete(ctx)
 
-	o, err = client.datum.GetOrganizationByID(ctx, org.ID)
+	o, err = suite.client.datum.GetOrganizationByID(ctx, org.ID)
 
 	require.NoError(t, err)
 	require.Equal(t, o.Organization.ID, org.ID)
@@ -621,15 +615,14 @@ func TestMutationOrganizationCascadeDelete(t *testing.T) {
 	// allow after tuples have been deleted
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	g, err = client.datum.GetGroupByID(ctx, group1.ID)
+	g, err = suite.client.datum.GetGroupByID(ctx, group1.ID)
 
 	require.NoError(t, err)
 	require.Equal(t, g.Group.ID, group1.ID)
 }
 
-func TestMutationCreateOrganizationTransaction(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationCreateOrganizationTransaction() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -641,19 +634,19 @@ func TestMutationCreateOrganizationTransaction(t *testing.T) {
 		}
 
 		fgaErr := errors.New("unable to create relationship") //nolint:goerr113
-		mock_fga.WriteError(t, client.fga, fgaErr)
+		mock_fga.WriteError(t, suite.client.fga, fgaErr)
 
-		resp, err := client.datum.CreateOrganization(reqCtx, input)
+		resp, err := suite.client.datum.CreateOrganization(reqCtx, input)
 
 		require.Error(t, err)
 		require.Empty(t, resp)
 
 		// Make sure the org was not added to the database (check without auth)
-		mock_fga.ListAny(t, client.fga, []string{})
+		mock_fga.ListAny(t, suite.client.fga, []string{})
 
 		ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
-		orgs, err := client.datum.GetAllOrganizations(ctx)
+		orgs, err := suite.client.datum.GetAllOrganizations(ctx)
 		require.NoError(t, err)
 
 		for _, o := range orgs.Organizations.Edges {

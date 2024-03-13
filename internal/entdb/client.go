@@ -2,7 +2,6 @@ package entdb
 
 import (
 	"context"
-	"log"
 	"os"
 	"time"
 
@@ -159,13 +158,6 @@ func NewTestClient(ctx context.Context, entOpts []ent.Option) (*ent.Client, *tes
 	if err := db.Schema.Create(ctx); err != nil {
 		return nil, nil, err
 	}
-
-	// Clean up the container
-	defer func() {
-		if err := ctr.Container.Terminate(ctx); err != nil {
-			log.Fatalf("failed to terminate container: %s", err)
-		}
-	}()
 
 	return db, ctr, nil
 }

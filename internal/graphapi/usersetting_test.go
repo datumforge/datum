@@ -13,19 +13,18 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 )
 
-func TestQueryUserSetting(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryUserSetting() {
+	t := suite.T()
 
 	// setup user context
 	ctx, err := userContext()
 	require.NoError(t, err)
 
-	user1 := (&UserBuilder{client: client}).MustNew(ctx, t)
+	user1 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 	user1Setting, err := user1.Setting(ctx)
 	require.NoError(t, err)
 
-	user2 := (&UserBuilder{client: client}).MustNew(ctx, t)
+	user2 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 	user2Setting, err := user2.Setting(ctx)
 	require.NoError(t, err)
 
@@ -58,16 +57,16 @@ func TestQueryUserSetting(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.expected != nil {
 				// placeholder until authz is enforced on org members
 				// at which point this needs to be the correct organization id
 				listObjects := []string{"organization:test"}
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
-			resp, err := client.datum.GetUserSettingByID(reqCtx, tc.queryID)
+			resp, err := suite.client.datum.GetUserSettingByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -84,35 +83,34 @@ func TestQueryUserSetting(t *testing.T) {
 		})
 	}
 
-	(&UserCleanup{client: client, UserID: user1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: user2.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: user1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: user2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryUserSettings(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryUserSettings() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	user1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	user1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	user1Setting, err := user1.Setting(reqCtx)
 	require.NoError(t, err)
 
 	// create another user to make sure we don't get their settings back
-	_ = (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	_ = (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	// mock list
 	listObjects := []string{"organization:test"}
 
 	t.Run("Get User Settings", func(t *testing.T) {
-		defer mock_fga.ClearMocks(client.fga)
+		defer mock_fga.ClearMocks(suite.client.fga)
 
 		// mock list for default org on user settings
-		mock_fga.ListAny(t, client.fga, listObjects)
+		mock_fga.ListAny(t, suite.client.fga, listObjects)
 
-		resp, err := client.datum.GetUserSettings(reqCtx)
+		resp, err := suite.client.datum.GetUserSettings(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -125,7 +123,7 @@ func TestQueryUserSettings(t *testing.T) {
 		reqCtx, err := userContextWithID(user1.ID)
 		require.NoError(t, err)
 
-		resp, err = client.datum.GetUserSettings(reqCtx)
+		resp, err = suite.client.datum.GetUserSettings(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -134,20 +132,19 @@ func TestQueryUserSettings(t *testing.T) {
 	})
 }
 
-func TestMutationUpdateUserSetting(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
+	t := suite.T()
 
 	// setup user context
 	ctx, err := userContext()
 	require.NoError(t, err)
 
-	user := (&UserBuilder{client: client}).MustNew(ctx, t)
+	user := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 	user1Setting, err := user.Setting(ctx)
 	require.NoError(t, err)
 
-	org := (&OrganizationBuilder{client: client}).MustNew(ctx, t)
-	org2 := (&OrganizationBuilder{client: client}).MustNew(ctx, t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(ctx, t)
+	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(ctx, t)
 
 	// mock list objects
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
@@ -212,20 +209,20 @@ func TestMutationUpdateUserSetting(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			// when attempting to update default org, we do a check
 			if tc.checkOrg {
-				mock_fga.CheckAny(t, client.fga, tc.allowed)
+				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
 			// on successful update, we list the default org
 			if tc.errorMsg == "" {
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
 			// update user
-			resp, err := client.datum.UpdateUserSetting(reqCtx, user1Setting.ID, tc.updateInput)
+			resp, err := suite.client.datum.UpdateUserSetting(reqCtx, user1Setting.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)

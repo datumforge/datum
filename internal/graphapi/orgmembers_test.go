@@ -15,15 +15,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/hooks"
 )
 
-func TestQueryOrgMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryOrgMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	// allow access to organization
 	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
@@ -62,16 +61,16 @@ func TestQueryOrgMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			orgID := tc.queryID
 			whereInput := datumclient.OrgMembershipWhereInput{
 				OrganizationID: &orgID,
 			}
 
-			mock_fga.CheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := client.datum.GetOrgMembersByOrgID(reqCtx, &whereInput)
+			resp, err := suite.client.datum.GetOrgMembersByOrgID(reqCtx, &whereInput)
 
 			if tc.expectErr {
 				require.Error(t, err)
@@ -95,19 +94,18 @@ func TestQueryOrgMembers(t *testing.T) {
 	}
 
 	// delete created org
-	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryCreateOrgMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	personalOrg := (&OrganizationBuilder{client: client, PersonalOrg: true}).MustNew(reqCtx, t)
+	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	personalOrg := (&OrganizationBuilder{client: suite.client, PersonalOrg: true}).MustNew(reqCtx, t)
 	listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", personalOrg.ID)}
 
 	// allow access to organization
@@ -117,8 +115,8 @@ func TestQueryCreateOrgMembers(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, orgMember, 1)
 
-	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
-	testUser2 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	testUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name      string
@@ -194,20 +192,20 @@ func TestQueryCreateOrgMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errMsg == "" {
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			if tc.checkOrg {
 				// checks for adding orgs to ensure not a personal org
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
 			// checks role in org to ensure user has ability to add other members
 			if tc.checkRole {
-				mock_fga.CheckAny(t, client.fga, true)
+				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
 			role := tc.role
@@ -217,7 +215,7 @@ func TestQueryCreateOrgMembers(t *testing.T) {
 				Role:           &role,
 			}
 
-			resp, err := client.datum.AddUserToOrgWithRole(reqCtx, input)
+			resp, err := suite.client.datum.AddUserToOrgWithRole(reqCtx, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -236,20 +234,19 @@ func TestQueryCreateOrgMembers(t *testing.T) {
 	}
 
 	// delete created org and users
-	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryUpdateOrgMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryUpdateOrgMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&OrgMemberBuilder{client: client}).MustNew(reqCtx, t)
+	om := (&OrgMemberBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name       string
@@ -282,14 +279,14 @@ func TestQueryUpdateOrgMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.tupleWrite {
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			if tc.errMsg == "" {
-				mock_fga.CheckAny(t, client.fga, true)
+				mock_fga.CheckAny(t, suite.client.fga, true)
 			}
 
 			role := tc.role
@@ -297,7 +294,7 @@ func TestQueryUpdateOrgMembers(t *testing.T) {
 				Role: &role,
 			}
 
-			resp, err := client.datum.UpdateUserRoleInOrg(reqCtx, om.ID, input)
+			resp, err := suite.client.datum.UpdateUserRoleInOrg(reqCtx, om.ID, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -314,23 +311,22 @@ func TestQueryUpdateOrgMembers(t *testing.T) {
 	}
 
 	// delete created org and users
-	(&OrgMemberCleanup{client: client, ID: om.ID}).MustDelete(reqCtx, t)
+	(&OrgMemberCleanup{client: suite.client, ID: om.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryDeleteOrgMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryDeleteOrgMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&OrgMemberBuilder{client: client}).MustNew(reqCtx, t)
+	om := (&OrgMemberBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	mock_fga.WriteAny(t, client.fga)
-	mock_fga.CheckAny(t, client.fga, true)
+	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	resp, err := client.datum.RemoveUserFromOrg(reqCtx, om.ID)
+	resp, err := suite.client.datum.RemoveUserFromOrg(reqCtx, om.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)

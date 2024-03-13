@@ -283,10 +283,21 @@ func init() {
 	// groupsetting.DefaultID holds the default value on creation for the id field.
 	groupsetting.DefaultID = groupsettingDescID.Default.(func() string)
 	integrationMixin := schema.Integration{}.Mixin()
+	integration.Policy = privacy.NewPolicies(schema.Integration{})
+	integration.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := integration.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	integrationMixinHooks0 := integrationMixin[0].Hooks()
 	integrationMixinHooks2 := integrationMixin[2].Hooks()
-	integration.Hooks[0] = integrationMixinHooks0[0]
-	integration.Hooks[1] = integrationMixinHooks2[0]
+
+	integration.Hooks[1] = integrationMixinHooks0[0]
+
+	integration.Hooks[2] = integrationMixinHooks2[0]
 	integrationMixinInters2 := integrationMixin[2].Interceptors()
 	integration.Interceptors[0] = integrationMixinInters2[0]
 	integrationMixinFields0 := integrationMixin[0].Fields()

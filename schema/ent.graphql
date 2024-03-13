@@ -128,7 +128,7 @@ input CreateIntegrationInput {
   description: String
   kind: String
   secretName: String
-  ownerID: ID
+  ownerID: ID!
 }
 """
 CreateInviteInput is used for create Invite object.
@@ -1387,6 +1387,7 @@ type Integration implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  ownerID: ID!
   """
   the name of the integration - must be unique within the organization
   """
@@ -1397,7 +1398,7 @@ type Integration implements Node {
   description: String
   kind: String
   secretName: String
-  owner: Organization
+  owner: Organization!
 }
 """
 A connection to a list of items.
@@ -1564,6 +1565,22 @@ input IntegrationWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
+  """
   name field predicates
   """
   name: String
@@ -1629,6 +1646,7 @@ type Invite implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  ownerID: ID!
   """
   the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
@@ -1813,6 +1831,22 @@ input InviteWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
   """
   expires field predicates
   """
@@ -4294,7 +4328,6 @@ input UpdateIntegrationInput {
   kind: String
   clearKind: Boolean
   ownerID: ID
-  clearOwner: Boolean
 }
 """
 UpdateInviteInput is used for update Invite object.

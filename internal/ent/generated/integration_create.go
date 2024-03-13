@@ -105,6 +105,12 @@ func (ic *IntegrationCreate) SetNillableDeletedBy(s *string) *IntegrationCreate 
 	return ic
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (ic *IntegrationCreate) SetOwnerID(s string) *IntegrationCreate {
+	ic.mutation.SetOwnerID(s)
+	return ic
+}
+
 // SetName sets the "name" field.
 func (ic *IntegrationCreate) SetName(s string) *IntegrationCreate {
 	ic.mutation.SetName(s)
@@ -163,20 +169,6 @@ func (ic *IntegrationCreate) SetID(s string) *IntegrationCreate {
 func (ic *IntegrationCreate) SetNillableID(s *string) *IntegrationCreate {
 	if s != nil {
 		ic.SetID(*s)
-	}
-	return ic
-}
-
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (ic *IntegrationCreate) SetOwnerID(id string) *IntegrationCreate {
-	ic.mutation.SetOwnerID(id)
-	return ic
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableOwnerID(id *string) *IntegrationCreate {
-	if id != nil {
-		ic = ic.SetOwnerID(*id)
 	}
 	return ic
 }
@@ -249,6 +241,9 @@ func (ic *IntegrationCreate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (ic *IntegrationCreate) check() error {
+	if _, ok := ic.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Integration.owner_id"`)}
+	}
 	if _, ok := ic.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Integration.name"`)}
 	}
@@ -256,6 +251,9 @@ func (ic *IntegrationCreate) check() error {
 		if err := integration.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
+	}
+	if _, ok := ic.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Integration.owner"`)}
 	}
 	return nil
 }
@@ -348,7 +346,7 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_integrations = &nodes[0]
+		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

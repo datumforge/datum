@@ -205,7 +205,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "kind", Type: field.TypeString, Nullable: true},
 		{Name: "secret_name", Type: field.TypeString, Nullable: true},
-		{Name: "organization_integrations", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString},
 	}
 	// IntegrationsTable holds the schema information for the "integrations" table.
 	IntegrationsTable = &schema.Table{
@@ -217,7 +217,7 @@ var (
 				Symbol:     "integrations_organizations_integrations",
 				Columns:    []*schema.Column{IntegrationsColumns[11]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}

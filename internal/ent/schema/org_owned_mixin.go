@@ -13,16 +13,23 @@ import (
 
 type OrgOwnerMixin struct {
 	mixin.Schema
-	Ref               string
-	Optional          bool
+	// Ref table for the id
+	Ref string
+	// Optional makes the owner id field not required
+	Optional bool
+	// SkipOASGeneration skips open api spec generation for the field
 	SkipOASGeneration bool
+	// AllowWhere includes the owner_id field in gql generated fields
+	AllowWhere bool
 }
 
 // Fields of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
-	ownerIDField := field.String("owner_id").Annotations(
-		entgql.Skip(),
-	)
+	ownerIDField := field.String("owner_id")
+
+	if !orgOwned.AllowWhere {
+		ownerIDField.Annotations(entgql.Skip())
+	}
 
 	if orgOwned.Optional {
 		ownerIDField.Optional()

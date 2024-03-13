@@ -1,13 +1,18 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // Integration maps configured integrations (github, slack, etc.) to organizations
@@ -43,9 +48,7 @@ func (Integration) Fields() []ent.Field {
 
 // Edges of the Integration
 func (Integration) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("owner", Organization.Type).Ref("integrations").Unique(),
-	}
+	return []ent.Edge{}
 }
 
 // Annotations of the Integration
@@ -54,6 +57,11 @@ func (Integration) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType:   "organization",
+			IncludeHooks: false,
+			IDField:      "OwnerID",
+		},
 	}
 }
 
@@ -63,5 +71,30 @@ func (Integration) Mixin() []ent.Mixin {
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
+		OrgOwnerMixin{
+			Ref:        "integrations",
+			AllowWhere: true,
+		},
+	}
+}
+
+// Policy of the Integration
+func (Integration) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			rule.DenyIfNoSubject(),
+			privacy.IntegrationMutationRuleFunc(func(ctx context.Context, m *generated.IntegrationMutation) error {
+				return m.CheckAccessForDelete(ctx)
+			}),
+
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			rule.DenyIfNoSubject(),
+			privacy.IntegrationQueryRuleFunc(func(ctx context.Context, q *generated.IntegrationQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

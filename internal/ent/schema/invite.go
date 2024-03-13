@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"context"
 	"net/mail"
 
 	"entgo.io/contrib/entgql"
@@ -12,11 +13,13 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // Invite holds the schema definition for the Invite entity
@@ -89,7 +92,8 @@ func (Invite) Mixin() []ent.Mixin {
 		mixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
-			Ref: "invites",
+			Ref:        "invites",
+			AllowWhere: true,
 		},
 	}
 }
@@ -115,6 +119,11 @@ func (Invite) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entfga.Annotations{
+			ObjectType:   "organization",
+			IncludeHooks: false,
+			IDField:      "OwnerID",
+		},
 	}
 }
 
@@ -129,18 +138,21 @@ func (Invite) Hooks() []ent.Hook {
 // Policy of the Invite
 func (Invite) Policy() ent.Policy {
 	return privacy.Policy{
-		// TODO: come back and add query + delete policies
 		Mutation: privacy.MutationPolicy{
-			privacy.OnMutationOperation(
-				privacy.MutationPolicy{
-					rule.AllowIfAdmin(),
-					rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
-					rule.HasInviteEditAccess(),
-					rule.AllowMutationAfterApplyingOwnerFilter(),
-					privacy.AlwaysDenyRule(),
-				},
-				ent.OpCreate,
-			),
+			rule.AllowIfAdmin(),
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
+			privacy.InviteMutationRuleFunc(func(ctx context.Context, m *generated.InviteMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+			rule.AllowMutationAfterApplyingOwnerFilter(),
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.OrgInviteToken{}),
+			privacy.InviteQueryRuleFunc(func(ctx context.Context, q *generated.InviteQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
 		},
 	}
 }

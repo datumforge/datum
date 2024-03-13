@@ -30,6 +30,8 @@ type Integration struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the name of the integration - must be unique within the organization
 	Name string `json:"name,omitempty"`
 	// a description of the integration
@@ -40,9 +42,8 @@ type Integration struct {
 	SecretName string `json:"secret_name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the IntegrationQuery when eager-loading is set.
-	Edges                     IntegrationEdges `json:"edges"`
-	organization_integrations *string
-	selectValues              sql.SelectValues
+	Edges        IntegrationEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // IntegrationEdges holds the relations/edges for other nodes in the graph.
@@ -72,12 +73,10 @@ func (*Integration) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case integration.FieldID, integration.FieldCreatedBy, integration.FieldUpdatedBy, integration.FieldDeletedBy, integration.FieldName, integration.FieldDescription, integration.FieldKind, integration.FieldSecretName:
+		case integration.FieldID, integration.FieldCreatedBy, integration.FieldUpdatedBy, integration.FieldDeletedBy, integration.FieldOwnerID, integration.FieldName, integration.FieldDescription, integration.FieldKind, integration.FieldSecretName:
 			values[i] = new(sql.NullString)
 		case integration.FieldCreatedAt, integration.FieldUpdatedAt, integration.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case integration.ForeignKeys[0]: // organization_integrations
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -135,6 +134,12 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				i.DeletedBy = value.String
 			}
+		case integration.FieldOwnerID:
+			if value, ok := values[j].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[j])
+			} else if value.Valid {
+				i.OwnerID = value.String
+			}
 		case integration.FieldName:
 			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[j])
@@ -158,13 +163,6 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field secret_name", values[j])
 			} else if value.Valid {
 				i.SecretName = value.String
-			}
-		case integration.ForeignKeys[0]:
-			if value, ok := values[j].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_integrations", values[j])
-			} else if value.Valid {
-				i.organization_integrations = new(string)
-				*i.organization_integrations = value.String
 			}
 		default:
 			i.selectValues.Set(columns[j], values[j])
@@ -224,6 +222,9 @@ func (i *Integration) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(i.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(i.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(i.Name)

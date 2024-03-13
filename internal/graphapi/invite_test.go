@@ -64,6 +64,7 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.shouldCheck {
+				mock_fga.CheckAny(t, suite.client.fga, true)
 				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", invite.OwnerID)})
 			}
 
@@ -278,6 +279,10 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
+
+			if !tc.wantErr {
+				mock_fga.CheckAny(t, suite.client.fga, true)
+			}
 
 			resp, err := suite.client.datum.DeleteInvite(reqCtx, tc.queryID)
 

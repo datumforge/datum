@@ -652,6 +652,10 @@ func (i *IntegrationQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				return err
 			}
 			i.withOwner = query
+			if _, ok := fieldSeen[integration.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, integration.FieldOwnerID)
+				fieldSeen[integration.FieldOwnerID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[integration.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, integration.FieldCreatedAt)
@@ -681,6 +685,11 @@ func (i *IntegrationQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 			if _, ok := fieldSeen[integration.FieldDeletedBy]; !ok {
 				selectedFields = append(selectedFields, integration.FieldDeletedBy)
 				fieldSeen[integration.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[integration.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, integration.FieldOwnerID)
+				fieldSeen[integration.FieldOwnerID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[integration.FieldName]; !ok {
@@ -829,6 +838,11 @@ func (i *InviteQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			if _, ok := fieldSeen[invite.FieldDeletedBy]; !ok {
 				selectedFields = append(selectedFields, invite.FieldDeletedBy)
 				fieldSeen[invite.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[invite.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, invite.FieldOwnerID)
+				fieldSeen[invite.FieldOwnerID] = struct{}{}
 			}
 		case "expires":
 			if _, ok := fieldSeen[invite.FieldExpires]; !ok {

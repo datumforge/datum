@@ -506,7 +506,7 @@ type CreateIntegrationInput struct {
 	Description *string
 	Kind        *string
 	SecretName  *string
-	OwnerID     *string
+	OwnerID     string
 }
 
 // Mutate applies the CreateIntegrationInput on the IntegrationMutation builder.
@@ -533,9 +533,7 @@ func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
 	if v := i.SecretName; v != nil {
 		m.SetSecretName(*v)
 	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
+	m.SetOwnerID(i.OwnerID)
 }
 
 // SetInput applies the change-set in the CreateIntegrationInput on the IntegrationCreate builder.
@@ -555,7 +553,6 @@ type UpdateIntegrationInput struct {
 	Description      *string
 	ClearKind        bool
 	Kind             *string
-	ClearOwner       bool
 	OwnerID          *string
 }
 
@@ -587,9 +584,6 @@ func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.Kind; v != nil {
 		m.SetKind(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)

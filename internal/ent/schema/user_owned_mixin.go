@@ -27,6 +27,7 @@ func (userOwned UserOwnedMixin) Fields() []ent.Field {
 	ownerIDField := field.String("owner_id").Annotations(
 		entgql.Skip(),
 	)
+
 	if userOwned.Optional {
 		ownerIDField.Optional()
 	}

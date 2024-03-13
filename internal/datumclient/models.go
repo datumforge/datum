@@ -100,7 +100,7 @@ type CreateIntegrationInput struct {
 	Description *string `json:"description,omitempty"`
 	Kind        *string `json:"kind,omitempty"`
 	SecretName  *string `json:"secretName,omitempty"`
-	OwnerID     *string `json:"ownerID,omitempty"`
+	OwnerID     string  `json:"ownerID"`
 }
 
 // CreateInviteInput is used for create Invite object.
@@ -1127,13 +1127,14 @@ type Integration struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   string     `json:"ownerID"`
 	// the name of the integration - must be unique within the organization
 	Name string `json:"name"`
 	// a description of the integration
 	Description *string       `json:"description,omitempty"`
 	Kind        *string       `json:"kind,omitempty"`
 	SecretName  *string       `json:"secretName,omitempty"`
-	Owner       *Organization `json:"owner,omitempty"`
+	Owner       *Organization `json:"owner"`
 }
 
 func (Integration) IsNode() {}
@@ -1280,6 +1281,20 @@ type IntegrationWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -1339,6 +1354,7 @@ type Invite struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   string     `json:"ownerID"`
 	// the expiration date of the invitation token which defaults to 14 days in the future from creation
 	Expires time.Time `json:"expires"`
 	// the email used as input to generate the invitation token and is the destination person the invitation is sent to who is required to accept to join the organization
@@ -1489,6 +1505,20 @@ type InviteWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// expires field predicates
 	Expires      *time.Time   `json:"expires,omitempty"`
 	ExpiresNeq   *time.Time   `json:"expiresNEQ,omitempty"`
@@ -3212,7 +3242,6 @@ type UpdateIntegrationInput struct {
 	Kind             *string `json:"kind,omitempty"`
 	ClearKind        *bool   `json:"clearKind,omitempty"`
 	OwnerID          *string `json:"ownerID,omitempty"`
-	ClearOwner       *bool   `json:"clearOwner,omitempty"`
 }
 
 // UpdateInviteInput is used for update Invite object.

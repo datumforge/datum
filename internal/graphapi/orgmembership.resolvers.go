@@ -54,14 +54,6 @@ func (r *mutationResolver) CreateOrgMembership(ctx context.Context, input genera
 
 // UpdateOrgMembership is the resolver for the updateOrgMembership field.
 func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, input generated.UpdateOrgMembershipInput) (*OrgMembershipUpdatePayload, error) {
-	// setup view context
-	v := viewer.UserViewer{
-		// TODO: this isn't right, fix it
-		OrgID: id,
-	}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	orgMember, err := withTransactionalMutation(ctx).OrgMembership.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -99,12 +91,6 @@ func (r *mutationResolver) UpdateOrgMembership(ctx context.Context, id string, i
 
 // DeleteOrgMembership is the resolver for the deleteOrgMembership field.
 func (r *mutationResolver) DeleteOrgMembership(ctx context.Context, id string) (*OrgMembershipDeletePayload, error) {
-	// setup view context
-	// TODO: make this the org in question?
-	v := viewer.UserViewer{}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	if err := withTransactionalMutation(ctx).OrgMembership.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -127,12 +113,6 @@ func (r *mutationResolver) DeleteOrgMembership(ctx context.Context, id string) (
 
 // OrgMembership is the resolver for the orgMembership field.
 func (r *queryResolver) OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error) {
-	// setup view context
-	// TODO: fix this
-	v := viewer.UserViewer{}
-
-	ctx = viewer.NewContext(ctx, v)
-
 	org, err := withTransactionalMutation(ctx).OrgMembership.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get members of organization", "error", err)

@@ -169,6 +169,36 @@ func (m *GroupSettingMutation) CreateTuplesFromDelete(ctx context.Context) error
 	return nil
 }
 
+func (m *IntegrationMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *IntegrationMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *IntegrationMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *InviteMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *InviteMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *InviteMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
 func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	// Get fields for tuple creation

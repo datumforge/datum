@@ -26,16 +26,16 @@ import (
 
 func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler(t *testing.T) {
 	// add handler
-	suite.client.e.POST("invite", suite.client.h.OrganizationInviteAccept)
+	suite.e.POST("invite", suite.h.OrganizationInviteAccept)
 
 	// bypass auth
 	ctx := context.Background()
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
 	// setup test data
-	requestor := suite.client.db.User.Create().
+	requestor := suite.db.User.Create().
 		SetEmail("rocket@datum.net").
 		SetFirstName("Rocket").
 		SetLastName("Racoon").
@@ -51,14 +51,14 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler(t *testing.T) {
 
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
-	org := suite.client.db.Organization.Create().
+	org := suite.db.Organization.Create().
 		SetName("avengers").
 		SaveX(reqCtx)
 
 	var groot = "groot@datum.net"
 
 	// recipient test data
-	recipient := suite.client.db.User.Create().
+	recipient := suite.db.User.Create().
 		SetEmail(groot).
 		SetFirstName("Groot").
 		SetLastName("JustGroot").
@@ -102,22 +102,22 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(suite.client.fga)
+			defer mock_fga.ClearMocks(suite.fga)
 
 			sent := time.Now()
 
 			mock.ResetEmailMock()
 
 			// mock auth
-			mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
+			mock_fga.ListAny(t, suite.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
 
-			invite := suite.client.db.Invite.Create().
+			invite := suite.db.Invite.Create().
 				SetOwnerID(org.ID).
 				SetRecipient(tc.email).SaveX(reqCtx)
 
 			// wait for messages so we don't have conflicts with the accept message
 			predicate := func() bool {
-				return suite.client.h.TaskMan.GetQueueLength() == 0
+				return suite.h.TaskMan.GetQueueLength() == 0
 			}
 
 			asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
@@ -135,7 +135,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req.WithContext(userCtx))
+			suite.e.ServeHTTP(recorder, req.WithContext(userCtx))
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -171,7 +171,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler(t *testing.T) {
 
 			// wait for messages
 			predicate = func() bool {
-				return suite.client.h.TaskMan.GetQueueLength() == 0
+				return suite.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 

@@ -24,10 +24,10 @@ func (suite *HandlerTestSuite) TestHandler_UserInfo() {
 	ctx := context.Background()
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
 	// setup test data
-	user := suite.client.db.User.Create().
+	user := suite.db.User.Create().
 		SetEmail("juju@datum.net").
 		SetFirstName("Juju").
 		SetLastName("Bee").
@@ -38,7 +38,7 @@ func (suite *HandlerTestSuite) TestHandler_UserInfo() {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	suite.client.e.GET("oauth/userinfo", suite.client.h.UserInfo)
+	suite.e.GET("oauth/userinfo", suite.h.UserInfo)
 
 	tests := []struct {
 		name    string
@@ -65,7 +65,7 @@ func (suite *HandlerTestSuite) TestHandler_UserInfo() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req.WithContext(tt.ctx))
+			suite.e.ServeHTTP(recorder, req.WithContext(tt.ctx))
 
 			res := recorder.Result()
 			defer res.Body.Close()

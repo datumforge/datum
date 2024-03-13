@@ -20,7 +20,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 	t := suite.T()
 
 	// add login handler
-	suite.client.e.POST("oauth/register", suite.client.h.OauthRegister)
+	suite.e.POST("oauth/register", suite.h.OauthRegister)
 
 	type args struct {
 		name     string
@@ -83,13 +83,13 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.writes {
 				// add mocks for writes when a new user is created
-				mock_fga.WriteOnce(t, suite.client.fga)
+				mock_fga.WriteOnce(t, suite.fga)
 			}
 
 			if !tt.writes && tt.expectedStatus == http.StatusOK {
 				// required to list objects to get the default org in claims
 				// when the user is not created in the call
-				mock_fga.ListAny(t, suite.client.fga, []string{"organization:test"})
+				mock_fga.ListAny(t, suite.fga, []string{"organization:test"})
 			}
 
 			registerJSON := handlers.OauthTokenRequest{
@@ -112,7 +112,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

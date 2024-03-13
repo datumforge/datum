@@ -19,7 +19,7 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 	t := suite.T()
 
 	// add login handler
-	suite.client.e.POST("login", suite.client.h.LoginHandler)
+	suite.e.POST("login", suite.h.LoginHandler)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -90,13 +90,13 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.writes {
 				// add mocks for writes when a new user is created
-				mock_fga.WriteOnce(t, suite.client.fga)
+				mock_fga.WriteOnce(t, suite.fga)
 			}
 
 			now := time.Now()
 
 			// start transaction because the query expects a transaction in the context
-			tx, err := suite.client.h.DBClient.Tx(ctx)
+			tx, err := suite.h.DBClient.Tx(ctx)
 			require.NoError(t, err)
 
 			// commit transaction after test finishes
@@ -105,7 +105,7 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 			// set transaction in the context
 			ctx = transaction.NewContext(ctx, tx)
 
-			got, err := suite.client.h.CheckAndCreateUser(ctx, tt.args.name, tt.args.email, tt.args.provider)
+			got, err := suite.h.CheckAndCreateUser(ctx, tt.args.name, tt.args.email, tt.args.provider)
 			if tt.wantErr {
 				require.Error(t, err)
 				assert.Nil(t, got)

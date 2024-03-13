@@ -23,7 +23,7 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.client.e.GET("verify", suite.client.h.VerifyEmail)
+	suite.e.GET("verify", suite.h.VerifyEmail)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -77,10 +77,10 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(suite.client.fga)
+			defer mock_fga.ClearMocks(suite.fga)
 
 			if tc.expectedStatus == http.StatusOK {
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
+				mock_fga.ListAny(t, suite.fga, listObjects)
 			}
 
 			// set privacy allow in order to allow the creation of the users without
@@ -88,14 +88,14 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 			ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 			// create user in the database
-			userSetting := suite.client.db.UserSetting.Create().
+			userSetting := suite.db.UserSetting.Create().
 				SetEmailConfirmed(tc.userConfirmed).
 				SaveX(ctx)
 
 			// mock writes for user creation
-			mock_fga.WriteAny(t, suite.client.fga)
+			mock_fga.WriteAny(t, suite.fga)
 
-			u := suite.client.db.User.Create().
+			u := suite.db.User.Create().
 				SetFirstName(gofakeit.FirstName()).
 				SetLastName(gofakeit.LastName()).
 				SetEmail(tc.email).
@@ -125,7 +125,7 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 			}
 
 			// store token in db
-			et := suite.client.db.EmailVerificationToken.Create().
+			et := suite.db.EmailVerificationToken.Create().
 				SetOwner(u).
 				SetToken(user.EmailVerificationToken.String).
 				SetEmail(user.Email).
@@ -144,7 +144,7 @@ func (suite *HandlerTestSuite) TestVerifyHandler() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

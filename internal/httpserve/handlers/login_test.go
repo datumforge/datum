@@ -24,7 +24,7 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 	t := suite.T()
 
 	// add login handler
-	suite.client.e.POST("login", suite.client.h.LoginHandler)
+	suite.e.POST("login", suite.h.LoginHandler)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -33,17 +33,17 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"
 	validPassword := "sup3rs3cu7e!"
 
-	userSetting := suite.client.db.UserSetting.Create().
+	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ctx)
 
-	_ = suite.client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validConfirmedUser).
@@ -55,11 +55,11 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 
 	validUnconfirmedUser := "msmith@datum.net"
 
-	userSetting = suite.client.db.UserSetting.Create().
+	userSetting = suite.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	_ = suite.client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validUnconfirmedUser).
@@ -119,11 +119,11 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(suite.client.fga)
+			defer mock_fga.ClearMocks(suite.fga)
 
 			// required to list objects to get the default org in claims
 			if tc.expectedErr == nil {
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
+				mock_fga.ListAny(t, suite.fga, listObjects)
 			}
 
 			loginJSON := handlers.LoginRequest{
@@ -142,7 +142,7 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

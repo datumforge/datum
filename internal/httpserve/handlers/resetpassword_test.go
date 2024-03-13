@@ -29,7 +29,7 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 	t := suite.T()
 
 	// setup request request
-	suite.client.e.POST("password-reset", suite.client.h.ResetPassword)
+	suite.e.POST("password-reset", suite.h.ResetPassword)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -122,7 +122,7 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 			mock.ResetEmailMock()
 
 			// create user in the database
-			rt, _, err := createUserWithResetToken(t, suite.client, ec, tc.email, tc.ttl)
+			rt, _, err := suite.createUserWithResetToken(t, ec, tc.email, tc.ttl)
 			require.NoError(t, err)
 
 			pwResetJSON := handlers.ResetPasswordRequest{
@@ -151,7 +151,7 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			// get result
 			res := recorder.Result()
@@ -183,7 +183,7 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 
 			// wait for messages
 			predicate := func() bool {
-				return suite.client.h.TaskMan.GetQueueLength() == 0
+				return suite.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 
@@ -201,17 +201,17 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 }
 
 // createUserWithResetToken creates a user with a valid reset token and returns the token, user id, and error if one occurred
-func createUserWithResetToken(t *testing.T, client *client, ec context.Context, email string, ttl string) (*ent.PasswordResetToken, string, error) {
+func (suite *HandlerTestSuite) createUserWithResetToken(t *testing.T, ec context.Context, email string, ttl string) (*ent.PasswordResetToken, string, error) {
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
-	userSetting := client.db.UserSetting.Create().
+	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ctx)
 
-	u := client.db.User.Create().
+	u := suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(email).
@@ -242,7 +242,7 @@ func createUserWithResetToken(t *testing.T, client *client, ec context.Context, 
 	}
 
 	// store token in db
-	pr := client.db.PasswordResetToken.Create().
+	pr := suite.db.PasswordResetToken.Create().
 		SetOwner(u).
 		SetToken(user.PasswordResetToken.String).
 		SetEmail(user.Email).
@@ -251,7 +251,7 @@ func createUserWithResetToken(t *testing.T, client *client, ec context.Context, 
 		SaveX(ctx)
 
 	// clear mocks
-	mock_fga.ClearMocks(client.fga)
+	mock_fga.ClearMocks(suite.fga)
 
 	return pr, u.ID, nil
 }

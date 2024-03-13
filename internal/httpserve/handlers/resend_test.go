@@ -22,21 +22,21 @@ func (suite *HandlerTestSuite) TestResendHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.client.e.POST("resend", suite.client.h.ResendEmail)
+	suite.e.POST("resend", suite.h.ResendEmail)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
 	// create user in the database
-	userSetting := suite.client.db.UserSetting.Create().
+	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	_ = suite.client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("bsanderson@datum.net").
@@ -45,11 +45,11 @@ func (suite *HandlerTestSuite) TestResendHandler() {
 		SaveX(ctx)
 
 	// create user in the database
-	userSetting2 := suite.client.db.UserSetting.Create().
+	userSetting2 := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ctx)
 
-	_ = suite.client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("dabraham@datum.net").
@@ -134,7 +134,7 @@ func (suite *HandlerTestSuite) TestResendHandler() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

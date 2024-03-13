@@ -26,7 +26,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.client.e.POST("refresh", suite.client.h.RefreshHandler)
+	suite.e.POST("refresh", suite.h.RefreshHandler)
 
 	// Set full overlap of the refresh and access token so the refresh token is immediately valid
 	tm, err := createTokenManager(-60 * time.Minute) //nolint:gomnd
@@ -34,7 +34,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 		t.Error("error creating token manager")
 	}
 
-	suite.client.h.TM = tm
+	suite.h.TM = tm
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -43,7 +43,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 	ec = privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
 	// create user in the database
 	validUser := gofakeit.Email()
@@ -51,11 +51,11 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 
 	userID := ulids.New().String()
 
-	userSetting := suite.client.db.UserSetting.Create().
+	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ec)
 
-	user := suite.client.db.User.Create().
+	user := suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validUser).
@@ -114,7 +114,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

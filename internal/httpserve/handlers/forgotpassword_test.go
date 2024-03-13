@@ -26,7 +26,7 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 	t := suite.T()
 
 	// setup handler
-	suite.client.e.POST("forgot-password", suite.client.h.ForgotPassword)
+	suite.e.POST("forgot-password", suite.h.ForgotPassword)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -34,13 +34,13 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
-	userSetting := suite.client.db.UserSetting.Create().
+	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	_ = suite.client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("asandler@datum.net").
@@ -102,7 +102,7 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			suite.client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -133,7 +133,7 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 
 			// wait for messages
 			predicate := func() bool {
-				return suite.client.h.TaskMan.GetQueueLength() == 0
+				return suite.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 

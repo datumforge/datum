@@ -38,6 +38,7 @@ var (
 	testUser    *ent.User
 )
 
+// TestGraphTestSuite runs all the tests in the GraphTestSuite
 func TestGraphTestSuite(t *testing.T) {
 	suite.Run(t, new(GraphTestSuite))
 }
@@ -65,16 +66,18 @@ type graphClient struct {
 	httpClient *http.Client
 }
 
-func (suite *GraphTestSuite) SetupTest() {
+func (suite *GraphTestSuite) SetupSuite() {
+	t := suite.T()
+
 	ctx := context.Background()
 
 	// setup fga mock
 	c := &client{
-		fga: mock_fga.NewMockSdkClient(suite.T()),
+		fga: mock_fga.NewMockSdkClient(t),
 	}
 
 	// create mock FGA client
-	fc := fgax.NewMockFGAClient(suite.T(), c.fga)
+	fc := fgax.NewMockFGAClient(t, c.fga)
 
 	// setup logger
 	logger := zap.NewNop().Sugar()
@@ -88,7 +91,7 @@ func (suite *GraphTestSuite) SetupTest() {
 
 	em, err := emails.New(emConfig)
 	if err != nil {
-		suite.T().Fatal("error creating email manager")
+		t.Fatal("error creating email manager")
 	}
 
 	// setup task manager
@@ -126,21 +129,26 @@ func (suite *GraphTestSuite) SetupTest() {
 	// create database connection
 	db, ctr, err := entdb.NewTestClient(ctx, opts)
 	if err != nil {
-		require.NoError(suite.T(), err, "failed opening connection to database")
+		require.NoError(t, err, "failed opening connection to database")
 	}
 
 	// assign values
 	dbContainer = ctr
 	c.db = db
-	c.datum = graphTestClient(suite.T(), c.db)
+	c.datum = graphTestClient(t, c.db)
 
 	// create test user
-	testUser = (&UserBuilder{client: c}).MustNew(context.Background(), suite.T())
+	testUser = (&UserBuilder{client: c}).MustNew(context.Background(), t)
 
 	suite.client = c
 }
 
 func (suite *GraphTestSuite) TearDownTest() {
+	// clear all fga mocks
+	mock_fga.ClearMocks(suite.client.fga)
+}
+
+func (suite *GraphTestSuite) TearDownSuite() {
 	if err := suite.client.db.Close(); err != nil {
 		log.Fatalf("failed to close database: %s", err)
 	}

@@ -18,26 +18,25 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
-func TestResendHandler(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestResendHandler() {
+	t := suite.T()
 
 	// add handler
-	client.e.POST("resend", client.h.ResendEmail)
+	suite.e.POST("resend", suite.h.ResendEmail)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
 	// create user in the database
-	userSetting := client.db.UserSetting.Create().
+	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	_ = client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("bsanderson@datum.net").
@@ -46,11 +45,11 @@ func TestResendHandler(t *testing.T) {
 		SaveX(ctx)
 
 	// create user in the database
-	userSetting2 := client.db.UserSetting.Create().
+	userSetting2 := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ctx)
 
-	_ = client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("dabraham@datum.net").
@@ -135,7 +134,7 @@ func TestResendHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

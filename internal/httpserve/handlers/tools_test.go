@@ -13,6 +13,7 @@ import (
 	"github.com/alicebob/miniredis/v2"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
@@ -33,8 +34,6 @@ import (
 )
 
 var (
-	dbContainer *testutils.TC
-
 	// commonly used vars in tests
 	emptyResponse = "null\n"
 	validPassword = "sup3rs3cu7e!"
@@ -44,11 +43,96 @@ var (
 	pollIntervalInMillis = 100
 )
 
-type client struct {
+// HandlerTestSuite handles the setup and teardown between tests
+type HandlerTestSuite struct {
+	suite.Suite
 	e   *echo.Echo
 	db  *ent.Client
 	h   *handlers.Handler
 	fga *mock_fga.MockSdkClient
+	tc  *testutils.TC
+}
+
+func (suite *HandlerTestSuite) SetupSuite() {
+	ctx := context.Background()
+
+	suite.tc = entdb.NewTestContainer(ctx)
+}
+
+func (suite *HandlerTestSuite) SetupTest() {
+	t := suite.T()
+
+	ctx := context.Background()
+
+	suite.fga = mock_fga.NewMockSdkClient(t)
+
+	// create mock FGA client
+	fc := fgax.NewMockFGAClient(t, suite.fga)
+
+	// setup logger
+	logger := zap.NewNop().Sugar()
+
+	emConfig := emails.Config{
+		Testing:   true,
+		Archive:   filepath.Join("fixtures", "emails"),
+		FromEmail: "mitb@datum.net",
+	}
+
+	em, err := emails.New(emConfig)
+	if err != nil {
+		t.Fatal("error creating email manager")
+	}
+
+	// Start task manager
+	tmConfig := marionette.Config{
+		Logger: zap.NewNop().Sugar(),
+	}
+
+	taskMan := marionette.New(tmConfig)
+
+	taskMan.Start()
+
+	opts := []ent.Option{
+		ent.Logger(*logger),
+		ent.Authz(*fc),
+		ent.Marionette(taskMan),
+		ent.Emails(em),
+		ent.Analytics(&analytics.EventManager{Enabled: false}),
+	}
+
+	ctr := entdb.NewTestContainer(ctx)
+
+	// create database connection
+	db, err := entdb.NewTestClient(ctx, ctr, opts)
+	if err != nil {
+		require.NoError(t, err, "failed opening connection to database")
+	}
+
+	// add db to test client
+	suite.db = db
+
+	// setup handler
+	suite.h = handlerSetup(t, suite.db, em, taskMan)
+
+	// setup echo router
+	suite.e = setupEcho(suite.db)
+}
+
+func (suite *HandlerTestSuite) TearDownTest() {
+	// clear all fga mocks
+	mock_fga.ClearMocks(suite.fga)
+
+	if err := suite.db.Close(); err != nil {
+		log.Fatalf("failed to close database: %s", err)
+	}
+}
+
+func (suite *HandlerTestSuite) TearDownSuite() {
+	if suite.tc.Container != nil {
+		if err := suite.tc.Container.Terminate(context.Background()); err != nil {
+			log.Fatalf("failed to terminate container: %s", err)
+		}
+	}
 }
 
 func setupEcho(entClient *ent.Client) *echo.Echo {
@@ -98,66 +182,6 @@ func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMa
 	}
 
 	return h
-}
-
-func setupTest(t *testing.T) *client {
-	ctx := context.Background()
-
-	c := &client{
-		fga: mock_fga.NewMockSdkClient(t),
-	}
-
-	// create mock FGA client
-	fc := fgax.NewMockFGAClient(t, c.fga)
-
-	// setup logger
-	logger := zap.NewNop().Sugar()
-
-	emConfig := emails.Config{
-		Testing:   true,
-		Archive:   filepath.Join("fixtures", "emails"),
-		FromEmail: "mitb@datum.net",
-	}
-
-	em, err := emails.New(emConfig)
-	if err != nil {
-		t.Fatal("error creating email manager")
-	}
-
-	// Start task manager
-	tmConfig := marionette.Config{
-		Logger: zap.NewNop().Sugar(),
-	}
-
-	taskMan := marionette.New(tmConfig)
-
-	taskMan.Start()
-
-	opts := []ent.Option{
-		ent.Logger(*logger),
-		ent.Authz(*fc),
-		ent.Marionette(taskMan),
-		ent.Emails(em),
-		ent.Analytics(&analytics.EventManager{Enabled: false}),
-	}
-
-	// create database connection
-	db, ctr, err := entdb.NewTestClient(ctx, opts)
-	if err != nil {
-		require.NoError(t, err, "failed opening connection to database")
-	}
-
-	// add db to test client
-	dbContainer = ctr
-	c.db = db
-
-	// setup handler
-	c.h = handlerSetup(t, c.db, em, taskMan)
-
-	// setup echo router
-	c.e = setupEcho(c.db)
-
-	return c
 }
 
 func newRedisClient() *redis.Client {

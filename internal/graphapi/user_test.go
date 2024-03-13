@@ -20,16 +20,15 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
-func TestQueryUser(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryUser() {
+	t := suite.T()
 
 	// setup user context
 	ctx, err := userContext()
 	require.NoError(t, err)
 
-	user1 := (&UserBuilder{client: client}).MustNew(ctx, t)
-	user2 := (&UserBuilder{client: client}).MustNew(ctx, t)
+	user1 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
+	user2 := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	// setup valid user context
 	reqCtx, err := userContextWithID(user1.ID)
@@ -60,16 +59,16 @@ func TestQueryUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errorMsg == "" {
 				// placeholder until authz is enforced on org members
 				// at which point this needs to be the correct organization id
 				listObjects := []string{"organization:test"}
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
-			resp, err := client.datum.GetUserByID(reqCtx, tc.queryID)
+			resp, err := suite.client.datum.GetUserByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -85,31 +84,30 @@ func TestQueryUser(t *testing.T) {
 		})
 	}
 
-	(&UserCleanup{client: client, UserID: user1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: user2.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: user1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: user2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryUsers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryUsers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	user1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
-	user2 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	user1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	user2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	// mock list
 	listObjects := []string{"organization:test"}
 
 	t.Run("Get Users", func(t *testing.T) {
-		defer mock_fga.ClearMocks(client.fga)
+		defer mock_fga.ClearMocks(suite.client.fga)
 
 		// mock list for default org on user settings
-		mock_fga.ListAny(t, client.fga, listObjects)
+		mock_fga.ListAny(t, suite.client.fga, listObjects)
 
-		resp, err := client.datum.GetAllUsers(reqCtx)
+		resp, err := suite.client.datum.GetAllUsers(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -122,7 +120,7 @@ func TestQueryUsers(t *testing.T) {
 		reqCtx, err := userContextWithID(user1.ID)
 		require.NoError(t, err)
 
-		resp, err = client.datum.GetAllUsers(reqCtx)
+		resp, err = suite.client.datum.GetAllUsers(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -154,9 +152,8 @@ func TestQueryUsers(t *testing.T) {
 	})
 }
 
-func TestMutationCreateUserNoAuth(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -263,14 +260,14 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errorMsg == "" {
 				// mock writes to create personal org membership
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
-			resp, err := client.datum.CreateUser(reqCtx, tc.userInput)
+			resp, err := suite.client.datum.CreateUser(reqCtx, tc.userInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -323,11 +320,11 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 
 			// mocks to check for org access
 			listObjects := []string{fmt.Sprintf("organization:%s", orgs[0].OrganizationID)}
-			mock_fga.ListAny(t, client.fga, listObjects)
-			mock_fga.CheckAny(t, client.fga, true)
+			mock_fga.ListAny(t, suite.client.fga, listObjects)
+			mock_fga.CheckAny(t, suite.client.fga, true)
 
 			// Bypass auth checks to ensure input checks for now
-			personalOrg, err := client.datum.GetOrganizationByID(reqCtx, orgs[0].OrganizationID)
+			personalOrg, err := suite.client.datum.GetOrganizationByID(reqCtx, orgs[0].OrganizationID)
 			require.NoError(t, err)
 
 			assert.True(t, *personalOrg.Organization.PersonalOrg)
@@ -339,9 +336,8 @@ func TestMutationCreateUserNoAuth(t *testing.T) {
 	}
 }
 
-func TestMutationCreateUser(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationCreateUser() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -434,14 +430,14 @@ func TestMutationCreateUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errorMsg == "" {
 				// mock writes to create personal org membership
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
-			resp, err := client.datum.CreateUser(reqCtx, tc.userInput)
+			resp, err := suite.client.datum.CreateUser(reqCtx, tc.userInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -474,7 +470,7 @@ func TestMutationCreateUser(t *testing.T) {
 			// default org will always be the personal org when the user is first created
 			personalOrgID := resp.CreateUser.User.Setting.DefaultOrg.ID
 
-			org, err := client.datum.GetOrganizationByID(reqCtx, personalOrgID, nil)
+			org, err := suite.client.datum.GetOrganizationByID(reqCtx, personalOrgID, nil)
 			require.NoError(t, err)
 			assert.Equal(t, personalOrgID, org.Organization.ID)
 			assert.True(t, *org.Organization.PersonalOrg)
@@ -482,9 +478,8 @@ func TestMutationCreateUser(t *testing.T) {
 	}
 }
 
-func TestMutationUpdateUser(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationUpdateUser() {
+	t := suite.T()
 
 	// setup user context
 	ctx, err := userContext()
@@ -496,7 +491,7 @@ func TestMutationUpdateUser(t *testing.T) {
 	displayNameUpdate := gofakeit.LetterN(40)
 	nameUpdateLong := gofakeit.LetterN(200)
 
-	user := (&UserBuilder{client: client}).MustNew(ctx, t)
+	user := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	// setup valid user context
 	reqCtx, err := userContextWithID(user.ID)
@@ -580,18 +575,18 @@ func TestMutationUpdateUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			// checks for member tables
 			if tc.errorMsg == "" {
-				mock_fga.CheckAny(t, client.fga, true)
+				mock_fga.CheckAny(t, suite.client.fga, true)
 
 				// mock list for default org on user settings
-				mock_fga.ListAny(t, client.fga, []string{"organization:test"})
+				mock_fga.ListAny(t, suite.client.fga, []string{"organization:test"})
 			}
 
 			// update user
-			resp, err := client.datum.UpdateUser(reqCtx, user.ID, tc.updateInput)
+			resp, err := suite.client.datum.UpdateUser(reqCtx, user.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -615,9 +610,8 @@ func TestMutationUpdateUser(t *testing.T) {
 	}
 }
 
-func TestMutationDeleteUser(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationDeleteUser() {
+	t := suite.T()
 
 	// setup user context
 	ctx, err := userContext()
@@ -626,7 +620,7 @@ func TestMutationDeleteUser(t *testing.T) {
 	// bypass auth on object creation
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	user := (&UserBuilder{client: client}).MustNew(ctx, t)
+	user := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	userSetting := user.Edges.Setting
 
@@ -657,19 +651,19 @@ func TestMutationDeleteUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			// mock check calls
 			if tc.errorMsg == "" {
-				mock_fga.CheckAny(t, client.fga, true)
+				mock_fga.CheckAny(t, suite.client.fga, true)
 
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
 
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			// delete user
-			resp, err := client.datum.DeleteUser(reqCtx, tc.userID)
+			resp, err := suite.client.datum.DeleteUser(reqCtx, tc.userID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -684,7 +678,7 @@ func TestMutationDeleteUser(t *testing.T) {
 			require.NotNil(t, resp.DeleteUser.DeletedID)
 
 			// make sure the personal org is deleted
-			org, err := client.datum.GetOrganizationByID(reqCtx, personalOrgID)
+			org, err := suite.client.datum.GetOrganizationByID(reqCtx, personalOrgID)
 			require.Nil(t, org)
 			require.Error(t, err)
 			assert.ErrorContains(t, err, "not found")
@@ -693,7 +687,7 @@ func TestMutationDeleteUser(t *testing.T) {
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
 
 			// make sure the user setting is deleted
-			out, err := client.datum.GetUserSettingByID(reqCtx, userSetting.ID)
+			out, err := suite.client.datum.GetUserSettingByID(reqCtx, userSetting.ID)
 			require.Nil(t, out)
 			require.Error(t, err)
 			assert.ErrorContains(t, err, "not found")
@@ -701,20 +695,19 @@ func TestMutationDeleteUser(t *testing.T) {
 	}
 }
 
-func TestMutationUserCascadeDelete(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationUserCascadeDelete() {
+	t := suite.T()
 
 	// setup user context
 	ctx, err := userContext()
 	require.NoError(t, err)
 
-	user := (&UserBuilder{client: client}).MustNew(ctx, t)
+	user := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	reqCtx, err := userContextWithID(user.ID)
 	require.NoError(t, err)
 
-	token := (&PersonalAccessTokenBuilder{client: client, OwnerID: user.ID}).MustNew(reqCtx, t)
+	token := (&PersonalAccessTokenBuilder{client: suite.client, OwnerID: user.ID}).MustNew(reqCtx, t)
 
 	userSettings, err := user.Setting(ctx)
 	require.NoError(t, err)
@@ -722,13 +715,13 @@ func TestMutationUserCascadeDelete(t *testing.T) {
 	listObjects := []string{fmt.Sprintf("organization:%s", userSettings.Edges.DefaultOrg.ID)}
 
 	// mock checks
-	mock_fga.CheckAny(t, client.fga, true)
-	mock_fga.ListAny(t, client.fga, listObjects)
+	mock_fga.CheckAny(t, suite.client.fga, true)
+	mock_fga.ListAny(t, suite.client.fga, listObjects)
 	// mock writes to clean up personal org
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.client.fga)
 
 	// delete user
-	resp, err := client.datum.DeleteUser(reqCtx, user.ID)
+	resp, err := suite.client.datum.DeleteUser(reqCtx, user.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)
@@ -737,13 +730,13 @@ func TestMutationUserCascadeDelete(t *testing.T) {
 	// make sure the deletedID matches the ID we wanted to delete
 	assert.Equal(t, user.ID, resp.DeleteUser.DeletedID)
 
-	o, err := client.datum.GetUserByID(reqCtx, user.ID)
+	o, err := suite.client.datum.GetUserByID(reqCtx, user.ID)
 
 	require.Nil(t, o)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
-	g, err := client.datum.GetPersonalAccessTokenByID(reqCtx, token.ID)
+	g, err := suite.client.datum.GetPersonalAccessTokenByID(reqCtx, token.ID)
 	require.Error(t, err)
 
 	require.Nil(t, g)
@@ -754,7 +747,7 @@ func TestMutationUserCascadeDelete(t *testing.T) {
 	// skip checks because tuples will be deleted at this point
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	o, err = client.datum.GetUserByID(ctx, user.ID)
+	o, err = suite.client.datum.GetUserByID(ctx, user.ID)
 	require.NoError(t, err)
 
 	require.Equal(t, o.User.ID, user.ID)
@@ -762,15 +755,14 @@ func TestMutationUserCascadeDelete(t *testing.T) {
 	// Bypass auth check to get owner of access token
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	g, err = client.datum.GetPersonalAccessTokenByID(ctx, token.ID)
+	g, err = suite.client.datum.GetPersonalAccessTokenByID(ctx, token.ID)
 	require.NoError(t, err)
 
 	require.Equal(t, g.PersonalAccessToken.ID, token.ID)
 }
 
-func TestMutationSoftDeleteUniqueIndex(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationSoftDeleteUniqueIndex() {
+	t := suite.T()
 
 	// Setup echo context
 	ec := echocontext.NewTestEchoContext()
@@ -793,17 +785,17 @@ func TestMutationSoftDeleteUniqueIndex(t *testing.T) {
 	listObjects := []string{fmt.Sprintf("organization:%s", "test")}
 
 	// write tuples for personal org on create, delete, and create again
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.client.fga)
 
 	// check access for requests
-	mock_fga.CheckAny(t, client.fga, true)
-	mock_fga.ListAny(t, client.fga, listObjects)
+	mock_fga.CheckAny(t, suite.client.fga, true)
+	mock_fga.ListAny(t, suite.client.fga, listObjects)
 
-	resp, err := client.datum.CreateUser(ctx, input)
+	resp, err := suite.client.datum.CreateUser(ctx, input)
 	require.NoError(t, err)
 
 	// should fail on unique
-	_, err = client.datum.CreateUser(ctx, input)
+	_, err = suite.client.datum.CreateUser(ctx, input)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "constraint failed")
 
@@ -818,13 +810,13 @@ func TestMutationSoftDeleteUniqueIndex(t *testing.T) {
 	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
 
 	// delete user
-	_, err = client.datum.DeleteUser(userCtx.Request().Context(), resp.CreateUser.User.ID)
+	_, err = suite.client.datum.DeleteUser(userCtx.Request().Context(), resp.CreateUser.User.ID)
 	require.NoError(t, err)
 
 	// skip checks because tuples will be deleted at this point
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	o, err := client.datum.GetUserByID(ctx, resp.CreateUser.User.ID)
+	o, err := suite.client.datum.GetUserByID(ctx, resp.CreateUser.User.ID)
 
 	require.Nil(t, o)
 	require.Error(t, err)
@@ -833,7 +825,7 @@ func TestMutationSoftDeleteUniqueIndex(t *testing.T) {
 	// Ensure user is soft deleted
 	ctx = entx.SkipSoftDelete(userCtx.Request().Context())
 
-	o, err = client.datum.GetUserByID(ctx, resp.CreateUser.User.ID)
+	o, err = suite.client.datum.GetUserByID(ctx, resp.CreateUser.User.ID)
 	require.NoError(t, err)
 
 	require.Equal(t, o.User.ID, resp.CreateUser.User.ID)
@@ -842,7 +834,7 @@ func TestMutationSoftDeleteUniqueIndex(t *testing.T) {
 	// records on unique email
 	// skip auth checks because user creation is not generally allowed via a direct mutation
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
-	resp, err = client.datum.CreateUser(ctx, input)
+	resp, err = suite.client.datum.CreateUser(ctx, input)
 	require.NoError(t, err)
 	assert.Equal(t, input.Email, resp.CreateUser.User.Email)
 }

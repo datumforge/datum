@@ -19,12 +19,11 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
-func TestVerifyHandler(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestVerifyHandler() {
+	t := suite.T()
 
 	// add handler
-	client.e.GET("verify", client.h.VerifyEmail)
+	suite.e.GET("verify", suite.h.VerifyEmail)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -78,10 +77,10 @@ func TestVerifyHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.fga)
 
 			if tc.expectedStatus == http.StatusOK {
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.fga, listObjects)
 			}
 
 			// set privacy allow in order to allow the creation of the users without
@@ -89,14 +88,14 @@ func TestVerifyHandler(t *testing.T) {
 			ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 			// create user in the database
-			userSetting := client.db.UserSetting.Create().
+			userSetting := suite.db.UserSetting.Create().
 				SetEmailConfirmed(tc.userConfirmed).
 				SaveX(ctx)
 
 			// mock writes for user creation
-			mock_fga.WriteAny(t, client.fga)
+			mock_fga.WriteAny(t, suite.fga)
 
-			u := client.db.User.Create().
+			u := suite.db.User.Create().
 				SetFirstName(gofakeit.FirstName()).
 				SetLastName(gofakeit.LastName()).
 				SetEmail(tc.email).
@@ -126,7 +125,7 @@ func TestVerifyHandler(t *testing.T) {
 			}
 
 			// store token in db
-			et := client.db.EmailVerificationToken.Create().
+			et := suite.db.EmailVerificationToken.Create().
 				SetOwner(u).
 				SetToken(user.EmailVerificationToken.String).
 				SetEmail(user.Email).
@@ -145,7 +144,7 @@ func TestVerifyHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

@@ -17,18 +17,17 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
-func TestQueryInvite(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryInvite() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	invite := (&InviteBuilder{client: client}).MustNew(reqCtx, t)
+	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	user := (&UserBuilder{client: client}).MustNew(reqCtx, t)
-	inviteExistingUser := (&InviteBuilder{client: client, Recipient: user.Email}).MustNew(reqCtx, t)
+	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	inviteExistingUser := (&InviteBuilder{client: suite.client, Recipient: user.Email}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name        string
@@ -62,13 +61,13 @@ func TestQueryInvite(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.shouldCheck {
-				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", invite.OwnerID)})
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", invite.OwnerID)})
 			}
 
-			resp, err := client.datum.GetInvite(reqCtx, tc.queryID)
+			resp, err := suite.client.datum.GetInvite(reqCtx, tc.queryID)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -84,9 +83,8 @@ func TestQueryInvite(t *testing.T) {
 	}
 }
 
-func TestMutationCreateInvite(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationCreateInvite() {
+	t := suite.T()
 
 	// setup user context
 	ec := echocontext.NewTestEchoContext()
@@ -95,7 +93,7 @@ func TestMutationCreateInvite(t *testing.T) {
 
 	ec.SetRequest(ec.Request().WithContext(ctx))
 
-	orgAdmin := (&UserBuilder{client: client}).MustNew(ctx, t)
+	orgAdmin := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
 	// setup valid user context
 	userCtx, err := auth.NewTestContextWithValidUser(orgAdmin.ID)
@@ -108,14 +106,14 @@ func TestMutationCreateInvite(t *testing.T) {
 	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
 
 	// Org to invite users to
-	org := (&OrganizationBuilder{client: client}).MustNew(userCtx.Request().Context(), t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(userCtx.Request().Context(), t)
 
 	// Existing user to invite to org
-	existingUser := (&UserBuilder{client: client}).MustNew(userCtx.Request().Context(), t)
+	existingUser := (&UserBuilder{client: suite.client}).MustNew(userCtx.Request().Context(), t)
 
 	// Existing user already a member of org
-	existingUser2 := (&UserBuilder{client: client}).MustNew(userCtx.Request().Context(), t)
-	_ = (&OrgMemberBuilder{client: client, OrgID: org.ID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
+	existingUser2 := (&UserBuilder{client: suite.client}).MustNew(userCtx.Request().Context(), t)
+	_ = (&OrgMemberBuilder{client: suite.client, OrgID: org.ID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name             string
@@ -207,12 +205,12 @@ func TestMutationCreateInvite(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
-			mock_fga.CheckAny(t, client.fga, tc.accessAllowed)
+			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
 
 			if tc.accessAllowed {
-				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", tc.orgID)})
 			}
 
 			role := tc.role
@@ -222,7 +220,7 @@ func TestMutationCreateInvite(t *testing.T) {
 				Role:      &role,
 			}
 
-			resp, err := client.datum.CreateInvite(reqCtx, input)
+			resp, err := suite.client.datum.CreateInvite(reqCtx, input)
 
 			if tc.wantErr {
 				require.Error(t, err)
@@ -245,15 +243,14 @@ func TestMutationCreateInvite(t *testing.T) {
 	}
 }
 
-func TestMutationDeleteInvite(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationDeleteInvite() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	invite := (&InviteBuilder{client: client}).MustNew(reqCtx, t)
+	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name     string
@@ -280,9 +277,9 @@ func TestMutationDeleteInvite(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
-			resp, err := client.datum.DeleteInvite(reqCtx, tc.queryID)
+			resp, err := suite.client.datum.DeleteInvite(reqCtx, tc.queryID)
 
 			if tc.wantErr {
 				require.Error(t, err)

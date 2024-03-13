@@ -2,12 +2,14 @@ package graphapi_test
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Yamashou/gqlgenc/clientv2"
@@ -32,9 +34,20 @@ import (
 )
 
 var (
-	dbContainer *testutils.TC
-	testUser    *ent.User
+	testUser *ent.User
 )
+
+// TestGraphTestSuite runs all the tests in the GraphTestSuite
+func TestGraphTestSuite(t *testing.T) {
+	suite.Run(t, new(GraphTestSuite))
+}
+
+// GraphTestSuite handles the setup and teardown between tests
+type GraphTestSuite struct {
+	suite.Suite
+	client *client
+	tc     *testutils.TC
+}
 
 // client contains all the clients the test need to interact with
 type client struct {
@@ -53,7 +66,15 @@ type graphClient struct {
 	httpClient *http.Client
 }
 
-func setupTest(t *testing.T) *client {
+func (suite *GraphTestSuite) SetupSuite() {
+	ctx := context.Background()
+
+	suite.tc = entdb.NewTestContainer(ctx)
+}
+
+func (suite *GraphTestSuite) SetupTest() {
+	t := suite.T()
+
 	ctx := context.Background()
 
 	// setup fga mock
@@ -112,20 +133,36 @@ func setupTest(t *testing.T) *client {
 	}
 
 	// create database connection
-	db, ctr, err := entdb.NewTestClient(ctx, opts)
+	db, err := entdb.NewTestClient(ctx, suite.tc, opts)
 	if err != nil {
 		require.NoError(t, err, "failed opening connection to database")
 	}
 
 	// assign values
-	dbContainer = ctr
 	c.db = db
 	c.datum = graphTestClient(t, c.db)
 
 	// create test user
 	testUser = (&UserBuilder{client: c}).MustNew(context.Background(), t)
 
-	return c
+	suite.client = c
+}
+
+func (suite *GraphTestSuite) TearDownTest() {
+	// clear all fga mocks
+	mock_fga.ClearMocks(suite.client.fga)
+
+	if err := suite.client.db.Close(); err != nil {
+		log.Fatalf("failed to close database: %s", err)
+	}
+}
+
+func (suite *GraphTestSuite) TearDownSuite() {
+	if suite.tc.Container != nil {
+		if err := suite.tc.Container.Terminate(context.Background()); err != nil {
+			log.Fatalf("failed to terminate container: %s", err)
+		}
+	}
 }
 
 func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {

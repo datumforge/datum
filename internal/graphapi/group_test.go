@@ -14,16 +14,15 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 )
 
-func TestQueryGroup(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryGroup() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	group1 := (&GroupBuilder{client: client, Owner: org1.ID}).MustNew(reqCtx, t)
+	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	group1 := (&GroupBuilder{client: suite.client, Owner: org1.ID}).MustNew(reqCtx, t)
 
 	listOrgs := []string{fmt.Sprintf("organization:%s", org1.ID)}
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
@@ -51,19 +50,19 @@ func TestQueryGroup(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
-			mock_fga.CheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
 			// second check won't happen if org does not exist
 			if tc.errorMsg == "" {
-				mock_fga.ListTimes(t, client.fga, listGroups, 1)
+				mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 				// we need to check list objects even on a get to check the user
 				// has access to the owner (organization of the group)
-				mock_fga.ListTimes(t, client.fga, listOrgs, 1)
+				mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 			}
 
-			resp, err := client.datum.GetGroupByID(reqCtx, tc.queryID)
+			resp, err := suite.client.datum.GetGroupByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -80,35 +79,34 @@ func TestQueryGroup(t *testing.T) {
 	}
 
 	// delete created org and group
-	(&GroupCleanup{client: client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryGroupsByOwner(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryGroupsByOwner() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	org2 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	group1 := (&GroupBuilder{client: client, Owner: org1.ID}).MustNew(reqCtx, t)
-	group2 := (&GroupBuilder{client: client, Owner: org2.ID}).MustNew(reqCtx, t)
+	group1 := (&GroupBuilder{client: suite.client, Owner: org1.ID}).MustNew(reqCtx, t)
+	group2 := (&GroupBuilder{client: suite.client, Owner: org2.ID}).MustNew(reqCtx, t)
 
 	t.Run("Get Groups By Owner", func(t *testing.T) {
-		defer mock_fga.ClearMocks(client.fga)
+		defer mock_fga.ClearMocks(suite.client.fga)
 
 		// check tuple per org
 		listOrgs := []string{fmt.Sprintf("organization:%s", org1.ID)}
 		listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
 
-		mock_fga.ListTimes(t, client.fga, listOrgs, 1)
-		mock_fga.ListTimes(t, client.fga, listGroups, 1)
+		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 
-		mock_fga.CheckAny(t, client.fga, true)
+		mock_fga.CheckAny(t, suite.client.fga, true)
 
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -118,7 +116,7 @@ func TestQueryGroupsByOwner(t *testing.T) {
 			},
 		}
 
-		resp, err := client.datum.GroupsWhere(reqCtx, whereInput)
+		resp, err := suite.client.datum.GroupsWhere(reqCtx, whereInput)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -144,8 +142,8 @@ func TestQueryGroupsByOwner(t *testing.T) {
 		}
 
 		// Try to get groups for org not authorized to access
-		mock_fga.ListTimes(t, client.fga, listOrgs, 1)
-		mock_fga.ListTimes(t, client.fga, listGroups, 1)
+		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 
 		whereInput = &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{
@@ -155,45 +153,44 @@ func TestQueryGroupsByOwner(t *testing.T) {
 			},
 		}
 
-		resp, err = client.datum.GroupsWhere(reqCtx, whereInput)
+		resp, err = suite.client.datum.GroupsWhere(reqCtx, whereInput)
 
 		require.NoError(t, err)
 		require.Empty(t, resp.Groups.Edges)
 	})
 
 	// delete created orgs and groups
-	(&GroupCleanup{client: client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: client, GroupID: group2.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: client, OrgID: org2.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group2.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryGroups(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryGroups() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	org2 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	org2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	group1 := (&GroupBuilder{client: client, Owner: org1.ID}).MustNew(reqCtx, t)
-	group2 := (&GroupBuilder{client: client, Owner: org2.ID}).MustNew(reqCtx, t)
-	group3 := (&GroupBuilder{client: client, Owner: org2.ID}).MustNew(reqCtx, t)
+	group1 := (&GroupBuilder{client: suite.client, Owner: org1.ID}).MustNew(reqCtx, t)
+	group2 := (&GroupBuilder{client: suite.client, Owner: org2.ID}).MustNew(reqCtx, t)
+	group3 := (&GroupBuilder{client: suite.client, Owner: org2.ID}).MustNew(reqCtx, t)
 
 	t.Run("Get Groups", func(t *testing.T) {
-		defer mock_fga.ClearMocks(client.fga)
+		defer mock_fga.ClearMocks(suite.client.fga)
 
 		// check org tuples
 		listOrgs := []string{fmt.Sprintf("organization:%s", org2.ID)}
 		listGroups := []string{fmt.Sprintf("group:%s", group2.ID), fmt.Sprintf("group:%s", group3.ID)}
 
-		mock_fga.ListTimes(t, client.fga, listOrgs, 1) // org check comes before group check
-		mock_fga.ListTimes(t, client.fga, listGroups, 1)
+		mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1) // org check comes before group check
+		mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 
-		resp, err := client.datum.GetAllGroups(reqCtx)
+		resp, err := suite.client.datum.GetAllGroups(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -228,9 +225,9 @@ func TestQueryGroups(t *testing.T) {
 		}
 
 		// Check user with no relations, gets no groups back
-		mock_fga.ListAny(t, client.fga, []string{})
+		mock_fga.ListAny(t, suite.client.fga, []string{})
 
-		resp, err = client.datum.GetAllGroups(reqCtx)
+		resp, err = suite.client.datum.GetAllGroups(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -240,23 +237,22 @@ func TestQueryGroups(t *testing.T) {
 	})
 
 	// delete created orgs and groups
-	(&GroupCleanup{client: client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: client, GroupID: group2.ID}).MustDelete(reqCtx, t)
-	(&GroupCleanup{client: client, GroupID: group3.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: client, OrgID: org1.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: client, OrgID: org2.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group2.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group3.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: org2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutationCreateGroup(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationCreateGroup() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	owner1 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	owner2 := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
+	owner1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	owner2 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("organization:%s", owner1.ID)}
 
@@ -328,7 +324,7 @@ func TestMutationCreateGroup(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
 			// clear mocks at end of each test
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			tc := tc
 			input := datumclient.CreateGroupInput{
@@ -347,16 +343,16 @@ func TestMutationCreateGroup(t *testing.T) {
 			}
 
 			if tc.check {
-				mock_fga.CheckAny(t, client.fga, tc.allowed)
+				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
-				mock_fga.WriteAny(t, client.fga)
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.WriteAny(t, suite.client.fga)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
-			resp, err := client.datum.CreateGroup(reqCtx, input)
+			resp, err := suite.client.datum.CreateGroup(reqCtx, input)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -387,16 +383,15 @@ func TestMutationCreateGroup(t *testing.T) {
 			}
 
 			// cleanup group
-			(&GroupCleanup{client: client, GroupID: resp.CreateGroup.Group.ID}).MustDelete(reqCtx, t)
+			(&GroupCleanup{client: suite.client, GroupID: resp.CreateGroup.Group.ID}).MustDelete(reqCtx, t)
 		})
 	}
 
-	(&OrganizationCleanup{client: client, OrgID: owner1.ID}).MustDelete(reqCtx, t)
+	(&OrganizationCleanup{client: suite.client, OrgID: owner1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutationUpdateGroup(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationUpdateGroup() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
@@ -406,12 +401,12 @@ func TestMutationUpdateGroup(t *testing.T) {
 	displayNameUpdate := gofakeit.LetterN(40)
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 
-	org := (&OrganizationBuilder{client: client}).MustNew(reqCtx, t)
-	group := (&GroupBuilder{client: client, Owner: org.ID}).MustNew(reqCtx, t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	group := (&GroupBuilder{client: suite.client, Owner: org.ID}).MustNew(reqCtx, t)
 
-	om := (&OrgMemberBuilder{client: client, OrgID: org.ID}).MustNew(reqCtx, t)
+	om := (&OrgMemberBuilder{client: suite.client, OrgID: org.ID}).MustNew(reqCtx, t)
 
-	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
 
@@ -500,20 +495,20 @@ func TestMutationUpdateGroup(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
-			mock_fga.CheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
 			if tc.list {
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
 			}
 
 			if tc.updateInput.AddGroupMembers != nil && tc.errorMsg == "" {
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			// update group
-			resp, err := client.datum.UpdateGroup(reqCtx, group.ID, tc.updateInput)
+			resp, err := suite.client.datum.UpdateGroup(reqCtx, group.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -547,19 +542,18 @@ func TestMutationUpdateGroup(t *testing.T) {
 		})
 	}
 
-	(&GroupCleanup{client: client, GroupID: group.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
 }
 
-func TestMutationDeleteGroup(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestMutationDeleteGroup() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	group := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
+	group := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
 
@@ -584,19 +578,19 @@ func TestMutationDeleteGroup(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			// mock read of tuple
-			mock_fga.CheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
 			if tc.allowed {
-				mock_fga.ReadAny(t, client.fga)
-				mock_fga.ListAny(t, client.fga, listObjects)
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.ReadAny(t, suite.client.fga)
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			// delete group
-			resp, err := client.datum.DeleteGroup(reqCtx, tc.groupID)
+			resp, err := suite.client.datum.DeleteGroup(reqCtx, tc.groupID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -613,7 +607,7 @@ func TestMutationDeleteGroup(t *testing.T) {
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.groupID, resp.DeleteGroup.DeletedID)
 
-			o, err := client.datum.GetGroupByID(reqCtx, tc.groupID)
+			o, err := suite.client.datum.GetGroupByID(reqCtx, tc.groupID)
 
 			require.Nil(t, o)
 			require.Error(t, err)

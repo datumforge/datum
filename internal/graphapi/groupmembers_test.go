@@ -14,15 +14,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
-func TestQueryGroupMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryGroupMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	group := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
+	group := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	// allow access to group
 	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
@@ -61,16 +60,16 @@ func TestQueryGroupMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			groupID := tc.queryID
 			whereInput := datumclient.GroupMembershipWhereInput{
 				GroupID: &groupID,
 			}
 
-			mock_fga.CheckAny(t, client.fga, tc.allowed)
+			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 
-			resp, err := client.datum.GetGroupMembersByGroupID(reqCtx, &whereInput)
+			resp, err := suite.client.datum.GetGroupMembersByGroupID(reqCtx, &whereInput)
 
 			if tc.errExpected {
 				require.Error(t, err)
@@ -95,18 +94,17 @@ func TestQueryGroupMembers(t *testing.T) {
 	}
 
 	// delete created group
-	(&GroupCleanup{client: client, GroupID: group.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryCreateGroupMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryCreateGroupMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	group1 := (&GroupBuilder{client: client}).MustNew(reqCtx, t)
+	group1 := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	// allow access to group
 	checkCtx := privacy.DecisionContext(reqCtx, privacy.Allow)
@@ -115,8 +113,8 @@ func TestQueryCreateGroupMembers(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, groupMember, 1)
 
-	testUser1 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
-	testUser2 := (&UserBuilder{client: client}).MustNew(reqCtx, t)
+	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+	testUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name    string
@@ -210,18 +208,18 @@ func TestQueryCreateGroupMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errMsg == "" {
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			if tc.check {
-				mock_fga.CheckAny(t, client.fga, tc.allowed)
+				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
 			if tc.list {
-				mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", group1.OwnerID)})
+				mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", group1.OwnerID)})
 			}
 
 			role := tc.role
@@ -231,7 +229,7 @@ func TestQueryCreateGroupMembers(t *testing.T) {
 				Role:    &role,
 			}
 
-			resp, err := client.datum.AddUserToGroupWithRole(reqCtx, input)
+			resp, err := suite.client.datum.AddUserToGroupWithRole(reqCtx, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -250,20 +248,19 @@ func TestQueryCreateGroupMembers(t *testing.T) {
 	}
 
 	// delete created group and users
-	(&GroupCleanup{client: client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
-	(&UserCleanup{client: client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
+	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: testUser1.ID}).MustDelete(reqCtx, t)
+	(&UserCleanup{client: suite.client, UserID: testUser2.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryUpdateGroupMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryUpdateGroupMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	gm := (&GroupMemberBuilder{client: client}).MustNew(reqCtx, t)
+	gm := (&GroupMemberBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	testCases := []struct {
 		name    string
@@ -302,14 +299,14 @@ func TestQueryUpdateGroupMembers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			if tc.errMsg == "" {
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
 			if tc.check {
-				mock_fga.CheckAny(t, client.fga, tc.allowed)
+				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
 			}
 
 			role := tc.role
@@ -317,7 +314,7 @@ func TestQueryUpdateGroupMembers(t *testing.T) {
 				Role: &role,
 			}
 
-			resp, err := client.datum.UpdateUserRoleInGroup(reqCtx, gm.ID, input)
+			resp, err := suite.client.datum.UpdateUserRoleInGroup(reqCtx, gm.ID, input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -334,23 +331,22 @@ func TestQueryUpdateGroupMembers(t *testing.T) {
 	}
 
 	// delete created group
-	(&GroupMemberCleanup{client: client, ID: gm.ID}).MustDelete(reqCtx, t)
+	(&GroupMemberCleanup{client: suite.client, ID: gm.ID}).MustDelete(reqCtx, t)
 }
 
-func TestQueryDeleteGroupMembers(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *GraphTestSuite) TestQueryDeleteGroupMembers() {
+	t := suite.T()
 
 	// setup user context
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	om := (&GroupMemberBuilder{client: client}).MustNew(reqCtx, t)
+	om := (&GroupMemberBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	mock_fga.WriteAny(t, client.fga)
-	mock_fga.CheckAny(t, client.fga, true)
+	mock_fga.WriteAny(t, suite.client.fga)
+	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	resp, err := client.datum.RemoveUserFromGroup(reqCtx, om.ID)
+	resp, err := suite.client.datum.RemoveUserFromGroup(reqCtx, om.ID)
 
 	require.NoError(t, err)
 	require.NotNil(t, resp)

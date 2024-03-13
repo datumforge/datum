@@ -24,12 +24,11 @@ import (
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
 
-func TestRegisterHandler(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestRegisterHandler() {
+	t := suite.T()
 
 	// add handler
-	client.e.POST("register", client.h.RegisterHandler)
+	suite.e.POST("register", suite.h.RegisterHandler)
 
 	var bonkers = "b!a!n!a!n!a!s!"
 
@@ -104,7 +103,7 @@ func TestRegisterHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.fga)
 
 			sent := time.Now()
 
@@ -112,7 +111,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			// setup mock authz writes
 			if tc.expectedErrMessage == "" {
-				mock_fga.WriteAny(t, client.fga)
+				mock_fga.WriteAny(t, suite.fga)
 			}
 
 			registerJSON := handlers.RegisterRequest{
@@ -133,7 +132,7 @@ func TestRegisterHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -159,7 +158,7 @@ func TestRegisterHandler(t *testing.T) {
 				ctx := ec.Request().Context()
 
 				// get the user and make sure things were created as expected
-				user, err := client.db.User.Get(ctx, out.ID)
+				user, err := suite.db.User.Get(ctx, out.ID)
 				require.NoError(t, err)
 
 				// setup echo context
@@ -170,7 +169,7 @@ func TestRegisterHandler(t *testing.T) {
 
 				// mocks to check for org access
 				listObjects := []string{"organization:test"}
-				mock_fga.ListOnce(t, client.fga, listObjects, nil)
+				mock_fga.ListOnce(t, suite.fga, listObjects, nil)
 
 				// make sure user is an owner of their personal org
 				orgMemberships, err := user.OrgMemberships(ctx)
@@ -179,7 +178,7 @@ func TestRegisterHandler(t *testing.T) {
 				assert.Equal(t, orgMemberships[0].Role, enums.RoleOwner)
 
 				// delete user
-				client.db.User.DeleteOneID(out.ID).ExecX(ctx)
+				suite.db.User.DeleteOneID(out.ID).ExecX(ctx)
 			} else {
 				assert.Contains(t, out.Error, tc.expectedErrMessage)
 			}
@@ -196,7 +195,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			// wait for messages
 			predicate := func() bool {
-				return client.h.TaskMan.GetQueueLength() == 0
+				return suite.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 

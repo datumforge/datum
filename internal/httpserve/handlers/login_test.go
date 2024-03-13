@@ -20,12 +20,11 @@ import (
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-func TestLoginHandler(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestLoginHandler() {
+	t := suite.T()
 
 	// add login handler
-	client.e.POST("login", client.h.LoginHandler)
+	suite.e.POST("login", suite.h.LoginHandler)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -34,17 +33,17 @@ func TestLoginHandler(t *testing.T) {
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.fga)
 
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"
 	validPassword := "sup3rs3cu7e!"
 
-	userSetting := client.db.UserSetting.Create().
+	userSetting := suite.db.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ctx)
 
-	_ = client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validConfirmedUser).
@@ -56,11 +55,11 @@ func TestLoginHandler(t *testing.T) {
 
 	validUnconfirmedUser := "msmith@datum.net"
 
-	userSetting = client.db.UserSetting.Create().
+	userSetting = suite.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	_ = client.db.User.Create().
+	_ = suite.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail(validUnconfirmedUser).
@@ -120,11 +119,11 @@ func TestLoginHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.fga)
 
 			// required to list objects to get the default org in claims
 			if tc.expectedErr == nil {
-				mock_fga.ListAny(t, client.fga, listObjects)
+				mock_fga.ListAny(t, suite.fga, listObjects)
 			}
 
 			loginJSON := handlers.LoginRequest{
@@ -143,7 +142,7 @@ func TestLoginHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req)
+			suite.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()

@@ -84,6 +84,7 @@ func getPG(ctx context.Context, image string, opts ...testcontainers.ContainerCu
 		testcontainers.WithImage(fmt.Sprintf("%s:%s", defaultImg, imgTag)),
 		testcontainers.WithWaitStrategy(
 			wait.ForSQL(nat.Port("5432"), "postgres", uriFunc),
+			wait.ForExposedPort(),
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
 				WithStartupTimeout(30*time.Second)),

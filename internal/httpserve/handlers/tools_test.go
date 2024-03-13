@@ -13,6 +13,7 @@ import (
 	"github.com/alicebob/miniredis/v2"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/fgax"
@@ -26,6 +27,7 @@ import (
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 	"github.com/datumforge/datum/pkg/sessions"
+	"github.com/datumforge/datum/pkg/testutils"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"
@@ -41,6 +43,13 @@ var (
 	pollIntervalInMillis = 100
 )
 
+// HandlerTestSuite handles the setup and teardown between tests
+type HandlerTestSuite struct {
+	suite.Suite
+	client *client
+	tc     *testutils.TC
+}
+
 type client struct {
 	e   *echo.Echo
 	db  *ent.Client
@@ -48,56 +57,15 @@ type client struct {
 	fga *mock_fga.MockSdkClient
 }
 
-func setupEcho(entClient *ent.Client) *echo.Echo {
-	// create echo context with middleware
-	e := echo.New()
-	transactionConfig := transaction.Client{
-		EntDBClient: entClient,
-		Logger:      zap.NewNop().Sugar(),
-	}
+func (suite *HandlerTestSuite) SetupSuite() {
+	ctx := context.Background()
 
-	e.Use(transactionConfig.Middleware)
-
-	return e
+	suite.tc = entdb.NewTestContainer(ctx)
 }
 
-// handlerSetup to be used for required references in the handler tests
-func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMan *marionette.TaskManager) *handlers.Handler {
-	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
-	if err != nil {
-		t.Fatal("error creating token manager")
-	}
+func (suite *HandlerTestSuite) SetupTest() {
+	t := suite.T()
 
-	sm := createSessionManager()
-	rc := newRedisClient()
-	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
-
-	sessionConfig := sessions.NewSessionConfig(
-		sm,
-		sessions.WithPersistence(rc),
-		sessions.WithLogger(logger),
-	)
-
-	sessionConfig.CookieConfig = &sessions.DebugOnlyCookieConfig
-
-	h := &handlers.Handler{
-		IsTest:        true,
-		TM:            tm,
-		DBClient:      ent,
-		RedisClient:   rc,
-		Logger:        logger,
-		SessionConfig: &sessionConfig,
-		EmailManager:  em,
-		TaskMan:       taskMan,
-		AnalyticsClient: &analytics.EventManager{
-			Enabled: false,
-		},
-	}
-
-	return h
-}
-
-func setupTest(t *testing.T) *client {
 	ctx := context.Background()
 
 	c := &client{
@@ -155,7 +123,73 @@ func setupTest(t *testing.T) *client {
 	// setup echo router
 	c.e = setupEcho(c.db)
 
-	return c
+	suite.client = c
+}
+
+func (suite *HandlerTestSuite) TearDownTest() {
+	// clear all fga mocks
+	mock_fga.ClearMocks(suite.client.fga)
+
+	if err := suite.client.db.Close(); err != nil {
+		log.Fatalf("failed to close database: %s", err)
+	}
+}
+
+func (suite *HandlerTestSuite) TearDownSuite() {
+	if suite.tc.Container != nil {
+		if err := suite.tc.Container.Terminate(context.Background()); err != nil {
+			log.Fatalf("failed to terminate container: %s", err)
+		}
+	}
+}
+
+func setupEcho(entClient *ent.Client) *echo.Echo {
+	// create echo context with middleware
+	e := echo.New()
+	transactionConfig := transaction.Client{
+		EntDBClient: entClient,
+		Logger:      zap.NewNop().Sugar(),
+	}
+
+	e.Use(transactionConfig.Middleware)
+
+	return e
+}
+
+// handlerSetup to be used for required references in the handler tests
+func handlerSetup(t *testing.T, ent *ent.Client, em *emails.EmailManager, taskMan *marionette.TaskManager) *handlers.Handler {
+	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
+	if err != nil {
+		t.Fatal("error creating token manager")
+	}
+
+	sm := createSessionManager()
+	rc := newRedisClient()
+	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
+
+	sessionConfig := sessions.NewSessionConfig(
+		sm,
+		sessions.WithPersistence(rc),
+		sessions.WithLogger(logger),
+	)
+
+	sessionConfig.CookieConfig = &sessions.DebugOnlyCookieConfig
+
+	h := &handlers.Handler{
+		IsTest:        true,
+		TM:            tm,
+		DBClient:      ent,
+		RedisClient:   rc,
+		Logger:        logger,
+		SessionConfig: &sessionConfig,
+		EmailManager:  em,
+		TaskMan:       taskMan,
+		AnalyticsClient: &analytics.EventManager{
+			Enabled: false,
+		},
+	}
+
+	return h
 }
 
 func newRedisClient() *redis.Client {

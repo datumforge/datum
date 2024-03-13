@@ -15,12 +15,11 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/transaction"
 )
 
-func TestHandlerCheckAndCreateUser(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
+	t := suite.T()
 
 	// add login handler
-	client.e.POST("login", client.h.LoginHandler)
+	suite.client.e.POST("login", suite.client.h.LoginHandler)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -91,13 +90,13 @@ func TestHandlerCheckAndCreateUser(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.writes {
 				// add mocks for writes when a new user is created
-				mock_fga.WriteOnce(t, client.fga)
+				mock_fga.WriteOnce(t, suite.client.fga)
 			}
 
 			now := time.Now()
 
 			// start transaction because the query expects a transaction in the context
-			tx, err := client.h.DBClient.Tx(ctx)
+			tx, err := suite.client.h.DBClient.Tx(ctx)
 			require.NoError(t, err)
 
 			// commit transaction after test finishes
@@ -106,7 +105,7 @@ func TestHandlerCheckAndCreateUser(t *testing.T) {
 			// set transaction in the context
 			ctx = transaction.NewContext(ctx, tx)
 
-			got, err := client.h.CheckAndCreateUser(ctx, tt.args.name, tt.args.email, tt.args.provider)
+			got, err := suite.client.h.CheckAndCreateUser(ctx, tt.args.name, tt.args.email, tt.args.provider)
 			if tt.wantErr {
 				require.Error(t, err)
 				assert.Nil(t, got)

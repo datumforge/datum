@@ -22,12 +22,11 @@ import (
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
 
-func TestForgotPasswordHandler(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
+	t := suite.T()
 
 	// setup handler
-	client.e.POST("forgot-password", client.h.ForgotPassword)
+	suite.client.e.POST("forgot-password", suite.client.h.ForgotPassword)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -35,13 +34,13 @@ func TestForgotPasswordHandler(t *testing.T) {
 	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// add mocks for writes
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.client.fga)
 
-	userSetting := client.db.UserSetting.Create().
+	userSetting := suite.client.db.UserSetting.Create().
 		SetEmailConfirmed(false).
 		SaveX(ctx)
 
-	_ = client.db.User.Create().
+	_ = suite.client.db.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
 		SetEmail("asandler@datum.net").
@@ -103,7 +102,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req)
+			suite.client.e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -134,7 +133,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 			// wait for messages
 			predicate := func() bool {
-				return client.h.TaskMan.GetQueueLength() == 0
+				return suite.client.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 

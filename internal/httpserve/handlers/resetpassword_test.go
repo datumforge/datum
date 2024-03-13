@@ -25,12 +25,11 @@ import (
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
 
-func TestResetPassword(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestResetPassword() {
+	t := suite.T()
 
 	// setup request request
-	client.e.POST("password-reset", client.h.ResetPassword)
+	suite.client.e.POST("password-reset", suite.client.h.ResetPassword)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -123,7 +122,7 @@ func TestResetPassword(t *testing.T) {
 			mock.ResetEmailMock()
 
 			// create user in the database
-			rt, _, err := createUserWithResetToken(t, client, ec, tc.email, tc.ttl)
+			rt, _, err := createUserWithResetToken(t, suite.client, ec, tc.email, tc.ttl)
 			require.NoError(t, err)
 
 			pwResetJSON := handlers.ResetPasswordRequest{
@@ -152,7 +151,7 @@ func TestResetPassword(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req)
+			suite.client.e.ServeHTTP(recorder, req)
 
 			// get result
 			res := recorder.Result()
@@ -184,7 +183,7 @@ func TestResetPassword(t *testing.T) {
 
 			// wait for messages
 			predicate := func() bool {
-				return client.h.TaskMan.GetQueueLength() == 0
+				return suite.client.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 

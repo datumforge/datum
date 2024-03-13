@@ -17,18 +17,17 @@ import (
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
-func TestHandler_UserInfo(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
+func (suite *HandlerTestSuite) TestHandler_UserInfo() {
+	t := suite.T()
 
 	// bypass auth
 	ctx := context.Background()
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.client.fga)
 
 	// setup test data
-	user := client.db.User.Create().
+	user := suite.client.db.User.Create().
 		SetEmail("juju@datum.net").
 		SetFirstName("Juju").
 		SetLastName("Bee").
@@ -39,7 +38,7 @@ func TestHandler_UserInfo(t *testing.T) {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	client.e.GET("oauth/userinfo", client.h.UserInfo)
+	suite.client.e.GET("oauth/userinfo", suite.client.h.UserInfo)
 
 	tests := []struct {
 		name    string
@@ -66,7 +65,7 @@ func TestHandler_UserInfo(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req.WithContext(tt.ctx))
+			suite.client.e.ServeHTTP(recorder, req.WithContext(tt.ctx))
 
 			res := recorder.Result()
 			defer res.Body.Close()

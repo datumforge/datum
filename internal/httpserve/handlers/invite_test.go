@@ -24,21 +24,18 @@ import (
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
 
-func TestOrgInviteAcceptHandler(t *testing.T) {
-	client := setupTest(t)
-	defer client.db.Close()
-
+func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler(t *testing.T) {
 	// add handler
-	client.e.POST("invite", client.h.OrganizationInviteAccept)
+	suite.client.e.POST("invite", suite.client.h.OrganizationInviteAccept)
 
 	// bypass auth
 	ctx := context.Background()
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	mock_fga.WriteAny(t, client.fga)
+	mock_fga.WriteAny(t, suite.client.fga)
 
 	// setup test data
-	requestor := client.db.User.Create().
+	requestor := suite.client.db.User.Create().
 		SetEmail("rocket@datum.net").
 		SetFirstName("Rocket").
 		SetLastName("Racoon").
@@ -54,14 +51,14 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
-	org := client.db.Organization.Create().
+	org := suite.client.db.Organization.Create().
 		SetName("avengers").
 		SaveX(reqCtx)
 
 	var groot = "groot@datum.net"
 
 	// recipient test data
-	recipient := client.db.User.Create().
+	recipient := suite.client.db.User.Create().
 		SetEmail(groot).
 		SetFirstName("Groot").
 		SetLastName("JustGroot").
@@ -105,22 +102,22 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			defer mock_fga.ClearMocks(client.fga)
+			defer mock_fga.ClearMocks(suite.client.fga)
 
 			sent := time.Now()
 
 			mock.ResetEmailMock()
 
 			// mock auth
-			mock_fga.ListAny(t, client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
+			mock_fga.ListAny(t, suite.client.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
 
-			invite := client.db.Invite.Create().
+			invite := suite.client.db.Invite.Create().
 				SetOwnerID(org.ID).
 				SetRecipient(tc.email).SaveX(reqCtx)
 
 			// wait for messages so we don't have conflicts with the accept message
 			predicate := func() bool {
-				return client.h.TaskMan.GetQueueLength() == 0
+				return suite.client.h.TaskMan.GetQueueLength() == 0
 			}
 
 			asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
@@ -138,7 +135,7 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
-			client.e.ServeHTTP(recorder, req.WithContext(userCtx))
+			suite.client.e.ServeHTTP(recorder, req.WithContext(userCtx))
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -174,7 +171,7 @@ func TestOrgInviteAcceptHandler(t *testing.T) {
 
 			// wait for messages
 			predicate = func() bool {
-				return client.h.TaskMan.GetQueueLength() == 0
+				return suite.client.h.TaskMan.GetQueueLength() == 0
 			}
 			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 

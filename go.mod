@@ -227,7 +227,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
-	github.com/posthog/posthog-go v0.0.0-20240221135834-4944045455b4
+	github.com/posthog/posthog-go v0.0.0-20240314155707-f35c554222b3
 	github.com/pquerna/otp v1.4.0
 	github.com/ravilushqa/otelgqlgen v0.15.0
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect

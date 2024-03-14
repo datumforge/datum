@@ -30,7 +30,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v0.83.0
+	github.com/ogen-go/ogen v1.0.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.0
 	github.com/rShetty/asyncwait v0.0.0-20180203043142-1e02703eb90e

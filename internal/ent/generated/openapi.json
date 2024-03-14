@@ -1708,6 +1708,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -1725,7 +1728,9 @@
                   }
                 },
                 "required": [
-                  "name"
+                  "owner_id",
+                  "name",
+                  "owner"
                 ]
               }
             }
@@ -1860,6 +1865,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -7246,6 +7254,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7264,7 +7275,9 @@
         },
         "required": [
           "id",
-          "name"
+          "owner_id",
+          "name",
+          "owner"
         ]
       },
       "Invite": {

@@ -6287,6 +6287,42 @@ func (m *IntegrationMutation) ResetDeletedBy() {
 	delete(m.clearedFields, integration.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *IntegrationMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *IntegrationMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the Integration entity.
+// If the Integration object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *IntegrationMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *IntegrationMutation) ResetOwnerID() {
+	m.owner = nil
+}
+
 // SetName sets the "name" field.
 func (m *IntegrationMutation) SetName(s string) {
 	m.name = &s
@@ -6470,27 +6506,15 @@ func (m *IntegrationMutation) ResetSecretName() {
 	delete(m.clearedFields, integration.FieldSecretName)
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by id.
-func (m *IntegrationMutation) SetOwnerID(id string) {
-	m.owner = &id
-}
-
 // ClearOwner clears the "owner" edge to the Organization entity.
 func (m *IntegrationMutation) ClearOwner() {
 	m.clearedowner = true
+	m.clearedFields[integration.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *IntegrationMutation) OwnerCleared() bool {
 	return m.clearedowner
-}
-
-// OwnerID returns the "owner" edge ID in the mutation.
-func (m *IntegrationMutation) OwnerID() (id string, exists bool) {
-	if m.owner != nil {
-		return *m.owner, true
-	}
-	return
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -6543,7 +6567,7 @@ func (m *IntegrationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IntegrationMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, integration.FieldCreatedAt)
 	}
@@ -6561,6 +6585,9 @@ func (m *IntegrationMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, integration.FieldDeletedBy)
+	}
+	if m.owner != nil {
+		fields = append(fields, integration.FieldOwnerID)
 	}
 	if m.name != nil {
 		fields = append(fields, integration.FieldName)
@@ -6594,6 +6621,8 @@ func (m *IntegrationMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case integration.FieldDeletedBy:
 		return m.DeletedBy()
+	case integration.FieldOwnerID:
+		return m.OwnerID()
 	case integration.FieldName:
 		return m.Name()
 	case integration.FieldDescription:
@@ -6623,6 +6652,8 @@ func (m *IntegrationMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDeletedAt(ctx)
 	case integration.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case integration.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case integration.FieldName:
 		return m.OldName(ctx)
 	case integration.FieldDescription:
@@ -6681,6 +6712,13 @@ func (m *IntegrationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case integration.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
 		return nil
 	case integration.FieldName:
 		v, ok := value.(string)
@@ -6833,6 +6871,9 @@ func (m *IntegrationMutation) ResetField(name string) error {
 		return nil
 	case integration.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case integration.FieldOwnerID:
+		m.ResetOwnerID()
 		return nil
 	case integration.FieldName:
 		m.ResetName()

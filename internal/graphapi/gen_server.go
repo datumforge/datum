@@ -236,6 +236,7 @@ type ComplexityRoot struct {
 		Kind        func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Owner       func(childComplexity int) int
+		OwnerID     func(childComplexity int) int
 		SecretName  func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UpdatedBy   func(childComplexity int) int
@@ -272,6 +273,7 @@ type ComplexityRoot struct {
 		Expires      func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Owner        func(childComplexity int) int
+		OwnerID      func(childComplexity int) int
 		Recipient    func(childComplexity int) int
 		RequestorID  func(childComplexity int) int
 		Role         func(childComplexity int) int
@@ -1600,6 +1602,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Integration.Owner(childComplexity), true
 
+	case "Integration.ownerID":
+		if e.complexity.Integration.OwnerID == nil {
+			break
+		}
+
+		return e.complexity.Integration.OwnerID(childComplexity), true
+
 	case "Integration.secretName":
 		if e.complexity.Integration.SecretName == nil {
 			break
@@ -1725,6 +1734,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Invite.Owner(childComplexity), true
+
+	case "Invite.ownerID":
+		if e.complexity.Invite.OwnerID == nil {
+			break
+		}
+
+		return e.complexity.Invite.OwnerID(childComplexity), true
 
 	case "Invite.recipient":
 		if e.complexity.Invite.Recipient == nil {
@@ -4562,7 +4578,7 @@ input CreateIntegrationInput {
   description: String
   kind: String
   secretName: String
-  ownerID: ID
+  ownerID: ID!
 }
 """
 CreateInviteInput is used for create Invite object.
@@ -5821,6 +5837,7 @@ type Integration implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  ownerID: ID!
   """
   the name of the integration - must be unique within the organization
   """
@@ -5831,7 +5848,7 @@ type Integration implements Node {
   description: String
   kind: String
   secretName: String
-  owner: Organization
+  owner: Organization!
 }
 """
 A connection to a list of items.
@@ -5998,6 +6015,22 @@ input IntegrationWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
+  """
   name field predicates
   """
   name: String
@@ -6063,6 +6096,7 @@ type Invite implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  ownerID: ID!
   """
   the expiration date of the invitation token which defaults to 14 days in the future from creation
   """
@@ -6247,6 +6281,22 @@ input InviteWhereInput {
   deletedByNotNil: Boolean
   deletedByEqualFold: String
   deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
   """
   expires field predicates
   """
@@ -8728,7 +8778,6 @@ input UpdateIntegrationInput {
   kind: String
   clearKind: Boolean
   ownerID: ID
-  clearOwner: Boolean
 }
 """
 UpdateInviteInput is used for update Invite object.
@@ -17682,6 +17731,50 @@ func (ec *executionContext) fieldContext_Integration_deletedBy(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Integration_ownerID(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Integration_ownerID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OwnerID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Integration_ownerID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Integration",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Integration_name(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Integration_name(ctx, field)
 	if err != nil {
@@ -17870,11 +17963,14 @@ func (ec *executionContext) _Integration_owner(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*generated.Organization)
 	fc.Result = res
-	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
+	return ec.marshalNOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -18136,6 +18232,8 @@ func (ec *executionContext) fieldContext_IntegrationCreatePayload_integration(ct
 				return ec.fieldContext_Integration_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Integration_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Integration_ownerID(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
 			case "description":
@@ -18247,6 +18345,8 @@ func (ec *executionContext) fieldContext_IntegrationEdge_node(ctx context.Contex
 				return ec.fieldContext_Integration_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Integration_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Integration_ownerID(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
 			case "description":
@@ -18361,6 +18461,8 @@ func (ec *executionContext) fieldContext_IntegrationUpdatePayload_integration(ct
 				return ec.fieldContext_Integration_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Integration_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Integration_ownerID(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
 			case "description":
@@ -18663,6 +18765,50 @@ func (ec *executionContext) fieldContext_Invite_deletedBy(ctx context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Invite_ownerID(ctx context.Context, field graphql.CollectedField, obj *generated.Invite) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Invite_ownerID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OwnerID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Invite_ownerID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Invite",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -19222,6 +19368,8 @@ func (ec *executionContext) fieldContext_InviteCreatePayload_invite(ctx context.
 				return ec.fieldContext_Invite_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Invite_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Invite_ownerID(ctx, field)
 			case "expires":
 				return ec.fieldContext_Invite_expires(ctx, field)
 			case "recipient":
@@ -19337,6 +19485,8 @@ func (ec *executionContext) fieldContext_InviteEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Invite_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Invite_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Invite_ownerID(ctx, field)
 			case "expires":
 				return ec.fieldContext_Invite_expires(ctx, field)
 			case "recipient":
@@ -19455,6 +19605,8 @@ func (ec *executionContext) fieldContext_InviteUpdatePayload_invite(ctx context.
 				return ec.fieldContext_Invite_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Invite_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Invite_ownerID(ctx, field)
 			case "expires":
 				return ec.fieldContext_Invite_expires(ctx, field)
 			case "recipient":
@@ -25853,6 +26005,8 @@ func (ec *executionContext) fieldContext_Organization_integrations(ctx context.C
 				return ec.fieldContext_Integration_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Integration_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Integration_ownerID(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
 			case "description":
@@ -26307,6 +26461,8 @@ func (ec *executionContext) fieldContext_Organization_invites(ctx context.Contex
 				return ec.fieldContext_Invite_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Invite_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Invite_ownerID(ctx, field)
 			case "expires":
 				return ec.fieldContext_Invite_expires(ctx, field)
 			case "recipient":
@@ -30873,6 +31029,8 @@ func (ec *executionContext) fieldContext_Query_integration(ctx context.Context, 
 				return ec.fieldContext_Integration_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Integration_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Integration_ownerID(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
 			case "description":
@@ -30954,6 +31112,8 @@ func (ec *executionContext) fieldContext_Query_invite(ctx context.Context, field
 				return ec.fieldContext_Invite_deletedAt(ctx, field)
 			case "deletedBy":
 				return ec.fieldContext_Invite_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Invite_ownerID(ctx, field)
 			case "expires":
 				return ec.fieldContext_Invite_expires(ctx, field)
 			case "recipient":
@@ -38103,7 +38263,7 @@ func (ec *executionContext) unmarshalInputCreateIntegrationInput(ctx context.Con
 			it.SecretName = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -42709,7 +42869,7 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "kind", "kindNEQ", "kindIn", "kindNotIn", "kindGT", "kindGTE", "kindLT", "kindLTE", "kindContains", "kindHasPrefix", "kindHasSuffix", "kindIsNil", "kindNotNil", "kindEqualFold", "kindContainsFold", "secretName", "secretNameNEQ", "secretNameIn", "secretNameNotIn", "secretNameGT", "secretNameGTE", "secretNameLT", "secretNameLTE", "secretNameContains", "secretNameHasPrefix", "secretNameHasSuffix", "secretNameIsNil", "secretNameNotNil", "secretNameEqualFold", "secretNameContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDEqualFold", "ownerIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "kind", "kindNEQ", "kindIn", "kindNotIn", "kindGT", "kindGTE", "kindLT", "kindLTE", "kindContains", "kindHasPrefix", "kindHasSuffix", "kindIsNil", "kindNotNil", "kindEqualFold", "kindContainsFold", "secretName", "secretNameNEQ", "secretNameIn", "secretNameNotIn", "secretNameGT", "secretNameGTE", "secretNameLT", "secretNameLTE", "secretNameContains", "secretNameHasPrefix", "secretNameHasSuffix", "secretNameIsNil", "secretNameNotNil", "secretNameEqualFold", "secretNameContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -43332,6 +43492,97 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.DeletedByContainsFold = data
+		case "ownerID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerID = data
+		case "ownerIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDNEQ = data
+		case "ownerIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDIn = data
+		case "ownerIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDNotIn = data
+		case "ownerIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDGT = data
+		case "ownerIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDGTE = data
+		case "ownerIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDLT = data
+		case "ownerIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDLTE = data
+		case "ownerIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDContains = data
+		case "ownerIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDHasPrefix = data
+		case "ownerIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDHasSuffix = data
+		case "ownerIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDEqualFold = data
+		case "ownerIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDContainsFold = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -43660,7 +43911,7 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "sendAttempts", "sendAttemptsNEQ", "sendAttemptsIn", "sendAttemptsNotIn", "sendAttemptsGT", "sendAttemptsGTE", "sendAttemptsLT", "sendAttemptsLTE", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDEqualFold", "ownerIDContainsFold", "expires", "expiresNEQ", "expiresIn", "expiresNotIn", "expiresGT", "expiresGTE", "expiresLT", "expiresLTE", "recipient", "recipientNEQ", "recipientIn", "recipientNotIn", "recipientGT", "recipientGTE", "recipientLT", "recipientLTE", "recipientContains", "recipientHasPrefix", "recipientHasSuffix", "recipientEqualFold", "recipientContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "sendAttempts", "sendAttemptsNEQ", "sendAttemptsIn", "sendAttemptsNotIn", "sendAttemptsGT", "sendAttemptsGTE", "sendAttemptsLT", "sendAttemptsLTE", "requestorID", "requestorIDNEQ", "requestorIDIn", "requestorIDNotIn", "requestorIDGT", "requestorIDGTE", "requestorIDLT", "requestorIDLTE", "requestorIDContains", "requestorIDHasPrefix", "requestorIDHasSuffix", "requestorIDEqualFold", "requestorIDContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44283,6 +44534,97 @@ func (ec *executionContext) unmarshalInputInviteWhereInput(ctx context.Context, 
 				return it, err
 			}
 			it.DeletedByContainsFold = data
+		case "ownerID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerID = data
+		case "ownerIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDNEQ = data
+		case "ownerIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDIn = data
+		case "ownerIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDNotIn = data
+		case "ownerIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDGT = data
+		case "ownerIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDGTE = data
+		case "ownerIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDLT = data
+		case "ownerIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDLTE = data
+		case "ownerIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDContains = data
+		case "ownerIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDHasPrefix = data
+		case "ownerIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDHasSuffix = data
+		case "ownerIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDEqualFold = data
+		case "ownerIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDContainsFold = data
 		case "expires":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expires"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -52176,7 +52518,7 @@ func (ec *executionContext) unmarshalInputUpdateIntegrationInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "kind", "clearKind", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "kind", "clearKind", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -52253,13 +52595,6 @@ func (ec *executionContext) unmarshalInputUpdateIntegrationInput(ctx context.Con
 				return it, err
 			}
 			it.OwnerID = data
-		case "clearOwner":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOwner"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearOwner = data
 		}
 	}
 
@@ -57996,6 +58331,11 @@ func (ec *executionContext) _Integration(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Integration_deletedAt(ctx, field, obj)
 		case "deletedBy":
 			out.Values[i] = ec._Integration_deletedBy(ctx, field, obj)
+		case "ownerID":
+			out.Values[i] = ec._Integration_ownerID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "name":
 			out.Values[i] = ec._Integration_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -58017,6 +58357,9 @@ func (ec *executionContext) _Integration(ctx context.Context, sel ast.SelectionS
 					}
 				}()
 				res = ec._Integration_owner(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -58295,6 +58638,11 @@ func (ec *executionContext) _Invite(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Invite_deletedAt(ctx, field, obj)
 		case "deletedBy":
 			out.Values[i] = ec._Invite_deletedBy(ctx, field, obj)
+		case "ownerID":
+			out.Values[i] = ec._Invite_ownerID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "expires":
 			out.Values[i] = ec._Invite_expires(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

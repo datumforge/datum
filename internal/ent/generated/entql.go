@@ -171,6 +171,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			integration.FieldUpdatedBy:   {Type: field.TypeString, Column: integration.FieldUpdatedBy},
 			integration.FieldDeletedAt:   {Type: field.TypeTime, Column: integration.FieldDeletedAt},
 			integration.FieldDeletedBy:   {Type: field.TypeString, Column: integration.FieldDeletedBy},
+			integration.FieldOwnerID:     {Type: field.TypeString, Column: integration.FieldOwnerID},
 			integration.FieldName:        {Type: field.TypeString, Column: integration.FieldName},
 			integration.FieldDescription: {Type: field.TypeString, Column: integration.FieldDescription},
 			integration.FieldKind:        {Type: field.TypeString, Column: integration.FieldKind},
@@ -1699,6 +1700,11 @@ func (f *IntegrationFilter) WhereDeletedAt(p entql.TimeP) {
 // WhereDeletedBy applies the entql string predicate on the deleted_by field.
 func (f *IntegrationFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(integration.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *IntegrationFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(integration.FieldOwnerID))
 }
 
 // WhereName applies the entql string predicate on the name field.

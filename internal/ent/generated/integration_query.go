@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type IntegrationQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Integration
 	withOwner  *OrganizationQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*Integration) error
 	// intermediate query (i.e. traversal path).
@@ -370,24 +370,23 @@ func (iq *IntegrationQuery) prepareQuery(ctx context.Context) error {
 		}
 		iq.sql = prev
 	}
+	if integration.Policy == nil {
+		return errors.New("generated: uninitialized integration.Policy (forgotten import generated/runtime?)")
+	}
+	if err := integration.Policy.EvalQuery(ctx, iq); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Integration, error) {
 	var (
 		nodes       = []*Integration{}
-		withFKs     = iq.withFKs
 		_spec       = iq.querySpec()
 		loadedTypes = [1]bool{
 			iq.withOwner != nil,
 		}
 	)
-	if iq.withOwner != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, integration.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Integration).scanValues(nil, columns)
 	}
@@ -429,10 +428,7 @@ func (iq *IntegrationQuery) loadOwner(ctx context.Context, query *OrganizationQu
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Integration)
 	for i := range nodes {
-		if nodes[i].organization_integrations == nil {
-			continue
-		}
-		fk := *nodes[i].organization_integrations
+		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +445,7 @@ func (iq *IntegrationQuery) loadOwner(ctx context.Context, query *OrganizationQu
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "organization_integrations" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +483,9 @@ func (iq *IntegrationQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != integration.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if iq.withOwner != nil {
+			_spec.Node.AddColumnOnce(integration.FieldOwnerID)
 		}
 	}
 	if ps := iq.predicates; len(ps) > 0 {

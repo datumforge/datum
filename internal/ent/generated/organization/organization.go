@@ -84,7 +84,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "integration" package.
 	IntegrationsInverseTable = "integrations"
 	// IntegrationsColumn is the table column denoting the integrations relation/edge.
-	IntegrationsColumn = "organization_integrations"
+	IntegrationsColumn = "owner_id"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "organization_settings"
 	// SettingInverseTable is the table name for the OrganizationSetting entity.

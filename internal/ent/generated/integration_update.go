@@ -103,6 +103,20 @@ func (iu *IntegrationUpdate) ClearDeletedBy() *IntegrationUpdate {
 	return iu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (iu *IntegrationUpdate) SetOwnerID(s string) *IntegrationUpdate {
+	iu.mutation.SetOwnerID(s)
+	return iu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (iu *IntegrationUpdate) SetNillableOwnerID(s *string) *IntegrationUpdate {
+	if s != nil {
+		iu.SetOwnerID(*s)
+	}
+	return iu
+}
+
 // SetName sets the "name" field.
 func (iu *IntegrationUpdate) SetName(s string) *IntegrationUpdate {
 	iu.mutation.SetName(s)
@@ -154,20 +168,6 @@ func (iu *IntegrationUpdate) SetNillableKind(s *string) *IntegrationUpdate {
 // ClearKind clears the value of the "kind" field.
 func (iu *IntegrationUpdate) ClearKind() *IntegrationUpdate {
 	iu.mutation.ClearKind()
-	return iu
-}
-
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (iu *IntegrationUpdate) SetOwnerID(id string) *IntegrationUpdate {
-	iu.mutation.SetOwnerID(id)
-	return iu
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (iu *IntegrationUpdate) SetNillableOwnerID(id *string) *IntegrationUpdate {
-	if id != nil {
-		iu = iu.SetOwnerID(*id)
-	}
 	return iu
 }
 
@@ -235,6 +235,9 @@ func (iu *IntegrationUpdate) check() error {
 		if err := integration.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
+	}
+	if _, ok := iu.mutation.OwnerID(); iu.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Integration.owner"`)
 	}
 	return nil
 }
@@ -424,6 +427,20 @@ func (iuo *IntegrationUpdateOne) ClearDeletedBy() *IntegrationUpdateOne {
 	return iuo
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (iuo *IntegrationUpdateOne) SetOwnerID(s string) *IntegrationUpdateOne {
+	iuo.mutation.SetOwnerID(s)
+	return iuo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (iuo *IntegrationUpdateOne) SetNillableOwnerID(s *string) *IntegrationUpdateOne {
+	if s != nil {
+		iuo.SetOwnerID(*s)
+	}
+	return iuo
+}
+
 // SetName sets the "name" field.
 func (iuo *IntegrationUpdateOne) SetName(s string) *IntegrationUpdateOne {
 	iuo.mutation.SetName(s)
@@ -475,20 +492,6 @@ func (iuo *IntegrationUpdateOne) SetNillableKind(s *string) *IntegrationUpdateOn
 // ClearKind clears the value of the "kind" field.
 func (iuo *IntegrationUpdateOne) ClearKind() *IntegrationUpdateOne {
 	iuo.mutation.ClearKind()
-	return iuo
-}
-
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (iuo *IntegrationUpdateOne) SetOwnerID(id string) *IntegrationUpdateOne {
-	iuo.mutation.SetOwnerID(id)
-	return iuo
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (iuo *IntegrationUpdateOne) SetNillableOwnerID(id *string) *IntegrationUpdateOne {
-	if id != nil {
-		iuo = iuo.SetOwnerID(*id)
-	}
 	return iuo
 }
 
@@ -569,6 +572,9 @@ func (iuo *IntegrationUpdateOne) check() error {
 		if err := integration.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
+	}
+	if _, ok := iuo.mutation.OwnerID(); iuo.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Integration.owner"`)
 	}
 	return nil
 }

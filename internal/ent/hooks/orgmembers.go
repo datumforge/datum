@@ -43,8 +43,8 @@ func HookOrgMembers() ent.Hook {
 
 			if userID, ok := mutation.UserID(); ok {
 				role, _ := mutation.Role()
-				org, err := mutation.Client().Organization.Get(ctx, orgID)
 
+				org, err := mutation.Client().Organization.Get(ctx, orgID)
 				if err != nil {
 					mutation.Logger.Errorw("error getting organization", "error", err)
 

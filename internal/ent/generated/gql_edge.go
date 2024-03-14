@@ -85,7 +85,7 @@ func (i *Integration) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = i.QueryOwner().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (i *Invite) Owner(ctx context.Context) (*Organization, error) {

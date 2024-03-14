@@ -60,6 +60,6 @@ db:
 db: 
   debug: true
   driver_name: libsql
-  primary_db_source: "https://datum-golanglemonade.turso.io?authToken=$TURSO_TOKEN"  # set TURSO_TOKEN to value
+  primary_db_source: "https://datum-datum.turso.io?authToken=$TURSO_TOKEN"  # set TURSO_TOKEN to value
   run_migrations: false
 ```

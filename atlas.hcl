@@ -20,7 +20,7 @@ variable "token" {
 }
 
 env "turso" {
-  url     = "sqlite://datum-golanglemonade.turso.io?authToken=${var.token}"
+  url     = "libsql://datum-datum.turso.io?authToken=${var.token}"
   exclude = ["_litestream*"]
   migration {
     dir = data.remote_dir.migrations.url

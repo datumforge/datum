@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/subscribers"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -66,6 +67,9 @@ func (n *OrganizationSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *PersonalAccessToken) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *Subscribers) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *TFASettings) IsNode() {}
@@ -270,6 +274,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.ID(id))
 		query, err := query.CollectFields(ctx, "PersonalAccessToken")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case subscribers.Table:
+		query := c.Subscribers.Query().
+			Where(subscribers.ID(id))
+		query, err := query.CollectFields(ctx, "Subscribers")
 		if err != nil {
 			return nil, err
 		}
@@ -567,6 +583,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "PersonalAccessToken")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case subscribers.Table:
+		query := c.Subscribers.Query().
+			Where(subscribers.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Subscribers")
 		if err != nil {
 			return nil, err
 		}

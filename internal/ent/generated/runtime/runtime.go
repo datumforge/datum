@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/subscribers"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -769,6 +770,49 @@ func init() {
 	personalaccesstokenDescID := personalaccesstokenMixinFields2[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
+	subscribersMixin := schema.Subscribers{}.Mixin()
+	subscribersMixinHooks0 := subscribersMixin[0].Hooks()
+	subscribersMixinHooks2 := subscribersMixin[2].Hooks()
+	subscribers.Hooks[0] = subscribersMixinHooks0[0]
+	subscribers.Hooks[1] = subscribersMixinHooks2[0]
+	subscribersMixinInters2 := subscribersMixin[2].Interceptors()
+	subscribers.Interceptors[0] = subscribersMixinInters2[0]
+	subscribersMixinFields0 := subscribersMixin[0].Fields()
+	_ = subscribersMixinFields0
+	subscribersMixinFields1 := subscribersMixin[1].Fields()
+	_ = subscribersMixinFields1
+	subscribersFields := schema.Subscribers{}.Fields()
+	_ = subscribersFields
+	// subscribersDescCreatedAt is the schema descriptor for created_at field.
+	subscribersDescCreatedAt := subscribersMixinFields0[0].Descriptor()
+	// subscribers.DefaultCreatedAt holds the default value on creation for the created_at field.
+	subscribers.DefaultCreatedAt = subscribersDescCreatedAt.Default.(func() time.Time)
+	// subscribersDescUpdatedAt is the schema descriptor for updated_at field.
+	subscribersDescUpdatedAt := subscribersMixinFields0[1].Descriptor()
+	// subscribers.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	subscribers.DefaultUpdatedAt = subscribersDescUpdatedAt.Default.(func() time.Time)
+	// subscribers.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	subscribers.UpdateDefaultUpdatedAt = subscribersDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// subscribersDescEmail is the schema descriptor for email field.
+	subscribersDescEmail := subscribersFields[0].Descriptor()
+	// subscribers.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	subscribers.EmailValidator = subscribersDescEmail.Validators[0].(func(string) error)
+	// subscribersDescActive is the schema descriptor for active field.
+	subscribersDescActive := subscribersFields[1].Descriptor()
+	// subscribers.DefaultActive holds the default value on creation for the active field.
+	subscribers.DefaultActive = subscribersDescActive.Default.(bool)
+	// subscribersDescToken is the schema descriptor for token field.
+	subscribersDescToken := subscribersFields[3].Descriptor()
+	// subscribers.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	subscribers.TokenValidator = subscribersDescToken.Validators[0].(func(string) error)
+	// subscribersDescSecret is the schema descriptor for secret field.
+	subscribersDescSecret := subscribersFields[4].Descriptor()
+	// subscribers.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
+	subscribers.SecretValidator = subscribersDescSecret.Validators[0].(func([]byte) error)
+	// subscribersDescID is the schema descriptor for id field.
+	subscribersDescID := subscribersMixinFields1[0].Descriptor()
+	// subscribers.DefaultID holds the default value on creation for the id field.
+	subscribers.DefaultID = subscribersDescID.Default.(func() string)
 	tfasettingsMixin := schema.TFASettings{}.Mixin()
 	tfasettingsMixinHooks0 := tfasettingsMixin[0].Hooks()
 	tfasettingsMixinHooks2 := tfasettingsMixin[2].Hooks()

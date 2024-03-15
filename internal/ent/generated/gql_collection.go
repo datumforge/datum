@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/subscribers"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -1532,6 +1533,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedInvites(alias, func(wq *InviteQuery) {
 				*wq = *query
 			})
+		case "subscribers":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SubscribersClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedSubscribers(alias, func(wq *SubscribersQuery) {
+				*wq = *query
+			})
 		case "members":
 			var (
 				alias = field.Alias
@@ -1952,6 +1965,137 @@ func newPersonalAccessTokenPaginateArgs(rv map[string]any) *personalaccesstokenP
 	}
 	if v, ok := rv[whereField].(*PersonalAccessTokenWhereInput); ok {
 		args.opts = append(args.opts, WithPersonalAccessTokenFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (s *SubscribersQuery) CollectFields(ctx context.Context, satisfies ...string) (*SubscribersQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return s, nil
+	}
+	if err := s.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+func (s *SubscribersQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(subscribers.Columns))
+		selectedFields = []string{subscribers.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: s.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			s.withOwner = query
+			if _, ok := fieldSeen[subscribers.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldOwnerID)
+				fieldSeen[subscribers.FieldOwnerID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[subscribers.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldCreatedAt)
+				fieldSeen[subscribers.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[subscribers.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldUpdatedAt)
+				fieldSeen[subscribers.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[subscribers.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldCreatedBy)
+				fieldSeen[subscribers.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[subscribers.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldUpdatedBy)
+				fieldSeen[subscribers.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[subscribers.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldDeletedAt)
+				fieldSeen[subscribers.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[subscribers.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldDeletedBy)
+				fieldSeen[subscribers.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[subscribers.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldOwnerID)
+				fieldSeen[subscribers.FieldOwnerID] = struct{}{}
+			}
+		case "email":
+			if _, ok := fieldSeen[subscribers.FieldEmail]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldEmail)
+				fieldSeen[subscribers.FieldEmail] = struct{}{}
+			}
+		case "active":
+			if _, ok := fieldSeen[subscribers.FieldActive]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldActive)
+				fieldSeen[subscribers.FieldActive] = struct{}{}
+			}
+		case "ipAddress":
+			if _, ok := fieldSeen[subscribers.FieldIPAddress]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldIPAddress)
+				fieldSeen[subscribers.FieldIPAddress] = struct{}{}
+			}
+		case "token":
+			if _, ok := fieldSeen[subscribers.FieldToken]; !ok {
+				selectedFields = append(selectedFields, subscribers.FieldToken)
+				fieldSeen[subscribers.FieldToken] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		s.Select(selectedFields...)
+	}
+	return nil
+}
+
+type subscribersPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []SubscribersPaginateOption
+}
+
+func newSubscribersPaginateArgs(rv map[string]any) *subscribersPaginateArgs {
+	args := &subscribersPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*SubscribersWhereInput); ok {
+		args.opts = append(args.opts, WithSubscribersFilter(v.Filter))
 	}
 	return args
 }

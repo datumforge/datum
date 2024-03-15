@@ -3841,6 +3841,12 @@
                       "type": "string"
                     }
                   },
+                  "subscribers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "members": {
                     "type": "array",
                     "items": {
@@ -4046,6 +4052,12 @@
                     }
                   },
                   "invites": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "subscribers": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -4691,6 +4703,70 @@
         }
       }
     },
+    "/organizations/{id}/subscribers": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Subscribers",
+        "description": "List attached Subscribers.",
+        "operationId": "listOrganizationSubscribers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscribers"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/organizations/{id}/users": {
       "get": {
         "tags": [
@@ -5156,6 +5232,338 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/subscribers": {
+      "get": {
+        "tags": [
+          "Subscribers"
+        ],
+        "summary": "List Subscribers",
+        "description": "List Subscribers.",
+        "operationId": "listSubscribers",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Subscribers list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Subscribers"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Subscribers"
+        ],
+        "summary": "Create a new Subscribers",
+        "description": "Creates a new Subscribers and persists it to storage.",
+        "operationId": "createSubscribers",
+        "requestBody": {
+          "description": "Subscribers to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "ip_address": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "active",
+                  "token",
+                  "secret"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Subscribers created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscribers"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/subscribers/{id}": {
+      "get": {
+        "tags": [
+          "Subscribers"
+        ],
+        "summary": "Find a Subscribers by ID",
+        "description": "Finds the Subscribers with the requested ID and returns it.",
+        "operationId": "readSubscribers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscribers",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscribers with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscribers"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscribers"
+        ],
+        "summary": "Deletes a Subscribers by ID",
+        "description": "Deletes the Subscribers with the requested ID.",
+        "operationId": "deleteSubscribers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscribers",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Subscribers with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Subscribers"
+        ],
+        "summary": "Updates a Subscribers",
+        "description": "Updates a Subscribers and persists changes to storage.",
+        "operationId": "updateSubscribers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscribers",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Subscribers properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "ip_address": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Subscribers updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscribers"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/subscribers/{id}/owner": {
+      "get": {
+        "tags": [
+          "Subscribers"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the Subscribers with the given ID",
+        "operationId": "readSubscribersOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscribers",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to Subscribers with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization"
                 }
               }
             }
@@ -7654,6 +8062,12 @@
               "$ref": "#/components/schemas/Invite"
             }
           },
+          "subscribers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Subscribers"
+            }
+          },
           "members": {
             "type": "array",
             "items": {
@@ -7857,6 +8271,63 @@
           "name",
           "token",
           "owner"
+        ]
+      },
+      "Subscribers": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "ip_address": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Organization"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "active",
+          "token"
         ]
       },
       "TFASettings": {

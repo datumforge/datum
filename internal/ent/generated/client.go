@@ -32,6 +32,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/subscribers"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -80,6 +81,8 @@ type Client struct {
 	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
+	// Subscribers is the client for interacting with the Subscribers builders.
+	Subscribers *SubscribersClient
 	// TFASettings is the client for interacting with the TFASettings builders.
 	TFASettings *TFASettingsClient
 	// User is the client for interacting with the User builders.
@@ -118,6 +121,7 @@ func (c *Client) init() {
 	c.OrganizationSetting = NewOrganizationSettingClient(c.config)
 	c.PasswordResetToken = NewPasswordResetTokenClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
+	c.Subscribers = NewSubscribersClient(c.config)
 	c.TFASettings = NewTFASettingsClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserSetting = NewUserSettingClient(c.config)
@@ -310,6 +314,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
 		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
+		Subscribers:            NewSubscribersClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
@@ -347,6 +352,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
 		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
+		Subscribers:            NewSubscribersClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
@@ -383,7 +389,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.TFASettings, c.User, c.UserSetting, c.Webauthn,
+		c.PersonalAccessToken, c.Subscribers, c.TFASettings, c.User, c.UserSetting,
+		c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -396,7 +403,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.TFASettings, c.User, c.UserSetting, c.Webauthn,
+		c.PersonalAccessToken, c.Subscribers, c.TFASettings, c.User, c.UserSetting,
+		c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -433,6 +441,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PasswordResetToken.mutate(ctx, m)
 	case *PersonalAccessTokenMutation:
 		return c.PersonalAccessToken.mutate(ctx, m)
+	case *SubscribersMutation:
+		return c.Subscribers.mutate(ctx, m)
 	case *TFASettingsMutation:
 		return c.TFASettings.mutate(ctx, m)
 	case *UserMutation:
@@ -2358,6 +2368,25 @@ func (c *OrganizationClient) QueryInvites(o *Organization) *InviteQuery {
 	return query
 }
 
+// QuerySubscribers queries the subscribers edge of a Organization.
+func (c *OrganizationClient) QuerySubscribers(o *Organization) *SubscribersQuery {
+	query := (&SubscribersClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(subscribers.Table, subscribers.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.SubscribersTable, organization.SubscribersColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Subscribers
+		step.Edge.Schema = schemaConfig.Subscribers
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryMembers queries the members edge of a Organization.
 func (c *OrganizationClient) QueryMembers(o *Organization) *OrgMembershipQuery {
 	query := (&OrgMembershipClient{config: c.config}).Query()
@@ -2882,6 +2911,160 @@ func (c *PersonalAccessTokenClient) mutate(ctx context.Context, m *PersonalAcces
 		return (&PersonalAccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown PersonalAccessToken mutation op: %q", m.Op())
+	}
+}
+
+// SubscribersClient is a client for the Subscribers schema.
+type SubscribersClient struct {
+	config
+}
+
+// NewSubscribersClient returns a client for the Subscribers from the given config.
+func NewSubscribersClient(c config) *SubscribersClient {
+	return &SubscribersClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `subscribers.Hooks(f(g(h())))`.
+func (c *SubscribersClient) Use(hooks ...Hook) {
+	c.hooks.Subscribers = append(c.hooks.Subscribers, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `subscribers.Intercept(f(g(h())))`.
+func (c *SubscribersClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Subscribers = append(c.inters.Subscribers, interceptors...)
+}
+
+// Create returns a builder for creating a Subscribers entity.
+func (c *SubscribersClient) Create() *SubscribersCreate {
+	mutation := newSubscribersMutation(c.config, OpCreate)
+	return &SubscribersCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Subscribers entities.
+func (c *SubscribersClient) CreateBulk(builders ...*SubscribersCreate) *SubscribersCreateBulk {
+	return &SubscribersCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SubscribersClient) MapCreateBulk(slice any, setFunc func(*SubscribersCreate, int)) *SubscribersCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SubscribersCreateBulk{err: fmt.Errorf("calling to SubscribersClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SubscribersCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SubscribersCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Subscribers.
+func (c *SubscribersClient) Update() *SubscribersUpdate {
+	mutation := newSubscribersMutation(c.config, OpUpdate)
+	return &SubscribersUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SubscribersClient) UpdateOne(s *Subscribers) *SubscribersUpdateOne {
+	mutation := newSubscribersMutation(c.config, OpUpdateOne, withSubscribers(s))
+	return &SubscribersUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SubscribersClient) UpdateOneID(id string) *SubscribersUpdateOne {
+	mutation := newSubscribersMutation(c.config, OpUpdateOne, withSubscribersID(id))
+	return &SubscribersUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Subscribers.
+func (c *SubscribersClient) Delete() *SubscribersDelete {
+	mutation := newSubscribersMutation(c.config, OpDelete)
+	return &SubscribersDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SubscribersClient) DeleteOne(s *Subscribers) *SubscribersDeleteOne {
+	return c.DeleteOneID(s.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SubscribersClient) DeleteOneID(id string) *SubscribersDeleteOne {
+	builder := c.Delete().Where(subscribers.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SubscribersDeleteOne{builder}
+}
+
+// Query returns a query builder for Subscribers.
+func (c *SubscribersClient) Query() *SubscribersQuery {
+	return &SubscribersQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSubscribers},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Subscribers entity by its id.
+func (c *SubscribersClient) Get(ctx context.Context, id string) (*Subscribers, error) {
+	return c.Query().Where(subscribers.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SubscribersClient) GetX(ctx context.Context, id string) *Subscribers {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a Subscribers.
+func (c *SubscribersClient) QueryOwner(s *Subscribers) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := s.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(subscribers.Table, subscribers.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, subscribers.OwnerTable, subscribers.OwnerColumn),
+		)
+		schemaConfig := s.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Subscribers
+		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SubscribersClient) Hooks() []Hook {
+	hooks := c.hooks.Subscribers
+	return append(hooks[:len(hooks):len(hooks)], subscribers.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *SubscribersClient) Interceptors() []Interceptor {
+	inters := c.inters.Subscribers
+	return append(inters[:len(inters):len(inters)], subscribers.Interceptors[:]...)
+}
+
+func (c *SubscribersClient) mutate(ctx context.Context, m *SubscribersMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SubscribersCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SubscribersUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SubscribersUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SubscribersDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown Subscribers mutation op: %q", m.Op())
 	}
 }
 
@@ -3696,13 +3879,13 @@ type (
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		TFASettings, User, UserSetting, Webauthn []ent.Hook
+		Subscribers, TFASettings, User, UserSetting, Webauthn []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		TFASettings, User, UserSetting, Webauthn []ent.Interceptor
+		Subscribers, TFASettings, User, UserSetting, Webauthn []ent.Interceptor
 	}
 )
 

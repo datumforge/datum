@@ -90,6 +90,11 @@ func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.
 	return withTransactionalMutation(ctx).PersonalAccessToken.Query().Paginate(ctx, after, first, before, last, generated.WithPersonalAccessTokenFilter(where.Filter))
 }
 
+// SubscribersSlice is the resolver for the subscribersSlice field.
+func (r *queryResolver) SubscribersSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscribersWhereInput) (*generated.SubscribersConnection, error) {
+	panic(fmt.Errorf("not implemented: SubscribersSlice - subscribersSlice"))
+}
+
 // TfaSettingsSlice is the resolver for the tfaSettingsSlice field.
 func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error) {
 	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))

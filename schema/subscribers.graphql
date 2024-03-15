@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up subscribers by ID
+    """
+     subscribers(
+        """
+        ID of the subscribers
+        """
+        id: ID!
+    ):  Subscribers!
+}
+
+extend type Mutation{
+    """
+    Create a new subscribers
+    """
+    createSubscribers(
+        """
+        values of the subscribers
+        """
+        input: CreateSubscribersInput!
+    ): SubscribersCreatePayload!
+    """
+    Update an existing subscribers
+    """
+    updateSubscribers(
+        """
+        ID of the subscribers
+        """
+        id: ID!
+        """
+        New values for the subscribers
+        """
+        input: UpdateSubscribersInput!
+    ): SubscribersUpdatePayload!
+    """
+    Delete an existing subscribers
+    """
+    deleteSubscribers(
+        """
+        ID of the subscribers
+        """
+        id: ID!
+    ): SubscribersDeletePayload!
+}
+
+"""
+Return response for createSubscribers mutation
+"""
+type SubscribersCreatePayload {
+    """
+    Created subscribers
+    """
+    subscribers: Subscribers!
+}
+
+"""
+Return response for updateSubscribers mutation
+"""
+type SubscribersUpdatePayload {
+    """
+    Updated subscribers
+    """
+    subscribers: Subscribers!
+}
+
+"""
+Return response for deleteSubscribers mutation
+"""
+type SubscribersDeletePayload {
+    """
+    Deleted subscribers ID
+    """
+    deletedID: ID!
+}

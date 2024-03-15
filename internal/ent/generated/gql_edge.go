@@ -241,6 +241,18 @@ func (o *Organization) Invites(ctx context.Context) (result []*Invite, err error
 	return result, err
 }
 
+func (o *Organization) Subscribers(ctx context.Context) (result []*Subscribers, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedSubscribers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.SubscribersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QuerySubscribers().All(ctx)
+	}
+	return result, err
+}
+
 func (o *Organization) Members(ctx context.Context) (result []*OrgMembership, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = o.NamedMembers(graphql.GetFieldContext(ctx).Field.Alias)
@@ -279,6 +291,14 @@ func (pat *PersonalAccessToken) Organizations(ctx context.Context) (result []*Or
 		result, err = pat.QueryOrganizations().All(ctx)
 	}
 	return result, err
+}
+
+func (s *Subscribers) Owner(ctx context.Context) (*Organization, error) {
+	result, err := s.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = s.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (ts *TFASettings) Owner(ctx context.Context) (*User, error) {

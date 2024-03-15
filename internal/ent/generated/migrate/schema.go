@@ -512,6 +512,46 @@ var (
 			},
 		},
 	}
+	// SubscribersColumns holds the columns for the "subscribers" table.
+	SubscribersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "ip_address", Type: field.TypeString, Nullable: true},
+		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "secret", Type: field.TypeBytes},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// SubscribersTable holds the schema information for the "subscribers" table.
+	SubscribersTable = &schema.Table{
+		Name:       "subscribers",
+		Columns:    SubscribersColumns,
+		PrimaryKey: []*schema.Column{SubscribersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "subscribers_organizations_subscribers",
+				Columns:    []*schema.Column{SubscribersColumns[12]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "subscribers_email_active_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{SubscribersColumns[7], SubscribersColumns[8], SubscribersColumns[12]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
 	// TfaSettingsColumns holds the columns for the "tfa_settings" table.
 	TfaSettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -710,6 +750,7 @@ var (
 		OrganizationSettingsTable,
 		PasswordResetTokensTable,
 		PersonalAccessTokensTable,
+		SubscribersTable,
 		TfaSettingsTable,
 		UsersTable,
 		UserSettingsTable,
@@ -734,6 +775,7 @@ func init() {
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
+	SubscribersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable

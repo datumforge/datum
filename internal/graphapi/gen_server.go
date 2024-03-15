@@ -317,6 +317,7 @@ type ComplexityRoot struct {
 		CreateOrgMembership       func(childComplexity int, input generated.CreateOrgMembershipInput) int
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
+		CreateSubscribers         func(childComplexity int, input generated.CreateSubscribersInput) int
 		CreateTFASettings         func(childComplexity int, input generated.CreateTFASettingsInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
@@ -329,6 +330,7 @@ type ComplexityRoot struct {
 		DeleteOrgMembership       func(childComplexity int, id string) int
 		DeleteOrganization        func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
+		DeleteSubscribers         func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
@@ -343,6 +345,7 @@ type ComplexityRoot struct {
 		UpdateOrganization        func(childComplexity int, id string, input generated.UpdateOrganizationInput) int
 		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
+		UpdateSubscribers         func(childComplexity int, id string, input generated.UpdateSubscribersInput) int
 		UpdateTFASettings         func(childComplexity int, input generated.UpdateTFASettingsInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
 		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
@@ -489,6 +492,7 @@ type ComplexityRoot struct {
 		PersonalAccessTokens func(childComplexity int) int
 		PersonalOrg          func(childComplexity int) int
 		Setting              func(childComplexity int) int
+		Subscribers          func(childComplexity int) int
 		UpdatedAt            func(childComplexity int) int
 		UpdatedBy            func(childComplexity int) int
 		Users                func(childComplexity int) int
@@ -634,12 +638,53 @@ type ComplexityRoot struct {
 		Organizations        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
 		PersonalAccessToken  func(childComplexity int, id string) int
 		PersonalAccessTokens func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
+		Subscribers          func(childComplexity int, id string) int
+		SubscribersSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscribersWhereInput) int
 		TfaSettings          func(childComplexity int, id *string) int
 		TfaSettingsSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) int
 		User                 func(childComplexity int, id string) int
 		UserSetting          func(childComplexity int, id string) int
 		UserSettings         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) int
 		Users                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
+	}
+
+	Subscribers struct {
+		Active    func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		CreatedBy func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		DeletedBy func(childComplexity int) int
+		Email     func(childComplexity int) int
+		ID        func(childComplexity int) int
+		IPAddress func(childComplexity int) int
+		Owner     func(childComplexity int) int
+		OwnerID   func(childComplexity int) int
+		Token     func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		UpdatedBy func(childComplexity int) int
+	}
+
+	SubscribersConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	SubscribersCreatePayload struct {
+		Subscribers func(childComplexity int) int
+	}
+
+	SubscribersDeletePayload struct {
+		DeletedID func(childComplexity int) int
+	}
+
+	SubscribersEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	SubscribersUpdatePayload struct {
+		Subscribers func(childComplexity int) int
 	}
 
 	Subscription struct {
@@ -800,6 +845,9 @@ type MutationResolver interface {
 	CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error)
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
+	CreateSubscribers(ctx context.Context, input generated.CreateSubscribersInput) (*SubscribersCreatePayload, error)
+	UpdateSubscribers(ctx context.Context, id string, input generated.UpdateSubscribersInput) (*SubscribersUpdatePayload, error)
+	DeleteSubscribers(ctx context.Context, id string) (*SubscribersDeletePayload, error)
 	CreateTFASettings(ctx context.Context, input generated.CreateTFASettingsInput) (*TFASettingsCreatePayload, error)
 	UpdateTFASettings(ctx context.Context, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
@@ -826,6 +874,7 @@ type QueryResolver interface {
 	Organizations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error)
 	OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error)
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
+	SubscribersSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscribersWhereInput) (*generated.SubscribersConnection, error)
 	TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
 	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
@@ -841,6 +890,7 @@ type QueryResolver interface {
 	OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error)
 	OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error)
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
+	Subscribers(ctx context.Context, id string) (*generated.Subscribers, error)
 	TfaSettings(ctx context.Context, id *string) (*generated.TFASettings, error)
 	User(ctx context.Context, id string) (*generated.User, error)
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
@@ -1967,6 +2017,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePersonalAccessToken(childComplexity, args["input"].(generated.CreatePersonalAccessTokenInput)), true
 
+	case "Mutation.createSubscribers":
+		if e.complexity.Mutation.CreateSubscribers == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createSubscribers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateSubscribers(childComplexity, args["input"].(generated.CreateSubscribersInput)), true
+
 	case "Mutation.createTFASettings":
 		if e.complexity.Mutation.CreateTFASettings == nil {
 			break
@@ -2110,6 +2172,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeletePersonalAccessToken(childComplexity, args["id"].(string)), true
+
+	case "Mutation.deleteSubscribers":
+		if e.complexity.Mutation.DeleteSubscribers == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteSubscribers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteSubscribers(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
@@ -2278,6 +2352,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePersonalAccessToken(childComplexity, args["id"].(string), args["input"].(generated.UpdatePersonalAccessTokenInput)), true
+
+	case "Mutation.updateSubscribers":
+		if e.complexity.Mutation.UpdateSubscribers == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateSubscribers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateSubscribers(childComplexity, args["id"].(string), args["input"].(generated.UpdateSubscribersInput)), true
 
 	case "Mutation.updateTFASettings":
 		if e.complexity.Mutation.UpdateTFASettings == nil {
@@ -2921,6 +3007,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Organization.Setting(childComplexity), true
+
+	case "Organization.subscribers":
+		if e.complexity.Organization.Subscribers == nil {
+			break
+		}
+
+		return e.complexity.Organization.Subscribers(childComplexity), true
 
 	case "Organization.updatedAt":
 		if e.complexity.Organization.UpdatedAt == nil {
@@ -3668,6 +3761,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PersonalAccessTokens(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.PersonalAccessTokenWhereInput)), true
 
+	case "Query.subscribers":
+		if e.complexity.Query.Subscribers == nil {
+			break
+		}
+
+		args, err := ec.field_Query_subscribers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Subscribers(childComplexity, args["id"].(string)), true
+
+	case "Query.subscribersSlice":
+		if e.complexity.Query.SubscribersSlice == nil {
+			break
+		}
+
+		args, err := ec.field_Query_subscribersSlice_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.SubscribersSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.SubscribersWhereInput)), true
+
 	case "Query.tfaSettings":
 		if e.complexity.Query.TfaSettings == nil {
 			break
@@ -3739,6 +3856,153 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Users(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.UserOrder), args["where"].(*generated.UserWhereInput)), true
+
+	case "Subscribers.active":
+		if e.complexity.Subscribers.Active == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.Active(childComplexity), true
+
+	case "Subscribers.createdAt":
+		if e.complexity.Subscribers.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.CreatedAt(childComplexity), true
+
+	case "Subscribers.createdBy":
+		if e.complexity.Subscribers.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.CreatedBy(childComplexity), true
+
+	case "Subscribers.deletedAt":
+		if e.complexity.Subscribers.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.DeletedAt(childComplexity), true
+
+	case "Subscribers.deletedBy":
+		if e.complexity.Subscribers.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.DeletedBy(childComplexity), true
+
+	case "Subscribers.email":
+		if e.complexity.Subscribers.Email == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.Email(childComplexity), true
+
+	case "Subscribers.id":
+		if e.complexity.Subscribers.ID == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.ID(childComplexity), true
+
+	case "Subscribers.ipAddress":
+		if e.complexity.Subscribers.IPAddress == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.IPAddress(childComplexity), true
+
+	case "Subscribers.owner":
+		if e.complexity.Subscribers.Owner == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.Owner(childComplexity), true
+
+	case "Subscribers.ownerID":
+		if e.complexity.Subscribers.OwnerID == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.OwnerID(childComplexity), true
+
+	case "Subscribers.token":
+		if e.complexity.Subscribers.Token == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.Token(childComplexity), true
+
+	case "Subscribers.updatedAt":
+		if e.complexity.Subscribers.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.UpdatedAt(childComplexity), true
+
+	case "Subscribers.updatedBy":
+		if e.complexity.Subscribers.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Subscribers.UpdatedBy(childComplexity), true
+
+	case "SubscribersConnection.edges":
+		if e.complexity.SubscribersConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.SubscribersConnection.Edges(childComplexity), true
+
+	case "SubscribersConnection.pageInfo":
+		if e.complexity.SubscribersConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.SubscribersConnection.PageInfo(childComplexity), true
+
+	case "SubscribersConnection.totalCount":
+		if e.complexity.SubscribersConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.SubscribersConnection.TotalCount(childComplexity), true
+
+	case "SubscribersCreatePayload.subscribers":
+		if e.complexity.SubscribersCreatePayload.Subscribers == nil {
+			break
+		}
+
+		return e.complexity.SubscribersCreatePayload.Subscribers(childComplexity), true
+
+	case "SubscribersDeletePayload.deletedID":
+		if e.complexity.SubscribersDeletePayload.DeletedID == nil {
+			break
+		}
+
+		return e.complexity.SubscribersDeletePayload.DeletedID(childComplexity), true
+
+	case "SubscribersEdge.cursor":
+		if e.complexity.SubscribersEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.SubscribersEdge.Cursor(childComplexity), true
+
+	case "SubscribersEdge.node":
+		if e.complexity.SubscribersEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.SubscribersEdge.Node(childComplexity), true
+
+	case "SubscribersUpdatePayload.subscribers":
+		if e.complexity.SubscribersUpdatePayload.Subscribers == nil {
+			break
+		}
+
+		return e.complexity.SubscribersUpdatePayload.Subscribers(childComplexity), true
 
 	case "Subscription.subscribe":
 		if e.complexity.Subscription.Subscribe == nil {
@@ -4297,6 +4561,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOrganizationInput,
 		ec.unmarshalInputCreateOrganizationSettingInput,
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
+		ec.unmarshalInputCreateSubscribersInput,
 		ec.unmarshalInputCreateTFASettingsInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserSettingInput,
@@ -4315,6 +4580,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputOrganizationSettingWhereInput,
 		ec.unmarshalInputOrganizationWhereInput,
 		ec.unmarshalInputPersonalAccessTokenWhereInput,
+		ec.unmarshalInputSubscribersWhereInput,
 		ec.unmarshalInputTFASettingsWhereInput,
 		ec.unmarshalInputUpdateEntitlementInput,
 		ec.unmarshalInputUpdateGroupInput,
@@ -4328,6 +4594,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateOrganizationInput,
 		ec.unmarshalInputUpdateOrganizationSettingInput,
 		ec.unmarshalInputUpdatePersonalAccessTokenInput,
+		ec.unmarshalInputUpdateSubscribersInput,
 		ec.unmarshalInputUpdateTFASettingsInput,
 		ec.unmarshalInputUpdateUserInput,
 		ec.unmarshalInputUpdateUserSettingInput,
@@ -4728,6 +4995,7 @@ input CreateOrganizationInput {
   oauthproviderIDs: [ID!]
   userIDs: [ID!]
   inviteIDs: [ID!]
+  subscriberIDs: [ID!]
 }
 """
 CreateOrganizationSettingInput is used for create OrganizationSetting object.
@@ -4793,6 +5061,33 @@ input CreatePersonalAccessTokenInput {
   lastUsedAt: Time
   ownerID: ID!
   organizationIDs: [ID!]
+}
+"""
+CreateSubscribersInput is used for create Subscribers object.
+Input was generated by ent.
+"""
+input CreateSubscribersInput {
+  createdAt: Time
+  updatedAt: Time
+  createdBy: String
+  updatedBy: String
+  """
+  email address of the subscriber
+  """
+  email: String!
+  """
+  indicates if the subscriber is active or not
+  """
+  active: Boolean
+  """
+  IP address of the subscriber
+  """
+  ipAddress: String
+  """
+  the token used to unsubscribe
+  """
+  token: String!
+  ownerID: ID
 }
 """
 CreateTFASettingsInput is used for create TFASettings object.
@@ -7170,6 +7465,7 @@ type Organization implements Node {
   oauthprovider: [OauthProvider!]
   users: [User!]
   invites: [Invite!]
+  subscribers: [Subscribers!]
   members: [OrgMembership!]
 }
 """
@@ -7745,6 +8041,11 @@ input OrganizationWhereInput {
   """
   hasInvites: Boolean
   hasInvitesWith: [InviteWhereInput!]
+  """
+  subscribers edge predicates
+  """
+  hasSubscribers: Boolean
+  hasSubscribersWith: [SubscribersWhereInput!]
   """
   members edge predicates
   """
@@ -8343,6 +8644,32 @@ type Query {
     """
     where: PersonalAccessTokenWhereInput
   ): PersonalAccessTokenConnection!
+  subscribersSlice(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for SubscribersSlice returned from the connection.
+    """
+    where: SubscribersWhereInput
+  ): SubscribersConnection!
   tfaSettingsSlice(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -8426,6 +8753,256 @@ type Query {
     """
     where: UserSettingWhereInput
   ): UserSettingConnection!
+}
+type Subscribers implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  createdBy: String
+  updatedBy: String
+  deletedAt: Time
+  deletedBy: String
+  ownerID: ID
+  """
+  email address of the subscriber
+  """
+  email: String!
+  """
+  indicates if the subscriber is active or not
+  """
+  active: Boolean!
+  """
+  IP address of the subscriber
+  """
+  ipAddress: String
+  """
+  the token used to unsubscribe
+  """
+  token: String!
+  owner: Organization
+}
+"""
+A connection to a list of items.
+"""
+type SubscribersConnection {
+  """
+  A list of edges.
+  """
+  edges: [SubscribersEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type SubscribersEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Subscribers
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+SubscribersWhereInput is used for filtering Subscribers objects.
+Input was generated by ent.
+"""
+input SubscribersWhereInput {
+  not: SubscribersWhereInput
+  and: [SubscribersWhereInput!]
+  or: [SubscribersWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  created_by field predicates
+  """
+  createdBy: String
+  createdByNEQ: String
+  createdByIn: [String!]
+  createdByNotIn: [String!]
+  createdByGT: String
+  createdByGTE: String
+  createdByLT: String
+  createdByLTE: String
+  createdByContains: String
+  createdByHasPrefix: String
+  createdByHasSuffix: String
+  createdByIsNil: Boolean
+  createdByNotNil: Boolean
+  createdByEqualFold: String
+  createdByContainsFold: String
+  """
+  updated_by field predicates
+  """
+  updatedBy: String
+  updatedByNEQ: String
+  updatedByIn: [String!]
+  updatedByNotIn: [String!]
+  updatedByGT: String
+  updatedByGTE: String
+  updatedByLT: String
+  updatedByLTE: String
+  updatedByContains: String
+  updatedByHasPrefix: String
+  updatedByHasSuffix: String
+  updatedByIsNil: Boolean
+  updatedByNotNil: Boolean
+  updatedByEqualFold: String
+  updatedByContainsFold: String
+  """
+  deleted_at field predicates
+  """
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """
+  deleted_by field predicates
+  """
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
+  """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
+  """
+  email field predicates
+  """
+  email: String
+  emailNEQ: String
+  emailIn: [String!]
+  emailNotIn: [String!]
+  emailGT: String
+  emailGTE: String
+  emailLT: String
+  emailLTE: String
+  emailContains: String
+  emailHasPrefix: String
+  emailHasSuffix: String
+  emailEqualFold: String
+  emailContainsFold: String
+  """
+  active field predicates
+  """
+  active: Boolean
+  activeNEQ: Boolean
+  """
+  ip_address field predicates
+  """
+  ipAddress: String
+  ipAddressNEQ: String
+  ipAddressIn: [String!]
+  ipAddressNotIn: [String!]
+  ipAddressGT: String
+  ipAddressGTE: String
+  ipAddressLT: String
+  ipAddressLTE: String
+  ipAddressContains: String
+  ipAddressHasPrefix: String
+  ipAddressHasSuffix: String
+  ipAddressIsNil: Boolean
+  ipAddressNotNil: Boolean
+  ipAddressEqualFold: String
+  ipAddressContainsFold: String
+  """
+  token field predicates
+  """
+  token: String
+  tokenNEQ: String
+  tokenIn: [String!]
+  tokenNotIn: [String!]
+  tokenGT: String
+  tokenGTE: String
+  tokenLT: String
+  tokenLTE: String
+  tokenContains: String
+  tokenHasPrefix: String
+  tokenHasSuffix: String
+  tokenEqualFold: String
+  tokenContainsFold: String
+  """
+  owner edge predicates
+  """
+  hasOwner: Boolean
+  hasOwnerWith: [OrganizationWhereInput!]
 }
 type TFASettings implements Node {
   id: ID!
@@ -8940,6 +9517,9 @@ input UpdateOrganizationInput {
   addInviteIDs: [ID!]
   removeInviteIDs: [ID!]
   clearInvites: Boolean
+  addSubscriberIDs: [ID!]
+  removeSubscriberIDs: [ID!]
+  clearSubscribers: Boolean
 }
 """
 UpdateOrganizationSettingInput is used for update OrganizationSetting object.
@@ -9016,6 +9596,35 @@ input UpdatePersonalAccessTokenInput {
   addOrganizationIDs: [ID!]
   removeOrganizationIDs: [ID!]
   clearOrganizations: Boolean
+}
+"""
+UpdateSubscribersInput is used for update Subscribers object.
+Input was generated by ent.
+"""
+input UpdateSubscribersInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  updatedBy: String
+  clearUpdatedBy: Boolean
+  """
+  email address of the subscriber
+  """
+  email: String
+  """
+  indicates if the subscriber is active or not
+  """
+  active: Boolean
+  """
+  IP address of the subscriber
+  """
+  ipAddress: String
+  clearIPAddress: Boolean
+  """
+  the token used to unsubscribe
+  """
+  token: String
+  ownerID: ID
+  clearOwner: Boolean
 }
 """
 UpdateTFASettingsInput is used for update TFASettings object.
@@ -10733,6 +11342,81 @@ type PersonalAccessTokenDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
+	{Name: "../../schema/subscribers.graphql", Input: `extend type Query {
+    """
+    Look up subscribers by ID
+    """
+     subscribers(
+        """
+        ID of the subscribers
+        """
+        id: ID!
+    ):  Subscribers!
+}
+
+extend type Mutation{
+    """
+    Create a new subscribers
+    """
+    createSubscribers(
+        """
+        values of the subscribers
+        """
+        input: CreateSubscribersInput!
+    ): SubscribersCreatePayload!
+    """
+    Update an existing subscribers
+    """
+    updateSubscribers(
+        """
+        ID of the subscribers
+        """
+        id: ID!
+        """
+        New values for the subscribers
+        """
+        input: UpdateSubscribersInput!
+    ): SubscribersUpdatePayload!
+    """
+    Delete an existing subscribers
+    """
+    deleteSubscribers(
+        """
+        ID of the subscribers
+        """
+        id: ID!
+    ): SubscribersDeletePayload!
+}
+
+"""
+Return response for createSubscribers mutation
+"""
+type SubscribersCreatePayload {
+    """
+    Created subscribers
+    """
+    subscribers: Subscribers!
+}
+
+"""
+Return response for updateSubscribers mutation
+"""
+type SubscribersUpdatePayload {
+    """
+    Updated subscribers
+    """
+    subscribers: Subscribers!
+}
+
+"""
+Return response for deleteSubscribers mutation
+"""
+type SubscribersDeletePayload {
+    """
+    Deleted subscribers ID
+    """
+    deletedID: ID!
+}`, BuiltIn: false},
 	{Name: "../../schema/tfasettings.graphql", Input: `extend type Query {
     """
     Look up tfaSettings for the current user
@@ -11074,6 +11758,21 @@ func (ec *executionContext) field_Mutation_createPersonalAccessToken_args(ctx co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createSubscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateSubscribersInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateSubscribersInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -11240,6 +11939,21 @@ func (ec *executionContext) field_Mutation_deleteOrganization_args(ctx context.C
 }
 
 func (ec *executionContext) field_Mutation_deletePersonalAccessToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteSubscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -11573,6 +12287,30 @@ func (ec *executionContext) field_Mutation_updatePersonalAccessToken_args(ctx co
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNUpdatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdatePersonalAccessTokenInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateSubscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateSubscribersInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateSubscribersInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -12565,6 +13303,72 @@ func (ec *executionContext) field_Query_personalAccessTokens_args(ctx context.Co
 		}
 	}
 	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_subscribersSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.SubscribersWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_subscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -13588,6 +14392,8 @@ func (ec *executionContext) fieldContext_Entitlement_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -14633,6 +15439,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -18025,6 +18833,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -19161,6 +19971,8 @@ func (ec *executionContext) fieldContext_Invite_owner(ctx context.Context, field
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -21516,6 +22328,183 @@ func (ec *executionContext) fieldContext_Mutation_deletePersonalAccessToken(ctx 
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createSubscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createSubscribers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateSubscribers(rctx, fc.Args["input"].(generated.CreateSubscribersInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*SubscribersCreatePayload)
+	fc.Result = res
+	return ec.marshalNSubscribersCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createSubscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "subscribers":
+				return ec.fieldContext_SubscribersCreatePayload_subscribers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SubscribersCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createSubscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateSubscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateSubscribers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateSubscribers(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateSubscribersInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*SubscribersUpdatePayload)
+	fc.Result = res
+	return ec.marshalNSubscribersUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersUpdatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateSubscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "subscribers":
+				return ec.fieldContext_SubscribersUpdatePayload_subscribers(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SubscribersUpdatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateSubscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteSubscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteSubscribers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteSubscribers(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*SubscribersDeletePayload)
+	fc.Result = res
+	return ec.marshalNSubscribersDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersDeletePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteSubscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedID":
+				return ec.fieldContext_SubscribersDeletePayload_deletedID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SubscribersDeletePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteSubscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createTFASettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createTFASettings(ctx, field)
 	if err != nil {
@@ -22691,6 +23680,8 @@ func (ec *executionContext) fieldContext_OauthProvider_owner(ctx context.Context
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -24684,6 +25675,8 @@ func (ec *executionContext) fieldContext_OrgMembership_organization(ctx context.
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -25808,6 +26801,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -26484,6 +27479,75 @@ func (ec *executionContext) fieldContext_Organization_invites(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Organization_subscribers(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_subscribers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Subscribers(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.Subscribers)
+	fc.Result = res
+	return ec.marshalOSubscribers2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Subscribers_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+			case "email":
+				return ec.fieldContext_Subscribers_email(ctx, field)
+			case "active":
+				return ec.fieldContext_Subscribers_active(ctx, field)
+			case "ipAddress":
+				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
+			case "token":
+				return ec.fieldContext_Subscribers_token(ctx, field)
+			case "owner":
+				return ec.fieldContext_Subscribers_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Organization_members(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Organization_members(ctx, field)
 	if err != nil {
@@ -26779,6 +27843,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -26912,6 +27978,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -27663,6 +28731,8 @@ func (ec *executionContext) fieldContext_OrganizationSetting_organization(ctx co
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -28219,6 +29289,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -29117,6 +30189,8 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_organizations(ctx c
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -30447,6 +31521,69 @@ func (ec *executionContext) fieldContext_Query_personalAccessTokens(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_subscribersSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_subscribersSlice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SubscribersSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.SubscribersWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.SubscribersConnection)
+	fc.Result = res
+	return ec.marshalNSubscribersConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_subscribersSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_SubscribersConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_SubscribersConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_SubscribersConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SubscribersConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_subscribersSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_tfaSettingsSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_tfaSettingsSlice(ctx, field)
 	if err != nil {
@@ -31403,6 +32540,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -31674,6 +32813,89 @@ func (ec *executionContext) fieldContext_Query_personalAccessToken(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_personalAccessToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_subscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_subscribers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Subscribers(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Subscribers)
+	fc.Result = res
+	return ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Subscribers_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+			case "email":
+				return ec.fieldContext_Subscribers_email(ctx, field)
+			case "active":
+				return ec.fieldContext_Subscribers_active(ctx, field)
+			case "ipAddress":
+				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
+			case "token":
+				return ec.fieldContext_Subscribers_token(ctx, field)
+			case "owner":
+				return ec.fieldContext_Subscribers_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_subscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -32083,6 +33305,1047 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_id(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_updatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_ownerID(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_ownerID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OwnerID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_ownerID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_email(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_active(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_active(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Active, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_ipAddress(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_ipAddress(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IPAddress, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_ipAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_token(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_token(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Token, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscribers_owner(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscribers_owner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Owner(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Organization)
+	fc.Result = res
+	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscribers_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscribers",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Organization_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Organization_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Organization_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Organization_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Organization_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Organization_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Organization_deletedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
+			case "description":
+				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "parent":
+				return ec.fieldContext_Organization_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_Organization_children(ctx, field)
+			case "groups":
+				return ec.fieldContext_Organization_groups(ctx, field)
+			case "integrations":
+				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
+			case "entitlements":
+				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "personalAccessTokens":
+				return ec.fieldContext_Organization_personalAccessTokens(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
+			case "users":
+				return ec.fieldContext_Organization_users(ctx, field)
+			case "invites":
+				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.SubscribersEdge)
+	fc.Result = res
+	return ec.marshalOSubscribersEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_SubscribersEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_SubscribersEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SubscribersEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersCreatePayload_subscribers(ctx context.Context, field graphql.CollectedField, obj *SubscribersCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersCreatePayload_subscribers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Subscribers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Subscribers)
+	fc.Result = res
+	return ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersCreatePayload_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersCreatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Subscribers_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+			case "email":
+				return ec.fieldContext_Subscribers_email(ctx, field)
+			case "active":
+				return ec.fieldContext_Subscribers_active(ctx, field)
+			case "ipAddress":
+				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
+			case "token":
+				return ec.fieldContext_Subscribers_token(ctx, field)
+			case "owner":
+				return ec.fieldContext_Subscribers_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *SubscribersDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersDeletePayload_deletedID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersDeletePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Subscribers)
+	fc.Result = res
+	return ec.marshalOSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Subscribers_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+			case "email":
+				return ec.fieldContext_Subscribers_email(ctx, field)
+			case "active":
+				return ec.fieldContext_Subscribers_active(ctx, field)
+			case "ipAddress":
+				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
+			case "token":
+				return ec.fieldContext_Subscribers_token(ctx, field)
+			case "owner":
+				return ec.fieldContext_Subscribers_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SubscribersUpdatePayload_subscribers(ctx context.Context, field graphql.CollectedField, obj *SubscribersUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscribersUpdatePayload_subscribers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Subscribers, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Subscribers)
+	fc.Result = res
+	return ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SubscribersUpdatePayload_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SubscribersUpdatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Subscribers_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+			case "email":
+				return ec.fieldContext_Subscribers_email(ctx, field)
+			case "active":
+				return ec.fieldContext_Subscribers_active(ctx, field)
+			case "ipAddress":
+				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
+			case "token":
+				return ec.fieldContext_Subscribers_token(ctx, field)
+			case "owner":
+				return ec.fieldContext_Subscribers_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
 		},
 	}
 	return fc, nil
@@ -34193,6 +36456,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -35596,6 +37861,8 @@ func (ec *executionContext) fieldContext_UserSetting_defaultOrg(ctx context.Cont
 				return ec.fieldContext_Organization_users(ctx, field)
 			case "invites":
 				return ec.fieldContext_Organization_invites(ctx, field)
+			case "subscribers":
+				return ec.fieldContext_Organization_subscribers(ctx, field)
 			case "members":
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
@@ -38671,7 +40938,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "avatarRemoteURL", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "createOrgSettings"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "avatarRemoteURL", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "subscriberIDs", "createOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38804,6 +41071,13 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.InviteIDs = data
+		case "subscriberIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("subscriberIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SubscriberIDs = data
 		case "createOrgSettings":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createOrgSettings"))
 			data, err := ec.unmarshalOCreateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, v)
@@ -39014,6 +41288,89 @@ func (ec *executionContext) unmarshalInputCreatePersonalAccessTokenInput(ctx con
 				return it, err
 			}
 			it.OrganizationIDs = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateSubscribersInput(ctx context.Context, obj interface{}) (generated.CreateSubscribersInput, error) {
+	var it generated.CreateSubscribersInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "active", "ipAddress", "token", "ownerID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "createdBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedBy = data
+		case "updatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "active":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
+		case "ipAddress":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddress"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddress = data
+		case "token":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Token = data
+		case "ownerID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerID = data
 		}
 	}
 
@@ -49266,7 +51623,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "personalOrgIsNil", "personalOrgNotNil", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasInvites", "hasInvitesWith", "hasMembers", "hasMembersWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "personalOrgIsNil", "personalOrgNotNil", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasInvites", "hasInvitesWith", "hasSubscribers", "hasSubscribersWith", "hasMembers", "hasMembersWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50358,6 +52715,20 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.HasInvitesWith = data
+		case "hasSubscribers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSubscribers"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSubscribers = data
+		case "hasSubscribersWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSubscribersWith"))
+			data, err := ec.unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSubscribersWith = data
 		case "hasMembers":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMembers"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -51253,6 +53624,1062 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 				return it, err
 			}
 			it.HasOrganizationsWith = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputSubscribersWhereInput(ctx context.Context, obj interface{}) (generated.SubscribersWhereInput, error) {
+	var it generated.SubscribersWhereInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDIsNil", "ownerIDNotNil", "ownerIDEqualFold", "ownerIDContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "active", "activeNEQ", "ipAddress", "ipAddressNEQ", "ipAddressIn", "ipAddressNotIn", "ipAddressGT", "ipAddressGTE", "ipAddressLT", "ipAddressLTE", "ipAddressContains", "ipAddressHasPrefix", "ipAddressHasSuffix", "ipAddressIsNil", "ipAddressNotNil", "ipAddressEqualFold", "ipAddressContainsFold", "token", "tokenNEQ", "tokenIn", "tokenNotIn", "tokenGT", "tokenGTE", "tokenLT", "tokenLTE", "tokenContains", "tokenHasPrefix", "tokenHasSuffix", "tokenEqualFold", "tokenContainsFold", "hasOwner", "hasOwnerWith"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalOSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "idEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDEqualFold = data
+		case "idContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDContainsFold = data
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "createdAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNEQ = data
+		case "createdAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIn = data
+		case "createdAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotIn = data
+		case "createdAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGT = data
+		case "createdAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGTE = data
+		case "createdAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLT = data
+		case "createdAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "updatedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNEQ = data
+		case "updatedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIn = data
+		case "updatedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotIn = data
+		case "updatedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGT = data
+		case "updatedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGTE = data
+		case "updatedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLT = data
+		case "updatedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
+		case "createdBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedBy = data
+		case "createdByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNEQ = data
+		case "createdByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByIn = data
+		case "createdByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNotIn = data
+		case "createdByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByGT = data
+		case "createdByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByGTE = data
+		case "createdByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByLT = data
+		case "createdByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByLTE = data
+		case "createdByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByContains = data
+		case "createdByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByHasPrefix = data
+		case "createdByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByHasSuffix = data
+		case "createdByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByIsNil = data
+		case "createdByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNotNil = data
+		case "createdByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByEqualFold = data
+		case "createdByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByContainsFold = data
+		case "updatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "updatedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNEQ = data
+		case "updatedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByIn = data
+		case "updatedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNotIn = data
+		case "updatedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByGT = data
+		case "updatedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByGTE = data
+		case "updatedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByLT = data
+		case "updatedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByLTE = data
+		case "updatedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByContains = data
+		case "updatedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByHasPrefix = data
+		case "updatedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByHasSuffix = data
+		case "updatedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByIsNil = data
+		case "updatedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNotNil = data
+		case "updatedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByEqualFold = data
+		case "updatedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
+		case "ownerID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerID = data
+		case "ownerIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDNEQ = data
+		case "ownerIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDIn = data
+		case "ownerIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDNotIn = data
+		case "ownerIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDGT = data
+		case "ownerIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDGTE = data
+		case "ownerIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDLT = data
+		case "ownerIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDLTE = data
+		case "ownerIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDContains = data
+		case "ownerIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDHasPrefix = data
+		case "ownerIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDHasSuffix = data
+		case "ownerIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDIsNil = data
+		case "ownerIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDNotNil = data
+		case "ownerIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDEqualFold = data
+		case "ownerIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerIDContainsFold = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "emailNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailNEQ = data
+		case "emailIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailIn = data
+		case "emailNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailNotIn = data
+		case "emailGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailGT = data
+		case "emailGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailGTE = data
+		case "emailLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailLT = data
+		case "emailLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailLTE = data
+		case "emailContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailContains = data
+		case "emailHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailHasPrefix = data
+		case "emailHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailHasSuffix = data
+		case "emailEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailEqualFold = data
+		case "emailContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailContainsFold = data
+		case "active":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
+		case "activeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("activeNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ActiveNEQ = data
+		case "ipAddress":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddress"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddress = data
+		case "ipAddressNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressNEQ = data
+		case "ipAddressIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressIn = data
+		case "ipAddressNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressNotIn = data
+		case "ipAddressGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressGT = data
+		case "ipAddressGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressGTE = data
+		case "ipAddressLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressLT = data
+		case "ipAddressLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressLTE = data
+		case "ipAddressContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressContains = data
+		case "ipAddressHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressHasPrefix = data
+		case "ipAddressHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressHasSuffix = data
+		case "ipAddressIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressIsNil = data
+		case "ipAddressNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressNotNil = data
+		case "ipAddressEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressEqualFold = data
+		case "ipAddressContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddressContainsFold = data
+		case "token":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Token = data
+		case "tokenNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenNEQ = data
+		case "tokenIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenIn = data
+		case "tokenNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenNotIn = data
+		case "tokenGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenGT = data
+		case "tokenGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenGTE = data
+		case "tokenLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenLT = data
+		case "tokenLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenLTE = data
+		case "tokenContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenContains = data
+		case "tokenHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenHasPrefix = data
+		case "tokenHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenHasSuffix = data
+		case "tokenEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenEqualFold = data
+		case "tokenContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TokenContainsFold = data
+		case "hasOwner":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwner"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasOwner = data
+		case "hasOwnerWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwnerWith"))
+			data, err := ec.unmarshalOOrganizationWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasOwnerWith = data
 		}
 	}
 
@@ -53026,7 +56453,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "avatarRemoteURL", "clearAvatarRemoteURL", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers", "addInviteIDs", "removeInviteIDs", "clearInvites", "addOrgMembers", "updateOrgSettings"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "avatarRemoteURL", "clearAvatarRemoteURL", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers", "addInviteIDs", "removeInviteIDs", "clearInvites", "addSubscriberIDs", "removeSubscriberIDs", "clearSubscribers", "addOrgMembers", "updateOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -53264,6 +56691,27 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.ClearInvites = data
+		case "addSubscriberIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addSubscriberIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddSubscriberIDs = data
+		case "removeSubscriberIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeSubscriberIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveSubscriberIDs = data
+		case "clearSubscribers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSubscribers"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSubscribers = data
 		case "addOrgMembers":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addOrgMembers"))
 			data, err := ec.unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInputᚄ(ctx, v)
@@ -53581,6 +57029,103 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 				return it, err
 			}
 			it.ClearOrganizations = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateSubscribersInput(ctx context.Context, obj interface{}) (generated.UpdateSubscribersInput, error) {
+	var it generated.UpdateSubscribersInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "active", "ipAddress", "clearIPAddress", "token", "ownerID", "clearOwner"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
+		case "updatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "clearUpdatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedBy"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedBy = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "active":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
+		case "ipAddress":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddress"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IPAddress = data
+		case "clearIPAddress":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIPAddress"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearIPAddress = data
+		case "token":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Token = data
+		case "ownerID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnerID = data
+		case "clearOwner":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOwner"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearOwner = data
 		}
 	}
 
@@ -56861,6 +60406,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._PersonalAccessToken(ctx, sel, obj)
+	case *generated.Subscribers:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Subscribers(ctx, sel, obj)
 	case *generated.TFASettings:
 		if obj == nil {
 			return graphql.Null
@@ -59179,6 +62729,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createSubscribers":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createSubscribers(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateSubscribers":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateSubscribers(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteSubscribers":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteSubscribers(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createTFASettings":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createTFASettings(ctx, field)
@@ -60628,6 +64199,39 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "subscribers":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Organization_subscribers(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "members":
 			field := field
 
@@ -61909,6 +65513,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "subscribersSlice":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_subscribersSlice(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "tfaSettingsSlice":
 			field := field
 
@@ -62239,6 +65865,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "subscribers":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_subscribers(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "tfaSettings":
 			field := field
 
@@ -62313,6 +65961,313 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var subscribersImplementors = []string{"Subscribers", "Node"}
+
+func (ec *executionContext) _Subscribers(ctx context.Context, sel ast.SelectionSet, obj *generated.Subscribers) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Subscribers")
+		case "id":
+			out.Values[i] = ec._Subscribers_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createdAt":
+			out.Values[i] = ec._Subscribers_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Subscribers_updatedAt(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._Subscribers_createdBy(ctx, field, obj)
+		case "updatedBy":
+			out.Values[i] = ec._Subscribers_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._Subscribers_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._Subscribers_deletedBy(ctx, field, obj)
+		case "ownerID":
+			out.Values[i] = ec._Subscribers_ownerID(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._Subscribers_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "active":
+			out.Values[i] = ec._Subscribers_active(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "ipAddress":
+			out.Values[i] = ec._Subscribers_ipAddress(ctx, field, obj)
+		case "token":
+			out.Values[i] = ec._Subscribers_token(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "owner":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Subscribers_owner(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var subscribersConnectionImplementors = []string{"SubscribersConnection"}
+
+func (ec *executionContext) _SubscribersConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.SubscribersConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SubscribersConnection")
+		case "edges":
+			out.Values[i] = ec._SubscribersConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._SubscribersConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._SubscribersConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var subscribersCreatePayloadImplementors = []string{"SubscribersCreatePayload"}
+
+func (ec *executionContext) _SubscribersCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscribersCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersCreatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SubscribersCreatePayload")
+		case "subscribers":
+			out.Values[i] = ec._SubscribersCreatePayload_subscribers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var subscribersDeletePayloadImplementors = []string{"SubscribersDeletePayload"}
+
+func (ec *executionContext) _SubscribersDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscribersDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersDeletePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SubscribersDeletePayload")
+		case "deletedID":
+			out.Values[i] = ec._SubscribersDeletePayload_deletedID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var subscribersEdgeImplementors = []string{"SubscribersEdge"}
+
+func (ec *executionContext) _SubscribersEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.SubscribersEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SubscribersEdge")
+		case "node":
+			out.Values[i] = ec._SubscribersEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._SubscribersEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var subscribersUpdatePayloadImplementors = []string{"SubscribersUpdatePayload"}
+
+func (ec *executionContext) _SubscribersUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscribersUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersUpdatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SubscribersUpdatePayload")
+		case "subscribers":
+			out.Values[i] = ec._SubscribersUpdatePayload_subscribers(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -63814,6 +67769,11 @@ func (ec *executionContext) unmarshalNCreatePersonalAccessTokenInput2githubᚗco
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateSubscribersInput(ctx context.Context, v interface{}) (generated.CreateSubscribersInput, error) {
+	res, err := ec.unmarshalInputCreateSubscribersInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTFASettingsInput(ctx context.Context, v interface{}) (generated.CreateTFASettingsInput, error) {
 	res, err := ec.unmarshalInputCreateTFASettingsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -64957,6 +68917,81 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
+func (ec *executionContext) marshalNSubscribers2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx context.Context, sel ast.SelectionSet, v generated.Subscribers) graphql.Marshaler {
+	return ec._Subscribers(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx context.Context, sel ast.SelectionSet, v *generated.Subscribers) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Subscribers(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSubscribersConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersConnection(ctx context.Context, sel ast.SelectionSet, v generated.SubscribersConnection) graphql.Marshaler {
+	return ec._SubscribersConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSubscribersConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersConnection(ctx context.Context, sel ast.SelectionSet, v *generated.SubscribersConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SubscribersConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSubscribersCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersCreatePayload(ctx context.Context, sel ast.SelectionSet, v SubscribersCreatePayload) graphql.Marshaler {
+	return ec._SubscribersCreatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSubscribersCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersCreatePayload(ctx context.Context, sel ast.SelectionSet, v *SubscribersCreatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SubscribersCreatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSubscribersDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersDeletePayload(ctx context.Context, sel ast.SelectionSet, v SubscribersDeletePayload) graphql.Marshaler {
+	return ec._SubscribersDeletePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSubscribersDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersDeletePayload(ctx context.Context, sel ast.SelectionSet, v *SubscribersDeletePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SubscribersDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSubscribersUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersUpdatePayload(ctx context.Context, sel ast.SelectionSet, v SubscribersUpdatePayload) graphql.Marshaler {
+	return ec._SubscribersUpdatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSubscribersUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *SubscribersUpdatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SubscribersUpdatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx context.Context, v interface{}) (*generated.SubscribersWhereInput, error) {
+	res, err := ec.unmarshalInputSubscribersWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNTFASettings2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v generated.TFASettings) graphql.Marshaler {
 	return ec._TFASettings(ctx, sel, &v)
 }
@@ -65111,6 +69146,11 @@ func (ec *executionContext) unmarshalNUpdateOrganizationSettingInput2githubᚗco
 
 func (ec *executionContext) unmarshalNUpdatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdatePersonalAccessTokenInput(ctx context.Context, v interface{}) (generated.UpdatePersonalAccessTokenInput, error) {
 	res, err := ec.unmarshalInputUpdatePersonalAccessTokenInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateSubscribersInput(ctx context.Context, v interface{}) (generated.UpdateSubscribersInput, error) {
+	res, err := ec.unmarshalInputUpdateSubscribersInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -67849,6 +71889,136 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOSubscribers2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.Subscribers) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx context.Context, sel ast.SelectionSet, v *generated.Subscribers) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Subscribers(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOSubscribersEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.SubscribersEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOSubscribersEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOSubscribersEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx context.Context, sel ast.SelectionSet, v *generated.SubscribersEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SubscribersEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.SubscribersWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.SubscribersWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx context.Context, v interface{}) (*generated.SubscribersWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputSubscribersWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOTFASettings2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.TFASettings) graphql.Marshaler {

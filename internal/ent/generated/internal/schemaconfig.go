@@ -22,6 +22,7 @@ type SchemaConfig struct {
 	OrganizationSetting              string // OrganizationSetting table.
 	PasswordResetToken               string // PasswordResetToken table.
 	PersonalAccessToken              string // PersonalAccessToken table.
+	Subscribers                      string // Subscribers table.
 	TFASettings                      string // TFASettings table.
 	User                             string // User table.
 	UserSetting                      string // UserSetting table.

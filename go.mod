@@ -49,7 +49,7 @@ require (
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.18.0
 	golang.org/x/term v0.18.0
-	google.golang.org/api v0.169.0
+	google.golang.org/api v0.170.0
 	modernc.org/sqlite v1.29.5
 )
 
@@ -227,7 +227,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
-	github.com/posthog/posthog-go v0.0.0-20240221135834-4944045455b4
+	github.com/posthog/posthog-go v0.0.0-20240315130956-036dfa9f3555
 	github.com/pquerna/otp v1.4.0
 	github.com/ravilushqa/otelgqlgen v0.15.0
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
@@ -257,7 +257,7 @@ require (
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.24.0
 	gocloud.dev v0.37.0
 	golang.org/x/crypto v0.21.0
-	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225
+	golang.org/x/exp v0.0.0-20240314144324-c7f7c6466f7f
 	golang.org/x/mod v0.16.0 // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect

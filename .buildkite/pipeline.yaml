@@ -176,6 +176,7 @@ steps:
     if: build.branch == "main"
     depends_on: "atlas_migrate"
     key: "atlas_apply"
+    skip: "true" # temporarily skip this step
     plugins:
       - datumforge/atlas#v0.0.3:
           project: datum

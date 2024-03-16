@@ -10,7 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 )
 
-// HookSubscriber runs on email verification mutations and sets expires
+// HookSubscriber runs on subscriber mutations and ensures uniqueness of email for root subscribers
 func HookSubscriber() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.SubscriberFunc(func(ctx context.Context, mutation *generated.SubscriberMutation) (generated.Value, error) {

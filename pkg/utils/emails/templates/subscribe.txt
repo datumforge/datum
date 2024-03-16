@@ -1,9 +1,8 @@
-Thank you for subscribing to Datum!
+Thank you for subscribing to the Datum platform - in order to confirm the subscription of future emails, please verify your email address by clicking the button below, or copy and paste the linked URL into your browser:
 
-What Next?
+{{ .VerifySubscriberURL }}
 
-Check out the starter guide https://docs.datum.net/getting-started for more information, or our examples https://docs.datum.net/examples for ideas and inspiration.
+If you are having trouble verifying your email address, please contact us at support@datum.net.
 
-If you have any questions, please reach out to us at support@datum.net.
-
+Thank you,
 The Datum Team

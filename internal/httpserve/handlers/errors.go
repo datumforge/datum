@@ -61,6 +61,9 @@ var (
 
 	// ErrSubscriberNotFound is returned when the subscriber is not found
 	ErrSubscriberNotFound = errors.New("subscriber not found")
+
+	// ErrExpiredToken is returned when the token has expired
+	ErrExpiredToken = errors.New("token has expired")
 )
 
 // IsConstraintError returns true if the error resulted from a database constraint violation.

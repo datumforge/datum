@@ -30,6 +30,7 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("email is required"))
 	}
 
+	// create user input for subscriber verification token
 	user := &User{
 		Email: email,
 	}
@@ -48,9 +49,8 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 	// set viewer context
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), email)
 
-	_, err := h.createSubscriber(ctxWithToken, input, user)
-	if err != nil {
-		h.Logger.Errorw("error creating new user", "error", err)
+	if _, err := h.createSubscriber(ctxWithToken, input, user); err != nil {
+		h.Logger.Errorw("error creating new subscriber", "error", err)
 
 		if IsConstraintError(err) || errors.Is(err, hooks.ErrUserAlreadySubscriber) {
 			return ctx.JSON(http.StatusConflict, rout.ErrorResponse("email address is already subscribed"))

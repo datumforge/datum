@@ -85,7 +85,29 @@ func (h *Handler) updateSubscriber(ctx context.Context, id string, input ent.Upd
 	return nil
 }
 
-// deleteSubscriber updates a subscriber by in the database based on the input
+// updateSubscriber updates a subscriber by in the database based on the input
+func (h *Handler) updateSubscriberVerificationToken(ctx context.Context, user *User) error {
+	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+	if err != nil {
+		h.Logger.Errorw("unable to parse ttl", "error", err)
+		return err
+	}
+
+	_, err = transaction.FromContext(ctx).Subscriber.UpdateOneID(user.ID).
+		SetToken(user.EmailVerificationToken.String).
+		SetSecret(user.EmailVerificationSecret).
+		SetTTL(ttl).
+		Save(ctx)
+	if err != nil {
+		h.Logger.Errorw("error updating subscriber tokens", "error", err)
+
+		return err
+	}
+
+	return nil
+}
+
+// deleteSubscriber deletes a subscriber by email and org in the database
 func (h *Handler) deleteSubscriber(ctx context.Context, email string, org string) error {
 	whereOrg := subscriber.OwnerID(org)
 	if org == "" {

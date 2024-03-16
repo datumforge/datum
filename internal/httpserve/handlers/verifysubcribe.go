@@ -131,7 +131,6 @@ func (h *Handler) verifySubscriberToken(ctx context.Context, t *tokens.Verificat
 
 				return err
 			}
-
 		}
 
 		return ErrExpiredToken

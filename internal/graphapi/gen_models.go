@@ -228,22 +228,22 @@ type PersonalAccessTokenUpdatePayload struct {
 	PersonalAccessToken *generated.PersonalAccessToken `json:"personalAccessToken"`
 }
 
-// Return response for createSubscribers mutation
-type SubscribersCreatePayload struct {
-	// Created subscribers
-	Subscribers *generated.Subscribers `json:"subscribers"`
+// Return response for createSubscriber mutation
+type SubscriberCreatePayload struct {
+	// Created subscriber
+	Subscriber *generated.Subscriber `json:"subscriber"`
 }
 
-// Return response for deleteSubscribers mutation
-type SubscribersDeletePayload struct {
-	// Deleted subscribers ID
+// Return response for deleteSubscriber mutation
+type SubscriberDeletePayload struct {
+	// Deleted subscriber ID
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response for updateSubscribers mutation
-type SubscribersUpdatePayload struct {
-	// Updated subscribers
-	Subscribers *generated.Subscribers `json:"subscribers"`
+// Return response for updateSubscriber mutation
+type SubscriberUpdatePayload struct {
+	// Updated subscriber
+	Subscriber *generated.Subscriber `json:"subscriber"`
 }
 
 type Subscription struct {

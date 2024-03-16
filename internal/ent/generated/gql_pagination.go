@@ -26,7 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -3260,20 +3260,20 @@ func (pat *PersonalAccessToken) ToEdge(order *PersonalAccessTokenOrder) *Persona
 	}
 }
 
-// SubscribersEdge is the edge representation of Subscribers.
-type SubscribersEdge struct {
-	Node   *Subscribers `json:"node"`
-	Cursor Cursor       `json:"cursor"`
+// SubscriberEdge is the edge representation of Subscriber.
+type SubscriberEdge struct {
+	Node   *Subscriber `json:"node"`
+	Cursor Cursor      `json:"cursor"`
 }
 
-// SubscribersConnection is the connection containing edges to Subscribers.
-type SubscribersConnection struct {
-	Edges      []*SubscribersEdge `json:"edges"`
-	PageInfo   PageInfo           `json:"pageInfo"`
-	TotalCount int                `json:"totalCount"`
+// SubscriberConnection is the connection containing edges to Subscriber.
+type SubscriberConnection struct {
+	Edges      []*SubscriberEdge `json:"edges"`
+	PageInfo   PageInfo          `json:"pageInfo"`
+	TotalCount int               `json:"totalCount"`
 }
 
-func (c *SubscribersConnection) build(nodes []*Subscribers, pager *subscribersPager, after *Cursor, first *int, before *Cursor, last *int) {
+func (c *SubscriberConnection) build(nodes []*Subscriber, pager *subscriberPager, after *Cursor, first *int, before *Cursor, last *int) {
 	c.PageInfo.HasNextPage = before != nil
 	c.PageInfo.HasPreviousPage = after != nil
 	if first != nil && *first+1 == len(nodes) {
@@ -3283,21 +3283,21 @@ func (c *SubscribersConnection) build(nodes []*Subscribers, pager *subscribersPa
 		c.PageInfo.HasPreviousPage = true
 		nodes = nodes[:len(nodes)-1]
 	}
-	var nodeAt func(int) *Subscribers
+	var nodeAt func(int) *Subscriber
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *Subscribers {
+		nodeAt = func(i int) *Subscriber {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *Subscribers {
+		nodeAt = func(i int) *Subscriber {
 			return nodes[i]
 		}
 	}
-	c.Edges = make([]*SubscribersEdge, len(nodes))
+	c.Edges = make([]*SubscriberEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		c.Edges[i] = &SubscribersEdge{
+		c.Edges[i] = &SubscriberEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -3311,87 +3311,87 @@ func (c *SubscribersConnection) build(nodes []*Subscribers, pager *subscribersPa
 	}
 }
 
-// SubscribersPaginateOption enables pagination customization.
-type SubscribersPaginateOption func(*subscribersPager) error
+// SubscriberPaginateOption enables pagination customization.
+type SubscriberPaginateOption func(*subscriberPager) error
 
-// WithSubscribersOrder configures pagination ordering.
-func WithSubscribersOrder(order *SubscribersOrder) SubscribersPaginateOption {
+// WithSubscriberOrder configures pagination ordering.
+func WithSubscriberOrder(order *SubscriberOrder) SubscriberPaginateOption {
 	if order == nil {
-		order = DefaultSubscribersOrder
+		order = DefaultSubscriberOrder
 	}
 	o := *order
-	return func(pager *subscribersPager) error {
+	return func(pager *subscriberPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultSubscribersOrder.Field
+			o.Field = DefaultSubscriberOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithSubscribersFilter configures pagination filter.
-func WithSubscribersFilter(filter func(*SubscribersQuery) (*SubscribersQuery, error)) SubscribersPaginateOption {
-	return func(pager *subscribersPager) error {
+// WithSubscriberFilter configures pagination filter.
+func WithSubscriberFilter(filter func(*SubscriberQuery) (*SubscriberQuery, error)) SubscriberPaginateOption {
+	return func(pager *subscriberPager) error {
 		if filter == nil {
-			return errors.New("SubscribersQuery filter cannot be nil")
+			return errors.New("SubscriberQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type subscribersPager struct {
+type subscriberPager struct {
 	reverse bool
-	order   *SubscribersOrder
-	filter  func(*SubscribersQuery) (*SubscribersQuery, error)
+	order   *SubscriberOrder
+	filter  func(*SubscriberQuery) (*SubscriberQuery, error)
 }
 
-func newSubscribersPager(opts []SubscribersPaginateOption, reverse bool) (*subscribersPager, error) {
-	pager := &subscribersPager{reverse: reverse}
+func newSubscriberPager(opts []SubscriberPaginateOption, reverse bool) (*subscriberPager, error) {
+	pager := &subscriberPager{reverse: reverse}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultSubscribersOrder
+		pager.order = DefaultSubscriberOrder
 	}
 	return pager, nil
 }
 
-func (p *subscribersPager) applyFilter(query *SubscribersQuery) (*SubscribersQuery, error) {
+func (p *subscriberPager) applyFilter(query *SubscriberQuery) (*SubscriberQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *subscribersPager) toCursor(s *Subscribers) Cursor {
+func (p *subscriberPager) toCursor(s *Subscriber) Cursor {
 	return p.order.Field.toCursor(s)
 }
 
-func (p *subscribersPager) applyCursors(query *SubscribersQuery, after, before *Cursor) (*SubscribersQuery, error) {
+func (p *subscriberPager) applyCursors(query *SubscriberQuery, after, before *Cursor) (*SubscriberQuery, error) {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
-	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultSubscribersOrder.Field.column, p.order.Field.column, direction) {
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultSubscriberOrder.Field.column, p.order.Field.column, direction) {
 		query = query.Where(predicate)
 	}
 	return query, nil
 }
 
-func (p *subscribersPager) applyOrder(query *SubscribersQuery) *SubscribersQuery {
+func (p *subscriberPager) applyOrder(query *SubscriberQuery) *SubscriberQuery {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
 	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
-	if p.order.Field != DefaultSubscribersOrder.Field {
-		query = query.Order(DefaultSubscribersOrder.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultSubscriberOrder.Field {
+		query = query.Order(DefaultSubscriberOrder.Field.toTerm(direction.OrderTermOption()))
 	}
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(p.order.Field.column)
@@ -3399,7 +3399,7 @@ func (p *subscribersPager) applyOrder(query *SubscribersQuery) *SubscribersQuery
 	return query
 }
 
-func (p *subscribersPager) orderExpr(query *SubscribersQuery) sql.Querier {
+func (p *subscriberPager) orderExpr(query *SubscriberQuery) sql.Querier {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
@@ -3409,28 +3409,28 @@ func (p *subscribersPager) orderExpr(query *SubscribersQuery) sql.Querier {
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
 		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultSubscribersOrder.Field {
-			b.Comma().Ident(DefaultSubscribersOrder.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultSubscriberOrder.Field {
+			b.Comma().Ident(DefaultSubscriberOrder.Field.column).Pad().WriteString(string(direction))
 		}
 	})
 }
 
-// Paginate executes the query and returns a relay based cursor connection to Subscribers.
-func (s *SubscribersQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to Subscriber.
+func (s *SubscriberQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...SubscribersPaginateOption,
-) (*SubscribersConnection, error) {
+	before *Cursor, last *int, opts ...SubscriberPaginateOption,
+) (*SubscriberConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newSubscribersPager(opts, last != nil)
+	pager, err := newSubscriberPager(opts, last != nil)
 	if err != nil {
 		return nil, err
 	}
 	if s, err = pager.applyFilter(s); err != nil {
 		return nil, err
 	}
-	conn := &SubscribersConnection{Edges: []*SubscribersEdge{}}
+	conn := &SubscriberConnection{Edges: []*SubscriberEdge{}}
 	ignoredEdges := !hasCollectedField(ctx, edgesField)
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
@@ -3465,42 +3465,42 @@ func (s *SubscribersQuery) Paginate(
 	return conn, nil
 }
 
-// SubscribersOrderField defines the ordering field of Subscribers.
-type SubscribersOrderField struct {
-	// Value extracts the ordering value from the given Subscribers.
-	Value    func(*Subscribers) (ent.Value, error)
+// SubscriberOrderField defines the ordering field of Subscriber.
+type SubscriberOrderField struct {
+	// Value extracts the ordering value from the given Subscriber.
+	Value    func(*Subscriber) (ent.Value, error)
 	column   string // field or computed.
-	toTerm   func(...sql.OrderTermOption) subscribers.OrderOption
-	toCursor func(*Subscribers) Cursor
+	toTerm   func(...sql.OrderTermOption) subscriber.OrderOption
+	toCursor func(*Subscriber) Cursor
 }
 
-// SubscribersOrder defines the ordering of Subscribers.
-type SubscribersOrder struct {
-	Direction OrderDirection         `json:"direction"`
-	Field     *SubscribersOrderField `json:"field"`
+// SubscriberOrder defines the ordering of Subscriber.
+type SubscriberOrder struct {
+	Direction OrderDirection        `json:"direction"`
+	Field     *SubscriberOrderField `json:"field"`
 }
 
-// DefaultSubscribersOrder is the default ordering of Subscribers.
-var DefaultSubscribersOrder = &SubscribersOrder{
+// DefaultSubscriberOrder is the default ordering of Subscriber.
+var DefaultSubscriberOrder = &SubscriberOrder{
 	Direction: entgql.OrderDirectionAsc,
-	Field: &SubscribersOrderField{
-		Value: func(s *Subscribers) (ent.Value, error) {
+	Field: &SubscriberOrderField{
+		Value: func(s *Subscriber) (ent.Value, error) {
 			return s.ID, nil
 		},
-		column: subscribers.FieldID,
-		toTerm: subscribers.ByID,
-		toCursor: func(s *Subscribers) Cursor {
+		column: subscriber.FieldID,
+		toTerm: subscriber.ByID,
+		toCursor: func(s *Subscriber) Cursor {
 			return Cursor{ID: s.ID}
 		},
 	},
 }
 
-// ToEdge converts Subscribers into SubscribersEdge.
-func (s *Subscribers) ToEdge(order *SubscribersOrder) *SubscribersEdge {
+// ToEdge converts Subscriber into SubscriberEdge.
+func (s *Subscriber) ToEdge(order *SubscriberOrder) *SubscriberEdge {
 	if order == nil {
-		order = DefaultSubscribersOrder
+		order = DefaultSubscriberOrder
 	}
-	return &SubscribersEdge{
+	return &SubscriberEdge{
 		Node:   s,
 		Cursor: order.Field.toCursor(s),
 	}

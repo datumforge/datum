@@ -32,7 +32,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -81,8 +81,8 @@ type Client struct {
 	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
-	// Subscribers is the client for interacting with the Subscribers builders.
-	Subscribers *SubscribersClient
+	// Subscriber is the client for interacting with the Subscriber builders.
+	Subscriber *SubscriberClient
 	// TFASettings is the client for interacting with the TFASettings builders.
 	TFASettings *TFASettingsClient
 	// User is the client for interacting with the User builders.
@@ -121,7 +121,7 @@ func (c *Client) init() {
 	c.OrganizationSetting = NewOrganizationSettingClient(c.config)
 	c.PasswordResetToken = NewPasswordResetTokenClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
-	c.Subscribers = NewSubscribersClient(c.config)
+	c.Subscriber = NewSubscriberClient(c.config)
 	c.TFASettings = NewTFASettingsClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserSetting = NewUserSettingClient(c.config)
@@ -314,7 +314,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
 		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		Subscribers:            NewSubscribersClient(cfg),
+		Subscriber:             NewSubscriberClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
@@ -352,7 +352,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
 		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		Subscribers:            NewSubscribersClient(cfg),
+		Subscriber:             NewSubscriberClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
@@ -389,7 +389,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscribers, c.TFASettings, c.User, c.UserSetting,
+		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
 		c.Webauthn,
 	} {
 		n.Use(hooks...)
@@ -403,7 +403,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscribers, c.TFASettings, c.User, c.UserSetting,
+		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
 		c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
@@ -441,8 +441,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PasswordResetToken.mutate(ctx, m)
 	case *PersonalAccessTokenMutation:
 		return c.PersonalAccessToken.mutate(ctx, m)
-	case *SubscribersMutation:
-		return c.Subscribers.mutate(ctx, m)
+	case *SubscriberMutation:
+		return c.Subscriber.mutate(ctx, m)
 	case *TFASettingsMutation:
 		return c.TFASettings.mutate(ctx, m)
 	case *UserMutation:
@@ -2369,18 +2369,18 @@ func (c *OrganizationClient) QueryInvites(o *Organization) *InviteQuery {
 }
 
 // QuerySubscribers queries the subscribers edge of a Organization.
-func (c *OrganizationClient) QuerySubscribers(o *Organization) *SubscribersQuery {
-	query := (&SubscribersClient{config: c.config}).Query()
+func (c *OrganizationClient) QuerySubscribers(o *Organization) *SubscriberQuery {
+	query := (&SubscriberClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, id),
-			sqlgraph.To(subscribers.Table, subscribers.FieldID),
+			sqlgraph.To(subscriber.Table, subscriber.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.SubscribersTable, organization.SubscribersColumn),
 		)
 		schemaConfig := o.schemaConfig
-		step.To.Schema = schemaConfig.Subscribers
-		step.Edge.Schema = schemaConfig.Subscribers
+		step.To.Schema = schemaConfig.Subscriber
+		step.Edge.Schema = schemaConfig.Subscriber
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -2914,107 +2914,107 @@ func (c *PersonalAccessTokenClient) mutate(ctx context.Context, m *PersonalAcces
 	}
 }
 
-// SubscribersClient is a client for the Subscribers schema.
-type SubscribersClient struct {
+// SubscriberClient is a client for the Subscriber schema.
+type SubscriberClient struct {
 	config
 }
 
-// NewSubscribersClient returns a client for the Subscribers from the given config.
-func NewSubscribersClient(c config) *SubscribersClient {
-	return &SubscribersClient{config: c}
+// NewSubscriberClient returns a client for the Subscriber from the given config.
+func NewSubscriberClient(c config) *SubscriberClient {
+	return &SubscriberClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `subscribers.Hooks(f(g(h())))`.
-func (c *SubscribersClient) Use(hooks ...Hook) {
-	c.hooks.Subscribers = append(c.hooks.Subscribers, hooks...)
+// A call to `Use(f, g, h)` equals to `subscriber.Hooks(f(g(h())))`.
+func (c *SubscriberClient) Use(hooks ...Hook) {
+	c.hooks.Subscriber = append(c.hooks.Subscriber, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `subscribers.Intercept(f(g(h())))`.
-func (c *SubscribersClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Subscribers = append(c.inters.Subscribers, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `subscriber.Intercept(f(g(h())))`.
+func (c *SubscriberClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Subscriber = append(c.inters.Subscriber, interceptors...)
 }
 
-// Create returns a builder for creating a Subscribers entity.
-func (c *SubscribersClient) Create() *SubscribersCreate {
-	mutation := newSubscribersMutation(c.config, OpCreate)
-	return &SubscribersCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a Subscriber entity.
+func (c *SubscriberClient) Create() *SubscriberCreate {
+	mutation := newSubscriberMutation(c.config, OpCreate)
+	return &SubscriberCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Subscribers entities.
-func (c *SubscribersClient) CreateBulk(builders ...*SubscribersCreate) *SubscribersCreateBulk {
-	return &SubscribersCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of Subscriber entities.
+func (c *SubscriberClient) CreateBulk(builders ...*SubscriberCreate) *SubscriberCreateBulk {
+	return &SubscriberCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *SubscribersClient) MapCreateBulk(slice any, setFunc func(*SubscribersCreate, int)) *SubscribersCreateBulk {
+func (c *SubscriberClient) MapCreateBulk(slice any, setFunc func(*SubscriberCreate, int)) *SubscriberCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &SubscribersCreateBulk{err: fmt.Errorf("calling to SubscribersClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &SubscriberCreateBulk{err: fmt.Errorf("calling to SubscriberClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*SubscribersCreate, rv.Len())
+	builders := make([]*SubscriberCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &SubscribersCreateBulk{config: c.config, builders: builders}
+	return &SubscriberCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Subscribers.
-func (c *SubscribersClient) Update() *SubscribersUpdate {
-	mutation := newSubscribersMutation(c.config, OpUpdate)
-	return &SubscribersUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for Subscriber.
+func (c *SubscriberClient) Update() *SubscriberUpdate {
+	mutation := newSubscriberMutation(c.config, OpUpdate)
+	return &SubscriberUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *SubscribersClient) UpdateOne(s *Subscribers) *SubscribersUpdateOne {
-	mutation := newSubscribersMutation(c.config, OpUpdateOne, withSubscribers(s))
-	return &SubscribersUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *SubscriberClient) UpdateOne(s *Subscriber) *SubscriberUpdateOne {
+	mutation := newSubscriberMutation(c.config, OpUpdateOne, withSubscriber(s))
+	return &SubscriberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *SubscribersClient) UpdateOneID(id string) *SubscribersUpdateOne {
-	mutation := newSubscribersMutation(c.config, OpUpdateOne, withSubscribersID(id))
-	return &SubscribersUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *SubscriberClient) UpdateOneID(id string) *SubscriberUpdateOne {
+	mutation := newSubscriberMutation(c.config, OpUpdateOne, withSubscriberID(id))
+	return &SubscriberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Subscribers.
-func (c *SubscribersClient) Delete() *SubscribersDelete {
-	mutation := newSubscribersMutation(c.config, OpDelete)
-	return &SubscribersDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for Subscriber.
+func (c *SubscriberClient) Delete() *SubscriberDelete {
+	mutation := newSubscriberMutation(c.config, OpDelete)
+	return &SubscriberDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *SubscribersClient) DeleteOne(s *Subscribers) *SubscribersDeleteOne {
+func (c *SubscriberClient) DeleteOne(s *Subscriber) *SubscriberDeleteOne {
 	return c.DeleteOneID(s.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *SubscribersClient) DeleteOneID(id string) *SubscribersDeleteOne {
-	builder := c.Delete().Where(subscribers.ID(id))
+func (c *SubscriberClient) DeleteOneID(id string) *SubscriberDeleteOne {
+	builder := c.Delete().Where(subscriber.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &SubscribersDeleteOne{builder}
+	return &SubscriberDeleteOne{builder}
 }
 
-// Query returns a query builder for Subscribers.
-func (c *SubscribersClient) Query() *SubscribersQuery {
-	return &SubscribersQuery{
+// Query returns a query builder for Subscriber.
+func (c *SubscriberClient) Query() *SubscriberQuery {
+	return &SubscriberQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeSubscribers},
+		ctx:    &QueryContext{Type: TypeSubscriber},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a Subscribers entity by its id.
-func (c *SubscribersClient) Get(ctx context.Context, id string) (*Subscribers, error) {
-	return c.Query().Where(subscribers.ID(id)).Only(ctx)
+// Get returns a Subscriber entity by its id.
+func (c *SubscriberClient) Get(ctx context.Context, id string) (*Subscriber, error) {
+	return c.Query().Where(subscriber.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *SubscribersClient) GetX(ctx context.Context, id string) *Subscribers {
+func (c *SubscriberClient) GetX(ctx context.Context, id string) *Subscriber {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -3022,19 +3022,19 @@ func (c *SubscribersClient) GetX(ctx context.Context, id string) *Subscribers {
 	return obj
 }
 
-// QueryOwner queries the owner edge of a Subscribers.
-func (c *SubscribersClient) QueryOwner(s *Subscribers) *OrganizationQuery {
+// QueryOwner queries the owner edge of a Subscriber.
+func (c *SubscriberClient) QueryOwner(s *Subscriber) *OrganizationQuery {
 	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := s.ID
 		step := sqlgraph.NewStep(
-			sqlgraph.From(subscribers.Table, subscribers.FieldID, id),
+			sqlgraph.From(subscriber.Table, subscriber.FieldID, id),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, subscribers.OwnerTable, subscribers.OwnerColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, subscriber.OwnerTable, subscriber.OwnerColumn),
 		)
 		schemaConfig := s.schemaConfig
 		step.To.Schema = schemaConfig.Organization
-		step.Edge.Schema = schemaConfig.Subscribers
+		step.Edge.Schema = schemaConfig.Subscriber
 		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -3042,29 +3042,29 @@ func (c *SubscribersClient) QueryOwner(s *Subscribers) *OrganizationQuery {
 }
 
 // Hooks returns the client hooks.
-func (c *SubscribersClient) Hooks() []Hook {
-	hooks := c.hooks.Subscribers
-	return append(hooks[:len(hooks):len(hooks)], subscribers.Hooks[:]...)
+func (c *SubscriberClient) Hooks() []Hook {
+	hooks := c.hooks.Subscriber
+	return append(hooks[:len(hooks):len(hooks)], subscriber.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
-func (c *SubscribersClient) Interceptors() []Interceptor {
-	inters := c.inters.Subscribers
-	return append(inters[:len(inters):len(inters)], subscribers.Interceptors[:]...)
+func (c *SubscriberClient) Interceptors() []Interceptor {
+	inters := c.inters.Subscriber
+	return append(inters[:len(inters):len(inters)], subscriber.Interceptors[:]...)
 }
 
-func (c *SubscribersClient) mutate(ctx context.Context, m *SubscribersMutation) (Value, error) {
+func (c *SubscriberClient) mutate(ctx context.Context, m *SubscriberMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&SubscribersCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&SubscriberCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&SubscribersUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&SubscriberUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&SubscribersUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&SubscriberUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&SubscribersDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&SubscriberDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("generated: unknown Subscribers mutation op: %q", m.Op())
+		return nil, fmt.Errorf("generated: unknown Subscriber mutation op: %q", m.Op())
 	}
 }
 
@@ -3879,13 +3879,13 @@ type (
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		Subscribers, TFASettings, User, UserSetting, Webauthn []ent.Hook
+		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		Subscribers, TFASettings, User, UserSetting, Webauthn []ent.Interceptor
+		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Interceptor
 	}
 )
 

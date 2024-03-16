@@ -522,9 +522,12 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString},
-		{Name: "active", Type: field.TypeBool, Default: true},
-		{Name: "ip_address", Type: field.TypeString, Nullable: true},
+		{Name: "phone_number", Type: field.TypeString, Nullable: true},
+		{Name: "verified_email", Type: field.TypeBool, Default: false},
+		{Name: "verified_phone", Type: field.TypeBool, Default: false},
+		{Name: "active", Type: field.TypeBool, Default: false},
 		{Name: "token", Type: field.TypeString, Unique: true},
+		{Name: "ttl", Type: field.TypeTime},
 		{Name: "secret", Type: field.TypeBytes},
 		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
@@ -536,16 +539,16 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "subscribers_organizations_subscribers",
-				Columns:    []*schema.Column{SubscribersColumns[12]},
+				Columns:    []*schema.Column{SubscribersColumns[15]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "subscribers_email_active_owner_id",
+				Name:    "subscriber_email_active_owner_id",
 				Unique:  true,
-				Columns: []*schema.Column{SubscribersColumns[7], SubscribersColumns[8], SubscribersColumns[12]},
+				Columns: []*schema.Column{SubscribersColumns[7], SubscribersColumns[11], SubscribersColumns[15]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},

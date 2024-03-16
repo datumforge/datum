@@ -71,7 +71,7 @@ type OrganizationEdges struct {
 	// Invites holds the value of the invites edge.
 	Invites []*Invite `json:"invites,omitempty"`
 	// Subscribers holds the value of the subscribers edge.
-	Subscribers []*Subscribers `json:"subscribers,omitempty"`
+	Subscribers []*Subscriber `json:"subscribers,omitempty"`
 	// Members holds the value of the members edge.
 	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -88,7 +88,7 @@ type OrganizationEdges struct {
 	namedOauthprovider        map[string][]*OauthProvider
 	namedUsers                map[string][]*User
 	namedInvites              map[string][]*Invite
-	namedSubscribers          map[string][]*Subscribers
+	namedSubscribers          map[string][]*Subscriber
 	namedMembers              map[string][]*OrgMembership
 }
 
@@ -188,7 +188,7 @@ func (e OrganizationEdges) InvitesOrErr() ([]*Invite, error) {
 
 // SubscribersOrErr returns the Subscribers value or an error if the edge
 // was not loaded in eager-loading.
-func (e OrganizationEdges) SubscribersOrErr() ([]*Subscribers, error) {
+func (e OrganizationEdges) SubscribersOrErr() ([]*Subscriber, error) {
 	if e.loadedTypes[10] {
 		return e.Subscribers, nil
 	}
@@ -373,7 +373,7 @@ func (o *Organization) QueryInvites() *InviteQuery {
 }
 
 // QuerySubscribers queries the "subscribers" edge of the Organization entity.
-func (o *Organization) QuerySubscribers() *SubscribersQuery {
+func (o *Organization) QuerySubscribers() *SubscriberQuery {
 	return NewOrganizationClient(o.config).QuerySubscribers(o)
 }
 
@@ -640,7 +640,7 @@ func (o *Organization) appendNamedInvites(name string, edges ...*Invite) {
 
 // NamedSubscribers returns the Subscribers named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (o *Organization) NamedSubscribers(name string) ([]*Subscribers, error) {
+func (o *Organization) NamedSubscribers(name string) ([]*Subscriber, error) {
 	if o.Edges.namedSubscribers == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
@@ -651,12 +651,12 @@ func (o *Organization) NamedSubscribers(name string) ([]*Subscribers, error) {
 	return nodes, nil
 }
 
-func (o *Organization) appendNamedSubscribers(name string, edges ...*Subscribers) {
+func (o *Organization) appendNamedSubscribers(name string, edges ...*Subscriber) {
 	if o.Edges.namedSubscribers == nil {
-		o.Edges.namedSubscribers = make(map[string][]*Subscribers)
+		o.Edges.namedSubscribers = make(map[string][]*Subscriber)
 	}
 	if len(edges) == 0 {
-		o.Edges.namedSubscribers[name] = []*Subscribers{}
+		o.Edges.namedSubscribers[name] = []*Subscriber{}
 	} else {
 		o.Edges.namedSubscribers[name] = append(o.Edges.namedSubscribers[name], edges...)
 	}

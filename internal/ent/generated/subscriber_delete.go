@@ -11,29 +11,29 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 )
 
-// SubscribersDelete is the builder for deleting a Subscribers entity.
-type SubscribersDelete struct {
+// SubscriberDelete is the builder for deleting a Subscriber entity.
+type SubscriberDelete struct {
 	config
 	hooks    []Hook
-	mutation *SubscribersMutation
+	mutation *SubscriberMutation
 }
 
-// Where appends a list predicates to the SubscribersDelete builder.
-func (sd *SubscribersDelete) Where(ps ...predicate.Subscribers) *SubscribersDelete {
+// Where appends a list predicates to the SubscriberDelete builder.
+func (sd *SubscriberDelete) Where(ps ...predicate.Subscriber) *SubscriberDelete {
 	sd.mutation.Where(ps...)
 	return sd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (sd *SubscribersDelete) Exec(ctx context.Context) (int, error) {
+func (sd *SubscriberDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, sd.sqlExec, sd.mutation, sd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (sd *SubscribersDelete) ExecX(ctx context.Context) int {
+func (sd *SubscriberDelete) ExecX(ctx context.Context) int {
 	n, err := sd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -41,9 +41,9 @@ func (sd *SubscribersDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (sd *SubscribersDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(subscribers.Table, sqlgraph.NewFieldSpec(subscribers.FieldID, field.TypeString))
-	_spec.Node.Schema = sd.schemaConfig.Subscribers
+func (sd *SubscriberDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(subscriber.Table, sqlgraph.NewFieldSpec(subscriber.FieldID, field.TypeString))
+	_spec.Node.Schema = sd.schemaConfig.Subscriber
 	ctx = internal.NewSchemaConfigContext(ctx, sd.schemaConfig)
 	if ps := sd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -60,32 +60,32 @@ func (sd *SubscribersDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// SubscribersDeleteOne is the builder for deleting a single Subscribers entity.
-type SubscribersDeleteOne struct {
-	sd *SubscribersDelete
+// SubscriberDeleteOne is the builder for deleting a single Subscriber entity.
+type SubscriberDeleteOne struct {
+	sd *SubscriberDelete
 }
 
-// Where appends a list predicates to the SubscribersDelete builder.
-func (sdo *SubscribersDeleteOne) Where(ps ...predicate.Subscribers) *SubscribersDeleteOne {
+// Where appends a list predicates to the SubscriberDelete builder.
+func (sdo *SubscriberDeleteOne) Where(ps ...predicate.Subscriber) *SubscriberDeleteOne {
 	sdo.sd.mutation.Where(ps...)
 	return sdo
 }
 
 // Exec executes the deletion query.
-func (sdo *SubscribersDeleteOne) Exec(ctx context.Context) error {
+func (sdo *SubscriberDeleteOne) Exec(ctx context.Context) error {
 	n, err := sdo.sd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{subscribers.Label}
+		return &NotFoundError{subscriber.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (sdo *SubscribersDeleteOne) ExecX(ctx context.Context) {
+func (sdo *SubscriberDeleteOne) ExecX(ctx context.Context) {
 	if err := sdo.Exec(ctx); err != nil {
 		panic(err)
 	}

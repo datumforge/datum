@@ -275,6 +275,10 @@
         "reset": {
           "type": "string",
           "description": "Reset is the path to the reset endpoint used in password reset emails"
+        },
+        "subscriberVerify": {
+          "type": "string",
+          "description": "SubscriberVerify is the path to the subscriber verify endpoint used in verification emails"
         }
       },
       "additionalProperties": false,

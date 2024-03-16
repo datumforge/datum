@@ -127,8 +127,8 @@ const (
 	InvitesColumn = "owner_id"
 	// SubscribersTable is the table that holds the subscribers relation/edge.
 	SubscribersTable = "subscribers"
-	// SubscribersInverseTable is the table name for the Subscribers entity.
-	// It exists in this package in order to avoid circular dependency with the "subscribers" package.
+	// SubscribersInverseTable is the table name for the Subscriber entity.
+	// It exists in this package in order to avoid circular dependency with the "subscriber" package.
 	SubscribersInverseTable = "subscribers"
 	// SubscribersColumn is the table column denoting the subscribers relation/edge.
 	SubscribersColumn = "owner_id"

@@ -35,6 +35,8 @@ type URLConfig struct {
 	Invite string `json:"invite" koanf:"invite" default:"/v1/invite"`
 	// Reset is the path to the reset endpoint used in password reset emails
 	Reset string `json:"reset" koanf:"reset" default:"/v1/password-reset"`
+	// SubscriberVerify is the path to the subscriber verify endpoint used in verification emails
+	SubscriberVerify string `json:"subscriberVerify" koanf:"subscriberVerify" default:"/v1/subscribe/verify"`
 }
 
 // SetSendGridAPIKey to provided key
@@ -174,6 +176,18 @@ func (c URLConfig) ResetURL(token string) (string, error) {
 	base, _ := url.Parse(c.Base)
 
 	url := base.ResolveReference(&url.URL{Path: c.Reset, RawQuery: url.Values{"token": []string{token}}.Encode()})
+
+	return url.String(), nil
+}
+
+// SubscriberVerifyURL constructs a verify URL from the token.
+func (c URLConfig) SubscriberVerifyURL(token string) (string, error) {
+	if token == "" {
+		return "", newMissingRequiredFieldError("token")
+	}
+
+	base, _ := url.Parse(c.Base)
+	url := base.ResolveReference(&url.URL{Path: c.SubscriberVerify, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
 }

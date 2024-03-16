@@ -58,6 +58,9 @@ var (
 
 	// ErrDeviceAlreadyRegistered is returned when the device is already registered
 	ErrDeviceAlreadyRegistered = errors.New("device already registered")
+
+	// ErrSubscriberNotFound is returned when the subscriber is not found
+	ErrSubscriberNotFound = errors.New("subscriber not found")
 )
 
 // IsConstraintError returns true if the error resulted from a database constraint violation.

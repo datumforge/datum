@@ -27,7 +27,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -57,7 +57,7 @@ const (
 	TypeOrganizationSetting    = "OrganizationSetting"
 	TypePasswordResetToken     = "PasswordResetToken"
 	TypePersonalAccessToken    = "PersonalAccessToken"
-	TypeSubscribers            = "Subscribers"
+	TypeSubscriber             = "Subscriber"
 	TypeTFASettings            = "TFASettings"
 	TypeUser                   = "User"
 	TypeUserSetting            = "UserSetting"
@@ -12822,7 +12822,7 @@ func (m *OrganizationMutation) ResetInvites() {
 	m.removedinvites = nil
 }
 
-// AddSubscriberIDs adds the "subscribers" edge to the Subscribers entity by ids.
+// AddSubscriberIDs adds the "subscribers" edge to the Subscriber entity by ids.
 func (m *OrganizationMutation) AddSubscriberIDs(ids ...string) {
 	if m.subscribers == nil {
 		m.subscribers = make(map[string]struct{})
@@ -12832,17 +12832,17 @@ func (m *OrganizationMutation) AddSubscriberIDs(ids ...string) {
 	}
 }
 
-// ClearSubscribers clears the "subscribers" edge to the Subscribers entity.
+// ClearSubscribers clears the "subscribers" edge to the Subscriber entity.
 func (m *OrganizationMutation) ClearSubscribers() {
 	m.clearedsubscribers = true
 }
 
-// SubscribersCleared reports if the "subscribers" edge to the Subscribers entity was cleared.
+// SubscribersCleared reports if the "subscribers" edge to the Subscriber entity was cleared.
 func (m *OrganizationMutation) SubscribersCleared() bool {
 	return m.clearedsubscribers
 }
 
-// RemoveSubscriberIDs removes the "subscribers" edge to the Subscribers entity by IDs.
+// RemoveSubscriberIDs removes the "subscribers" edge to the Subscriber entity by IDs.
 func (m *OrganizationMutation) RemoveSubscriberIDs(ids ...string) {
 	if m.removedsubscribers == nil {
 		m.removedsubscribers = make(map[string]struct{})
@@ -12853,7 +12853,7 @@ func (m *OrganizationMutation) RemoveSubscriberIDs(ids ...string) {
 	}
 }
 
-// RemovedSubscribers returns the removed IDs of the "subscribers" edge to the Subscribers entity.
+// RemovedSubscribers returns the removed IDs of the "subscribers" edge to the Subscriber entity.
 func (m *OrganizationMutation) RemovedSubscribersIDs() (ids []string) {
 	for id := range m.removedsubscribers {
 		ids = append(ids, id)
@@ -17409,42 +17409,45 @@ func (m *PersonalAccessTokenMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PersonalAccessToken edge %s", name)
 }
 
-// SubscribersMutation represents an operation that mutates the Subscribers nodes in the graph.
-type SubscribersMutation struct {
+// SubscriberMutation represents an operation that mutates the Subscriber nodes in the graph.
+type SubscriberMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	created_at    *time.Time
-	updated_at    *time.Time
-	created_by    *string
-	updated_by    *string
-	deleted_at    *time.Time
-	deleted_by    *string
-	email         *string
-	active        *bool
-	ip_address    *string
-	token         *string
-	secret        *[]byte
-	clearedFields map[string]struct{}
-	owner         *string
-	clearedowner  bool
-	done          bool
-	oldValue      func(context.Context) (*Subscribers, error)
-	predicates    []predicate.Subscribers
+	op             Op
+	typ            string
+	id             *string
+	created_at     *time.Time
+	updated_at     *time.Time
+	created_by     *string
+	updated_by     *string
+	deleted_at     *time.Time
+	deleted_by     *string
+	email          *string
+	phone_number   *string
+	verified_email *bool
+	verified_phone *bool
+	active         *bool
+	token          *string
+	ttl            *time.Time
+	secret         *[]byte
+	clearedFields  map[string]struct{}
+	owner          *string
+	clearedowner   bool
+	done           bool
+	oldValue       func(context.Context) (*Subscriber, error)
+	predicates     []predicate.Subscriber
 }
 
-var _ ent.Mutation = (*SubscribersMutation)(nil)
+var _ ent.Mutation = (*SubscriberMutation)(nil)
 
-// subscribersOption allows management of the mutation configuration using functional options.
-type subscribersOption func(*SubscribersMutation)
+// subscriberOption allows management of the mutation configuration using functional options.
+type subscriberOption func(*SubscriberMutation)
 
-// newSubscribersMutation creates new mutation for the Subscribers entity.
-func newSubscribersMutation(c config, op Op, opts ...subscribersOption) *SubscribersMutation {
-	m := &SubscribersMutation{
+// newSubscriberMutation creates new mutation for the Subscriber entity.
+func newSubscriberMutation(c config, op Op, opts ...subscriberOption) *SubscriberMutation {
+	m := &SubscriberMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeSubscribers,
+		typ:           TypeSubscriber,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -17453,20 +17456,20 @@ func newSubscribersMutation(c config, op Op, opts ...subscribersOption) *Subscri
 	return m
 }
 
-// withSubscribersID sets the ID field of the mutation.
-func withSubscribersID(id string) subscribersOption {
-	return func(m *SubscribersMutation) {
+// withSubscriberID sets the ID field of the mutation.
+func withSubscriberID(id string) subscriberOption {
+	return func(m *SubscriberMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *Subscribers
+			value *Subscriber
 		)
-		m.oldValue = func(ctx context.Context) (*Subscribers, error) {
+		m.oldValue = func(ctx context.Context) (*Subscriber, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().Subscribers.Get(ctx, id)
+					value, err = m.Client().Subscriber.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -17475,10 +17478,10 @@ func withSubscribersID(id string) subscribersOption {
 	}
 }
 
-// withSubscribers sets the old Subscribers of the mutation.
-func withSubscribers(node *Subscribers) subscribersOption {
-	return func(m *SubscribersMutation) {
-		m.oldValue = func(context.Context) (*Subscribers, error) {
+// withSubscriber sets the old Subscriber of the mutation.
+func withSubscriber(node *Subscriber) subscriberOption {
+	return func(m *SubscriberMutation) {
+		m.oldValue = func(context.Context) (*Subscriber, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -17487,7 +17490,7 @@ func withSubscribers(node *Subscribers) subscribersOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m SubscribersMutation) Client() *Client {
+func (m SubscriberMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -17495,7 +17498,7 @@ func (m SubscribersMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m SubscribersMutation) Tx() (*Tx, error) {
+func (m SubscriberMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("generated: mutation is not running in a transaction")
 	}
@@ -17505,14 +17508,14 @@ func (m SubscribersMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Subscribers entities.
-func (m *SubscribersMutation) SetID(id string) {
+// operation is only accepted on creation of Subscriber entities.
+func (m *SubscriberMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *SubscribersMutation) ID() (id string, exists bool) {
+func (m *SubscriberMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -17523,7 +17526,7 @@ func (m *SubscribersMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *SubscribersMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *SubscriberMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -17532,19 +17535,19 @@ func (m *SubscribersMutation) IDs(ctx context.Context) ([]string, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Subscribers.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().Subscriber.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *SubscribersMutation) SetCreatedAt(t time.Time) {
+func (m *SubscriberMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *SubscribersMutation) CreatedAt() (r time.Time, exists bool) {
+func (m *SubscriberMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -17552,10 +17555,10 @@ func (m *SubscribersMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *SubscriberMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -17570,30 +17573,30 @@ func (m *SubscribersMutation) OldCreatedAt(ctx context.Context) (v time.Time, er
 }
 
 // ClearCreatedAt clears the value of the "created_at" field.
-func (m *SubscribersMutation) ClearCreatedAt() {
+func (m *SubscriberMutation) ClearCreatedAt() {
 	m.created_at = nil
-	m.clearedFields[subscribers.FieldCreatedAt] = struct{}{}
+	m.clearedFields[subscriber.FieldCreatedAt] = struct{}{}
 }
 
 // CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *SubscribersMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldCreatedAt]
+func (m *SubscriberMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldCreatedAt]
 	return ok
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *SubscribersMutation) ResetCreatedAt() {
+func (m *SubscriberMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, subscribers.FieldCreatedAt)
+	delete(m.clearedFields, subscriber.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (m *SubscribersMutation) SetUpdatedAt(t time.Time) {
+func (m *SubscriberMutation) SetUpdatedAt(t time.Time) {
 	m.updated_at = &t
 }
 
 // UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *SubscribersMutation) UpdatedAt() (r time.Time, exists bool) {
+func (m *SubscriberMutation) UpdatedAt() (r time.Time, exists bool) {
 	v := m.updated_at
 	if v == nil {
 		return
@@ -17601,10 +17604,10 @@ func (m *SubscribersMutation) UpdatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedAt returns the old "updated_at" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedAt returns the old "updated_at" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *SubscriberMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
 	}
@@ -17619,30 +17622,30 @@ func (m *SubscribersMutation) OldUpdatedAt(ctx context.Context) (v time.Time, er
 }
 
 // ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *SubscribersMutation) ClearUpdatedAt() {
+func (m *SubscriberMutation) ClearUpdatedAt() {
 	m.updated_at = nil
-	m.clearedFields[subscribers.FieldUpdatedAt] = struct{}{}
+	m.clearedFields[subscriber.FieldUpdatedAt] = struct{}{}
 }
 
 // UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *SubscribersMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldUpdatedAt]
+func (m *SubscriberMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldUpdatedAt]
 	return ok
 }
 
 // ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *SubscribersMutation) ResetUpdatedAt() {
+func (m *SubscriberMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, subscribers.FieldUpdatedAt)
+	delete(m.clearedFields, subscriber.FieldUpdatedAt)
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *SubscribersMutation) SetCreatedBy(s string) {
+func (m *SubscriberMutation) SetCreatedBy(s string) {
 	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *SubscribersMutation) CreatedBy() (r string, exists bool) {
+func (m *SubscriberMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -17650,10 +17653,10 @@ func (m *SubscribersMutation) CreatedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldCreatedBy returns the old "created_by" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedBy returns the old "created_by" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *SubscriberMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -17668,30 +17671,30 @@ func (m *SubscribersMutation) OldCreatedBy(ctx context.Context) (v string, err e
 }
 
 // ClearCreatedBy clears the value of the "created_by" field.
-func (m *SubscribersMutation) ClearCreatedBy() {
+func (m *SubscriberMutation) ClearCreatedBy() {
 	m.created_by = nil
-	m.clearedFields[subscribers.FieldCreatedBy] = struct{}{}
+	m.clearedFields[subscriber.FieldCreatedBy] = struct{}{}
 }
 
 // CreatedByCleared returns if the "created_by" field was cleared in this mutation.
-func (m *SubscribersMutation) CreatedByCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldCreatedBy]
+func (m *SubscriberMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldCreatedBy]
 	return ok
 }
 
 // ResetCreatedBy resets all changes to the "created_by" field.
-func (m *SubscribersMutation) ResetCreatedBy() {
+func (m *SubscriberMutation) ResetCreatedBy() {
 	m.created_by = nil
-	delete(m.clearedFields, subscribers.FieldCreatedBy)
+	delete(m.clearedFields, subscriber.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *SubscribersMutation) SetUpdatedBy(s string) {
+func (m *SubscriberMutation) SetUpdatedBy(s string) {
 	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *SubscribersMutation) UpdatedBy() (r string, exists bool) {
+func (m *SubscriberMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -17699,10 +17702,10 @@ func (m *SubscribersMutation) UpdatedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedBy returns the old "updated_by" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedBy returns the old "updated_by" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *SubscriberMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -17717,30 +17720,30 @@ func (m *SubscribersMutation) OldUpdatedBy(ctx context.Context) (v string, err e
 }
 
 // ClearUpdatedBy clears the value of the "updated_by" field.
-func (m *SubscribersMutation) ClearUpdatedBy() {
+func (m *SubscriberMutation) ClearUpdatedBy() {
 	m.updated_by = nil
-	m.clearedFields[subscribers.FieldUpdatedBy] = struct{}{}
+	m.clearedFields[subscriber.FieldUpdatedBy] = struct{}{}
 }
 
 // UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
-func (m *SubscribersMutation) UpdatedByCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldUpdatedBy]
+func (m *SubscriberMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldUpdatedBy]
 	return ok
 }
 
 // ResetUpdatedBy resets all changes to the "updated_by" field.
-func (m *SubscribersMutation) ResetUpdatedBy() {
+func (m *SubscriberMutation) ResetUpdatedBy() {
 	m.updated_by = nil
-	delete(m.clearedFields, subscribers.FieldUpdatedBy)
+	delete(m.clearedFields, subscriber.FieldUpdatedBy)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (m *SubscribersMutation) SetDeletedAt(t time.Time) {
+func (m *SubscriberMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
 }
 
 // DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *SubscribersMutation) DeletedAt() (r time.Time, exists bool) {
+func (m *SubscriberMutation) DeletedAt() (r time.Time, exists bool) {
 	v := m.deleted_at
 	if v == nil {
 		return
@@ -17748,10 +17751,10 @@ func (m *SubscribersMutation) DeletedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldDeletedAt returns the old "deleted_at" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedAt returns the old "deleted_at" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *SubscriberMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -17766,30 +17769,30 @@ func (m *SubscribersMutation) OldDeletedAt(ctx context.Context) (v time.Time, er
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *SubscribersMutation) ClearDeletedAt() {
+func (m *SubscriberMutation) ClearDeletedAt() {
 	m.deleted_at = nil
-	m.clearedFields[subscribers.FieldDeletedAt] = struct{}{}
+	m.clearedFields[subscriber.FieldDeletedAt] = struct{}{}
 }
 
 // DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *SubscribersMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldDeletedAt]
+func (m *SubscriberMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldDeletedAt]
 	return ok
 }
 
 // ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *SubscribersMutation) ResetDeletedAt() {
+func (m *SubscriberMutation) ResetDeletedAt() {
 	m.deleted_at = nil
-	delete(m.clearedFields, subscribers.FieldDeletedAt)
+	delete(m.clearedFields, subscriber.FieldDeletedAt)
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (m *SubscribersMutation) SetDeletedBy(s string) {
+func (m *SubscriberMutation) SetDeletedBy(s string) {
 	m.deleted_by = &s
 }
 
 // DeletedBy returns the value of the "deleted_by" field in the mutation.
-func (m *SubscribersMutation) DeletedBy() (r string, exists bool) {
+func (m *SubscriberMutation) DeletedBy() (r string, exists bool) {
 	v := m.deleted_by
 	if v == nil {
 		return
@@ -17797,10 +17800,10 @@ func (m *SubscribersMutation) DeletedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldDeletedBy returns the old "deleted_by" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedBy returns the old "deleted_by" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+func (m *SubscriberMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
 	}
@@ -17815,30 +17818,30 @@ func (m *SubscribersMutation) OldDeletedBy(ctx context.Context) (v string, err e
 }
 
 // ClearDeletedBy clears the value of the "deleted_by" field.
-func (m *SubscribersMutation) ClearDeletedBy() {
+func (m *SubscriberMutation) ClearDeletedBy() {
 	m.deleted_by = nil
-	m.clearedFields[subscribers.FieldDeletedBy] = struct{}{}
+	m.clearedFields[subscriber.FieldDeletedBy] = struct{}{}
 }
 
 // DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
-func (m *SubscribersMutation) DeletedByCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldDeletedBy]
+func (m *SubscriberMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldDeletedBy]
 	return ok
 }
 
 // ResetDeletedBy resets all changes to the "deleted_by" field.
-func (m *SubscribersMutation) ResetDeletedBy() {
+func (m *SubscriberMutation) ResetDeletedBy() {
 	m.deleted_by = nil
-	delete(m.clearedFields, subscribers.FieldDeletedBy)
+	delete(m.clearedFields, subscriber.FieldDeletedBy)
 }
 
 // SetOwnerID sets the "owner_id" field.
-func (m *SubscribersMutation) SetOwnerID(s string) {
+func (m *SubscriberMutation) SetOwnerID(s string) {
 	m.owner = &s
 }
 
 // OwnerID returns the value of the "owner_id" field in the mutation.
-func (m *SubscribersMutation) OwnerID() (r string, exists bool) {
+func (m *SubscriberMutation) OwnerID() (r string, exists bool) {
 	v := m.owner
 	if v == nil {
 		return
@@ -17846,10 +17849,10 @@ func (m *SubscribersMutation) OwnerID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldOwnerID returns the old "owner_id" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldOwnerID returns the old "owner_id" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+func (m *SubscriberMutation) OldOwnerID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
 	}
@@ -17864,30 +17867,30 @@ func (m *SubscribersMutation) OldOwnerID(ctx context.Context) (v string, err err
 }
 
 // ClearOwnerID clears the value of the "owner_id" field.
-func (m *SubscribersMutation) ClearOwnerID() {
+func (m *SubscriberMutation) ClearOwnerID() {
 	m.owner = nil
-	m.clearedFields[subscribers.FieldOwnerID] = struct{}{}
+	m.clearedFields[subscriber.FieldOwnerID] = struct{}{}
 }
 
 // OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
-func (m *SubscribersMutation) OwnerIDCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldOwnerID]
+func (m *SubscriberMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldOwnerID]
 	return ok
 }
 
 // ResetOwnerID resets all changes to the "owner_id" field.
-func (m *SubscribersMutation) ResetOwnerID() {
+func (m *SubscriberMutation) ResetOwnerID() {
 	m.owner = nil
-	delete(m.clearedFields, subscribers.FieldOwnerID)
+	delete(m.clearedFields, subscriber.FieldOwnerID)
 }
 
 // SetEmail sets the "email" field.
-func (m *SubscribersMutation) SetEmail(s string) {
+func (m *SubscriberMutation) SetEmail(s string) {
 	m.email = &s
 }
 
 // Email returns the value of the "email" field in the mutation.
-func (m *SubscribersMutation) Email() (r string, exists bool) {
+func (m *SubscriberMutation) Email() (r string, exists bool) {
 	v := m.email
 	if v == nil {
 		return
@@ -17895,10 +17898,10 @@ func (m *SubscribersMutation) Email() (r string, exists bool) {
 	return *v, true
 }
 
-// OldEmail returns the old "email" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldEmail returns the old "email" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldEmail(ctx context.Context) (v string, err error) {
+func (m *SubscriberMutation) OldEmail(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
 	}
@@ -17913,17 +17916,138 @@ func (m *SubscribersMutation) OldEmail(ctx context.Context) (v string, err error
 }
 
 // ResetEmail resets all changes to the "email" field.
-func (m *SubscribersMutation) ResetEmail() {
+func (m *SubscriberMutation) ResetEmail() {
 	m.email = nil
 }
 
+// SetPhoneNumber sets the "phone_number" field.
+func (m *SubscriberMutation) SetPhoneNumber(s string) {
+	m.phone_number = &s
+}
+
+// PhoneNumber returns the value of the "phone_number" field in the mutation.
+func (m *SubscriberMutation) PhoneNumber() (r string, exists bool) {
+	v := m.phone_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhoneNumber returns the old "phone_number" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SubscriberMutation) OldPhoneNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPhoneNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPhoneNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhoneNumber: %w", err)
+	}
+	return oldValue.PhoneNumber, nil
+}
+
+// ClearPhoneNumber clears the value of the "phone_number" field.
+func (m *SubscriberMutation) ClearPhoneNumber() {
+	m.phone_number = nil
+	m.clearedFields[subscriber.FieldPhoneNumber] = struct{}{}
+}
+
+// PhoneNumberCleared returns if the "phone_number" field was cleared in this mutation.
+func (m *SubscriberMutation) PhoneNumberCleared() bool {
+	_, ok := m.clearedFields[subscriber.FieldPhoneNumber]
+	return ok
+}
+
+// ResetPhoneNumber resets all changes to the "phone_number" field.
+func (m *SubscriberMutation) ResetPhoneNumber() {
+	m.phone_number = nil
+	delete(m.clearedFields, subscriber.FieldPhoneNumber)
+}
+
+// SetVerifiedEmail sets the "verified_email" field.
+func (m *SubscriberMutation) SetVerifiedEmail(b bool) {
+	m.verified_email = &b
+}
+
+// VerifiedEmail returns the value of the "verified_email" field in the mutation.
+func (m *SubscriberMutation) VerifiedEmail() (r bool, exists bool) {
+	v := m.verified_email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVerifiedEmail returns the old "verified_email" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SubscriberMutation) OldVerifiedEmail(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVerifiedEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVerifiedEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVerifiedEmail: %w", err)
+	}
+	return oldValue.VerifiedEmail, nil
+}
+
+// ResetVerifiedEmail resets all changes to the "verified_email" field.
+func (m *SubscriberMutation) ResetVerifiedEmail() {
+	m.verified_email = nil
+}
+
+// SetVerifiedPhone sets the "verified_phone" field.
+func (m *SubscriberMutation) SetVerifiedPhone(b bool) {
+	m.verified_phone = &b
+}
+
+// VerifiedPhone returns the value of the "verified_phone" field in the mutation.
+func (m *SubscriberMutation) VerifiedPhone() (r bool, exists bool) {
+	v := m.verified_phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVerifiedPhone returns the old "verified_phone" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SubscriberMutation) OldVerifiedPhone(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVerifiedPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVerifiedPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVerifiedPhone: %w", err)
+	}
+	return oldValue.VerifiedPhone, nil
+}
+
+// ResetVerifiedPhone resets all changes to the "verified_phone" field.
+func (m *SubscriberMutation) ResetVerifiedPhone() {
+	m.verified_phone = nil
+}
+
 // SetActive sets the "active" field.
-func (m *SubscribersMutation) SetActive(b bool) {
+func (m *SubscriberMutation) SetActive(b bool) {
 	m.active = &b
 }
 
 // Active returns the value of the "active" field in the mutation.
-func (m *SubscribersMutation) Active() (r bool, exists bool) {
+func (m *SubscriberMutation) Active() (r bool, exists bool) {
 	v := m.active
 	if v == nil {
 		return
@@ -17931,10 +18055,10 @@ func (m *SubscribersMutation) Active() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldActive returns the old "active" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldActive returns the old "active" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldActive(ctx context.Context) (v bool, err error) {
+func (m *SubscriberMutation) OldActive(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldActive is only allowed on UpdateOne operations")
 	}
@@ -17949,66 +18073,17 @@ func (m *SubscribersMutation) OldActive(ctx context.Context) (v bool, err error)
 }
 
 // ResetActive resets all changes to the "active" field.
-func (m *SubscribersMutation) ResetActive() {
+func (m *SubscriberMutation) ResetActive() {
 	m.active = nil
 }
 
-// SetIPAddress sets the "ip_address" field.
-func (m *SubscribersMutation) SetIPAddress(s string) {
-	m.ip_address = &s
-}
-
-// IPAddress returns the value of the "ip_address" field in the mutation.
-func (m *SubscribersMutation) IPAddress() (r string, exists bool) {
-	v := m.ip_address
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldIPAddress returns the old "ip_address" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldIPAddress(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIPAddress is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIPAddress requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIPAddress: %w", err)
-	}
-	return oldValue.IPAddress, nil
-}
-
-// ClearIPAddress clears the value of the "ip_address" field.
-func (m *SubscribersMutation) ClearIPAddress() {
-	m.ip_address = nil
-	m.clearedFields[subscribers.FieldIPAddress] = struct{}{}
-}
-
-// IPAddressCleared returns if the "ip_address" field was cleared in this mutation.
-func (m *SubscribersMutation) IPAddressCleared() bool {
-	_, ok := m.clearedFields[subscribers.FieldIPAddress]
-	return ok
-}
-
-// ResetIPAddress resets all changes to the "ip_address" field.
-func (m *SubscribersMutation) ResetIPAddress() {
-	m.ip_address = nil
-	delete(m.clearedFields, subscribers.FieldIPAddress)
-}
-
 // SetToken sets the "token" field.
-func (m *SubscribersMutation) SetToken(s string) {
+func (m *SubscriberMutation) SetToken(s string) {
 	m.token = &s
 }
 
 // Token returns the value of the "token" field in the mutation.
-func (m *SubscribersMutation) Token() (r string, exists bool) {
+func (m *SubscriberMutation) Token() (r string, exists bool) {
 	v := m.token
 	if v == nil {
 		return
@@ -18016,10 +18091,10 @@ func (m *SubscribersMutation) Token() (r string, exists bool) {
 	return *v, true
 }
 
-// OldToken returns the old "token" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldToken returns the old "token" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldToken(ctx context.Context) (v string, err error) {
+func (m *SubscriberMutation) OldToken(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldToken is only allowed on UpdateOne operations")
 	}
@@ -18034,17 +18109,53 @@ func (m *SubscribersMutation) OldToken(ctx context.Context) (v string, err error
 }
 
 // ResetToken resets all changes to the "token" field.
-func (m *SubscribersMutation) ResetToken() {
+func (m *SubscriberMutation) ResetToken() {
 	m.token = nil
 }
 
+// SetTTL sets the "ttl" field.
+func (m *SubscriberMutation) SetTTL(t time.Time) {
+	m.ttl = &t
+}
+
+// TTL returns the value of the "ttl" field in the mutation.
+func (m *SubscriberMutation) TTL() (r time.Time, exists bool) {
+	v := m.ttl
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTTL returns the old "ttl" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SubscriberMutation) OldTTL(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTTL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTTL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTTL: %w", err)
+	}
+	return oldValue.TTL, nil
+}
+
+// ResetTTL resets all changes to the "ttl" field.
+func (m *SubscriberMutation) ResetTTL() {
+	m.ttl = nil
+}
+
 // SetSecret sets the "secret" field.
-func (m *SubscribersMutation) SetSecret(b []byte) {
+func (m *SubscriberMutation) SetSecret(b []byte) {
 	m.secret = &b
 }
 
 // Secret returns the value of the "secret" field in the mutation.
-func (m *SubscribersMutation) Secret() (r []byte, exists bool) {
+func (m *SubscriberMutation) Secret() (r []byte, exists bool) {
 	v := m.secret
 	if v == nil {
 		return
@@ -18052,10 +18163,10 @@ func (m *SubscribersMutation) Secret() (r []byte, exists bool) {
 	return *v, true
 }
 
-// OldSecret returns the old "secret" field's value of the Subscribers entity.
-// If the Subscribers object wasn't provided to the builder, the object is fetched from the database.
+// OldSecret returns the old "secret" field's value of the Subscriber entity.
+// If the Subscriber object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubscribersMutation) OldSecret(ctx context.Context) (v *[]byte, err error) {
+func (m *SubscriberMutation) OldSecret(ctx context.Context) (v *[]byte, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSecret is only allowed on UpdateOne operations")
 	}
@@ -18070,25 +18181,25 @@ func (m *SubscribersMutation) OldSecret(ctx context.Context) (v *[]byte, err err
 }
 
 // ResetSecret resets all changes to the "secret" field.
-func (m *SubscribersMutation) ResetSecret() {
+func (m *SubscriberMutation) ResetSecret() {
 	m.secret = nil
 }
 
 // ClearOwner clears the "owner" edge to the Organization entity.
-func (m *SubscribersMutation) ClearOwner() {
+func (m *SubscriberMutation) ClearOwner() {
 	m.clearedowner = true
-	m.clearedFields[subscribers.FieldOwnerID] = struct{}{}
+	m.clearedFields[subscriber.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
-func (m *SubscribersMutation) OwnerCleared() bool {
+func (m *SubscriberMutation) OwnerCleared() bool {
 	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // OwnerID instead. It exists only for internal usage by the builders.
-func (m *SubscribersMutation) OwnerIDs() (ids []string) {
+func (m *SubscriberMutation) OwnerIDs() (ids []string) {
 	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
@@ -18096,20 +18207,20 @@ func (m *SubscribersMutation) OwnerIDs() (ids []string) {
 }
 
 // ResetOwner resets all changes to the "owner" edge.
-func (m *SubscribersMutation) ResetOwner() {
+func (m *SubscriberMutation) ResetOwner() {
 	m.owner = nil
 	m.clearedowner = false
 }
 
-// Where appends a list predicates to the SubscribersMutation builder.
-func (m *SubscribersMutation) Where(ps ...predicate.Subscribers) {
+// Where appends a list predicates to the SubscriberMutation builder.
+func (m *SubscriberMutation) Where(ps ...predicate.Subscriber) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the SubscribersMutation builder. Using this method,
+// WhereP appends storage-level predicates to the SubscriberMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *SubscribersMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.Subscribers, len(ps))
+func (m *SubscriberMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Subscriber, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -18117,60 +18228,69 @@ func (m *SubscribersMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *SubscribersMutation) Op() Op {
+func (m *SubscriberMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *SubscribersMutation) SetOp(op Op) {
+func (m *SubscriberMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (Subscribers).
-func (m *SubscribersMutation) Type() string {
+// Type returns the node type of this mutation (Subscriber).
+func (m *SubscriberMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *SubscribersMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+func (m *SubscriberMutation) Fields() []string {
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
-		fields = append(fields, subscribers.FieldCreatedAt)
+		fields = append(fields, subscriber.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, subscribers.FieldUpdatedAt)
+		fields = append(fields, subscriber.FieldUpdatedAt)
 	}
 	if m.created_by != nil {
-		fields = append(fields, subscribers.FieldCreatedBy)
+		fields = append(fields, subscriber.FieldCreatedBy)
 	}
 	if m.updated_by != nil {
-		fields = append(fields, subscribers.FieldUpdatedBy)
+		fields = append(fields, subscriber.FieldUpdatedBy)
 	}
 	if m.deleted_at != nil {
-		fields = append(fields, subscribers.FieldDeletedAt)
+		fields = append(fields, subscriber.FieldDeletedAt)
 	}
 	if m.deleted_by != nil {
-		fields = append(fields, subscribers.FieldDeletedBy)
+		fields = append(fields, subscriber.FieldDeletedBy)
 	}
 	if m.owner != nil {
-		fields = append(fields, subscribers.FieldOwnerID)
+		fields = append(fields, subscriber.FieldOwnerID)
 	}
 	if m.email != nil {
-		fields = append(fields, subscribers.FieldEmail)
+		fields = append(fields, subscriber.FieldEmail)
+	}
+	if m.phone_number != nil {
+		fields = append(fields, subscriber.FieldPhoneNumber)
+	}
+	if m.verified_email != nil {
+		fields = append(fields, subscriber.FieldVerifiedEmail)
+	}
+	if m.verified_phone != nil {
+		fields = append(fields, subscriber.FieldVerifiedPhone)
 	}
 	if m.active != nil {
-		fields = append(fields, subscribers.FieldActive)
-	}
-	if m.ip_address != nil {
-		fields = append(fields, subscribers.FieldIPAddress)
+		fields = append(fields, subscriber.FieldActive)
 	}
 	if m.token != nil {
-		fields = append(fields, subscribers.FieldToken)
+		fields = append(fields, subscriber.FieldToken)
+	}
+	if m.ttl != nil {
+		fields = append(fields, subscriber.FieldTTL)
 	}
 	if m.secret != nil {
-		fields = append(fields, subscribers.FieldSecret)
+		fields = append(fields, subscriber.FieldSecret)
 	}
 	return fields
 }
@@ -18178,31 +18298,37 @@ func (m *SubscribersMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *SubscribersMutation) Field(name string) (ent.Value, bool) {
+func (m *SubscriberMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case subscribers.FieldCreatedAt:
+	case subscriber.FieldCreatedAt:
 		return m.CreatedAt()
-	case subscribers.FieldUpdatedAt:
+	case subscriber.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case subscribers.FieldCreatedBy:
+	case subscriber.FieldCreatedBy:
 		return m.CreatedBy()
-	case subscribers.FieldUpdatedBy:
+	case subscriber.FieldUpdatedBy:
 		return m.UpdatedBy()
-	case subscribers.FieldDeletedAt:
+	case subscriber.FieldDeletedAt:
 		return m.DeletedAt()
-	case subscribers.FieldDeletedBy:
+	case subscriber.FieldDeletedBy:
 		return m.DeletedBy()
-	case subscribers.FieldOwnerID:
+	case subscriber.FieldOwnerID:
 		return m.OwnerID()
-	case subscribers.FieldEmail:
+	case subscriber.FieldEmail:
 		return m.Email()
-	case subscribers.FieldActive:
+	case subscriber.FieldPhoneNumber:
+		return m.PhoneNumber()
+	case subscriber.FieldVerifiedEmail:
+		return m.VerifiedEmail()
+	case subscriber.FieldVerifiedPhone:
+		return m.VerifiedPhone()
+	case subscriber.FieldActive:
 		return m.Active()
-	case subscribers.FieldIPAddress:
-		return m.IPAddress()
-	case subscribers.FieldToken:
+	case subscriber.FieldToken:
 		return m.Token()
-	case subscribers.FieldSecret:
+	case subscriber.FieldTTL:
+		return m.TTL()
+	case subscriber.FieldSecret:
 		return m.Secret()
 	}
 	return nil, false
@@ -18211,119 +18337,146 @@ func (m *SubscribersMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *SubscribersMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *SubscriberMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case subscribers.FieldCreatedAt:
+	case subscriber.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case subscribers.FieldUpdatedAt:
+	case subscriber.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case subscribers.FieldCreatedBy:
+	case subscriber.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
-	case subscribers.FieldUpdatedBy:
+	case subscriber.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
-	case subscribers.FieldDeletedAt:
+	case subscriber.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case subscribers.FieldDeletedBy:
+	case subscriber.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
-	case subscribers.FieldOwnerID:
+	case subscriber.FieldOwnerID:
 		return m.OldOwnerID(ctx)
-	case subscribers.FieldEmail:
+	case subscriber.FieldEmail:
 		return m.OldEmail(ctx)
-	case subscribers.FieldActive:
+	case subscriber.FieldPhoneNumber:
+		return m.OldPhoneNumber(ctx)
+	case subscriber.FieldVerifiedEmail:
+		return m.OldVerifiedEmail(ctx)
+	case subscriber.FieldVerifiedPhone:
+		return m.OldVerifiedPhone(ctx)
+	case subscriber.FieldActive:
 		return m.OldActive(ctx)
-	case subscribers.FieldIPAddress:
-		return m.OldIPAddress(ctx)
-	case subscribers.FieldToken:
+	case subscriber.FieldToken:
 		return m.OldToken(ctx)
-	case subscribers.FieldSecret:
+	case subscriber.FieldTTL:
+		return m.OldTTL(ctx)
+	case subscriber.FieldSecret:
 		return m.OldSecret(ctx)
 	}
-	return nil, fmt.Errorf("unknown Subscribers field %s", name)
+	return nil, fmt.Errorf("unknown Subscriber field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *SubscribersMutation) SetField(name string, value ent.Value) error {
+func (m *SubscriberMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case subscribers.FieldCreatedAt:
+	case subscriber.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case subscribers.FieldUpdatedAt:
+	case subscriber.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case subscribers.FieldCreatedBy:
+	case subscriber.FieldCreatedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
-	case subscribers.FieldUpdatedBy:
+	case subscriber.FieldUpdatedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
 		return nil
-	case subscribers.FieldDeletedAt:
+	case subscriber.FieldDeletedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case subscribers.FieldDeletedBy:
+	case subscriber.FieldDeletedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
 		return nil
-	case subscribers.FieldOwnerID:
+	case subscriber.FieldOwnerID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOwnerID(v)
 		return nil
-	case subscribers.FieldEmail:
+	case subscriber.FieldEmail:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
 		return nil
-	case subscribers.FieldActive:
+	case subscriber.FieldPhoneNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhoneNumber(v)
+		return nil
+	case subscriber.FieldVerifiedEmail:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVerifiedEmail(v)
+		return nil
+	case subscriber.FieldVerifiedPhone:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVerifiedPhone(v)
+		return nil
+	case subscriber.FieldActive:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetActive(v)
 		return nil
-	case subscribers.FieldIPAddress:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetIPAddress(v)
-		return nil
-	case subscribers.FieldToken:
+	case subscriber.FieldToken:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetToken(v)
 		return nil
-	case subscribers.FieldSecret:
+	case subscriber.FieldTTL:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTTL(v)
+		return nil
+	case subscriber.FieldSecret:
 		v, ok := value.([]byte)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -18331,159 +18484,168 @@ func (m *SubscribersMutation) SetField(name string, value ent.Value) error {
 		m.SetSecret(v)
 		return nil
 	}
-	return fmt.Errorf("unknown Subscribers field %s", name)
+	return fmt.Errorf("unknown Subscriber field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *SubscribersMutation) AddedFields() []string {
+func (m *SubscriberMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *SubscribersMutation) AddedField(name string) (ent.Value, bool) {
+func (m *SubscriberMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *SubscribersMutation) AddField(name string, value ent.Value) error {
+func (m *SubscriberMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown Subscribers numeric field %s", name)
+	return fmt.Errorf("unknown Subscriber numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *SubscribersMutation) ClearedFields() []string {
+func (m *SubscriberMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(subscribers.FieldCreatedAt) {
-		fields = append(fields, subscribers.FieldCreatedAt)
+	if m.FieldCleared(subscriber.FieldCreatedAt) {
+		fields = append(fields, subscriber.FieldCreatedAt)
 	}
-	if m.FieldCleared(subscribers.FieldUpdatedAt) {
-		fields = append(fields, subscribers.FieldUpdatedAt)
+	if m.FieldCleared(subscriber.FieldUpdatedAt) {
+		fields = append(fields, subscriber.FieldUpdatedAt)
 	}
-	if m.FieldCleared(subscribers.FieldCreatedBy) {
-		fields = append(fields, subscribers.FieldCreatedBy)
+	if m.FieldCleared(subscriber.FieldCreatedBy) {
+		fields = append(fields, subscriber.FieldCreatedBy)
 	}
-	if m.FieldCleared(subscribers.FieldUpdatedBy) {
-		fields = append(fields, subscribers.FieldUpdatedBy)
+	if m.FieldCleared(subscriber.FieldUpdatedBy) {
+		fields = append(fields, subscriber.FieldUpdatedBy)
 	}
-	if m.FieldCleared(subscribers.FieldDeletedAt) {
-		fields = append(fields, subscribers.FieldDeletedAt)
+	if m.FieldCleared(subscriber.FieldDeletedAt) {
+		fields = append(fields, subscriber.FieldDeletedAt)
 	}
-	if m.FieldCleared(subscribers.FieldDeletedBy) {
-		fields = append(fields, subscribers.FieldDeletedBy)
+	if m.FieldCleared(subscriber.FieldDeletedBy) {
+		fields = append(fields, subscriber.FieldDeletedBy)
 	}
-	if m.FieldCleared(subscribers.FieldOwnerID) {
-		fields = append(fields, subscribers.FieldOwnerID)
+	if m.FieldCleared(subscriber.FieldOwnerID) {
+		fields = append(fields, subscriber.FieldOwnerID)
 	}
-	if m.FieldCleared(subscribers.FieldIPAddress) {
-		fields = append(fields, subscribers.FieldIPAddress)
+	if m.FieldCleared(subscriber.FieldPhoneNumber) {
+		fields = append(fields, subscriber.FieldPhoneNumber)
 	}
 	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *SubscribersMutation) FieldCleared(name string) bool {
+func (m *SubscriberMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *SubscribersMutation) ClearField(name string) error {
+func (m *SubscriberMutation) ClearField(name string) error {
 	switch name {
-	case subscribers.FieldCreatedAt:
+	case subscriber.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
-	case subscribers.FieldUpdatedAt:
+	case subscriber.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
-	case subscribers.FieldCreatedBy:
+	case subscriber.FieldCreatedBy:
 		m.ClearCreatedBy()
 		return nil
-	case subscribers.FieldUpdatedBy:
+	case subscriber.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
-	case subscribers.FieldDeletedAt:
+	case subscriber.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
-	case subscribers.FieldDeletedBy:
+	case subscriber.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
-	case subscribers.FieldOwnerID:
+	case subscriber.FieldOwnerID:
 		m.ClearOwnerID()
 		return nil
-	case subscribers.FieldIPAddress:
-		m.ClearIPAddress()
+	case subscriber.FieldPhoneNumber:
+		m.ClearPhoneNumber()
 		return nil
 	}
-	return fmt.Errorf("unknown Subscribers nullable field %s", name)
+	return fmt.Errorf("unknown Subscriber nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *SubscribersMutation) ResetField(name string) error {
+func (m *SubscriberMutation) ResetField(name string) error {
 	switch name {
-	case subscribers.FieldCreatedAt:
+	case subscriber.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case subscribers.FieldUpdatedAt:
+	case subscriber.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case subscribers.FieldCreatedBy:
+	case subscriber.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
-	case subscribers.FieldUpdatedBy:
+	case subscriber.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
-	case subscribers.FieldDeletedAt:
+	case subscriber.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case subscribers.FieldDeletedBy:
+	case subscriber.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
-	case subscribers.FieldOwnerID:
+	case subscriber.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
-	case subscribers.FieldEmail:
+	case subscriber.FieldEmail:
 		m.ResetEmail()
 		return nil
-	case subscribers.FieldActive:
+	case subscriber.FieldPhoneNumber:
+		m.ResetPhoneNumber()
+		return nil
+	case subscriber.FieldVerifiedEmail:
+		m.ResetVerifiedEmail()
+		return nil
+	case subscriber.FieldVerifiedPhone:
+		m.ResetVerifiedPhone()
+		return nil
+	case subscriber.FieldActive:
 		m.ResetActive()
 		return nil
-	case subscribers.FieldIPAddress:
-		m.ResetIPAddress()
-		return nil
-	case subscribers.FieldToken:
+	case subscriber.FieldToken:
 		m.ResetToken()
 		return nil
-	case subscribers.FieldSecret:
+	case subscriber.FieldTTL:
+		m.ResetTTL()
+		return nil
+	case subscriber.FieldSecret:
 		m.ResetSecret()
 		return nil
 	}
-	return fmt.Errorf("unknown Subscribers field %s", name)
+	return fmt.Errorf("unknown Subscriber field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *SubscribersMutation) AddedEdges() []string {
+func (m *SubscriberMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
 	if m.owner != nil {
-		edges = append(edges, subscribers.EdgeOwner)
+		edges = append(edges, subscriber.EdgeOwner)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *SubscribersMutation) AddedIDs(name string) []ent.Value {
+func (m *SubscriberMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case subscribers.EdgeOwner:
+	case subscriber.EdgeOwner:
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
@@ -18492,31 +18654,31 @@ func (m *SubscribersMutation) AddedIDs(name string) []ent.Value {
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *SubscribersMutation) RemovedEdges() []string {
+func (m *SubscriberMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *SubscribersMutation) RemovedIDs(name string) []ent.Value {
+func (m *SubscriberMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *SubscribersMutation) ClearedEdges() []string {
+func (m *SubscriberMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
 	if m.clearedowner {
-		edges = append(edges, subscribers.EdgeOwner)
+		edges = append(edges, subscriber.EdgeOwner)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *SubscribersMutation) EdgeCleared(name string) bool {
+func (m *SubscriberMutation) EdgeCleared(name string) bool {
 	switch name {
-	case subscribers.EdgeOwner:
+	case subscriber.EdgeOwner:
 		return m.clearedowner
 	}
 	return false
@@ -18524,24 +18686,24 @@ func (m *SubscribersMutation) EdgeCleared(name string) bool {
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *SubscribersMutation) ClearEdge(name string) error {
+func (m *SubscriberMutation) ClearEdge(name string) error {
 	switch name {
-	case subscribers.EdgeOwner:
+	case subscriber.EdgeOwner:
 		m.ClearOwner()
 		return nil
 	}
-	return fmt.Errorf("unknown Subscribers unique edge %s", name)
+	return fmt.Errorf("unknown Subscriber unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *SubscribersMutation) ResetEdge(name string) error {
+func (m *SubscriberMutation) ResetEdge(name string) error {
 	switch name {
-	case subscribers.EdgeOwner:
+	case subscriber.EdgeOwner:
 		m.ResetOwner()
 		return nil
 	}
-	return fmt.Errorf("unknown Subscribers edge %s", name)
+	return fmt.Errorf("unknown Subscriber edge %s", name)
 }
 
 // TFASettingsMutation represents an operation that mutates the TFASettings nodes in the graph.

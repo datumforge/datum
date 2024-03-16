@@ -23,7 +23,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -464,31 +464,31 @@ func (f TraversePersonalAccessToken) Traverse(ctx context.Context, q generated.Q
 	return fmt.Errorf("unexpected query type %T. expect *generated.PersonalAccessTokenQuery", q)
 }
 
-// The SubscribersFunc type is an adapter to allow the use of ordinary function as a Querier.
-type SubscribersFunc func(context.Context, *generated.SubscribersQuery) (generated.Value, error)
+// The SubscriberFunc type is an adapter to allow the use of ordinary function as a Querier.
+type SubscriberFunc func(context.Context, *generated.SubscriberQuery) (generated.Value, error)
 
 // Query calls f(ctx, q).
-func (f SubscribersFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.SubscribersQuery); ok {
+func (f SubscriberFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.SubscriberQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.SubscribersQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.SubscriberQuery", q)
 }
 
-// The TraverseSubscribers type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseSubscribers func(context.Context, *generated.SubscribersQuery) error
+// The TraverseSubscriber type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseSubscriber func(context.Context, *generated.SubscriberQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseSubscribers) Intercept(next generated.Querier) generated.Querier {
+func (f TraverseSubscriber) Intercept(next generated.Querier) generated.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseSubscribers) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.SubscribersQuery); ok {
+func (f TraverseSubscriber) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.SubscriberQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.SubscribersQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *generated.SubscriberQuery", q)
 }
 
 // The TFASettingsFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -630,8 +630,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.PasswordResetTokenQuery, predicate.PasswordResetToken, passwordresettoken.OrderOption]{typ: generated.TypePasswordResetToken, tq: q}, nil
 	case *generated.PersonalAccessTokenQuery:
 		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
-	case *generated.SubscribersQuery:
-		return &query[*generated.SubscribersQuery, predicate.Subscribers, subscribers.OrderOption]{typ: generated.TypeSubscribers, tq: q}, nil
+	case *generated.SubscriberQuery:
+		return &query[*generated.SubscriberQuery, predicate.Subscriber, subscriber.OrderOption]{typ: generated.TypeSubscriber, tq: q}, nil
 	case *generated.TFASettingsQuery:
 		return &query[*generated.TFASettingsQuery, predicate.TFASettings, tfasettings.OrderOption]{typ: generated.TypeTFASettings, tq: q}, nil
 	case *generated.UserQuery:

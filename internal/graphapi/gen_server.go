@@ -317,7 +317,7 @@ type ComplexityRoot struct {
 		CreateOrgMembership       func(childComplexity int, input generated.CreateOrgMembershipInput) int
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
-		CreateSubscribers         func(childComplexity int, input generated.CreateSubscribersInput) int
+		CreateSubscriber          func(childComplexity int, input generated.CreateSubscriberInput) int
 		CreateTFASettings         func(childComplexity int, input generated.CreateTFASettingsInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
@@ -330,7 +330,7 @@ type ComplexityRoot struct {
 		DeleteOrgMembership       func(childComplexity int, id string) int
 		DeleteOrganization        func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
-		DeleteSubscribers         func(childComplexity int, id string) int
+		DeleteSubscriber          func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
@@ -345,7 +345,7 @@ type ComplexityRoot struct {
 		UpdateOrganization        func(childComplexity int, id string, input generated.UpdateOrganizationInput) int
 		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
-		UpdateSubscribers         func(childComplexity int, id string, input generated.UpdateSubscribersInput) int
+		UpdateSubscriber          func(childComplexity int, id string, input generated.UpdateSubscriberInput) int
 		UpdateTFASettings         func(childComplexity int, input generated.UpdateTFASettingsInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
 		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
@@ -638,8 +638,8 @@ type ComplexityRoot struct {
 		Organizations        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
 		PersonalAccessToken  func(childComplexity int, id string) int
 		PersonalAccessTokens func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
-		Subscribers          func(childComplexity int, id string) int
-		SubscribersSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscribersWhereInput) int
+		Subscriber           func(childComplexity int, id string) int
+		Subscribers          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) int
 		TfaSettings          func(childComplexity int, id *string) int
 		TfaSettingsSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) int
 		User                 func(childComplexity int, id string) int
@@ -648,43 +648,44 @@ type ComplexityRoot struct {
 		Users                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
 	}
 
-	Subscribers struct {
-		Active    func(childComplexity int) int
-		CreatedAt func(childComplexity int) int
-		CreatedBy func(childComplexity int) int
-		DeletedAt func(childComplexity int) int
-		DeletedBy func(childComplexity int) int
-		Email     func(childComplexity int) int
-		ID        func(childComplexity int) int
-		IPAddress func(childComplexity int) int
-		Owner     func(childComplexity int) int
-		OwnerID   func(childComplexity int) int
-		Token     func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
-		UpdatedBy func(childComplexity int) int
+	Subscriber struct {
+		Active        func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		CreatedBy     func(childComplexity int) int
+		DeletedAt     func(childComplexity int) int
+		DeletedBy     func(childComplexity int) int
+		Email         func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Owner         func(childComplexity int) int
+		OwnerID       func(childComplexity int) int
+		PhoneNumber   func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UpdatedBy     func(childComplexity int) int
+		VerifiedEmail func(childComplexity int) int
+		VerifiedPhone func(childComplexity int) int
 	}
 
-	SubscribersConnection struct {
+	SubscriberConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	SubscribersCreatePayload struct {
-		Subscribers func(childComplexity int) int
+	SubscriberCreatePayload struct {
+		Subscriber func(childComplexity int) int
 	}
 
-	SubscribersDeletePayload struct {
+	SubscriberDeletePayload struct {
 		DeletedID func(childComplexity int) int
 	}
 
-	SubscribersEdge struct {
+	SubscriberEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
 	}
 
-	SubscribersUpdatePayload struct {
-		Subscribers func(childComplexity int) int
+	SubscriberUpdatePayload struct {
+		Subscriber func(childComplexity int) int
 	}
 
 	Subscription struct {
@@ -845,9 +846,9 @@ type MutationResolver interface {
 	CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error)
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
-	CreateSubscribers(ctx context.Context, input generated.CreateSubscribersInput) (*SubscribersCreatePayload, error)
-	UpdateSubscribers(ctx context.Context, id string, input generated.UpdateSubscribersInput) (*SubscribersUpdatePayload, error)
-	DeleteSubscribers(ctx context.Context, id string) (*SubscribersDeletePayload, error)
+	CreateSubscriber(ctx context.Context, input generated.CreateSubscriberInput) (*SubscriberCreatePayload, error)
+	UpdateSubscriber(ctx context.Context, id string, input generated.UpdateSubscriberInput) (*SubscriberUpdatePayload, error)
+	DeleteSubscriber(ctx context.Context, id string) (*SubscriberDeletePayload, error)
 	CreateTFASettings(ctx context.Context, input generated.CreateTFASettingsInput) (*TFASettingsCreatePayload, error)
 	UpdateTFASettings(ctx context.Context, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
@@ -874,7 +875,7 @@ type QueryResolver interface {
 	Organizations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error)
 	OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error)
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
-	SubscribersSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscribersWhereInput) (*generated.SubscribersConnection, error)
+	Subscribers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) (*generated.SubscriberConnection, error)
 	TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
 	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
@@ -890,7 +891,7 @@ type QueryResolver interface {
 	OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error)
 	OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error)
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
-	Subscribers(ctx context.Context, id string) (*generated.Subscribers, error)
+	Subscriber(ctx context.Context, id string) (*generated.Subscriber, error)
 	TfaSettings(ctx context.Context, id *string) (*generated.TFASettings, error)
 	User(ctx context.Context, id string) (*generated.User, error)
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
@@ -2017,17 +2018,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePersonalAccessToken(childComplexity, args["input"].(generated.CreatePersonalAccessTokenInput)), true
 
-	case "Mutation.createSubscribers":
-		if e.complexity.Mutation.CreateSubscribers == nil {
+	case "Mutation.createSubscriber":
+		if e.complexity.Mutation.CreateSubscriber == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createSubscribers_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createSubscriber_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateSubscribers(childComplexity, args["input"].(generated.CreateSubscribersInput)), true
+		return e.complexity.Mutation.CreateSubscriber(childComplexity, args["input"].(generated.CreateSubscriberInput)), true
 
 	case "Mutation.createTFASettings":
 		if e.complexity.Mutation.CreateTFASettings == nil {
@@ -2173,17 +2174,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeletePersonalAccessToken(childComplexity, args["id"].(string)), true
 
-	case "Mutation.deleteSubscribers":
-		if e.complexity.Mutation.DeleteSubscribers == nil {
+	case "Mutation.deleteSubscriber":
+		if e.complexity.Mutation.DeleteSubscriber == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteSubscribers_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteSubscriber_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteSubscribers(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.DeleteSubscriber(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
@@ -2353,17 +2354,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdatePersonalAccessToken(childComplexity, args["id"].(string), args["input"].(generated.UpdatePersonalAccessTokenInput)), true
 
-	case "Mutation.updateSubscribers":
-		if e.complexity.Mutation.UpdateSubscribers == nil {
+	case "Mutation.updateSubscriber":
+		if e.complexity.Mutation.UpdateSubscriber == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateSubscribers_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateSubscriber_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateSubscribers(childComplexity, args["id"].(string), args["input"].(generated.UpdateSubscribersInput)), true
+		return e.complexity.Mutation.UpdateSubscriber(childComplexity, args["id"].(string), args["input"].(generated.UpdateSubscriberInput)), true
 
 	case "Mutation.updateTFASettings":
 		if e.complexity.Mutation.UpdateTFASettings == nil {
@@ -3761,6 +3762,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PersonalAccessTokens(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.PersonalAccessTokenWhereInput)), true
 
+	case "Query.subscriber":
+		if e.complexity.Query.Subscriber == nil {
+			break
+		}
+
+		args, err := ec.field_Query_subscriber_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Subscriber(childComplexity, args["id"].(string)), true
+
 	case "Query.subscribers":
 		if e.complexity.Query.Subscribers == nil {
 			break
@@ -3771,19 +3784,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Subscribers(childComplexity, args["id"].(string)), true
-
-	case "Query.subscribersSlice":
-		if e.complexity.Query.SubscribersSlice == nil {
-			break
-		}
-
-		args, err := ec.field_Query_subscribersSlice_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.SubscribersSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.SubscribersWhereInput)), true
+		return e.complexity.Query.Subscribers(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.SubscriberWhereInput)), true
 
 	case "Query.tfaSettings":
 		if e.complexity.Query.TfaSettings == nil {
@@ -3857,152 +3858,159 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Users(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.UserOrder), args["where"].(*generated.UserWhereInput)), true
 
-	case "Subscribers.active":
-		if e.complexity.Subscribers.Active == nil {
+	case "Subscriber.active":
+		if e.complexity.Subscriber.Active == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.Active(childComplexity), true
+		return e.complexity.Subscriber.Active(childComplexity), true
 
-	case "Subscribers.createdAt":
-		if e.complexity.Subscribers.CreatedAt == nil {
+	case "Subscriber.createdAt":
+		if e.complexity.Subscriber.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.CreatedAt(childComplexity), true
+		return e.complexity.Subscriber.CreatedAt(childComplexity), true
 
-	case "Subscribers.createdBy":
-		if e.complexity.Subscribers.CreatedBy == nil {
+	case "Subscriber.createdBy":
+		if e.complexity.Subscriber.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.CreatedBy(childComplexity), true
+		return e.complexity.Subscriber.CreatedBy(childComplexity), true
 
-	case "Subscribers.deletedAt":
-		if e.complexity.Subscribers.DeletedAt == nil {
+	case "Subscriber.deletedAt":
+		if e.complexity.Subscriber.DeletedAt == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.DeletedAt(childComplexity), true
+		return e.complexity.Subscriber.DeletedAt(childComplexity), true
 
-	case "Subscribers.deletedBy":
-		if e.complexity.Subscribers.DeletedBy == nil {
+	case "Subscriber.deletedBy":
+		if e.complexity.Subscriber.DeletedBy == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.DeletedBy(childComplexity), true
+		return e.complexity.Subscriber.DeletedBy(childComplexity), true
 
-	case "Subscribers.email":
-		if e.complexity.Subscribers.Email == nil {
+	case "Subscriber.email":
+		if e.complexity.Subscriber.Email == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.Email(childComplexity), true
+		return e.complexity.Subscriber.Email(childComplexity), true
 
-	case "Subscribers.id":
-		if e.complexity.Subscribers.ID == nil {
+	case "Subscriber.id":
+		if e.complexity.Subscriber.ID == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.ID(childComplexity), true
+		return e.complexity.Subscriber.ID(childComplexity), true
 
-	case "Subscribers.ipAddress":
-		if e.complexity.Subscribers.IPAddress == nil {
+	case "Subscriber.owner":
+		if e.complexity.Subscriber.Owner == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.IPAddress(childComplexity), true
+		return e.complexity.Subscriber.Owner(childComplexity), true
 
-	case "Subscribers.owner":
-		if e.complexity.Subscribers.Owner == nil {
+	case "Subscriber.ownerID":
+		if e.complexity.Subscriber.OwnerID == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.Owner(childComplexity), true
+		return e.complexity.Subscriber.OwnerID(childComplexity), true
 
-	case "Subscribers.ownerID":
-		if e.complexity.Subscribers.OwnerID == nil {
+	case "Subscriber.phoneNumber":
+		if e.complexity.Subscriber.PhoneNumber == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.OwnerID(childComplexity), true
+		return e.complexity.Subscriber.PhoneNumber(childComplexity), true
 
-	case "Subscribers.token":
-		if e.complexity.Subscribers.Token == nil {
+	case "Subscriber.updatedAt":
+		if e.complexity.Subscriber.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.Token(childComplexity), true
+		return e.complexity.Subscriber.UpdatedAt(childComplexity), true
 
-	case "Subscribers.updatedAt":
-		if e.complexity.Subscribers.UpdatedAt == nil {
+	case "Subscriber.updatedBy":
+		if e.complexity.Subscriber.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.UpdatedAt(childComplexity), true
+		return e.complexity.Subscriber.UpdatedBy(childComplexity), true
 
-	case "Subscribers.updatedBy":
-		if e.complexity.Subscribers.UpdatedBy == nil {
+	case "Subscriber.verifiedEmail":
+		if e.complexity.Subscriber.VerifiedEmail == nil {
 			break
 		}
 
-		return e.complexity.Subscribers.UpdatedBy(childComplexity), true
+		return e.complexity.Subscriber.VerifiedEmail(childComplexity), true
 
-	case "SubscribersConnection.edges":
-		if e.complexity.SubscribersConnection.Edges == nil {
+	case "Subscriber.verifiedPhone":
+		if e.complexity.Subscriber.VerifiedPhone == nil {
 			break
 		}
 
-		return e.complexity.SubscribersConnection.Edges(childComplexity), true
+		return e.complexity.Subscriber.VerifiedPhone(childComplexity), true
 
-	case "SubscribersConnection.pageInfo":
-		if e.complexity.SubscribersConnection.PageInfo == nil {
+	case "SubscriberConnection.edges":
+		if e.complexity.SubscriberConnection.Edges == nil {
 			break
 		}
 
-		return e.complexity.SubscribersConnection.PageInfo(childComplexity), true
+		return e.complexity.SubscriberConnection.Edges(childComplexity), true
 
-	case "SubscribersConnection.totalCount":
-		if e.complexity.SubscribersConnection.TotalCount == nil {
+	case "SubscriberConnection.pageInfo":
+		if e.complexity.SubscriberConnection.PageInfo == nil {
 			break
 		}
 
-		return e.complexity.SubscribersConnection.TotalCount(childComplexity), true
+		return e.complexity.SubscriberConnection.PageInfo(childComplexity), true
 
-	case "SubscribersCreatePayload.subscribers":
-		if e.complexity.SubscribersCreatePayload.Subscribers == nil {
+	case "SubscriberConnection.totalCount":
+		if e.complexity.SubscriberConnection.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.SubscribersCreatePayload.Subscribers(childComplexity), true
+		return e.complexity.SubscriberConnection.TotalCount(childComplexity), true
 
-	case "SubscribersDeletePayload.deletedID":
-		if e.complexity.SubscribersDeletePayload.DeletedID == nil {
+	case "SubscriberCreatePayload.subscriber":
+		if e.complexity.SubscriberCreatePayload.Subscriber == nil {
 			break
 		}
 
-		return e.complexity.SubscribersDeletePayload.DeletedID(childComplexity), true
+		return e.complexity.SubscriberCreatePayload.Subscriber(childComplexity), true
 
-	case "SubscribersEdge.cursor":
-		if e.complexity.SubscribersEdge.Cursor == nil {
+	case "SubscriberDeletePayload.deletedID":
+		if e.complexity.SubscriberDeletePayload.DeletedID == nil {
 			break
 		}
 
-		return e.complexity.SubscribersEdge.Cursor(childComplexity), true
+		return e.complexity.SubscriberDeletePayload.DeletedID(childComplexity), true
 
-	case "SubscribersEdge.node":
-		if e.complexity.SubscribersEdge.Node == nil {
+	case "SubscriberEdge.cursor":
+		if e.complexity.SubscriberEdge.Cursor == nil {
 			break
 		}
 
-		return e.complexity.SubscribersEdge.Node(childComplexity), true
+		return e.complexity.SubscriberEdge.Cursor(childComplexity), true
 
-	case "SubscribersUpdatePayload.subscribers":
-		if e.complexity.SubscribersUpdatePayload.Subscribers == nil {
+	case "SubscriberEdge.node":
+		if e.complexity.SubscriberEdge.Node == nil {
 			break
 		}
 
-		return e.complexity.SubscribersUpdatePayload.Subscribers(childComplexity), true
+		return e.complexity.SubscriberEdge.Node(childComplexity), true
+
+	case "SubscriberUpdatePayload.subscriber":
+		if e.complexity.SubscriberUpdatePayload.Subscriber == nil {
+			break
+		}
+
+		return e.complexity.SubscriberUpdatePayload.Subscriber(childComplexity), true
 
 	case "Subscription.subscribe":
 		if e.complexity.Subscription.Subscribe == nil {
@@ -4561,7 +4569,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOrganizationInput,
 		ec.unmarshalInputCreateOrganizationSettingInput,
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
-		ec.unmarshalInputCreateSubscribersInput,
+		ec.unmarshalInputCreateSubscriberInput,
 		ec.unmarshalInputCreateTFASettingsInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserSettingInput,
@@ -4580,7 +4588,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputOrganizationSettingWhereInput,
 		ec.unmarshalInputOrganizationWhereInput,
 		ec.unmarshalInputPersonalAccessTokenWhereInput,
-		ec.unmarshalInputSubscribersWhereInput,
+		ec.unmarshalInputSubscriberWhereInput,
 		ec.unmarshalInputTFASettingsWhereInput,
 		ec.unmarshalInputUpdateEntitlementInput,
 		ec.unmarshalInputUpdateGroupInput,
@@ -4594,7 +4602,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateOrganizationInput,
 		ec.unmarshalInputUpdateOrganizationSettingInput,
 		ec.unmarshalInputUpdatePersonalAccessTokenInput,
-		ec.unmarshalInputUpdateSubscribersInput,
+		ec.unmarshalInputUpdateSubscriberInput,
 		ec.unmarshalInputUpdateTFASettingsInput,
 		ec.unmarshalInputUpdateUserInput,
 		ec.unmarshalInputUpdateUserSettingInput,
@@ -5063,10 +5071,10 @@ input CreatePersonalAccessTokenInput {
   organizationIDs: [ID!]
 }
 """
-CreateSubscribersInput is used for create Subscribers object.
+CreateSubscriberInput is used for create Subscriber object.
 Input was generated by ent.
 """
-input CreateSubscribersInput {
+input CreateSubscriberInput {
   createdAt: Time
   updatedAt: Time
   createdBy: String
@@ -5076,17 +5084,21 @@ input CreateSubscribersInput {
   """
   email: String!
   """
-  indicates if the subscriber is active or not
+  phone number of the subscriber
+  """
+  phoneNumber: String
+  """
+  indicates if the email address has been verified
+  """
+  verifiedEmail: Boolean
+  """
+  indicates if the phone number has been verified
+  """
+  verifiedPhone: Boolean
+  """
+  indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean
-  """
-  IP address of the subscriber
-  """
-  ipAddress: String
-  """
-  the token used to unsubscribe
-  """
-  token: String!
   ownerID: ID
 }
 """
@@ -7465,7 +7477,7 @@ type Organization implements Node {
   oauthprovider: [OauthProvider!]
   users: [User!]
   invites: [Invite!]
-  subscribers: [Subscribers!]
+  subscribers: [Subscriber!]
   members: [OrgMembership!]
 }
 """
@@ -8045,7 +8057,7 @@ input OrganizationWhereInput {
   subscribers edge predicates
   """
   hasSubscribers: Boolean
-  hasSubscribersWith: [SubscribersWhereInput!]
+  hasSubscribersWith: [SubscriberWhereInput!]
   """
   members edge predicates
   """
@@ -8644,7 +8656,7 @@ type Query {
     """
     where: PersonalAccessTokenWhereInput
   ): PersonalAccessTokenConnection!
-  subscribersSlice(
+  subscribers(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8666,10 +8678,10 @@ type Query {
     last: Int
 
     """
-    Filtering options for SubscribersSlice returned from the connection.
+    Filtering options for Subscribers returned from the connection.
     """
-    where: SubscribersWhereInput
-  ): SubscribersConnection!
+    where: SubscriberWhereInput
+  ): SubscriberConnection!
   tfaSettingsSlice(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -8754,7 +8766,7 @@ type Query {
     where: UserSettingWhereInput
   ): UserSettingConnection!
 }
-type Subscribers implements Node {
+type Subscriber implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
@@ -8768,27 +8780,31 @@ type Subscribers implements Node {
   """
   email: String!
   """
-  indicates if the subscriber is active or not
+  phone number of the subscriber
+  """
+  phoneNumber: String
+  """
+  indicates if the email address has been verified
+  """
+  verifiedEmail: Boolean!
+  """
+  indicates if the phone number has been verified
+  """
+  verifiedPhone: Boolean!
+  """
+  indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean!
-  """
-  IP address of the subscriber
-  """
-  ipAddress: String
-  """
-  the token used to unsubscribe
-  """
-  token: String!
   owner: Organization
 }
 """
 A connection to a list of items.
 """
-type SubscribersConnection {
+type SubscriberConnection {
   """
   A list of edges.
   """
-  edges: [SubscribersEdge]
+  edges: [SubscriberEdge]
   """
   Information to aid in pagination.
   """
@@ -8801,24 +8817,24 @@ type SubscribersConnection {
 """
 An edge in a connection.
 """
-type SubscribersEdge {
+type SubscriberEdge {
   """
   The item at the end of the edge.
   """
-  node: Subscribers
+  node: Subscriber
   """
   A cursor for use in pagination.
   """
   cursor: Cursor!
 }
 """
-SubscribersWhereInput is used for filtering Subscribers objects.
+SubscriberWhereInput is used for filtering Subscriber objects.
 Input was generated by ent.
 """
-input SubscribersWhereInput {
-  not: SubscribersWhereInput
-  and: [SubscribersWhereInput!]
-  or: [SubscribersWhereInput!]
+input SubscriberWhereInput {
+  not: SubscriberWhereInput
+  and: [SubscriberWhereInput!]
+  or: [SubscriberWhereInput!]
   """
   id field predicates
   """
@@ -8960,44 +8976,38 @@ input SubscribersWhereInput {
   emailEqualFold: String
   emailContainsFold: String
   """
+  phone_number field predicates
+  """
+  phoneNumber: String
+  phoneNumberNEQ: String
+  phoneNumberIn: [String!]
+  phoneNumberNotIn: [String!]
+  phoneNumberGT: String
+  phoneNumberGTE: String
+  phoneNumberLT: String
+  phoneNumberLTE: String
+  phoneNumberContains: String
+  phoneNumberHasPrefix: String
+  phoneNumberHasSuffix: String
+  phoneNumberIsNil: Boolean
+  phoneNumberNotNil: Boolean
+  phoneNumberEqualFold: String
+  phoneNumberContainsFold: String
+  """
+  verified_email field predicates
+  """
+  verifiedEmail: Boolean
+  verifiedEmailNEQ: Boolean
+  """
+  verified_phone field predicates
+  """
+  verifiedPhone: Boolean
+  verifiedPhoneNEQ: Boolean
+  """
   active field predicates
   """
   active: Boolean
   activeNEQ: Boolean
-  """
-  ip_address field predicates
-  """
-  ipAddress: String
-  ipAddressNEQ: String
-  ipAddressIn: [String!]
-  ipAddressNotIn: [String!]
-  ipAddressGT: String
-  ipAddressGTE: String
-  ipAddressLT: String
-  ipAddressLTE: String
-  ipAddressContains: String
-  ipAddressHasPrefix: String
-  ipAddressHasSuffix: String
-  ipAddressIsNil: Boolean
-  ipAddressNotNil: Boolean
-  ipAddressEqualFold: String
-  ipAddressContainsFold: String
-  """
-  token field predicates
-  """
-  token: String
-  tokenNEQ: String
-  tokenIn: [String!]
-  tokenNotIn: [String!]
-  tokenGT: String
-  tokenGTE: String
-  tokenLT: String
-  tokenLTE: String
-  tokenContains: String
-  tokenHasPrefix: String
-  tokenHasSuffix: String
-  tokenEqualFold: String
-  tokenContainsFold: String
   """
   owner edge predicates
   """
@@ -9598,10 +9608,10 @@ input UpdatePersonalAccessTokenInput {
   clearOrganizations: Boolean
 }
 """
-UpdateSubscribersInput is used for update Subscribers object.
+UpdateSubscriberInput is used for update Subscriber object.
 Input was generated by ent.
 """
-input UpdateSubscribersInput {
+input UpdateSubscriberInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
   updatedBy: String
@@ -9611,18 +9621,22 @@ input UpdateSubscribersInput {
   """
   email: String
   """
-  indicates if the subscriber is active or not
+  phone number of the subscriber
+  """
+  phoneNumber: String
+  clearPhoneNumber: Boolean
+  """
+  indicates if the email address has been verified
+  """
+  verifiedEmail: Boolean
+  """
+  indicates if the phone number has been verified
+  """
+  verifiedPhone: Boolean
+  """
+  indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean
-  """
-  IP address of the subscriber
-  """
-  ipAddress: String
-  clearIPAddress: Boolean
-  """
-  the token used to unsubscribe
-  """
-  token: String
   ownerID: ID
   clearOwner: Boolean
 }
@@ -11342,78 +11356,78 @@ type PersonalAccessTokenDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/subscribers.graphql", Input: `extend type Query {
+	{Name: "../../schema/subscriber.graphql", Input: `extend type Query {
     """
-    Look up subscribers by ID
+    Look up subscriber by ID
     """
-     subscribers(
+     subscriber(
         """
-        ID of the subscribers
+        ID of the subscriber
         """
         id: ID!
-    ):  Subscribers!
+    ):  Subscriber!
 }
 
 extend type Mutation{
     """
-    Create a new subscribers
+    Create a new subscriber
     """
-    createSubscribers(
+    createSubscriber(
         """
-        values of the subscribers
+        values of the subscriber
         """
-        input: CreateSubscribersInput!
-    ): SubscribersCreatePayload!
+        input: CreateSubscriberInput!
+    ): SubscriberCreatePayload!
     """
-    Update an existing subscribers
+    Update an existing subscriber
     """
-    updateSubscribers(
+    updateSubscriber(
         """
-        ID of the subscribers
-        """
-        id: ID!
-        """
-        New values for the subscribers
-        """
-        input: UpdateSubscribersInput!
-    ): SubscribersUpdatePayload!
-    """
-    Delete an existing subscribers
-    """
-    deleteSubscribers(
-        """
-        ID of the subscribers
+        ID of the subscriber
         """
         id: ID!
-    ): SubscribersDeletePayload!
+        """
+        New values for the subscriber
+        """
+        input: UpdateSubscriberInput!
+    ): SubscriberUpdatePayload!
+    """
+    Delete an existing subscriber
+    """
+    deleteSubscriber(
+        """
+        ID of the subscriber
+        """
+        id: ID!
+    ): SubscriberDeletePayload!
 }
 
 """
-Return response for createSubscribers mutation
+Return response for createSubscriber mutation
 """
-type SubscribersCreatePayload {
+type SubscriberCreatePayload {
     """
-    Created subscribers
+    Created subscriber
     """
-    subscribers: Subscribers!
+    subscriber: Subscriber!
 }
 
 """
-Return response for updateSubscribers mutation
+Return response for updateSubscriber mutation
 """
-type SubscribersUpdatePayload {
+type SubscriberUpdatePayload {
     """
-    Updated subscribers
+    Updated subscriber
     """
-    subscribers: Subscribers!
+    subscriber: Subscriber!
 }
 
 """
-Return response for deleteSubscribers mutation
+Return response for deleteSubscriber mutation
 """
-type SubscribersDeletePayload {
+type SubscriberDeletePayload {
     """
-    Deleted subscribers ID
+    Deleted subscriber ID
     """
     deletedID: ID!
 }`, BuiltIn: false},
@@ -11758,13 +11772,13 @@ func (ec *executionContext) field_Mutation_createPersonalAccessToken_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createSubscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createSubscriber_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 generated.CreateSubscribersInput
+	var arg0 generated.CreateSubscriberInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateSubscribersInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateSubscriberInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateSubscriberInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -11953,7 +11967,7 @@ func (ec *executionContext) field_Mutation_deletePersonalAccessToken_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteSubscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteSubscriber_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -12295,7 +12309,7 @@ func (ec *executionContext) field_Mutation_updatePersonalAccessToken_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateSubscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateSubscriber_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -12307,10 +12321,10 @@ func (ec *executionContext) field_Mutation_updateSubscribers_args(ctx context.Co
 		}
 	}
 	args["id"] = arg0
-	var arg1 generated.UpdateSubscribersInput
+	var arg1 generated.UpdateSubscriberInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateSubscribersInput(ctx, tmp)
+		arg1, err = ec.unmarshalNUpdateSubscriberInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateSubscriberInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -13306,7 +13320,22 @@ func (ec *executionContext) field_Query_personalAccessTokens_args(ctx context.Co
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_subscribersSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_subscriber_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_subscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entgql.Cursor[string]
@@ -13345,30 +13374,15 @@ func (ec *executionContext) field_Query_subscribersSlice_args(ctx context.Contex
 		}
 	}
 	args["last"] = arg3
-	var arg4 *generated.SubscribersWhereInput
+	var arg4 *generated.SubscriberWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx, tmp)
+		arg4, err = ec.unmarshalOSubscriberWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["where"] = arg4
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_subscribers_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -22328,8 +22342,8 @@ func (ec *executionContext) fieldContext_Mutation_deletePersonalAccessToken(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createSubscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createSubscribers(ctx, field)
+func (ec *executionContext) _Mutation_createSubscriber(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createSubscriber(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22342,7 +22356,7 @@ func (ec *executionContext) _Mutation_createSubscribers(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSubscribers(rctx, fc.Args["input"].(generated.CreateSubscribersInput))
+		return ec.resolvers.Mutation().CreateSubscriber(rctx, fc.Args["input"].(generated.CreateSubscriberInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22354,12 +22368,12 @@ func (ec *executionContext) _Mutation_createSubscribers(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*SubscribersCreatePayload)
+	res := resTmp.(*SubscriberCreatePayload)
 	fc.Result = res
-	return ec.marshalNSubscribersCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersCreatePayload(ctx, field.Selections, res)
+	return ec.marshalNSubscriberCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberCreatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createSubscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_createSubscriber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -22367,10 +22381,10 @@ func (ec *executionContext) fieldContext_Mutation_createSubscribers(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "subscribers":
-				return ec.fieldContext_SubscribersCreatePayload_subscribers(ctx, field)
+			case "subscriber":
+				return ec.fieldContext_SubscriberCreatePayload_subscriber(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SubscribersCreatePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SubscriberCreatePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -22380,15 +22394,15 @@ func (ec *executionContext) fieldContext_Mutation_createSubscribers(ctx context.
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createSubscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_createSubscriber_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateSubscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateSubscribers(ctx, field)
+func (ec *executionContext) _Mutation_updateSubscriber(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateSubscriber(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22401,7 +22415,7 @@ func (ec *executionContext) _Mutation_updateSubscribers(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSubscribers(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateSubscribersInput))
+		return ec.resolvers.Mutation().UpdateSubscriber(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateSubscriberInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22413,12 +22427,12 @@ func (ec *executionContext) _Mutation_updateSubscribers(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*SubscribersUpdatePayload)
+	res := resTmp.(*SubscriberUpdatePayload)
 	fc.Result = res
-	return ec.marshalNSubscribersUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersUpdatePayload(ctx, field.Selections, res)
+	return ec.marshalNSubscriberUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberUpdatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateSubscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateSubscriber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -22426,10 +22440,10 @@ func (ec *executionContext) fieldContext_Mutation_updateSubscribers(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "subscribers":
-				return ec.fieldContext_SubscribersUpdatePayload_subscribers(ctx, field)
+			case "subscriber":
+				return ec.fieldContext_SubscriberUpdatePayload_subscriber(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SubscribersUpdatePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SubscriberUpdatePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -22439,15 +22453,15 @@ func (ec *executionContext) fieldContext_Mutation_updateSubscribers(ctx context.
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateSubscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateSubscriber_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_deleteSubscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteSubscribers(ctx, field)
+func (ec *executionContext) _Mutation_deleteSubscriber(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteSubscriber(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22460,7 +22474,7 @@ func (ec *executionContext) _Mutation_deleteSubscribers(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteSubscribers(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().DeleteSubscriber(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22472,12 +22486,12 @@ func (ec *executionContext) _Mutation_deleteSubscribers(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*SubscribersDeletePayload)
+	res := resTmp.(*SubscriberDeletePayload)
 	fc.Result = res
-	return ec.marshalNSubscribersDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersDeletePayload(ctx, field.Selections, res)
+	return ec.marshalNSubscriberDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberDeletePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_deleteSubscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteSubscriber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -22486,9 +22500,9 @@ func (ec *executionContext) fieldContext_Mutation_deleteSubscribers(ctx context.
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "deletedID":
-				return ec.fieldContext_SubscribersDeletePayload_deletedID(ctx, field)
+				return ec.fieldContext_SubscriberDeletePayload_deletedID(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SubscribersDeletePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SubscriberDeletePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -22498,7 +22512,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteSubscribers(ctx context.
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteSubscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteSubscriber_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -27502,9 +27516,9 @@ func (ec *executionContext) _Organization_subscribers(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.Subscribers)
+	res := resTmp.([]*generated.Subscriber)
 	fc.Result = res
-	return ec.marshalOSubscribers2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersᚄ(ctx, field.Selections, res)
+	return ec.marshalOSubscriber2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Organization_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -27516,33 +27530,35 @@ func (ec *executionContext) fieldContext_Organization_subscribers(ctx context.Co
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Subscribers_id(ctx, field)
+				return ec.fieldContext_Subscriber_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+				return ec.fieldContext_Subscriber_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+				return ec.fieldContext_Subscriber_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+				return ec.fieldContext_Subscriber_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+				return ec.fieldContext_Subscriber_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+				return ec.fieldContext_Subscriber_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+				return ec.fieldContext_Subscriber_deletedBy(ctx, field)
 			case "ownerID":
-				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+				return ec.fieldContext_Subscriber_ownerID(ctx, field)
 			case "email":
-				return ec.fieldContext_Subscribers_email(ctx, field)
+				return ec.fieldContext_Subscriber_email(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Subscriber_phoneNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_Subscriber_verifiedEmail(ctx, field)
+			case "verifiedPhone":
+				return ec.fieldContext_Subscriber_verifiedPhone(ctx, field)
 			case "active":
-				return ec.fieldContext_Subscribers_active(ctx, field)
-			case "ipAddress":
-				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
-			case "token":
-				return ec.fieldContext_Subscribers_token(ctx, field)
+				return ec.fieldContext_Subscriber_active(ctx, field)
 			case "owner":
-				return ec.fieldContext_Subscribers_owner(ctx, field)
+				return ec.fieldContext_Subscriber_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Subscriber", field.Name)
 		},
 	}
 	return fc, nil
@@ -31521,8 +31537,8 @@ func (ec *executionContext) fieldContext_Query_personalAccessTokens(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_subscribersSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_subscribersSlice(ctx, field)
+func (ec *executionContext) _Query_subscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_subscribers(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -31535,7 +31551,7 @@ func (ec *executionContext) _Query_subscribersSlice(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SubscribersSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.SubscribersWhereInput))
+		return ec.resolvers.Query().Subscribers(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.SubscriberWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -31547,12 +31563,12 @@ func (ec *executionContext) _Query_subscribersSlice(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.SubscribersConnection)
+	res := resTmp.(*generated.SubscriberConnection)
 	fc.Result = res
-	return ec.marshalNSubscribersConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersConnection(ctx, field.Selections, res)
+	return ec.marshalNSubscriberConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_subscribersSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -31561,13 +31577,13 @@ func (ec *executionContext) fieldContext_Query_subscribersSlice(ctx context.Cont
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "edges":
-				return ec.fieldContext_SubscribersConnection_edges(ctx, field)
+				return ec.fieldContext_SubscriberConnection_edges(ctx, field)
 			case "pageInfo":
-				return ec.fieldContext_SubscribersConnection_pageInfo(ctx, field)
+				return ec.fieldContext_SubscriberConnection_pageInfo(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_SubscribersConnection_totalCount(ctx, field)
+				return ec.fieldContext_SubscriberConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SubscribersConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SubscriberConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -31577,7 +31593,7 @@ func (ec *executionContext) fieldContext_Query_subscribersSlice(ctx context.Cont
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_subscribersSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_subscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -32819,8 +32835,8 @@ func (ec *executionContext) fieldContext_Query_personalAccessToken(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_subscribers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_subscribers(ctx, field)
+func (ec *executionContext) _Query_subscriber(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_subscriber(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -32833,7 +32849,7 @@ func (ec *executionContext) _Query_subscribers(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Subscribers(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().Subscriber(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32845,12 +32861,12 @@ func (ec *executionContext) _Query_subscribers(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.Subscribers)
+	res := resTmp.(*generated.Subscriber)
 	fc.Result = res
-	return ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+	return ec.marshalNSubscriber2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_subscriber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -32859,33 +32875,35 @@ func (ec *executionContext) fieldContext_Query_subscribers(ctx context.Context, 
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Subscribers_id(ctx, field)
+				return ec.fieldContext_Subscriber_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+				return ec.fieldContext_Subscriber_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+				return ec.fieldContext_Subscriber_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+				return ec.fieldContext_Subscriber_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+				return ec.fieldContext_Subscriber_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+				return ec.fieldContext_Subscriber_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+				return ec.fieldContext_Subscriber_deletedBy(ctx, field)
 			case "ownerID":
-				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+				return ec.fieldContext_Subscriber_ownerID(ctx, field)
 			case "email":
-				return ec.fieldContext_Subscribers_email(ctx, field)
+				return ec.fieldContext_Subscriber_email(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Subscriber_phoneNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_Subscriber_verifiedEmail(ctx, field)
+			case "verifiedPhone":
+				return ec.fieldContext_Subscriber_verifiedPhone(ctx, field)
 			case "active":
-				return ec.fieldContext_Subscribers_active(ctx, field)
-			case "ipAddress":
-				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
-			case "token":
-				return ec.fieldContext_Subscribers_token(ctx, field)
+				return ec.fieldContext_Subscriber_active(ctx, field)
 			case "owner":
-				return ec.fieldContext_Subscribers_owner(ctx, field)
+				return ec.fieldContext_Subscriber_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Subscriber", field.Name)
 		},
 	}
 	defer func() {
@@ -32895,7 +32913,7 @@ func (ec *executionContext) fieldContext_Query_subscribers(ctx context.Context, 
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_subscribers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_subscriber_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -33310,8 +33328,8 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_id(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_id(ctx, field)
+func (ec *executionContext) _Subscriber_id(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33341,9 +33359,9 @@ func (ec *executionContext) _Subscribers_id(ctx context.Context, field graphql.C
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33354,8 +33372,8 @@ func (ec *executionContext) fieldContext_Subscribers_id(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_createdAt(ctx, field)
+func (ec *executionContext) _Subscriber_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33382,9 +33400,9 @@ func (ec *executionContext) _Subscribers_createdAt(ctx context.Context, field gr
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33395,8 +33413,8 @@ func (ec *executionContext) fieldContext_Subscribers_createdAt(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_updatedAt(ctx, field)
+func (ec *executionContext) _Subscriber_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33423,9 +33441,9 @@ func (ec *executionContext) _Subscribers_updatedAt(ctx context.Context, field gr
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33436,8 +33454,8 @@ func (ec *executionContext) fieldContext_Subscribers_updatedAt(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_createdBy(ctx, field)
+func (ec *executionContext) _Subscriber_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_createdBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33464,9 +33482,9 @@ func (ec *executionContext) _Subscribers_createdBy(ctx context.Context, field gr
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33477,8 +33495,8 @@ func (ec *executionContext) fieldContext_Subscribers_createdBy(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_updatedBy(ctx, field)
+func (ec *executionContext) _Subscriber_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_updatedBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33505,9 +33523,9 @@ func (ec *executionContext) _Subscribers_updatedBy(ctx context.Context, field gr
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33518,8 +33536,8 @@ func (ec *executionContext) fieldContext_Subscribers_updatedBy(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_deletedAt(ctx, field)
+func (ec *executionContext) _Subscriber_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_deletedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33546,9 +33564,9 @@ func (ec *executionContext) _Subscribers_deletedAt(ctx context.Context, field gr
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33559,8 +33577,8 @@ func (ec *executionContext) fieldContext_Subscribers_deletedAt(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_deletedBy(ctx, field)
+func (ec *executionContext) _Subscriber_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_deletedBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33587,9 +33605,9 @@ func (ec *executionContext) _Subscribers_deletedBy(ctx context.Context, field gr
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33600,8 +33618,8 @@ func (ec *executionContext) fieldContext_Subscribers_deletedBy(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_ownerID(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_ownerID(ctx, field)
+func (ec *executionContext) _Subscriber_ownerID(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_ownerID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33628,9 +33646,9 @@ func (ec *executionContext) _Subscribers_ownerID(ctx context.Context, field grap
 	return ec.marshalOID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_ownerID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_ownerID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33641,8 +33659,8 @@ func (ec *executionContext) fieldContext_Subscribers_ownerID(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_email(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_email(ctx, field)
+func (ec *executionContext) _Subscriber_email(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_email(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33672,9 +33690,9 @@ func (ec *executionContext) _Subscribers_email(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33685,8 +33703,137 @@ func (ec *executionContext) fieldContext_Subscribers_email(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_active(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_active(ctx, field)
+func (ec *executionContext) _Subscriber_phoneNumber(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_phoneNumber(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhoneNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscriber_phoneNumber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscriber",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscriber_verifiedEmail(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_verifiedEmail(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VerifiedEmail, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscriber_verifiedEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscriber",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscriber_verifiedPhone(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_verifiedPhone(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VerifiedPhone, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Subscriber_verifiedPhone(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Subscriber",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Subscriber_active(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_active(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33716,9 +33863,9 @@ func (ec *executionContext) _Subscribers_active(ctx context.Context, field graph
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_active(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -33729,93 +33876,8 @@ func (ec *executionContext) fieldContext_Subscribers_active(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscribers_ipAddress(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_ipAddress(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IPAddress, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Subscribers_ipAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscribers_token(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_token(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Token, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Subscribers_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscribers_owner(ctx context.Context, field graphql.CollectedField, obj *generated.Subscribers) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscribers_owner(ctx, field)
+func (ec *executionContext) _Subscriber_owner(ctx context.Context, field graphql.CollectedField, obj *generated.Subscriber) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Subscriber_owner(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33842,9 +33904,9 @@ func (ec *executionContext) _Subscribers_owner(ctx context.Context, field graphq
 	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Subscribers_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Subscriber_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Subscribers",
+		Object:     "Subscriber",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: false,
@@ -33905,8 +33967,8 @@ func (ec *executionContext) fieldContext_Subscribers_owner(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersConnection_edges(ctx, field)
+func (ec *executionContext) _SubscriberConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.SubscriberConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberConnection_edges(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33928,32 +33990,32 @@ func (ec *executionContext) _SubscribersConnection_edges(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.SubscribersEdge)
+	res := resTmp.([]*generated.SubscriberEdge)
 	fc.Result = res
-	return ec.marshalOSubscribersEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx, field.Selections, res)
+	return ec.marshalOSubscriberEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberEdge(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersConnection",
+		Object:     "SubscriberConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "node":
-				return ec.fieldContext_SubscribersEdge_node(ctx, field)
+				return ec.fieldContext_SubscriberEdge_node(ctx, field)
 			case "cursor":
-				return ec.fieldContext_SubscribersEdge_cursor(ctx, field)
+				return ec.fieldContext_SubscriberEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SubscribersEdge", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type SubscriberEdge", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersConnection_pageInfo(ctx, field)
+func (ec *executionContext) _SubscriberConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.SubscriberConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberConnection_pageInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33983,9 +34045,9 @@ func (ec *executionContext) _SubscribersConnection_pageInfo(ctx context.Context,
 	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersConnection",
+		Object:     "SubscriberConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -34006,8 +34068,8 @@ func (ec *executionContext) fieldContext_SubscribersConnection_pageInfo(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersConnection_totalCount(ctx, field)
+func (ec *executionContext) _SubscriberConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.SubscriberConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberConnection_totalCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34037,9 +34099,9 @@ func (ec *executionContext) _SubscribersConnection_totalCount(ctx context.Contex
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersConnection",
+		Object:     "SubscriberConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -34050,8 +34112,8 @@ func (ec *executionContext) fieldContext_SubscribersConnection_totalCount(ctx co
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersCreatePayload_subscribers(ctx context.Context, field graphql.CollectedField, obj *SubscribersCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersCreatePayload_subscribers(ctx, field)
+func (ec *executionContext) _SubscriberCreatePayload_subscriber(ctx context.Context, field graphql.CollectedField, obj *SubscriberCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberCreatePayload_subscriber(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34064,7 +34126,7 @@ func (ec *executionContext) _SubscribersCreatePayload_subscribers(ctx context.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Subscribers, nil
+		return obj.Subscriber, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34076,54 +34138,56 @@ func (ec *executionContext) _SubscribersCreatePayload_subscribers(ctx context.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.Subscribers)
+	res := resTmp.(*generated.Subscriber)
 	fc.Result = res
-	return ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+	return ec.marshalNSubscriber2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersCreatePayload_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberCreatePayload_subscriber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersCreatePayload",
+		Object:     "SubscriberCreatePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Subscribers_id(ctx, field)
+				return ec.fieldContext_Subscriber_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+				return ec.fieldContext_Subscriber_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+				return ec.fieldContext_Subscriber_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+				return ec.fieldContext_Subscriber_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+				return ec.fieldContext_Subscriber_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+				return ec.fieldContext_Subscriber_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+				return ec.fieldContext_Subscriber_deletedBy(ctx, field)
 			case "ownerID":
-				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+				return ec.fieldContext_Subscriber_ownerID(ctx, field)
 			case "email":
-				return ec.fieldContext_Subscribers_email(ctx, field)
+				return ec.fieldContext_Subscriber_email(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Subscriber_phoneNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_Subscriber_verifiedEmail(ctx, field)
+			case "verifiedPhone":
+				return ec.fieldContext_Subscriber_verifiedPhone(ctx, field)
 			case "active":
-				return ec.fieldContext_Subscribers_active(ctx, field)
-			case "ipAddress":
-				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
-			case "token":
-				return ec.fieldContext_Subscribers_token(ctx, field)
+				return ec.fieldContext_Subscriber_active(ctx, field)
 			case "owner":
-				return ec.fieldContext_Subscribers_owner(ctx, field)
+				return ec.fieldContext_Subscriber_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Subscriber", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *SubscribersDeletePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersDeletePayload_deletedID(ctx, field)
+func (ec *executionContext) _SubscriberDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *SubscriberDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberDeletePayload_deletedID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34153,9 +34217,9 @@ func (ec *executionContext) _SubscribersDeletePayload_deletedID(ctx context.Cont
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersDeletePayload",
+		Object:     "SubscriberDeletePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -34166,8 +34230,8 @@ func (ec *executionContext) fieldContext_SubscribersDeletePayload_deletedID(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersEdge_node(ctx, field)
+func (ec *executionContext) _SubscriberEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.SubscriberEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberEdge_node(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34189,54 +34253,56 @@ func (ec *executionContext) _SubscribersEdge_node(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.Subscribers)
+	res := resTmp.(*generated.Subscriber)
 	fc.Result = res
-	return ec.marshalOSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+	return ec.marshalOSubscriber2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersEdge",
+		Object:     "SubscriberEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Subscribers_id(ctx, field)
+				return ec.fieldContext_Subscriber_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+				return ec.fieldContext_Subscriber_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+				return ec.fieldContext_Subscriber_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+				return ec.fieldContext_Subscriber_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+				return ec.fieldContext_Subscriber_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+				return ec.fieldContext_Subscriber_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+				return ec.fieldContext_Subscriber_deletedBy(ctx, field)
 			case "ownerID":
-				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+				return ec.fieldContext_Subscriber_ownerID(ctx, field)
 			case "email":
-				return ec.fieldContext_Subscribers_email(ctx, field)
+				return ec.fieldContext_Subscriber_email(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Subscriber_phoneNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_Subscriber_verifiedEmail(ctx, field)
+			case "verifiedPhone":
+				return ec.fieldContext_Subscriber_verifiedPhone(ctx, field)
 			case "active":
-				return ec.fieldContext_Subscribers_active(ctx, field)
-			case "ipAddress":
-				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
-			case "token":
-				return ec.fieldContext_Subscribers_token(ctx, field)
+				return ec.fieldContext_Subscriber_active(ctx, field)
 			case "owner":
-				return ec.fieldContext_Subscribers_owner(ctx, field)
+				return ec.fieldContext_Subscriber_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Subscriber", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.SubscribersEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersEdge_cursor(ctx, field)
+func (ec *executionContext) _SubscriberEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.SubscriberEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberEdge_cursor(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34266,9 +34332,9 @@ func (ec *executionContext) _SubscribersEdge_cursor(ctx context.Context, field g
 	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersEdge",
+		Object:     "SubscriberEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -34279,8 +34345,8 @@ func (ec *executionContext) fieldContext_SubscribersEdge_cursor(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscribersUpdatePayload_subscribers(ctx context.Context, field graphql.CollectedField, obj *SubscribersUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscribersUpdatePayload_subscribers(ctx, field)
+func (ec *executionContext) _SubscriberUpdatePayload_subscriber(ctx context.Context, field graphql.CollectedField, obj *SubscriberUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberUpdatePayload_subscriber(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34293,7 +34359,7 @@ func (ec *executionContext) _SubscribersUpdatePayload_subscribers(ctx context.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Subscribers, nil
+		return obj.Subscriber, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34305,47 +34371,49 @@ func (ec *executionContext) _SubscribersUpdatePayload_subscribers(ctx context.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.Subscribers)
+	res := resTmp.(*generated.Subscriber)
 	fc.Result = res
-	return ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, field.Selections, res)
+	return ec.marshalNSubscriber2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscribersUpdatePayload_subscribers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberUpdatePayload_subscriber(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "SubscribersUpdatePayload",
+		Object:     "SubscriberUpdatePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Subscribers_id(ctx, field)
+				return ec.fieldContext_Subscriber_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_Subscribers_createdAt(ctx, field)
+				return ec.fieldContext_Subscriber_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_Subscribers_updatedAt(ctx, field)
+				return ec.fieldContext_Subscriber_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_Subscribers_createdBy(ctx, field)
+				return ec.fieldContext_Subscriber_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_Subscribers_updatedBy(ctx, field)
+				return ec.fieldContext_Subscriber_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_Subscribers_deletedAt(ctx, field)
+				return ec.fieldContext_Subscriber_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_Subscribers_deletedBy(ctx, field)
+				return ec.fieldContext_Subscriber_deletedBy(ctx, field)
 			case "ownerID":
-				return ec.fieldContext_Subscribers_ownerID(ctx, field)
+				return ec.fieldContext_Subscriber_ownerID(ctx, field)
 			case "email":
-				return ec.fieldContext_Subscribers_email(ctx, field)
+				return ec.fieldContext_Subscriber_email(ctx, field)
+			case "phoneNumber":
+				return ec.fieldContext_Subscriber_phoneNumber(ctx, field)
+			case "verifiedEmail":
+				return ec.fieldContext_Subscriber_verifiedEmail(ctx, field)
+			case "verifiedPhone":
+				return ec.fieldContext_Subscriber_verifiedPhone(ctx, field)
 			case "active":
-				return ec.fieldContext_Subscribers_active(ctx, field)
-			case "ipAddress":
-				return ec.fieldContext_Subscribers_ipAddress(ctx, field)
-			case "token":
-				return ec.fieldContext_Subscribers_token(ctx, field)
+				return ec.fieldContext_Subscriber_active(ctx, field)
 			case "owner":
-				return ec.fieldContext_Subscribers_owner(ctx, field)
+				return ec.fieldContext_Subscriber_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Subscribers", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Subscriber", field.Name)
 		},
 	}
 	return fc, nil
@@ -41294,14 +41362,14 @@ func (ec *executionContext) unmarshalInputCreatePersonalAccessTokenInput(ctx con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateSubscribersInput(ctx context.Context, obj interface{}) (generated.CreateSubscribersInput, error) {
-	var it generated.CreateSubscribersInput
+func (ec *executionContext) unmarshalInputCreateSubscriberInput(ctx context.Context, obj interface{}) (generated.CreateSubscriberInput, error) {
+	var it generated.CreateSubscriberInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "active", "ipAddress", "token", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "phoneNumber", "verifiedEmail", "verifiedPhone", "active", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41343,6 +41411,27 @@ func (ec *executionContext) unmarshalInputCreateSubscribersInput(ctx context.Con
 				return it, err
 			}
 			it.Email = data
+		case "phoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
+		case "verifiedEmail":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedEmail"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedEmail = data
+		case "verifiedPhone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedPhone"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedPhone = data
 		case "active":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -41350,20 +41439,6 @@ func (ec *executionContext) unmarshalInputCreateSubscribersInput(ctx context.Con
 				return it, err
 			}
 			it.Active = data
-		case "ipAddress":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddress"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddress = data
-		case "token":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Token = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -52724,7 +52799,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 			it.HasSubscribers = data
 		case "hasSubscribersWith":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSubscribersWith"))
-			data, err := ec.unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOSubscriberWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53630,14 +53705,14 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputSubscribersWhereInput(ctx context.Context, obj interface{}) (generated.SubscribersWhereInput, error) {
-	var it generated.SubscribersWhereInput
+func (ec *executionContext) unmarshalInputSubscriberWhereInput(ctx context.Context, obj interface{}) (generated.SubscriberWhereInput, error) {
+	var it generated.SubscriberWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDIsNil", "ownerIDNotNil", "ownerIDEqualFold", "ownerIDContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "active", "activeNEQ", "ipAddress", "ipAddressNEQ", "ipAddressIn", "ipAddressNotIn", "ipAddressGT", "ipAddressGTE", "ipAddressLT", "ipAddressLTE", "ipAddressContains", "ipAddressHasPrefix", "ipAddressHasSuffix", "ipAddressIsNil", "ipAddressNotNil", "ipAddressEqualFold", "ipAddressContainsFold", "token", "tokenNEQ", "tokenIn", "tokenNotIn", "tokenGT", "tokenGTE", "tokenLT", "tokenLTE", "tokenContains", "tokenHasPrefix", "tokenHasSuffix", "tokenEqualFold", "tokenContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDIsNil", "ownerIDNotNil", "ownerIDEqualFold", "ownerIDContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "verifiedEmail", "verifiedEmailNEQ", "verifiedPhone", "verifiedPhoneNEQ", "active", "activeNEQ", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -53646,21 +53721,21 @@ func (ec *executionContext) unmarshalInputSubscribersWhereInput(ctx context.Cont
 		switch k {
 		case "not":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			data, err := ec.unmarshalOSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx, v)
+			data, err := ec.unmarshalOSubscriberWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Not = data
 		case "and":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			data, err := ec.unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOSubscriberWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.And = data
 		case "or":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			data, err := ec.unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOSubscriberWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -54456,6 +54531,139 @@ func (ec *executionContext) unmarshalInputSubscribersWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.EmailContainsFold = data
+		case "phoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
+		case "phoneNumberNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberNEQ = data
+		case "phoneNumberIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberIn = data
+		case "phoneNumberNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberNotIn = data
+		case "phoneNumberGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberGT = data
+		case "phoneNumberGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberGTE = data
+		case "phoneNumberLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberLT = data
+		case "phoneNumberLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberLTE = data
+		case "phoneNumberContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberContains = data
+		case "phoneNumberHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberHasPrefix = data
+		case "phoneNumberHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberHasSuffix = data
+		case "phoneNumberIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberIsNil = data
+		case "phoneNumberNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberNotNil = data
+		case "phoneNumberEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberEqualFold = data
+		case "phoneNumberContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumberContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumberContainsFold = data
+		case "verifiedEmail":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedEmail"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedEmail = data
+		case "verifiedEmailNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedEmailNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedEmailNEQ = data
+		case "verifiedPhone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedPhone"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedPhone = data
+		case "verifiedPhoneNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedPhoneNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedPhoneNEQ = data
 		case "active":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -54470,202 +54678,6 @@ func (ec *executionContext) unmarshalInputSubscribersWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.ActiveNEQ = data
-		case "ipAddress":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddress"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddress = data
-		case "ipAddressNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressNEQ = data
-		case "ipAddressIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressIn = data
-		case "ipAddressNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressNotIn = data
-		case "ipAddressGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressGT = data
-		case "ipAddressGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressGTE = data
-		case "ipAddressLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressLT = data
-		case "ipAddressLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressLTE = data
-		case "ipAddressContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressContains = data
-		case "ipAddressHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressHasPrefix = data
-		case "ipAddressHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressHasSuffix = data
-		case "ipAddressIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressIsNil = data
-		case "ipAddressNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressNotNil = data
-		case "ipAddressEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressEqualFold = data
-		case "ipAddressContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddressContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddressContainsFold = data
-		case "token":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Token = data
-		case "tokenNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenNEQ = data
-		case "tokenIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenIn = data
-		case "tokenNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenNotIn = data
-		case "tokenGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenGT = data
-		case "tokenGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenGTE = data
-		case "tokenLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenLT = data
-		case "tokenLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenLTE = data
-		case "tokenContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenContains = data
-		case "tokenHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenHasPrefix = data
-		case "tokenHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenHasSuffix = data
-		case "tokenEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenEqualFold = data
-		case "tokenContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tokenContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TokenContainsFold = data
 		case "hasOwner":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwner"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -57035,14 +57047,14 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateSubscribersInput(ctx context.Context, obj interface{}) (generated.UpdateSubscribersInput, error) {
-	var it generated.UpdateSubscribersInput
+func (ec *executionContext) unmarshalInputUpdateSubscriberInput(ctx context.Context, obj interface{}) (generated.UpdateSubscriberInput, error) {
+	var it generated.UpdateSubscriberInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "active", "ipAddress", "clearIPAddress", "token", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "phoneNumber", "clearPhoneNumber", "verifiedEmail", "verifiedPhone", "active", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -57084,6 +57096,34 @@ func (ec *executionContext) unmarshalInputUpdateSubscribersInput(ctx context.Con
 				return it, err
 			}
 			it.Email = data
+		case "phoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("phoneNumber"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PhoneNumber = data
+		case "clearPhoneNumber":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPhoneNumber"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearPhoneNumber = data
+		case "verifiedEmail":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedEmail"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedEmail = data
+		case "verifiedPhone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedPhone"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VerifiedPhone = data
 		case "active":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -57091,27 +57131,6 @@ func (ec *executionContext) unmarshalInputUpdateSubscribersInput(ctx context.Con
 				return it, err
 			}
 			it.Active = data
-		case "ipAddress":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ipAddress"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IPAddress = data
-		case "clearIPAddress":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIPAddress"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearIPAddress = data
-		case "token":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Token = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -60406,11 +60425,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._PersonalAccessToken(ctx, sel, obj)
-	case *generated.Subscribers:
+	case *generated.Subscriber:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._Subscribers(ctx, sel, obj)
+		return ec._Subscriber(ctx, sel, obj)
 	case *generated.TFASettings:
 		if obj == nil {
 			return graphql.Null
@@ -62729,23 +62748,23 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createSubscribers":
+		case "createSubscriber":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createSubscribers(ctx, field)
+				return ec._Mutation_createSubscriber(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updateSubscribers":
+		case "updateSubscriber":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateSubscribers(ctx, field)
+				return ec._Mutation_updateSubscriber(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deleteSubscribers":
+		case "deleteSubscriber":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteSubscribers(ctx, field)
+				return ec._Mutation_deleteSubscriber(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -65513,7 +65532,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "subscribersSlice":
+		case "subscribers":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -65522,7 +65541,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_subscribersSlice(ctx, field)
+				res = ec._Query_subscribers(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -65865,7 +65884,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "subscribers":
+		case "subscriber":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -65874,7 +65893,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_subscribers(ctx, field)
+				res = ec._Query_subscriber(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -65984,50 +66003,55 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var subscribersImplementors = []string{"Subscribers", "Node"}
+var subscriberImplementors = []string{"Subscriber", "Node"}
 
-func (ec *executionContext) _Subscribers(ctx context.Context, sel ast.SelectionSet, obj *generated.Subscribers) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersImplementors)
+func (ec *executionContext) _Subscriber(ctx context.Context, sel ast.SelectionSet, obj *generated.Subscriber) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscriberImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Subscribers")
+			out.Values[i] = graphql.MarshalString("Subscriber")
 		case "id":
-			out.Values[i] = ec._Subscribers_id(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
-			out.Values[i] = ec._Subscribers_createdAt(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_createdAt(ctx, field, obj)
 		case "updatedAt":
-			out.Values[i] = ec._Subscribers_updatedAt(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_updatedAt(ctx, field, obj)
 		case "createdBy":
-			out.Values[i] = ec._Subscribers_createdBy(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_createdBy(ctx, field, obj)
 		case "updatedBy":
-			out.Values[i] = ec._Subscribers_updatedBy(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_updatedBy(ctx, field, obj)
 		case "deletedAt":
-			out.Values[i] = ec._Subscribers_deletedAt(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_deletedAt(ctx, field, obj)
 		case "deletedBy":
-			out.Values[i] = ec._Subscribers_deletedBy(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_deletedBy(ctx, field, obj)
 		case "ownerID":
-			out.Values[i] = ec._Subscribers_ownerID(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_ownerID(ctx, field, obj)
 		case "email":
-			out.Values[i] = ec._Subscribers_email(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "phoneNumber":
+			out.Values[i] = ec._Subscriber_phoneNumber(ctx, field, obj)
+		case "verifiedEmail":
+			out.Values[i] = ec._Subscriber_verifiedEmail(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "verifiedPhone":
+			out.Values[i] = ec._Subscriber_verifiedPhone(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "active":
-			out.Values[i] = ec._Subscribers_active(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "ipAddress":
-			out.Values[i] = ec._Subscribers_ipAddress(ctx, field, obj)
-		case "token":
-			out.Values[i] = ec._Subscribers_token(ctx, field, obj)
+			out.Values[i] = ec._Subscriber_active(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -66040,7 +66064,7 @@ func (ec *executionContext) _Subscribers(ctx context.Context, sel ast.SelectionS
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Subscribers_owner(ctx, field, obj)
+				res = ec._Subscriber_owner(ctx, field, obj)
 				return res
 			}
 
@@ -66087,26 +66111,26 @@ func (ec *executionContext) _Subscribers(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
-var subscribersConnectionImplementors = []string{"SubscribersConnection"}
+var subscriberConnectionImplementors = []string{"SubscriberConnection"}
 
-func (ec *executionContext) _SubscribersConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.SubscribersConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersConnectionImplementors)
+func (ec *executionContext) _SubscriberConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.SubscriberConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscriberConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SubscribersConnection")
+			out.Values[i] = graphql.MarshalString("SubscriberConnection")
 		case "edges":
-			out.Values[i] = ec._SubscribersConnection_edges(ctx, field, obj)
+			out.Values[i] = ec._SubscriberConnection_edges(ctx, field, obj)
 		case "pageInfo":
-			out.Values[i] = ec._SubscribersConnection_pageInfo(ctx, field, obj)
+			out.Values[i] = ec._SubscriberConnection_pageInfo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "totalCount":
-			out.Values[i] = ec._SubscribersConnection_totalCount(ctx, field, obj)
+			out.Values[i] = ec._SubscriberConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -66133,19 +66157,19 @@ func (ec *executionContext) _SubscribersConnection(ctx context.Context, sel ast.
 	return out
 }
 
-var subscribersCreatePayloadImplementors = []string{"SubscribersCreatePayload"}
+var subscriberCreatePayloadImplementors = []string{"SubscriberCreatePayload"}
 
-func (ec *executionContext) _SubscribersCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscribersCreatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersCreatePayloadImplementors)
+func (ec *executionContext) _SubscriberCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscriberCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscriberCreatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SubscribersCreatePayload")
-		case "subscribers":
-			out.Values[i] = ec._SubscribersCreatePayload_subscribers(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("SubscriberCreatePayload")
+		case "subscriber":
+			out.Values[i] = ec._SubscriberCreatePayload_subscriber(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -66172,19 +66196,19 @@ func (ec *executionContext) _SubscribersCreatePayload(ctx context.Context, sel a
 	return out
 }
 
-var subscribersDeletePayloadImplementors = []string{"SubscribersDeletePayload"}
+var subscriberDeletePayloadImplementors = []string{"SubscriberDeletePayload"}
 
-func (ec *executionContext) _SubscribersDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscribersDeletePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersDeletePayloadImplementors)
+func (ec *executionContext) _SubscriberDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscriberDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscriberDeletePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SubscribersDeletePayload")
+			out.Values[i] = graphql.MarshalString("SubscriberDeletePayload")
 		case "deletedID":
-			out.Values[i] = ec._SubscribersDeletePayload_deletedID(ctx, field, obj)
+			out.Values[i] = ec._SubscriberDeletePayload_deletedID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -66211,21 +66235,21 @@ func (ec *executionContext) _SubscribersDeletePayload(ctx context.Context, sel a
 	return out
 }
 
-var subscribersEdgeImplementors = []string{"SubscribersEdge"}
+var subscriberEdgeImplementors = []string{"SubscriberEdge"}
 
-func (ec *executionContext) _SubscribersEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.SubscribersEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersEdgeImplementors)
+func (ec *executionContext) _SubscriberEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.SubscriberEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscriberEdgeImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SubscribersEdge")
+			out.Values[i] = graphql.MarshalString("SubscriberEdge")
 		case "node":
-			out.Values[i] = ec._SubscribersEdge_node(ctx, field, obj)
+			out.Values[i] = ec._SubscriberEdge_node(ctx, field, obj)
 		case "cursor":
-			out.Values[i] = ec._SubscribersEdge_cursor(ctx, field, obj)
+			out.Values[i] = ec._SubscriberEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -66252,19 +66276,19 @@ func (ec *executionContext) _SubscribersEdge(ctx context.Context, sel ast.Select
 	return out
 }
 
-var subscribersUpdatePayloadImplementors = []string{"SubscribersUpdatePayload"}
+var subscriberUpdatePayloadImplementors = []string{"SubscriberUpdatePayload"}
 
-func (ec *executionContext) _SubscribersUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscribersUpdatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, subscribersUpdatePayloadImplementors)
+func (ec *executionContext) _SubscriberUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *SubscriberUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, subscriberUpdatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SubscribersUpdatePayload")
-		case "subscribers":
-			out.Values[i] = ec._SubscribersUpdatePayload_subscribers(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("SubscriberUpdatePayload")
+		case "subscriber":
+			out.Values[i] = ec._SubscriberUpdatePayload_subscriber(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -67769,8 +67793,8 @@ func (ec *executionContext) unmarshalNCreatePersonalAccessTokenInput2githubᚗco
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateSubscribersInput(ctx context.Context, v interface{}) (generated.CreateSubscribersInput, error) {
-	res, err := ec.unmarshalInputCreateSubscribersInput(ctx, v)
+func (ec *executionContext) unmarshalNCreateSubscriberInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateSubscriberInput(ctx context.Context, v interface{}) (generated.CreateSubscriberInput, error) {
+	res, err := ec.unmarshalInputCreateSubscriberInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -68917,78 +68941,78 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNSubscribers2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx context.Context, sel ast.SelectionSet, v generated.Subscribers) graphql.Marshaler {
-	return ec._Subscribers(ctx, sel, &v)
+func (ec *executionContext) marshalNSubscriber2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx context.Context, sel ast.SelectionSet, v generated.Subscriber) graphql.Marshaler {
+	return ec._Subscriber(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx context.Context, sel ast.SelectionSet, v *generated.Subscribers) graphql.Marshaler {
+func (ec *executionContext) marshalNSubscriber2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx context.Context, sel ast.SelectionSet, v *generated.Subscriber) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._Subscribers(ctx, sel, v)
+	return ec._Subscriber(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSubscribersConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersConnection(ctx context.Context, sel ast.SelectionSet, v generated.SubscribersConnection) graphql.Marshaler {
-	return ec._SubscribersConnection(ctx, sel, &v)
+func (ec *executionContext) marshalNSubscriberConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberConnection(ctx context.Context, sel ast.SelectionSet, v generated.SubscriberConnection) graphql.Marshaler {
+	return ec._SubscriberConnection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSubscribersConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersConnection(ctx context.Context, sel ast.SelectionSet, v *generated.SubscribersConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNSubscriberConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberConnection(ctx context.Context, sel ast.SelectionSet, v *generated.SubscriberConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._SubscribersConnection(ctx, sel, v)
+	return ec._SubscriberConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSubscribersCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersCreatePayload(ctx context.Context, sel ast.SelectionSet, v SubscribersCreatePayload) graphql.Marshaler {
-	return ec._SubscribersCreatePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNSubscriberCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberCreatePayload(ctx context.Context, sel ast.SelectionSet, v SubscriberCreatePayload) graphql.Marshaler {
+	return ec._SubscriberCreatePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSubscribersCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersCreatePayload(ctx context.Context, sel ast.SelectionSet, v *SubscribersCreatePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNSubscriberCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberCreatePayload(ctx context.Context, sel ast.SelectionSet, v *SubscriberCreatePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._SubscribersCreatePayload(ctx, sel, v)
+	return ec._SubscriberCreatePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSubscribersDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersDeletePayload(ctx context.Context, sel ast.SelectionSet, v SubscribersDeletePayload) graphql.Marshaler {
-	return ec._SubscribersDeletePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNSubscriberDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberDeletePayload(ctx context.Context, sel ast.SelectionSet, v SubscriberDeletePayload) graphql.Marshaler {
+	return ec._SubscriberDeletePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSubscribersDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersDeletePayload(ctx context.Context, sel ast.SelectionSet, v *SubscribersDeletePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNSubscriberDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberDeletePayload(ctx context.Context, sel ast.SelectionSet, v *SubscriberDeletePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._SubscribersDeletePayload(ctx, sel, v)
+	return ec._SubscriberDeletePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSubscribersUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersUpdatePayload(ctx context.Context, sel ast.SelectionSet, v SubscribersUpdatePayload) graphql.Marshaler {
-	return ec._SubscribersUpdatePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNSubscriberUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberUpdatePayload(ctx context.Context, sel ast.SelectionSet, v SubscriberUpdatePayload) graphql.Marshaler {
+	return ec._SubscriberUpdatePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSubscribersUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscribersUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *SubscribersUpdatePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNSubscriberUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐSubscriberUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *SubscriberUpdatePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._SubscribersUpdatePayload(ctx, sel, v)
+	return ec._SubscriberUpdatePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx context.Context, v interface{}) (*generated.SubscribersWhereInput, error) {
-	res, err := ec.unmarshalInputSubscribersWhereInput(ctx, v)
+func (ec *executionContext) unmarshalNSubscriberWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInput(ctx context.Context, v interface{}) (*generated.SubscriberWhereInput, error) {
+	res, err := ec.unmarshalInputSubscriberWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -69149,8 +69173,8 @@ func (ec *executionContext) unmarshalNUpdatePersonalAccessTokenInput2githubᚗco
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateSubscribersInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateSubscribersInput(ctx context.Context, v interface{}) (generated.UpdateSubscribersInput, error) {
-	res, err := ec.unmarshalInputUpdateSubscribersInput(ctx, v)
+func (ec *executionContext) unmarshalNUpdateSubscriberInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateSubscriberInput(ctx context.Context, v interface{}) (generated.UpdateSubscriberInput, error) {
+	res, err := ec.unmarshalInputUpdateSubscriberInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -71891,7 +71915,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOSubscribers2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.Subscribers) graphql.Marshaler {
+func (ec *executionContext) marshalOSubscriber2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.Subscriber) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -71918,7 +71942,7 @@ func (ec *executionContext) marshalOSubscribers2ᚕᚖgithubᚗcomᚋdatumforge�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx, sel, v[i])
+			ret[i] = ec.marshalNSubscriber2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -71938,14 +71962,14 @@ func (ec *executionContext) marshalOSubscribers2ᚕᚖgithubᚗcomᚋdatumforge�
 	return ret
 }
 
-func (ec *executionContext) marshalOSubscribers2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribers(ctx context.Context, sel ast.SelectionSet, v *generated.Subscribers) graphql.Marshaler {
+func (ec *executionContext) marshalOSubscriber2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx context.Context, sel ast.SelectionSet, v *generated.Subscriber) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Subscribers(ctx, sel, v)
+	return ec._Subscriber(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOSubscribersEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.SubscribersEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOSubscriberEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.SubscriberEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -71972,7 +71996,7 @@ func (ec *executionContext) marshalOSubscribersEdge2ᚕᚖgithubᚗcomᚋdatumfo
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOSubscribersEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOSubscriberEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -71986,14 +72010,14 @@ func (ec *executionContext) marshalOSubscribersEdge2ᚕᚖgithubᚗcomᚋdatumfo
 	return ret
 }
 
-func (ec *executionContext) marshalOSubscribersEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersEdge(ctx context.Context, sel ast.SelectionSet, v *generated.SubscribersEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOSubscriberEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberEdge(ctx context.Context, sel ast.SelectionSet, v *generated.SubscriberEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._SubscribersEdge(ctx, sel, v)
+	return ec._SubscriberEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.SubscribersWhereInput, error) {
+func (ec *executionContext) unmarshalOSubscriberWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.SubscriberWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -72002,10 +72026,10 @@ func (ec *executionContext) unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcom�
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*generated.SubscribersWhereInput, len(vSlice))
+	res := make([]*generated.SubscriberWhereInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNSubscriberWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -72013,11 +72037,11 @@ func (ec *executionContext) unmarshalOSubscribersWhereInput2ᚕᚖgithubᚗcom�
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOSubscribersWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscribersWhereInput(ctx context.Context, v interface{}) (*generated.SubscribersWhereInput, error) {
+func (ec *executionContext) unmarshalOSubscriberWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriberWhereInput(ctx context.Context, v interface{}) (*generated.SubscriberWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputSubscribersWhereInput(ctx, v)
+	res, err := ec.unmarshalInputSubscriberWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

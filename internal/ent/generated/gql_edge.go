@@ -241,7 +241,7 @@ func (o *Organization) Invites(ctx context.Context) (result []*Invite, err error
 	return result, err
 }
 
-func (o *Organization) Subscribers(ctx context.Context) (result []*Subscribers, err error) {
+func (o *Organization) Subscribers(ctx context.Context) (result []*Subscriber, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = o.NamedSubscribers(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
@@ -293,7 +293,7 @@ func (pat *PersonalAccessToken) Organizations(ctx context.Context) (result []*Or
 	return result, err
 }
 
-func (s *Subscribers) Owner(ctx context.Context) (*Organization, error) {
+func (s *Subscriber) Owner(ctx context.Context) (*Organization, error) {
 	result, err := s.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = s.QueryOwner().Only(ctx)

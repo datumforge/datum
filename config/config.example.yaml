@@ -61,6 +61,7 @@ email:
         base: ""
         invite: ""
         reset: ""
+        subscriberVerify: ""
         verify: ""
 posthog:
     apiKey: ""

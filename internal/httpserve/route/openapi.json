@@ -4746,7 +4746,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Subscribers"
+                    "$ref": "#/components/schemas/Subscriber"
                   }
                 }
               }
@@ -5254,11 +5254,11 @@
     "/subscribers": {
       "get": {
         "tags": [
-          "Subscribers"
+          "Subscriber"
         ],
         "summary": "List Subscribers",
         "description": "List Subscribers.",
-        "operationId": "listSubscribers",
+        "operationId": "listSubscriber",
         "parameters": [
           {
             "name": "page",
@@ -5282,13 +5282,13 @@
         ],
         "responses": {
           "200": {
-            "description": "result Subscribers list",
+            "description": "result Subscriber list",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Subscribers"
+                    "$ref": "#/components/schemas/Subscriber"
                   }
                 }
               }
@@ -5299,76 +5299,6 @@
           },
           "404": {
             "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Subscribers"
-        ],
-        "summary": "Create a new Subscribers",
-        "description": "Creates a new Subscribers and persists it to storage.",
-        "operationId": "createSubscribers",
-        "requestBody": {
-          "description": "Subscribers to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  },
-                  "active": {
-                    "type": "boolean"
-                  },
-                  "ip_address": {
-                    "type": "string"
-                  },
-                  "token": {
-                    "type": "string"
-                  },
-                  "secret": {
-                    "type": "string",
-                    "format": "byte"
-                  },
-                  "owner": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "email",
-                  "active",
-                  "token",
-                  "secret"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Subscribers created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Subscribers"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
           },
           "409": {
             "$ref": "#/components/responses/409"
@@ -5382,16 +5312,16 @@
     "/subscribers/{id}": {
       "get": {
         "tags": [
-          "Subscribers"
+          "Subscriber"
         ],
-        "summary": "Find a Subscribers by ID",
-        "description": "Finds the Subscribers with the requested ID and returns it.",
-        "operationId": "readSubscribers",
+        "summary": "Find a Subscriber by ID",
+        "description": "Finds the Subscriber with the requested ID and returns it.",
+        "operationId": "readSubscriber",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the Subscribers",
+            "description": "ID of the Subscriber",
             "required": true,
             "schema": {
               "type": "string"
@@ -5400,125 +5330,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Subscribers with requested ID was found",
+            "description": "Subscriber with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Subscribers"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Subscribers"
-        ],
-        "summary": "Deletes a Subscribers by ID",
-        "description": "Deletes the Subscribers with the requested ID.",
-        "operationId": "deleteSubscribers",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Subscribers",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Subscribers with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Subscribers"
-        ],
-        "summary": "Updates a Subscribers",
-        "description": "Updates a Subscribers and persists changes to storage.",
-        "operationId": "updateSubscribers",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Subscribers",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Subscribers properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  },
-                  "active": {
-                    "type": "boolean"
-                  },
-                  "ip_address": {
-                    "type": "string"
-                  },
-                  "token": {
-                    "type": "string"
-                  },
-                  "secret": {
-                    "type": "string",
-                    "format": "byte"
-                  },
-                  "owner": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Subscribers updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Subscribers"
+                  "$ref": "#/components/schemas/Subscriber"
                 }
               }
             }
@@ -5541,16 +5357,16 @@
     "/subscribers/{id}/owner": {
       "get": {
         "tags": [
-          "Subscribers"
+          "Subscriber"
         ],
         "summary": "Find the attached Organization",
-        "description": "Find the attached Organization of the Subscribers with the given ID",
-        "operationId": "readSubscribersOwner",
+        "description": "Find the attached Organization of the Subscriber with the given ID",
+        "operationId": "readSubscriberOwner",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the Subscribers",
+            "description": "ID of the Subscriber",
             "required": true,
             "schema": {
               "type": "string"
@@ -5559,7 +5375,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Organization attached to Subscribers with requested ID was found",
+            "description": "Organization attached to Subscriber with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
@@ -8065,7 +7881,7 @@
           "subscribers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Subscribers"
+              "$ref": "#/components/schemas/Subscriber"
             }
           },
           "members": {
@@ -8273,7 +8089,7 @@
           "owner"
         ]
       },
-      "Subscribers": {
+      "Subscriber": {
         "type": "object",
         "properties": {
           "id": {
@@ -8306,14 +8122,24 @@
           "email": {
             "type": "string"
           },
+          "phone_number": {
+            "type": "string"
+          },
+          "verified_email": {
+            "type": "boolean"
+          },
+          "verified_phone": {
+            "type": "boolean"
+          },
           "active": {
             "type": "boolean"
           },
-          "ip_address": {
-            "type": "string"
-          },
           "token": {
             "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
           },
           "secret": {
             "type": "string",
@@ -8326,6 +8152,8 @@
         "required": [
           "id",
           "email",
+          "verified_email",
+          "verified_phone",
           "active",
           "token"
         ]

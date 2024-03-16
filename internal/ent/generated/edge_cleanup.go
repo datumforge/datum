@@ -16,7 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -117,9 +117,9 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 		}
 	}
 
-	if exists, err := FromContext(ctx).Subscribers.Query().Where((subscribers.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
-		if subscribersCount, err := FromContext(ctx).Subscribers.Delete().Where(subscribers.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
-			FromContext(ctx).Logger.Debugw("deleting subscribers", "count", subscribersCount, "err", err)
+	if exists, err := FromContext(ctx).Subscriber.Query().Where((subscriber.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if subscriberCount, err := FromContext(ctx).Subscriber.Delete().Where(subscriber.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting subscriber", "count", subscriberCount, "err", err)
 			return err
 		}
 	}
@@ -149,7 +149,7 @@ func PersonalAccessTokenEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
-func SubscribersEdgeCleanup(ctx context.Context, id string) error {
+func SubscriberEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

@@ -114,7 +114,7 @@ func (Organization) Edges() []ent.Edge {
 			Ref("organizations").
 			Through("members", OrgMembership.Type),
 		edge.To("invites", Invite.Type).Annotations(entx.CascadeAnnotationField("Owner")),
-		edge.To("subscribers", Subscribers.Type).Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("subscribers", Subscriber.Type).Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 

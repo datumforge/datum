@@ -10,11 +10,11 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 )
 
-// Subscribers is the model entity for the Subscribers schema.
-type Subscribers struct {
+// Subscriber is the model entity for the Subscriber schema.
+type Subscriber struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
@@ -34,22 +34,28 @@ type Subscribers struct {
 	OwnerID string `json:"owner_id,omitempty"`
 	// email address of the subscriber
 	Email string `json:"email,omitempty"`
-	// indicates if the subscriber is active or not
+	// phone number of the subscriber
+	PhoneNumber string `json:"phone_number,omitempty"`
+	// indicates if the email address has been verified
+	VerifiedEmail bool `json:"verified_email,omitempty"`
+	// indicates if the phone number has been verified
+	VerifiedPhone bool `json:"verified_phone,omitempty"`
+	// indicates if the subscriber is active or not, active users will have at least one verified contact method
 	Active bool `json:"active,omitempty"`
-	// IP address of the subscriber
-	IPAddress string `json:"ip_address,omitempty"`
-	// the token used to unsubscribe
+	// the verification token sent to the user via email which should only be provided to the /subscribe endpoint + handler
 	Token string `json:"token,omitempty"`
+	// the ttl of the verification token which defaults to 7 days
+	TTL *time.Time `json:"ttl,omitempty"`
 	// the comparison secret to verify the token's signature
 	Secret *[]byte `json:"secret,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the SubscribersQuery when eager-loading is set.
-	Edges        SubscribersEdges `json:"edges"`
+	// The values are being populated by the SubscriberQuery when eager-loading is set.
+	Edges        SubscriberEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// SubscribersEdges holds the relations/edges for other nodes in the graph.
-type SubscribersEdges struct {
+// SubscriberEdges holds the relations/edges for other nodes in the graph.
+type SubscriberEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *Organization `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -61,7 +67,7 @@ type SubscribersEdges struct {
 
 // OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e SubscribersEdges) OwnerOrErr() (*Organization, error) {
+func (e SubscriberEdges) OwnerOrErr() (*Organization, error) {
 	if e.Owner != nil {
 		return e.Owner, nil
 	} else if e.loadedTypes[0] {
@@ -71,17 +77,17 @@ func (e SubscribersEdges) OwnerOrErr() (*Organization, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Subscribers) scanValues(columns []string) ([]any, error) {
+func (*Subscriber) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case subscribers.FieldSecret:
+		case subscriber.FieldSecret:
 			values[i] = new([]byte)
-		case subscribers.FieldActive:
+		case subscriber.FieldVerifiedEmail, subscriber.FieldVerifiedPhone, subscriber.FieldActive:
 			values[i] = new(sql.NullBool)
-		case subscribers.FieldID, subscribers.FieldCreatedBy, subscribers.FieldUpdatedBy, subscribers.FieldDeletedBy, subscribers.FieldOwnerID, subscribers.FieldEmail, subscribers.FieldIPAddress, subscribers.FieldToken:
+		case subscriber.FieldID, subscriber.FieldCreatedBy, subscriber.FieldUpdatedBy, subscriber.FieldDeletedBy, subscriber.FieldOwnerID, subscriber.FieldEmail, subscriber.FieldPhoneNumber, subscriber.FieldToken:
 			values[i] = new(sql.NullString)
-		case subscribers.FieldCreatedAt, subscribers.FieldUpdatedAt, subscribers.FieldDeletedAt:
+		case subscriber.FieldCreatedAt, subscriber.FieldUpdatedAt, subscriber.FieldDeletedAt, subscriber.FieldTTL:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -91,86 +97,105 @@ func (*Subscribers) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Subscribers fields.
-func (s *Subscribers) assignValues(columns []string, values []any) error {
+// to the Subscriber fields.
+func (s *Subscriber) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case subscribers.FieldID:
+		case subscriber.FieldID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				s.ID = value.String
 			}
-		case subscribers.FieldCreatedAt:
+		case subscriber.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				s.CreatedAt = value.Time
 			}
-		case subscribers.FieldUpdatedAt:
+		case subscriber.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				s.UpdatedAt = value.Time
 			}
-		case subscribers.FieldCreatedBy:
+		case subscriber.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
 				s.CreatedBy = value.String
 			}
-		case subscribers.FieldUpdatedBy:
+		case subscriber.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				s.UpdatedBy = value.String
 			}
-		case subscribers.FieldDeletedAt:
+		case subscriber.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				s.DeletedAt = value.Time
 			}
-		case subscribers.FieldDeletedBy:
+		case subscriber.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
 				s.DeletedBy = value.String
 			}
-		case subscribers.FieldOwnerID:
+		case subscriber.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
 			} else if value.Valid {
 				s.OwnerID = value.String
 			}
-		case subscribers.FieldEmail:
+		case subscriber.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
 				s.Email = value.String
 			}
-		case subscribers.FieldActive:
+		case subscriber.FieldPhoneNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field phone_number", values[i])
+			} else if value.Valid {
+				s.PhoneNumber = value.String
+			}
+		case subscriber.FieldVerifiedEmail:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field verified_email", values[i])
+			} else if value.Valid {
+				s.VerifiedEmail = value.Bool
+			}
+		case subscriber.FieldVerifiedPhone:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field verified_phone", values[i])
+			} else if value.Valid {
+				s.VerifiedPhone = value.Bool
+			}
+		case subscriber.FieldActive:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field active", values[i])
 			} else if value.Valid {
 				s.Active = value.Bool
 			}
-		case subscribers.FieldIPAddress:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field ip_address", values[i])
-			} else if value.Valid {
-				s.IPAddress = value.String
-			}
-		case subscribers.FieldToken:
+		case subscriber.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field token", values[i])
 			} else if value.Valid {
 				s.Token = value.String
 			}
-		case subscribers.FieldSecret:
+		case subscriber.FieldTTL:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field ttl", values[i])
+			} else if value.Valid {
+				s.TTL = new(time.Time)
+				*s.TTL = value.Time
+			}
+		case subscriber.FieldSecret:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field secret", values[i])
 			} else if value != nil {
@@ -183,39 +208,39 @@ func (s *Subscribers) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Subscribers.
+// Value returns the ent.Value that was dynamically selected and assigned to the Subscriber.
 // This includes values selected through modifiers, order, etc.
-func (s *Subscribers) Value(name string) (ent.Value, error) {
+func (s *Subscriber) Value(name string) (ent.Value, error) {
 	return s.selectValues.Get(name)
 }
 
-// QueryOwner queries the "owner" edge of the Subscribers entity.
-func (s *Subscribers) QueryOwner() *OrganizationQuery {
-	return NewSubscribersClient(s.config).QueryOwner(s)
+// QueryOwner queries the "owner" edge of the Subscriber entity.
+func (s *Subscriber) QueryOwner() *OrganizationQuery {
+	return NewSubscriberClient(s.config).QueryOwner(s)
 }
 
-// Update returns a builder for updating this Subscribers.
-// Note that you need to call Subscribers.Unwrap() before calling this method if this Subscribers
+// Update returns a builder for updating this Subscriber.
+// Note that you need to call Subscriber.Unwrap() before calling this method if this Subscriber
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (s *Subscribers) Update() *SubscribersUpdateOne {
-	return NewSubscribersClient(s.config).UpdateOne(s)
+func (s *Subscriber) Update() *SubscriberUpdateOne {
+	return NewSubscriberClient(s.config).UpdateOne(s)
 }
 
-// Unwrap unwraps the Subscribers entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Subscriber entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (s *Subscribers) Unwrap() *Subscribers {
+func (s *Subscriber) Unwrap() *Subscriber {
 	_tx, ok := s.config.driver.(*txDriver)
 	if !ok {
-		panic("generated: Subscribers is not a transactional entity")
+		panic("generated: Subscriber is not a transactional entity")
 	}
 	s.config.driver = _tx.drv
 	return s
 }
 
 // String implements the fmt.Stringer.
-func (s *Subscribers) String() string {
+func (s *Subscriber) String() string {
 	var builder strings.Builder
-	builder.WriteString("Subscribers(")
+	builder.WriteString("Subscriber(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", s.ID))
 	builder.WriteString("created_at=")
 	builder.WriteString(s.CreatedAt.Format(time.ANSIC))
@@ -241,14 +266,25 @@ func (s *Subscribers) String() string {
 	builder.WriteString("email=")
 	builder.WriteString(s.Email)
 	builder.WriteString(", ")
+	builder.WriteString("phone_number=")
+	builder.WriteString(s.PhoneNumber)
+	builder.WriteString(", ")
+	builder.WriteString("verified_email=")
+	builder.WriteString(fmt.Sprintf("%v", s.VerifiedEmail))
+	builder.WriteString(", ")
+	builder.WriteString("verified_phone=")
+	builder.WriteString(fmt.Sprintf("%v", s.VerifiedPhone))
+	builder.WriteString(", ")
 	builder.WriteString("active=")
 	builder.WriteString(fmt.Sprintf("%v", s.Active))
 	builder.WriteString(", ")
-	builder.WriteString("ip_address=")
-	builder.WriteString(s.IPAddress)
-	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(s.Token)
+	builder.WriteString(", ")
+	if v := s.TTL; v != nil {
+		builder.WriteString("ttl=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := s.Secret; v != nil {
 		builder.WriteString("secret=")
@@ -258,5 +294,5 @@ func (s *Subscribers) String() string {
 	return builder.String()
 }
 
-// SubscribersSlice is a parsable slice of Subscribers.
-type SubscribersSlice []*Subscribers
+// Subscribers is a parsable slice of Subscriber.
+type Subscribers []*Subscriber

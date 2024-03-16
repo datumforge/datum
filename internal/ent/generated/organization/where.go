@@ -1175,19 +1175,19 @@ func HasSubscribers() predicate.Organization {
 			sqlgraph.Edge(sqlgraph.O2M, false, SubscribersTable, SubscribersColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Subscribers
-		step.Edge.Schema = schemaConfig.Subscribers
+		step.To.Schema = schemaConfig.Subscriber
+		step.Edge.Schema = schemaConfig.Subscriber
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
 // HasSubscribersWith applies the HasEdge predicate on the "subscribers" edge with a given conditions (other predicates).
-func HasSubscribersWith(preds ...predicate.Subscribers) predicate.Organization {
+func HasSubscribersWith(preds ...predicate.Subscriber) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		step := newSubscribersStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Subscribers
-		step.Edge.Schema = schemaConfig.Subscribers
+		step.To.Schema = schemaConfig.Subscriber
+		step.Edge.Schema = schemaConfig.Subscriber
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

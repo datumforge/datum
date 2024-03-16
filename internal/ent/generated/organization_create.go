@@ -19,7 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/subscribers"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -362,14 +362,14 @@ func (oc *OrganizationCreate) AddInvites(i ...*Invite) *OrganizationCreate {
 	return oc.AddInviteIDs(ids...)
 }
 
-// AddSubscriberIDs adds the "subscribers" edge to the Subscribers entity by IDs.
+// AddSubscriberIDs adds the "subscribers" edge to the Subscriber entity by IDs.
 func (oc *OrganizationCreate) AddSubscriberIDs(ids ...string) *OrganizationCreate {
 	oc.mutation.AddSubscriberIDs(ids...)
 	return oc
 }
 
-// AddSubscribers adds the "subscribers" edges to the Subscribers entity.
-func (oc *OrganizationCreate) AddSubscribers(s ...*Subscribers) *OrganizationCreate {
+// AddSubscribers adds the "subscribers" edges to the Subscriber entity.
+func (oc *OrganizationCreate) AddSubscribers(s ...*Subscriber) *OrganizationCreate {
 	ids := make([]string, len(s))
 	for i := range s {
 		ids[i] = s[i].ID
@@ -750,10 +750,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.SubscribersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(subscribers.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(subscriber.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = oc.schemaConfig.Subscribers
+		edge.Schema = oc.schemaConfig.Subscriber
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

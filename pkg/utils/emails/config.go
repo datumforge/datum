@@ -37,6 +37,8 @@ type URLConfig struct {
 	Reset string `json:"reset" koanf:"reset" default:"/v1/password-reset"`
 	// SubscriberVerify is the path to the subscriber verify endpoint used in verification emails
 	SubscriberVerify string `json:"subscriberVerify" koanf:"subscriberVerify" default:"/v1/subscribe/verify"`
+	// DefaultSubscriptionOrg is the default organization name to subscribe to
+	DefaultSubscriptionOrg string `json:"defaultSubscriptionOrg" koanf:"defaultSubscriptionOrg" default:"Datum"`
 }
 
 // SetSendGridAPIKey to provided key

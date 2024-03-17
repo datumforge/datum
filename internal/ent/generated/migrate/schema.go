@@ -546,9 +546,9 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "subscriber_email_active_owner_id",
+				Name:    "subscriber_email_owner_id",
 				Unique:  true,
-				Columns: []*schema.Column{SubscribersColumns[7], SubscribersColumns[11], SubscribersColumns[15]},
+				Columns: []*schema.Column{SubscribersColumns[7], SubscribersColumns[15]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},

@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"context"
 	"net/mail"
 	"regexp"
 
@@ -12,8 +13,13 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/fgax/entfga"
 )
 
 // Subscriber holds the schema definition for the Subscriber entity
@@ -94,7 +100,7 @@ func (Subscriber) Hooks() []ent.Hook {
 // Indexes of the Subscriber
 func (Subscriber) Indexes() []ent.Index {
 	return []ent.Index{
-		index.Fields("email", "active", "owner_id").
+		index.Fields("email", "owner_id").
 			Unique().
 			Annotations(
 				entsql.IndexWhere("deleted_at is NULL"),
@@ -111,5 +117,31 @@ func (Subscriber) Annotations() []schema.Annotation {
 		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entfga.Annotations{
+			ObjectType:      "organization",
+			IncludeHooks:    false,
+			IDField:         "OwnerID",
+			NillableIDField: true,
+		},
+	}
+}
+
+// Policy of the Subscriber
+func (Subscriber) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			rule.DenyIfNoSubject(),
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
+			privacy.SubscriberMutationRuleFunc(func(ctx context.Context, m *generated.SubscriberMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.SubscriberQueryRuleFunc(func(ctx context.Context, q *generated.SubscriberQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }

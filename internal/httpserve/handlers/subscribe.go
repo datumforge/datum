@@ -88,7 +88,8 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 
 func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID string) error {
 	// get org name if not root level (Datum)
-	orgName := ""
+	orgName := h.EmailManager.DefaultSubscriptionOrg
+
 	if orgID != "" {
 		org, err := h.getOrgByID(ctx, orgID)
 		if err != nil {

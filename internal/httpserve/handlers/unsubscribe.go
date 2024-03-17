@@ -24,12 +24,12 @@ func (h *Handler) UnsubscribeHandler(ctx echo.Context) error {
 	}
 
 	// organization, if null defaults to root level datum subscribers
-	organization_id := ctx.QueryParam("organization_id")
+	organizationID := ctx.QueryParam("organization_id")
 
 	// set viewer context
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), email)
 
-	if err := h.deleteSubscriber(ctxWithToken, email, organization_id); err != nil {
+	if err := h.deleteSubscriber(ctxWithToken, email, organizationID); err != nil {
 		h.Logger.Errorw("error un user", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))

@@ -24,7 +24,9 @@ import (
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
 
-func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler(t *testing.T) {
+func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
+	t := suite.T()
+
 	// add handler
 	suite.e.POST("invite", suite.h.OrganizationInviteAccept)
 

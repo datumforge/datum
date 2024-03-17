@@ -53,6 +53,11 @@ type HandlerTestSuite struct {
 	tc  *testutils.TC
 }
 
+// TestHandlerTestSuite runs all the tests in the HandlerTestSuite
+func TestHandlerTestSuite(t *testing.T) {
+	suite.Run(t, new(HandlerTestSuite))
+}
+
 func (suite *HandlerTestSuite) SetupSuite() {
 	ctx := context.Background()
 

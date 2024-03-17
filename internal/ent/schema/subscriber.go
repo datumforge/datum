@@ -130,14 +130,16 @@ func (Subscriber) Annotations() []schema.Annotation {
 func (Subscriber) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
 			rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.VerifyToken{}),
 			privacy.SubscriberMutationRuleFunc(func(ctx context.Context, m *generated.SubscriberMutation) error {
 				return m.CheckAccessForEdit(ctx)
 			}),
 			privacy.AlwaysDenyRule(),
 		},
 		Query: privacy.QueryPolicy{
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
+			rule.AllowIfContextHasPrivacyTokenOfType(&token.VerifyToken{}),
 			privacy.SubscriberQueryRuleFunc(func(ctx context.Context, q *generated.SubscriberQuery) error {
 				return q.CheckAccess(ctx)
 			}),

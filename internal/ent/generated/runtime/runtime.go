@@ -771,12 +771,24 @@ func init() {
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
 	subscriberMixin := schema.Subscriber{}.Mixin()
+	subscriber.Policy = privacy.NewPolicies(schema.Subscriber{})
+	subscriber.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := subscriber.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	subscriberMixinHooks0 := subscriberMixin[0].Hooks()
 	subscriberMixinHooks2 := subscriberMixin[2].Hooks()
 	subscriberHooks := schema.Subscriber{}.Hooks()
-	subscriber.Hooks[0] = subscriberMixinHooks0[0]
-	subscriber.Hooks[1] = subscriberMixinHooks2[0]
-	subscriber.Hooks[2] = subscriberHooks[0]
+
+	subscriber.Hooks[1] = subscriberMixinHooks0[0]
+
+	subscriber.Hooks[2] = subscriberMixinHooks2[0]
+
+	subscriber.Hooks[3] = subscriberHooks[0]
 	subscriberMixinInters2 := subscriberMixin[2].Interceptors()
 	subscriber.Interceptors[0] = subscriberMixinInters2[0]
 	subscriberMixinFields0 := subscriberMixin[0].Fields()

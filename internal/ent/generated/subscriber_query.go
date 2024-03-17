@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -368,6 +369,12 @@ func (sq *SubscriberQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		sq.sql = prev
+	}
+	if subscriber.Policy == nil {
+		return errors.New("generated: uninitialized subscriber.Policy (forgotten import generated/runtime?)")
+	}
+	if err := subscriber.Policy.EvalQuery(ctx, sq); err != nil {
+		return err
 	}
 	return nil
 }

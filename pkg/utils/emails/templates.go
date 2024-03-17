@@ -65,8 +65,8 @@ const (
 	PasswordResetRequestRE = "Datum Password Reset - Action Required"
 	PasswordResetSuccessRE = "Datum Password Reset Confirmation"
 	InviteBeenAccepted     = "You've been added to an Organization on Datum"
-	Subscribed             = "You've been subscribed to Datum"
-	Unsubscribed           = "You've been unsubscribed from Datum"
+	Subscribed             = "You've been subscribed to %s"
+	Unsubscribed           = "You've been unsubscribed from %s"
 )
 
 // WelcomeEmail creates a welcome email for a new user
@@ -92,20 +92,7 @@ func SubscribeEmail(data SubscriberEmailData) (message *mail.SGMailV3, err error
 		return nil, err
 	}
 
-	data.Subject = Subscribed
-
-	return data.Build(text, html)
-}
-
-// UnsubscribeEmail creates a unsubscribe email for a subscriber
-func UnsubscribeEmail(data WelcomeData) (message *mail.SGMailV3, err error) {
-	var text, html string
-
-	if text, html, err = Render("unsubscribe", data); err != nil {
-		return nil, err
-	}
-
-	data.Subject = Unsubscribed
+	data.Subject = fmt.Sprintf(Subscribed, data.OrgName)
 
 	return data.Build(text, html)
 }

@@ -9,6 +9,8 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -22,6 +24,11 @@ func InterceptorSubscriber() ent.Interceptor {
 				return nil, err
 			}
 
+			// bypass checks on token request
+			if rule.ContextHasPrivacyTokenOfType(ctx, &token.VerifyToken{}) || rule.ContextHasPrivacyTokenOfType(ctx, &token.SignUpToken{}) {
+				return v, nil
+			}
+
 			return filterSubscribersByAccess(ctx, q, v)
 		})
 	})
@@ -33,9 +40,9 @@ func filterSubscribersByAccess(ctx context.Context, q *generated.SubscriberQuery
 
 	subscribers, ok := v.([]*generated.Subscriber)
 	if !ok {
-		q.Logger.Errorw("unexpected type for subscriber query")
+		q.Logger.Infow("unexpected type for subscriber query, will continue without filtering")
 
-		return nil, ErrInternalServerError
+		return nil, nil
 	}
 
 	// get userID for tuple checks

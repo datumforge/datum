@@ -40,5 +40,5 @@ func (h *Handler) UnsubscribeHandler(ctx echo.Context) error {
 		Message: "We are sorry to see you go. You have been unsubscribed.",
 	}
 
-	return ctx.JSON(http.StatusCreated, out)
+	return ctx.JSON(http.StatusOK, out)
 }

@@ -8,47 +8,60 @@ import (
 	"testing"
 	"time"
 
+	"github.com/brianvoe/gofakeit/v7"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
 
-func (suite *HandlerTestSuite) TestSubscribeHandler() {
+func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.e.GET("subscribe", suite.h.SubscribeHandler)
+	suite.e.GET("subscribe/verify", suite.h.VerifySubscription)
+
+	ec := echocontext.NewTestEchoContext().Request().Context()
+
+	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
 	testCases := []struct {
 		name               string
 		email              string
+		ttl                string
+		tokenSet           bool
 		emailExpected      bool
 		expectedErrMessage string
 		expectedStatus     int
-		from               string
 	}{
 		{
-			name:           "happy path ,new subscriber",
-			email:          "brax@datum.net",
+			name:           "happy path, new subscriber",
+			email:          gofakeit.Email(),
+			tokenSet:       true,
+			emailExpected:  false,
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name:           "expired token",
+			email:          gofakeit.Email(),
+			tokenSet:       true,
+			ttl:            expiredTTL,
 			emailExpected:  true,
 			expectedStatus: http.StatusCreated,
 		},
 		{
-			name:           "subscriber already exists",
-			email:          "brax@datum.net",
+			name:           "missing token",
+			email:          gofakeit.Email(),
+			tokenSet:       false,
 			emailExpected:  false,
-			expectedStatus: http.StatusConflict,
-		},
-		{
-			name:               "missing email",
-			emailExpected:      false,
-			expectedStatus:     http.StatusBadRequest,
-			expectedErrMessage: "email is required",
+			expectedStatus: http.StatusBadRequest,
 		},
 	}
 
@@ -60,7 +73,40 @@ func (suite *HandlerTestSuite) TestSubscribeHandler() {
 
 			mock.ResetEmailMock()
 
-			target := fmt.Sprintf("/subscribe?email=%s", tc.email)
+			user := handlers.User{
+				Email: tc.email,
+			}
+
+			// create token
+			if err := user.CreateVerificationToken(); err != nil {
+				require.NoError(t, err)
+			}
+
+			if tc.ttl != "" {
+				user.EmailVerificationExpires.String = tc.ttl
+			}
+
+			ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+			if err != nil {
+				require.NoError(t, err)
+			}
+
+			// set privacy allow in order to allow the creation of the users without
+			// authentication in the tests
+			ctx := privacy.DecisionContext(ec, privacy.Allow)
+
+			// store token in db
+			et := suite.db.Subscriber.Create().
+				SetToken(user.EmailVerificationToken.String).
+				SetEmail(user.Email).
+				SetSecret(user.EmailVerificationSecret).
+				SetTTL(ttl).
+				SaveX(ctx)
+
+			target := "/subscribe/verify"
+			if tc.tokenSet {
+				target = fmt.Sprintf("/subscribe/verify?token=%s", et.Token)
+			}
 
 			req := httptest.NewRequest(http.MethodGet, target, nil)
 

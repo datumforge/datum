@@ -19,7 +19,7 @@ func HookSubscriber() ent.Hook {
 			email, _ := mutation.Email()
 
 			if !ok {
-				exists, err := mutation.Client().Subscriber.Query().
+				exist, err := mutation.Client().Subscriber.Query().
 					Where(
 						subscriber.EmailEQ(email),
 						subscriber.OwnerIDIsNil(),
@@ -33,7 +33,7 @@ func HookSubscriber() ent.Hook {
 				}
 
 				// if the user already is a subscriber to datum, say so
-				if exists {
+				if exist {
 					return nil, ErrUserAlreadySubscriber
 				}
 			}

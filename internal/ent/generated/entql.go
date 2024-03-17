@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -31,7 +32,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 18)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 19)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -385,6 +386,34 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[14] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   subscriber.Table,
+			Columns: subscriber.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: subscriber.FieldID,
+			},
+		},
+		Type: "Subscriber",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			subscriber.FieldCreatedAt:     {Type: field.TypeTime, Column: subscriber.FieldCreatedAt},
+			subscriber.FieldUpdatedAt:     {Type: field.TypeTime, Column: subscriber.FieldUpdatedAt},
+			subscriber.FieldCreatedBy:     {Type: field.TypeString, Column: subscriber.FieldCreatedBy},
+			subscriber.FieldUpdatedBy:     {Type: field.TypeString, Column: subscriber.FieldUpdatedBy},
+			subscriber.FieldDeletedAt:     {Type: field.TypeTime, Column: subscriber.FieldDeletedAt},
+			subscriber.FieldDeletedBy:     {Type: field.TypeString, Column: subscriber.FieldDeletedBy},
+			subscriber.FieldOwnerID:       {Type: field.TypeString, Column: subscriber.FieldOwnerID},
+			subscriber.FieldEmail:         {Type: field.TypeString, Column: subscriber.FieldEmail},
+			subscriber.FieldPhoneNumber:   {Type: field.TypeString, Column: subscriber.FieldPhoneNumber},
+			subscriber.FieldVerifiedEmail: {Type: field.TypeBool, Column: subscriber.FieldVerifiedEmail},
+			subscriber.FieldVerifiedPhone: {Type: field.TypeBool, Column: subscriber.FieldVerifiedPhone},
+			subscriber.FieldActive:        {Type: field.TypeBool, Column: subscriber.FieldActive},
+			subscriber.FieldToken:         {Type: field.TypeString, Column: subscriber.FieldToken},
+			subscriber.FieldTTL:           {Type: field.TypeTime, Column: subscriber.FieldTTL},
+			subscriber.FieldSecret:        {Type: field.TypeBytes, Column: subscriber.FieldSecret},
+		},
+	}
+	graph.Nodes[15] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   tfasettings.Table,
 			Columns: tfasettings.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -409,7 +438,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			tfasettings.FieldTotpAllowed:     {Type: field.TypeBool, Column: tfasettings.FieldTotpAllowed},
 		},
 	}
-	graph.Nodes[15] = &sqlgraph.Node{
+	graph.Nodes[16] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -439,7 +468,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
 		},
 	}
-	graph.Nodes[16] = &sqlgraph.Node{
+	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -468,7 +497,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldPhoneNumber:       {Type: field.TypeString, Column: usersetting.FieldPhoneNumber},
 		},
 	}
-	graph.Nodes[17] = &sqlgraph.Node{
+	graph.Nodes[18] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   webauthn.Table,
 			Columns: webauthn.Columns,
@@ -785,6 +814,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Invite",
 	)
 	graph.MustAddE(
+		"subscribers",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.SubscribersTable,
+			Columns: []string{organization.SubscribersColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"Subscriber",
+	)
+	graph.MustAddE(
 		"members",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -842,6 +883,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"PersonalAccessToken",
+		"Organization",
+	)
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   subscriber.OwnerTable,
+			Columns: []string{subscriber.OwnerColumn},
+			Bidi:    false,
+		},
+		"Subscriber",
 		"Organization",
 	)
 	graph.MustAddE(
@@ -2452,6 +2505,20 @@ func (f *OrganizationFilter) WhereHasInvitesWith(preds ...predicate.Invite) {
 	})))
 }
 
+// WhereHasSubscribers applies a predicate to check if query has an edge subscribers.
+func (f *OrganizationFilter) WhereHasSubscribers() {
+	f.Where(entql.HasEdge("subscribers"))
+}
+
+// WhereHasSubscribersWith applies a predicate to check if query has an edge subscribers with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasSubscribersWith(preds ...predicate.Subscriber) {
+	f.Where(entql.HasEdgeWith("subscribers", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // WhereHasMembers applies a predicate to check if query has an edge members.
 func (f *OrganizationFilter) WhereHasMembers() {
 	f.Where(entql.HasEdge("members"))
@@ -2833,6 +2900,135 @@ func (f *PersonalAccessTokenFilter) WhereHasOrganizationsWith(preds ...predicate
 }
 
 // addPredicate implements the predicateAdder interface.
+func (sq *SubscriberQuery) addPredicate(pred func(s *sql.Selector)) {
+	sq.predicates = append(sq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SubscriberQuery builder.
+func (sq *SubscriberQuery) Filter() *SubscriberFilter {
+	return &SubscriberFilter{config: sq.config, predicateAdder: sq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SubscriberMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SubscriberMutation builder.
+func (m *SubscriberMutation) Filter() *SubscriberFilter {
+	return &SubscriberFilter{config: m.config, predicateAdder: m}
+}
+
+// SubscriberFilter provides a generic filtering capability at runtime for SubscriberQuery.
+type SubscriberFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SubscriberFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *SubscriberFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *SubscriberFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(subscriber.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *SubscriberFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(subscriber.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *SubscriberFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *SubscriberFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *SubscriberFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(subscriber.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *SubscriberFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *SubscriberFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldOwnerID))
+}
+
+// WhereEmail applies the entql string predicate on the email field.
+func (f *SubscriberFilter) WhereEmail(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldEmail))
+}
+
+// WherePhoneNumber applies the entql string predicate on the phone_number field.
+func (f *SubscriberFilter) WherePhoneNumber(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldPhoneNumber))
+}
+
+// WhereVerifiedEmail applies the entql bool predicate on the verified_email field.
+func (f *SubscriberFilter) WhereVerifiedEmail(p entql.BoolP) {
+	f.Where(p.Field(subscriber.FieldVerifiedEmail))
+}
+
+// WhereVerifiedPhone applies the entql bool predicate on the verified_phone field.
+func (f *SubscriberFilter) WhereVerifiedPhone(p entql.BoolP) {
+	f.Where(p.Field(subscriber.FieldVerifiedPhone))
+}
+
+// WhereActive applies the entql bool predicate on the active field.
+func (f *SubscriberFilter) WhereActive(p entql.BoolP) {
+	f.Where(p.Field(subscriber.FieldActive))
+}
+
+// WhereToken applies the entql string predicate on the token field.
+func (f *SubscriberFilter) WhereToken(p entql.StringP) {
+	f.Where(p.Field(subscriber.FieldToken))
+}
+
+// WhereTTL applies the entql time.Time predicate on the ttl field.
+func (f *SubscriberFilter) WhereTTL(p entql.TimeP) {
+	f.Where(p.Field(subscriber.FieldTTL))
+}
+
+// WhereSecret applies the entql []byte predicate on the secret field.
+func (f *SubscriberFilter) WhereSecret(p entql.BytesP) {
+	f.Where(p.Field(subscriber.FieldSecret))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *SubscriberFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *SubscriberFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (tsq *TFASettingsQuery) addPredicate(pred func(s *sql.Selector)) {
 	tsq.predicates = append(tsq.predicates, pred)
 }
@@ -2861,7 +3057,7 @@ type TFASettingsFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TFASettingsFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2980,7 +3176,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -3245,7 +3441,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[16].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -3393,7 +3589,7 @@ type WebauthnFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *WebauthnFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

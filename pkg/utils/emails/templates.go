@@ -25,6 +25,13 @@ type VerifyEmailData struct {
 	VerifyURL string
 }
 
+// SubscriberEmailData is used to complete the subscriber email template
+type SubscriberEmailData struct {
+	EmailData
+	VerifySubscriberURL string
+	OrgName             string
+}
+
 // InviteData is used to complete the invite email template
 type InviteData struct {
 	EmailData
@@ -58,6 +65,7 @@ const (
 	PasswordResetRequestRE = "Datum Password Reset - Action Required"
 	PasswordResetSuccessRE = "Datum Password Reset Confirmation"
 	InviteBeenAccepted     = "You've been added to an Organization on Datum"
+	Subscribed             = "You've been subscribed to %s"
 )
 
 // WelcomeEmail creates a welcome email for a new user
@@ -71,6 +79,19 @@ func WelcomeEmail(data WelcomeData) (message *mail.SGMailV3, err error) {
 	}
 
 	data.Subject = WelcomeRE
+
+	return data.Build(text, html)
+}
+
+// SubscribeEmail creates a subscribe email for a new subscriber
+func SubscribeEmail(data SubscriberEmailData) (message *mail.SGMailV3, err error) {
+	var text, html string
+
+	if text, html, err = Render("subscribe", data); err != nil {
+		return nil, err
+	}
+
+	data.Subject = fmt.Sprintf(Subscribed, data.OrgName)
 
 	return data.Build(text, html)
 }

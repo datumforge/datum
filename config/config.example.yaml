@@ -59,8 +59,10 @@ email:
     testing: false
     url:
         base: ""
+        defaultSubscriptionOrg: ""
         invite: ""
         reset: ""
+        subscriberVerify: ""
         verify: ""
 posthog:
     apiKey: ""

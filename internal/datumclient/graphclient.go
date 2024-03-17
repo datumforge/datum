@@ -49,6 +49,7 @@ type DatumClient interface {
 	GetAllPersonalAccessTokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllPersonalAccessTokens, error)
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
 	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
+	Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error)
 	GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error)
 	CreateTFASettings(ctx context.Context, input CreateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASettings, error)
 	UpdateTFASettings(ctx context.Context, input UpdateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASettings, error)
@@ -4823,6 +4824,67 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 	return t.DeletedID
 }
 
+type Subscribers_Subscribers_Edges_Node struct {
+	ID            string  "json:\"id\" graphql:\"id\""
+	Email         string  "json:\"email\" graphql:\"email\""
+	VerifiedEmail bool    "json:\"verifiedEmail\" graphql:\"verifiedEmail\""
+	Active        bool    "json:\"active\" graphql:\"active\""
+	OwnerID       *string "json:\"ownerID,omitempty\" graphql:\"ownerID\""
+}
+
+func (t *Subscribers_Subscribers_Edges_Node) GetID() string {
+	if t == nil {
+		t = &Subscribers_Subscribers_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *Subscribers_Subscribers_Edges_Node) GetEmail() string {
+	if t == nil {
+		t = &Subscribers_Subscribers_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *Subscribers_Subscribers_Edges_Node) GetVerifiedEmail() bool {
+	if t == nil {
+		t = &Subscribers_Subscribers_Edges_Node{}
+	}
+	return t.VerifiedEmail
+}
+func (t *Subscribers_Subscribers_Edges_Node) GetActive() bool {
+	if t == nil {
+		t = &Subscribers_Subscribers_Edges_Node{}
+	}
+	return t.Active
+}
+func (t *Subscribers_Subscribers_Edges_Node) GetOwnerID() *string {
+	if t == nil {
+		t = &Subscribers_Subscribers_Edges_Node{}
+	}
+	return t.OwnerID
+}
+
+type Subscribers_Subscribers_Edges struct {
+	Node *Subscribers_Subscribers_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *Subscribers_Subscribers_Edges) GetNode() *Subscribers_Subscribers_Edges_Node {
+	if t == nil {
+		t = &Subscribers_Subscribers_Edges{}
+	}
+	return t.Node
+}
+
+type Subscribers_Subscribers struct {
+	Edges []*Subscribers_Subscribers_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *Subscribers_Subscribers) GetEdges() []*Subscribers_Subscribers_Edges {
+	if t == nil {
+		t = &Subscribers_Subscribers{}
+	}
+	return t.Edges
+}
+
 type GetTFASettings_TfaSettings struct {
 	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
 	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
@@ -7143,6 +7205,17 @@ func (t *DeletePersonalAccessToken) GetDeletePersonalAccessToken() *DeletePerson
 	return &t.DeletePersonalAccessToken
 }
 
+type Subscribers struct {
+	Subscribers Subscribers_Subscribers "json:\"subscribers\" graphql:\"subscribers\""
+}
+
+func (t *Subscribers) GetSubscribers() *Subscribers_Subscribers {
+	if t == nil {
+		t = &Subscribers{}
+	}
+	return &t.Subscribers
+}
+
 type GetTFASettings struct {
 	TfaSettings GetTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
 }
@@ -8837,6 +8910,38 @@ func (c *Client) DeletePersonalAccessToken(ctx context.Context, deletePersonalAc
 	return &res, nil
 }
 
+const SubscribersDocument = `query Subscribers ($where: SubscriberWhereInput) {
+	subscribers(where: $where) {
+		edges {
+			node {
+				id
+				email
+				verifiedEmail
+				active
+				ownerID
+			}
+		}
+	}
+}
+`
+
+func (c *Client) Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res Subscribers
+	if err := c.Client.Post(ctx, "Subscribers", SubscribersDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetTFASettingsDocument = `query GetTFASettings {
 	tfaSettings {
 		totpAllowed
@@ -9450,6 +9555,7 @@ var DocumentOperationNames = map[string]string{
 	GetAllPersonalAccessTokensDocument:  "GetAllPersonalAccessTokens",
 	GetPersonalAccessTokenByIDDocument:  "GetPersonalAccessTokenByID",
 	DeletePersonalAccessTokenDocument:   "DeletePersonalAccessToken",
+	SubscribersDocument:                 "Subscribers",
 	GetTFASettingsDocument:              "GetTFASettings",
 	CreateTFASettingsDocument:           "CreateTFASettings",
 	UpdateTFASettingsDocument:           "UpdateTFASettings",

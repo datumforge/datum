@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -45,6 +46,91 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 	}
 
 	return meowuser, nil
+}
+
+// createSubscriber creates a subscriber in the database based on the input
+func (h *Handler) createSubscriber(ctx context.Context, input ent.CreateSubscriberInput, user *User) (*ent.Subscriber, error) {
+	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+	if err != nil {
+		h.Logger.Errorw("unable to parse ttl", "error", err)
+		return nil, err
+	}
+
+	meowsubscriber, err := transaction.FromContext(ctx).Subscriber.Create().
+		SetInput(input).
+		SetToken(user.EmailVerificationToken.String).
+		SetSecret(user.EmailVerificationSecret).
+		SetTTL(ttl).
+		Save(ctx)
+	if err != nil {
+		h.Logger.Errorw("error creating new subscriber", "error", err)
+
+		return nil, err
+	}
+
+	return meowsubscriber, nil
+}
+
+// updateSubscriber updates a subscriber by in the database based on the input
+func (h *Handler) updateSubscriber(ctx context.Context, id string, input ent.UpdateSubscriberInput) error {
+	_, err := transaction.FromContext(ctx).Subscriber.UpdateOneID(id).
+		SetInput(input).
+		Save(ctx)
+	if err != nil {
+		h.Logger.Errorw("error updating subscriber", "error", err)
+
+		return err
+	}
+
+	return nil
+}
+
+// updateSubscriber updates a subscriber by in the database based on the input
+func (h *Handler) updateSubscriberVerificationToken(ctx context.Context, user *User) error {
+	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+	if err != nil {
+		h.Logger.Errorw("unable to parse ttl", "error", err)
+		return err
+	}
+
+	_, err = transaction.FromContext(ctx).Subscriber.UpdateOneID(user.ID).
+		SetToken(user.EmailVerificationToken.String).
+		SetSecret(user.EmailVerificationSecret).
+		SetTTL(ttl).
+		Save(ctx)
+	if err != nil {
+		h.Logger.Errorw("error updating subscriber tokens", "error", err)
+
+		return err
+	}
+
+	return nil
+}
+
+// deleteSubscriber deletes a subscriber by email and org in the database
+func (h *Handler) deleteSubscriber(ctx context.Context, email string, org string) error {
+	whereOrg := subscriber.OwnerID(org)
+	if org == "" {
+		whereOrg = subscriber.OwnerIDIsNil()
+	}
+
+	num, err := transaction.FromContext(ctx).Subscriber.Delete().
+		Where(
+			subscriber.EmailEQ(email),
+			whereOrg,
+		).
+		Exec(ctx)
+	if err != nil {
+		h.Logger.Errorw("error updating subscriber", "error", err)
+
+		return err
+	}
+
+	if num < 1 {
+		return ErrSubscriberNotFound
+	}
+
+	return nil
 }
 
 // createEmailVerificationToken creates a new email verification for the user
@@ -403,4 +489,32 @@ func (h *Handler) setWebauthnAllowed(ctx context.Context, user *ent.User) error 
 	}
 
 	return nil
+}
+
+// getSubscriberByToken returns the subscriber based on the token in the request
+func (h *Handler) getSubscriberByToken(ctx context.Context, token string) (*ent.Subscriber, error) {
+	subscriber, err := transaction.FromContext(ctx).Subscriber.Query().
+		Where(
+			subscriber.Token(token),
+		).
+		Only(ctx)
+	if err != nil {
+		h.Logger.Errorw("error obtaining subscriber from verification token", "error", err)
+
+		return nil, err
+	}
+
+	return subscriber, nil
+}
+
+// getOrgByID returns the organization based on the id in the request
+func (h *Handler) getOrgByID(ctx context.Context, id string) (*ent.Organization, error) {
+	org, err := transaction.FromContext(ctx).Organization.Get(ctx, id)
+	if err != nil {
+		h.Logger.Errorw("error obtaining organization from id", "error", err)
+
+		return nil, err
+	}
+
+	return org, nil
 }

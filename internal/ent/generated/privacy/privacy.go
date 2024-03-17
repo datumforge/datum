@@ -447,6 +447,30 @@ func (f PersonalAccessTokenMutationRuleFunc) EvalMutation(ctx context.Context, m
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.PersonalAccessTokenMutation", m)
 }
 
+// The SubscriberQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SubscriberQueryRuleFunc func(context.Context, *generated.SubscriberQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SubscriberQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.SubscriberQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.SubscriberQuery", q)
+}
+
+// The SubscriberMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SubscriberMutationRuleFunc func(context.Context, *generated.SubscriberMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SubscriberMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.SubscriberMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.SubscriberMutation", m)
+}
+
 // The TFASettingsQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type TFASettingsQueryRuleFunc func(context.Context, *generated.TFASettingsQuery) error
@@ -606,6 +630,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.PersonalAccessTokenQuery:
 		return q.Filter(), nil
+	case *generated.SubscriberQuery:
+		return q.Filter(), nil
 	case *generated.TFASettingsQuery:
 		return q.Filter(), nil
 	case *generated.UserQuery:
@@ -648,6 +674,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.PasswordResetTokenMutation:
 		return m.Filter(), nil
 	case *generated.PersonalAccessTokenMutation:
+		return m.Filter(), nil
+	case *generated.SubscriberMutation:
 		return m.Filter(), nil
 	case *generated.TFASettingsMutation:
 		return m.Filter(), nil

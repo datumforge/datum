@@ -48,6 +48,9 @@ type PasswordResetToken func(*sql.Selector)
 // PersonalAccessToken is the predicate function for personalaccesstoken builders.
 type PersonalAccessToken func(*sql.Selector)
 
+// Subscriber is the predicate function for subscriber builders.
+type Subscriber func(*sql.Selector)
+
 // TFASettings is the predicate function for tfasettings builders.
 type TFASettings func(*sql.Selector)
 

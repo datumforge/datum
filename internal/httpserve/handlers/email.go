@@ -39,6 +39,32 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 	return h.EmailManager.Send(msg)
 }
 
+// SendSubscriberEmail sends an email to confirm a user's subscription
+func (h *Handler) SendSubscriberEmail(user *User, orgName string) error {
+	data := emails.SubscriberEmailData{
+		OrgName: orgName,
+		EmailData: emails.EmailData{
+			Sender: h.EmailManager.MustFromContact(),
+			Recipient: sendgrid.Contact{
+				Email: user.Email,
+			},
+		},
+	}
+
+	var err error
+	if data.VerifySubscriberURL, err = h.EmailManager.URLConfig.SubscriberVerifyURL(user.GetVerificationToken()); err != nil {
+		return err
+	}
+
+	msg, err := emails.SubscribeEmail(data)
+	if err != nil {
+		return err
+	}
+
+	// Send the email
+	return h.EmailManager.Send(msg)
+}
+
 // SendPasswordResetRequestEmail Send an email to a user to request them to reset their password
 func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data := emails.ResetRequestData{

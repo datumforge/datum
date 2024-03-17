@@ -177,6 +177,18 @@ func (f PersonalAccessTokenFunc) Mutate(ctx context.Context, m generated.Mutatio
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.PersonalAccessTokenMutation", m)
 }
 
+// The SubscriberFunc type is an adapter to allow the use of ordinary
+// function as Subscriber mutator.
+type SubscriberFunc func(context.Context, *generated.SubscriberMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SubscriberFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.SubscriberMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SubscriberMutation", m)
+}
+
 // The TFASettingsFunc type is an adapter to allow the use of ordinary
 // function as TFASettings mutator.
 type TFASettingsFunc func(context.Context, *generated.TFASettingsMutation) (generated.Value, error)

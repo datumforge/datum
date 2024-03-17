@@ -460,6 +460,8 @@ URLConfig for the datum registration
 |**verify**|`string`|Verify is the path to the verify endpoint used in verification emails<br/>||
 |**invite**|`string`|Invite is the path to the invite endpoint used in invite emails<br/>||
 |**reset**|`string`|Reset is the path to the reset endpoint used in password reset emails<br/>||
+|**subscriberVerify**|`string`|SubscriberVerify is the path to the subscriber verify endpoint used in verification emails<br/>||
+|**defaultSubscriptionOrg**|`string`|DefaultSubscriptionOrg is the default organization name to subscribe to<br/>||
 
 **Additional Properties:** not allowed  
 <a name="sessions"></a>

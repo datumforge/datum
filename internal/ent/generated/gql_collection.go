@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -1532,6 +1533,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedInvites(alias, func(wq *InviteQuery) {
 				*wq = *query
 			})
+		case "subscribers":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SubscriberClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedSubscribers(alias, func(wq *SubscriberQuery) {
+				*wq = *query
+			})
 		case "members":
 			var (
 				alias = field.Alias
@@ -1952,6 +1965,142 @@ func newPersonalAccessTokenPaginateArgs(rv map[string]any) *personalaccesstokenP
 	}
 	if v, ok := rv[whereField].(*PersonalAccessTokenWhereInput); ok {
 		args.opts = append(args.opts, WithPersonalAccessTokenFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (s *SubscriberQuery) CollectFields(ctx context.Context, satisfies ...string) (*SubscriberQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return s, nil
+	}
+	if err := s.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+func (s *SubscriberQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(subscriber.Columns))
+		selectedFields = []string{subscriber.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: s.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			s.withOwner = query
+			if _, ok := fieldSeen[subscriber.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldOwnerID)
+				fieldSeen[subscriber.FieldOwnerID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[subscriber.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldCreatedAt)
+				fieldSeen[subscriber.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[subscriber.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldUpdatedAt)
+				fieldSeen[subscriber.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[subscriber.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldCreatedBy)
+				fieldSeen[subscriber.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[subscriber.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldUpdatedBy)
+				fieldSeen[subscriber.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[subscriber.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldDeletedAt)
+				fieldSeen[subscriber.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[subscriber.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldDeletedBy)
+				fieldSeen[subscriber.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[subscriber.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldOwnerID)
+				fieldSeen[subscriber.FieldOwnerID] = struct{}{}
+			}
+		case "email":
+			if _, ok := fieldSeen[subscriber.FieldEmail]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldEmail)
+				fieldSeen[subscriber.FieldEmail] = struct{}{}
+			}
+		case "phoneNumber":
+			if _, ok := fieldSeen[subscriber.FieldPhoneNumber]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldPhoneNumber)
+				fieldSeen[subscriber.FieldPhoneNumber] = struct{}{}
+			}
+		case "verifiedEmail":
+			if _, ok := fieldSeen[subscriber.FieldVerifiedEmail]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldVerifiedEmail)
+				fieldSeen[subscriber.FieldVerifiedEmail] = struct{}{}
+			}
+		case "verifiedPhone":
+			if _, ok := fieldSeen[subscriber.FieldVerifiedPhone]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldVerifiedPhone)
+				fieldSeen[subscriber.FieldVerifiedPhone] = struct{}{}
+			}
+		case "active":
+			if _, ok := fieldSeen[subscriber.FieldActive]; !ok {
+				selectedFields = append(selectedFields, subscriber.FieldActive)
+				fieldSeen[subscriber.FieldActive] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		s.Select(selectedFields...)
+	}
+	return nil
+}
+
+type subscriberPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []SubscriberPaginateOption
+}
+
+func newSubscriberPaginateArgs(rv map[string]any) *subscriberPaginateArgs {
+	args := &subscriberPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*SubscriberWhereInput); ok {
+		args.opts = append(args.opts, WithSubscriberFilter(v.Filter))
 	}
 	return args
 }

@@ -1080,6 +1080,7 @@ type CreateOrganizationInput struct {
 	OauthproviderIDs       []string
 	UserIDs                []string
 	InviteIDs              []string
+	SubscriberIDs          []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -1136,6 +1137,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.InviteIDs; len(v) > 0 {
 		m.AddInviteIDs(v...)
 	}
+	if v := i.SubscriberIDs; len(v) > 0 {
+		m.AddSubscriberIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -1179,6 +1183,9 @@ type UpdateOrganizationInput struct {
 	ClearInvites                 bool
 	AddInviteIDs                 []string
 	RemoveInviteIDs              []string
+	ClearSubscribers             bool
+	AddSubscriberIDs             []string
+	RemoveSubscriberIDs          []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -1281,6 +1288,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveInviteIDs; len(v) > 0 {
 		m.RemoveInviteIDs(v...)
+	}
+	if i.ClearSubscribers {
+		m.ClearSubscribers()
+	}
+	if v := i.AddSubscriberIDs; len(v) > 0 {
+		m.AddSubscriberIDs(v...)
+	}
+	if v := i.RemoveSubscriberIDs; len(v) > 0 {
+		m.RemoveSubscriberIDs(v...)
 	}
 }
 
@@ -1594,6 +1610,126 @@ func (c *PersonalAccessTokenUpdate) SetInput(i UpdatePersonalAccessTokenInput) *
 
 // SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdateOne builder.
 func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateSubscriberInput represents a mutation input for creating subscribers.
+type CreateSubscriberInput struct {
+	CreatedAt     *time.Time
+	UpdatedAt     *time.Time
+	CreatedBy     *string
+	UpdatedBy     *string
+	Email         string
+	PhoneNumber   *string
+	VerifiedEmail *bool
+	VerifiedPhone *bool
+	Active        *bool
+	OwnerID       *string
+}
+
+// Mutate applies the CreateSubscriberInput on the SubscriberMutation builder.
+func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetEmail(i.Email)
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
+	}
+	if v := i.VerifiedEmail; v != nil {
+		m.SetVerifiedEmail(*v)
+	}
+	if v := i.VerifiedPhone; v != nil {
+		m.SetVerifiedPhone(*v)
+	}
+	if v := i.Active; v != nil {
+		m.SetActive(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateSubscriberInput on the SubscriberCreate builder.
+func (c *SubscriberCreate) SetInput(i CreateSubscriberInput) *SubscriberCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateSubscriberInput represents a mutation input for updating subscribers.
+type UpdateSubscriberInput struct {
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Email            *string
+	ClearPhoneNumber bool
+	PhoneNumber      *string
+	VerifiedEmail    *bool
+	VerifiedPhone    *bool
+	Active           *bool
+	ClearOwner       bool
+	OwnerID          *string
+}
+
+// Mutate applies the UpdateSubscriberInput on the SubscriberMutation builder.
+func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Email; v != nil {
+		m.SetEmail(*v)
+	}
+	if i.ClearPhoneNumber {
+		m.ClearPhoneNumber()
+	}
+	if v := i.PhoneNumber; v != nil {
+		m.SetPhoneNumber(*v)
+	}
+	if v := i.VerifiedEmail; v != nil {
+		m.SetVerifiedEmail(*v)
+	}
+	if v := i.VerifiedPhone; v != nil {
+		m.SetVerifiedPhone(*v)
+	}
+	if v := i.Active; v != nil {
+		m.SetActive(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateSubscriberInput on the SubscriberUpdate builder.
+func (c *SubscriberUpdate) SetInput(i UpdateSubscriberInput) *SubscriberUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateSubscriberInput on the SubscriberUpdateOne builder.
+func (c *SubscriberUpdateOne) SetInput(i UpdateSubscriberInput) *SubscriberUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -769,6 +770,77 @@ func init() {
 	personalaccesstokenDescID := personalaccesstokenMixinFields2[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
+	subscriberMixin := schema.Subscriber{}.Mixin()
+	subscriber.Policy = privacy.NewPolicies(schema.Subscriber{})
+	subscriber.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := subscriber.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	subscriberMixinHooks0 := subscriberMixin[0].Hooks()
+	subscriberMixinHooks2 := subscriberMixin[2].Hooks()
+	subscriberHooks := schema.Subscriber{}.Hooks()
+
+	subscriber.Hooks[1] = subscriberMixinHooks0[0]
+
+	subscriber.Hooks[2] = subscriberMixinHooks2[0]
+
+	subscriber.Hooks[3] = subscriberHooks[0]
+	subscriberMixinInters2 := subscriberMixin[2].Interceptors()
+	subscriberInters := schema.Subscriber{}.Interceptors()
+	subscriber.Interceptors[0] = subscriberMixinInters2[0]
+	subscriber.Interceptors[1] = subscriberInters[0]
+	subscriberMixinFields0 := subscriberMixin[0].Fields()
+	_ = subscriberMixinFields0
+	subscriberMixinFields1 := subscriberMixin[1].Fields()
+	_ = subscriberMixinFields1
+	subscriberFields := schema.Subscriber{}.Fields()
+	_ = subscriberFields
+	// subscriberDescCreatedAt is the schema descriptor for created_at field.
+	subscriberDescCreatedAt := subscriberMixinFields0[0].Descriptor()
+	// subscriber.DefaultCreatedAt holds the default value on creation for the created_at field.
+	subscriber.DefaultCreatedAt = subscriberDescCreatedAt.Default.(func() time.Time)
+	// subscriberDescUpdatedAt is the schema descriptor for updated_at field.
+	subscriberDescUpdatedAt := subscriberMixinFields0[1].Descriptor()
+	// subscriber.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	subscriber.DefaultUpdatedAt = subscriberDescUpdatedAt.Default.(func() time.Time)
+	// subscriber.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	subscriber.UpdateDefaultUpdatedAt = subscriberDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// subscriberDescEmail is the schema descriptor for email field.
+	subscriberDescEmail := subscriberFields[0].Descriptor()
+	// subscriber.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	subscriber.EmailValidator = subscriberDescEmail.Validators[0].(func(string) error)
+	// subscriberDescPhoneNumber is the schema descriptor for phone_number field.
+	subscriberDescPhoneNumber := subscriberFields[1].Descriptor()
+	// subscriber.PhoneNumberValidator is a validator for the "phone_number" field. It is called by the builders before save.
+	subscriber.PhoneNumberValidator = subscriberDescPhoneNumber.Validators[0].(func(string) error)
+	// subscriberDescVerifiedEmail is the schema descriptor for verified_email field.
+	subscriberDescVerifiedEmail := subscriberFields[2].Descriptor()
+	// subscriber.DefaultVerifiedEmail holds the default value on creation for the verified_email field.
+	subscriber.DefaultVerifiedEmail = subscriberDescVerifiedEmail.Default.(bool)
+	// subscriberDescVerifiedPhone is the schema descriptor for verified_phone field.
+	subscriberDescVerifiedPhone := subscriberFields[3].Descriptor()
+	// subscriber.DefaultVerifiedPhone holds the default value on creation for the verified_phone field.
+	subscriber.DefaultVerifiedPhone = subscriberDescVerifiedPhone.Default.(bool)
+	// subscriberDescActive is the schema descriptor for active field.
+	subscriberDescActive := subscriberFields[4].Descriptor()
+	// subscriber.DefaultActive holds the default value on creation for the active field.
+	subscriber.DefaultActive = subscriberDescActive.Default.(bool)
+	// subscriberDescToken is the schema descriptor for token field.
+	subscriberDescToken := subscriberFields[5].Descriptor()
+	// subscriber.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	subscriber.TokenValidator = subscriberDescToken.Validators[0].(func(string) error)
+	// subscriberDescSecret is the schema descriptor for secret field.
+	subscriberDescSecret := subscriberFields[7].Descriptor()
+	// subscriber.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
+	subscriber.SecretValidator = subscriberDescSecret.Validators[0].(func([]byte) error)
+	// subscriberDescID is the schema descriptor for id field.
+	subscriberDescID := subscriberMixinFields1[0].Descriptor()
+	// subscriber.DefaultID holds the default value on creation for the id field.
+	subscriber.DefaultID = subscriberDescID.Default.(func() string)
 	tfasettingsMixin := schema.TFASettings{}.Mixin()
 	tfasettingsMixinHooks0 := tfasettingsMixin[0].Hooks()
 	tfasettingsMixinHooks2 := tfasettingsMixin[2].Hooks()

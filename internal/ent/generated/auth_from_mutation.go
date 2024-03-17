@@ -355,3 +355,18 @@ func (m *OrganizationSettingMutation) CreateTuplesFromDelete(ctx context.Context
 
 	return nil
 }
+
+func (m *SubscriberMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *SubscriberMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *SubscriberMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}

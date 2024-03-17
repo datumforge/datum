@@ -23,13 +23,13 @@ func (h *Handler) UnsubscribeHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("email is required"))
 	}
 
-	// TODO: allow org subscriptions
-	org := ""
+	// organization, if null defaults to root level datum subscribers
+	organization_id := ctx.QueryParam("organization_id")
 
 	// set viewer context
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), email)
 
-	if err := h.deleteSubscriber(ctxWithToken, email, org); err != nil {
+	if err := h.deleteSubscriber(ctxWithToken, email, organization_id); err != nil {
 		h.Logger.Errorw("error un user", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))

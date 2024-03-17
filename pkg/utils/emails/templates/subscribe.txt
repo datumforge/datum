@@ -1,4 +1,4 @@
-Thank you for subscribing to the Datum platform - in order to confirm the subscription of future emails, please verify your email address by clicking the button below, or copy and paste the linked URL into your browser:
+Thank you for subscribing to {{ .OrgName }} - in order to confirm the subscription of future emails, please verify your email address by clicking the button below, or copy and paste the linked URL into your browser:
 
 {{ .VerifySubscriberURL }}
 

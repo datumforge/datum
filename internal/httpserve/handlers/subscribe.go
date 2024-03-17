@@ -24,11 +24,15 @@ type SubscribeReply struct {
 
 // SubscribeHandler is responsible for handling requests to the `/subscribe` endpoint
 // It creates a new subscriber and sends a verification email to the subscriber
+// this current only supports email subscriptions
 func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 	email := ctx.QueryParam("email")
 	if email == "" {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("email is required"))
 	}
+
+	// organization, if null defaults to root level datum subscribers
+	organizationID := ctx.QueryParam("organization_id")
 
 	// create user input for subscriber verification token
 	user := &User{
@@ -41,9 +45,13 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse("could not create verification token"))
 	}
 
-	// create subscriber
+	// create subscriber input
 	input := generated.CreateSubscriberInput{
 		Email: email,
+	}
+
+	if organizationID != "" {
+		input.OwnerID = &organizationID
 	}
 
 	// set viewer context
@@ -64,7 +72,7 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 		return err
 	}
 
-	if err := h.sendEmail(user); err != nil {
+	if err := h.sendSubscriberEmail(ctxWithToken, user, organizationID); err != nil {
 		h.Logger.Errorw("error sending subscriber email", "error", err)
 
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse("could not send subscriber email"))
@@ -78,13 +86,24 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, out)
 }
 
-func (h *Handler) sendEmail(user *User) error {
+func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID string) error {
+	// get org name if not root level (Datum)
+	orgName := ""
+	if orgID != "" {
+		org, err := h.getOrgByID(ctx, orgID)
+		if err != nil {
+			return err
+		}
+
+		orgName = org.Name
+	}
+
 	// send emails via TaskMan as to not create blocking operations in the server
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return h.SendSubscriberEmail(user)
+		return h.SendSubscriberEmail(user, orgName)
 	}), marionette.WithRetries(3), // nolint: gomnd
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
-		marionette.WithErrorf("could not send verification email to user %s", user.ID),
+		marionette.WithErrorf("could not send subscriber verification email to user %s", user.Email),
 	); err != nil {
 		return err
 	}

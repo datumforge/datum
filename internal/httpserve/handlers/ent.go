@@ -505,3 +505,15 @@ func (h *Handler) getSubscriberByToken(ctx context.Context, token string) (*ent.
 
 	return subscriber, nil
 }
+
+// getOrgByID returns the organization based on the id in the request
+func (h *Handler) getOrgByID(ctx context.Context, id string) (*ent.Organization, error) {
+	org, err := transaction.FromContext(ctx).Organization.Get(ctx, id)
+	if err != nil {
+		h.Logger.Errorw("error obtaining organization from id", "error", err)
+
+		return nil, err
+	}
+
+	return org, nil
+}

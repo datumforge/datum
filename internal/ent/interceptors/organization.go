@@ -42,9 +42,9 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 	}
 
 	// by pass checks on invite
-	if rule.ContextHasPrivacyTokenOfType(ctx, &token.OrgInviteToken{}) {
+	if rule.ContextHasPrivacyTokenOfType(ctx, &token.OrgInviteToken{}) || rule.ContextHasPrivacyTokenOfType(ctx, &token.SignUpToken{}) {
 		if len(orgs) != 1 {
-			q.Logger.Errorw("unexpected number of orgs on invite")
+			q.Logger.Errorw("unexpected number of orgs on token request")
 
 			return nil, ErrInternalServerError
 		}

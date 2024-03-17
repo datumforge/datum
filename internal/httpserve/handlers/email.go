@@ -40,8 +40,13 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 }
 
 // SendSubscriberEmail sends an email to confirm a user's subscription
-func (h *Handler) SendSubscriberEmail(user *User) error {
+func (h *Handler) SendSubscriberEmail(user *User, orgName string) error {
+	if orgName == "" {
+		orgName = "Datum"
+	}
+
 	data := emails.SubscriberEmailData{
+		OrgName: orgName,
 		EmailData: emails.EmailData{
 			Sender: h.EmailManager.MustFromContact(),
 			Recipient: sendgrid.Contact{

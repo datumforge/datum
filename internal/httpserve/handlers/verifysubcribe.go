@@ -44,29 +44,8 @@ func (h *Handler) VerifySubscription(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
 	}
 
-	// create email verification
-	user := &User{
-		ID:    entSubscriber.ID,
-		Email: entSubscriber.Email,
-	}
-
 	if !entSubscriber.VerifiedEmail {
-		// Construct the user token from the database fields
-		t := &tokens.VerificationToken{
-			Email: entSubscriber.Email,
-		}
-
-		user.EmailVerificationSecret = *entSubscriber.Secret
-		user.EmailVerificationToken = sql.NullString{String: entSubscriber.Token, Valid: true}
-		user.EmailVerificationExpires = sql.NullString{String: entSubscriber.TTL.Format(time.RFC3339Nano), Valid: true}
-
-		if t.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
-			h.Logger.Errorw("unable to parse expiration", "error", err)
-
-			return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
-		}
-
-		if err := h.verifySubscriberToken(ctxWithToken, t, user); err != nil {
+		if err := h.verifySubscriberToken(ctxWithToken, entSubscriber); err != nil {
 			if errors.Is(err, ErrExpiredToken) {
 				out := &VerifySubscribeReply{
 					Reply:   rout.Reply{Success: false},
@@ -111,8 +90,34 @@ func validateVerifySubscriptionRequest(token string) error {
 	return nil
 }
 
-func (h *Handler) verifySubscriberToken(ctx context.Context, t *tokens.VerificationToken, user *User) error {
+// verifySubscriberToken checks the token provided by the user and verifies it against the database
+func (h *Handler) verifySubscriberToken(ctx context.Context, entSubscriber *generated.Subscriber) error {
+	// create User struct from entSubscriber
+	user := &User{
+		ID:                       entSubscriber.ID,
+		Email:                    entSubscriber.Email,
+		EmailVerificationSecret:  *entSubscriber.Secret,
+		EmailVerificationToken:   sql.NullString{String: entSubscriber.Token, Valid: true},
+		EmailVerificationExpires: sql.NullString{String: entSubscriber.TTL.Format(time.RFC3339Nano), Valid: true},
+	}
+
+	// setup token to be validated
+	t := &tokens.VerificationToken{
+		Email: entSubscriber.Email,
+	}
+
+	var err error
+	t.ExpiresAt, err = user.GetVerificationExpires()
+
+	if err != nil {
+		h.Logger.Errorw("unable to parse expiration", "error", err)
+
+		return ErrUnableToVerifyEmail
+	}
+
+	// verify token is valid, otherwise reset and send new token
 	if err := t.Verify(user.GetVerificationToken(), user.EmailVerificationSecret); err != nil {
+		// if token is expired, create new token and send email
 		if errors.Is(err, tokens.ErrTokenExpired) {
 			if err := user.CreateVerificationToken(); err != nil {
 				h.Logger.Errorw("error creating verification token", "error", err)
@@ -120,13 +125,15 @@ func (h *Handler) verifySubscriberToken(ctx context.Context, t *tokens.Verificat
 				return err
 			}
 
+			// update token settings in the database
 			if err := h.updateSubscriberVerificationToken(ctx, user); err != nil {
 				h.Logger.Errorw("error updating subscriber verification token", "error", err)
 
 				return err
 			}
 
-			if err := h.sendEmail(user); err != nil {
+			// resend email with new token to the subscriber
+			if err := h.sendSubscriberEmail(ctx, user, entSubscriber.OwnerID); err != nil {
 				h.Logger.Errorw("error sending subscriber email", "error", err)
 
 				return err

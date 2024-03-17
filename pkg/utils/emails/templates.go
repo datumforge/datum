@@ -29,6 +29,7 @@ type VerifyEmailData struct {
 type SubscriberEmailData struct {
 	EmailData
 	VerifySubscriberURL string
+	OrgName             string
 }
 
 // InviteData is used to complete the invite email template

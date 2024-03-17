@@ -6,7 +6,7 @@ import (
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 )
 
-// orgMembersCmd represents the base subscribers command when called without any subcommands
+// subscribersCmd represents the base subscribers command when called without any subcommands
 var subscribersCmd = &cobra.Command{
 	Use:   "subscribers",
 	Short: "The subcommands for working with the subscribers of a datum organization",

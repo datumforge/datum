@@ -139,7 +139,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 				{
 					To:        tc.email,
 					From:      "mitb@datum.net",
-					Subject:   emails.Subscribed,
+					Subject:   fmt.Sprintf(emails.Subscribed, "MITB"),
 					Timestamp: sent,
 				},
 			}

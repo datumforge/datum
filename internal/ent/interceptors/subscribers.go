@@ -5,7 +5,6 @@ import (
 
 	"entgo.io/ent"
 	"github.com/datumforge/fgax"
-	"github.com/openfga/go-sdk/client"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
@@ -24,7 +23,7 @@ func InterceptorSubscriber() ent.Interceptor {
 				return nil, err
 			}
 
-			// bypass checks on token request
+			// bypass checks on subscriber creation
 			if rule.ContextHasPrivacyTokenOfType(ctx, &token.VerifyToken{}) || rule.ContextHasPrivacyTokenOfType(ctx, &token.SignUpToken{}) {
 				return v, nil
 			}
@@ -59,11 +58,7 @@ func filterSubscribersByAccess(ctx context.Context, q *generated.SubscriberQuery
 	}
 
 	// Check for system admin
-	isAdmin, err := q.Authz.CheckTuple(ctx, client.ClientCheckRequest{
-		User:     "user:" + userID,
-		Relation: "assignee",
-		Object:   "role:system_admin",
-	})
+	isAdmin, err := q.Authz.CheckSystemAdminRole(ctx, userID)
 	if err != nil {
 		return nil, err
 	}

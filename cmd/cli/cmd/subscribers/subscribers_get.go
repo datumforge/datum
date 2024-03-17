@@ -59,12 +59,12 @@ func subscribers(ctx context.Context) error {
 
 	var s []byte
 
-	org, err := cli.Client.Subscribers(ctx, &where, cli.Interceptor)
+	subs, err := cli.Client.Subscribers(ctx, &where, cli.Interceptor)
 	if err != nil {
 		return err
 	}
 
-	s, err = json.Marshal(org)
+	s, err = json.Marshal(subs)
 	if err != nil {
 		return err
 	}

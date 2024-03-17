@@ -491,6 +491,7 @@ func (h *Handler) setWebauthnAllowed(ctx context.Context, user *ent.User) error 
 	return nil
 }
 
+// getSubscriberByToken returns the subscriber based on the token in the request
 func (h *Handler) getSubscriberByToken(ctx context.Context, token string) (*ent.Subscriber, error) {
 	subscriber, err := transaction.FromContext(ctx).Subscriber.Query().
 		Where(

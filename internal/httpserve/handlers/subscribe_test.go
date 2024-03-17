@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,9 +12,14 @@ import (
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
 )
@@ -24,16 +30,20 @@ func (suite *HandlerTestSuite) TestSubscribeHandler() {
 	// add handler
 	suite.e.GET("subscribe", suite.h.SubscribeHandler)
 
+	org := suite.createTestOrg(t)
+
 	testCases := []struct {
 		name               string
 		email              string
+		orgID              string
+		orgName            string
 		emailExpected      bool
 		expectedErrMessage string
 		expectedStatus     int
 		from               string
 	}{
 		{
-			name:           "happy path ,new subscriber",
+			name:           "happy path, new subscriber",
 			email:          "brax@datum.net",
 			emailExpected:  true,
 			expectedStatus: http.StatusCreated,
@@ -43,6 +53,14 @@ func (suite *HandlerTestSuite) TestSubscribeHandler() {
 			email:          "brax@datum.net",
 			emailExpected:  false,
 			expectedStatus: http.StatusConflict,
+		},
+		{
+			name:           "happy path, new subscriber for org",
+			email:          "brax@datum.net",
+			orgName:        org.Name,
+			orgID:          org.ID,
+			emailExpected:  true,
+			expectedStatus: http.StatusCreated,
 		},
 		{
 			name:               "missing email",
@@ -61,6 +79,9 @@ func (suite *HandlerTestSuite) TestSubscribeHandler() {
 			mock.ResetEmailMock()
 
 			target := fmt.Sprintf("/subscribe?email=%s", tc.email)
+			if tc.orgID != "" {
+				target = fmt.Sprintf("%s&organization_id=%s", target, tc.orgID)
+			}
 
 			req := httptest.NewRequest(http.MethodGet, target, nil)
 
@@ -89,11 +110,16 @@ func (suite *HandlerTestSuite) TestSubscribeHandler() {
 			}
 
 			// Test that one verify email was sent to each user
+			orgName := "MITB"
+			if tc.orgName != "" {
+				orgName = tc.orgName
+			}
+
 			messages := []*mock.EmailMetadata{
 				{
 					To:        tc.email,
 					From:      "mitb@datum.net",
-					Subject:   emails.Subscribed,
+					Subject:   fmt.Sprintf(emails.Subscribed, orgName),
 					Timestamp: sent,
 				},
 			}
@@ -115,4 +141,32 @@ func (suite *HandlerTestSuite) TestSubscribeHandler() {
 			}
 		})
 	}
+}
+
+func (suite *HandlerTestSuite) createTestOrg(t *testing.T) *ent.Organization {
+	mock_fga.WriteAny(t, suite.fga)
+	// bypass auth
+	ctx := context.Background()
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	// setup test data
+	requestor := suite.db.User.Create().
+		SetEmail("rocket@datum.net").
+		SetFirstName("Rocket").
+		SetLastName("Racoon").
+		SaveX(ctx)
+
+	ec, err := auth.NewTestContextWithValidUser(requestor.ID)
+	require.NoError(t, err)
+
+	newCtx := ec.Request().Context()
+	newCtx = privacy.DecisionContext(newCtx, privacy.Allow)
+
+	reqCtx := context.WithValue(newCtx, echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	return suite.db.Organization.Create().
+		SetName("avengers").
+		SaveX(reqCtx)
 }

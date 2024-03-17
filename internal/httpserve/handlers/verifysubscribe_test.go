@@ -26,7 +26,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.e.GET("subscribe/verify", suite.h.VerifySubscription)
+	suite.e.GET("subscribe/verify", suite.h.VerifySubscriptionHandler)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 

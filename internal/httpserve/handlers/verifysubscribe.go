@@ -22,8 +22,8 @@ type VerifySubscribeReply struct {
 	Message string `json:"message,omitempty"`
 }
 
-// VerifySubscription is the handler for the subscription verification endpoint
-func (h *Handler) VerifySubscription(ctx echo.Context) error {
+// VerifySubscriptionHandler is the handler for the subscription verification endpoint
+func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 	reqToken := ctx.QueryParam("token")
 
 	if err := validateVerifySubscriptionRequest(reqToken); err != nil {

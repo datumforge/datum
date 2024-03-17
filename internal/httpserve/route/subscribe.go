@@ -25,7 +25,7 @@ func registerVerifySubscribeHandler(router *echo.Echo, h *handlers.Handler) (err
 		Method: http.MethodGet,
 		Path:   "/subscribe/verify",
 		Handler: func(c echo.Context) error {
-			return h.VerifySubscription(c)
+			return h.VerifySubscriptionHandler(c)
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))
 

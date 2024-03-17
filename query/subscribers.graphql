@@ -1,0 +1,13 @@
+query Subscribers($where: SubscriberWhereInput) {
+  subscribers(where: $where) {
+    edges {
+      node {
+        id
+        email
+        verifiedEmail
+        active
+        ownerID
+      }
+    }
+  }
+}

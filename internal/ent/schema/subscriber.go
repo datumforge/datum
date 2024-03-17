@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -123,6 +124,13 @@ func (Subscriber) Annotations() []schema.Annotation {
 			IDField:         "OwnerID",
 			NillableIDField: true,
 		},
+	}
+}
+
+// Interceptors of the Subscriber
+func (Subscriber) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.InterceptorSubscriber(),
 	}
 }
 

@@ -92,7 +92,9 @@ func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.
 
 // Subscribers is the resolver for the subscribers field.
 func (r *queryResolver) Subscribers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) (*generated.SubscriberConnection, error) {
-	panic(fmt.Errorf("not implemented: Subscribers - subscribers"))
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
+	return withTransactionalMutation(ctx).Subscriber.Query().Paginate(ctx, after, first, before, last, generated.WithSubscriberFilter(where.Filter))
 }
 
 // TfaSettingsSlice is the resolver for the tfaSettingsSlice field.

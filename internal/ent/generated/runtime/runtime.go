@@ -790,7 +790,9 @@ func init() {
 
 	subscriber.Hooks[3] = subscriberHooks[0]
 	subscriberMixinInters2 := subscriberMixin[2].Interceptors()
+	subscriberInters := schema.Subscriber{}.Interceptors()
 	subscriber.Interceptors[0] = subscriberMixinInters2[0]
+	subscriber.Interceptors[1] = subscriberInters[0]
 	subscriberMixinFields0 := subscriberMixin[0].Fields()
 	_ = subscriberMixinFields0
 	subscriberMixinFields1 := subscriberMixin[1].Fields()

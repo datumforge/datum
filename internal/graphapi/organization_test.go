@@ -573,7 +573,7 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	// mocks checks for all calls
 	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 5)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 6)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 
@@ -616,8 +616,8 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	g, err = suite.client.datum.GetGroupByID(ctx, group1.ID)
-
 	require.NoError(t, err)
+
 	require.Equal(t, g.Group.ID, group1.ID)
 }
 

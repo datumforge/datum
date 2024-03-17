@@ -66,7 +66,6 @@ const (
 	PasswordResetSuccessRE = "Datum Password Reset Confirmation"
 	InviteBeenAccepted     = "You've been added to an Organization on Datum"
 	Subscribed             = "You've been subscribed to %s"
-	Unsubscribed           = "You've been unsubscribed from %s"
 )
 
 // WelcomeEmail creates a welcome email for a new user

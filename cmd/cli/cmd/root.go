@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"text/tabwriter"
 
 	"github.com/99designs/keyring"
 	"github.com/TylerBrock/colorjson"
@@ -25,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/tokens"
+	"github.com/datumforge/datum/pkg/utils/cli/rows"
 )
 
 const (
@@ -76,6 +78,9 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVar(&DatumHost, "host", defaultRootHost, "api host url")
 	ViperBindFlag("datum.host", RootCmd.PersistentFlags().Lookup("host"))
+
+	RootCmd.PersistentFlags().StringP("format", "f", "json", "output format (json, table)")
+	ViperBindFlag("output.format", RootCmd.PersistentFlags().Lookup("format"))
 
 	// Logging flags
 	RootCmd.PersistentFlags().Bool("debug", false, "enable debug logging")
@@ -180,6 +185,18 @@ func JSONPrint(s []byte) error {
 	fmt.Println(string(o))
 
 	return nil
+}
+
+func TablePrint(header []string, data [][]string) {
+	var w rows.Writer
+	w = rows.NewTabRowWriter(tabwriter.NewWriter(os.Stdout, 1, 0, 4, ' ', 0)) //nolint:gomnd
+	defer w.(*rows.TabRowWriter).Flush()
+
+	w.Write(header)
+
+	for _, r := range data {
+		w.Write(r)
+	}
 }
 
 func createClient(ctx context.Context, baseURL string) (*CLI, error) {

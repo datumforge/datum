@@ -54,10 +54,28 @@ func orgMembers(ctx context.Context) error {
 		return err
 	}
 
-	s, err = json.Marshal(org)
-	if err != nil {
-		return err
+	if viper.GetString("output.format") == "json" {
+		s, err = json.Marshal(org)
+		if err != nil {
+			return err
+		}
+
+		return datum.JSONPrint(s)
 	}
 
-	return datum.JSONPrint(s)
+	orgMembersTablePrint(*org)
+
+	return nil
+}
+
+func orgMembersTablePrint(om datumclient.GetOrgMembersByOrgID) {
+	header := []string{"Role", "UserID"}
+	data := [][]string{}
+
+	for _, v := range om.OrgMemberships.Edges {
+		r := []string{v.Node.Role.String(), v.Node.UserID}
+		data = append(data, r)
+	}
+
+	datum.TablePrint(header, data)
 }

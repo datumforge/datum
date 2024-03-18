@@ -549,8 +549,8 @@ github.com/tklauser/numcpus v0.6.1 h1:ng9scYS7az0Bk4OZLvrNXNSAO2Pxr1XXRAPyjhIx+F
 github.com/tklauser/numcpus v0.6.1/go.mod h1:1XfjsgE2zo8GVw7POkMbHENHzVg3GzmoZ9fESEdAacY=
 github.com/trisacrypto/directory v1.7.6 h1:SOa1uynpHgcENjZwvVtkfp6qjyvCZBs/X9C0T3nQ0LA=
 github.com/trisacrypto/directory v1.7.6/go.mod h1:JSIMzr3J79h3+Y+17ghtvsb0hUEHzo+islfpecrQfpk=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240220085343-4ae0eb9d0898 h1:1MvEhzI5pvP27e9Dzz861mxk9WzXZLSJwzOU67cKTbU=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240220085343-4ae0eb9d0898/go.mod h1:9bKuHS7eZh/0mJndbUOrCx8Ej3PlsRDszj4L7oVYMPQ=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240318102539-e704ff5fd269 h1:q8sTM/+OSCl6iq25ShYgc0jxBoDBgxb6qEE/9vcmVPY=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240318102539-e704ff5fd269/go.mod h1:9bKuHS7eZh/0mJndbUOrCx8Ej3PlsRDszj4L7oVYMPQ=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=

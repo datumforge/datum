@@ -12,8 +12,6 @@ server:
 # db settings
 db: 
   debug: true
-  driverName: libsql
-  primaryDbSource: "file:datum.db"
   multiWrite: false
 
 # auth settings

@@ -63,19 +63,36 @@ func orgMembers(ctx context.Context) error {
 		return datum.JSONPrint(s)
 	}
 
-	orgMembersTablePrint(*org)
-
-	return nil
+	return orgMembersTablePrint(*org)
 }
 
-func orgMembersTablePrint(om datumclient.GetOrgMembersByOrgID) {
-	header := []string{"Role", "UserID"}
-	data := [][]string{}
+func orgMembersTablePrint(om datumclient.GetOrgMembersByOrgID) error {
+	// check if there are any org members, otherwise we have nothing to print
+	if len(om.OrgMemberships.Edges) > 0 {
+		// get the headers for the table for each struct and substruct
+		header := datum.GetHeaders(om.OrgMemberships.Edges[0].Node, "")
+		subHeaders := datum.GetHeaders(om.OrgMemberships.Edges[0].Node.User, "User.")
 
-	for _, v := range om.OrgMemberships.Edges {
-		r := []string{v.Node.Role.String(), v.Node.UserID}
-		data = append(data, r)
+		// combine the headers
+		header = append(header, subHeaders...)
+
+		data := [][]string{}
+
+		// get the field values for each struct and substruct per row
+		for _, v := range om.OrgMemberships.Edges {
+			fields := datum.GetFields(*v.Node)
+			subfields := datum.GetFields(v.Node.User)
+
+			// combine the fields
+			fields = append(fields, subfields...)
+
+			// append the fields to the data slice
+			data = append(data, fields)
+		}
+
+		// print ze data
+		return datum.TablePrint(header, data)
 	}
 
-	datum.TablePrint(header, data)
+	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"net/http/cookiejar"
 	"os"
 	"path"
+	"reflect"
 	"strings"
 	"text/tabwriter"
 
@@ -187,16 +188,54 @@ func JSONPrint(s []byte) error {
 	return nil
 }
 
-func TablePrint(header []string, data [][]string) {
-	var w rows.Writer
-	w = rows.NewTabRowWriter(tabwriter.NewWriter(os.Stdout, 1, 0, 4, ' ', 0)) //nolint:gomnd
+// TablePrint prints a table to the console
+func TablePrint(header []string, data [][]string) error {
+	w := rows.NewTabRowWriter(tabwriter.NewWriter(os.Stdout, 1, 0, 4, ' ', 0)) //nolint:gomnd
 	defer w.(*rows.TabRowWriter).Flush()
 
-	w.Write(header)
+	if err := w.Write(header); err != nil {
+		return err
+	}
 
 	for _, r := range data {
-		w.Write(r)
+		if err := w.Write(r); err != nil {
+			return err
+		}
 	}
+
+	return nil
+}
+
+// GetHeaders returns the name of each field in a struct
+func GetHeaders(s interface{}, prefix string) []string {
+	headers := []string{}
+	val := reflect.Indirect(reflect.ValueOf(s))
+
+	for i := 0; i < val.NumField(); i++ {
+		if val.Type().Field(i).Type.Kind() == reflect.Struct {
+			continue
+		}
+
+		headers = append(headers, fmt.Sprintf("%s%s", prefix, val.Type().Field(i).Name))
+	}
+
+	return headers
+}
+
+// GetFields returns the value of each field in a struct
+func GetFields(i interface{}) (res []string) {
+	v := reflect.ValueOf(i)
+
+	for j := 0; j < v.NumField(); j++ {
+		t := v.Field(j).Type()
+		if t.Kind() == reflect.Struct {
+			continue
+		}
+
+		res = append(res, v.Field(j).String())
+	}
+
+	return
 }
 
 func createClient(ctx context.Context, baseURL string) (*CLI, error) {

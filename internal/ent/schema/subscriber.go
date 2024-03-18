@@ -13,6 +13,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	emixin "github.com/datumforge/entx/mixin"
+	"github.com/datumforge/fgax/entfga"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -20,7 +23,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/fgax/entfga"
 )
 
 // Subscriber holds the schema definition for the Subscriber entity
@@ -74,8 +76,8 @@ func (Subscriber) Fields() []ent.Field {
 // Mixin of the Subscriber
 func (Subscriber) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{ // empty org means Datum system Subscriber
 			Ref:        "subscribers",

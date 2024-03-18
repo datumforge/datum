@@ -10,7 +10,9 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+
 	"github.com/datumforge/entx"
+	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -29,9 +31,9 @@ type Group struct {
 // Mixin of the Group
 func (Group) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
+		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
-		mixin.IDMixin{},
+		emixin.IDMixin{},
 		OrgOwnerMixin{
 			Ref: "groups",
 		},

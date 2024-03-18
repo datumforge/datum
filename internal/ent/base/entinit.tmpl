@@ -23,8 +23,8 @@ func ({{ . }}) Fields() []ent.Field {
 // Mixin of the {{ . }}
 func ({{ . }}) Mixin() []ent.Mixin {
     return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
     }
 }

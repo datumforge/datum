@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/datumforge/entx"
 
+	emixin "github.com/datumforge/entx/mixin"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -58,8 +60,8 @@ func (EmailVerificationToken) Edges() []ent.Edge {
 // Mixin of the EmailVerificationToken
 func (EmailVerificationToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		UserOwnedMixin{
 			Ref:               "email_verification_tokens",

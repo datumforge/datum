@@ -7,8 +7,8 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
-	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/entx"
+	emixin "github.com/datumforge/entx/mixin"
 )
 
 // Webauthn holds the schema definition for the Webauthn entity
@@ -61,8 +61,8 @@ func (Webauthn) Edges() []ent.Edge {
 // Mixin of the Webauthn
 func (Webauthn) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		UserOwnedMixin{
 			Ref:               "webauthn",
 			SkipOASGeneration: true,

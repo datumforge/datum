@@ -10,6 +10,8 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+
+	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -78,8 +80,8 @@ func (OrgMembership) Indexes() []ent.Index {
 // Mixin of the OrgMembership
 func (OrgMembership) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }

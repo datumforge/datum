@@ -41,7 +41,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
-	github.com/tursodatabase/libsql-client-go v0.0.0-20240318102539-e704ff5fd269
+	github.com/tursodatabase/libsql-client-go v0.0.0-20240319161759-27d97b27f9e1
 	github.com/vektah/gqlparser/v2 v2.5.11
 	github.com/wundergraph/graphql-go-tools v1.67.1
 	go.opentelemetry.io/otel v1.24.0

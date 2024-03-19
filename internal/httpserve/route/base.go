@@ -7,6 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	oas "github.com/datumforge/datum/pkg/oasrouter"
 )
 
 func registerLivenessHandler(router *echo.Echo) (err error) {
@@ -41,6 +42,28 @@ func registerMetricsHandler(router *echo.Echo) (err error) {
 		Path:    "/metrics",
 		Handler: echo.WrapHandler(promhttp.Handler()),
 	}.ForGroup(unversioned, mw))
+
+	return
+}
+
+func registerOASHandler(router *echo.Echo, oasRouter *OASRouter) (err error) {
+	e := echo.Route{
+		Method: http.MethodGet,
+		Path:   "/oas",
+		Handler: func(c echo.Context) error {
+			if err := oasRouter.GenerateAndExposeOpenAPI(); err != nil {
+				return err
+			}
+			return c.JSON(http.StatusOK, "meow")
+		},
+	}
+	_, err = oasRouter.AddRoute(e.Method, e.Path, e.Handler, oas.Definitions{})
+
+	if err != nil {
+		return
+	}
+
+	//	_, err = router.AddRoute(e.ForGroup(unversioned, mw))
 
 	return
 }

@@ -2,14 +2,19 @@ package server
 
 import (
 	"context"
+	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/getkin/kin-openapi/openapi3"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	echodebug "github.com/datumforge/datum/pkg/middleware/debug"
 	"github.com/datumforge/datum/pkg/tokens"
+
+	oas "github.com/datumforge/datum/pkg/oasrouter"
+	"github.com/datumforge/datum/pkg/oasrouter/apirouter"
 )
 
 type Server struct {
@@ -77,8 +82,22 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	s.config.Handler.JWTKeys = keys
 	s.config.Handler.TM = tm
 
+	oasRouter, err := oas.NewRouter(NewRouter(srv), oas.Options{
+		Context: context.Background(),
+		OpenAPI: &openapi3.T{
+			Info: &openapi3.Info{
+				Title:   "Datum API",
+				Version: "1.0.0",
+			},
+		},
+	})
+
+	if err != nil {
+		return err
+	}
+
 	// Add base routes to the server
-	if err := route.RegisterRoutes(srv, &s.config.Handler); err != nil {
+	if err := route.RegisterRoutes(srv, &s.config.Handler, oasRouter); err != nil {
 		return err
 	}
 
@@ -102,4 +121,31 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 
 	// otherwise, start without TLS
 	return sc.Start(srv)
+}
+
+type Route = *echo.RouteInfo
+
+type echoRouter struct {
+	router *echo.Echo
+}
+
+func (r echoRouter) AddRoute(method string, path string, handler echo.HandlerFunc) echo.RouteInfo {
+	return r.router.Add(method, path, handler)
+}
+
+func (r echoRouter) TransformPathToOASPath(path string) string {
+	return apirouter.TransformPathParamsWithColon(path)
+}
+
+func (r echoRouter) OASHandler(contentType string, blob []byte) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Response().Header().Add("Content-Type", contentType)
+		return c.JSONBlob(http.StatusOK, blob)
+	}
+}
+
+func NewRouter(router *echo.Echo) apirouter.Router[echo.HandlerFunc, echo.RouteInfo] {
+	return echoRouter{
+		router: router,
+	}
 }

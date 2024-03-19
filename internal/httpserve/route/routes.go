@@ -9,6 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
+	oas "github.com/datumforge/datum/pkg/oasrouter"
 )
 
 const (
@@ -32,9 +33,11 @@ type Route struct {
 	Name string
 }
 
+type OASRouter = oas.Router[echo.HandlerFunc, echo.RouteInfo]
+
 // RegisterRoutes with the echo routers
-func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
-	// add transaction middleware
+func RegisterRoutes(router *echo.Echo, h *handlers.Handler, oasrouter *oas.Router[echo.HandlerFunc, echo.RouteInfo]) error {
+	// add transaction middleware0
 	transactionConfig := transaction.Client{
 		EntDBClient: h.DBClient,
 		Logger:      h.Logger,
@@ -45,6 +48,16 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	// Middleware for restricted endpoints
 	restrictedEndpointsMW = append(restrictedEndpointsMW, mw...)
 	restrictedEndpointsMW = append(restrictedEndpointsMW, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
+
+	routeOASHandlers := []interface{}{
+		registerOASHandler,
+	}
+
+	for _, route := range routeOASHandlers {
+		if err := route.(func(*echo.Echo, *OASRouter) error)(router, oasrouter); err != nil {
+			return err
+		}
+	}
 
 	// routeHandlers that take the router and handler as input
 	routeHandlers := []interface{}{
@@ -98,18 +111,4 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	}
 
 	return nil
-}
-
-// RegisterRoute with the echo server given a method, path, and handler definition
-func (r *Route) RegisterRoute(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
-		Method:      r.Method,
-		Path:        r.Path,
-		Handler:     r.Handler,
-		Middlewares: r.Middlewares,
-
-		Name: r.Name,
-	})
-
-	return
 }

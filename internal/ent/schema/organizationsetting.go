@@ -13,11 +13,13 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	emixin "github.com/datumforge/entx/mixin"
+	"github.com/datumforge/fgax/entfga"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
-	"github.com/datumforge/fgax/entfga"
 )
 
 // OrganizationSetting holds the schema definition for the OrganizationSetting entity
@@ -99,8 +101,8 @@ func (OrganizationSetting) Annotations() []schema.Annotation {
 // Mixin of the OrganizationSetting
 func (OrganizationSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }

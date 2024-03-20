@@ -8,6 +8,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	emixin "github.com/datumforge/entx/mixin"
+
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
@@ -78,9 +80,9 @@ func (PersonalAccessToken) Indexes() []ent.Index {
 // Mixin of the PersonalAccessToken
 func (PersonalAccessToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
+		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
-		mixin.IDMixin{},
+		emixin.IDMixin{},
 		UserOwnedMixin{
 			Ref:         "personal_access_tokens",
 			AllowUpdate: false,

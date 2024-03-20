@@ -8,7 +8,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
-	"github.com/datumforge/datum/internal/ent/mixin"
+	emixin "github.com/datumforge/entx/mixin"
 )
 
 // OhAuthTooToken holds the schema definition for the OhAuthTooToken entity
@@ -52,7 +52,7 @@ func (OhAuthTooToken) Edges() []ent.Edge {
 // Mixin of the OhAuthTooToken
 func (OhAuthTooToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.IDMixin{},
+		emixin.IDMixin{},
 	}
 }
 

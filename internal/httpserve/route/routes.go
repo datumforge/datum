@@ -9,7 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/pkg/middleware/ratelimit"
 	"github.com/datumforge/datum/pkg/middleware/transaction"
-	oas "github.com/datumforge/datum/pkg/oasrouter"
+	"github.com/datumforge/datum/pkg/oas"
 )
 
 const (
@@ -51,6 +51,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler, oasrouter *oas.Route
 
 	routeOASHandlers := []interface{}{
 		registerOASHandler,
+		registerLivenessHandler,
 	}
 
 	for _, route := range routeOASHandlers {
@@ -96,7 +97,6 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler, oasrouter *oas.Route
 
 	// register additional handlers that only require router input
 	additionalHandlers := []interface{}{
-		registerLivenessHandler,
 		registerOpenAPISpecHandler,
 		registerMetricsHandler,
 		registerSwaggerStatic,

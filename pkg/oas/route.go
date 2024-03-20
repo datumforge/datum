@@ -1,4 +1,4 @@
-package oasrouter
+package oas
 
 import (
 	"fmt"
@@ -85,6 +85,10 @@ type Definitions struct {
 	Security SecurityRequirements
 }
 
+// newOperationFromDefinition is a function that creates and returns a new `Operation` object
+// based on the provided `Definitions` schema. It initializes the `Operation` object with values
+// extracted from the `Definitions` - it sets up the responses, request body, and
+// parameters for the operation based on the schema provided
 func newOperationFromDefinition(schema Definitions) Operation {
 	operation := NewOperation()
 	operation.Responses = &openapi3.Responses{}
@@ -106,7 +110,9 @@ const (
 	errorFormat     = "%w: %s"
 )
 
-// AddRoute add a route with json schema inferred by passed schema
+// AddRoute is a method of the `Router` struct that adds a route with a specified method, path, handler function, and schema
+// definitions. It creates a new `Operation` object based on the provided schema definitions, sets up the request body,
+// responses, and parameters for the operation, and then adds the route to the router with the specified details
 func (r Router[HandlerFunc, Route]) AddRoute(method string, path string, handler HandlerFunc, schema Definitions) (Route, error) {
 	operation := newOperationFromDefinition(schema)
 
@@ -145,7 +151,10 @@ func (r Router[HandlerFunc, Route]) AddRoute(method string, path string, handler
 	return r.AddRawRoute(method, path, handler, operation)
 }
 
-// getSchemaFromInterface returns the openapi3 schema from an interface
+// `getSchemaFromInterface` is a method defined in the `Router` struct that takes an interface `v` and a boolean `allowAdditionalProperties` as input
+// parameters. This method is responsible for converting the input interface `v` into an OpenAPI 3 schema. It uses the `jsonschema.Reflector` to reflect the
+// input interface and generate a JSON schema representation. The generated JSON schema is then converted into an OpenAPI 3 schema by creating a new
+// `openapi3.Schema` object and unmarshaling the JSON data into it
 func (r Router[_, _]) getSchemaFromInterface(v interface{}, allowAdditionalProperties bool) (*openapi3.Schema, error) {
 	if v == nil {
 		return &openapi3.Schema{}, nil
@@ -177,7 +186,9 @@ func (r Router[_, _]) getSchemaFromInterface(v interface{}, allowAdditionalPrope
 	return schema, nil
 }
 
-// resolveRequestBodySchema adds the request body to the operation
+// resolveRequestBodySchema function is responsible for adding the request body to the operation
+// in the OpenAPI schema. It takes in the body schema information, which includes the content and
+// description of the request body
 func (r Router[_, _]) resolveRequestBodySchema(bodySchema *ContentValue, operation Operation) error {
 	if bodySchema == nil {
 		return nil
@@ -200,7 +211,9 @@ func (r Router[_, _]) resolveRequestBodySchema(bodySchema *ContentValue, operati
 	return nil
 }
 
-// resolveResponsesSchema adds the responses to the operation
+// resolveResponsesSchema is a function that adds the responses to the operation in the OpenAPI schema - it takes in a map of response status codes
+// and corresponding content values. For each status code and content value pair in the map, it creates a new OpenAPI 3 response object, adds the content to
+// the response, sets the description of the response, and then adds this response to the operation
 func (r Router[_, _]) resolveResponsesSchema(responses map[int]ContentValue, operation Operation) error {
 	if responses == nil {
 		operation.Responses = openapi3.NewResponses()
@@ -223,7 +236,9 @@ func (r Router[_, _]) resolveResponsesSchema(responses map[int]ContentValue, ope
 	return nil
 }
 
-// resolveParameterSchema adds the parameters to the operation
+// resolveParameterSchema function is responsible for adding parameters to the operation in the
+// OpenAPI schema - it takes in the parameter type (such as path, query, header, or cookie), the
+// parameter configuration (ParameterValue), and the operation to which the parameters need to be added
 func (r Router[_, _]) resolveParameterSchema(paramType string, paramConfig ParameterValue, operation Operation) error {
 	var keys = make([]string, 0, len(paramConfig))
 	for k := range paramConfig {
@@ -282,7 +297,7 @@ func (r Router[_, _]) resolveParameterSchema(paramType string, paramConfig Param
 	return nil
 }
 
-// addContentToOASSchema adds the content to the openapi3 schema
+// addContentToOASSchema function is responsible for converting content information into an OpenAPI 3 schema format
 func (r Router[_, _]) addContentToOASSchema(content Content) (openapi3.Content, error) {
 	oasContent := openapi3.NewContent()
 
@@ -300,7 +315,10 @@ func (r Router[_, _]) addContentToOASSchema(content Content) (openapi3.Content, 
 	return oasContent, nil
 }
 
-// getPathParamsAutoComplete returns the path parameters from the path
+// getPathParamsAutoComplete function is used to extract path parameters from the provided path string - it checks the path segments for curly braces `{}`
+// which indicate a path parameter; if it finds any path segment enclosed in curly braces, it extracts the parameter name and adds it to the
+// `PathParams` field in the `Definitions` schema - if the `PathParams` field is not already initialized, it initializes it as a map of parameter names to `Parameter` objects with an empty
+// schema value
 func getPathParamsAutoComplete(schema Definitions, path string) ParameterValue {
 	if schema.PathParams == nil {
 		pathParams := strings.Split(path, "/")

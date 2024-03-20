@@ -1,4 +1,4 @@
-package oasrouter
+package oas
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/ghodss/yaml"
 
-	"github.com/datumforge/datum/pkg/oasrouter/apirouter"
+	"github.com/datumforge/datum/pkg/oas/apirouter"
 )
 
 // Router handles calling the the apirouter and the OpenAPI schema to make that openAPI spec magic happen

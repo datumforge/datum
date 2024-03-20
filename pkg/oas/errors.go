@@ -1,4 +1,4 @@
-package oasrouter
+package oas
 
 import (
 	"errors"

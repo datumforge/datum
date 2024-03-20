@@ -13,8 +13,8 @@ import (
 	echodebug "github.com/datumforge/datum/pkg/middleware/debug"
 	"github.com/datumforge/datum/pkg/tokens"
 
-	oas "github.com/datumforge/datum/pkg/oasrouter"
-	"github.com/datumforge/datum/pkg/oasrouter/apirouter"
+	"github.com/datumforge/datum/pkg/oas"
+	"github.com/datumforge/datum/pkg/oas/apirouter"
 )
 
 type Server struct {
@@ -110,6 +110,10 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	routes := srv.Router().Routes()
 	for _, r := range routes {
 		s.logger.Infow("registered route", "route", r.Path(), "method", r.Method())
+	}
+
+	if err := oasRouter.GenerateAndExposeOpenAPI(); err != nil {
+		return err
 	}
 
 	// if TLS is enabled, start new echo server with TLS

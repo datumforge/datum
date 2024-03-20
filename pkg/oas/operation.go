@@ -1,4 +1,4 @@
-package oasrouter
+package oas
 
 import (
 	"github.com/getkin/kin-openapi/openapi3"

@@ -2,6 +2,7 @@ package config
 
 import (
 	"crypto/tls"
+	"fmt"
 	"strings"
 	"time"
 
@@ -171,6 +172,9 @@ func Load(cfgFile *string) (*Config, error) {
 	if err := k.Unmarshal("", &conf); err != nil {
 		panic(err)
 	}
+
+	all := k.All()
+	fmt.Printf("all: %+v\n", all)
 
 	return conf, nil
 }

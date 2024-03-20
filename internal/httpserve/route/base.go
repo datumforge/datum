@@ -7,11 +7,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	oas "github.com/datumforge/datum/pkg/oasrouter"
+	"github.com/datumforge/datum/pkg/oas"
 )
 
-func registerLivenessHandler(router *echo.Echo) (err error) {
-	_, err = router.AddRoute(echo.Route{
+func registerLivenessHandler(router *echo.Echo, oasRouter *OASRouter) (err error) {
+	e := echo.Route{
 		Method: http.MethodGet,
 		Path:   "/livez",
 		Handler: func(c echo.Context) error {
@@ -19,7 +19,9 @@ func registerLivenessHandler(router *echo.Echo) (err error) {
 				"status": "UP",
 			})
 		},
-	}.ForGroup(unversioned, mw))
+	}.ForGroup(unversioned, mw)
+
+	oasRouter.AddRoute(e.ToRoute().Method, e.ToRoute().Path, e.ToRoute().Handler, oas.Definitions{})
 
 	return
 }
@@ -49,21 +51,28 @@ func registerMetricsHandler(router *echo.Echo) (err error) {
 func registerOASHandler(router *echo.Echo, oasRouter *OASRouter) (err error) {
 	e := echo.Route{
 		Method: http.MethodGet,
-		Path:   "/oas",
+		Path:   "/login-test",
 		Handler: func(c echo.Context) error {
-			if err := oasRouter.GenerateAndExposeOpenAPI(); err != nil {
-				return err
-			}
-			return c.JSON(http.StatusOK, "meow")
+			return c.JSON(http.StatusOK, echo.Map{
+				"status": "UP",
+			})
 		},
 	}
-	_, err = oasRouter.AddRoute(e.Method, e.Path, e.Handler, oas.Definitions{})
 
-	if err != nil {
-		return
-	}
-
-	//	_, err = router.AddRoute(e.ForGroup(unversioned, mw))
+	oasRouter.AddRoute(e.Method, e.Path, e.Handler, oas.Definitions{
+		RequestBody: &oas.ContentValue{
+			Content: oas.Content{
+				"application/json": {Value: handlers.LoginRequest{}},
+			},
+		},
+		Responses: map[int]oas.ContentValue{
+			200: {
+				Content: oas.Content{
+					"application/json": {Value: handlers.LoginReply{}},
+				},
+			},
+		},
+	})
 
 	return
 }

@@ -88,7 +88,7 @@ func (suite *HandlerTestSuite) SetupTest() {
 		t.Fatal("error creating email manager")
 	}
 
-	em.URLConfig = emails.URLConfig{
+	em.MarketingURLConfig = emails.MarketingURLConfig{
 		DefaultSubscriptionOrg: "MITB",
 	}
 

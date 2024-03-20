@@ -51,8 +51,8 @@ sessions:
 # email settings
 email:
   testing: false
-  url:
-    base: "https://console.datum.net"
+  consoleUrl:
+    consoleBase: "https://console.datum.net"
     
 # sentry settings
 sentry:

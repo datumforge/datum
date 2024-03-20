@@ -79,7 +79,10 @@ func TestEmailBuilders(t *testing.T) {
 	require.Equal(t, emails.PasswordResetRequestRE, mail.Subject, "expected password reset email subject to match")
 	generateMIME(t, mail, "reset_request.mime")
 
-	mail, err = emails.PasswordResetSuccessEmail(data)
+	resetSuccessData := emails.ResetSuccessData{
+		EmailData: data,
+	}
+	mail, err = emails.PasswordResetSuccessEmail(resetSuccessData)
 	require.NoError(t, err, "expected no error when building password reset success email")
 	require.Equal(t, emails.PasswordResetSuccessRE, mail.Subject, "expected password reset success email subject to match")
 	generateMIME(t, mail, "reset_success.mime")

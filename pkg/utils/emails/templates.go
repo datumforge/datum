@@ -57,6 +57,11 @@ type ResetRequestData struct {
 	ResetURL string
 }
 
+// ResetSuccessData is used to complete the password success request email template
+type ResetSuccessData struct {
+	EmailData
+}
+
 // Email subject lines
 const (
 	WelcomeRE              = "Welcome to Datum!"
@@ -152,7 +157,7 @@ func PasswordResetRequestEmail(data ResetRequestData) (message *mail.SGMailV3, e
 }
 
 // PasswordResetSuccessEmail creates an email to send to users once their password has been reset
-func PasswordResetSuccessEmail(data EmailData) (message *mail.SGMailV3, err error) {
+func PasswordResetSuccessEmail(data ResetSuccessData) (message *mail.SGMailV3, err error) {
 	var text, html string
 
 	if text, html, err = Render("password_reset_success", data); err != nil {

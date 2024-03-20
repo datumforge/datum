@@ -249,24 +249,24 @@
           "type": "string",
           "description": "AdminEmail is an internal group email configured within datum for email testing and visibility"
         },
-        "url": {
-          "$ref": "#/$defs/emails.URLConfig",
-          "description": "URLConfig is the configuration for the URLs used in emails"
+        "consoleUrl": {
+          "$ref": "#/$defs/emails.ConsoleURLConfig",
+          "description": "ConsoleURLConfig is the configuration for the URLs used in emails"
+        },
+        "marketingUrl": {
+          "$ref": "#/$defs/emails.MarketingURLConfig",
+          "description": "MarketingURLConfig is the configuration for the URLs used in marketing emails"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "description": "Config for sending emails via SendGrid and managing marketing contacts"
     },
-    "emails.URLConfig": {
+    "emails.ConsoleURLConfig": {
       "properties": {
-        "base": {
+        "consoleBase": {
           "type": "string",
           "description": "ConsoleBase is the base URL used for URL links in emails"
-        },
-        "marketingBase": {
-          "type": "string",
-          "description": "MarketingBase is the base URL used for marketing links in emails"
         },
         "verify": {
           "type": "string",
@@ -279,6 +279,17 @@
         "reset": {
           "type": "string",
           "description": "Reset is the path to the reset endpoint used in password reset emails"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "ConsoleURLConfig for the datum registration"
+    },
+    "emails.MarketingURLConfig": {
+      "properties": {
+        "marketingBase": {
+          "type": "string",
+          "description": "MarketingBase is the base URL used for marketing links in emails"
         },
         "subscriberVerify": {
           "type": "string",
@@ -291,7 +302,7 @@
       },
       "additionalProperties": false,
       "type": "object",
-      "description": "URLConfig for the datum registration"
+      "description": "MarketingURLConfig for the datum marketing emails"
     },
     "entx.Config": {
       "properties": {

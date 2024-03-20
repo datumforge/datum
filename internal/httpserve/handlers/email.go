@@ -26,7 +26,7 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 	}
 
 	var err error
-	if data.VerifyURL, err = h.EmailManager.URLConfig.VerifyURL(user.GetVerificationToken()); err != nil {
+	if data.VerifyURL, err = h.EmailManager.VerifyURL(user.GetVerificationToken()); err != nil {
 		return err
 	}
 
@@ -52,7 +52,7 @@ func (h *Handler) SendSubscriberEmail(user *User, orgName string) error {
 	}
 
 	var err error
-	if data.VerifySubscriberURL, err = h.EmailManager.URLConfig.SubscriberVerifyURL(user.GetVerificationToken()); err != nil {
+	if data.VerifySubscriberURL, err = h.EmailManager.SubscriberVerifyURL(user.GetVerificationToken()); err != nil {
 		return err
 	}
 
@@ -80,7 +80,7 @@ func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data.Recipient.ParseName(user.Name)
 
 	var err error
-	if data.ResetURL, err = h.EmailManager.URLConfig.ResetURL(user.GetPasswordResetToken()); err != nil {
+	if data.ResetURL, err = h.EmailManager.ResetURL(user.GetPasswordResetToken()); err != nil {
 		return err
 	}
 
@@ -95,12 +95,15 @@ func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 
 // SendPasswordResetSuccessEmail Send an email to a user to inform them that their password has been reset
 func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
-	data := emails.EmailData{
-		Sender: h.EmailManager.MustFromContact(),
-		Recipient: sendgrid.Contact{
-			Email: user.Email,
+	data := emails.ResetSuccessData{
+		EmailData: emails.EmailData{
+			Sender: h.EmailManager.MustFromContact(),
+			Recipient: sendgrid.Contact{
+				Email: user.Email,
+			},
 		},
 	}
+
 	data.Recipient.ParseName(user.Name)
 
 	msg, err := emails.PasswordResetSuccessEmail(data)
@@ -126,7 +129,7 @@ func (h *Handler) SendOrgInvitationEmail(i *emails.Invite) error {
 	}
 
 	var err error
-	if data.InviteURL, err = h.EmailManager.URLConfig.InviteURL(i.Token); err != nil {
+	if data.InviteURL, err = h.EmailManager.InviteURL(i.Token); err != nil {
 		return err
 	}
 

@@ -14,7 +14,8 @@ import (
 type EmailManager struct {
 	conf   Config
 	client SendGridClient
-	URLConfig
+	ConsoleURLConfig
+	MarketingURLConfig
 }
 
 // SendGridClient is an interface that can be implemented by live email clients to send
@@ -140,7 +141,7 @@ func (m *EmailManager) SendOrgInvitationEmail(i *Invite) error {
 
 	var err error
 
-	if data.InviteURL, err = m.URLConfig.InviteURL(i.Token); err != nil {
+	if data.InviteURL, err = m.InviteURL(i.Token); err != nil {
 		return err
 	}
 

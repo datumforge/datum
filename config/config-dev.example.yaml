@@ -66,8 +66,8 @@ email:
   testing: true
   archive: "fixtures/email"
   sendGridApiKey: "SG.FakeAPIKey"
-  url:
-    base: "http://localhost:17608/"
+  consoleUrl:
+    consoleBase: "http://localhost:17608/"
 
 # sentry settings
 sentry:

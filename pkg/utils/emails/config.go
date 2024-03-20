@@ -21,22 +21,28 @@ type Config struct {
 	DatumListID string `json:"datumListId" koanf:"datumListId"`
 	// AdminEmail is an internal group email configured within datum for email testing and visibility
 	AdminEmail string `json:"adminEmail" koanf:"adminEmail" default:"admins@datum.net"`
-	// URLConfig is the configuration for the URLs used in emails
-	URLConfig URLConfig `json:"url" koanf:"url"`
+	// ConsoleURLConfig is the configuration for the URLs used in emails
+	ConsoleURLConfig ConsoleURLConfig `json:"consoleUrl" koanf:"consoleUrl"`
+	// MarketingURLConfig is the configuration for the URLs used in marketing emails
+	MarketingURLConfig MarketingURLConfig `json:"marketingUrl" koanf:"marketingUrl"`
 }
 
-// URLConfig for the datum registration
-type URLConfig struct {
+// ConsoleURLConfig for the datum registration
+type ConsoleURLConfig struct {
 	// ConsoleBase is the base URL used for URL links in emails
-	ConsoleBase string `json:"base" koanf:"base" default:"https://console.datum.net"`
-	// MarketingBase is the base URL used for marketing links in emails
-	MarketingBase string `json:"marketingBase" koanf:"marketingBase" default:"https://datum.net"`
+	ConsoleBase string `json:"consoleBase" koanf:"consoleBase" default:"https://console.datum.net"`
 	// Verify is the path to the verify endpoint used in verification emails
 	Verify string `json:"verify" koanf:"verify" default:"/verify"`
 	// Invite is the path to the invite endpoint used in invite emails
 	Invite string `json:"invite" koanf:"invite" default:"/invite"`
 	// Reset is the path to the reset endpoint used in password reset emails
 	Reset string `json:"reset" koanf:"reset" default:"/password-reset"`
+}
+
+// MarketingURLConfig for the datum marketing emails
+type MarketingURLConfig struct {
+	// MarketingBase is the base URL used for marketing links in emails
+	MarketingBase string `json:"marketingBase" koanf:"marketingBase" default:"https://www.datum.net"`
 	// SubscriberVerify is the path to the subscriber verify endpoint used in verification emails
 	SubscriberVerify string `json:"subscriberVerify" koanf:"subscriberVerify" default:"/verify"`
 	// DefaultSubscriptionOrg is the default organization name to subscribe to
@@ -127,7 +133,7 @@ func parseEmail(email string) (contact sendgrid.Contact, err error) {
 	return contact, nil
 }
 
-func (c URLConfig) Validate() error {
+func (c ConsoleURLConfig) Validate() error {
 	if c.ConsoleBase == "" {
 		return newInvalidEmailConfigError("base URL")
 	}
@@ -147,66 +153,82 @@ func (c URLConfig) Validate() error {
 	return nil
 }
 
+func (c MarketingURLConfig) Validate() error {
+	if c.MarketingBase == "" {
+		return newInvalidEmailConfigError("base URL")
+	}
+
+	if c.SubscriberVerify == "" {
+		return newInvalidEmailConfigError("verify path")
+	}
+
+	if c.DefaultSubscriptionOrg == "" {
+		return newInvalidEmailConfigError("default subscription org")
+	}
+
+	return nil
+}
+
 // InviteURL Construct an invite URL from the token.
-func (c URLConfig) InviteURL(token string) (string, error) {
+func (m *EmailManager) InviteURL(token string) (string, error) {
 	if token == "" {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, err := url.Parse(c.ConsoleBase)
+	base, err := url.Parse(m.ConsoleBase)
 	if err != nil {
 		return "", err
 	}
 
-	url := base.ResolveReference(&url.URL{Path: c.Invite, RawQuery: url.Values{"token": []string{token}}.Encode()})
+	url := base.ResolveReference(&url.URL{Path: m.Invite, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
 }
 
 // VerifyURL constructs a verify URL from the token.
-func (c URLConfig) VerifyURL(token string) (string, error) {
+func (m *EmailManager) VerifyURL(token string) (string, error) {
 	if token == "" {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, err := url.Parse(c.ConsoleBase)
+	base, err := url.Parse(m.ConsoleBase)
 	if err != nil {
 		return "", err
 	}
 
-	url := base.ResolveReference(&url.URL{Path: c.Verify, RawQuery: url.Values{"token": []string{token}}.Encode()})
+	url := base.ResolveReference(&url.URL{Path: m.Verify, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
 }
 
 // ResetURL constructs a reset URL from the token.
-func (c URLConfig) ResetURL(token string) (string, error) {
+func (m *EmailManager) ResetURL(token string) (string, error) {
 	if token == "" {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, err := url.Parse(c.ConsoleBase)
+	base, err := url.Parse(m.ConsoleBase)
 	if err != nil {
 		return "", err
 	}
 
-	url := base.ResolveReference(&url.URL{Path: c.Reset, RawQuery: url.Values{"token": []string{token}}.Encode()})
+	url := base.ResolveReference(&url.URL{Path: m.Reset, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
 }
 
 // SubscriberVerifyURL constructs a verify URL from the token.
-func (c URLConfig) SubscriberVerifyURL(token string) (string, error) {
+func (m *EmailManager) SubscriberVerifyURL(token string) (string, error) {
 	if token == "" {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, err := url.Parse(c.MarketingBase)
+	base, err := url.Parse(m.MarketingBase)
 	if err != nil {
 		return "", err
 	}
 
-	url := base.ResolveReference(&url.URL{Path: c.SubscriberVerify, RawQuery: url.Values{"token": []string{token}}.Encode()})
+	url := base.ResolveReference(&url.URL{Path: m.SubscriberVerify, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
 }

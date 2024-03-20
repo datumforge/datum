@@ -233,11 +233,17 @@ func WithEmailManager() ServerOption {
 			panic(err)
 		}
 
-		if err := s.Config.Settings.Email.URLConfig.Validate(); err != nil {
+		if err := s.Config.Settings.Email.ConsoleURLConfig.Validate(); err != nil {
 			panic(err)
 		}
 
-		em.URLConfig = s.Config.Settings.Email.URLConfig
+		em.ConsoleURLConfig = s.Config.Settings.Email.ConsoleURLConfig
+
+		if err := s.Config.Settings.Email.MarketingURLConfig.Validate(); err != nil {
+			panic(err)
+		}
+
+		em.MarketingURLConfig = s.Config.Handler.EmailManager.MarketingURLConfig
 
 		s.Config.Handler.EmailManager = em
 	})

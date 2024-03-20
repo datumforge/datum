@@ -53,18 +53,19 @@ db:
 email:
     adminEmail: ""
     archive: ""
+    consoleUrl:
+        consoleBase: ""
+        invite: ""
+        reset: ""
+        verify: ""
     datumListId: ""
     fromEmail: ""
+    marketingUrl:
+        defaultSubscriptionOrg: ""
+        marketingBase: ""
+        subscriberVerify: ""
     sendGridApiKey: ""
     testing: false
-    url:
-        base: ""
-        defaultSubscriptionOrg: ""
-        invite: ""
-        marketingBase: ""
-        reset: ""
-        subscriberVerify: ""
-        verify: ""
 posthog:
     apiKey: ""
     enabled: false

@@ -262,7 +262,11 @@
       "properties": {
         "base": {
           "type": "string",
-          "description": "Base is the base URL used for URL links in emails"
+          "description": "ConsoleBase is the base URL used for URL links in emails"
+        },
+        "marketingBase": {
+          "type": "string",
+          "description": "MarketingBase is the base URL used for marketing links in emails"
         },
         "verify": {
           "type": "string",

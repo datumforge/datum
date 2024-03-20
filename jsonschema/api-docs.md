@@ -456,7 +456,8 @@ URLConfig for the datum registration
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
-|**base**|`string`|Base is the base URL used for URL links in emails<br/>||
+|**base**|`string`|ConsoleBase is the base URL used for URL links in emails<br/>||
+|**marketingBase**|`string`|MarketingBase is the base URL used for marketing links in emails<br/>||
 |**verify**|`string`|Verify is the path to the verify endpoint used in verification emails<br/>||
 |**invite**|`string`|Invite is the path to the invite endpoint used in invite emails<br/>||
 |**reset**|`string`|Reset is the path to the reset endpoint used in password reset emails<br/>||

@@ -61,6 +61,7 @@ email:
         base: ""
         defaultSubscriptionOrg: ""
         invite: ""
+        marketingBase: ""
         reset: ""
         subscriberVerify: ""
         verify: ""

@@ -243,7 +243,7 @@ func WithEmailManager() ServerOption {
 			panic(err)
 		}
 
-		em.MarketingURLConfig = s.Config.Handler.EmailManager.MarketingURLConfig
+		em.MarketingURLConfig = s.Config.Settings.Email.MarketingURLConfig
 
 		s.Config.Handler.EmailManager = em
 	})

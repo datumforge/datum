@@ -43,7 +43,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240319161759-27d97b27f9e1
 	github.com/vektah/gqlparser/v2 v2.5.11
-	github.com/wundergraph/graphql-go-tools v1.67.1
+	github.com/wundergraph/graphql-go-tools v1.67.2
 	go.opentelemetry.io/otel v1.24.0
 	go.opentelemetry.io/otel/sdk v1.24.0
 	go.uber.org/zap v1.27.0

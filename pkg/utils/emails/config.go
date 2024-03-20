@@ -27,16 +27,18 @@ type Config struct {
 
 // URLConfig for the datum registration
 type URLConfig struct {
-	// Base is the base URL used for URL links in emails
-	Base string `json:"base" koanf:"base" default:"https://api.datum.net"`
+	// ConsoleBase is the base URL used for URL links in emails
+	ConsoleBase string `json:"base" koanf:"base" default:"https://console.datum.net"`
+	// MarketingBase is the base URL used for marketing links in emails
+	MarketingBase string `json:"marketingBase" koanf:"marketingBase" default:"https://datum.net"`
 	// Verify is the path to the verify endpoint used in verification emails
-	Verify string `json:"verify" koanf:"verify" default:"/v1/verify"`
+	Verify string `json:"verify" koanf:"verify" default:"/verify"`
 	// Invite is the path to the invite endpoint used in invite emails
-	Invite string `json:"invite" koanf:"invite" default:"/v1/invite"`
+	Invite string `json:"invite" koanf:"invite" default:"/invite"`
 	// Reset is the path to the reset endpoint used in password reset emails
-	Reset string `json:"reset" koanf:"reset" default:"/v1/password-reset"`
+	Reset string `json:"reset" koanf:"reset" default:"/password-reset"`
 	// SubscriberVerify is the path to the subscriber verify endpoint used in verification emails
-	SubscriberVerify string `json:"subscriberVerify" koanf:"subscriberVerify" default:"/v1/subscribe/verify"`
+	SubscriberVerify string `json:"subscriberVerify" koanf:"subscriberVerify" default:"/verify"`
 	// DefaultSubscriptionOrg is the default organization name to subscribe to
 	DefaultSubscriptionOrg string `json:"defaultSubscriptionOrg" koanf:"defaultSubscriptionOrg" default:"Datum"`
 }
@@ -126,7 +128,7 @@ func parseEmail(email string) (contact sendgrid.Contact, err error) {
 }
 
 func (c URLConfig) Validate() error {
-	if c.Base == "" {
+	if c.ConsoleBase == "" {
 		return newInvalidEmailConfigError("base URL")
 	}
 
@@ -151,7 +153,11 @@ func (c URLConfig) InviteURL(token string) (string, error) {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, _ := url.Parse(c.Base)
+	base, err := url.Parse(c.ConsoleBase)
+	if err != nil {
+		return "", err
+	}
+
 	url := base.ResolveReference(&url.URL{Path: c.Invite, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
@@ -163,7 +169,11 @@ func (c URLConfig) VerifyURL(token string) (string, error) {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, _ := url.Parse(c.Base)
+	base, err := url.Parse(c.ConsoleBase)
+	if err != nil {
+		return "", err
+	}
+
 	url := base.ResolveReference(&url.URL{Path: c.Verify, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
@@ -175,7 +185,10 @@ func (c URLConfig) ResetURL(token string) (string, error) {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, _ := url.Parse(c.Base)
+	base, err := url.Parse(c.ConsoleBase)
+	if err != nil {
+		return "", err
+	}
 
 	url := base.ResolveReference(&url.URL{Path: c.Reset, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
@@ -188,7 +201,11 @@ func (c URLConfig) SubscriberVerifyURL(token string) (string, error) {
 		return "", newMissingRequiredFieldError("token")
 	}
 
-	base, _ := url.Parse(c.Base)
+	base, err := url.Parse(c.MarketingBase)
+	if err != nil {
+		return "", err
+	}
+
 	url := base.ResolveReference(&url.URL{Path: c.SubscriberVerify, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil

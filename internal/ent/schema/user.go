@@ -15,7 +15,9 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+
 	"github.com/datumforge/entx"
+	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -42,9 +44,9 @@ type User struct {
 // Mixin of the User
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
+		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
-		mixin.IDMixin{},
+		emixin.IDMixin{},
 	}
 }
 

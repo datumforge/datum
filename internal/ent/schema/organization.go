@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"github.com/datumforge/entx"
+	emixin "github.com/datumforge/entx/mixin"
+
 	"github.com/datumforge/fgax/entfga"
 	"github.com/ogen-go/ogen"
 
@@ -153,8 +155,8 @@ func (Organization) Annotations() []schema.Annotation {
 // Mixin of the Organization
 func (Organization) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }

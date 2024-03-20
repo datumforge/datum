@@ -7,6 +7,8 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
+	emixin "github.com/datumforge/entx/mixin"
+
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
@@ -68,8 +70,8 @@ func (TFASettings) Fields() []ent.Field {
 // Mixin of the TFASettings
 func (TFASettings) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		UserOwnedMixin{
 			Ref:             "tfa_settings",

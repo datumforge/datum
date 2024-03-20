@@ -9,12 +9,14 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	emixin "github.com/datumforge/entx/mixin"
+	"github.com/datumforge/fgax/entfga"
+
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
-	"github.com/datumforge/fgax/entfga"
 )
 
 // GroupSetting holds the schema definition for the GroupSetting entity
@@ -76,8 +78,8 @@ func (GroupSetting) Annotations() []schema.Annotation {
 // Mixin of the GroupSetting
 func (GroupSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 	}
 }

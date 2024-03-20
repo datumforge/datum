@@ -6,6 +6,8 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
+	emixin "github.com/datumforge/entx/mixin"
+
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
@@ -57,8 +59,8 @@ func (Entitlement) Annotations() []schema.Annotation {
 // Mixin of the Entitlement
 func (Entitlement) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		OrgOwnerMixin{
 			Ref: "entitlements",

@@ -12,13 +12,15 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/entx"
+	emixin "github.com/datumforge/entx/mixin"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
-	"github.com/datumforge/entx"
 )
 
 // PasswordResetToken holds the schema definition for the PasswordResetToken entity
@@ -58,8 +60,8 @@ func (PasswordResetToken) Edges() []ent.Edge {
 // Mixin of the PasswordResetToken
 func (PasswordResetToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AuditMixin{},
-		mixin.IDMixin{},
+		emixin.AuditMixin{},
+		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		UserOwnedMixin{
 			Ref:               "password_reset_tokens",

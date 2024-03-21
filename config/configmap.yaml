@@ -1,0 +1,156 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.names.fullname" . -}}-config
+  {{ $labels := include "common.tplvalues.merge" (dict "values" ( list .Values.api.commonLabels (include "common.labels.standard" .) ) "context" . ) }}
+  labels: {{- include "common.tplvalues.render" ( dict "value" $labels "context" $) | nindent 4 }}   
+  {{- if .Values.api.commonAnnotations }}
+  {{- $annotations := include "common.tplvalues.merge" ( dict "values" ( list .Values.api.commonAnnotations ) "context" . ) }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $) | nindent 4 }}
+  {{- end }}
+data:
+  DATUM_REFRESHINTERVAL: {{ .Values.datum.refreshInterval | 10m }}
+  DATUM_SERVER_DEBUG: {{ .Values.datum.server.debug | false }}
+  DATUM_SERVER_DEV: {{ .Values.datum.server.dev | false }}
+  DATUM_SERVER_LISTEN: {{ .Values.datum.server.listen | ":17608" }}
+  DATUM_SERVER_SHUTDOWNGRACEPERIOD: {{ .Values.datum.server.shutdownGracePeriod | 10s }}
+  DATUM_SERVER_READTIMEOUT: {{ .Values.datum.server.readTimeout | 15s }}
+  DATUM_SERVER_WRITETIMEOUT: {{ .Values.datum.server.writeTimeout | 15s }}
+  DATUM_SERVER_IDLETIMEOUT: {{ .Values.datum.server.idleTimeout | 30s }}
+  DATUM_SERVER_READHEADERTIMEOUT: {{ .Values.datum.server.readHeaderTimeout | 2s }}
+  DATUM_SERVER_TLS_ENABLED: {{ .Values.datum.server.tls.enabled | false }}
+  DATUM_SERVER_TLS_CERTFILE: {{ .Values.datum.server.tls.certFile | "server.crt" }}
+  DATUM_SERVER_TLS_CERTKEY: {{ .Values.datum.server.tls.certKey | "server.key" }}
+  DATUM_SERVER_TLS_AUTOCERT: {{ .Values.datum.server.tls.autoCert | false }}
+  DATUM_SERVER_CORS_ENABLED: {{ .Values.datum.server.cors.enabled | true }}
+  DATUM_SERVER_CORS_PREFIXES: {{ .Values.datum.server.cors.prefixes }}
+  DATUM_SERVER_CORS_ALLOWORIGINS: {{ .Values.datum.server.cors.allowOrigins }}
+  DATUM_SERVER_CORS_COOKIEINSECURE: {{ .Values.datum.server.cors.cookieInsecure }}
+  DATUM_SERVER_SECURE_ENABLED: {{ .Values.datum.server.secure.enabled | true }}
+  DATUM_SERVER_SECURE_XSSPROTECTION: {{ .Values.datum.server.secure.xssprotection | "1; mode=block" }}
+  DATUM_SERVER_SECURE_CONTENTTYPENOSNIFF: {{ .Values.datum.server.secure.contenttypenosniff | "nosniff" }}
+  DATUM_SERVER_SECURE_XFRAMEOPTIONS: {{ .Values.datum.server.secure.xframeoptions | "SAMEORIGIN" }}
+  DATUM_SERVER_SECURE_HSTSPRELOADENABLED: {{ .Values.datum.server.secure.hstspreloadenabled | false }}
+  DATUM_SERVER_SECURE_HSTSMAXAGE: {{ .Values.datum.server.secure.hstsmaxage | 31536000 }}
+  DATUM_SERVER_SECURE_CONTENTSECURITYPOLICY: {{ .Values.datum.server.secure.contentsecuritypolicy | "default-src 'self'" }}
+  DATUM_SERVER_SECURE_REFERRERPOLICY: {{ .Values.datum.server.secure.referrerpolicy | "same-origin" }}
+  DATUM_SERVER_SECURE_CSPREPORTONLY: {{ .Values.datum.server.secure.cspreportonly | false }}
+  DATUM_SERVER_REDIRECTS_ENABLED: {{ .Values.datum.server.redirects.enabled | true }}
+  DATUM_SERVER_REDIRECTS_REDIRECTS: {{ .Values.datum.server.redirects.redirects }}
+  DATUM_SERVER_REDIRECTS_CODE: {{ .Values.datum.server.redirects.code }}
+  DATUM_SERVER_CACHECONTROL_ENABLED: {{ .Values.datum.server.cachecontrol.enabled | true }}
+  DATUM_SERVER_CACHECONTROL_NOCACHEHEADERS: {{ .Values.datum.server.cachecontrol.noCacheHeaders }}
+  DATUM_SERVER_CACHECONTROL_ETAGHEADERS: {{ .Values.datum.server.cachecontrol.etagHeaders }}
+  DATUM_SERVER_MIME_ENABLED: {{ .Values.datum.server.mime.enabled | true }}
+  DATUM_SERVER_MIME_MIMETYPESFILE: {{ .Values.datum.server.mime.mimeTypesFile }}
+  DATUM_SERVER_MIME_DEFAULTCONTENTTYPE: {{ .Values.datum.server.mime.defaultContentType | "application/data" }}
+  DATUM_AUTH_ENABLED: {{ .Values.datum.auth.enabled | true }}
+  DATUM_AUTH_TOKEN_KID: {{ .Values.datum.auth.token.kid }}
+  DATUM_AUTH_TOKEN_AUDIENCE: {{ .Values.datum.auth.token.audience | "https://datum.net" }}
+  DATUM_AUTH_TOKEN_REFRESHAUDIENCE: {{ .Values.datum.auth.token.refreshAudience }}
+  DATUM_AUTH_TOKEN_ISSUER: {{ .Values.datum.auth.token.issuer | "https://auth.datum.net" }}
+  DATUM_AUTH_TOKEN_ACCESSDURATION: {{ .Values.datum.auth.token.accessDuration | 1h }}
+  DATUM_AUTH_TOKEN_REFRESHDURATION: {{ .Values.datum.auth.token.refreshDuration | 2h }}
+  DATUM_AUTH_TOKEN_REFRESHOVERLAP: {{ .Values.datum.auth.token.refreshOverlap | -15m }}
+  DATUM_AUTH_TOKEN_JWKSENDPOINT: {{ .Values.datum.auth.token.jwksEndpoint | "https://api.datum.net/.well-known/jwks.json" }}
+  DATUM_AUTH_TOKEN_KEYS: {{ .Values.datum.auth.token.keys }}
+  DATUM_AUTH_SUPPORTEDPROVIDERS: {{ .Values.datum.auth.supportedProviders }}
+  DATUM_AUTH_PROVIDERS_REDIRECTURL: {{ .Values.datum.auth.providers.redirectUrl | "http://localhost:3001/api/auth/callback/datum" }}
+  DATUM_AUTH_PROVIDERS_GITHUB_CLIENTID: {{ .Values.datum.auth.providers.github.clientId }}
+  DATUM_AUTH_PROVIDERS_GITHUB_CLIENTSECRET: {{ .Values.datum.auth.providers.github.clientSecret }}
+  DATUM_AUTH_PROVIDERS_GITHUB_CLIENTENDPOINT: {{ .Values.datum.auth.providers.github.clientEndpoint | "http://localhost:17608" }}
+  DATUM_AUTH_PROVIDERS_GITHUB_SCOPES: {{ .Values.datum.auth.providers.github.scopes }}
+  DATUM_AUTH_PROVIDERS_GITHUB_REDIRECTURL: {{ .Values.datum.auth.providers.github.redirectUrl | "/v1/github/callback" }}
+  DATUM_AUTH_PROVIDERS_GOOGLE_CLIENTID: {{ .Values.datum.auth.providers.google.clientId }}
+  DATUM_AUTH_PROVIDERS_GOOGLE_CLIENTSECRET: {{ .Values.datum.auth.providers.google.clientSecret }}
+  DATUM_AUTH_PROVIDERS_GOOGLE_CLIENTENDPOINT: {{ .Values.datum.auth.providers.google.clientEndpoint | "http://localhost:17608" }}
+  DATUM_AUTH_PROVIDERS_GOOGLE_SCOPES: {{ .Values.datum.auth.providers.google.scopes }}
+  DATUM_AUTH_PROVIDERS_GOOGLE_REDIRECTURL: {{ .Values.datum.auth.providers.google.redirectUrl | "/v1/google/callback" }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_ENABLED: {{ .Values.datum.auth.providers.webauthn.enabled | true }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_DISPLAYNAME: {{ .Values.datum.auth.providers.webauthn.displayName | "Datum" }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_RELYINGPARTYID: {{ .Values.datum.auth.providers.webauthn.relyingPartyId | "localhost" }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_REQUESTORIGIN: {{ .Values.datum.auth.providers.webauthn.requestOrigin | "http://localhost:3001" }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_MAXDEVICES: {{ .Values.datum.auth.providers.webauthn.maxDevices | 10 }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_ENFORCETIMEOUT: {{ .Values.datum.auth.providers.webauthn.enforceTimeout | true }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_TIMEOUT: {{ .Values.datum.auth.providers.webauthn.timeout | 60s }}
+  DATUM_AUTH_PROVIDERS_WEBAUTHN_DEBUG: {{ .Values.datum.auth.providers.webauthn.debug | false }}
+  DATUM_AUTHZ_ENABLED: {{ .Values.datum.authz.enabled | true }}
+  DATUM_AUTHZ_STORENAME: {{ .Values.datum.authz.storeName | "datum" }}
+  DATUM_AUTHZ_HOSTURL: {{ .Values.datum.authz.hostUrl | "https://authz.datum.net" }}
+  DATUM_AUTHZ_STOREID: {{ .Values.datum.authz.storeId }}
+  DATUM_AUTHZ_MODELID: {{ .Values.datum.authz.modelId }}
+  DATUM_AUTHZ_CREATENEWMODEL: {{ .Values.datum.authz.createNewModel | false }}
+  DATUM_DB_DEBUG: {{ .Values.datum.db.debug | false }}
+  DATUM_DB_DATABASENAME: {{ .Values.datum.db.databaseName | "datum" }}
+  DATUM_DB_DRIVERNAME: {{ .Values.datum.db.driverName | "libsql" }}
+  DATUM_DB_MULTIWRITE: {{ .Values.datum.db.multiWrite | false }}
+  DATUM_DB_PRIMARYDBSOURCE: {{ .Values.datum.db.primaryDbSource | "file:datum.db" }}
+  DATUM_DB_SECONDARYDBSOURCE: {{ .Values.datum.db.secondaryDbSource | "file:backup.db" }}
+  DATUM_DB_CACHETTL: {{ .Values.datum.db.cacheTTL | 1s }}
+  DATUM_DB_RUNMIGRATIONS: {{ .Values.datum.db.runMigrations | true }}
+  DATUM_REDIS_ENABLED: {{ .Values.datum.redis.enabled | true }}
+  DATUM_REDIS_ADDRESS: {{ .Values.datum.redis.address | "localhost:6379" }}
+  DATUM_REDIS_NAME: {{ .Values.datum.redis.name | "datum" }}
+  DATUM_REDIS_USERNAME: {{ .Values.datum.redis.username }}
+  DATUM_REDIS_PASSWORD: {{ .Values.datum.redis.password }}
+  DATUM_REDIS_DB: {{ .Values.datum.redis.db | 0 }}
+  DATUM_REDIS_DIALTIMEOUT: {{ .Values.datum.redis.dialTimeout | 5s }}
+  DATUM_REDIS_READTIMEOUT: {{ .Values.datum.redis.readTimeout | 0 }}
+  DATUM_REDIS_WRITETIMEOUT: {{ .Values.datum.redis.writeTimeout | 0 }}
+  DATUM_REDIS_MAXRETRIES: {{ .Values.datum.redis.maxRetries | 3 }}
+  DATUM_REDIS_MINIDLECONNS: {{ .Values.datum.redis.minIdleConns | 0 }}
+  DATUM_REDIS_MAXIDLECONNS: {{ .Values.datum.redis.maxIdleConns | 0 }}
+  DATUM_REDIS_MAXACTIVECONNS: {{ .Values.datum.redis.maxActiveConns | 0 }}
+  DATUM_TRACER_ENABLED: {{ .Values.datum.tracer.enabled | false }}
+  DATUM_TRACER_PROVIDER: {{ .Values.datum.tracer.provider | "stdout" }}
+  DATUM_TRACER_ENVIRONMENT: {{ .Values.datum.tracer.environment | "development" }}
+  DATUM_TRACER_STDOUT_PRETTY: {{ .Values.datum.tracer.stdout.pretty | true }}
+  DATUM_TRACER_STDOUT_DISABLETIMESTAMP: {{ .Values.datum.tracer.stdout.disableTimestamp | false }}
+  DATUM_TRACER_OTLP_ENDPOINT: {{ .Values.datum.tracer.otlp.endpoint | "localhost:4317" }}
+  DATUM_TRACER_OTLP_INSECURE: {{ .Values.datum.tracer.otlp.insecure | true }}
+  DATUM_TRACER_OTLP_CERTIFICATE: {{ .Values.datum.tracer.otlp.certificate }}
+  DATUM_TRACER_OTLP_HEADERS: {{ .Values.datum.tracer.otlp.headers }}
+  DATUM_TRACER_OTLP_COMPRESSION: {{ .Values.datum.tracer.otlp.compression }}
+  DATUM_TRACER_OTLP_TIMEOUT: {{ .Values.datum.tracer.otlp.timeout | 10s }}
+  DATUM_EMAIL_SENDGRIDAPIKEY: {{ .Values.datum.email.sendGridApiKey }}
+  DATUM_EMAIL_FROMEMAIL: {{ .Values.datum.email.fromEmail | "no-reply@datum.net" }}
+  DATUM_EMAIL_TESTING: {{ .Values.datum.email.testing | true }}
+  DATUM_EMAIL_ARCHIVE: {{ .Values.datum.email.archive }}
+  DATUM_EMAIL_DATUMLISTID: {{ .Values.datum.email.datumListId }}
+  DATUM_EMAIL_ADMINEMAIL: {{ .Values.datum.email.adminEmail | "admins@datum.net" }}
+  DATUM_EMAIL_CONSOLEURL_CONSOLEBASE: {{ .Values.datum.email.consoleurl.consoleBase | "https://console.datum.net" }}
+  DATUM_EMAIL_CONSOLEURL_VERIFY: {{ .Values.datum.email.consoleurl.verify | "/verify" }}
+  DATUM_EMAIL_CONSOLEURL_INVITE: {{ .Values.datum.email.consoleurl.invite | "/invite" }}
+  DATUM_EMAIL_CONSOLEURL_RESET: {{ .Values.datum.email.consoleurl.reset | "/password-reset" }}
+  DATUM_EMAIL_MARKETINGURL_MARKETINGBASE: {{ .Values.datum.email.marketingurl.marketingBase | "https://www.datum.net" }}
+  DATUM_EMAIL_MARKETINGURL_SUBSCRIBERVERIFY: {{ .Values.datum.email.marketingurl.subscriberVerify | "/verify" }}
+  DATUM_EMAIL_MARKETINGURL_DEFAULTSUBSCRIPTIONORG: {{ .Values.datum.email.marketingurl.defaultSubscriptionOrg | "Datum" }}
+  DATUM_SESSIONS_SIGNINGKEY: {{ .Values.datum.sessions.signingKey | "my-signing-secret" }}
+  DATUM_SESSIONS_ENCRYPTIONKEY: {{ .Values.datum.sessions.encryptionKey | "encryptionsecret" }}
+  DATUM_SENTRY_ENABLED: {{ .Values.datum.sentry.enabled | false }}
+  DATUM_SENTRY_DSN: {{ .Values.datum.sentry.dsn }}
+  DATUM_SENTRY_ENVIRONMENT: {{ .Values.datum.sentry.environment | "development" }}
+  DATUM_SENTRY_ENABLETRACING: {{ .Values.datum.sentry.enableTracing | false }}
+  DATUM_SENTRY_TRACESAMPLER: {{ .Values.datum.sentry.traceSampler | 1.0 }}
+  DATUM_SENTRY_ATTACHSTACKTRACE: {{ .Values.datum.sentry.attachStacktrace | true }}
+  DATUM_SENTRY_SAMPLERATE: {{ .Values.datum.sentry.sampleRate | 0.2 }}
+  DATUM_SENTRY_TRACESAMPLERATE: {{ .Values.datum.sentry.traceSampleRate | 0.2 }}
+  DATUM_SENTRY_PROFILESAMPLERATE: {{ .Values.datum.sentry.profileSampleRate | 0.2 }}
+  DATUM_SENTRY_REPANIC: {{ .Values.datum.sentry.repanic }}
+  DATUM_SENTRY_DEBUG: {{ .Values.datum.sentry.debug | false }}
+  DATUM_SENTRY_SERVERNAME: {{ .Values.datum.sentry.serverName }}
+  DATUM_POSTHOG_ENABLED: {{ .Values.datum.posthog.enabled | false }}
+  DATUM_POSTHOG_APIKEY: {{ .Values.datum.posthog.apiKey }}
+  DATUM_POSTHOG_HOST: {{ .Values.datum.posthog.host | "https://app.posthog.com" }}
+  DATUM_TOTP_ENABLED: {{ .Values.datum.totp.enabled | true }}
+  DATUM_TOTP_CODELENGTH: {{ .Values.datum.totp.codeLength | 6 }}
+  DATUM_TOTP_ISSUER: {{ .Values.datum.totp.issuer | "datum" }}
+  DATUM_TOTP_REDIS: {{ .Values.datum.totp.redis | true }}
+  DATUM_TOTP_SECRET: {{ .Values.datum.totp.secret }}
+  DATUM_TOTP_RECOVERYCODECOUNT: {{ .Values.datum.totp.recoveryCodeCount | 16 }}
+  DATUM_TOTP_RECOVERYCODELENGTH: {{ .Values.datum.totp.recoveryCodeLength | 8 }}
+  DATUM_RATELIMIT_ENABLED: {{ .Values.datum.ratelimit.enabled | false }}
+  DATUM_RATELIMIT_LIMIT: {{ .Values.datum.ratelimit.limit | 10 }}
+  DATUM_RATELIMIT_BURST: {{ .Values.datum.ratelimit.burst | 30 }}
+  DATUM_RATELIMIT_EXPIRES: {{ .Values.datum.ratelimit.expires | 10m }}

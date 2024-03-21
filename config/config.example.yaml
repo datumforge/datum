@@ -1,172 +1,172 @@
 auth:
-    enabled: false
+    enabled: true
     providers:
         github:
-            clientEndpoint: ""
+            clientEndpoint: http://localhost:17608
             clientId: ""
             clientSecret: ""
-            redirectUrl: ""
+            redirectUrl: /v1/github/callback
             scopes: null
         google:
-            clientEndpoint: ""
+            clientEndpoint: http://localhost:17608
             clientId: ""
             clientSecret: ""
-            redirectUrl: ""
+            redirectUrl: /v1/google/callback
             scopes: null
-        redirectUrl: ""
+        redirectUrl: http://localhost:3001/api/auth/callback/datum
         webauthn:
             debug: false
-            displayName: ""
-            enabled: false
-            enforceTimeout: false
-            maxDevices: 0
-            relyingPartyId: ""
-            requestOrigin: ""
-            timeout: 0
+            displayName: Datum
+            enabled: true
+            enforceTimeout: true
+            maxDevices: 10
+            relyingPartyId: localhost
+            requestOrigin: http://localhost:3001
+            timeout: 60000000000
     supportedProviders: null
     token:
-        accessDuration: 0
-        audience: ""
-        issuer: ""
-        jwksEndpoint: ""
+        accessDuration: 3600000000000
+        audience: https://datum.net
+        issuer: https://auth.datum.net
+        jwksEndpoint: https://api.datum.net/.well-known/jwks.json
         keys: null
         kid: ""
         refreshAudience: ""
-        refreshDuration: 0
-        refreshOverlap: 0
+        refreshDuration: 7200000000000
+        refreshOverlap: -900000000000
 authz:
     createNewModel: false
-    enabled: false
-    hostUrl: ""
+    enabled: true
+    hostUrl: https://authz.datum.net
     modelId: ""
     storeId: ""
-    storeName: ""
+    storeName: datum
 db:
-    catchTTL: 0
-    databaseName: ""
+    catchTTL: 1000000000
+    databaseName: datum
     debug: false
-    driverName: ""
+    driverName: libsql
     multiWrite: false
-    primaryDbSource: ""
-    runMigrations: false
-    secondaryDbSource: ""
+    primaryDbSource: file:datum.db
+    runMigrations: true
+    secondaryDbSource: file:backup.db
 email:
-    adminEmail: ""
+    adminEmail: admins@datum.net
     archive: ""
     consoleUrl:
-        consoleBase: ""
-        invite: ""
-        reset: ""
-        verify: ""
+        consoleBase: https://console.datum.net
+        invite: /invite
+        reset: /password-reset
+        verify: /verify
     datumListId: ""
-    fromEmail: ""
+    fromEmail: no-reply@datum.net
     marketingUrl:
-        defaultSubscriptionOrg: ""
-        marketingBase: ""
-        subscriberVerify: ""
+        defaultSubscriptionOrg: Datum
+        marketingBase: https://www.datum.net
+        subscriberVerify: /verify
     sendGridApiKey: ""
-    testing: false
+    testing: true
 posthog:
     apiKey: ""
     enabled: false
-    host: ""
+    host: https://app.posthog.com
 ratelimit:
-    burst: 0
+    burst: 30
     enabled: false
-    expires: 0
-    limit: 0
+    expires: 600000000000
+    limit: 10
 redis:
-    address: ""
+    address: localhost:6379
     db: 0
-    dialTimeout: 0
-    enabled: false
+    dialTimeout: 5000000000
+    enabled: true
     maxActiveConns: 0
     maxIdleConns: 0
-    maxRetries: 0
+    maxRetries: 3
     minIdleConns: 0
-    name: ""
+    name: datum
     password: ""
     readTimeout: 0
     username: ""
     writeTimeout: 0
-refreshInterval: 0
+refreshInterval: 600000000000
 sentry:
-    attachStacktrace: false
+    attachStacktrace: true
     debug: false
     dsn: ""
     enableTracing: false
     enabled: false
-    environment: ""
-    profileSampleRate: 0
+    environment: development
+    profileSampleRate: 0.2
     repanic: false
-    sampleRate: 0
+    sampleRate: 0.2
     serverName: ""
-    traceSampleRate: 0
-    traceSampler: 0
+    traceSampleRate: 0.2
+    traceSampler: 1
 server:
     cacheControl:
-        enabled: false
+        enabled: true
         etagHeaders: null
         noCacheHeaders: null
     cors:
         allowOrigins: null
         cookieInsecure: false
-        enabled: false
+        enabled: true
         prefixes: null
     debug: false
     dev: false
-    idleTimeout: 0
-    listen: ""
+    idleTimeout: 30000000000
+    listen: :17608
     mime:
-        defaultContentType: ""
-        enabled: false
+        defaultContentType: application/data
+        enabled: true
         mimeTypesFile: ""
-    readHeaderTimeout: 0
-    readTimeout: 0
+    readHeaderTimeout: 2000000000
+    readTimeout: 15000000000
     redirect:
         code: 0
-        enabled: false
+        enabled: true
         redirects: null
     secure:
-        contentsecuritypolicy: ""
-        contenttypenosniff: ""
+        contentsecuritypolicy: default-src 'self'
+        contenttypenosniff: nosniff
         cspreportonly: false
-        enabled: false
-        hstsmaxage: 0
+        enabled: true
+        hstsmaxage: 31536000
         hstspreloadenabled: false
-        referrerpolicy: ""
-        xframeoptions: ""
-        xssprotection: ""
-    shutdownGracePeriod: 0
+        referrerpolicy: same-origin
+        xframeoptions: SAMEORIGIN
+        xssprotection: 1; mode=block
+    shutdownGracePeriod: 10000000000
     tls:
         autoCert: false
-        certFile: ""
-        certKey: ""
+        certFile: server.crt
+        certKey: server.key
         config: null
         enabled: false
-    writeTimeout: 0
+    writeTimeout: 15000000000
 sessions:
-    encryptionKey: ""
-    signingKey: ""
+    encryptionKey: encryptionsecret
+    signingKey: my-signing-secret
 totp:
-    codeLength: 0
-    enabled: false
-    issuer: ""
-    recoveryCodeCount: 0
-    recoveryCodeLength: 0
-    redis: false
+    codeLength: 6
+    enabled: true
+    issuer: datum
+    recoveryCodeCount: 16
+    recoveryCodeLength: 8
+    redis: true
     secret: ""
 tracer:
     enabled: false
-    environment: ""
+    environment: development
     otlp:
         certificate: ""
         compression: ""
-        endpoint: ""
+        endpoint: localhost:4317
         headers: null
-        insecure: false
-        timeout: 0
-    provider: ""
+        insecure: true
+        timeout: 10000000000
+    provider: stdout
     stdout:
         disableTimestamp: false
-        pretty: false
+        pretty: true

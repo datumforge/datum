@@ -2,18 +2,24 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"reflect"
 
 	"github.com/datumforge/datum/config"
+	"github.com/datumforge/datum/jsonschema/envparse"
 	"github.com/invopop/jsonschema"
 	"github.com/invopop/yaml"
+	"github.com/mcuadros/go-defaults"
 )
 
 // const values used for the schema generator
 const (
 	jsonSchemaPath = "./jsonschema/datum.config.json"
 	yamlConfigPath = "./config/config.example.yaml"
+	envConfigPath  = "./config/.env.example"
+	varPrefix      = "DATUM"
+	ownerReadWrite = 0600
 )
 
 // includedPackages is a list of packages to include in the schema generation
@@ -39,12 +45,15 @@ type schemaConfig struct {
 	jsonSchemaPath string
 	// yamlConfigPath is the file path to the YAML configuration to be generated
 	yamlConfigPath string
+	// envConfigPath is the file path to the environment variable configuration to be generated
+	envConfigPath string
 }
 
 func main() {
 	c := schemaConfig{
 		jsonSchemaPath: jsonSchemaPath,
 		yamlConfigPath: yamlConfigPath,
+		envConfigPath:  envConfigPath,
 	}
 
 	if err := generateSchema(c, &config.Config{}); err != nil {
@@ -77,19 +86,36 @@ func generateSchema(c schemaConfig, structure interface{}) error {
 		panic(err.Error())
 	}
 
-	err = os.WriteFile(c.jsonSchemaPath, data, 0600) // nolint: gomnd
+	if err = os.WriteFile(c.jsonSchemaPath, data, ownerReadWrite); err != nil {
+		panic(err.Error())
+	}
+
+	// generate yaml schema with default
+	yamlConfig := &config.Config{}
+	defaults.SetDefaults(yamlConfig)
+
+	// this uses the `json` tag to generate the yaml schema
+	yamlSchema, err := yaml.Marshal(yamlConfig)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// generate yaml schema
-	var yamlConfig config.Config
+	if err = os.WriteFile(c.yamlConfigPath, yamlSchema, ownerReadWrite); err != nil {
+		panic(err.Error())
+	}
 
-	// this uses the `json` tag to generate the yaml schema
-	yamlSchema, err := yaml.Marshal(yamlConfig)
-
-	err = os.WriteFile(c.yamlConfigPath, yamlSchema, 0600) // nolint: gomnd
+	out, err := envparse.GatherEnvInfo(varPrefix, &config.Config{})
 	if err != nil {
+		panic(err.Error())
+	}
+
+	// generate the environment variables from the config and write to a file
+	envSchema := ""
+	for _, k := range out {
+		envSchema += fmt.Sprintf("%s=%s\n", k.Key, k.Tags.Get("default"))
+	}
+
+	if err = os.WriteFile(c.envConfigPath, []byte(envSchema), ownerReadWrite); err != nil {
 		panic(err.Error())
 	}
 

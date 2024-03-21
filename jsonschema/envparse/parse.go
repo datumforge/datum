@@ -10,15 +10,23 @@ import (
 // ErrInvalidSpecification indicates that a specification is of the wrong type.
 var ErrInvalidSpecification = errors.New("specification must be a struct pointer")
 
+type Config struct {
+	// FieldTagName is the name of the struct tag to use for the field name
+	FieldTagName string
+	// Skipper is the value of the tag to skip parsing of the field
+	Skipper string
+}
+
 // varInfo maintains information about the configuration variable
 type varInfo struct {
-	Name string
-	Key  string
-	Tags reflect.StructTag
+	FieldName string
+	FullPath  string
+	Key       string
+	Tags      reflect.StructTag
 }
 
 // GatherEnvInfo gathers information about the specified struct, including defaults and environment variable names.
-func GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error) {
+func (c Config) GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error) {
 	s := reflect.ValueOf(spec)
 
 	// Ensure the specification is a pointer to a struct
@@ -60,16 +68,23 @@ func GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error) {
 		}
 
 		// Capture information about the config variable
+		fieldName := c.getFieldName(ftype)
+		if fieldName == c.Skipper {
+			continue
+		}
+
 		info := varInfo{
-			Name: ftype.Name,
-			Tags: ftype.Tag,
+			FieldName: fieldName,
+			FullPath:  ftype.Name,
+			Tags:      ftype.Tag,
 		}
 
 		// Default to the field name as the env var name (will be upcased)
-		info.Key = info.Name
+		info.Key = info.FieldName
 
 		if prefix != "" {
 			info.Key = fmt.Sprintf("%s_%s", prefix, info.Key)
+			info.FullPath = fmt.Sprintf("%s.%s", strings.ToLower(strings.Replace(prefix, "_", ".", -1)), info.FieldName)
 		}
 
 		info.Key = strings.ToUpper(info.Key)
@@ -85,7 +100,7 @@ func GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error) {
 			embeddedPtr := f.Addr().Interface()
 
 			// Recursively gather information about the embedded struct
-			embeddedInfos, err := GatherEnvInfo(innerPrefix, embeddedPtr)
+			embeddedInfos, err := c.GatherEnvInfo(innerPrefix, embeddedPtr)
 			if err != nil {
 				return nil, err
 			}
@@ -96,4 +111,13 @@ func GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error) {
 		}
 	}
 	return infos, nil
+}
+
+func (c Config) getFieldName(ftype reflect.StructField) string {
+	if ftype.Tag.Get(c.FieldTagName) != "" {
+		return ftype.Tag.Get(c.FieldTagName)
+	}
+
+	// default to skip if the koanf tag is not present
+	return c.Skipper
 }

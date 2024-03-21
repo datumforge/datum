@@ -15,9 +15,13 @@ import (
 
 // const values used for the schema generator
 const (
+	tagName        = "koanf"
+	skipper        = "-"
+	defaultTag     = "default"
 	jsonSchemaPath = "./jsonschema/datum.config.json"
 	yamlConfigPath = "./config/config.example.yaml"
 	envConfigPath  = "./config/.env.example"
+	configMapPath  = "./config/configmap.yaml"
 	varPrefix      = "DATUM"
 	ownerReadWrite = 0600
 )
@@ -47,6 +51,8 @@ type schemaConfig struct {
 	yamlConfigPath string
 	// envConfigPath is the file path to the environment variable configuration to be generated
 	envConfigPath string
+	// configMapPath is the file path to the kubernetes config map configuration to be generated
+	configMapPath string
 }
 
 func main() {
@@ -54,6 +60,7 @@ func main() {
 		jsonSchemaPath: jsonSchemaPath,
 		yamlConfigPath: yamlConfigPath,
 		envConfigPath:  envConfigPath,
+		configMapPath:  configMapPath,
 	}
 
 	if err := generateSchema(c, &config.Config{}); err != nil {
@@ -69,7 +76,7 @@ func generateSchema(c schemaConfig, structure interface{}) error {
 	// set `jsonschema:required` tag to true to generate required fields
 	r.RequiredFromJSONSchemaTags = true
 	// set the tag name to `koanf` for the koanf struct tags
-	r.FieldNameTag = "koanf"
+	r.FieldNameTag = tagName
 
 	// add go comments to the schema
 	for _, pkg := range includedPackages {
@@ -104,18 +111,48 @@ func generateSchema(c schemaConfig, structure interface{}) error {
 		panic(err.Error())
 	}
 
-	out, err := envparse.GatherEnvInfo(varPrefix, &config.Config{})
+	cp := envparse.Config{
+		FieldTagName: tagName,
+		Skipper:      skipper,
+	}
+
+	out, err := cp.GatherEnvInfo(varPrefix, &config.Config{})
 	if err != nil {
 		panic(err.Error())
 	}
 
-	// generate the environment variables from the config and write to a file
+	// generate the environment variables from the config
 	envSchema := ""
+	configMapSchema := "\n"
 	for _, k := range out {
-		envSchema += fmt.Sprintf("%s=%s\n", k.Key, k.Tags.Get("default"))
+		defaultVal := k.Tags.Get(defaultTag)
+
+		envSchema += fmt.Sprintf("%s=%s\n", k.Key, defaultVal)
+
+		// if the default value is empty, use the value from the values.yaml
+		if defaultVal == "" {
+			configMapSchema += fmt.Sprintf("  %s: {{ .Values.%s }}\n", k.Key, k.FullPath)
+		} else {
+			configMapSchema += fmt.Sprintf("  %s: {{ .Values.%s | %s }}\n", k.Key, k.FullPath, defaultVal)
+		}
 	}
 
+	// write the environment variables to a file
 	if err = os.WriteFile(c.envConfigPath, []byte(envSchema), ownerReadWrite); err != nil {
+		panic(err.Error())
+	}
+
+	// Get the configmap header
+	cm, err := os.ReadFile("./jsonschema/templates/configmap.tmpl")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// append the configmap schema to the header
+	cm = append(cm, []byte(configMapSchema)...)
+
+	// write the configmap to a file
+	if err = os.WriteFile(c.configMapPath, cm, ownerReadWrite); err != nil {
 		panic(err.Error())
 	}
 

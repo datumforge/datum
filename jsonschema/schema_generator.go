@@ -127,12 +127,16 @@ func generateSchema(c schemaConfig, structure interface{}) error {
 	for _, k := range out {
 		defaultVal := k.Tags.Get(defaultTag)
 
-		envSchema += fmt.Sprintf("%s=%s\n", k.Key, defaultVal)
+		envSchema += fmt.Sprintf("%s=\"%s\"\n", k.Key, defaultVal)
 
 		// if the default value is empty, use the value from the values.yaml
 		if defaultVal == "" {
 			configMapSchema += fmt.Sprintf("  %s: {{ .Values.%s }}\n", k.Key, k.FullPath)
 		} else {
+			if k.Type.Kind() == reflect.String {
+				defaultVal = "\"" + defaultVal + "\"" // add quotes to the string
+			}
+
 			configMapSchema += fmt.Sprintf("  %s: {{ .Values.%s | %s }}\n", k.Key, k.FullPath, defaultVal)
 		}
 	}

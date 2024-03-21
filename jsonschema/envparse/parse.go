@@ -22,6 +22,7 @@ type varInfo struct {
 	FieldName string
 	FullPath  string
 	Key       string
+	Type      reflect.Type
 	Tags      reflect.StructTag
 }
 
@@ -76,6 +77,7 @@ func (c Config) GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error
 		info := varInfo{
 			FieldName: fieldName,
 			FullPath:  ftype.Name,
+			Type:      ftype.Type,
 			Tags:      ftype.Tag,
 		}
 

@@ -45,7 +45,7 @@ func MagicParameters() error {
 		return err
 	}
 
-	meow, _ := GetFunctionParametersJSONSchema(reflector, &handlers.LoginRequest{})
+	meow, _ := GetFunctionParametersJSONSchema(reflector, getHandlers)
 	s, _ := json.MarshalIndent(meow, "", " ")
 	fmt.Printf("getWeatherJsonSchema:\n%s\n\n", s)
 

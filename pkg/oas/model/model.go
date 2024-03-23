@@ -191,13 +191,6 @@ type Example struct {
 // Responses is a map of status code string to ResponseSpec
 type Responses map[string]ResponseSpec
 
-// Merge combines 2 responses objects into a single map
-func (r *Responses) Merge(other Responses) {
-	for k, v := range other {
-		(*r)[k] = v
-	}
-}
-
 // type Reference struct {
 // 	Ref         string `json:"$ref"`
 // 	Summary     string `json:"summary,omitempty"`

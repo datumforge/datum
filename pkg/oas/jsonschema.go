@@ -10,29 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type WeatherRequest struct {
-	// The city for which to request the data
-	City string `json:"city"`
-	// Return windspeed in km/h
-	WindSpeed bool `json:"wind_speed"`
-	// Return temperature in Celsius
-	Temperature bool `json:"temperature"`
-}
-
-type WeatherData struct {
-	City        string  `json:"city"`
-	Temperature float64 `json:"temperature"`
-	WindSpeed   float64 `json:"wind_speed"`
-}
-
-func getWeather(request WeatherRequest) WeatherData {
-	return WeatherData{
-		City:        request.City,
-		Temperature: 23.0,
-		WindSpeed:   10.0,
-	}
-}
-
 func getHandlers(handlers.LoginRequest) handlers.LoginRequest {
 	return handlers.LoginRequest{}
 }

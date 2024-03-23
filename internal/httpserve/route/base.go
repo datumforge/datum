@@ -21,7 +21,10 @@ func registerLivenessHandler(router *echo.Echo, oasRouter *OASRouter) (err error
 		},
 	}.ForGroup(unversioned, mw)
 
-	oasRouter.AddRoute(e.ToRoute().Method, e.ToRoute().Path, e.ToRoute().Handler, oas.Definitions{})
+	_, err = oasRouter.AddRoute(e.ToRoute().Method, e.ToRoute().Path, e.ToRoute().Handler, oas.Definitions{})
+	if err != nil {
+		return err
+	}
 
 	return
 }

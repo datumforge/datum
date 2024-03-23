@@ -216,3 +216,10 @@ func (o *Operation) Merge(other Operation) {
 
 	o.Security = append(o.Security, other.Security...)
 }
+
+// Merge combines 2 responses objects into a single map
+func (r *Responses) Merge(other Responses) {
+	for k, v := range other {
+		(*r)[k] = v
+	}
+}

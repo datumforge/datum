@@ -15,10 +15,10 @@ var (
 	ErrQuerystring = errors.New("errors generating querystring schema")
 	// ErrInvalidParamType is thrown if the parameter type is invalid
 	ErrInvalidParamType = errors.New("invalid parameter type")
-	// ErrGenerateSwagger throws when fails the marshalling of the swagger struct
-	ErrGenerateSwagger = errors.New("fail to generate swagger")
-	// ErrValidatingSwagger throws when given swagger params are not correct
-	ErrValidatingSwagger = errors.New("fails to validate swagger")
+	// ErrGenerateOpenAPI throws when fails the marshalling of the openapi struct
+	ErrGenerateOpenAPI = errors.New("fail to generate openapi")
+	// ErrValidatingOpenAPI throws when given openapi params are not correct
+	ErrValidatingOpenAPI = errors.New("fails to validate openapi")
 	// ErrOpenAPIRequired throws when openapi is required
 	ErrOpenAPIRequired = errors.New("openapi is required")
 	// ErrOpenAPITitleRequired throws when openapi title is required

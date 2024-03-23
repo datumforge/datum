@@ -1,0 +1,38 @@
+{
+    "info": {
+      "title": "test openapi title",
+      "version": "test openapi version"
+    },
+    "openapi": "3.1.0",
+    "paths": {
+      "/hello": {
+        "get": {
+          "responses": {
+            "default": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/hello/{value}": {
+        "post": {
+          "parameters": [
+            {
+              "in": "path",
+              "name": "value",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "default": {
+              "description": ""
+            }
+          }
+        }
+      }
+    }
+  }
+  

@@ -42,11 +42,17 @@ type Options struct {
 	PathPrefix string
 }
 
-// NewRouter generate new router with openAPI - default to OpenAPI 3.1.0
+var DefaultJSONDocumentationPath = "/documentation/json"
+var DefaultYAMLDocumentationPath = "/documentation/yaml"
+
+// NewRouter is a function that creates a new instance of the `Router` struct. It takes in a
+// router, options, and returns a pointer to a `Router` instance along with an error. Inside the
+// function, it validates the provided OpenAPI schema, sets default values for JSON and YAML
+// documentation paths if not provided, and creates a new `Router` instance with the provided options
 func NewRouter[HandlerFunc, Route any](router apirouter.Router[HandlerFunc, Route], options Options) (*Router[HandlerFunc, Route], error) {
 	openAPI, err := generateNewValidOpenAPI(options.OpenAPI)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %s", ErrValidatingSwagger, err)
+		return nil, fmt.Errorf("%w: %s", ErrValidatingOpenAPI, err)
 	}
 
 	var ctx = options.Context
@@ -90,7 +96,8 @@ type SubRouterOptions struct {
 	PathPrefix string
 }
 
-// SubRouter creates a new router with the same openapi schema and the same context - we'd want to use subrouters to make router groups
+// SubRouter is creating a new sub-router based on the existing main router - this is intended to allow you
+// to create the same OpenAPI schema and context as the main router, but with a different path prefix
 func (r Router[HandlerFunc, Route]) SubRouter(router apirouter.Router[HandlerFunc, Route], opts SubRouterOptions) (*Router[HandlerFunc, Route], error) {
 	return &Router[HandlerFunc, Route]{
 		router:                router,
@@ -102,7 +109,8 @@ func (r Router[HandlerFunc, Route]) SubRouter(router apirouter.Router[HandlerFun
 	}, nil
 }
 
-// generateNewValidOpenAPI generates a new valid openAPI schema and checks a view of the core fields for validations
+// generateNewValidOpenAPI function is responsible for generating a new valid OpenAPI schema by
+// checking and setting default values for certain core fields
 func generateNewValidOpenAPI(openapi *openapi3.T) (*openapi3.T, error) {
 	if openapi == nil {
 		return nil, ErrOpenAPIRequired
@@ -134,22 +142,23 @@ func generateNewValidOpenAPI(openapi *openapi3.T) (*openapi3.T, error) {
 // GenerateAndExposeOpenAPI creates a /documentation/json route on router and exposes the generated openAPI specifications
 func (r Router[_, _]) GenerateAndExposeOpenAPI() error {
 	if err := r.openAPISchema.Validate(r.context); err != nil {
-		return fmt.Errorf("%w: %s", ErrValidatingSwagger, err)
+		return fmt.Errorf("%w: %s", ErrValidatingOpenAPI, err)
 	}
 
-	jsonSwagger, err := r.openAPISchema.MarshalJSON()
+	// use the OASHandler to add the route and expose the specification embedded in the router / server
+	jsonOAS, err := r.openAPISchema.MarshalJSON()
 	if err != nil {
-		return fmt.Errorf("%w json marshal: %s", ErrGenerateSwagger, err)
+		return fmt.Errorf("%w json marshal: %s", ErrGenerateOpenAPI, err)
 	}
 
-	r.router.AddRoute(http.MethodGet, r.jsonDocumentationPath, r.router.OASHandler("application/json", jsonSwagger))
+	r.router.AddRoute(http.MethodGet, r.jsonDocumentationPath, r.router.OASHandler("application/json", jsonOAS))
 
-	yamlSwagger, err := yaml.JSONToYAML(jsonSwagger)
+	yamlOAS, err := yaml.JSONToYAML(jsonOAS)
 	if err != nil {
-		return fmt.Errorf("%w yaml marshal: %s", ErrGenerateSwagger, err)
+		return fmt.Errorf("%w yaml marshal: %s", ErrGenerateOpenAPI, err)
 	}
 
-	r.router.AddRoute(http.MethodGet, r.yamlDocumentationPath, r.router.OASHandler("text/plain", yamlSwagger))
+	r.router.AddRoute(http.MethodGet, r.yamlDocumentationPath, r.router.OASHandler("text/plain", yamlOAS))
 
 	return nil
 }

@@ -195,12 +195,12 @@ steps:
       #!/bin/bash
       ls
     plugins:
-      - equinixmetal-buildkite/docker-metadata#v1.0.0:
+      - datumforge/docker-metadata#v1.0.0:
           images:
           - "${IMAGE_REPO}"
           extra_tags:
           - "${IMAGE_TAG}"
-      - equinixmetal-buildkite/docker-build#v1.1.0:
+      - datumforge/container-build#v1.1.0:
           dockerfile: docker/Dockerfile
           push: false
           build-args:
@@ -221,12 +221,12 @@ steps:
           username: datum-bender
           password-env: SECRET_GHCR_PUBLISH_TOKEN
           server: ghcr.io
-      - equinixmetal-buildkite/docker-metadata#v1.0.0:
+      - datumforge/docker-metadata#v1.0.0:
           images:
           - "${IMAGE_REPO}"
           extra_tags:
           - "${IMAGE_TAG}"
-      - equinixmetal-buildkite/docker-build#v1.1.0:
+      - datumforge/container-build#v1.1.0:
           dockerfile: docker/Dockerfile
           push: true
           build-args:
@@ -246,14 +246,14 @@ steps:
           username: _json_key_base64
           password-env: SECRET_GCR_PUBLISH_TOKEN
           server: us-central1-docker.pkg.dev
-      - equinixmetal-buildkite/docker-metadata#e42eac2c2f81db3fc402b8ced031d9086149e9fd:
+      - datumforge/docker-metadata#v1.0.0:
           tag_prefix: "aio-"
           debug: true
           images:
           - "${GCR_REPO}"
           extra_tags:
           - "${IMAGE_TAG}"
-      - equinixmetal-buildkite/docker-build#v1.1.0:
+      - datumforge/container-build#v1.1.0:
           dockerfile: docker/all-in-one/Dockerfile.all-in-one
           push: true
           build-args:

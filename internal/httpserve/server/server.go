@@ -103,3 +103,10 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	// otherwise, start without TLS
 	return sc.Start(srv)
 }
+
+func (s *Server) GetFuncs(routes echo.Routes) {
+	for _, r := range routes {
+		r.Name()
+		s.logger.Infow("registered route", "route", r.Path, "method", r.Method)
+	}
+}

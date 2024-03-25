@@ -16,6 +16,7 @@ import (
 // organization but hasn't accepted the invite, then the invite is resent.
 func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "ResendEmail",
 		Method: http.MethodPost,
 		Path:   "/resend",
 		Handler: func(c echo.Context) error {

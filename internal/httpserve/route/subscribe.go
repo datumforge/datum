@@ -10,6 +10,7 @@ import (
 
 func registerSubscribeHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "Subscribe",
 		Method: http.MethodGet,
 		Path:   "/subscribe",
 		Handler: func(c echo.Context) error {
@@ -22,6 +23,7 @@ func registerSubscribeHandler(router *echo.Echo, h *handlers.Handler) (err error
 
 func registerVerifySubscribeHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "VerifySubscription",
 		Method: http.MethodGet,
 		Path:   "/subscribe/verify",
 		Handler: func(c echo.Context) error {
@@ -34,6 +36,7 @@ func registerVerifySubscribeHandler(router *echo.Echo, h *handlers.Handler) (err
 
 func registerUnsubscribeHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "Unsubscribe",
 		Method: http.MethodGet,
 		Path:   "/unsubscribe",
 		Handler: func(c echo.Context) error {

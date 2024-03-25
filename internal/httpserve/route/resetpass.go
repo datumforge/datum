@@ -14,6 +14,7 @@ import (
 // to the user and a 204 no content is returned
 func registerResetPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "ResetPassword",
 		Method: http.MethodPost,
 		Path:   "/password-reset",
 		Handler: func(c echo.Context) error {

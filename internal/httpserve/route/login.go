@@ -21,6 +21,7 @@ import (
 // access token so long as the refresh token is valid.
 func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "Login",
 		Method: http.MethodPost,
 		Path:   "/login",
 		Handler: func(c echo.Context) error {

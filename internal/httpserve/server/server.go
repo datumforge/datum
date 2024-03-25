@@ -82,7 +82,8 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	s.config.Handler.TM = tm
 
 	oasRouter, err := oas.NewRouter(oasecho.NewRouter(srv), oas.Options{
-		Context: context.Background(),
+		Context:    context.Background(),
+		PathPrefix: "/",
 		OpenAPI: &openapi3.T{
 			Info: &openapi3.Info{
 				Title:   "Datum API",

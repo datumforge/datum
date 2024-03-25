@@ -50,12 +50,12 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler, oasrouter *oas.Route
 	restrictedEndpointsMW = append(restrictedEndpointsMW, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
 
 	routeOASHandlers := []interface{}{
-		registerOASHandler,
+		registerLoginHandler,
 		registerLivenessHandler,
 	}
 
 	for _, route := range routeOASHandlers {
-		if err := route.(func(*echo.Echo, *OASRouter) error)(router, oasrouter); err != nil {
+		if err := route.(func(*echo.Echo, *handlers.Handler, *OASRouter) error)(router, h, oasrouter); err != nil {
 			return err
 		}
 	}
@@ -63,7 +63,6 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler, oasrouter *oas.Route
 	// routeHandlers that take the router and handler as input
 	routeHandlers := []interface{}{
 		registerReadinessHandler,
-		registerLoginHandler,
 		registerForgotPasswordHandler,
 		registerVerifyHandler,
 		registerResetPasswordHandler,

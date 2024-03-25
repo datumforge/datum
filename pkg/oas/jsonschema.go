@@ -10,10 +10,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func getHandlers(handlers.LoginRequest) handlers.LoginRequest {
-	return handlers.LoginRequest{}
-}
-
 func MagicParameters() error {
 	reflector := new(jsonschema.Reflector)
 
@@ -22,9 +18,13 @@ func MagicParameters() error {
 		return err
 	}
 
-	meow, _ := GetFunctionParametersJSONSchema(reflector, getHandlers)
-	s, _ := json.MarshalIndent(meow, "", " ")
-	fmt.Printf("getWeatherJsonSchema:\n%s\n\n", s)
+	getLoginRequestSchema, _ := GetFunctionParametersJSONSchema(reflector, getLoginRequest)
+	s, _ := json.MarshalIndent(getLoginRequestSchema, "", " ")
+	fmt.Printf("loginRequest:\n%s\n\n", s)
+
+	getLoginReplySchema, _ := GetFunctionParametersJSONSchema(reflector, getLoginReply)
+	s, _ = json.MarshalIndent(getLoginReplySchema, "", " ")
+	fmt.Printf("loginReply:\n%s\n\n", s)
 
 	return nil
 }
@@ -69,4 +69,72 @@ func GetFunctionParametersJSONSchema(reflector *jsonschema.Reflector, f Callable
 	schema.PrefixItems = paramSchemas
 
 	return schema, nil
+}
+
+func getLoginRequest(handlers.LoginRequest) handlers.LoginRequest {
+	return handlers.LoginRequest{}
+}
+
+func getLoginReply(handlers.LoginReply) handlers.LoginReply {
+	return handlers.LoginReply{}
+}
+
+func getRefreshRequest(handlers.RefreshRequest) handlers.RefreshRequest {
+	return handlers.RefreshRequest{}
+}
+
+func getRefreshReply(handlers.RefreshReply) handlers.RefreshReply {
+	return handlers.RefreshReply{}
+}
+
+func getRegisterRequest(handlers.RegisterRequest) handlers.RegisterRequest {
+	return handlers.RegisterRequest{}
+}
+
+func getRegisterReply(handlers.RegisterReply) handlers.RegisterReply {
+	return handlers.RegisterReply{}
+}
+
+func getForgotPasswordRequest(handlers.ForgotPasswordRequest) handlers.ForgotPasswordRequest {
+	return handlers.ForgotPasswordRequest{}
+}
+
+func getForgotPasswordReply(handlers.ForgotPasswordReply) handlers.ForgotPasswordReply {
+	return handlers.ForgotPasswordReply{}
+}
+
+func getVerifyRequest(handlers.VerifyRequest) handlers.VerifyRequest {
+	return handlers.VerifyRequest{}
+}
+
+func getVerifyReply(handlers.VerifyReply) handlers.VerifyReply {
+	return handlers.VerifyReply{}
+}
+
+func getResendEmailRequest(handlers.ResendRequest) handlers.ResendRequest {
+	return handlers.ResendRequest{}
+}
+
+func getResendEmailReply(handlers.ResendReply) handlers.ResendReply {
+	return handlers.ResendReply{}
+}
+
+func getSubscribeReply(handlers.SubscribeReply) handlers.SubscribeReply {
+	return handlers.SubscribeReply{}
+}
+
+func getVerifySubscribeReply(handlers.VerifySubscribeReply) handlers.VerifySubscribeReply {
+	return handlers.VerifySubscribeReply{}
+}
+
+func getUnsubscribeReply(handlers.UnsubscribeReply) handlers.UnsubscribeReply {
+	return handlers.UnsubscribeReply{}
+}
+
+func getInviteReply(handlers.InviteReply) handlers.InviteReply {
+	return handlers.InviteReply{}
+}
+
+func getWebauthnRegistrationRequest(handlers.WebauthnRegistrationRequest) handlers.WebauthnRegistrationRequest {
+	return handlers.WebauthnRegistrationRequest{}
 }

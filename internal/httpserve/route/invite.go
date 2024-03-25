@@ -13,7 +13,7 @@ func registerInviteHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	authMW := mw
 	authMW = append(authMW, h.AuthMiddleware...)
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodPost,
+		Method: http.MethodGet,
 		Path:   "/invite",
 		Handler: func(c echo.Context) error {
 			return h.OrganizationInviteAccept(c)

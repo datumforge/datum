@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"net/http"
 	"strings"
@@ -25,12 +24,7 @@ import (
 // ResetPasswordRequest contains user input required to reset a user's password
 type ResetPasswordRequest struct {
 	Password string `json:"password"`
-}
-
-// ResetPassword contains the full request to validate a password reset
-type ResetPassword struct {
-	Password string
-	Token    string
+	Token    string `json:"token"`
 }
 
 // ResetPasswordReply is the response returned from a non-successful password reset request
@@ -45,31 +39,20 @@ type ResetPasswordReply struct {
 // and not expired. If the request is successful, a confirmation of the reset is sent
 // to the user and a 204 no content is returned
 func (h *Handler) ResetPassword(ctx echo.Context) error {
-	rp := &ResetPassword{
-		Token: ctx.QueryParam("token"),
+	var req ResetPasswordRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	var in *ResetPasswordRequest
-
-	// parse request body
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		h.Logger.Errorw("error parsing request", "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
-	}
-
-	// Add to the full request to be validated
-	rp.Password = in.Password
-
-	if err := rp.validateResetRequest(); err != nil {
+	if err := req.validateResetRequest(); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithResetToken(ctx.Request().Context(), rp.Token)
+	ctxWithToken := token.NewContextWithResetToken(ctx.Request().Context(), req.Token)
 
 	// lookup user from db based on provided token
-	entUser, err := h.getUserByResetToken(ctxWithToken, rp.Token)
+	entUser, err := h.getUserByResetToken(ctxWithToken, req.Token)
 	if err != nil {
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
@@ -87,7 +70,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	// set tokens for request
-	if err := user.setResetTokens(entUser, rp.Token); err != nil {
+	if err := user.setResetTokens(entUser, req.Token); err != nil {
 		h.Logger.Errorw("unable to set reset tokens for request", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
@@ -123,7 +106,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	// make sure its not the same password as current
-	valid, err := passwd.VerifyDerivedKey(*entUser.Password, rp.Password)
+	valid, err := passwd.VerifyDerivedKey(*entUser.Password, req.Password)
 	if err != nil || valid {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(ErrNonUniquePassword))
 	}
@@ -131,7 +114,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	// set context for remaining request based on logged in user
 	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
 
-	if err := h.updateUserPassword(userCtx, entUser.ID, rp.Password); err != nil {
+	if err := h.updateUserPassword(userCtx, entUser.ID, req.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
@@ -163,7 +146,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 }
 
 // validateVerifyRequest validates the required fields are set in the user request
-func (r *ResetPassword) validateResetRequest() error {
+func (r *ResetPasswordRequest) validateResetRequest() error {
 	r.Password = strings.TrimSpace(r.Password)
 
 	switch {

@@ -20,6 +20,11 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
+// InviteRequest holds the fields that should be included on a request to the `/invite` endpoint
+type InviteRequest struct {
+	Token string `query:"token"`
+}
+
 // InviteReply holds the fields that are sent on a response to an accepted invitation
 // Note: there is no InviteRequest as this is handled via our graph interfaces
 type InviteReply struct {
@@ -54,6 +59,12 @@ type InviteToken struct {
 // and creates organization membership for the user
 // On success, it returns a response with the organization information
 func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
+	// parse the token out of the context
+	req := new(InviteRequest)
+	if err := ctx.Bind(req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
+
 	// setup view context
 	context := ctx.Request().Context()
 	userCtx := viewer.NewContext(context, viewer.NewUserViewerFromSubject(context))
@@ -66,9 +77,8 @@ func (h *Handler) OrganizationInviteAccept(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	// parse the token out of the context
 	inv := &Invite{
-		Token: ctx.QueryParam("token"),
+		Token: req.Token,
 	}
 
 	// ensure the user that is logged in, matches the invited user

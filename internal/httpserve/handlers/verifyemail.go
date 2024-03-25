@@ -18,7 +18,7 @@ import (
 
 // VerifyRequest holds the fields that should be included on a request to the `/verify` endpoint
 type VerifyRequest struct {
-	Token string `json:"token"`
+	Token string `query:"token"`
 }
 
 // VerifyReply holds the fields that are sent on a response to the `/verify` endpoint
@@ -36,16 +36,19 @@ type VerifyReply struct {
 
 // VerifyEmail is the handler for the email verification endpoint
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
-	reqToken := ctx.QueryParam("token")
+	var req VerifyRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
 
-	if err := validateVerifyRequest(reqToken); err != nil {
+	if err := validateVerifyRequest(req.Token); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), reqToken)
+	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), req.Token)
 
-	entUser, err := h.getUserByEVToken(ctxWithToken, reqToken)
+	entUser, err := h.getUserByEVToken(ctxWithToken, req.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
@@ -67,7 +70,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	// check to see if user is already confirmed
 	if !entUser.Edges.Setting.EmailConfirmed {
 		// set tokens for request
-		if err := user.setUserTokens(entUser, reqToken); err != nil {
+		if err := user.setUserTokens(entUser, req.Token); err != nil {
 			h.Logger.Errorw("unable to set user tokens for request", "error", err)
 
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))

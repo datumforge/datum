@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -33,10 +32,8 @@ type OauthTokenRequest struct {
 // OauthRegister returns the TokenResponse for a verified authenticated external oauth user
 func (h *Handler) OauthRegister(ctx echo.Context) error {
 	var r OauthTokenRequest
-
-	// parse request body
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&r); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	if err := ctx.Bind(&r); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), r.Email)

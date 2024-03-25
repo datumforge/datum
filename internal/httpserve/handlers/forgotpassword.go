@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/cenkalti/backoff/v4"
@@ -29,8 +28,6 @@ type ForgotPasswordReply struct {
 // ForgotPassword will send an forgot password email if the provided
 // email exists
 func (h *Handler) ForgotPassword(ctx echo.Context) error {
-	var in *ForgotPasswordRequest
-
 	out := &ForgotPasswordReply{
 		Reply: rout.Reply{
 			Success: true,
@@ -38,14 +35,12 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		Message: "We've received your request to have the password associated with this email reset. Please check your email.",
 	}
 
-	// parse request body
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		h.Logger.Errorw("error parsing request", "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+	var in ForgotPasswordRequest
+	if err := ctx.Bind(&in); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	if err := validateForgotPasswordRequest(in); err != nil {
+	if err := validateForgotPasswordRequest(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 

@@ -16,6 +16,11 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
+// VerifySubscribeRequest holds the fields that should be included on a request to the `/subscribe/verify` endpoint
+type VerifySubscribeRequest struct {
+	Token string `query:"token"`
+}
+
 // VerifySubscribeReply holds the fields that are sent on a response to the `/subscribe/verify` endpoint
 type VerifySubscribeReply struct {
 	rout.Reply
@@ -24,16 +29,19 @@ type VerifySubscribeReply struct {
 
 // VerifySubscriptionHandler is the handler for the subscription verification endpoint
 func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
-	reqToken := ctx.QueryParam("token")
+	var req VerifySubscribeRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
 
-	if err := validateVerifySubscriptionRequest(reqToken); err != nil {
+	if err := validateVerifySubscriptionRequest(req.Token); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), reqToken)
+	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), req.Token)
 
-	entSubscriber, err := h.getSubscriberByToken(ctxWithToken, reqToken)
+	entSubscriber, err := h.getSubscriberByToken(ctxWithToken, req.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))

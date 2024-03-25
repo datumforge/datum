@@ -16,6 +16,12 @@ import (
 	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
+// SubscribeRequest holds the fields that should be included on a request to the `/subscribe` endpoint
+type SubscribeRequest struct {
+	Email          string `query:"email"`
+	OrganizationID string `query:"organization_id" json:",omitempty"`
+}
+
 // SubscribeReply holds the fields that are sent on a response to the `/subscribe` endpoint
 type SubscribeReply struct {
 	rout.Reply
@@ -26,17 +32,18 @@ type SubscribeReply struct {
 // It creates a new subscriber and sends a verification email to the subscriber
 // this current only supports email subscriptions
 func (h *Handler) SubscribeHandler(ctx echo.Context) error {
-	email := ctx.QueryParam("email")
-	if email == "" {
+	var req SubscribeRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
+
+	if req.Email == "" {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("email is required"))
 	}
 
-	// organization, if null defaults to root level datum subscribers
-	organizationID := ctx.QueryParam("organization_id")
-
 	// create user input for subscriber verification token
 	user := &User{
-		Email: email,
+		Email: req.Email,
 	}
 
 	if err := user.CreateVerificationToken(); err != nil {
@@ -47,15 +54,15 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 
 	// create subscriber input
 	input := generated.CreateSubscriberInput{
-		Email: email,
+		Email: req.Email,
 	}
 
-	if organizationID != "" {
-		input.OwnerID = &organizationID
+	if req.OrganizationID != "" {
+		input.OwnerID = &req.OrganizationID
 	}
 
 	// set viewer context
-	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), email)
+	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), req.Email)
 
 	if _, err := h.createSubscriber(ctxWithToken, input, user); err != nil {
 		h.Logger.Errorw("error creating new subscriber", "error", err)
@@ -72,7 +79,7 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 		return err
 	}
 
-	if err := h.sendSubscriberEmail(ctxWithToken, user, organizationID); err != nil {
+	if err := h.sendSubscriberEmail(ctxWithToken, user, req.OrganizationID); err != nil {
 		h.Logger.Errorw("error sending subscriber email", "error", err)
 
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse("could not send subscriber email"))

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -107,6 +108,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/oauth/register", strings.NewReader(string(body)))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

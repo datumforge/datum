@@ -3,7 +3,6 @@ package handlers_test
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -129,23 +128,20 @@ func (suite *HandlerTestSuite) TestResetPassword() {
 				Password: tc.newPassword,
 			}
 
+			if tc.tokenSet {
+				pwResetJSON.Token = rt.Token
+				if tc.tokenProvided != "" {
+					pwResetJSON.Token = tc.tokenProvided
+				}
+			}
+
 			body, err := json.Marshal(pwResetJSON)
 			if err != nil {
 				require.NoError(t, err)
 			}
 
-			target := "/password-reset"
-
-			if tc.tokenSet {
-				token := rt.Token
-				if tc.tokenProvided != "" {
-					token = tc.tokenProvided
-				}
-
-				target = fmt.Sprintf("%s?token=%s", target, token)
-			}
-
-			req := httptest.NewRequest(http.MethodPost, target, strings.NewReader(string(body)))
+			req := httptest.NewRequest(http.MethodPost, "/password-reset", strings.NewReader(string(body)))
+			req.Header.Set("Content-Type", "application/json")
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -44,10 +43,8 @@ type RegisterReply struct {
 // the user will not be able to authenticate until the email is verified
 // [MermaidChart: 5a357443-f959-4f16-a07f-ec504f67f0eb]
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
-	var in *RegisterRequest
-
-	// parse request body
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
+	var in RegisterRequest
+	if err := ctx.Bind(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 

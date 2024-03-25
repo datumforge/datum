@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"strings"
 
+	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -34,6 +35,9 @@ func Login(c *Client, ctx context.Context, login handlers.LoginRequest) (*oauth2
 	if err != nil {
 		return nil, err
 	}
+
+	// Set Headers
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	b, err := json.Marshal(login)
 	if err != nil {

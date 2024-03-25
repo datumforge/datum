@@ -5,7 +5,6 @@ changelog:
     authors:
       - octocat
       - github-actions
-      - renovate
   categories:
     - title: Breaking Changes 🛠
       labels:

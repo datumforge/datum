@@ -2,9 +2,7 @@ changelog:
   exclude:
     labels:
       - ignore-for-release
-    authors:
-      - octocat
-      - github-actions
+    authors: []
   categories:
     - title: Breaking Changes 🛠
       labels:

@@ -21,8 +21,12 @@ func MagicParameters() error {
 
 	getLoginRequestSchema, _ := GetFunctionParametersJSONSchema(reflector, getLoginRequest)
 	ogenSpec := ogen.NewSpec()
+	matt, _ := getLoginRequestSchema.MarshalJSON()
+	ogenSchema := ogen.NewSchema()
+	getLoginRequestSchema.MarshalJSON()
+
+	ogenSpec.AddSchema("LoginRequest", matt)
 	s, _ := json.MarshalIndent(getLoginRequestSchema, "", " ")
-	ogenSpec.Raw
 	fmt.Printf("loginRequest:\n%s\n\n", s)
 
 	getLoginReplySchema, _ := GetFunctionParametersJSONSchema(reflector, getLoginReply)

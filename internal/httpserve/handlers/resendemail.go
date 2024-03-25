@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -28,16 +27,14 @@ type ResendReply struct {
 // ResendEmail will resend an email verification email if the provided
 // email exists
 func (h *Handler) ResendEmail(ctx echo.Context) error {
-	var in *ResendRequest
-
 	out := &ResendReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "We've received your request to be resent an email to complete verification. Please check your email.",
 	}
 
-	// parse request body
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+	var in ResendRequest
+	if err := ctx.Bind(&in); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	if err := validateResendRequest(in); err != nil {
@@ -94,7 +91,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 }
 
 // validateResendRequest validates the required fields are set in the user request
-func validateResendRequest(req *ResendRequest) error {
+func validateResendRequest(req ResendRequest) error {
 	if req.Email == "" {
 		return rout.NewMissingRequiredFieldError("email")
 	}

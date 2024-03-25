@@ -28,7 +28,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 	t := suite.T()
 
 	// add handler
-	suite.e.POST("invite", suite.h.OrganizationInviteAccept)
+	suite.e.GET("invite", suite.h.OrganizationInviteAccept)
 
 	// bypass auth
 	ctx := context.Background()
@@ -131,7 +131,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 				target = fmt.Sprintf("/invite?token=%s", invite.Token)
 			}
 
-			req := httptest.NewRequest(http.MethodPost, target, nil)
+			req := httptest.NewRequest(http.MethodGet, target, nil)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

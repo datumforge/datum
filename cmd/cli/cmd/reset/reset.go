@@ -45,7 +45,7 @@ func registerUser(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token")
 	}
 
-	reset := handlers.ResetPassword{
+	reset := handlers.ResetPasswordRequest{
 		Password: password,
 		Token:    token,
 	}

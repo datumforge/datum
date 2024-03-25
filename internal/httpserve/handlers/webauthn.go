@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
@@ -40,8 +39,7 @@ type WebauthnRegistrationResponse struct {
 // BeginWebauthnRegistration is the request to begin a webauthn login
 func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	var r WebauthnRegistrationRequest
-
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&r); err != nil {
+	if err := ctx.Bind(&r); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 
+	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -32,7 +33,9 @@ func OrgInvite(c *Client, ctx context.Context, r handlers.Invite, accessToken st
 		return nil, nil, err
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+	// Set Headers
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %s", accessToken))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	b, err := json.Marshal(r)
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
+	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
@@ -109,6 +110,7 @@ func (suite *HandlerTestSuite) TestRefreshHandler() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/refresh", strings.NewReader(string(body)))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

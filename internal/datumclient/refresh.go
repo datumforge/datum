@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 
+	echo "github.com/datumforge/echox"
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -31,6 +32,9 @@ func Refresh(c *Client, ctx context.Context, r handlers.RefreshRequest) (*oauth2
 	if err != nil {
 		return nil, err
 	}
+
+	// Set Headers
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	b, err := json.Marshal(r)
 	if err != nil {

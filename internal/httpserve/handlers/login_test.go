@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v7"
+	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -137,6 +138,7 @@ func (suite *HandlerTestSuite) TestLoginHandler() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(body)))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

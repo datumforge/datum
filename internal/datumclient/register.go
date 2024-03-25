@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"net/url"
 
+	echo "github.com/datumforge/echox"
+
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/route"
 )
@@ -29,6 +31,9 @@ func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*hand
 	if err != nil {
 		return nil, err
 	}
+
+	// Set Headers
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	b, err := json.Marshal(r)
 	if err != nil {

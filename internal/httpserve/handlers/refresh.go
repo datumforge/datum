@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
@@ -25,12 +24,8 @@ type RefreshReply struct {
 // RefreshHandler allows users to refresh their access token using their refresh token.
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	var r RefreshRequest
-
-	// parse request body
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&r); err != nil {
-		h.Logger.Errorw("error parsing request", "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
+	if err := ctx.Bind(&r); err != nil {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	if r.RefreshToken == "" {

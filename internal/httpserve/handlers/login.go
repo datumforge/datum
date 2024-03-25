@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
@@ -18,10 +17,9 @@ import (
 
 // LoginRequest to authenticate with the Datum Sever
 type LoginRequest struct {
-	Username    string `json:"username"`
-	Password    string `json:"password"`
-	InviteToken string `json:"invite_token,omitempty"`
-	OTPCode     string `json:"otp_code"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	OTPCode  string `json:"otp_code,omitempty"`
 }
 
 // LoginReply holds response to successful authentication
@@ -35,7 +33,7 @@ type LoginReply struct {
 }
 
 // LoginHandler validates the user credentials and returns a valid cookie
-// this only supports username password login today (not oauth)
+// this handler only supports username password login
 func (h *Handler) LoginHandler(ctx echo.Context) error {
 	user, err := h.verifyUserPassword(ctx)
 	if err != nil {
@@ -107,9 +105,7 @@ func createClaims(u *generated.User) *tokens.Claims {
 // verifyUserPassword verifies the username and password are valid
 func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) {
 	var l LoginRequest
-
-	// parse request body
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&l); err != nil {
+	if err := ctx.Bind(&l); err != nil {
 		return nil, ErrBadRequest
 	}
 

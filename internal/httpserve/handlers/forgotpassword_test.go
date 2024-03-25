@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
+	echo "github.com/datumforge/echox"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
@@ -97,6 +98,7 @@ func (suite *HandlerTestSuite) TestForgotPasswordHandler() {
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/forgot-password", strings.NewReader(string(body)))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()

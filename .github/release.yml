@@ -2,6 +2,7 @@ changelog:
   exclude:
     labels:
       - ignore-for-release
+      - ci
     authors: []
   categories:
     - title: Breaking Changes 🛠
@@ -12,6 +13,10 @@ changelog:
       labels:
         - Semver-Minor
         - enhancement
+        - feature
+    - title: Bug Fixes 🐛
+      labels:
+        - bug
     - title: 👒 Dependencies
       labels:
         - dependencies

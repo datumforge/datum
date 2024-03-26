@@ -30,7 +30,7 @@ tasks:
     cmds:
       - "brew install gomplate"
       - "go install entgo.io/ent/cmd/ent@latest"
-      - "go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"
+      - "go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57.1"
       - "curl -sSf https://atlasgo.sh | sh"
       - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
       - "go get -u github.com/openfga/go-sdk"
@@ -49,7 +49,7 @@ tasks:
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
-      - golangci-lint run -v
+      - golangci-lint run --config=.golangci.yaml --verbose
 
   go:test:
     desc: runs and outputs results of created go tests

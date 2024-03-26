@@ -86,7 +86,7 @@ func (c Config) GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error
 
 		if prefix != "" {
 			info.Key = fmt.Sprintf("%s_%s", prefix, info.Key)
-			info.FullPath = fmt.Sprintf("%s.%s", strings.ToLower(strings.Replace(prefix, "_", ".", -1)), info.FieldName)
+			info.FullPath = fmt.Sprintf("%s.%s", strings.ToLower(strings.Replace(prefix, "_", ".", -1)), info.FieldName) // nolint: gocritic
 		}
 
 		info.Key = strings.ToUpper(info.Key)
@@ -112,6 +112,7 @@ func (c Config) GatherEnvInfo(prefix string, spec interface{}) ([]varInfo, error
 			continue
 		}
 	}
+
 	return infos, nil
 }
 

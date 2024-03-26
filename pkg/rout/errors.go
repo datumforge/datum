@@ -52,7 +52,6 @@ var (
 	notAllowed       = Reply{Success: false, Error: "method not allowed"}
 	unverified       = Reply{Success: false, Unverified: true, Error: ErrVerifyEmail}
 	httpunsuccessful = echo.HTTPError{}
-	unauthorized     = echo.HTTPError{Code: http.StatusUnauthorized, Message: ErrTryLoginAgain}
 )
 
 // response creates a standard error message to ensure uniqueness and testability for external packages

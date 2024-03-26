@@ -50,6 +50,7 @@ require (
 	golang.org/x/oauth2 v0.18.0
 	golang.org/x/term v0.18.0
 	google.golang.org/api v0.171.0
+	gopkg.in/yaml.v2 v2.4.0
 	modernc.org/sqlite v1.29.5
 )
 
@@ -270,6 +271,5 @@ require (
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.19.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gopkg.in/yaml.v3 v3.0.1
 )

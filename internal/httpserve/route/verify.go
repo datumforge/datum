@@ -15,6 +15,7 @@ import (
 // 204 response is returned.
 func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "VerifyEmail",
 		Method: http.MethodGet,
 		Path:   "/verify",
 		Handler: func(c echo.Context) error {

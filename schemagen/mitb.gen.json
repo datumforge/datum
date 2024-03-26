@@ -1,0 +1,788 @@
+{
+  "components": {
+    "examples": {
+      "BadRequest": {
+        "value": {
+          "code": 400,
+          "reply": {
+            "error": "bad request",
+            "success": false
+          }
+        }
+      }
+    },
+    "parameters": {
+      "Token": {
+        "description": "the token to parse out of a URL",
+        "in": "query",
+        "name": "token",
+        "required": true,
+        "schema": {
+          "type": "integer"
+        }
+      }
+    },
+    "requestBodies": {
+      "ForgotPasswordRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "email": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ForgotPasswordRequest"
+            }
+          }
+        }
+      },
+      "LoginRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "otpcode": "",
+                  "password": "",
+                  "username": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/LoginRequest"
+            }
+          }
+        }
+      },
+      "RefreshRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "refreshtoken": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/RefreshRequest"
+            }
+          }
+        }
+      },
+      "RegisterRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "email": "",
+                  "firstname": "",
+                  "lastname": "",
+                  "password": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/RegisterRequest"
+            }
+          }
+        }
+      },
+      "ResendEmailRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "email": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ResendEmailRequest"
+            }
+          }
+        }
+      },
+      "ResetPasswordRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "password": "",
+                  "token": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ResetPasswordRequest"
+            }
+          }
+        }
+      },
+      "SubscribeRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "email": "",
+                  "organizationid": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/SubscribeRequest"
+            }
+          }
+        }
+      },
+      "VerifyRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "token": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/VerifyRequest"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "code": 400,
+                  "reply": {
+                    "error": "bad request",
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/StatusError"
+            }
+          }
+        },
+        "description": "The request's parameters are not valid"
+      },
+      "Conflict": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "code": 409,
+                  "reply": {
+                    "error": "conflict",
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/StatusError"
+            }
+          }
+        },
+        "description": "The request conflicts with the current state of the server"
+      },
+      "ForgotPasswordReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "message": "",
+                  "reply": {
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ForgotPasswordReply"
+            }
+          }
+        },
+        "description": "The password reset email was sent"
+      },
+      "InternalServerError": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "code": 500,
+                  "reply": {
+                    "error": "internal server error",
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/StatusError"
+            }
+          }
+        },
+        "description": "The server encountered an error"
+      },
+      "LoginReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "accesstoken": "",
+                  "expiresin": 0,
+                  "message": "",
+                  "refreshtoken": "",
+                  "reply": {
+                    "success": false
+                  },
+                  "tokentype": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/LoginReply"
+            }
+          }
+        },
+        "description": "The login was successful"
+      },
+      "RefreshReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "message": "",
+                  "reply": {
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/RefreshReply"
+            }
+          }
+        },
+        "description": "The token was refreshed"
+      },
+      "RegisterReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "email": "",
+                  "id": "",
+                  "message": "",
+                  "reply": {
+                    "success": false
+                  },
+                  "token": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/RegisterReply"
+            }
+          }
+        },
+        "description": "The user was registered"
+      },
+      "ResendEmailReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "message": "",
+                  "reply": {
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ResendEmailReply"
+            }
+          }
+        },
+        "description": "The email was resent"
+      },
+      "ResetPasswordReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "message": "",
+                  "reply": {
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ResetPasswordReply"
+            }
+          }
+        },
+        "description": "The password was reset"
+      },
+      "SubscribeReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "message": "",
+                  "reply": {
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/SubscribeReply"
+            }
+          }
+        },
+        "description": "The user was subscribed"
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "code": 401,
+                  "reply": {
+                    "error": "unauthorized",
+                    "success": false
+                  }
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/StatusError"
+            }
+          }
+        },
+        "description": "The request is not authorized"
+      },
+      "VerifyReply": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "error": {
+                "value": {
+                  "accesstoken": "",
+                  "email": "",
+                  "expiresin": 0,
+                  "id": "",
+                  "message": "",
+                  "refreshtoken": "",
+                  "reply": {
+                    "success": false
+                  },
+                  "token": "",
+                  "tokentype": ""
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/VerifyReply"
+            }
+          }
+        },
+        "description": "The email was verified"
+      }
+    },
+    "schemas": {
+      "ForgotPasswordReply": {
+        "properties": {
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "unverified": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ForgotPasswordRequest": {
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "LoginReply": {
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "expires_in": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "unverified": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "LoginRequest": {
+        "properties": {
+          "otp_code": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MissingRequiredFieldError": {
+        "properties": {
+          "required_field": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RefreshReply": {
+        "properties": {
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "unverified": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RegisterReply": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "token": {
+            "type": "string"
+          },
+          "unverified": {
+            "type": "boolean"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ResendEmailReply": {
+        "properties": {
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "unverified": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ResendEmailRequest": {
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ResetPasswordReply": {
+        "properties": {
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "unverified": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ResetPasswordRequest": {
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "StatusError": {
+        "properties": {
+          "code": {
+            "description": "the response HTTP code also in the response payload for your parsing convenience",
+            "type": "integer"
+          },
+          "reply": {
+            "description": "the Reply generated via the internal/rout package which contains a success bool and the corresponding message",
+            "properties": {
+              "error": {
+                "description": "The error message if the request was unsuccessful",
+                "type": "string"
+              },
+              "success": {
+                "description": "Whether or not the request was successful or not",
+                "type": "boolean"
+              },
+              "unverified": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "SubscribeReply": {
+        "properties": {
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "unverified": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SubscribeRequest": {
+        "properties": {
+          "OrganizationID": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VerifyReply": {
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "error": {
+            "description": "The error message if the request was unsuccessful",
+            "type": "string"
+          },
+          "expires_in": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "success": {
+            "description": "Whether or not the request was successful or not",
+            "type": "boolean"
+          },
+          "token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "unverified": {
+            "type": "boolean"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VerifyRequest": {}
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@datum.net",
+      "name": "Datum Support",
+      "url": "https://datum.net/support"
+    },
+    "description": "Documentation for Datum's API services",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "termsOfService": "https://datum.net/terms",
+    "title": "Datum OpenAPI 3.1.0 Specifications",
+    "version": "1.0.1"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/ready": {
+      "get": {
+        "description": "A status check for the server and it's associated dependencies",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "fga": {
+                      "type": "string"
+                    },
+                    "redis": {
+                      "type": "string"
+                    },
+                    "sqlite_db_primary": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "The status of the server and sub components are returned"
+          }
+        },
+        "security": [
+          {}
+        ],
+        "summary": "Status Check"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:17608/v1"
+    },
+    {
+      "url": "https://api.datum.net/v1"
+    }
+  ]
+}

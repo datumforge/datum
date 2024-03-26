@@ -69,6 +69,7 @@ func main() {
 			})
 			spec.Info.SetTermsOfService("https://datum.net/tos")
 
+			ogen.NewSchema()
 			return nil
 		}),
 	)

@@ -14,6 +14,7 @@ import (
 // not to avoid leaking information about users in the database.
 func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "ForgotPassword",
 		Method: http.MethodPost,
 		Path:   "/forgot-password",
 		Handler: func(c echo.Context) error {
@@ -27,6 +28,7 @@ func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err 
 
 	// we need to handle the redirect from /.well-known 302 -> /v1/forgot-password with a 200
 	_, err = router.AddRoute(echo.Route{
+		Name:   "ForgotPasswordRedirect",
 		Method: http.MethodGet,
 		Path:   "/forgot-password",
 		Handler: func(c echo.Context) error {

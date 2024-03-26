@@ -18,6 +18,7 @@ import (
 // in the register request and the user is assigned the Owner role.
 func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "Register",
 		Method: http.MethodPost,
 		Path:   "/register",
 		Handler: func(c echo.Context) error {

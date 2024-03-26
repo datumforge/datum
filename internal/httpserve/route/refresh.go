@@ -17,6 +17,7 @@ import (
 // stay authenticated semi-permanently.
 func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
+		Name:   "Refresh",
 		Method: http.MethodPost,
 		Path:   "/refresh",
 		Handler: func(c echo.Context) error {

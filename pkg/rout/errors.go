@@ -87,6 +87,7 @@ type Reply struct {
 	Unverified bool   `json:"unverified,omitempty" yaml:"unverified,omitempty"`
 }
 
+// BadRequest returns a JSON 400 response for the API
 func BadRequest() StatusError {
 	return StatusError{
 		StatusCode: http.StatusBadRequest,
@@ -94,6 +95,7 @@ func BadRequest() StatusError {
 	}
 }
 
+// InternalServerError returns a JSON 500 response for the API
 func InternalServerError() StatusError {
 	return StatusError{
 		StatusCode: http.StatusInternalServerError,
@@ -101,6 +103,7 @@ func InternalServerError() StatusError {
 	}
 }
 
+// Conflict returns a JSON 409 response for the API
 func Conflict() StatusError {
 	return StatusError{
 		StatusCode: http.StatusConflict,
@@ -108,7 +111,8 @@ func Conflict() StatusError {
 	}
 }
 
-func Unauthorzied() StatusError {
+// Unauthorized returns a JSON 401 response for the API
+func Unauthorized() StatusError {
 	return StatusError{
 		StatusCode: http.StatusUnauthorized,
 		Reply:      Reply{Success: false, Error: "unauthorized", Unverified: false},
@@ -204,11 +208,6 @@ func NotAllowed(c echo.Context) error {
 // their email address.
 func Unverified(c echo.Context) error {
 	return c.JSON(http.StatusForbidden, unverified) //nolint:errcheck
-}
-
-// Unauthorized returns a JSON 401 response indicating that the request failed authorization
-func Unauthorized(c echo.Context) error {
-	return c.JSON(http.StatusUnauthorized, unauthorized) //nolint:errcheck
 }
 
 func (e *FieldError) Error() string {

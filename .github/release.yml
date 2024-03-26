@@ -2,10 +2,7 @@ changelog:
   exclude:
     labels:
       - ignore-for-release
-    authors:
-      - octocat
-      - github-actions
-      - renovate
+    authors: []
   categories:
     - title: Breaking Changes 🛠
       labels:
@@ -15,6 +12,10 @@ changelog:
       labels:
         - Semver-Minor
         - enhancement
+        - feature
+    - title: Bug Fixes 🐛
+      labels:
+        - bug
     - title: 👒 Dependencies
       labels:
         - dependencies

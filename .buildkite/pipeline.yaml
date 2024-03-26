@@ -264,7 +264,7 @@ steps:
           security-checks: config,secret,vuln
           skip-files: 'cosign.key,Dockerfile.dev'
   - label: ":docker: docker build and publish"
-    key: "docker-build"
+    key: "docker-build-and-tag"
     if: build.tag != null
     commands: |
       #!/bin/bash
@@ -290,7 +290,7 @@ steps:
           security-checks: config,secret,vuln
           skip-files: 'cosign.key,Dockerfile.dev'
   - label: ":docker: docker build and publish all in one"
-    key: "docker-build-aio"
+    key: "docker-build-aio-and-tag"
     if: build.tag != null
     commands: |
       #!/bin/bash

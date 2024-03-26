@@ -1,4 +1,4 @@
-package main
+package oas
 
 import (
 	"context"
@@ -59,7 +59,7 @@ func NewSchemaGenerator() *OAS {
 	return s
 }
 
-var appJson = "application/json"
+var appJSON = "application/json"
 
 // AddSecurityScheme adds a security scheme to the OAS
 func (s *OAS) AddSecurityScheme(name string, scheme *openapi3.SecurityScheme) {
@@ -71,8 +71,8 @@ func (s *OAS) AddSecurityScheme(name string, scheme *openapi3.SecurityScheme) {
 // and adds an example for the request body in the `application/json` content type
 func (s *OAS) AddRequestBody(name string, body interface{}) {
 	request := openapi3.NewRequestBody().WithJSONSchemaRef(&openapi3.SchemaRef{Ref: "#/components/schemas/" + name})
-	request.Content.Get(appJson).Examples = make(map[string]*openapi3.ExampleRef)
-	request.Content.Get(appJson).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
+	request.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
+	request.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(body)}
 	s.Components.RequestBodies[name] = &openapi3.RequestBodyRef{Value: request}
 }
 
@@ -90,8 +90,8 @@ func (s *OAS) AddHeader(name string, header *openapi3.Header) {
 // reference to a schema, and an example of the response body
 func (s *OAS) AddResponse(name string, description string, ref string, example interface{}) {
 	response := openapi3.NewResponse().WithDescription(description).WithJSONSchemaRef(&openapi3.SchemaRef{Ref: ref})
-	response.Content.Get(appJson).Examples = make(map[string]*openapi3.ExampleRef)
-	response.Content.Get(appJson).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(example)}
+	response.Content.Get(appJSON).Examples = make(map[string]*openapi3.ExampleRef)
+	response.Content.Get(appJSON).Examples["error"] = &openapi3.ExampleRef{Value: openapi3.NewExample(example)}
 	s.Components.Responses[name] = &openapi3.ResponseRef{Value: response}
 }
 
@@ -103,7 +103,9 @@ func (s *OAS) AddResponse(name string, description string, ref string, example i
 func AddErrorSchemas(gen *OAS) {
 	gen.AddSchema("StatusError", &rout.StatusError{})
 	gen.AddSchema("MissingRequiredFieldError", &rout.MissingRequiredFieldError{})
+
 	var path = "#/components/schemas/StatusError"
+
 	gen.AddResponse("BadRequest", "The request's parameters are not valid", path, rout.BadRequest())
 	gen.AddResponse("Unauthorized", "The request is not authorized", path, rout.Unauthorized())
 	gen.AddResponse("InternalServerError", "The server encountered an error", path, rout.InternalServerError())
@@ -236,14 +238,14 @@ func checkTags(rval reflect.Type) {
 	for i := 0; i < rval.NumField(); i++ {
 		for _, tagName := range []string{"json", "yaml"} {
 			if _, ok := rval.Field(i).Tag.Lookup(tagName); !ok {
-				panic(fmt.Errorf("type %s does not have struct flag '%s'", rval.Name(), tagName))
+				panic(fmt.Errorf("type %s does not have struct flag '%s'", rval.Name(), tagName)) // nolint: goerr113
 			}
 		}
 	}
 }
 
-// main is the entry point for the schemagen tool. It generates an OpenAPI schema for the Datum API
-func main() {
+// oas is the entry point for the schemagen tool. It generates an OpenAPI schema for the Datum API
+func oas() { // nolint: unused
 	gen := NewSchemaGenerator()
 	AddErrorSchemas(gen)
 	AddExamples(gen)
@@ -298,12 +300,12 @@ func main() {
 	tmp = append(tmp, '\n')
 	bufferJSON = tmp
 
-	err = os.WriteFile("./schemagen/mitb.gen.json", bufferJSON, 0o644) // nolint: gomnd,gosec
+	err = os.WriteFile("./oas/outputschema.gen.json", bufferJSON, 0o644) // nolint: gomnd,gosec
 	if err != nil {
 		panic(err)
 	}
 
-	err = os.WriteFile("./schemagen/mitb.gen.yaml", bufferYAML, 0o644) // nolint: gomnd,gosec
+	err = os.WriteFile("./oas/outputschema.gen.yaml", bufferYAML, 0o644) // nolint: gomnd,gosec
 	if err != nil {
 		panic(err)
 	}

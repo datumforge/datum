@@ -36,7 +36,7 @@ func (OrganizationSetting) Fields() []ent.Field {
 				for _, domain := range domains {
 					u, err := url.Parse("http://" + domain)
 					if err != nil || u.Scheme == "" || u.Host == "" {
-						return fmt.Errorf("invalid domain: %s", domain)
+						return fmt.Errorf("invalid domain: %s", domain) // nolint: goerr113
 					}
 				}
 				return nil

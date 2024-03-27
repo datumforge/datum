@@ -1,0 +1,46 @@
+openapi: 3.1.0
+info:
+    title: Datum Example OpenAPI 3.1.0 Specifications
+    description: Documentation for Datum's Example API services
+    termsOfService: https://datum.net/terms
+    contact:
+        name: Datum Support
+        url: https://datum.net/support
+        email: support@datum.net
+    license:
+        name: Apache 2.0
+        url: https://www.apache.org/licenses/LICENSE-2.0.html
+    version: 1.0.1
+servers:
+    - url: https://example.datum.net/v1
+paths:
+    /ready:
+        get:
+            operationId: ready
+            security:
+                - {}
+            summary: Status Check
+            description: A status check for the server and it's associated dependencies
+            responses:
+                "200":
+                    description: The status of the server and sub components are returned
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    fga:
+                                        type: string
+                                    redis:
+                                        type: string
+                                    sqlite_db_primary:
+                                        type: string
+                "400":
+                    description: The server is not ready
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string

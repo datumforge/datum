@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -85,6 +86,7 @@ func (Group) Edges() []ent.Edge {
 			Unique().
 			Annotations(
 				entx.CascadeAnnotationField("Group"),
+				entoas.Skip(true),
 			),
 		edge.From("users", User.Type).
 			Ref("groups").

@@ -1,5 +1,6 @@
 theme:
   openapi:
+<<<<<<< HEAD
     hideRequestPayloadSample: false
     generateCodeSamples: 
       languages: 
@@ -27,17 +28,42 @@ theme:
               fontSize: 10pt
             medium: 
               fontSize: 12pt
+=======
+    disableSearch: false
+    expandResponses: 200,202
+    jsonSampleExpandLevel: 2
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: Go
+        - lang: Python
+        - lang: Node.js
+    hideRequestPayloadSample: false
+    theme:
+      layout:
+        showDarkRightPanel: true
+      sidebar:
+        backgroundColor: '#E1EBEA'
+        textColor: '#3d005b'
+>>>>>>> cae86b1 (add redoc config, html output, updated rest schema)
       colors:
         primary:
           main: '#F08C00'
       typography:
+<<<<<<< HEAD
         code: 
           wrap: true
+=======
+>>>>>>> cae86b1 (add redoc config, html output, updated rest schema)
         fontSize: 12pt
         headings:
           fontWeight: bold
 apis:
+<<<<<<< HEAD
   graph@v1:
+=======
+  core@v1:
+>>>>>>> cae86b1 (add redoc config, html output, updated rest schema)
     root: ./openapi.json
     rules:
       spec: error
@@ -57,6 +83,7 @@ apis:
       no-example-value-and-externalValue: error
       no-unresolved-refs: error
       spec-components-invalid-map-name: error
+<<<<<<< HEAD
   rest@v1:
     root: ./rest.yaml
     rules:
@@ -98,3 +125,5 @@ apis:
       no-unresolved-refs: error
       spec-components-invalid-map-name: error
 
+=======
+>>>>>>> cae86b1 (add redoc config, html output, updated rest schema)

@@ -151,6 +151,7 @@ func (User) Edges() []ent.Edge {
 			Unique().
 			Annotations(
 				entx.CascadeAnnotationField("User"),
+				entoas.Skip(true),
 			),
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Annotations(

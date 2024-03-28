@@ -1,0 +1,73 @@
+# server settings
+server: 
+  debug: true
+  dev: true
+  cors:
+    allowOrigins: []
+
+  # tls settings
+  tls:
+    enabled: false
+  
+# db settings
+db: 
+  debug: true
+  multiWrite: false
+  primaryDbSource: file:datum.db
+
+# auth settings
+auth:
+  enabled: true
+  token:
+    audience: "https://api.datum.net"
+    refreshAudience: "https://api.datum.net"
+    issuer: "https://api.datum.net"
+    kid: "01HHAS67AM73778S0QEZ3CEAGE"
+  supportedProviders:
+    - google
+    - github
+  providers:
+    google:
+      scopes:
+        - email
+        - profile
+    github:
+      scopes:
+        - user:email
+        - read:user
+    webauthn:
+      debug: false
+      enabled: true
+      relyingPartyId: "api.datum.net"
+      requestOrigin: "https://console.datum.net"
+      
+# authz settings
+authz:
+  enabled: true
+  storeName: datum
+  hostUrl: http://fga.internal:8080
+  createNewModel: false
+  modelFile: /fga/model/datum.fga
+
+# session settings
+sessions:
+  signingKey: "4N0txRe4PSBTIGhXpMEriFlfDEH9zTri"
+  encryptionKey: "IF841pLk48ibOVo6w9UIkr9OBCkjXG2q"
+
+# email settings
+email:
+  testing: true
+  archive: "fixtures/email"
+  consoleUrl:
+    consoleBase: "https://console.datum.net"
+    
+# sentry settings
+sentry:
+  enabled: true
+
+# analytics settings
+posthog:
+  enabled: true
+
+redis:
+  address: redis.internal:6379

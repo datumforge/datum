@@ -21,7 +21,7 @@ COPY --from=builder /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/
 COPY --from=builder /lib64/ld-linux-x86-64.so.2 /lib64/
 
 # Copy config 
-COPY config/config-aio.example.yaml /config/.config.yaml
+COPY config/config-kc.example.yaml /config/.config.yaml
 
 # Copy default model into image
 COPY fga/model/datum.fga /fga/model/datum.fga

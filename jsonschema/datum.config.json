@@ -370,6 +370,10 @@
         "createNewModel": {
           "type": "boolean",
           "description": "force create a new model"
+        },
+        "modelFile": {
+          "type": "string",
+          "description": "path to the fga model file"
         }
       },
       "additionalProperties": false,

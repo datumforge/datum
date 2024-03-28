@@ -149,7 +149,10 @@ func (User) Edges() []ent.Edge {
 		edge.To("setting", UserSetting.Type).
 			Required().
 			Unique().
-			Annotations(entx.CascadeAnnotationField("User")),
+			Annotations(
+				entx.CascadeAnnotationField("User"),
+				entoas.Skip(true),
+			),
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),

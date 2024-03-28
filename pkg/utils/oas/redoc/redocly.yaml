@@ -1,0 +1,46 @@
+theme:
+  openapi:
+    disableSearch: false
+    expandResponses: 200,202
+    jsonSampleExpandLevel: 2
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: Go
+        - lang: Python
+        - lang: Node.js
+    hideRequestPayloadSample: false
+    theme:
+      layout:
+        showDarkRightPanel: true
+      sidebar:
+        backgroundColor: '#E1EBEA'
+        textColor: '#3d005b'
+      colors:
+        primary:
+          main: '#F08C00'
+      typography:
+        fontSize: 12pt
+        headings:
+          fontWeight: bold
+apis:
+  core@v1:
+    root: ./openapi.json
+    rules:
+      spec: error
+      spec-strict-refs: error
+      no-undefined-server-variable: error
+      path-not-include-query: error
+      path-declaration-must-exist: error
+      no-identical-paths: error
+      path-parameters-defined: error
+      operation-operationId-url-safe: warn
+      operation-operationId-unique: error
+      operation-parameters-unique: error
+      operation-2xx-response: warn
+      no-invalid-parameter-examples: warn
+      no-invalid-media-type-examples: warn
+      no-invalid-schema-examples: warn
+      no-example-value-and-externalValue: error
+      no-unresolved-refs: error
+      spec-components-invalid-map-name: error

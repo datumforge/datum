@@ -16,3 +16,5 @@ As you may be able to see from the `mitb.gen.yaml` file, the current setup is on
 - Append the security method(s) to each operation
 - Add examples to all `Components` and associated
 - Add basic validations (e.g. every operation must have at least 1 4XX response)
+
+redocly join openapi.json doc.json  -o apis-combined.yaml

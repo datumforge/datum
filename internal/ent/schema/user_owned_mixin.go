@@ -47,6 +47,7 @@ func (userOwned UserOwnedMixin) Edges() []ent.Edge {
 		From("owner", User.Type).
 		Field("owner_id").
 		Ref(userOwned.Ref).
+		Annotations(entoas.Skip(true)).
 		Unique()
 
 	if !userOwned.Optional {

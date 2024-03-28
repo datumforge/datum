@@ -151,17 +151,26 @@ func (User) Edges() []ent.Edge {
 			Unique().
 			Annotations(
 				entx.CascadeAnnotationField("User"),
-				entoas.Skip(true),
 			),
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
+				entoas.Skip(true),
+				entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 				entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			),
 		edge.To("password_reset_tokens", PasswordResetToken.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
+				entoas.Skip(true),
+				entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 				entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			),
 		edge.To("groups", Group.Type).
 			Through("group_memberships", GroupMembership.Type),

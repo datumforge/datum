@@ -58,6 +58,7 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 
 	if orgOwned.SkipOASGeneration {
 		ownerEdge.Annotations(
+			entoas.Skip(true),
 			entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),

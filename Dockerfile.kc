@@ -1,0 +1,32 @@
+FROM --platform=linux/x86_64 golang:1.22.1-bookworm AS builder
+
+WORKDIR /src
+
+COPY . .
+
+RUN set -xe; \
+    CGO_ENABLED=1 GOOS=linux go build -a \
+    -buildmode=pie \
+    -ldflags "-linkmode external -extldflags -static-pie" \
+    -o /datum \
+    ;
+
+FROM scratch
+
+WORKDIR /home/nonroot
+
+# Copy the binary that goreleaser built
+COPY --from=builder /datum /bin/datum
+COPY --from=builder /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/
+COPY --from=builder /lib64/ld-linux-x86-64.so.2 /lib64/
+
+# Copy config 
+COPY config/config-aio.example.yaml /config/.config.yaml
+
+# Copy default model into image
+COPY fga/model/datum.fga /fga/model/datum.fga
+
+# Expose API port
+EXPOSE 17608
+
+ENTRYPOINT ["datum", "serve", "--debug", "--pretty"]

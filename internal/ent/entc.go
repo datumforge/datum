@@ -72,9 +72,7 @@ func main() {
 			bearerSecurity := ogen.SecurityScheme{
 				Type:         "http",
 				Scheme:       "bearer",
-				Name:         "Bearer: ",
 				Description:  "Bearer Token Authentication",
-				In:           "header",
 				BearerFormat: "JWT",
 			}
 

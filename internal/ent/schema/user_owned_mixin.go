@@ -25,7 +25,7 @@ type UserOwnedMixin struct {
 // Fields of the UserOwnedMixin
 func (userOwned UserOwnedMixin) Fields() []ent.Field {
 	ownerIDField := field.String("owner_id").Annotations(
-		entgql.Skip(),
+		entgql.Skip(), entoas.Skip(true),
 	)
 
 	if userOwned.Optional {

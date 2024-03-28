@@ -28,7 +28,7 @@ func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
 	ownerIDField := field.String("owner_id")
 
 	if !orgOwned.AllowWhere {
-		ownerIDField.Annotations(entgql.Skip())
+		ownerIDField.Annotations(entgql.Skip(), entoas.Skip(true))
 	}
 
 	if orgOwned.Optional {
@@ -50,6 +50,7 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 		From("owner", Organization.Type).
 		Field("owner_id").
 		Ref(orgOwned.Ref).
+		Annotations(entoas.Skip(true)).
 		Unique()
 
 	if !orgOwned.Optional {

@@ -436,3 +436,4 @@ components:
                         $ref: "#/components/schemas/ErrorReply"
 security:
     - BearerAuth: []
+    - openId: []

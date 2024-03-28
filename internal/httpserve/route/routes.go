@@ -89,6 +89,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerSwaggerStatic,
 		registerSecurityTxtHandler,
 		registerRobotsHandler,
+		registerRedocHandler,
 	}
 
 	for _, route := range additionalHandlers {

@@ -4908,9 +4908,6 @@
                   "name": {
                     "type": "string"
                   },
-                  "token": {
-                    "type": "string"
-                  },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
@@ -4941,7 +4938,6 @@
                 "required": [
                   "owner_id",
                   "name",
-                  "token",
                   "expires_at",
                   "owner"
                 ]
@@ -5307,6 +5303,80 @@
             "$ref": "#/components/responses/500"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Subscriber"
+        ],
+        "summary": "Create a new Subscriber",
+        "description": "Creates a new Subscriber and persists it to storage.",
+        "operationId": "createSubscriber",
+        "requestBody": {
+          "description": "Subscriber to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "verified_email": {
+                    "type": "boolean"
+                  },
+                  "verified_phone": {
+                    "type": "boolean"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "verified_email",
+                  "verified_phone",
+                  "active",
+                  "ttl"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Subscriber created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscriber"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
       }
     },
     "/subscribers/{id}": {
@@ -5331,6 +5401,123 @@
         "responses": {
           "200": {
             "description": "Subscriber with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscriber"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriber"
+        ],
+        "summary": "Deletes a Subscriber by ID",
+        "description": "Deletes the Subscriber with the requested ID.",
+        "operationId": "deleteSubscriber",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscriber",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Subscriber with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Subscriber"
+        ],
+        "summary": "Updates a Subscriber",
+        "description": "Updates a Subscriber and persists changes to storage.",
+        "operationId": "updateSubscriber",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscriber",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Subscriber properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "verified_email": {
+                    "type": "boolean"
+                  },
+                  "verified_phone": {
+                    "type": "boolean"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Subscriber updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -7907,9 +8094,6 @@
           "name": {
             "type": "string"
           },
-          "token": {
-            "type": "string"
-          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
@@ -7941,7 +8125,6 @@
           "id",
           "owner_id",
           "name",
-          "token",
           "owner"
         ]
       },
@@ -7990,16 +8173,9 @@
           "active": {
             "type": "boolean"
           },
-          "token": {
-            "type": "string"
-          },
           "ttl": {
             "type": "string",
             "format": "date-time"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
           },
           "owner": {
             "$ref": "#/components/schemas/Organization"
@@ -8010,8 +8186,7 @@
           "email",
           "verified_email",
           "verified_phone",
-          "active",
-          "token"
+          "active"
         ]
       },
       "TFASettings": {

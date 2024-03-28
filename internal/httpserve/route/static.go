@@ -49,7 +49,8 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 //go:embed openapi.json
 //go:embed robots.txt
 //go:embed security.txt
-//go:embed doc.json
+//go:embed rest.yaml
+//go:embed redoc-static.html
 var openapi embed.FS
 
 // registerOpenAPISpecHandler embeds our generated open api specs and serves it behind /api-docs
@@ -63,12 +64,22 @@ func registerOpenAPISpecHandler(router *echo.Echo) (err error) {
 	return
 }
 
-// registerSwaggerStatic embeds our generated open api specs and serves it behind /doc.json
+func registerRedocHandler(router *echo.Echo) (err error) {
+	_, err = router.AddRoute(echo.Route{
+		Method:  http.MethodGet,
+		Path:    "/redoc",
+		Handler: echo.StaticFileHandler("redoc-static.html", openapi),
+	}.ForGroup(V1Version, mw))
+
+	return
+}
+
+// registerSwaggerStatic embeds our generated open api specs and serves it behind /rest.yaml
 func registerSwaggerStatic(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  http.MethodGet,
 		Path:    "/restapi-docs",
-		Handler: echo.StaticFileHandler("doc.json", openapi),
+		Handler: echo.StaticFileHandler("rest.yaml", openapi),
 	}.ForGroup(V1Version, mw))
 
 	return

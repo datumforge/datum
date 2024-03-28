@@ -1,5 +1,8 @@
 theme:
   openapi:
+    requiredPropsFirst: true
+    sortEnumValuesAlphabetically: true
+    sortPropsAlphabetically: true
     disableSearch: false
     expandResponses: 200,202
     jsonSampleExpandLevel: 2
@@ -20,6 +23,8 @@ theme:
         primary:
           main: '#F08C00'
       typography:
+        code: 
+          wrap: true
         fontSize: 12pt
         headings:
           fontWeight: bold

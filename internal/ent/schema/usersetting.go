@@ -98,6 +98,12 @@ func (UserSetting) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entoas.Skip(true),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 	}
 }
 

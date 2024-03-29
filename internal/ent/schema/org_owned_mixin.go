@@ -25,7 +25,7 @@ type OrgOwnerMixin struct {
 
 // Fields of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
-	ownerIDField := field.String("owner_id")
+	ownerIDField := field.String("owner_id").Annotations(entoas.Skip(true))
 
 	if !orgOwned.AllowWhere {
 		ownerIDField.Annotations(entgql.Skip(), entoas.Skip(true))

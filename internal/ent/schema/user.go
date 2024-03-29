@@ -145,7 +145,15 @@ func (User) Edges() []ent.Edge {
 		edge.To("personal_access_tokens", PersonalAccessToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("tfa_settings", TFASettings.Type).
-			Annotations(entx.CascadeAnnotationField("Owner")),
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+				entoas.Skip(true),
+				entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+				entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			),
 		edge.To("setting", UserSetting.Type).
 			Required().
 			Unique().

@@ -1381,9 +1381,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -1401,7 +1398,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "name",
                   "owner"
                 ]
@@ -1538,9 +1534,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -1701,9 +1694,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "recipient": {
                     "type": "string"
                   },
@@ -1721,7 +1711,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "recipient",
                   "role",
                   "owner"
@@ -1859,9 +1848,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "recipient": {
                     "type": "string"
                   },
@@ -3004,309 +2990,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/organization-settings": {
-      "get": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "List OrganizationSettings",
-        "description": "List OrganizationSettings.",
-        "operationId": "listOrganizationSetting",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result OrganizationSetting list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OrganizationSetting"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Create a new OrganizationSetting",
-        "description": "Creates a new OrganizationSetting and persists it to storage.",
-        "operationId": "createOrganizationSetting",
-        "requestBody": {
-          "description": "OrganizationSetting to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "domains": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "billing_contact": {
-                    "type": "string"
-                  },
-                  "billing_email": {
-                    "type": "string"
-                  },
-                  "billing_phone": {
-                    "type": "string"
-                  },
-                  "billing_address": {
-                    "type": "string"
-                  },
-                  "tax_identifier": {
-                    "type": "string"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "organization": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OrganizationSetting created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/organization-settings/{id}": {
-      "get": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Find a OrganizationSetting by ID",
-        "description": "Finds the OrganizationSetting with the requested ID and returns it.",
-        "operationId": "readOrganizationSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the OrganizationSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OrganizationSetting with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Deletes a OrganizationSetting by ID",
-        "description": "Deletes the OrganizationSetting with the requested ID.",
-        "operationId": "deleteOrganizationSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the OrganizationSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "OrganizationSetting with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Updates a OrganizationSetting",
-        "description": "Updates a OrganizationSetting and persists changes to storage.",
-        "operationId": "updateOrganizationSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the OrganizationSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "OrganizationSetting properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "domains": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "billing_contact": {
-                    "type": "string"
-                  },
-                  "billing_email": {
-                    "type": "string"
-                  },
-                  "billing_phone": {
-                    "type": "string"
-                  },
-                  "billing_address": {
-                    "type": "string"
-                  },
-                  "tax_identifier": {
-                    "type": "string"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "organization": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OrganizationSetting updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationSetting"
                 }
               }
             }
@@ -4984,9 +4667,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "email": {
                     "type": "string"
                   },
@@ -5150,9 +4830,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "email": {
                     "type": "string"
                   },
@@ -5500,324 +5177,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/user-settings": {
-      "get": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "List UserSettings",
-        "description": "List UserSettings.",
-        "operationId": "listUserSetting",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result UserSetting list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserSetting"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Create a new UserSetting",
-        "description": "Creates a new UserSetting and persists it to storage.",
-        "operationId": "createUserSetting",
-        "requestBody": {
-          "description": "UserSetting to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "locked": {
-                    "type": "boolean"
-                  },
-                  "silenced_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "ACTIVE",
-                      "INACTIVE",
-                      "DEACTIVATED",
-                      "SUSPENDED"
-                    ],
-                    "default": "ACTIVE"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "is_webauthn_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_tfa_enabled": {
-                    "type": "boolean"
-                  },
-                  "user": {
-                    "type": "string"
-                  },
-                  "default_org": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "locked",
-                  "status",
-                  "tags"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "UserSetting created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/user-settings/{id}": {
-      "get": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Find a UserSetting by ID",
-        "description": "Finds the UserSetting with the requested ID and returns it.",
-        "operationId": "readUserSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the UserSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "UserSetting with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Deletes a UserSetting by ID",
-        "description": "Deletes the UserSetting with the requested ID.",
-        "operationId": "deleteUserSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the UserSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "UserSetting with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Updates a UserSetting",
-        "description": "Updates a UserSetting and persists changes to storage.",
-        "operationId": "updateUserSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the UserSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "UserSetting properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "locked": {
-                    "type": "boolean"
-                  },
-                  "silenced_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "ACTIVE",
-                      "INACTIVE",
-                      "DEACTIVATED",
-                      "SUSPENDED"
-                    ],
-                    "default": "ACTIVE"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "is_webauthn_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_tfa_enabled": {
-                    "type": "boolean"
-                  },
-                  "user": {
-                    "type": "string"
-                  },
-                  "default_org": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "UserSetting updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSetting"
                 }
               }
             }
@@ -7169,9 +6528,6 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
           "name": {
             "type": "string"
           },
@@ -7190,7 +6546,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "name",
           "owner"
         ]
@@ -7220,9 +6575,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "expires": {
@@ -7263,7 +6615,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "recipient",
           "status",
           "role",
@@ -7777,9 +7128,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "email": {

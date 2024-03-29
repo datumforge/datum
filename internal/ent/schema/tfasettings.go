@@ -95,6 +95,11 @@ func (TFASettings) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
-		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)), // delete occurs by disabling 2fa
+		entoas.Skip(true),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 	}
 }

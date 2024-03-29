@@ -386,6 +386,24 @@
         "hostUrl"
       ]
     },
+    "geodeticclient.Config": {
+      "properties": {
+        "baseUrl": {
+          "type": "string",
+          "description": "Base URL for the geodetic service"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Endpoint for the graphql api"
+        },
+        "debug": {
+          "type": "boolean",
+          "description": "Enable debug mode"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.ProviderConfig": {
       "properties": {
         "clientId": {
@@ -897,6 +915,10 @@
     "db": {
       "$ref": "#/$defs/entx.Config",
       "description": "DB contains the database configuration for the ent client"
+    },
+    "geodetic": {
+      "$ref": "#/$defs/geodeticclient.Config",
+      "description": "Geodetic contains the geodetic client configuration"
     },
     "redis": {
       "$ref": "#/$defs/cache.Config",

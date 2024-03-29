@@ -68,6 +68,10 @@ email:
         subscriberVerify: /verify
     sendGridApiKey: ""
     testing: true
+geodetic:
+    baseUrl: http://localhost:1337/
+    debug: false
+    endpoint: query
 posthog:
     apiKey: ""
     enabled: false

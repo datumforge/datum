@@ -97,9 +97,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -130,7 +127,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "tier",
                   "expires",
                   "cancelled",
@@ -269,9 +265,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -1174,9 +1167,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -1212,7 +1202,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "name",
                   "display_name",
                   "owner",
@@ -1351,9 +1340,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -4902,9 +4888,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -4936,7 +4919,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "name",
                   "expires_at",
                   "owner"
@@ -5074,9 +5056,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -5657,9 +5636,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "verified": {
                     "type": "boolean"
                   },
@@ -5770,9 +5746,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "verified": {
                     "type": "boolean"
                   },
@@ -7213,32 +7186,12 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "email": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
-          },
           "owner": {
             "$ref": "#/components/schemas/User"
           }
         },
         "required": [
           "id",
-          "owner_id",
-          "token",
-          "email",
           "owner"
         ]
       },
@@ -7267,9 +7220,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "tier": {
@@ -7303,7 +7253,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "tier",
           "expires",
           "cancelled",
@@ -7335,9 +7284,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "name": {
@@ -7376,7 +7322,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "name",
           "display_name",
           "owner",
@@ -8048,16 +7993,12 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
           "owner": {
             "$ref": "#/components/schemas/User"
           }
         },
         "required": [
           "id",
-          "owner_id",
           "owner"
         ]
       },
@@ -8086,9 +8027,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "name": {
@@ -8123,7 +8061,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "name",
           "owner"
         ]
@@ -8214,9 +8151,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "verified": {
@@ -8466,9 +8400,6 @@
           "updated_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
           "credential_id": {
             "type": "string",
             "format": "byte"
@@ -8512,7 +8443,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "aaguid",
           "sign_count",
           "transports",
@@ -8645,8 +8575,6 @@
       "BearerAuth": {
         "type": "http",
         "description": "Bearer Token Authentication",
-        "name": "Bearer: ",
-        "in": "header",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       },
@@ -8655,7 +8583,6 @@
         "flows": {
           "implicit": {
             "authorizationUrl": "https://api.datum.net/oauth2/authorize",
-            "tokenUrl": "https://api.datum.net/oauth2/token",
             "scopes": {
               "email": "email",
               "profile": "profile"
@@ -8668,5 +8595,15 @@
         "openIdConnectUrl": "https://api.datum.net/.well-known/openid-configuration"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "BearerAuth": [],
+      "OAuth2": [
+        "email",
+        "profile"
+      ],
+      "OIDC": []
+    }
+  ]
 }

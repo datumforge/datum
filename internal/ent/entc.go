@@ -81,7 +81,6 @@ func main() {
 				Flows: &ogen.OAuthFlows{
 					Implicit: &ogen.OAuthFlow{
 						AuthorizationURL: "https://api.datum.net/oauth2/authorize",
-						TokenURL:         "https://api.datum.net/oauth2/token",
 						Scopes: map[string]string{
 							"email":   "email",
 							"profile": "profile",
@@ -100,6 +99,14 @@ func main() {
 				"OAuth2":     &oauth2Security,
 				"OIDC":       &oidcSecurity,
 			}
+
+			security := ogen.SecurityRequirement{
+				"OAuth2":     {"email", "profile"},
+				"BearerAuth": {},
+				"OIDC":       {},
+			}
+
+			spec.Security = append(spec.Security, security)
 
 			return nil
 		}),

@@ -34,9 +34,11 @@ func (EmailVerificationToken) Fields() []ent.Field {
 		field.String("token").
 			Comment("the verification token sent to the user via email which should only be provided to the /verify endpoint + handler").
 			Unique().
+			Annotations(entoas.Skip(true)).
 			NotEmpty(),
 		field.Time("ttl").
 			Comment("the ttl of the verification token which defaults to 7 days").
+			Annotations(entoas.Skip(true)).
 			Nillable(),
 		field.String("email").
 			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed").
@@ -44,9 +46,11 @@ func (EmailVerificationToken) Fields() []ent.Field {
 				_, err := mail.ParseAddress(email)
 				return err
 			}).
+			Annotations(entoas.Skip(true)).
 			NotEmpty(),
 		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").
+			Annotations(entoas.Skip(true)).
 			NotEmpty().
 			Nillable(),
 	}

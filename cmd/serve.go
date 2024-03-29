@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/datumforge/fgax"
+	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
@@ -79,6 +80,9 @@ func serve(ctx context.Context) error {
 	redisClient := cache.New(so.Config.Settings.Redis)
 	defer redisClient.Close()
 
+	// Setup Geodetic client
+	gc := so.Config.Settings.Geodetic.NewDefaultClient()
+
 	// add otp manager, after redis is setup
 	so.AddServerOptions(
 		serveropts.WithOTP(),
@@ -92,6 +96,7 @@ func serve(ctx context.Context) error {
 		ent.Marionette(so.Config.Handler.TaskMan),
 		ent.Analytics(so.Config.Handler.AnalyticsClient),
 		ent.TOTP(so.Config.Handler.OTPManager),
+		ent.Geodetic(gc.(*geodetic.Client)),
 	)
 
 	// Setup DB connection

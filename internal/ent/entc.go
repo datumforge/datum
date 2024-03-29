@@ -20,6 +20,7 @@ import (
 	"gocloud.dev/secrets"
 
 	"github.com/datumforge/entx"
+	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/utils/emails"
@@ -175,6 +176,10 @@ func main() {
 		entc.Dependency(
 			entc.DependencyName("TOTP"),
 			entc.DependencyType(&totp.Manager{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("Geodetic"),
+			entc.DependencyType(&geodetic.Client{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

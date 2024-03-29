@@ -2279,18 +2279,19 @@ func (t *GetOrganizationByID_Organization_Members) GetUser() *GetOrganizationByI
 }
 
 type GetOrganizationByID_Organization_Setting struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string        "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string      "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string       "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string       "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 }
 
 func (t *GetOrganizationByID_Organization_Setting) GetID() string {
@@ -2364,6 +2365,12 @@ func (t *GetOrganizationByID_Organization_Setting) GetTags() []string {
 		t = &GetOrganizationByID_Organization_Setting{}
 	}
 	return t.Tags
+}
+func (t *GetOrganizationByID_Organization_Setting) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Setting{}
+	}
+	return t.GeoLocation
 }
 
 type GetOrganizationByID_Organization struct {
@@ -2584,18 +2591,19 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Members) GetUser() *GetAll
 }
 
 type GetAllOrganizations_Organizations_Edges_Node_Setting struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string        "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string      "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string       "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string       "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetID() string {
@@ -2669,6 +2677,12 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetTags() []strin
 		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
 	}
 	return t.Tags
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Setting{}
+	}
+	return t.GeoLocation
 }
 
 type GetAllOrganizations_Organizations_Edges_Node struct {
@@ -2897,18 +2911,19 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Members) GetUser() *Organiz
 }
 
 type OrganizationsWhere_Organizations_Edges_Node_Setting struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string        "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string      "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string       "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string       "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 }
 
 func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetID() string {
@@ -2982,6 +2997,12 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetTags() []string
 		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
 	}
 	return t.Tags
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_Setting{}
+	}
+	return t.GeoLocation
 }
 
 type OrganizationsWhere_Organizations_Edges_Node struct {
@@ -3088,18 +3109,19 @@ func (t *OrganizationsWhere_Organizations) GetEdges() []*OrganizationsWhere_Orga
 }
 
 type CreateOrganization_CreateOrganization_Organization_Setting struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string        "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string      "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string       "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string       "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 }
 
 func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetID() string {
@@ -3173,6 +3195,12 @@ func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetTags() [
 		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
 	}
 	return t.Tags
+}
+func (t *CreateOrganization_CreateOrganization_Organization_Setting) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Setting{}
+	}
+	return t.GeoLocation
 }
 
 type CreateOrganization_CreateOrganization_Organization_Parent struct {
@@ -3358,18 +3386,19 @@ func (t *UpdateOrganization_UpdateOrganization_Organization_Members) GetUserID()
 }
 
 type UpdateOrganization_UpdateOrganization_Organization_Setting struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Domains        []string   "json:\"domains,omitempty\" graphql:\"domains\""
-	BillingContact *string    "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string    "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string    "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	BillingAddress *string    "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	TaxIdentifier  *string    "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string   "json:\"tags,omitempty\" graphql:\"tags\""
+	ID             string        "json:\"id\" graphql:\"id\""
+	CreatedAt      *time.Time    "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time    "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string      "json:\"domains,omitempty\" graphql:\"domains\""
+	BillingContact *string       "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string       "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string       "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string       "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string       "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string      "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 }
 
 func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetID() string {
@@ -3443,6 +3472,12 @@ func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetTags() [
 		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
 	}
 	return t.Tags
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.GeoLocation
 }
 
 type UpdateOrganization_UpdateOrganization_Organization struct {
@@ -3539,6 +3574,7 @@ type GetOrganizationSettingByID_OrganizationSetting struct {
 	BillingAddress *string                                                      "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string                                                      "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
 	Tags           []string                                                     "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region                                                "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 	Organization   *GetOrganizationSettingByID_OrganizationSetting_Organization "json:\"organization,omitempty\" graphql:\"organization\""
 }
 
@@ -3626,6 +3662,12 @@ func (t *GetOrganizationSettingByID_OrganizationSetting) GetTags() []string {
 	}
 	return t.Tags
 }
+func (t *GetOrganizationSettingByID_OrganizationSetting) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &GetOrganizationSettingByID_OrganizationSetting{}
+	}
+	return t.GeoLocation
+}
 func (t *GetOrganizationSettingByID_OrganizationSetting) GetOrganization() *GetOrganizationSettingByID_OrganizationSetting_Organization {
 	if t == nil {
 		t = &GetOrganizationSettingByID_OrganizationSetting{}
@@ -3659,6 +3701,7 @@ type GetOrganizationSettings_OrganizationSettings_Edges_Node struct {
 	BillingAddress *string                                                               "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string                                                               "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
 	Tags           []string                                                              "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region                                                         "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 	Organization   *GetOrganizationSettings_OrganizationSettings_Edges_Node_Organization "json:\"organization,omitempty\" graphql:\"organization\""
 }
 
@@ -3746,6 +3789,12 @@ func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetTags() []st
 	}
 	return t.Tags
 }
+func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
+	}
+	return t.GeoLocation
+}
 func (t *GetOrganizationSettings_OrganizationSettings_Edges_Node) GetOrganization() *GetOrganizationSettings_OrganizationSettings_Edges_Node_Organization {
 	if t == nil {
 		t = &GetOrganizationSettings_OrganizationSettings_Edges_Node{}
@@ -3801,6 +3850,7 @@ type GetOrganizationSettingWhere_OrganizationSettings_Edges_Node struct {
 	BillingAddress *string                                                                   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string                                                                   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
 	Tags           []string                                                                  "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region                                                             "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 	Organization   *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node_Organization "json:\"organization,omitempty\" graphql:\"organization\""
 }
 
@@ -3888,6 +3938,12 @@ func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetTags() 
 	}
 	return t.Tags
 }
+func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
+	}
+	return t.GeoLocation
+}
 func (t *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node) GetOrganization() *GetOrganizationSettingWhere_OrganizationSettings_Edges_Node_Organization {
 	if t == nil {
 		t = &GetOrganizationSettingWhere_OrganizationSettings_Edges_Node{}
@@ -3943,6 +3999,7 @@ type UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting str
 	BillingAddress *string                                                                               "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
 	TaxIdentifier  *string                                                                               "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
 	Tags           []string                                                                              "json:\"tags,omitempty\" graphql:\"tags\""
+	GeoLocation    *enums.Region                                                                         "json:\"geoLocation,omitempty\" graphql:\"geoLocation\""
 	Organization   *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting_Organization "json:\"organization,omitempty\" graphql:\"organization\""
 }
 
@@ -4029,6 +4086,12 @@ func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting
 		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
 	}
 	return t.Tags
+}
+func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetGeoLocation() *enums.Region {
+	if t == nil {
+		t = &UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting{}
+	}
+	return t.GeoLocation
 }
 func (t *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting) GetOrganization() *UpdateOrganizationSetting_UpdateOrganizationSetting_OrganizationSetting_Organization {
 	if t == nil {
@@ -8122,6 +8185,7 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 			billingAddress
 			taxIdentifier
 			tags
+			geoLocation
 		}
 		createdAt
 		createdBy
@@ -8193,6 +8257,7 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 					billingAddress
 					taxIdentifier
 					tags
+					geoLocation
 				}
 				createdAt
 				updatedAt
@@ -8262,6 +8327,7 @@ const OrganizationsWhereDocument = `query OrganizationsWhere ($where: Organizati
 					billingAddress
 					taxIdentifier
 					tags
+					geoLocation
 				}
 				createdAt
 				updatedAt
@@ -8311,6 +8377,7 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 				billingAddress
 				taxIdentifier
 				tags
+				geoLocation
 			}
 			parent {
 				id
@@ -8373,6 +8440,7 @@ const UpdateOrganizationDocument = `mutation UpdateOrganization ($updateOrganiza
 				billingAddress
 				taxIdentifier
 				tags
+				geoLocation
 			}
 		}
 	}
@@ -8437,6 +8505,7 @@ const GetOrganizationSettingByIDDocument = `query GetOrganizationSettingByID ($o
 		billingAddress
 		taxIdentifier
 		tags
+		geoLocation
 		organization {
 			id
 		}
@@ -8479,6 +8548,7 @@ const GetOrganizationSettingsDocument = `query GetOrganizationSettings {
 				billingAddress
 				taxIdentifier
 				tags
+				geoLocation
 				organization {
 					id
 				}
@@ -8521,6 +8591,7 @@ const GetOrganizationSettingWhereDocument = `query GetOrganizationSettingWhere (
 				billingAddress
 				taxIdentifier
 				tags
+				geoLocation
 				organization {
 					id
 				}
@@ -8564,6 +8635,7 @@ const UpdateOrganizationSettingDocument = `mutation UpdateOrganizationSetting ($
 			billingAddress
 			taxIdentifier
 			tags
+			geoLocation
 			organization {
 				id
 			}

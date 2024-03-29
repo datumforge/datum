@@ -69,7 +69,7 @@ func HookOrganization() ent.Hook {
 				}
 
 				// create the database, if the org has a dedicated db
-				if orgCreated.DedicatedDb {
+				if !orgCreated.DedicatedDb {
 					settings, err := orgCreated.Setting(ctx)
 					if err != nil {
 						mutation.Logger.Errorw("unable to get organization settings")

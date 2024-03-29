@@ -180,6 +180,20 @@ func (ou *OrganizationUpdate) ClearAvatarRemoteURL() *OrganizationUpdate {
 	return ou
 }
 
+// SetDedicatedDb sets the "dedicated_db" field.
+func (ou *OrganizationUpdate) SetDedicatedDb(b bool) *OrganizationUpdate {
+	ou.mutation.SetDedicatedDb(b)
+	return ou
+}
+
+// SetNillableDedicatedDb sets the "dedicated_db" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableDedicatedDb(b *bool) *OrganizationUpdate {
+	if b != nil {
+		ou.SetDedicatedDb(*b)
+	}
+	return ou
+}
+
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
 func (ou *OrganizationUpdate) AddChildIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddChildIDs(ids...)
@@ -694,6 +708,9 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.AvatarRemoteURLCleared() {
 		_spec.ClearField(organization.FieldAvatarRemoteURL, field.TypeString)
+	}
+	if value, ok := ou.mutation.DedicatedDb(); ok {
+		_spec.SetField(organization.FieldDedicatedDb, field.TypeBool, value)
 	}
 	if ou.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1389,6 +1406,20 @@ func (ouo *OrganizationUpdateOne) ClearAvatarRemoteURL() *OrganizationUpdateOne 
 	return ouo
 }
 
+// SetDedicatedDb sets the "dedicated_db" field.
+func (ouo *OrganizationUpdateOne) SetDedicatedDb(b bool) *OrganizationUpdateOne {
+	ouo.mutation.SetDedicatedDb(b)
+	return ouo
+}
+
+// SetNillableDedicatedDb sets the "dedicated_db" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableDedicatedDb(b *bool) *OrganizationUpdateOne {
+	if b != nil {
+		ouo.SetDedicatedDb(*b)
+	}
+	return ouo
+}
+
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
 func (ouo *OrganizationUpdateOne) AddChildIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddChildIDs(ids...)
@@ -1933,6 +1964,9 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if ouo.mutation.AvatarRemoteURLCleared() {
 		_spec.ClearField(organization.FieldAvatarRemoteURL, field.TypeString)
+	}
+	if value, ok := ouo.mutation.DedicatedDb(); ok {
+		_spec.SetField(organization.FieldDedicatedDb, field.TypeBool, value)
 	}
 	if ouo.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -527,6 +527,7 @@ type ComplexityRoot struct {
 		DeletedAt      func(childComplexity int) int
 		DeletedBy      func(childComplexity int) int
 		Domains        func(childComplexity int) int
+		GeoLocation    func(childComplexity int) int
 		ID             func(childComplexity int) int
 		Organization   func(childComplexity int) int
 		OrganizationID func(childComplexity int) int
@@ -3149,6 +3150,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrganizationSetting.Domains(childComplexity), true
 
+	case "OrganizationSetting.geoLocation":
+		if e.complexity.OrganizationSetting.GeoLocation == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetting.GeoLocation(childComplexity), true
+
 	case "OrganizationSetting.id":
 		if e.complexity.OrganizationSetting.ID == nil {
 			break
@@ -5042,6 +5050,10 @@ input CreateOrganizationSettingInput {
   tags associated with the object
   """
   tags: [String!]
+  """
+  geographical location of the organization
+  """
+  geoLocation: OrganizationSettingRegion
   organizationID: ID
 }
 """
@@ -7567,6 +7579,10 @@ type OrganizationSetting implements Node {
   """
   tags: [String!]
   """
+  geographical location of the organization
+  """
+  geoLocation: OrganizationSettingRegion
+  """
   the ID of the organization the settings belong to
   """
   organizationID: ID
@@ -7601,6 +7617,14 @@ type OrganizationSettingEdge {
   A cursor for use in pagination.
   """
   cursor: Cursor!
+}
+"""
+OrganizationSettingRegion is enum for the field geo_location
+"""
+enum OrganizationSettingRegion @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Region") {
+  AMER
+  EMEA
+  APAC
 }
 """
 OrganizationSettingWhereInput is used for filtering OrganizationSetting objects.
@@ -7806,6 +7830,15 @@ input OrganizationSettingWhereInput {
   taxIdentifierNotNil: Boolean
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
+  """
+  geo_location field predicates
+  """
+  geoLocation: OrganizationSettingRegion
+  geoLocationNEQ: OrganizationSettingRegion
+  geoLocationIn: [OrganizationSettingRegion!]
+  geoLocationNotIn: [OrganizationSettingRegion!]
+  geoLocationIsNil: Boolean
+  geoLocationNotNil: Boolean
   """
   organization_id field predicates
   """
@@ -9577,6 +9610,11 @@ input UpdateOrganizationSettingInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
+  """
+  geographical location of the organization
+  """
+  geoLocation: OrganizationSettingRegion
+  clearGeoLocation: Boolean
   organizationID: ID
   clearOrganization: Boolean
 }
@@ -27097,6 +27135,8 @@ func (ec *executionContext) fieldContext_Organization_setting(ctx context.Contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "geoLocation":
+				return ec.fieldContext_OrganizationSetting_geoLocation(ctx, field)
 			case "organizationID":
 				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
@@ -28626,6 +28666,47 @@ func (ec *executionContext) fieldContext_OrganizationSetting_tags(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _OrganizationSetting_geoLocation(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_geoLocation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GeoLocation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(enums.Region)
+	fc.Result = res
+	return ec.marshalOOrganizationSettingRegion2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetting_geoLocation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type OrganizationSettingRegion does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrganizationSetting_organizationID(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 	if err != nil {
@@ -28970,6 +29051,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingCreatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "geoLocation":
+				return ec.fieldContext_OrganizationSetting_geoLocation(ctx, field)
 			case "organizationID":
 				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
@@ -29089,6 +29172,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingEdge_node(ctx contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "geoLocation":
+				return ec.fieldContext_OrganizationSetting_geoLocation(ctx, field)
 			case "organizationID":
 				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
@@ -29211,6 +29296,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingUpdatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "geoLocation":
+				return ec.fieldContext_OrganizationSetting_geoLocation(ctx, field)
 			case "organizationID":
 				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
@@ -32645,6 +32732,8 @@ func (ec *executionContext) fieldContext_Query_organizationSetting(ctx context.C
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "geoLocation":
+				return ec.fieldContext_OrganizationSetting_geoLocation(ctx, field)
 			case "organizationID":
 				return ec.fieldContext_OrganizationSetting_organizationID(ctx, field)
 			case "organization":
@@ -41168,7 +41257,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "organizationID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "geoLocation", "organizationID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41252,6 +41341,13 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.Tags = data
+		case "geoLocation":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocation"))
+			data, err := ec.unmarshalOOrganizationSettingRegion2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocation = data
 		case "organizationID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -50418,7 +50514,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "organizationID", "organizationIDNEQ", "organizationIDIn", "organizationIDNotIn", "organizationIDGT", "organizationIDGTE", "organizationIDLT", "organizationIDLTE", "organizationIDContains", "organizationIDHasPrefix", "organizationIDHasSuffix", "organizationIDIsNil", "organizationIDNotNil", "organizationIDEqualFold", "organizationIDContainsFold", "hasOrganization", "hasOrganizationWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "geoLocation", "geoLocationNEQ", "geoLocationIn", "geoLocationNotIn", "geoLocationIsNil", "geoLocationNotNil", "organizationID", "organizationIDNEQ", "organizationIDIn", "organizationIDNotIn", "organizationIDGT", "organizationIDGTE", "organizationIDLT", "organizationIDLTE", "organizationIDContains", "organizationIDHasPrefix", "organizationIDHasSuffix", "organizationIDIsNil", "organizationIDNotNil", "organizationIDEqualFold", "organizationIDContainsFold", "hasOrganization", "hasOrganizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -51566,6 +51662,48 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.TaxIdentifierContainsFold = data
+		case "geoLocation":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocation"))
+			data, err := ec.unmarshalOOrganizationSettingRegion2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocation = data
+		case "geoLocationNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocationNEQ"))
+			data, err := ec.unmarshalOOrganizationSettingRegion2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocationNEQ = data
+		case "geoLocationIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocationIn"))
+			data, err := ec.unmarshalOOrganizationSettingRegion2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegionᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocationIn = data
+		case "geoLocationNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocationNotIn"))
+			data, err := ec.unmarshalOOrganizationSettingRegion2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegionᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocationNotIn = data
+		case "geoLocationIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocationIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocationIsNil = data
+		case "geoLocationNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocationNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocationNotNil = data
 		case "organizationID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -56755,7 +56893,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "billingContact", "clearBillingContact", "billingEmail", "clearBillingEmail", "billingPhone", "clearBillingPhone", "billingAddress", "clearBillingAddress", "taxIdentifier", "clearTaxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "billingContact", "clearBillingContact", "billingEmail", "clearBillingEmail", "billingPhone", "clearBillingPhone", "billingAddress", "clearBillingAddress", "taxIdentifier", "clearTaxIdentifier", "tags", "appendTags", "clearTags", "geoLocation", "clearGeoLocation", "organizationID", "clearOrganization"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -56902,6 +57040,20 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.ClearTags = data
+		case "geoLocation":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("geoLocation"))
+			data, err := ec.unmarshalOOrganizationSettingRegion2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GeoLocation = data
+		case "clearGeoLocation":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearGeoLocation"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearGeoLocation = data
 		case "organizationID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -64514,6 +64666,8 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._OrganizationSetting_taxIdentifier(ctx, field, obj)
 		case "tags":
 			out.Values[i] = ec._OrganizationSetting_tags(ctx, field, obj)
+		case "geoLocation":
+			out.Values[i] = ec._OrganizationSetting_geoLocation(ctx, field, obj)
 		case "organizationID":
 			out.Values[i] = ec._OrganizationSetting_organizationID(ctx, field, obj)
 		case "organization":
@@ -68777,6 +68931,16 @@ func (ec *executionContext) marshalNOrganizationSettingConnection2ᚖgithubᚗco
 	return ec._OrganizationSettingConnection(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNOrganizationSettingRegion2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx context.Context, v interface{}) (enums.Region, error) {
+	var res enums.Region
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingRegion2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx context.Context, sel ast.SelectionSet, v enums.Region) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNOrganizationSettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐOrganizationSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v OrganizationSettingUpdatePayload) graphql.Marshaler {
 	return ec._OrganizationSettingUpdatePayload(ctx, sel, &v)
 }
@@ -71663,6 +71827,99 @@ func (ec *executionContext) marshalOOrganizationSettingEdge2ᚖgithubᚗcomᚋda
 		return graphql.Null
 	}
 	return ec._OrganizationSettingEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOOrganizationSettingRegion2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx context.Context, v interface{}) (enums.Region, error) {
+	var res enums.Region
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOOrganizationSettingRegion2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx context.Context, sel ast.SelectionSet, v enums.Region) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalOOrganizationSettingRegion2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegionᚄ(ctx context.Context, v interface{}) ([]enums.Region, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]enums.Region, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNOrganizationSettingRegion2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOOrganizationSettingRegion2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegionᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.Region) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOrganizationSettingRegion2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOOrganizationSettingRegion2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx context.Context, v interface{}) (*enums.Region, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(enums.Region)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOOrganizationSettingRegion2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐRegion(ctx context.Context, sel ast.SelectionSet, v *enums.Region) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOOrganizationSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.OrganizationSettingWhereInput, error) {

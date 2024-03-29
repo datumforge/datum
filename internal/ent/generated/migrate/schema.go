@@ -377,6 +377,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "personal_org", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "dedicated_db", Type: field.TypeBool, Default: false},
 		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -387,7 +388,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organizations_organizations_children",
-				Columns:    []*schema.Column{OrganizationsColumns[12]},
+				Columns:    []*schema.Column{OrganizationsColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -419,6 +420,7 @@ var (
 		{Name: "billing_address", Type: field.TypeString, Nullable: true},
 		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC"}},
 		{Name: "organization_id", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
@@ -429,7 +431,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organization_settings_organizations_setting",
-				Columns:    []*schema.Column{OrganizationSettingsColumns[14]},
+				Columns:    []*schema.Column{OrganizationSettingsColumns[15]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

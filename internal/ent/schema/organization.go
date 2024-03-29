@@ -81,6 +81,12 @@ func (Organization) Fields() []ent.Field {
 			}).
 			Optional().
 			Nillable(),
+		field.Bool("dedicated_db").
+			Comment("Whether the organization has a dedicated database").
+			Default(false). // default to shared db
+			Annotations(
+				entgql.Skip(),
+			),
 	}
 }
 

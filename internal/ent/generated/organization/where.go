@@ -127,6 +127,11 @@ func AvatarRemoteURL(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldAvatarRemoteURL, v))
 }
 
+// DedicatedDb applies equality check predicate on the "dedicated_db" field. It's identical to DedicatedDbEQ.
+func DedicatedDb(v bool) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldDedicatedDb, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldCreatedAt, v))
@@ -875,6 +880,16 @@ func AvatarRemoteURLEqualFold(v string) predicate.Organization {
 // AvatarRemoteURLContainsFold applies the ContainsFold predicate on the "avatar_remote_url" field.
 func AvatarRemoteURLContainsFold(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldContainsFold(FieldAvatarRemoteURL, v))
+}
+
+// DedicatedDbEQ applies the EQ predicate on the "dedicated_db" field.
+func DedicatedDbEQ(v bool) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldDedicatedDb, v))
+}
+
+// DedicatedDbNEQ applies the NEQ predicate on the "dedicated_db" field.
+func DedicatedDbNEQ(v bool) predicate.Organization {
+	return predicate.Organization(sql.FieldNEQ(FieldDedicatedDb, v))
 }
 
 // HasParent applies the HasEdge predicate on the "parent" edge.

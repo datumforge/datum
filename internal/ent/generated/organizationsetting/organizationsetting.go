@@ -3,11 +3,14 @@
 package organizationsetting
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 const (
@@ -41,6 +44,8 @@ const (
 	FieldTaxIdentifier = "tax_identifier"
 	// FieldTags holds the string denoting the tags field in the database.
 	FieldTags = "tags"
+	// FieldGeoLocation holds the string denoting the geo_location field in the database.
+	FieldGeoLocation = "geo_location"
 	// FieldOrganizationID holds the string denoting the organization_id field in the database.
 	FieldOrganizationID = "organization_id"
 	// EdgeOrganization holds the string denoting the organization edge name in mutations.
@@ -72,6 +77,7 @@ var Columns = []string{
 	FieldBillingAddress,
 	FieldTaxIdentifier,
 	FieldTags,
+	FieldGeoLocation,
 	FieldOrganizationID,
 }
 
@@ -111,6 +117,16 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
+
+// GeoLocationValidator is a validator for the "geo_location" field enum values. It is called by the builders before save.
+func GeoLocationValidator(gl enums.Region) error {
+	switch gl.String() {
+	case "AMER", "EMEA", "APAC":
+		return nil
+	default:
+		return fmt.Errorf("organizationsetting: invalid enum value for geo_location field: %q", gl)
+	}
+}
 
 // OrderOption defines the ordering options for the OrganizationSetting queries.
 type OrderOption func(*sql.Selector)
@@ -175,6 +191,11 @@ func ByTaxIdentifier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTaxIdentifier, opts...).ToFunc()
 }
 
+// ByGeoLocation orders the results by the geo_location field.
+func ByGeoLocation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGeoLocation, opts...).ToFunc()
+}
+
 // ByOrganizationID orders the results by the organization_id field.
 func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
@@ -193,3 +214,10 @@ func newOrganizationStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2O, true, OrganizationTable, OrganizationColumn),
 	)
 }
+
+var (
+	// enums.Region must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.Region)(nil)
+	// enums.Region must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.Region)(nil)
+)

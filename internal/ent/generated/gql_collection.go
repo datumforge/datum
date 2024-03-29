@@ -1775,6 +1775,11 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 				selectedFields = append(selectedFields, organizationsetting.FieldTags)
 				fieldSeen[organizationsetting.FieldTags] = struct{}{}
 			}
+		case "geoLocation":
+			if _, ok := fieldSeen[organizationsetting.FieldGeoLocation]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldGeoLocation)
+				fieldSeen[organizationsetting.FieldGeoLocation] = struct{}{}
+			}
 		case "organizationID":
 			if _, ok := fieldSeen[organizationsetting.FieldOrganizationID]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldOrganizationID)

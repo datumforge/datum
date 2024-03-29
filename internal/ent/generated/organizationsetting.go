@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 )
@@ -45,6 +46,8 @@ type OrganizationSetting struct {
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
+	// geographical location of the organization
+	GeoLocation enums.Region `json:"geo_location,omitempty"`
 	// the ID of the organization the settings belong to
 	OrganizationID string `json:"organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -82,7 +85,7 @@ func (*OrganizationSetting) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organizationsetting.FieldDomains, organizationsetting.FieldTags:
 			values[i] = new([]byte)
-		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier, organizationsetting.FieldOrganizationID:
+		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier, organizationsetting.FieldGeoLocation, organizationsetting.FieldOrganizationID:
 			values[i] = new(sql.NullString)
 		case organizationsetting.FieldCreatedAt, organizationsetting.FieldUpdatedAt, organizationsetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -189,6 +192,12 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 					return fmt.Errorf("unmarshal field tags: %w", err)
 				}
 			}
+		case organizationsetting.FieldGeoLocation:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field geo_location", values[i])
+			} else if value.Valid {
+				os.GeoLocation = enums.Region(value.String)
+			}
 		case organizationsetting.FieldOrganizationID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
@@ -274,6 +283,9 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tags=")
 	builder.WriteString(fmt.Sprintf("%v", os.Tags))
+	builder.WriteString(", ")
+	builder.WriteString("geo_location=")
+	builder.WriteString(fmt.Sprintf("%v", os.GeoLocation))
 	builder.WriteString(", ")
 	builder.WriteString("organization_id=")
 	builder.WriteString(os.OrganizationID)

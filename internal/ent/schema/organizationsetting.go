@@ -17,6 +17,7 @@ import (
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -70,6 +71,10 @@ func (OrganizationSetting) Fields() []ent.Field {
 		field.Strings("tags").
 			Comment("tags associated with the object").
 			Default([]string{}).
+			Optional(),
+		field.Enum("geo_location").
+			GoType(enums.Region("")).
+			Comment("geographical location of the organization").
 			Optional(),
 		field.String("organization_id").
 			Comment("the ID of the organization the settings belong to").

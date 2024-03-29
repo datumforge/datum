@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -895,6 +896,46 @@ func TagsIsNil() predicate.OrganizationSetting {
 // TagsNotNil applies the NotNil predicate on the "tags" field.
 func TagsNotNil() predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldNotNull(FieldTags))
+}
+
+// GeoLocationEQ applies the EQ predicate on the "geo_location" field.
+func GeoLocationEQ(v enums.Region) predicate.OrganizationSetting {
+	vc := v
+	return predicate.OrganizationSetting(sql.FieldEQ(FieldGeoLocation, vc))
+}
+
+// GeoLocationNEQ applies the NEQ predicate on the "geo_location" field.
+func GeoLocationNEQ(v enums.Region) predicate.OrganizationSetting {
+	vc := v
+	return predicate.OrganizationSetting(sql.FieldNEQ(FieldGeoLocation, vc))
+}
+
+// GeoLocationIn applies the In predicate on the "geo_location" field.
+func GeoLocationIn(vs ...enums.Region) predicate.OrganizationSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrganizationSetting(sql.FieldIn(FieldGeoLocation, v...))
+}
+
+// GeoLocationNotIn applies the NotIn predicate on the "geo_location" field.
+func GeoLocationNotIn(vs ...enums.Region) predicate.OrganizationSetting {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.OrganizationSetting(sql.FieldNotIn(FieldGeoLocation, v...))
+}
+
+// GeoLocationIsNil applies the IsNil predicate on the "geo_location" field.
+func GeoLocationIsNil() predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldIsNull(FieldGeoLocation))
+}
+
+// GeoLocationNotNil applies the NotNil predicate on the "geo_location" field.
+func GeoLocationNotNil() predicate.OrganizationSetting {
+	return predicate.OrganizationSetting(sql.FieldNotNull(FieldGeoLocation))
 }
 
 // OrganizationIDEQ applies the EQ predicate on the "organization_id" field.

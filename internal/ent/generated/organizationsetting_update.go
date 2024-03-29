@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -240,6 +241,26 @@ func (osu *OrganizationSettingUpdate) ClearTags() *OrganizationSettingUpdate {
 	return osu
 }
 
+// SetGeoLocation sets the "geo_location" field.
+func (osu *OrganizationSettingUpdate) SetGeoLocation(e enums.Region) *OrganizationSettingUpdate {
+	osu.mutation.SetGeoLocation(e)
+	return osu
+}
+
+// SetNillableGeoLocation sets the "geo_location" field if the given value is not nil.
+func (osu *OrganizationSettingUpdate) SetNillableGeoLocation(e *enums.Region) *OrganizationSettingUpdate {
+	if e != nil {
+		osu.SetGeoLocation(*e)
+	}
+	return osu
+}
+
+// ClearGeoLocation clears the value of the "geo_location" field.
+func (osu *OrganizationSettingUpdate) ClearGeoLocation() *OrganizationSettingUpdate {
+	osu.mutation.ClearGeoLocation()
+	return osu
+}
+
 // SetOrganizationID sets the "organization_id" field.
 func (osu *OrganizationSettingUpdate) SetOrganizationID(s string) *OrganizationSettingUpdate {
 	osu.mutation.SetOrganizationID(s)
@@ -333,6 +354,11 @@ func (osu *OrganizationSettingUpdate) check() error {
 	if v, ok := osu.mutation.BillingPhone(); ok {
 		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
 			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
+		}
+	}
+	if v, ok := osu.mutation.GeoLocation(); ok {
+		if err := organizationsetting.GeoLocationValidator(v); err != nil {
+			return &ValidationError{Name: "geo_location", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.geo_location": %w`, err)}
 		}
 	}
 	return nil
@@ -431,6 +457,12 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if osu.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
+	}
+	if value, ok := osu.mutation.GeoLocation(); ok {
+		_spec.SetField(organizationsetting.FieldGeoLocation, field.TypeEnum, value)
+	}
+	if osu.mutation.GeoLocationCleared() {
+		_spec.ClearField(organizationsetting.FieldGeoLocation, field.TypeEnum)
 	}
 	if osu.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -693,6 +725,26 @@ func (osuo *OrganizationSettingUpdateOne) ClearTags() *OrganizationSettingUpdate
 	return osuo
 }
 
+// SetGeoLocation sets the "geo_location" field.
+func (osuo *OrganizationSettingUpdateOne) SetGeoLocation(e enums.Region) *OrganizationSettingUpdateOne {
+	osuo.mutation.SetGeoLocation(e)
+	return osuo
+}
+
+// SetNillableGeoLocation sets the "geo_location" field if the given value is not nil.
+func (osuo *OrganizationSettingUpdateOne) SetNillableGeoLocation(e *enums.Region) *OrganizationSettingUpdateOne {
+	if e != nil {
+		osuo.SetGeoLocation(*e)
+	}
+	return osuo
+}
+
+// ClearGeoLocation clears the value of the "geo_location" field.
+func (osuo *OrganizationSettingUpdateOne) ClearGeoLocation() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearGeoLocation()
+	return osuo
+}
+
 // SetOrganizationID sets the "organization_id" field.
 func (osuo *OrganizationSettingUpdateOne) SetOrganizationID(s string) *OrganizationSettingUpdateOne {
 	osuo.mutation.SetOrganizationID(s)
@@ -799,6 +851,11 @@ func (osuo *OrganizationSettingUpdateOne) check() error {
 	if v, ok := osuo.mutation.BillingPhone(); ok {
 		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
 			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
+		}
+	}
+	if v, ok := osuo.mutation.GeoLocation(); ok {
+		if err := organizationsetting.GeoLocationValidator(v); err != nil {
+			return &ValidationError{Name: "geo_location", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.geo_location": %w`, err)}
 		}
 	}
 	return nil
@@ -914,6 +971,12 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 	}
 	if osuo.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
+	}
+	if value, ok := osuo.mutation.GeoLocation(); ok {
+		_spec.SetField(organizationsetting.FieldGeoLocation, field.TypeEnum, value)
+	}
+	if osuo.mutation.GeoLocationCleared() {
+		_spec.ClearField(organizationsetting.FieldGeoLocation, field.TypeEnum)
 	}
 	if osuo.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{

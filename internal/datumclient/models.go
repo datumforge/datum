@@ -231,8 +231,10 @@ type CreateOrganizationSettingInput struct {
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
-	Tags           []string `json:"tags,omitempty"`
-	OrganizationID *string  `json:"organizationID,omitempty"`
+	Tags []string `json:"tags,omitempty"`
+	// geographical location of the organization
+	GeoLocation    *enums.Region `json:"geoLocation,omitempty"`
+	OrganizationID *string       `json:"organizationID,omitempty"`
 }
 
 // CreatePersonalAccessTokenInput is used for create PersonalAccessToken object.
@@ -2332,6 +2334,8 @@ type OrganizationSetting struct {
 	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
+	// geographical location of the organization
+	GeoLocation *enums.Region `json:"geoLocation,omitempty"`
 	// the ID of the organization the settings belong to
 	OrganizationID *string       `json:"organizationID,omitempty"`
 	Organization   *Organization `json:"organization,omitempty"`
@@ -2553,6 +2557,13 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierNotNil       *bool    `json:"taxIdentifierNotNil,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
+	// geo_location field predicates
+	GeoLocation       *enums.Region  `json:"geoLocation,omitempty"`
+	GeoLocationNeq    *enums.Region  `json:"geoLocationNEQ,omitempty"`
+	GeoLocationIn     []enums.Region `json:"geoLocationIn,omitempty"`
+	GeoLocationNotIn  []enums.Region `json:"geoLocationNotIn,omitempty"`
+	GeoLocationIsNil  *bool          `json:"geoLocationIsNil,omitempty"`
+	GeoLocationNotNil *bool          `json:"geoLocationNotNil,omitempty"`
 	// organization_id field predicates
 	OrganizationID             *string  `json:"organizationID,omitempty"`
 	OrganizationIDNeq          *string  `json:"organizationIDNEQ,omitempty"`
@@ -3642,11 +3653,14 @@ type UpdateOrganizationSettingInput struct {
 	TaxIdentifier      *string `json:"taxIdentifier,omitempty"`
 	ClearTaxIdentifier *bool   `json:"clearTaxIdentifier,omitempty"`
 	// tags associated with the object
-	Tags              []string `json:"tags,omitempty"`
-	AppendTags        []string `json:"appendTags,omitempty"`
-	ClearTags         *bool    `json:"clearTags,omitempty"`
-	OrganizationID    *string  `json:"organizationID,omitempty"`
-	ClearOrganization *bool    `json:"clearOrganization,omitempty"`
+	Tags       []string `json:"tags,omitempty"`
+	AppendTags []string `json:"appendTags,omitempty"`
+	ClearTags  *bool    `json:"clearTags,omitempty"`
+	// geographical location of the organization
+	GeoLocation       *enums.Region `json:"geoLocation,omitempty"`
+	ClearGeoLocation  *bool         `json:"clearGeoLocation,omitempty"`
+	OrganizationID    *string       `json:"organizationID,omitempty"`
+	ClearOrganization *bool         `json:"clearOrganization,omitempty"`
 }
 
 // UpdatePersonalAccessTokenInput is used for update PersonalAccessToken object.

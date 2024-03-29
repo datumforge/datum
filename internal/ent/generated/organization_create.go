@@ -190,6 +190,20 @@ func (oc *OrganizationCreate) SetNillableAvatarRemoteURL(s *string) *Organizatio
 	return oc
 }
 
+// SetDedicatedDb sets the "dedicated_db" field.
+func (oc *OrganizationCreate) SetDedicatedDb(b bool) *OrganizationCreate {
+	oc.mutation.SetDedicatedDb(b)
+	return oc
+}
+
+// SetNillableDedicatedDb sets the "dedicated_db" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableDedicatedDb(b *bool) *OrganizationCreate {
+	if b != nil {
+		oc.SetDedicatedDb(*b)
+	}
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrganizationCreate) SetID(s string) *OrganizationCreate {
 	oc.mutation.SetID(s)
@@ -451,6 +465,10 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultPersonalOrg
 		oc.mutation.SetPersonalOrg(v)
 	}
+	if _, ok := oc.mutation.DedicatedDb(); !ok {
+		v := organization.DefaultDedicatedDb
+		oc.mutation.SetDedicatedDb(v)
+	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if organization.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized organization.DefaultID (forgotten import generated/runtime?)")
@@ -483,6 +501,9 @@ func (oc *OrganizationCreate) check() error {
 		if err := organization.AvatarRemoteURLValidator(v); err != nil {
 			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "Organization.avatar_remote_url": %w`, err)}
 		}
+	}
+	if _, ok := oc.mutation.DedicatedDb(); !ok {
+		return &ValidationError{Name: "dedicated_db", err: errors.New(`generated: missing required field "Organization.dedicated_db"`)}
 	}
 	return nil
 }
@@ -563,6 +584,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.AvatarRemoteURL(); ok {
 		_spec.SetField(organization.FieldAvatarRemoteURL, field.TypeString, value)
 		_node.AvatarRemoteURL = &value
+	}
+	if value, ok := oc.mutation.DedicatedDb(); ok {
+		_spec.SetField(organization.FieldDedicatedDb, field.TypeBool, value)
+		_node.DedicatedDb = value
 	}
 	if nodes := oc.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

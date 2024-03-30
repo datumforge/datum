@@ -1,0 +1,5943 @@
+openapi: 3.1.0
+info:
+  title: Datum OpenAPI 3.1.0 Specifications
+  description: Documentation for Datum's API services
+  termsOfService: https://datum.net/terms
+  contact:
+    name: Datum Support
+    url: https://datum.net/support
+    email: support@datum.net
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
+servers:
+  - url: https://api.datum.net/v1
+  - url: http://localhost:17608/v1
+    description: http localhost endpoint for testing purposes
+tags:
+  - name: HealthCheck
+    x-displayName: HealthCheck
+  - name: Register
+    x-displayName: Register
+  - name: Login
+    x-displayName: Login
+  - name: Authentication
+    x-displayName: Authentication
+  - name: ForgotPassword
+    x-displayName: ForgotPassword
+  - name: PasswordReset
+    x-displayName: PasswordReset
+  - name: VerifyEmail
+    x-displayName: VerifyEmail
+  - name: ResendVerificationEmail
+    x-displayName: ResendVerificationEmail
+  - name: Invite
+    x-displayName: Invite
+  - name: Entitlement
+    x-displayName: Entitlement
+  - name: GroupMembership
+    x-displayName: GroupMembership
+  - name: GroupSetting
+    x-displayName: GroupSetting
+  - name: Group
+    x-displayName: Group
+  - name: Integration
+    x-displayName: Integration
+  - name: OauthProvider
+    x-displayName: OauthProvider
+  - name: OhAuthTooToken
+    x-displayName: OhAuthTooToken
+  - name: OrgMembership
+    x-displayName: OrgMembership
+  - name: OrganizationSetting
+    x-displayName: OrganizationSetting
+  - name: Organization
+    x-displayName: Organization
+  - name: PersonalAccessToken
+    x-displayName: PersonalAccessToken
+  - name: Subscriber
+    x-displayName: Subscriber
+  - name: TFASettings
+    x-displayName: TFASettings
+  - name: UserSetting
+    x-displayName: UserSetting
+  - name: User
+    x-displayName: User
+paths:
+  /ready:
+    get:
+      operationId: ready
+      tags:
+        - HealthCheck
+      security:
+        - {}
+      summary: Status Check
+      description: A status check for the server and it's associated dependencies
+      responses:
+        '200':
+          description: The status of the server and sub components are returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fga:
+                    type: string
+                  redis:
+                    type: string
+                  sqlite_db_primary:
+                    type: string
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /livez:
+    get:
+      operationId: livez
+      tags:
+        - HealthCheck
+      security:
+        - {}
+      summary: Server liveness check response
+      description: A heartbeat check to confirm the server is up or down
+      responses:
+        '200':
+          description: An up / down status of the server is returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+  /register:
+    post:
+      operationId: register
+      tags:
+        - Register
+      security:
+        - {}
+      summary: Register User
+      description: Register a new user and their personal organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - first-name
+                - last-name
+                - email
+                - password
+              properties:
+                first-name:
+                  type: string
+                last-name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: >-
+            User and organization created successfully. The details of the new
+            user are returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user_id
+                properties:
+                  user_id:
+                    type: string
+                  email:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '409':
+          description: A user with the email address already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorReply'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /login:
+    post:
+      operationId: login
+      tags:
+        - Login
+      security:
+        - {}
+      summary: Login User
+      description: >-
+        User login and authentication via email and password. The user can
+        optionally supply an OrgID to log into a specific organization that they
+        belong to. An _access token_ and a _refresh token_ are returned that
+        contain the authorization claims of the user.
+
+        The access token should be added to the Authorize header as a Bearer
+        token for all requests that require authentication. The refresh token
+        can be used to obtain a new access token after it expires (extending the
+        user's session) without requiring the user to supply their username and
+        password again.
+
+        The access token contains claims that help identify the user (e.g. name,
+        email, picture) as well as the ID of the organization the user is
+        currently logged into. A user can only be logged into one organization
+        at a time. Additionally the claims contain the permissions the user has
+        defined by the user's role. The subject of the claims is the ID of the
+        user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginReply'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /refresh:
+    post:
+      operationId: refresh
+      tags:
+        - Authentication
+      security:
+        - {}
+      summary: Refresh access token
+      description: >
+        Access tokens have an expiration of an hour, in order to maintain long
+        running sessions, a refresh token that is tied with a specific access
+        token is issued at the same time. The refresh token may be used to
+        obtain a new access/refresh token pair, thereby extending the user or
+        api key session without requiring credentials to be authenticated a
+        second time.
+
+        Note that the claims that are returned during refresh may not be the
+        same claims as the original access token (e.g. if the role of a user has
+        changed during the session). This means that an operation that was
+        previously allowed by the original access token may not be allowed after
+        refresh.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  description: >-
+                    a JWT token that is signed by Datum and linked to an access
+                    token. Has a "Not Before" and "Expires" timestamp that bound
+                    when the refresh token can be used
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginReply'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          description: Could not authenticate refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorReply'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /forgot-password:
+    post:
+      operationId: forgot-password
+      tags:
+        - ForgotPassword
+      security:
+        - {}
+      summary: Request a password reset
+      description: Ability for a user to trigger a password re-set flow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+      responses:
+        '204':
+          description: Password reset received; no content is returned
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /password-reset:
+    post:
+      operationId: password-reset
+      tags:
+        - PasswordReset
+      security:
+        - {}
+      summary: Update a user's password
+      description: >-
+        Endpoint which will accept a Datum generated token in addition to a new
+        password for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+      parameters:
+        - name: token
+          in: query
+          description: datum generated token
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '204':
+          description: Password reset received; no content is returned
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /verify:
+    get:
+      operationId: verify
+      tags:
+        - VerifyEmail
+      security:
+        - {}
+      summary: Verify email
+      description: >-
+        Verify a user's email by providing the secure token sent to the
+        requesting email
+      parameters:
+        - name: token
+          in: query
+          description: datum generated token
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '201':
+          description: Token is valid, but expired - re-sent token
+        '204':
+          description: Verification completed; no content returned
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /resend:
+    post:
+      operationId: resend-email
+      tags:
+        - ResendVerificationEmail
+      security:
+        - {}
+      summary: Resend verification email
+      description: >-
+        Triggers a re-send of the email and token which can be used to re-set a
+        users's password; invalidates previously generated tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Resend verify email request received; no content is returned
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /invite:
+    post:
+      operationId: invite
+      tags:
+        - Invite
+      security:
+        - {}
+      summary: Invite a user to Datum
+      description: >-
+        Creates an invitation token and sends that token to a user via email to
+        complete the Datum registration process and join the organization the
+        invitation was generated from
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - first-name
+                - last-name
+                - password
+              properties:
+                first-name:
+                  type: string
+                last-name:
+                  type: string
+                password:
+                  type: string
+      parameters:
+        - name: token
+          in: query
+          description: datum generated token
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '201':
+          description: >-
+            User and organization created successfully. The details of the new
+            user are returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - email
+                  - user_id
+                  - joined_org_id
+                  - role
+                properties:
+                  email:
+                    type: string
+                    description: The email of the user joined to the requesting orgnization
+                  user_id:
+                    type: string
+                    description: >-
+                      The Datum generated user ID of the user joined to the
+                      requesting organization
+                  joined_org_id:
+                    type: string
+                    description: >-
+                      The Datum generated organization ID of the requesting
+                      organization the user was joined to
+                  role:
+                    type: string
+                    description: The users role upon joining the requesting organization
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /entitlements:
+    get:
+      tags:
+        - Entitlement
+      summary: List Entitlements
+      description: List Entitlements.
+      operationId: listEntitlement
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result Entitlement list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entitlement'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - Entitlement
+      summary: Create a new Entitlement
+      description: Creates a new Entitlement and persists it to storage.
+      operationId: createEntitlement
+      requestBody:
+        description: Entitlement to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tier:
+                  type: string
+                  enum:
+                    - FREE
+                    - PRO
+                    - ENTERPRISE
+                  default: FREE
+                external_customer_id:
+                  type: string
+                external_subscription_id:
+                  type: string
+                expires:
+                  type: boolean
+                expires_at:
+                  type: string
+                  format: date-time
+                cancelled:
+                  type: boolean
+                owner:
+                  type: string
+              required:
+                - tier
+                - expires
+                - cancelled
+                - owner
+        required: true
+      responses:
+        '200':
+          description: Entitlement created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entitlement'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /entitlements/{id}:
+    get:
+      tags:
+        - Entitlement
+      summary: Find a Entitlement by ID
+      description: Finds the Entitlement with the requested ID and returns it.
+      operationId: readEntitlement
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Entitlement
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Entitlement with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entitlement'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - Entitlement
+      summary: Deletes a Entitlement by ID
+      description: Deletes the Entitlement with the requested ID.
+      operationId: deleteEntitlement
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Entitlement
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Entitlement with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - Entitlement
+      summary: Updates a Entitlement
+      description: Updates a Entitlement and persists changes to storage.
+      operationId: updateEntitlement
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Entitlement
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Entitlement properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tier:
+                  type: string
+                  enum:
+                    - FREE
+                    - PRO
+                    - ENTERPRISE
+                  default: FREE
+                external_customer_id:
+                  type: string
+                external_subscription_id:
+                  type: string
+                expires:
+                  type: boolean
+                expires_at:
+                  type: string
+                  format: date-time
+                cancelled:
+                  type: boolean
+                owner:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Entitlement updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entitlement'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /entitlements/{id}/owner:
+    get:
+      tags:
+        - Entitlement
+      summary: Find the attached Organization
+      description: Find the attached Organization of the Entitlement with the given ID
+      operationId: readEntitlementOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Entitlement
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to Entitlement with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /group-memberships:
+    get:
+      tags:
+        - GroupMembership
+      summary: List GroupMemberships
+      description: List GroupMemberships.
+      operationId: listGroupMembership
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result GroupMembership list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - GroupMembership
+      summary: Create a new GroupMembership
+      description: Creates a new GroupMembership and persists it to storage.
+      operationId: createGroupMembership
+      requestBody:
+        description: GroupMembership to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - MEMBER
+                  default: MEMBER
+                group_id:
+                  type: string
+                user_id:
+                  type: string
+                group:
+                  type: string
+                user:
+                  type: string
+              required:
+                - role
+                - group_id
+                - user_id
+                - group
+                - user
+        required: true
+      responses:
+        '200':
+          description: GroupMembership created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /group-memberships/{id}:
+    get:
+      tags:
+        - GroupMembership
+      summary: Find a GroupMembership by ID
+      description: Finds the GroupMembership with the requested ID and returns it.
+      operationId: readGroupMembership
+      parameters:
+        - name: id
+          in: path
+          description: ID of the GroupMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: GroupMembership with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - GroupMembership
+      summary: Deletes a GroupMembership by ID
+      description: Deletes the GroupMembership with the requested ID.
+      operationId: deleteGroupMembership
+      parameters:
+        - name: id
+          in: path
+          description: ID of the GroupMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: GroupMembership with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - GroupMembership
+      summary: Updates a GroupMembership
+      description: Updates a GroupMembership and persists changes to storage.
+      operationId: updateGroupMembership
+      parameters:
+        - name: id
+          in: path
+          description: ID of the GroupMembership
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: GroupMembership properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - MEMBER
+                  default: MEMBER
+                group:
+                  type: string
+                user:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: GroupMembership updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /group-memberships/{id}/group:
+    get:
+      tags:
+        - GroupMembership
+      summary: Find the attached Group
+      description: Find the attached Group of the GroupMembership with the given ID
+      operationId: readGroupMembershipGroup
+      parameters:
+        - name: id
+          in: path
+          description: ID of the GroupMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Group attached to GroupMembership with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /group-memberships/{id}/user:
+    get:
+      tags:
+        - GroupMembership
+      summary: Find the attached User
+      description: Find the attached User of the GroupMembership with the given ID
+      operationId: readGroupMembershipUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of the GroupMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User attached to GroupMembership with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /group-settings/{id}/group:
+    get:
+      tags:
+        - GroupSetting
+      summary: Find the attached Group
+      description: Find the attached Group of the GroupSetting with the given ID
+      operationId: readGroupSettingGroup
+      parameters:
+        - name: id
+          in: path
+          description: ID of the GroupSetting
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Group attached to GroupSetting with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /groups:
+    get:
+      tags:
+        - Group
+      summary: List Groups
+      description: List Groups.
+      operationId: listGroup
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result Group list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - Group
+      summary: Create a new Group
+      description: Creates a new Group and persists it to storage.
+      operationId: createGroup
+      requestBody:
+        description: Group to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                gravatar_logo_url:
+                  type: string
+                logo_url:
+                  type: string
+                display_name:
+                  type: string
+                owner:
+                  type: string
+                setting:
+                  type: string
+                users:
+                  type: array
+                  items:
+                    type: string
+                members:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name
+                - display_name
+                - owner
+                - setting
+        required: true
+      responses:
+        '200':
+          description: Group created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /groups/{id}:
+    get:
+      tags:
+        - Group
+      summary: Find a Group by ID
+      description: Finds the Group with the requested ID and returns it.
+      operationId: readGroup
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Group
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Group with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - Group
+      summary: Deletes a Group by ID
+      description: Deletes the Group with the requested ID.
+      operationId: deleteGroup
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Group
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Group with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - Group
+      summary: Updates a Group
+      description: Updates a Group and persists changes to storage.
+      operationId: updateGroup
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Group
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Group properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                gravatar_logo_url:
+                  type: string
+                logo_url:
+                  type: string
+                display_name:
+                  type: string
+                owner:
+                  type: string
+                setting:
+                  type: string
+                users:
+                  type: array
+                  items:
+                    type: string
+                members:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: Group updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /groups/{id}/members:
+    get:
+      tags:
+        - Group
+      summary: List attached Members
+      description: List attached Members.
+      operationId: listGroupMembers
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Group
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Groups list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /groups/{id}/owner:
+    get:
+      tags:
+        - Group
+      summary: Find the attached Organization
+      description: Find the attached Organization of the Group with the given ID
+      operationId: readGroupOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Group
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to Group with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /groups/{id}/setting:
+    get:
+      tags:
+        - Group
+      summary: Find the attached GroupSetting
+      description: Find the attached GroupSetting of the Group with the given ID
+      operationId: readGroupSetting
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Group
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: GroupSetting attached to Group with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupSetting'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /groups/{id}/users:
+    get:
+      tags:
+        - Group
+      summary: List attached Users
+      description: List attached Users.
+      operationId: listGroupUsers
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Group
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Groups list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /integrations:
+    get:
+      tags:
+        - Integration
+      summary: List Integrations
+      description: List Integrations.
+      operationId: listIntegration
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result Integration list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Integration'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - Integration
+      summary: Create a new Integration
+      description: Creates a new Integration and persists it to storage.
+      operationId: createIntegration
+      requestBody:
+        description: Integration to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                kind:
+                  type: string
+                secret_name:
+                  type: string
+                owner:
+                  type: string
+              required:
+                - name
+                - owner
+        required: true
+      responses:
+        '200':
+          description: Integration created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Integration'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /integrations/{id}:
+    get:
+      tags:
+        - Integration
+      summary: Find a Integration by ID
+      description: Finds the Integration with the requested ID and returns it.
+      operationId: readIntegration
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Integration
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Integration with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Integration'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - Integration
+      summary: Deletes a Integration by ID
+      description: Deletes the Integration with the requested ID.
+      operationId: deleteIntegration
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Integration
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Integration with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - Integration
+      summary: Updates a Integration
+      description: Updates a Integration and persists changes to storage.
+      operationId: updateIntegration
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Integration
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Integration properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                kind:
+                  type: string
+                owner:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Integration updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Integration'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /integrations/{id}/owner:
+    get:
+      tags:
+        - Integration
+      summary: Find the attached Organization
+      description: Find the attached Organization of the Integration with the given ID
+      operationId: readIntegrationOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Integration
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to Integration with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /invites:
+    get:
+      tags:
+        - Invite
+      summary: List Invites
+      description: List Invites.
+      operationId: listInvite
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result Invite list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invite'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - Invite
+      summary: Create a new Invite
+      description: Creates a new Invite and persists it to storage.
+      operationId: createInvite
+      requestBody:
+        description: Invite to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - MEMBER
+                    - OWNER
+                  default: MEMBER
+                owner:
+                  type: string
+              required:
+                - recipient
+                - role
+                - owner
+        required: true
+      responses:
+        '200':
+          description: Invite created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invite'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /invites/{id}:
+    get:
+      tags:
+        - Invite
+      summary: Find a Invite by ID
+      description: Finds the Invite with the requested ID and returns it.
+      operationId: readInvite
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Invite
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invite with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invite'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - Invite
+      summary: Deletes a Invite by ID
+      description: Deletes the Invite with the requested ID.
+      operationId: deleteInvite
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Invite
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Invite with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - Invite
+      summary: Updates a Invite
+      description: Updates a Invite and persists changes to storage.
+      operationId: updateInvite
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Invite
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Invite properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recipient:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - MEMBER
+                    - OWNER
+                  default: MEMBER
+                owner:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Invite updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invite'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /invites/{id}/owner:
+    get:
+      tags:
+        - Invite
+      summary: Find the attached Organization
+      description: Find the attached Organization of the Invite with the given ID
+      operationId: readInviteOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Invite
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to Invite with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /oauth-providers:
+    get:
+      tags:
+        - OauthProvider
+      summary: List OauthProviders
+      description: List OauthProviders.
+      operationId: listOauthProvider
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result OauthProvider list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OauthProvider'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - OauthProvider
+      summary: Create a new OauthProvider
+      description: Creates a new OauthProvider and persists it to storage.
+      operationId: createOauthProvider
+      requestBody:
+        description: OauthProvider to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+                redirect_url:
+                  type: string
+                scopes:
+                  type: string
+                auth_url:
+                  type: string
+                token_url:
+                  type: string
+                auth_style:
+                  type: integer
+                  format: int32
+                  maximum: 255
+                  minimum: 0
+                info_url:
+                  type: string
+                owner:
+                  type: string
+              required:
+                - name
+                - client_id
+                - client_secret
+                - redirect_url
+                - scopes
+                - auth_url
+                - token_url
+                - auth_style
+                - info_url
+        required: true
+      responses:
+        '200':
+          description: OauthProvider created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthProvider'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /oauth-providers/{id}:
+    get:
+      tags:
+        - OauthProvider
+      summary: Find a OauthProvider by ID
+      description: Finds the OauthProvider with the requested ID and returns it.
+      operationId: readOauthProvider
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OauthProvider
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OauthProvider with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthProvider'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - OauthProvider
+      summary: Deletes a OauthProvider by ID
+      description: Deletes the OauthProvider with the requested ID.
+      operationId: deleteOauthProvider
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OauthProvider
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: OauthProvider with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - OauthProvider
+      summary: Updates a OauthProvider
+      description: Updates a OauthProvider and persists changes to storage.
+      operationId: updateOauthProvider
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OauthProvider
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: OauthProvider properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                client_id:
+                  type: string
+                client_secret:
+                  type: string
+                redirect_url:
+                  type: string
+                scopes:
+                  type: string
+                auth_url:
+                  type: string
+                token_url:
+                  type: string
+                auth_style:
+                  type: integer
+                  format: int32
+                  maximum: 255
+                  minimum: 0
+                info_url:
+                  type: string
+                owner:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: OauthProvider updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthProvider'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /oauth-providers/{id}/owner:
+    get:
+      tags:
+        - OauthProvider
+      summary: Find the attached Organization
+      description: Find the attached Organization of the OauthProvider with the given ID
+      operationId: readOauthProviderOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OauthProvider
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to OauthProvider with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /oh-auth-too-tokens:
+    get:
+      tags:
+        - OhAuthTooToken
+      summary: List OhAuthTooTokens
+      description: List OhAuthTooTokens.
+      operationId: listOhAuthTooToken
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result OhAuthTooToken list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OhAuthTooToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - OhAuthTooToken
+      summary: Create a new OhAuthTooToken
+      description: Creates a new OhAuthTooToken and persists it to storage.
+      operationId: createOhAuthTooToken
+      requestBody:
+        description: OhAuthTooToken to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                nonce:
+                  type: string
+                claims_user_id:
+                  type: string
+                claims_username:
+                  type: string
+                claims_email:
+                  type: string
+                claims_email_verified:
+                  type: boolean
+                claims_groups:
+                  type: array
+                  items:
+                    type: string
+                claims_preferred_username:
+                  type: string
+                connector_id:
+                  type: string
+                connector_data:
+                  type: array
+                  items:
+                    type: string
+                last_used:
+                  type: string
+                  format: date-time
+              required:
+                - client_id
+                - nonce
+                - claims_user_id
+                - claims_username
+                - claims_email
+                - claims_email_verified
+                - claims_preferred_username
+                - connector_id
+                - last_used
+        required: true
+      responses:
+        '200':
+          description: OhAuthTooToken created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OhAuthTooToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /oh-auth-too-tokens/{id}:
+    get:
+      tags:
+        - OhAuthTooToken
+      summary: Find a OhAuthTooToken by ID
+      description: Finds the OhAuthTooToken with the requested ID and returns it.
+      operationId: readOhAuthTooToken
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OhAuthTooToken
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OhAuthTooToken with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OhAuthTooToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - OhAuthTooToken
+      summary: Deletes a OhAuthTooToken by ID
+      description: Deletes the OhAuthTooToken with the requested ID.
+      operationId: deleteOhAuthTooToken
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OhAuthTooToken
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: OhAuthTooToken with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - OhAuthTooToken
+      summary: Updates a OhAuthTooToken
+      description: Updates a OhAuthTooToken and persists changes to storage.
+      operationId: updateOhAuthTooToken
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OhAuthTooToken
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: OhAuthTooToken properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                nonce:
+                  type: string
+                claims_user_id:
+                  type: string
+                claims_username:
+                  type: string
+                claims_email:
+                  type: string
+                claims_email_verified:
+                  type: boolean
+                claims_groups:
+                  type: array
+                  items:
+                    type: string
+                claims_preferred_username:
+                  type: string
+                connector_id:
+                  type: string
+                connector_data:
+                  type: array
+                  items:
+                    type: string
+                last_used:
+                  type: string
+                  format: date-time
+        required: true
+      responses:
+        '200':
+          description: OhAuthTooToken updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OhAuthTooToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /org-memberships:
+    get:
+      tags:
+        - OrgMembership
+      summary: List OrgMemberships
+      description: List OrgMemberships.
+      operationId: listOrgMembership
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result OrgMembership list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrgMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - OrgMembership
+      summary: Create a new OrgMembership
+      description: Creates a new OrgMembership and persists it to storage.
+      operationId: createOrgMembership
+      requestBody:
+        description: OrgMembership to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - MEMBER
+                    - OWNER
+                  default: MEMBER
+                organization_id:
+                  type: string
+                user_id:
+                  type: string
+                organization:
+                  type: string
+                user:
+                  type: string
+              required:
+                - role
+                - organization_id
+                - user_id
+                - organization
+                - user
+        required: true
+      responses:
+        '200':
+          description: OrgMembership created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /org-memberships/{id}:
+    get:
+      tags:
+        - OrgMembership
+      summary: Find a OrgMembership by ID
+      description: Finds the OrgMembership with the requested ID and returns it.
+      operationId: readOrgMembership
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OrgMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OrgMembership with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - OrgMembership
+      summary: Deletes a OrgMembership by ID
+      description: Deletes the OrgMembership with the requested ID.
+      operationId: deleteOrgMembership
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OrgMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: OrgMembership with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - OrgMembership
+      summary: Updates a OrgMembership
+      description: Updates a OrgMembership and persists changes to storage.
+      operationId: updateOrgMembership
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OrgMembership
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: OrgMembership properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - ADMIN
+                    - MEMBER
+                    - OWNER
+                  default: MEMBER
+                organization:
+                  type: string
+                user:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: OrgMembership updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /org-memberships/{id}/organization:
+    get:
+      tags:
+        - OrgMembership
+      summary: Find the attached Organization
+      description: Find the attached Organization of the OrgMembership with the given ID
+      operationId: readOrgMembershipOrganization
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OrgMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to OrgMembership with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /org-memberships/{id}/user:
+    get:
+      tags:
+        - OrgMembership
+      summary: Find the attached User
+      description: Find the attached User of the OrgMembership with the given ID
+      operationId: readOrgMembershipUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OrgMembership
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User attached to OrgMembership with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organization-settings/{id}/organization:
+    get:
+      tags:
+        - OrganizationSetting
+      summary: Find the attached Organization
+      description: >-
+        Find the attached Organization of the OrganizationSetting with the given
+        ID
+      operationId: readOrganizationSettingOrganization
+      parameters:
+        - name: id
+          in: path
+          description: ID of the OrganizationSetting
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            Organization attached to OrganizationSetting with requested ID was
+            found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations:
+    get:
+      tags:
+        - Organization
+      summary: List Organizations
+      description: List Organizations.
+      operationId: listOrganization
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result Organization list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - Organization
+      summary: Create a new Organization
+      description: Creates a new Organization and persists it to storage.
+      operationId: createOrganization
+      requestBody:
+        description: Organization to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                display_name:
+                  type: string
+                description:
+                  type: string
+                parent_organization_id:
+                  type: string
+                personal_org:
+                  type: boolean
+                avatar_remote_url:
+                  type: string
+                parent:
+                  type: string
+                children:
+                  type: array
+                  items:
+                    type: string
+                groups:
+                  type: array
+                  items:
+                    type: string
+                integrations:
+                  type: array
+                  items:
+                    type: string
+                setting:
+                  type: string
+                entitlements:
+                  type: array
+                  items:
+                    type: string
+                personal_access_tokens:
+                  type: array
+                  items:
+                    type: string
+                oauthprovider:
+                  type: array
+                  items:
+                    type: string
+                users:
+                  type: array
+                  items:
+                    type: string
+                invites:
+                  type: array
+                  items:
+                    type: string
+                subscribers:
+                  type: array
+                  items:
+                    type: string
+                members:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name
+                - display_name
+        required: true
+      responses:
+        '200':
+          description: Organization created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}:
+    get:
+      tags:
+        - Organization
+      summary: Find a Organization by ID
+      description: Finds the Organization with the requested ID and returns it.
+      operationId: readOrganization
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - Organization
+      summary: Deletes a Organization by ID
+      description: Deletes the Organization with the requested ID.
+      operationId: deleteOrganization
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Organization with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - Organization
+      summary: Updates a Organization
+      description: Updates a Organization and persists changes to storage.
+      operationId: updateOrganization
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Organization properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                display_name:
+                  type: string
+                description:
+                  type: string
+                avatar_remote_url:
+                  type: string
+                parent:
+                  type: string
+                children:
+                  type: array
+                  items:
+                    type: string
+                groups:
+                  type: array
+                  items:
+                    type: string
+                integrations:
+                  type: array
+                  items:
+                    type: string
+                setting:
+                  type: string
+                entitlements:
+                  type: array
+                  items:
+                    type: string
+                personal_access_tokens:
+                  type: array
+                  items:
+                    type: string
+                oauthprovider:
+                  type: array
+                  items:
+                    type: string
+                users:
+                  type: array
+                  items:
+                    type: string
+                invites:
+                  type: array
+                  items:
+                    type: string
+                subscribers:
+                  type: array
+                  items:
+                    type: string
+                members:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: Organization updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/children:
+    get:
+      tags:
+        - Organization
+      summary: List attached Childrens
+      description: List attached Childrens.
+      operationId: listOrganizationChildren
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/entitlements:
+    get:
+      tags:
+        - Organization
+      summary: List attached Entitlements
+      description: List attached Entitlements.
+      operationId: listOrganizationEntitlements
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entitlement'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/groups:
+    get:
+      tags:
+        - Organization
+      summary: List attached Groups
+      description: List attached Groups.
+      operationId: listOrganizationGroups
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/integrations:
+    get:
+      tags:
+        - Organization
+      summary: List attached Integrations
+      description: List attached Integrations.
+      operationId: listOrganizationIntegrations
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Integration'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/invites:
+    get:
+      tags:
+        - Organization
+      summary: List attached Invites
+      description: List attached Invites.
+      operationId: listOrganizationInvites
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invite'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/members:
+    get:
+      tags:
+        - Organization
+      summary: List attached Members
+      description: List attached Members.
+      operationId: listOrganizationMembers
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrgMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/oauthprovider:
+    get:
+      tags:
+        - Organization
+      summary: List attached Oauthproviders
+      description: List attached Oauthproviders.
+      operationId: listOrganizationOauthprovider
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OauthProvider'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/parent:
+    get:
+      tags:
+        - Organization
+      summary: Find the attached Organization
+      description: Find the attached Organization of the Organization with the given ID
+      operationId: readOrganizationParent
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to Organization with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/personal-access-tokens:
+    get:
+      tags:
+        - Organization
+      summary: List attached PersonalAccessTokens
+      description: List attached PersonalAccessTokens.
+      operationId: listOrganizationPersonalAccessTokens
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonalAccessToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/setting:
+    get:
+      tags:
+        - Organization
+      summary: Find the attached OrganizationSetting
+      description: >-
+        Find the attached OrganizationSetting of the Organization with the given
+        ID
+      operationId: readOrganizationSetting
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            OrganizationSetting attached to Organization with requested ID was
+            found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationSetting'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/subscribers:
+    get:
+      tags:
+        - Organization
+      summary: List attached Subscribers
+      description: List attached Subscribers.
+      operationId: listOrganizationSubscribers
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscriber'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /organizations/{id}/users:
+    get:
+      tags:
+        - Organization
+      summary: List attached Users
+      description: List attached Users.
+      operationId: listOrganizationUsers
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Organization
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Organizations list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /personal-access-tokens:
+    get:
+      tags:
+        - PersonalAccessToken
+      summary: List PersonalAccessTokens
+      description: List PersonalAccessTokens.
+      operationId: listPersonalAccessToken
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result PersonalAccessToken list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonalAccessToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - PersonalAccessToken
+      summary: Create a new PersonalAccessToken
+      description: Creates a new PersonalAccessToken and persists it to storage.
+      operationId: createPersonalAccessToken
+      requestBody:
+        description: PersonalAccessToken to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                expires_at:
+                  type: string
+                  format: date-time
+                description:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                last_used_at:
+                  type: string
+                  format: date-time
+                owner:
+                  type: string
+                organizations:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - name
+                - expires_at
+                - owner
+        required: true
+      responses:
+        '200':
+          description: PersonalAccessToken created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalAccessToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /personal-access-tokens/{id}:
+    get:
+      tags:
+        - PersonalAccessToken
+      summary: Find a PersonalAccessToken by ID
+      description: Finds the PersonalAccessToken with the requested ID and returns it.
+      operationId: readPersonalAccessToken
+      parameters:
+        - name: id
+          in: path
+          description: ID of the PersonalAccessToken
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: PersonalAccessToken with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalAccessToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - PersonalAccessToken
+      summary: Deletes a PersonalAccessToken by ID
+      description: Deletes the PersonalAccessToken with the requested ID.
+      operationId: deletePersonalAccessToken
+      parameters:
+        - name: id
+          in: path
+          description: ID of the PersonalAccessToken
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: PersonalAccessToken with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - PersonalAccessToken
+      summary: Updates a PersonalAccessToken
+      description: Updates a PersonalAccessToken and persists changes to storage.
+      operationId: updatePersonalAccessToken
+      parameters:
+        - name: id
+          in: path
+          description: ID of the PersonalAccessToken
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: PersonalAccessToken properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                expires_at:
+                  type: string
+                  format: date-time
+                description:
+                  type: string
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                last_used_at:
+                  type: string
+                  format: date-time
+                owner:
+                  type: string
+                organizations:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: PersonalAccessToken updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalAccessToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /personal-access-tokens/{id}/organizations:
+    get:
+      tags:
+        - PersonalAccessToken
+      summary: List attached Organizations
+      description: List attached Organizations.
+      operationId: listPersonalAccessTokenOrganizations
+      parameters:
+        - name: id
+          in: path
+          description: ID of the PersonalAccessToken
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result PersonalAccessTokens list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /personal-access-tokens/{id}/owner:
+    get:
+      tags:
+        - PersonalAccessToken
+      summary: Find the attached User
+      description: Find the attached User of the PersonalAccessToken with the given ID
+      operationId: readPersonalAccessTokenOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the PersonalAccessToken
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User attached to PersonalAccessToken with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /subscribers:
+    get:
+      tags:
+        - Subscriber
+      summary: List Subscribers
+      description: List Subscribers.
+      operationId: listSubscriber
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result Subscriber list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscriber'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - Subscriber
+      summary: Create a new Subscriber
+      description: Creates a new Subscriber and persists it to storage.
+      operationId: createSubscriber
+      requestBody:
+        description: Subscriber to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                phone_number:
+                  type: string
+                verified_email:
+                  type: boolean
+                verified_phone:
+                  type: boolean
+                active:
+                  type: boolean
+                ttl:
+                  type: string
+                  format: date-time
+                owner:
+                  type: string
+              required:
+                - email
+                - verified_email
+                - verified_phone
+                - active
+                - ttl
+        required: true
+      responses:
+        '200':
+          description: Subscriber created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /subscribers/{id}:
+    get:
+      tags:
+        - Subscriber
+      summary: Find a Subscriber by ID
+      description: Finds the Subscriber with the requested ID and returns it.
+      operationId: readSubscriber
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Subscriber
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subscriber with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - Subscriber
+      summary: Deletes a Subscriber by ID
+      description: Deletes the Subscriber with the requested ID.
+      operationId: deleteSubscriber
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Subscriber
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Subscriber with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - Subscriber
+      summary: Updates a Subscriber
+      description: Updates a Subscriber and persists changes to storage.
+      operationId: updateSubscriber
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Subscriber
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Subscriber properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                phone_number:
+                  type: string
+                verified_email:
+                  type: boolean
+                verified_phone:
+                  type: boolean
+                active:
+                  type: boolean
+                ttl:
+                  type: string
+                  format: date-time
+                owner:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Subscriber updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscriber'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /subscribers/{id}/owner:
+    get:
+      tags:
+        - Subscriber
+      summary: Find the attached Organization
+      description: Find the attached Organization of the Subscriber with the given ID
+      operationId: readSubscriberOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the Subscriber
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to Subscriber with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /tfa-settings/{id}/owner:
+    get:
+      tags:
+        - TFASettings
+      summary: Find the attached User
+      description: Find the attached User of the TFASettings with the given ID
+      operationId: readTFASettingsOwner
+      parameters:
+        - name: id
+          in: path
+          description: ID of the TFASettings
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User attached to TFASettings with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /user-settings/{id}/default-org:
+    get:
+      tags:
+        - UserSetting
+      summary: Find the attached Organization
+      description: Find the attached Organization of the UserSetting with the given ID
+      operationId: readUserSettingDefaultOrg
+      parameters:
+        - name: id
+          in: path
+          description: ID of the UserSetting
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Organization attached to UserSetting with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users:
+    get:
+      tags:
+        - User
+      summary: List Users
+      description: List Users.
+      operationId: listUser
+      parameters:
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+            minimum: 1
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+            maximum: 255
+            minimum: 1
+      responses:
+        '200':
+          description: result User list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    post:
+      tags:
+        - User
+      summary: Create a new User
+      description: Creates a new User and persists it to storage.
+      operationId: createUser
+      requestBody:
+        description: User to create
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                display_name:
+                  type: string
+                avatar_remote_url:
+                  type: string
+                avatar_local_file:
+                  type: string
+                avatar_updated_at:
+                  type: string
+                  format: date-time
+                auth_provider:
+                  type: string
+                  enum:
+                    - CREDENTIALS
+                    - GOOGLE
+                    - GITHUB
+                    - WEBAUTHN
+                  default: CREDENTIALS
+                personal_access_tokens:
+                  type: array
+                  items:
+                    type: string
+                tfa_settings:
+                  type: array
+                  items:
+                    type: string
+                setting:
+                  type: string
+                email_verification_tokens:
+                  type: array
+                  items:
+                    type: string
+                password_reset_tokens:
+                  type: array
+                  items:
+                    type: string
+                groups:
+                  type: array
+                  items:
+                    type: string
+                organizations:
+                  type: array
+                  items:
+                    type: string
+                webauthn:
+                  type: array
+                  items:
+                    type: string
+                group_memberships:
+                  type: array
+                  items:
+                    type: string
+                org_memberships:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - email
+                - first_name
+                - last_name
+                - display_name
+                - auth_provider
+                - setting
+        required: true
+      responses:
+        '200':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}:
+    get:
+      tags:
+        - User
+      summary: Find a User by ID
+      description: Finds the User with the requested ID and returns it.
+      operationId: readUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    delete:
+      tags:
+        - User
+      summary: Deletes a User by ID
+      description: Deletes the User with the requested ID.
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User with requested ID was deleted
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+    patch:
+      tags:
+        - User
+      summary: Updates a User
+      description: Updates a User and persists changes to storage.
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User properties to update
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                display_name:
+                  type: string
+                avatar_remote_url:
+                  type: string
+                avatar_local_file:
+                  type: string
+                avatar_updated_at:
+                  type: string
+                  format: date-time
+                auth_provider:
+                  type: string
+                  enum:
+                    - CREDENTIALS
+                    - GOOGLE
+                    - GITHUB
+                    - WEBAUTHN
+                  default: CREDENTIALS
+                personal_access_tokens:
+                  type: array
+                  items:
+                    type: string
+                tfa_settings:
+                  type: array
+                  items:
+                    type: string
+                setting:
+                  type: string
+                email_verification_tokens:
+                  type: array
+                  items:
+                    type: string
+                password_reset_tokens:
+                  type: array
+                  items:
+                    type: string
+                groups:
+                  type: array
+                  items:
+                    type: string
+                organizations:
+                  type: array
+                  items:
+                    type: string
+                webauthn:
+                  type: array
+                  items:
+                    type: string
+                group_memberships:
+                  type: array
+                  items:
+                    type: string
+                org_memberships:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}/group-memberships:
+    get:
+      tags:
+        - User
+      summary: List attached GroupMemberships
+      description: List attached GroupMemberships.
+      operationId: listUserGroupMemberships
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}/groups:
+    get:
+      tags:
+        - User
+      summary: List attached Groups
+      description: List attached Groups.
+      operationId: listUserGroups
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}/org-memberships:
+    get:
+      tags:
+        - User
+      summary: List attached OrgMemberships
+      description: List attached OrgMemberships.
+      operationId: listUserOrgMemberships
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrgMembership'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}/organizations:
+    get:
+      tags:
+        - User
+      summary: List attached Organizations
+      description: List attached Organizations.
+      operationId: listUserOrganizations
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Organization'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}/personal-access-tokens:
+    get:
+      tags:
+        - User
+      summary: List attached PersonalAccessTokens
+      description: List attached PersonalAccessTokens.
+      operationId: listUserPersonalAccessTokens
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonalAccessToken'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}/setting:
+    get:
+      tags:
+        - User
+      summary: Find the attached UserSetting
+      description: Find the attached UserSetting of the User with the given ID
+      operationId: readUserSetting
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: UserSetting attached to User with requested ID was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSetting'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+  /users/{id}/webauthn:
+    get:
+      tags:
+        - User
+      summary: List attached Webauthns
+      description: List attached Webauthns.
+      operationId: listUserWebauthn
+      parameters:
+        - name: id
+          in: path
+          description: ID of the User
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: what page to render
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: item count to render per page
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: result Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Webauthn'
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '409':
+          $ref: '#/components/responses/409'
+        '500':
+          $ref: '#/components/responses/500'
+      security:
+        - BearerAuth: []
+          OAuth2:
+            - email
+            - profile
+          OIDC: []
+components:
+  schemas:
+    ErrorReply:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          description: False if there is an error, true otherwise
+        error:
+          type: string
+          description: The error message with more detail about why the request failed
+    LoginReply:
+      type: object
+      required:
+        - access_token
+        - refresh_token
+      properties:
+        access_token:
+          type: string
+          description: >-
+            A JWT token signed by Datum that authenticates the user and contains
+            claims that authorize them
+        refresh_token:
+          type: string
+          description: >-
+            A JWT token signed by Datum that can be used to obtain a new
+            access/refresh token pair
+    EmailVerificationToken:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        owner:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+        - owner
+    Entitlement:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        tier:
+          type: string
+          enum:
+            - FREE
+            - PRO
+            - ENTERPRISE
+          default: FREE
+        external_customer_id:
+          type: string
+        external_subscription_id:
+          type: string
+        expires:
+          type: boolean
+        expires_at:
+          type: string
+          format: date-time
+        cancelled:
+          type: boolean
+        owner:
+          $ref: '#/components/schemas/Organization'
+      required:
+        - id
+        - tier
+        - expires
+        - cancelled
+        - owner
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        gravatar_logo_url:
+          type: string
+        logo_url:
+          type: string
+        display_name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Organization'
+        setting:
+          $ref: '#/components/schemas/GroupSetting'
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMembership'
+      required:
+        - id
+        - name
+        - display_name
+        - owner
+        - setting
+    GroupMembership:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - MEMBER
+          default: MEMBER
+        group_id:
+          type: string
+        user_id:
+          type: string
+        group:
+          $ref: '#/components/schemas/Group'
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+        - role
+        - group_id
+        - user_id
+        - group
+        - user
+    GroupSetting:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - PUBLIC
+            - PRIVATE
+          default: PUBLIC
+        join_policy:
+          type: string
+          enum:
+            - OPEN
+            - INVITE_ONLY
+            - APPLICATION_ONLY
+            - INVITE_OR_APPLICATION
+          default: INVITE_OR_APPLICATION
+        tags:
+          type: array
+          items:
+            type: string
+        sync_to_slack:
+          type: boolean
+        sync_to_github:
+          type: boolean
+        group_id:
+          type: string
+        group:
+          $ref: '#/components/schemas/Group'
+      required:
+        - id
+        - visibility
+        - join_policy
+    Integration:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        kind:
+          type: string
+        secret_name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Organization'
+      required:
+        - id
+        - name
+        - owner
+    Invite:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        expires:
+          type: string
+          format: date-time
+        recipient:
+          type: string
+        status:
+          type: string
+          enum:
+            - INVITATION_SENT
+            - APPROVAL_REQUIRED
+            - INVITATION_ACCEPTED
+            - INVITATION_EXPIRED
+          default: INVITATION_SENT
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - MEMBER
+            - OWNER
+          default: MEMBER
+        send_attempts:
+          type: integer
+        requestor_id:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Organization'
+      required:
+        - id
+        - recipient
+        - status
+        - role
+        - send_attempts
+        - requestor_id
+        - owner
+    OauthProvider:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        name:
+          type: string
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        redirect_url:
+          type: string
+        scopes:
+          type: string
+        auth_url:
+          type: string
+        token_url:
+          type: string
+        auth_style:
+          type: integer
+          format: int32
+          maximum: 255
+          minimum: 0
+        info_url:
+          type: string
+        owner:
+          $ref: '#/components/schemas/Organization'
+      required:
+        - id
+        - name
+        - client_id
+        - client_secret
+        - redirect_url
+        - scopes
+        - auth_url
+        - token_url
+        - auth_style
+        - info_url
+    OhAuthTooToken:
+      type: object
+      properties:
+        id:
+          type: string
+        client_id:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        nonce:
+          type: string
+        claims_user_id:
+          type: string
+        claims_username:
+          type: string
+        claims_email:
+          type: string
+        claims_email_verified:
+          type: boolean
+        claims_groups:
+          type: array
+          items:
+            type: string
+        claims_preferred_username:
+          type: string
+        connector_id:
+          type: string
+        connector_data:
+          type: array
+          items:
+            type: string
+        last_used:
+          type: string
+          format: date-time
+      required:
+        - id
+        - client_id
+        - nonce
+        - claims_user_id
+        - claims_username
+        - claims_email
+        - claims_email_verified
+        - claims_preferred_username
+        - connector_id
+        - last_used
+    OrgMembership:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        role:
+          type: string
+          enum:
+            - ADMIN
+            - MEMBER
+            - OWNER
+          default: MEMBER
+        organization_id:
+          type: string
+        user_id:
+          type: string
+        organization:
+          $ref: '#/components/schemas/Organization'
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+        - role
+        - organization_id
+        - user_id
+        - organization
+        - user
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        name:
+          type: string
+        display_name:
+          type: string
+        description:
+          type: string
+        parent_organization_id:
+          type: string
+        personal_org:
+          type: boolean
+        avatar_remote_url:
+          type: string
+        parent:
+          $ref: '#/components/schemas/Organization'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        integrations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Integration'
+        setting:
+          $ref: '#/components/schemas/OrganizationSetting'
+        entitlements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entitlement'
+        personal_access_tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonalAccessToken'
+        oauthprovider:
+          type: array
+          items:
+            $ref: '#/components/schemas/OauthProvider'
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        invites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invite'
+        subscribers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Subscriber'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgMembership'
+      required:
+        - id
+        - name
+        - display_name
+    OrganizationSetting:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        domains:
+          type: array
+          items:
+            type: string
+        billing_contact:
+          type: string
+        billing_email:
+          type: string
+        billing_phone:
+          type: string
+        billing_address:
+          type: string
+        tax_identifier:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        organization_id:
+          type: string
+        organization:
+          $ref: '#/components/schemas/Organization'
+      required:
+        - id
+    PasswordResetToken:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        owner:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+        - owner
+    PersonalAccessToken:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        name:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        last_used_at:
+          type: string
+          format: date-time
+        owner:
+          $ref: '#/components/schemas/User'
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+      required:
+        - id
+        - name
+        - owner
+    Subscriber:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+        verified_email:
+          type: boolean
+        verified_phone:
+          type: boolean
+        active:
+          type: boolean
+        ttl:
+          type: string
+          format: date-time
+        owner:
+          $ref: '#/components/schemas/Organization'
+      required:
+        - id
+        - email
+        - verified_email
+        - verified_phone
+        - active
+    TFASettings:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        verified:
+          type: boolean
+        totp_allowed:
+          type: boolean
+        owner:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+        - verified
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        display_name:
+          type: string
+        avatar_remote_url:
+          type: string
+        avatar_local_file:
+          type: string
+        avatar_updated_at:
+          type: string
+          format: date-time
+        last_seen:
+          type: string
+          format: date-time
+        auth_provider:
+          type: string
+          enum:
+            - CREDENTIALS
+            - GOOGLE
+            - GITHUB
+            - WEBAUTHN
+          default: CREDENTIALS
+        personal_access_tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonalAccessToken'
+        tfa_settings:
+          type: array
+          items:
+            $ref: '#/components/schemas/TFASettings'
+        setting:
+          $ref: '#/components/schemas/UserSetting'
+        email_verification_tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmailVerificationToken'
+        password_reset_tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/PasswordResetToken'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+        webauthn:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webauthn'
+        group_memberships:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMembership'
+        org_memberships:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgMembership'
+      required:
+        - id
+        - email
+        - first_name
+        - last_name
+        - display_name
+        - auth_provider
+        - setting
+    UserSetting:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        deleted_at:
+          type: string
+          format: date-time
+        deleted_by:
+          type: string
+        user_id:
+          type: string
+        locked:
+          type: boolean
+        silenced_at:
+          type: string
+          format: date-time
+        suspended_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - DEACTIVATED
+            - SUSPENDED
+          default: ACTIVE
+        email_confirmed:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        is_webauthn_allowed:
+          type: boolean
+        is_tfa_enabled:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/User'
+        default_org:
+          $ref: '#/components/schemas/Organization'
+      required:
+        - id
+        - locked
+        - status
+        - email_confirmed
+        - tags
+    Webauthn:
+      type: object
+      properties:
+        id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        created_by:
+          type: string
+        updated_by:
+          type: string
+        credential_id:
+          type: string
+          format: byte
+        public_key:
+          type: string
+          format: byte
+        attestation_type:
+          type: string
+        aaguid:
+          type: string
+          format: byte
+        sign_count:
+          type: integer
+          format: int32
+        transports:
+          type: array
+          items:
+            type: string
+        backup_eligible:
+          type: boolean
+        backup_state:
+          type: boolean
+        user_present:
+          type: boolean
+        user_verified:
+          type: boolean
+        owner:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+        - aaguid
+        - sign_count
+        - transports
+        - backup_eligible
+        - backup_state
+        - user_present
+        - user_verified
+        - owner
+  responses:
+    '400':
+      description: invalid input, data invalid
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              errors: {}
+            required:
+              - code
+              - status
+    '403':
+      description: insufficient permissions
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              errors: {}
+            required:
+              - code
+              - status
+    '404':
+      description: resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              errors: {}
+            required:
+              - code
+              - status
+    '409':
+      description: conflicting resources
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              errors: {}
+            required:
+              - code
+              - status
+    '500':
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              errors: {}
+            required:
+              - code
+              - status
+    Unauthorized:
+      description: User does not have permissions to perform request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorReply'
+    InvalidRequest:
+      description: Invalid request, user should repair the request and try again
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorReply'
+    InternalError:
+      description: Internal error, admins need to address the issue on the server
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorReply'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      description: Bearer Token Authentication
+      scheme: bearer
+      bearerFormat: JWT
+    OAuth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://api.datum.net/oauth2/authorize
+          scopes:
+            email: email
+            profile: profile
+    OIDC:
+      type: openIdConnect
+      openIdConnectUrl: https://api.datum.net/.well-known/openid-configuration

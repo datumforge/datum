@@ -17,6 +17,8 @@ paths:
     /ready:
         get:
             operationId: ready
+            tags: 
+                -  HealthCheck
             security:
                 - {}
             summary: Status Check
@@ -42,6 +44,8 @@ paths:
     /livez:
         get:
             operationId: livez
+            tags:
+                - HealthCheck
             security:
                 - {}
             summary: Server liveness check response
@@ -61,6 +65,8 @@ paths:
     /register:
         post:
             operationId: register
+            tags: 
+                -  Register
             security:
                 - {}
             summary: Register User
@@ -115,6 +121,8 @@ paths:
     /login:
         post:
             operationId: login
+            tags: 
+                -  Login
             security:
                 - {}
             summary: Login User
@@ -157,6 +165,8 @@ paths:
     /refresh:
         post:
             operationId: refresh
+            tags: 
+                -  Authentication
             security:
                 - {}
             summary: Refresh access token
@@ -200,10 +210,10 @@ paths:
     /forgot-password:
         post:
             operationId: forgot-password
+            tags: 
+                -  ForgotPassword
             security:
                 - {}
-            tags:
-                - passwords
             summary: Request a password reset
             description: Ability for a user to trigger a password re-set flow
             requestBody:
@@ -228,10 +238,10 @@ paths:
     /password-reset:
         post:
             operationId: password-reset
+            tags: 
+                -  PasswordReset
             security:
                 - {}
-            tags:
-                - passwords
             summary: Update a user's password
             description: Endpoint which will accept a Datum generated token in addition to a new password for a user
             requestBody:
@@ -264,10 +274,10 @@ paths:
     /verify:
         get:
             operationId: verify
+            tags: 
+                -  VerifyEmail
             security:
                 - {}
-            tags:
-                - verification
             summary: Verify email
             description: Verify a user's email by providing the secure token sent to the requesting email
             parameters:
@@ -290,10 +300,10 @@ paths:
     /resend:
         post:
             operationId: resend-email
+            tags:
+                - ResendVerificationEmail
             security:
                 - {}
-            tags:
-                - verification
             summary: Resend verification email
             description: Triggers a re-send of the email and token which can be used to re-set a users's password; invalidates previously generated tokens
             requestBody:
@@ -318,7 +328,7 @@ paths:
         post:
             operationId: invite
             tags:
-                - invitations
+                - Invite
             security:
                 - {}
             summary: Invite a user to Datum
@@ -381,16 +391,6 @@ paths:
                     $ref: "#/components/responses/InternalError"
 
 components:
-    securitySchemes:
-        openId:
-            type: openIdConnect
-            openIdConnectUrl: /.well-known/openid-configuration
-        BearerAuth:
-            type: http
-            scheme: bearer
-            description: Authorization header with Bearer JWT access token
-            bearerFormat: JWT
-
     schemas:
         ErrorReply:
             type: object
@@ -434,6 +434,3 @@ components:
                 application/json:
                     schema:
                         $ref: "#/components/schemas/ErrorReply"
-security:
-    - BearerAuth: []
-    - openId: []

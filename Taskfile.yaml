@@ -44,6 +44,7 @@ tasks:
     cmds:
       - go generate ./...
       - cp ./internal/ent/generated/openapi.json ./internal/httpserve/route
+      - cp ./internal/ent/generated/openapi.json ./pkg/utils/oas/redoc/openapi.json
 
   ## Go tasks
   go:lint:

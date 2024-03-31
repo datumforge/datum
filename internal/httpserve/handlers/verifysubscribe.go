@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
+	ph "github.com/posthog/posthog-go"
 	"github.com/samber/lo"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -80,6 +81,11 @@ func (h *Handler) VerifySubscriptionHandler(ctx echo.Context) error {
 			return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrUnableToVerifyEmail))
 		}
 	}
+
+	props := ph.NewProperties().
+		Set("email", entSubscriber.Email)
+
+	h.AnalyticsClient.Event("subscriber_verified", props)
 
 	out := &VerifySubscribeReply{
 		Reply:   rout.Reply{Success: true},

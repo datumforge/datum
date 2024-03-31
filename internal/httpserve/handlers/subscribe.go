@@ -8,6 +8,7 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -85,6 +86,11 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse("could not send subscriber email"))
 	}
 
+	props := ph.NewProperties().
+		Set("email", user.Email)
+
+	h.AnalyticsClient.Event("subscriber_created", props)
+
 	out := &SubscribeReply{
 		Reply:   rout.Reply{Success: true},
 		Message: "Thank you for subscribing. Please check your email and click on the super sweet verification link.",
@@ -115,6 +121,15 @@ func (h *Handler) sendSubscriberEmail(ctx context.Context, user *User, orgID str
 	); err != nil {
 		return err
 	}
+
+	props := ph.NewProperties().
+		Set("user_id", user.ID).
+		Set("email", user.Email).
+		Set("first_name", user.FirstName).
+		Set("last_name", user.LastName).
+		Set("organization_name", orgName)
+
+	h.AnalyticsClient.Event("email_verification_sent", props)
 
 	return nil
 }

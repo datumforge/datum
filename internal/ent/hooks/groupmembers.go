@@ -52,7 +52,7 @@ func HookGroupMembers() ent.Hook {
 				Set("user_id", userID).
 				Set("role", role)
 
-			mutation.Analytics.Handler.GroupEvent(groupID, userID, "group_membership", props)
+			mutation.Analytics.Event("group_membership", props)
 
 			return next.Mutate(ctx, mutation)
 		})

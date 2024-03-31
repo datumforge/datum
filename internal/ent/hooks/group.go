@@ -8,7 +8,6 @@ import (
 	"entgo.io/ent"
 	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
-	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -119,18 +118,6 @@ func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupM
 		return err
 	}
 
-	orgID, ok := m.OwnerID()
-	if !ok {
-		m.Logger.Errorw("unable to get org id from mutation, unable to add user to group")
-		return ErrInternalServerError
-	}
-
-	groupName, ok := m.Name()
-	if !ok {
-		m.Logger.Errorw("unable to get group name from mutation, unable to add user to group")
-		return ErrInternalServerError
-	}
-
 	// Add user as admin of group
 	input := generated.CreateGroupMembershipInput{
 		UserID:  userID,
@@ -143,15 +130,6 @@ func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupM
 
 		return err
 	}
-
-	props := ph.NewProperties().
-		Set("group_name", groupName).
-		Set("group_id", input.GroupID).
-		Set("organization_id", orgID).
-		Set("group_owner", userID)
-
-	m.Analytics.OrganizationEvent(orgID, userID, "group_created", props)
-	m.Analytics.NewGroup(input.GroupID, props)
 
 	return nil
 }

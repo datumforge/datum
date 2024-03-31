@@ -103,7 +103,8 @@ func HookUser() ent.Hook {
 					Set("user_id", userCreated.ID).
 					Set("email", userCreated.Email)
 
-				mutation.Analytics.NewUser(userCreated.ID, props)
+				mutation.Analytics.Event("user_created", props)
+				mutation.Analytics.UserProperties(userCreated.ID, props)
 			}
 
 			return userCreated, err

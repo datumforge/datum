@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
@@ -75,6 +76,24 @@ func HookInvite() ent.Hook {
 			if err := createInviteToSend(ctx, m); err != nil {
 				m.Logger.Errorw("error sending email to user", "error", err)
 			}
+
+			orgID, _ := m.OwnerID()
+			org, _ := m.Client().Organization.Query().Where(organization.ID(orgID)).Only(ctx)
+			reqID, _ := m.RequestorID()
+			requestor, _ := m.Client().User.Query().Where(user.ID(reqID)).Only(ctx)
+			email, _ := m.Recipient()
+			role, _ := m.Role()
+
+			props := ph.NewProperties().
+				Set("organization_id", orgID).
+				Set("organization_name", org.Name).
+				Set("requestor_id", reqID).
+				Set("requestor_name", requestor.FirstName).
+				Set("requestor_email", requestor.Email).
+				Set("recipient_email", email).
+				Set("recipient_role", role)
+
+			m.Analytics.Event("organization_invite_created", props)
 
 			return retValue, err
 		})
@@ -152,6 +171,14 @@ func HookInviteAccepted() ent.Hook {
 				Recipient: recipient,
 				Role:      string(role),
 			}
+
+			props := ph.NewProperties().
+				Set("organization_id", org.ID).
+				Set("organization_name", org.Name).
+				Set("acceptor_email", recipient).
+				Set("acceptor_id", userID)
+
+			m.Analytics.Event("organization_invite_accepted", props)
 
 			// send an email to recipient notifying them they've been added to a datum organization
 			if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
@@ -260,17 +287,6 @@ func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error 
 		Recipient: email,
 		Role:      string(role),
 	}
-
-	props := ph.NewProperties().
-		Set("organization_id", orgID).
-		Set("organization_name", org.Name).
-		Set("requestor_id", reqID).
-		Set("requestor_name", requestor.FirstName).
-		Set("requestor_email", requestor.Email).
-		Set("recipient_email", email).
-		Set("recipient_role", role)
-
-	m.Analytics.OrganizationEvent(orgID, reqID, "organization_invite", props)
 
 	if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 		return sendOrgInvitationEmail(ctx, m, invite)

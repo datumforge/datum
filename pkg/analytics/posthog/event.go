@@ -67,9 +67,10 @@ func (p *PostHog) UserEvent(userID, eventName string, properties posthog.Propert
 
 // AssociateUser function is used to associate a user with an organization in PostHog
 func (p *PostHog) AssociateUser(userID string, organizationID string) {
-	_ = p.client.Enqueue(posthog.Capture{
-		DistinctId: userID,
-		Event:      "authentication",
+	_ = p.client.Enqueue(posthog.GroupIdentify{
+		DistinctId: organizationID,
+		Type:       "user",
+		Key:        userID,
 		Timestamp:  time.Now(),
 		Properties: map[string]interface{}{
 			"$set": map[string]interface{}{

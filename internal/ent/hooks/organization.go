@@ -65,9 +65,10 @@ func HookOrganization() ent.Hook {
 				}
 
 				props := ph.NewProperties().
-					Set("organization_name", orgCreated.Name)
+					Set("organization_name", orgCreated.Name).
+					Set("organization_id", orgCreated.ID)
 
-				mutation.Analytics.NewOrganization(orgCreated.ID, orgCreated.CreatedBy, props)
+				mutation.Analytics.Event("organization_created", props)
 				mutation.Analytics.OrganizationProperties(orgCreated.ID, props)
 			}
 

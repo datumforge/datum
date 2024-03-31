@@ -5,6 +5,7 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
+	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -70,7 +71,13 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	h.AnalyticsClient.AssociateUser(user.ID, claims.OrgID)
+	props := ph.NewProperties().
+		Set("user_id", user.ID).
+		Set("email", user.Email).
+		Set("organization_id", claims.OrgID)
+
+	h.AnalyticsClient.Event("user_authenticated", props)
+	h.AnalyticsClient.UserProperties(user.ID, props)
 
 	out := LoginReply{
 		Reply:        rout.Reply{Success: true},

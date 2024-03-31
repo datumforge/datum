@@ -123,8 +123,8 @@ github.com/datumforge/entx v0.0.8 h1:qTlvWRxnoZwXMX2mf1NHvSASVqWZYzs7tgBnY1u6j0s
 github.com/datumforge/entx v0.0.8/go.mod h1:7eiomY5fsbc8HzO+pbydDaMUftV0PqMftUZ0BziuhJc=
 github.com/datumforge/fgax v0.1.5 h1:cU7MTw+/7STl6KUBACfvvuPO5gbPLW7P4RlYXGLfxgw=
 github.com/datumforge/fgax v0.1.5/go.mod h1:hOcVFfzYI7jI3jQu1KV+iEZzTJ5YzPbv5ptKlb9Vjf0=
-github.com/datumforge/geodetic v0.0.0-20240329223921-f59b0cb530f2 h1:wi+nj3yiZfqfjVXKn7EtYJAtTxXk7ab8fVcX2poHuYo=
-github.com/datumforge/geodetic v0.0.0-20240329223921-f59b0cb530f2/go.mod h1:UM347gK6Cps3oWw3XfpyYf7YJT+6UwVZRMjvv8i+0PM=
+github.com/datumforge/geodetic v0.0.0-20240331161757-fbe8d04c2ac4 h1:/+Il8qFVHhIlG0/8gBWZxocc4fsx8C/oZDslAcLidsY=
+github.com/datumforge/geodetic v0.0.0-20240331161757-fbe8d04c2ac4/go.mod h1:UM347gK6Cps3oWw3XfpyYf7YJT+6UwVZRMjvv8i+0PM=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=

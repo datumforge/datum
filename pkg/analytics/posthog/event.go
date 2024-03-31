@@ -92,6 +92,18 @@ func (p *PostHog) OrganizationEvent(organizationID, userID, eventName string, pr
 	})
 }
 
+// GroupEvent creates an event associated with the group, where the eventName can be passed in generically and associated with the group ID if provided
+func (p *PostHog) GroupEvent(groupID, userID, eventName string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.Capture{
+		DistinctId: userID,
+		Event:      eventName,
+		Timestamp:  time.Now(),
+		Properties: properties,
+		Groups: posthog.NewGroups().
+			Set("group", groupID),
+	})
+}
+
 // NewOrganization uses the NewGroups reference to create a new organization in the organization groups category, and also sets attributes for the organization
 func (p *PostHog) NewOrganization(organizationID, userID string, properties posthog.Properties) {
 	// this event is creating the organization and associating it with our internal organization ID
@@ -140,6 +152,17 @@ func (p *PostHog) NewUser(userID string, properties posthog.Properties) {
 		Timestamp:  time.Now(),
 		Groups: posthog.NewGroups().
 			Set("user", userID),
+	})
+}
+
+// NewGroup maps the groupID to the group group
+func (p *PostHog) NewGroup(groupID string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.Capture{
+		DistinctId: groupID,
+		Event:      "group_created",
+		Timestamp:  time.Now(),
+		Groups: posthog.NewGroups().
+			Set("group", groupID),
 	})
 }
 

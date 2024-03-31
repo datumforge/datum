@@ -5,6 +5,8 @@ import (
 
 	"entgo.io/ent"
 
+	ph "github.com/posthog/posthog-go"
+
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -258,6 +260,17 @@ func createInviteToSend(ctx context.Context, m *generated.InviteMutation) error 
 		Recipient: email,
 		Role:      string(role),
 	}
+
+	props := ph.NewProperties().
+		Set("organization_id", orgID).
+		Set("organization_name", org.Name).
+		Set("requestor_id", reqID).
+		Set("requestor_name", requestor.FirstName).
+		Set("requestor_email", requestor.Email).
+		Set("recipient_email", email).
+		Set("recipient_role", role)
+
+	m.Analytics.OrganizationEvent(orgID, reqID, "organization_invite", props)
 
 	if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 		return sendOrgInvitationEmail(ctx, m, invite)

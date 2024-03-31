@@ -86,10 +86,8 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		registerLivenessHandler,
 		registerOpenAPISpecHandler,
 		registerMetricsHandler,
-		registerSwaggerStatic,
 		registerSecurityTxtHandler,
 		registerRobotsHandler,
-		registerRedocHandler,
 	}
 
 	for _, route := range additionalHandlers {

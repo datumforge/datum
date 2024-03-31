@@ -15,6 +15,10 @@ includes:
     taskfile: ./db
     dir: ./db
     aliases: [atlas]
+  oas: 
+    taskfile: ./pkg/utils/oas
+    dir: ./pkg/utils/oas
+    aliases: [oas]
   config: 
     taskfile: ./jsonschema
 
@@ -29,6 +33,7 @@ tasks:
     desc: installs tools and packages needed to develop against the datum repo
     cmds:
       - "brew install gomplate"
+      - "brew install daveshanley/vacuum/vacuum"
       - "go install entgo.io/ent/cmd/ent@latest"
       - "go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57.1"
       - "curl -sSf https://atlasgo.sh | sh"
@@ -43,8 +48,7 @@ tasks:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc. 
     cmds:
       - go generate ./...
-      - cp ./internal/ent/generated/openapi.json ./internal/httpserve/route
-      - cp ./internal/ent/generated/openapi.json ./pkg/utils/oas/redoc/openapi.json
+      - cp ./internal/ent/generated/openapi.json ./pkg/utils/oas/specifications/openapi.json
 
   ## Go tasks
   go:lint:

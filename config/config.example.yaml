@@ -38,6 +38,7 @@ authz:
     createNewModel: false
     enabled: true
     hostUrl: https://authz.datum.net
+    modelFile: fga/model/datum.fga
     modelId: ""
     storeId: ""
     storeName: datum

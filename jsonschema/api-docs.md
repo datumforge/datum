@@ -328,6 +328,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**storeId**|`string`|id of openFGA store<br/>|no|
 |**modelId**|`string`|id of openFGA model<br/>|no|
 |**createNewModel**|`boolean`|force create a new model<br/>|no|
+|**modelFile**|`string`|path to the fga model file<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="db"></a>

@@ -81,6 +81,7 @@ data:
   DATUM_AUTHZ_STOREID: {{ .Values.datum.authz.storeId }}
   DATUM_AUTHZ_MODELID: {{ .Values.datum.authz.modelId }}
   DATUM_AUTHZ_CREATENEWMODEL: {{ .Values.datum.authz.createNewModel | false }}
+  DATUM_AUTHZ_MODELFILE: {{ .Values.datum.authz.modelFile | "fga/model/datum.fga" }}
   DATUM_DB_DEBUG: {{ .Values.datum.db.debug | false }}
   DATUM_DB_DATABASENAME: {{ .Values.datum.db.databaseName | "datum" }}
   DATUM_DB_DRIVERNAME: {{ .Values.datum.db.driverName | "libsql" }}

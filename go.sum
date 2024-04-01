@@ -110,8 +110,8 @@ github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PB
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
 github.com/datumforge/entx v0.0.7 h1:G5DEJIa9X434OPiHRaoDEWADei+XrWD5LjeqFXDXqVk=
 github.com/datumforge/entx v0.0.7/go.mod h1:zAdGGTOdOdr5EVdaB/JMO2EqqEk5K/9DEeaCJFAVABo=
-github.com/datumforge/fgax v0.1.4 h1:LKx63TQXXFbx2ULdMUz2wkdMQTePix0yWc0Lxc84EqI=
-github.com/datumforge/fgax v0.1.4/go.mod h1:UWf84kM2Tu/H2G8/IPRwMMMhwZOWYN7UQ39z+F2Lb8s=
+github.com/datumforge/fgax v0.1.5 h1:cU7MTw+/7STl6KUBACfvvuPO5gbPLW7P4RlYXGLfxgw=
+github.com/datumforge/fgax v0.1.5/go.mod h1:hOcVFfzYI7jI3jQu1KV+iEZzTJ5YzPbv5ptKlb9Vjf0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
@@ -424,8 +424,8 @@ github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee h1:ZqeLB0dxo4XgR
 github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee/go.mod h1:XF/4W9je/FGBZQ2M5pbQnrzdKF4VcEEtds3ole9sW5E=
 github.com/openfga/go-sdk v0.3.5 h1:KQXhMREh+g/K7HNuZ/YmXuHkREkq0VMKteua4bYr3Uw=
 github.com/openfga/go-sdk v0.3.5/go.mod h1:u1iErzj5E9/bhe+8nsMv0gigcYbJtImcdgcE5DmpbBg=
-github.com/openfga/language/pkg/go v0.0.0-20240317082346-05173c4e8833 h1:TxdUMvsd4YbBGGwPBQtnlxrKDEsH7ETUntw5/GtVoUQ=
-github.com/openfga/language/pkg/go v0.0.0-20240317082346-05173c4e8833/go.mod h1:uuXSPj7C3ImG5UF3rAupq+aC8mZQ3pbR52GRU/DXjLU=
+github.com/openfga/language/pkg/go v0.0.0-20240328133052-aabba86a664b h1:u741ckN7yfFib1uAMtkTaFYYIx761GmMf18Ou87pnOs=
+github.com/openfga/language/pkg/go v0.0.0-20240328133052-aabba86a664b/go.mod h1:uuXSPj7C3ImG5UF3rAupq+aC8mZQ3pbR52GRU/DXjLU=
 github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 github.com/pelletier/go-toml/v2 v2.1.1 h1:LWAJwfNvjQZCFIDKWYQaM62NcYeYViCmWIwmOStowAI=
 github.com/pelletier/go-toml/v2 v2.1.1/go.mod h1:tJU2Z3ZkXwnxa4DPO899bsyIoywizdUvyaeZurnPPDc=
@@ -537,8 +537,8 @@ github.com/tklauser/numcpus v0.6.1 h1:ng9scYS7az0Bk4OZLvrNXNSAO2Pxr1XXRAPyjhIx+F
 github.com/tklauser/numcpus v0.6.1/go.mod h1:1XfjsgE2zo8GVw7POkMbHENHzVg3GzmoZ9fESEdAacY=
 github.com/trisacrypto/directory v1.7.6 h1:SOa1uynpHgcENjZwvVtkfp6qjyvCZBs/X9C0T3nQ0LA=
 github.com/trisacrypto/directory v1.7.6/go.mod h1:JSIMzr3J79h3+Y+17ghtvsb0hUEHzo+islfpecrQfpk=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240327144008-dd14b387afb3 h1:L2TGdqNA/1NwZxK98jUZk+lZP0fX8ydAcBpVRNufahg=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240327144008-dd14b387afb3/go.mod h1:2Fu26tjM011BLeR5+jwTfs6DX/fNMEWV/3CBZvggrA4=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240401075953-8e79a99d828a h1:LMz5RmEKz1epPZgUO3MtA5/X9Peudqm4rUoteSjLkho=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240401075953-8e79a99d828a/go.mod h1:2Fu26tjM011BLeR5+jwTfs6DX/fNMEWV/3CBZvggrA4=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.2.11 h1:BMaWp1Bb6fHwEtbplGBGJ498wD+LKlNSl25MjdZY4dU=

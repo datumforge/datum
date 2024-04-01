@@ -27,7 +27,7 @@ type RegisterRequest struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
-	Password  string `json:"password,omitempty"`
+	Password  string `json:"password"`
 }
 
 // RegisterReply holds the fields that are sent on a response to the `/register` endpoint

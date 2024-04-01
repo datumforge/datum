@@ -85,7 +85,14 @@ func (UserSetting) Fields() []ent.Field {
 // Edges of the UserSetting
 func (UserSetting) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("setting").Unique().Field("user_id"),
+		edge.From("user", User.Type).Ref("setting").Unique().Field("user_id").Annotations(
+			entoas.Skip(true),
+			entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+			entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		),
 		edge.To("default_org", Organization.Type).
 			Unique().
 			Comment("organization to load on user login"),
@@ -98,6 +105,12 @@ func (UserSetting) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entoas.Skip(true),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 	}
 }
 

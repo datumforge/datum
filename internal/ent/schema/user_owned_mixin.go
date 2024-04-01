@@ -25,7 +25,7 @@ type UserOwnedMixin struct {
 // Fields of the UserOwnedMixin
 func (userOwned UserOwnedMixin) Fields() []ent.Field {
 	ownerIDField := field.String("owner_id").Annotations(
-		entgql.Skip(),
+		entgql.Skip(), entoas.Skip(true),
 	)
 
 	if userOwned.Optional {
@@ -47,6 +47,7 @@ func (userOwned UserOwnedMixin) Edges() []ent.Edge {
 		From("owner", User.Type).
 		Field("owner_id").
 		Ref(userOwned.Ref).
+		Annotations(entoas.Skip(true)).
 		Unique()
 
 	if !userOwned.Optional {
@@ -62,6 +63,7 @@ func (userOwned UserOwnedMixin) Edges() []ent.Edge {
 
 	if userOwned.SkipOASGeneration {
 		ownerEdge.Annotations(
+			entoas.Skip(true),
 			entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 			entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),

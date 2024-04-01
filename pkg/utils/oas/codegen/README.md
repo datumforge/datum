@@ -8,11 +8,4 @@ Eventually we may be able to use `ast`, `packages`, and other walking methods to
 
 ## TO DO 
 
-As you may be able to see from the `mitb.gen.yaml` file, the current setup is only composing `Components`, and the objects underneath it. The main remaining body of work is:
-
-- Compose full `Operations` as a rollup of Requests, Responses, etc.
-- Add methods to `range` over the registered routes and map them to `PathItems` which relate to `Operations`
-- Add meethods to properly merge both json and yaml specifications
-- Append the security method(s) to each operation
 - Add examples to all `Components` and associated
-- Add basic validations (e.g. every operation must have at least 1 4XX response)

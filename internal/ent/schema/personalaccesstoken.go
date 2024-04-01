@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -34,6 +35,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 			Immutable().
 			Annotations(
 				entgql.Skip(^entgql.SkipType),
+				entoas.Skip(true),
 			).
 			DefaultFunc(func() string {
 				token := keygen.PrefixedSecret("dtm") // datum token prefix
@@ -65,6 +67,7 @@ func (PersonalAccessToken) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("organizations", Organization.Type).
 			Ref("personal_access_tokens").
+			Annotations(entoas.Skip(true)).
 			Comment("the organization(s) the token is associated with"),
 	}
 }

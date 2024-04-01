@@ -69,7 +69,45 @@ func main() {
 			})
 			spec.Info.SetTermsOfService("https://datum.net/tos")
 
-			ogen.NewSchema()
+			bearerSecurity := ogen.SecurityScheme{
+				Type:         "http",
+				Scheme:       "bearer",
+				Description:  "Bearer Token Authentication",
+				BearerFormat: "JWT",
+			}
+
+			oauth2Security := ogen.SecurityScheme{
+				Type: "oauth2",
+				Flows: &ogen.OAuthFlows{
+					Implicit: &ogen.OAuthFlow{
+						AuthorizationURL: "https://api.datum.net/oauth2/authorize",
+						Scopes: map[string]string{
+							"email":   "email",
+							"profile": "profile",
+						},
+					},
+				},
+			}
+
+			oidcSecurity := ogen.SecurityScheme{
+				Type:             "openIdConnect",
+				OpenIDConnectURL: "https://api.datum.net/.well-known/openid-configuration",
+			}
+
+			spec.Components.SecuritySchemes = map[string]*ogen.SecurityScheme{
+				"BearerAuth": &bearerSecurity,
+				"OAuth2":     &oauth2Security,
+				"OIDC":       &oidcSecurity,
+			}
+
+			security := ogen.SecurityRequirement{
+				"OAuth2":     {"email", "profile"},
+				"BearerAuth": {},
+				"OIDC":       {},
+			}
+
+			spec.Security = append(spec.Security, security)
+
 			return nil
 		}),
 	)

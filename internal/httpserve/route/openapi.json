@@ -97,9 +97,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -130,7 +127,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "tier",
                   "expires",
                   "cancelled",
@@ -269,9 +265,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -745,319 +738,6 @@
         }
       }
     },
-    "/group-settings": {
-      "get": {
-        "tags": [
-          "GroupSetting"
-        ],
-        "summary": "List GroupSettings",
-        "description": "List GroupSettings.",
-        "operationId": "listGroupSetting",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result GroupSetting list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/GroupSetting"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "GroupSetting"
-        ],
-        "summary": "Create a new GroupSetting",
-        "description": "Creates a new GroupSetting and persists it to storage.",
-        "operationId": "createGroupSetting",
-        "requestBody": {
-          "description": "GroupSetting to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "visibility": {
-                    "type": "string",
-                    "enum": [
-                      "PUBLIC",
-                      "PRIVATE"
-                    ],
-                    "default": "PUBLIC"
-                  },
-                  "join_policy": {
-                    "type": "string",
-                    "enum": [
-                      "OPEN",
-                      "INVITE_ONLY",
-                      "APPLICATION_ONLY",
-                      "INVITE_OR_APPLICATION"
-                    ],
-                    "default": "INVITE_OR_APPLICATION"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "sync_to_slack": {
-                    "type": "boolean"
-                  },
-                  "sync_to_github": {
-                    "type": "boolean"
-                  },
-                  "group_id": {
-                    "type": "string"
-                  },
-                  "group": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "visibility",
-                  "join_policy"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "GroupSetting created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/group-settings/{id}": {
-      "get": {
-        "tags": [
-          "GroupSetting"
-        ],
-        "summary": "Find a GroupSetting by ID",
-        "description": "Finds the GroupSetting with the requested ID and returns it.",
-        "operationId": "readGroupSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the GroupSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "GroupSetting with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "GroupSetting"
-        ],
-        "summary": "Deletes a GroupSetting by ID",
-        "description": "Deletes the GroupSetting with the requested ID.",
-        "operationId": "deleteGroupSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the GroupSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "GroupSetting with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "GroupSetting"
-        ],
-        "summary": "Updates a GroupSetting",
-        "description": "Updates a GroupSetting and persists changes to storage.",
-        "operationId": "updateGroupSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the GroupSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "GroupSetting properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "visibility": {
-                    "type": "string",
-                    "enum": [
-                      "PUBLIC",
-                      "PRIVATE"
-                    ],
-                    "default": "PUBLIC"
-                  },
-                  "join_policy": {
-                    "type": "string",
-                    "enum": [
-                      "OPEN",
-                      "INVITE_ONLY",
-                      "APPLICATION_ONLY",
-                      "INVITE_OR_APPLICATION"
-                    ],
-                    "default": "INVITE_OR_APPLICATION"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "sync_to_slack": {
-                    "type": "boolean"
-                  },
-                  "sync_to_github": {
-                    "type": "boolean"
-                  },
-                  "group_id": {
-                    "type": "string"
-                  },
-                  "group": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "GroupSetting updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/group-settings/{id}/group": {
       "get": {
         "tags": [
@@ -1174,9 +854,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -1212,7 +889,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "name",
                   "display_name",
                   "owner",
@@ -1351,9 +1027,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -1708,9 +1381,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -1728,7 +1398,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "name",
                   "owner"
                 ]
@@ -1865,9 +1534,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -2028,9 +1694,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "recipient": {
                     "type": "string"
                   },
@@ -2048,7 +1711,6 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "recipient",
                   "role",
                   "owner"
@@ -2186,9 +1848,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "recipient": {
                     "type": "string"
                   },
@@ -3331,309 +2990,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/organization-settings": {
-      "get": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "List OrganizationSettings",
-        "description": "List OrganizationSettings.",
-        "operationId": "listOrganizationSetting",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result OrganizationSetting list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OrganizationSetting"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Create a new OrganizationSetting",
-        "description": "Creates a new OrganizationSetting and persists it to storage.",
-        "operationId": "createOrganizationSetting",
-        "requestBody": {
-          "description": "OrganizationSetting to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "domains": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "billing_contact": {
-                    "type": "string"
-                  },
-                  "billing_email": {
-                    "type": "string"
-                  },
-                  "billing_phone": {
-                    "type": "string"
-                  },
-                  "billing_address": {
-                    "type": "string"
-                  },
-                  "tax_identifier": {
-                    "type": "string"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "organization": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OrganizationSetting created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/organization-settings/{id}": {
-      "get": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Find a OrganizationSetting by ID",
-        "description": "Finds the OrganizationSetting with the requested ID and returns it.",
-        "operationId": "readOrganizationSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the OrganizationSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OrganizationSetting with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Deletes a OrganizationSetting by ID",
-        "description": "Deletes the OrganizationSetting with the requested ID.",
-        "operationId": "deleteOrganizationSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the OrganizationSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "OrganizationSetting with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "OrganizationSetting"
-        ],
-        "summary": "Updates a OrganizationSetting",
-        "description": "Updates a OrganizationSetting and persists changes to storage.",
-        "operationId": "updateOrganizationSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the OrganizationSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "OrganizationSetting properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "domains": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "billing_contact": {
-                    "type": "string"
-                  },
-                  "billing_email": {
-                    "type": "string"
-                  },
-                  "billing_phone": {
-                    "type": "string"
-                  },
-                  "billing_address": {
-                    "type": "string"
-                  },
-                  "tax_identifier": {
-                    "type": "string"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "organization": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OrganizationSetting updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrganizationSetting"
                 }
               }
             }
@@ -4902,13 +4258,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
-                    "type": "string"
-                  },
-                  "token": {
                     "type": "string"
                   },
                   "expires_at": {
@@ -4939,9 +4289,7 @@
                   }
                 },
                 "required": [
-                  "owner_id",
                   "name",
-                  "token",
                   "expires_at",
                   "owner"
                 ]
@@ -5078,9 +4426,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -5307,6 +4652,77 @@
             "$ref": "#/components/responses/500"
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Subscriber"
+        ],
+        "summary": "Create a new Subscriber",
+        "description": "Creates a new Subscriber and persists it to storage.",
+        "operationId": "createSubscriber",
+        "requestBody": {
+          "description": "Subscriber to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "verified_email": {
+                    "type": "boolean"
+                  },
+                  "verified_phone": {
+                    "type": "boolean"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "verified_email",
+                  "verified_phone",
+                  "active",
+                  "ttl"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Subscriber created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscriber"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
       }
     },
     "/subscribers/{id}": {
@@ -5331,6 +4747,120 @@
         "responses": {
           "200": {
             "description": "Subscriber with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscriber"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Subscriber"
+        ],
+        "summary": "Deletes a Subscriber by ID",
+        "description": "Deletes the Subscriber with the requested ID.",
+        "operationId": "deleteSubscriber",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscriber",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Subscriber with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Subscriber"
+        ],
+        "summary": "Updates a Subscriber",
+        "description": "Updates a Subscriber and persists changes to storage.",
+        "operationId": "updateSubscriber",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Subscriber",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Subscriber properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "verified_email": {
+                    "type": "boolean"
+                  },
+                  "verified_phone": {
+                    "type": "boolean"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Subscriber updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -5399,234 +4929,6 @@
         }
       }
     },
-    "/tfa-settings": {
-      "get": {
-        "tags": [
-          "TFASettings"
-        ],
-        "summary": "List TFASettings",
-        "description": "List TFASettings.",
-        "operationId": "listTFASettings",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result TFASettings list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TFASettings"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "TFASettings"
-        ],
-        "summary": "Create a new TFASettings",
-        "description": "Creates a new TFASettings and persists it to storage.",
-        "operationId": "createTFASettings",
-        "requestBody": {
-          "description": "TFASettings to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
-                  "verified": {
-                    "type": "boolean"
-                  },
-                  "totp_allowed": {
-                    "type": "boolean"
-                  },
-                  "owner": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "verified"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "TFASettings created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TFASettings"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/tfa-settings/{id}": {
-      "get": {
-        "tags": [
-          "TFASettings"
-        ],
-        "summary": "Find a TFASettings by ID",
-        "description": "Finds the TFASettings with the requested ID and returns it.",
-        "operationId": "readTFASettings",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the TFASettings",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "TFASettings with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TFASettings"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "TFASettings"
-        ],
-        "summary": "Updates a TFASettings",
-        "description": "Updates a TFASettings and persists changes to storage.",
-        "operationId": "updateTFASettings",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the TFASettings",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "TFASettings properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "owner_id": {
-                    "type": "string"
-                  },
-                  "verified": {
-                    "type": "boolean"
-                  },
-                  "totp_allowed": {
-                    "type": "boolean"
-                  },
-                  "owner": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "TFASettings updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TFASettings"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/tfa-settings/{id}/owner": {
       "get": {
         "tags": [
@@ -5672,324 +4974,6 @@
         }
       }
     },
-    "/user-settings": {
-      "get": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "List UserSettings",
-        "description": "List UserSettings.",
-        "operationId": "listUserSetting",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result UserSetting list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserSetting"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Create a new UserSetting",
-        "description": "Creates a new UserSetting and persists it to storage.",
-        "operationId": "createUserSetting",
-        "requestBody": {
-          "description": "UserSetting to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "locked": {
-                    "type": "boolean"
-                  },
-                  "silenced_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "ACTIVE",
-                      "INACTIVE",
-                      "DEACTIVATED",
-                      "SUSPENDED"
-                    ],
-                    "default": "ACTIVE"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "is_webauthn_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_tfa_enabled": {
-                    "type": "boolean"
-                  },
-                  "user": {
-                    "type": "string"
-                  },
-                  "default_org": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "locked",
-                  "status",
-                  "tags"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "UserSetting created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/user-settings/{id}": {
-      "get": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Find a UserSetting by ID",
-        "description": "Finds the UserSetting with the requested ID and returns it.",
-        "operationId": "readUserSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the UserSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "UserSetting with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Deletes a UserSetting by ID",
-        "description": "Deletes the UserSetting with the requested ID.",
-        "operationId": "deleteUserSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the UserSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "UserSetting with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Updates a UserSetting",
-        "description": "Updates a UserSetting and persists changes to storage.",
-        "operationId": "updateUserSetting",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the UserSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "UserSetting properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "locked": {
-                    "type": "boolean"
-                  },
-                  "silenced_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "ACTIVE",
-                      "INACTIVE",
-                      "DEACTIVATED",
-                      "SUSPENDED"
-                    ],
-                    "default": "ACTIVE"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "is_webauthn_allowed": {
-                    "type": "boolean"
-                  },
-                  "is_tfa_enabled": {
-                    "type": "boolean"
-                  },
-                  "user": {
-                    "type": "string"
-                  },
-                  "default_org": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "UserSetting updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSetting"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/user-settings/{id}/default-org": {
       "get": {
         "tags": [
@@ -6016,51 +5000,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Organization"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/user-settings/{id}/user": {
-      "get": {
-        "tags": [
-          "UserSetting"
-        ],
-        "summary": "Find the attached User",
-        "description": "Find the attached User of the UserSetting with the given ID",
-        "operationId": "readUserSettingUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the UserSetting",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User attached to UserSetting with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
                 }
               }
             }
@@ -6503,70 +5442,6 @@
         }
       }
     },
-    "/users/{id}/email-verification-tokens": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "List attached EmailVerificationTokens",
-        "description": "List attached EmailVerificationTokens.",
-        "operationId": "listUserEmailVerificationTokens",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the User",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Users list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EmailVerificationToken"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/users/{id}/group-memberships": {
       "get": {
         "tags": [
@@ -6803,70 +5678,6 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Organization"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/users/{id}/password-reset-tokens": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "List attached PasswordResetTokens",
-        "description": "List attached PasswordResetTokens.",
-        "operationId": "listUserPasswordResetTokens",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the User",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Users list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PasswordResetToken"
                   }
                 }
               }
@@ -7154,32 +5965,12 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "email": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
-          },
           "owner": {
             "$ref": "#/components/schemas/User"
           }
         },
         "required": [
           "id",
-          "owner_id",
-          "token",
-          "email",
           "owner"
         ]
       },
@@ -7208,9 +5999,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "tier": {
@@ -7244,7 +6032,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "tier",
           "expires",
           "cancelled",
@@ -7276,9 +6063,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "name": {
@@ -7317,7 +6101,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "name",
           "display_name",
           "owner",
@@ -7478,9 +6261,6 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
           "name": {
             "type": "string"
           },
@@ -7499,7 +6279,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "name",
           "owner"
         ]
@@ -7529,9 +6308,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "expires": {
@@ -7572,7 +6348,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "recipient",
           "status",
           "role",
@@ -7989,32 +6764,12 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "email": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
-          },
           "owner": {
             "$ref": "#/components/schemas/User"
           }
         },
         "required": [
           "id",
-          "owner_id",
-          "token",
-          "email",
           "owner"
         ]
       },
@@ -8045,13 +6800,7 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
           "name": {
-            "type": "string"
-          },
-          "token": {
             "type": "string"
           },
           "expires_at": {
@@ -8083,9 +6832,7 @@
         },
         "required": [
           "id",
-          "owner_id",
           "name",
-          "token",
           "owner"
         ]
       },
@@ -8116,9 +6863,6 @@
           "deleted_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
           "email": {
             "type": "string"
           },
@@ -8134,16 +6878,9 @@
           "active": {
             "type": "boolean"
           },
-          "token": {
-            "type": "string"
-          },
           "ttl": {
             "type": "string",
             "format": "date-time"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
           },
           "owner": {
             "$ref": "#/components/schemas/Organization"
@@ -8154,8 +6891,7 @@
           "email",
           "verified_email",
           "verified_phone",
-          "active",
-          "token"
+          "active"
         ]
       },
       "TFASettings": {
@@ -8183,9 +6919,6 @@
             "format": "date-time"
           },
           "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
             "type": "string"
           },
           "verified": {
@@ -8435,9 +7168,6 @@
           "updated_by": {
             "type": "string"
           },
-          "owner_id": {
-            "type": "string"
-          },
           "credential_id": {
             "type": "string",
             "format": "byte"
@@ -8481,7 +7211,6 @@
         },
         "required": [
           "id",
-          "owner_id",
           "aaguid",
           "sign_count",
           "transports",
@@ -8609,6 +7338,40 @@
           }
         }
       }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "description": "Bearer Token Authentication",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://api.datum.net/oauth2/authorize",
+            "scopes": {
+              "email": "email",
+              "profile": "profile"
+            }
+          }
+        }
+      },
+      "OIDC": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "https://api.datum.net/.well-known/openid-configuration"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "BearerAuth": [],
+      "OAuth2": [
+        "email",
+        "profile"
+      ],
+      "OIDC": []
+    }
+  ]
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -56,7 +57,7 @@ func (GroupSetting) Fields() []ent.Field {
 // Edges of the GroupSetting
 func (GroupSetting) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("group", Group.Type).Ref("setting").Field("group_id").Unique(),
+		edge.From("group", Group.Type).Ref("setting").Field("group_id").Unique().Annotations(entoas.Skip(true)),
 	}
 }
 
@@ -66,6 +67,12 @@ func (GroupSetting) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entoas.Skip(true),
+		entoas.CreateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ReadOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entfga.Annotations{
 			ObjectType:      "group",
 			IncludeHooks:    false,

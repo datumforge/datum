@@ -63,8 +63,7 @@ func HookOrgMembers() ent.Hook {
 					Set("user_name", user.FirstName+user.LastName).
 					Set("join_role", role.String())
 
-				mutation.Analytics.OrganizationEvent(orgID, userID, "organization_membership", props)
-				mutation.Analytics.UserEvent(userID, "organization_membership", props)
+				mutation.Analytics.Event("org_membership", props)
 			}
 
 			return retValue, err

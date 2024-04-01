@@ -8,6 +8,7 @@ import (
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
+	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -139,6 +140,14 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *
 	if err != nil {
 		return nil, err
 	}
+
+	props := ph.NewProperties().
+		Set("user_id", user.ID).
+		Set("email", user.Email).
+		Set("first_name", user.FirstName).
+		Set("last_name", user.LastName)
+
+	h.AnalyticsClient.Event("email_verification_sent", props)
 
 	// send emails via TaskMan as to not create blocking operations in the server
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {

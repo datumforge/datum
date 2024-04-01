@@ -5,6 +5,8 @@ import (
 
 	"entgo.io/ent"
 
+	ph "github.com/posthog/posthog-go"
+
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -73,6 +75,24 @@ func HookInvite() ent.Hook {
 			if err := createInviteToSend(ctx, m); err != nil {
 				m.Logger.Errorw("error sending email to user", "error", err)
 			}
+
+			orgID, _ := m.OwnerID()
+			org, _ := m.Client().Organization.Get(ctx, orgID)
+			reqID, _ := m.RequestorID()
+			requestor, _ := m.Client().User.Get(ctx, reqID)
+			email, _ := m.Recipient()
+			role, _ := m.Role()
+
+			props := ph.NewProperties().
+				Set("organization_id", orgID).
+				Set("organization_name", org.Name).
+				Set("requestor_id", reqID).
+				Set("requestor_name", requestor.FirstName).
+				Set("requestor_email", requestor.Email).
+				Set("recipient_email", email).
+				Set("recipient_role", role)
+
+			m.Analytics.Event("organization_invite_created", props)
 
 			return retValue, err
 		})
@@ -150,6 +170,14 @@ func HookInviteAccepted() ent.Hook {
 				Recipient: recipient,
 				Role:      string(role),
 			}
+
+			props := ph.NewProperties().
+				Set("organization_id", org.ID).
+				Set("organization_name", org.Name).
+				Set("acceptor_email", recipient).
+				Set("acceptor_id", userID)
+
+			m.Analytics.Event("organization_invite_accepted", props)
 
 			// send an email to recipient notifying them they've been added to a datum organization
 			if err := m.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {

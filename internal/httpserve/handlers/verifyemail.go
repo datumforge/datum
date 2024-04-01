@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
+	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -134,7 +135,17 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	// set cookies on request with the access and refresh token
 	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
+	props := ph.NewProperties().
+		Set("user_id", user.ID).
+		Set("email", user.Email).
+		Set("first_name", user.FirstName).
+		Set("last_name", user.LastName)
+
+	h.AnalyticsClient.Event("email_verified", props)
+
 	out := &VerifyReply{
+		ID:           entUser.ID,
+		Email:        entUser.Email,
 		Reply:        rout.Reply{Success: true},
 		Message:      "success",
 		AccessToken:  access,

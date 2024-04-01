@@ -67,9 +67,10 @@ func (p *PostHog) UserEvent(userID, eventName string, properties posthog.Propert
 
 // AssociateUser function is used to associate a user with an organization in PostHog
 func (p *PostHog) AssociateUser(userID string, organizationID string) {
-	_ = p.client.Enqueue(posthog.Capture{
-		DistinctId: userID,
-		Event:      "authentication",
+	_ = p.client.Enqueue(posthog.GroupIdentify{
+		DistinctId: organizationID,
+		Type:       "user",
+		Key:        userID,
 		Timestamp:  time.Now(),
 		Properties: map[string]interface{}{
 			"$set": map[string]interface{}{
@@ -89,6 +90,18 @@ func (p *PostHog) OrganizationEvent(organizationID, userID, eventName string, pr
 		Properties: properties,
 		Groups: posthog.NewGroups().
 			Set("organization", organizationID),
+	})
+}
+
+// GroupEvent creates an event associated with the group, where the eventName can be passed in generically and associated with the group ID if provided
+func (p *PostHog) GroupEvent(groupID, userID, eventName string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.Capture{
+		DistinctId: userID,
+		Event:      eventName,
+		Timestamp:  time.Now(),
+		Properties: properties,
+		Groups: posthog.NewGroups().
+			Set("group", groupID),
 	})
 }
 
@@ -140,6 +153,17 @@ func (p *PostHog) NewUser(userID string, properties posthog.Properties) {
 		Timestamp:  time.Now(),
 		Groups: posthog.NewGroups().
 			Set("user", userID),
+	})
+}
+
+// NewGroup maps the groupID to the group group
+func (p *PostHog) NewGroup(groupID string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.Capture{
+		DistinctId: groupID,
+		Event:      "group_created",
+		Timestamp:  time.Now(),
+		Groups: posthog.NewGroups().
+			Set("group", groupID),
 	})
 }
 

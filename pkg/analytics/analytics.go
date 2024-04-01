@@ -20,6 +20,8 @@ type Handler interface {
 	UserEvent(userID, eventName string, properties ph.Properties)
 	NewUser(userID string, properties ph.Properties)
 	UserProperties(userID string, properties ph.Properties)
+	NewGroup(groupID string, properties ph.Properties)
+	GroupEvent(groupID, userID, eventName string, properties ph.Properties)
 	Cleanup()
 }
 
@@ -75,6 +77,13 @@ func (e *EventManager) NewUser(userID string, properties ph.Properties) {
 func (e *EventManager) UserProperties(userID string, properties ph.Properties) {
 	if e.Enabled {
 		e.Handler.UserProperties(userID, properties)
+	}
+}
+
+// NewGroup is a wrapper for creation of a new user and associating the user with the user group type
+func (e *EventManager) NewGroup(groupID string, properties ph.Properties) {
+	if e.Enabled {
+		e.Handler.NewUser(groupID, properties)
 	}
 }
 

@@ -78,9 +78,9 @@ func HookInvite() ent.Hook {
 			}
 
 			orgID, _ := m.OwnerID()
-			org, _ := m.Client().Organization.Query().Where(organization.ID(orgID)).Only(ctx)
+			org, _ := m.Client().Organization.Get(ctx, orgID)
 			reqID, _ := m.RequestorID()
-			requestor, _ := m.Client().User.Query().Where(user.ID(reqID)).Only(ctx)
+			requestor, _ := m.Client().User.Get(ctx, reqID)
 			email, _ := m.Recipient()
 			role, _ := m.Role()
 

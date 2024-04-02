@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tier"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -886,6 +887,53 @@ func init() {
 	tfasettingsDescID := tfasettingsMixinFields1[0].Descriptor()
 	// tfasettings.DefaultID holds the default value on creation for the id field.
 	tfasettings.DefaultID = tfasettingsDescID.Default.(func() string)
+	tierMixin := schema.Tier{}.Mixin()
+	tier.Policy = privacy.NewPolicies(schema.Tier{})
+	tier.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := tier.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	tierMixinHooks0 := tierMixin[0].Hooks()
+	tierMixinHooks2 := tierMixin[2].Hooks()
+	tierHooks := schema.Tier{}.Hooks()
+
+	tier.Hooks[1] = tierMixinHooks0[0]
+
+	tier.Hooks[2] = tierMixinHooks2[0]
+
+	tier.Hooks[3] = tierHooks[0]
+	tierMixinInters2 := tierMixin[2].Interceptors()
+	tierInters := schema.Tier{}.Interceptors()
+	tier.Interceptors[0] = tierMixinInters2[0]
+	tier.Interceptors[1] = tierInters[0]
+	tierMixinFields0 := tierMixin[0].Fields()
+	_ = tierMixinFields0
+	tierMixinFields1 := tierMixin[1].Fields()
+	_ = tierMixinFields1
+	tierFields := schema.Tier{}.Fields()
+	_ = tierFields
+	// tierDescCreatedAt is the schema descriptor for created_at field.
+	tierDescCreatedAt := tierMixinFields0[0].Descriptor()
+	// tier.DefaultCreatedAt holds the default value on creation for the created_at field.
+	tier.DefaultCreatedAt = tierDescCreatedAt.Default.(func() time.Time)
+	// tierDescUpdatedAt is the schema descriptor for updated_at field.
+	tierDescUpdatedAt := tierMixinFields0[1].Descriptor()
+	// tier.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	tier.DefaultUpdatedAt = tierDescUpdatedAt.Default.(func() time.Time)
+	// tier.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	tier.UpdateDefaultUpdatedAt = tierDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tierDescName is the schema descriptor for name field.
+	tierDescName := tierFields[0].Descriptor()
+	// tier.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	tier.NameValidator = tierDescName.Validators[0].(func(string) error)
+	// tierDescID is the schema descriptor for id field.
+	tierDescID := tierMixinFields1[0].Descriptor()
+	// tier.DefaultID holds the default value on creation for the id field.
+	tier.DefaultID = tierDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

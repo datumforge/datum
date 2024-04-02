@@ -596,6 +596,44 @@ var (
 			},
 		},
 	}
+	// TiersColumns holds the columns for the "tiers" table.
+	TiersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "organization_id", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+	}
+	// TiersTable holds the schema information for the "tiers" table.
+	TiersTable = &schema.Table{
+		Name:       "tiers",
+		Columns:    TiersColumns,
+		PrimaryKey: []*schema.Column{TiersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tiers_organizations_tiers",
+				Columns:    []*schema.Column{TiersColumns[10]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "tier_name_owner_id",
+				Unique:  true,
+				Columns: []*schema.Column{TiersColumns[7], TiersColumns[10]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -755,6 +793,7 @@ var (
 		PersonalAccessTokensTable,
 		SubscribersTable,
 		TfaSettingsTable,
+		TiersTable,
 		UsersTable,
 		UserSettingsTable,
 		WebauthnsTable,
@@ -780,6 +819,7 @@ func init() {
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SubscribersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
+	TiersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable

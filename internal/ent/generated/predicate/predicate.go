@@ -54,6 +54,9 @@ type Subscriber func(*sql.Selector)
 // TFASettings is the predicate function for tfasettings builders.
 type TFASettings func(*sql.Selector)
 
+// Tier is the predicate function for tier builders.
+type Tier func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 

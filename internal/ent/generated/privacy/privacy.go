@@ -495,6 +495,30 @@ func (f TFASettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generat
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TFASettingsMutation", m)
 }
 
+// The TierQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TierQueryRuleFunc func(context.Context, *generated.TierQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TierQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.TierQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.TierQuery", q)
+}
+
+// The TierMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TierMutationRuleFunc func(context.Context, *generated.TierMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TierMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.TierMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TierMutation", m)
+}
+
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserQueryRuleFunc func(context.Context, *generated.UserQuery) error
@@ -634,6 +658,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.TFASettingsQuery:
 		return q.Filter(), nil
+	case *generated.TierQuery:
+		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
 	case *generated.UserSettingQuery:
@@ -678,6 +704,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.SubscriberMutation:
 		return m.Filter(), nil
 	case *generated.TFASettingsMutation:
+		return m.Filter(), nil
+	case *generated.TierMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
 		return m.Filter(), nil

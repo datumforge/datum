@@ -28,6 +28,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tier"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -3749,6 +3750,252 @@ func (ts *TFASettings) ToEdge(order *TFASettingsOrder) *TFASettingsEdge {
 	return &TFASettingsEdge{
 		Node:   ts,
 		Cursor: order.Field.toCursor(ts),
+	}
+}
+
+// TierEdge is the edge representation of Tier.
+type TierEdge struct {
+	Node   *Tier  `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// TierConnection is the connection containing edges to Tier.
+type TierConnection struct {
+	Edges      []*TierEdge `json:"edges"`
+	PageInfo   PageInfo    `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
+}
+
+func (c *TierConnection) build(nodes []*Tier, pager *tierPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Tier
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Tier {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Tier {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TierEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TierEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TierPaginateOption enables pagination customization.
+type TierPaginateOption func(*tierPager) error
+
+// WithTierOrder configures pagination ordering.
+func WithTierOrder(order *TierOrder) TierPaginateOption {
+	if order == nil {
+		order = DefaultTierOrder
+	}
+	o := *order
+	return func(pager *tierPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultTierOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithTierFilter configures pagination filter.
+func WithTierFilter(filter func(*TierQuery) (*TierQuery, error)) TierPaginateOption {
+	return func(pager *tierPager) error {
+		if filter == nil {
+			return errors.New("TierQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type tierPager struct {
+	reverse bool
+	order   *TierOrder
+	filter  func(*TierQuery) (*TierQuery, error)
+}
+
+func newTierPager(opts []TierPaginateOption, reverse bool) (*tierPager, error) {
+	pager := &tierPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultTierOrder
+	}
+	return pager, nil
+}
+
+func (p *tierPager) applyFilter(query *TierQuery) (*TierQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *tierPager) toCursor(t *Tier) Cursor {
+	return p.order.Field.toCursor(t)
+}
+
+func (p *tierPager) applyCursors(query *TierQuery, after, before *Cursor) (*TierQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultTierOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *tierPager) applyOrder(query *TierQuery) *TierQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultTierOrder.Field {
+		query = query.Order(DefaultTierOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *tierPager) orderExpr(query *TierQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTierOrder.Field {
+			b.Comma().Ident(DefaultTierOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Tier.
+func (t *TierQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TierPaginateOption,
+) (*TierConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTierPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if t, err = pager.applyFilter(t); err != nil {
+		return nil, err
+	}
+	conn := &TierConnection{Edges: []*TierEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = t.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if t, err = pager.applyCursors(t, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		t.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := t.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	t = pager.applyOrder(t)
+	nodes, err := t.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// TierOrderField defines the ordering field of Tier.
+type TierOrderField struct {
+	// Value extracts the ordering value from the given Tier.
+	Value    func(*Tier) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) tier.OrderOption
+	toCursor func(*Tier) Cursor
+}
+
+// TierOrder defines the ordering of Tier.
+type TierOrder struct {
+	Direction OrderDirection  `json:"direction"`
+	Field     *TierOrderField `json:"field"`
+}
+
+// DefaultTierOrder is the default ordering of Tier.
+var DefaultTierOrder = &TierOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TierOrderField{
+		Value: func(t *Tier) (ent.Value, error) {
+			return t.ID, nil
+		},
+		column: tier.FieldID,
+		toTerm: tier.ByID,
+		toCursor: func(t *Tier) Cursor {
+			return Cursor{ID: t.ID}
+		},
+	},
+}
+
+// ToEdge converts Tier into TierEdge.
+func (t *Tier) ToEdge(order *TierOrder) *TierEdge {
+	if order == nil {
+		order = DefaultTierOrder
+	}
+	return &TierEdge{
+		Node:   t,
+		Cursor: order.Field.toCursor(t),
 	}
 }
 

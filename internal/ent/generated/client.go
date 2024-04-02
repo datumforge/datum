@@ -34,6 +34,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tier"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -85,6 +86,8 @@ type Client struct {
 	Subscriber *SubscriberClient
 	// TFASettings is the client for interacting with the TFASettings builders.
 	TFASettings *TFASettingsClient
+	// Tier is the client for interacting with the Tier builders.
+	Tier *TierClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserSetting is the client for interacting with the UserSetting builders.
@@ -123,6 +126,7 @@ func (c *Client) init() {
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Subscriber = NewSubscriberClient(c.config)
 	c.TFASettings = NewTFASettingsClient(c.config)
+	c.Tier = NewTierClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserSetting = NewUserSettingClient(c.config)
 	c.Webauthn = NewWebauthnClient(c.config)
@@ -316,6 +320,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
 		Subscriber:             NewSubscriberClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
+		Tier:                   NewTierClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
 		Webauthn:               NewWebauthnClient(cfg),
@@ -354,6 +359,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
 		Subscriber:             NewSubscriberClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
+		Tier:                   NewTierClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
 		Webauthn:               NewWebauthnClient(cfg),
@@ -389,8 +395,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
-		c.Webauthn,
+		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.Tier, c.User,
+		c.UserSetting, c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -403,8 +409,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
-		c.Webauthn,
+		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.Tier, c.User,
+		c.UserSetting, c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -445,6 +451,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Subscriber.mutate(ctx, m)
 	case *TFASettingsMutation:
 		return c.TFASettings.mutate(ctx, m)
+	case *TierMutation:
+		return c.Tier.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserSettingMutation:
@@ -2387,6 +2395,25 @@ func (c *OrganizationClient) QuerySubscribers(o *Organization) *SubscriberQuery 
 	return query
 }
 
+// QueryTiers queries the tiers edge of a Organization.
+func (c *OrganizationClient) QueryTiers(o *Organization) *TierQuery {
+	query := (&TierClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(tier.Table, tier.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.TiersTable, organization.TiersColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Tier
+		step.Edge.Schema = schemaConfig.Tier
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryMembers queries the members edge of a Organization.
 func (c *OrganizationClient) QueryMembers(o *Organization) *OrgMembershipQuery {
 	query := (&OrgMembershipClient{config: c.config}).Query()
@@ -3222,6 +3249,160 @@ func (c *TFASettingsClient) mutate(ctx context.Context, m *TFASettingsMutation) 
 	}
 }
 
+// TierClient is a client for the Tier schema.
+type TierClient struct {
+	config
+}
+
+// NewTierClient returns a client for the Tier from the given config.
+func NewTierClient(c config) *TierClient {
+	return &TierClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tier.Hooks(f(g(h())))`.
+func (c *TierClient) Use(hooks ...Hook) {
+	c.hooks.Tier = append(c.hooks.Tier, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `tier.Intercept(f(g(h())))`.
+func (c *TierClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Tier = append(c.inters.Tier, interceptors...)
+}
+
+// Create returns a builder for creating a Tier entity.
+func (c *TierClient) Create() *TierCreate {
+	mutation := newTierMutation(c.config, OpCreate)
+	return &TierCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Tier entities.
+func (c *TierClient) CreateBulk(builders ...*TierCreate) *TierCreateBulk {
+	return &TierCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TierClient) MapCreateBulk(slice any, setFunc func(*TierCreate, int)) *TierCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TierCreateBulk{err: fmt.Errorf("calling to TierClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TierCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TierCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Tier.
+func (c *TierClient) Update() *TierUpdate {
+	mutation := newTierMutation(c.config, OpUpdate)
+	return &TierUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TierClient) UpdateOne(t *Tier) *TierUpdateOne {
+	mutation := newTierMutation(c.config, OpUpdateOne, withTier(t))
+	return &TierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TierClient) UpdateOneID(id string) *TierUpdateOne {
+	mutation := newTierMutation(c.config, OpUpdateOne, withTierID(id))
+	return &TierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Tier.
+func (c *TierClient) Delete() *TierDelete {
+	mutation := newTierMutation(c.config, OpDelete)
+	return &TierDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TierClient) DeleteOne(t *Tier) *TierDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TierClient) DeleteOneID(id string) *TierDeleteOne {
+	builder := c.Delete().Where(tier.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TierDeleteOne{builder}
+}
+
+// Query returns a query builder for Tier.
+func (c *TierClient) Query() *TierQuery {
+	return &TierQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTier},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Tier entity by its id.
+func (c *TierClient) Get(ctx context.Context, id string) (*Tier, error) {
+	return c.Query().Where(tier.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TierClient) GetX(ctx context.Context, id string) *Tier {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a Tier.
+func (c *TierClient) QueryOwner(t *Tier) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tier.Table, tier.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tier.OwnerTable, tier.OwnerColumn),
+		)
+		schemaConfig := t.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Tier
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TierClient) Hooks() []Hook {
+	hooks := c.hooks.Tier
+	return append(hooks[:len(hooks):len(hooks)], tier.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *TierClient) Interceptors() []Interceptor {
+	inters := c.inters.Tier
+	return append(inters[:len(inters):len(inters)], tier.Interceptors[:]...)
+}
+
+func (c *TierClient) mutate(ctx context.Context, m *TierMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TierCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TierUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TierDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown Tier mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -3879,13 +4060,13 @@ type (
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Hook
+		Subscriber, TFASettings, Tier, User, UserSetting, Webauthn []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Interceptor
+		Subscriber, TFASettings, Tier, User, UserSetting, Webauthn []ent.Interceptor
 	}
 )
 

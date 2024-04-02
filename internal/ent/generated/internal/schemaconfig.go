@@ -24,6 +24,7 @@ type SchemaConfig struct {
 	PersonalAccessToken              string // PersonalAccessToken table.
 	Subscriber                       string // Subscriber table.
 	TFASettings                      string // TFASettings table.
+	Tier                             string // Tier table.
 	User                             string // User table.
 	UserSetting                      string // UserSetting table.
 	Webauthn                         string // Webauthn table.

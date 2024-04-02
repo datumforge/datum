@@ -24,6 +24,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tier"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -1545,6 +1546,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedSubscribers(alias, func(wq *SubscriberQuery) {
 				*wq = *query
 			})
+		case "tiers":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TierClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedTiers(alias, func(wq *TierQuery) {
+				*wq = *query
+			})
 		case "members":
 			var (
 				alias = field.Alias
@@ -2227,6 +2240,132 @@ func newTFASettingsPaginateArgs(rv map[string]any) *tfasettingsPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*TFASettingsWhereInput); ok {
 		args.opts = append(args.opts, WithTFASettingsFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (t *TierQuery) CollectFields(ctx context.Context, satisfies ...string) (*TierQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return t, nil
+	}
+	if err := t.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
+func (t *TierQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(tier.Columns))
+		selectedFields = []string{tier.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: t.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			t.withOwner = query
+			if _, ok := fieldSeen[tier.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, tier.FieldOwnerID)
+				fieldSeen[tier.FieldOwnerID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[tier.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, tier.FieldCreatedAt)
+				fieldSeen[tier.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[tier.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, tier.FieldUpdatedAt)
+				fieldSeen[tier.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[tier.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, tier.FieldCreatedBy)
+				fieldSeen[tier.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[tier.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, tier.FieldUpdatedBy)
+				fieldSeen[tier.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[tier.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, tier.FieldDeletedAt)
+				fieldSeen[tier.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[tier.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, tier.FieldDeletedBy)
+				fieldSeen[tier.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[tier.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, tier.FieldOwnerID)
+				fieldSeen[tier.FieldOwnerID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[tier.FieldName]; !ok {
+				selectedFields = append(selectedFields, tier.FieldName)
+				fieldSeen[tier.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[tier.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, tier.FieldDescription)
+				fieldSeen[tier.FieldDescription] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[tier.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, tier.FieldOrganizationID)
+				fieldSeen[tier.FieldOrganizationID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		t.Select(selectedFields...)
+	}
+	return nil
+}
+
+type tierPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TierPaginateOption
+}
+
+func newTierPaginateArgs(rv map[string]any) *tierPaginateArgs {
+	args := &tierPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*TierWhereInput); ok {
+		args.opts = append(args.opts, WithTierFilter(v.Filter))
 	}
 	return args
 }

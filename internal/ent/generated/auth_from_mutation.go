@@ -370,3 +370,18 @@ func (m *SubscriberMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }
+
+func (m *TierMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *TierMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *TierMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}

@@ -61,6 +61,8 @@ const (
 	EdgeInvites = "invites"
 	// EdgeSubscribers holds the string denoting the subscribers edge name in mutations.
 	EdgeSubscribers = "subscribers"
+	// EdgeTiers holds the string denoting the tiers edge name in mutations.
+	EdgeTiers = "tiers"
 	// EdgeMembers holds the string denoting the members edge name in mutations.
 	EdgeMembers = "members"
 	// Table holds the table name of the organization in the database.
@@ -132,6 +134,13 @@ const (
 	SubscribersInverseTable = "subscribers"
 	// SubscribersColumn is the table column denoting the subscribers relation/edge.
 	SubscribersColumn = "owner_id"
+	// TiersTable is the table that holds the tiers relation/edge.
+	TiersTable = "tiers"
+	// TiersInverseTable is the table name for the Tier entity.
+	// It exists in this package in order to avoid circular dependency with the "tier" package.
+	TiersInverseTable = "tiers"
+	// TiersColumn is the table column denoting the tiers relation/edge.
+	TiersColumn = "owner_id"
 	// MembersTable is the table that holds the members relation/edge.
 	MembersTable = "org_memberships"
 	// MembersInverseTable is the table name for the OrgMembership entity.
@@ -414,6 +423,20 @@ func BySubscribers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByTiersCount orders the results by tiers count.
+func ByTiersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTiersStep(), opts...)
+	}
+}
+
+// ByTiers orders the results by tiers terms.
+func ByTiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTiersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByMembersCount orders the results by members count.
 func ByMembersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -502,6 +525,13 @@ func newSubscribersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SubscribersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, SubscribersTable, SubscribersColumn),
+	)
+}
+func newTiersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TiersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TiersTable, TiersColumn),
 	)
 }
 func newMembersStep() *sqlgraph.Step {

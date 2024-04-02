@@ -1196,6 +1196,35 @@ func HasSubscribersWith(preds ...predicate.Subscriber) predicate.Organization {
 	})
 }
 
+// HasTiers applies the HasEdge predicate on the "tiers" edge.
+func HasTiers() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TiersTable, TiersColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Tier
+		step.Edge.Schema = schemaConfig.Tier
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTiersWith applies the HasEdge predicate on the "tiers" edge with a given conditions (other predicates).
+func HasTiersWith(preds ...predicate.Tier) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newTiersStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Tier
+		step.Edge.Schema = schemaConfig.Tier
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasMembers applies the HasEdge predicate on the "members" edge.
 func HasMembers() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

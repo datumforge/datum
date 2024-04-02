@@ -44,6 +44,8 @@ type Tx struct {
 	Subscriber *SubscriberClient
 	// TFASettings is the client for interacting with the TFASettings builders.
 	TFASettings *TFASettingsClient
+	// Tier is the client for interacting with the Tier builders.
+	Tier *TierClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserSetting is the client for interacting with the UserSetting builders.
@@ -197,6 +199,7 @@ func (tx *Tx) init() {
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Subscriber = NewSubscriberClient(tx.config)
 	tx.TFASettings = NewTFASettingsClient(tx.config)
+	tx.Tier = NewTierClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)
 	tx.Webauthn = NewWebauthnClient(tx.config)

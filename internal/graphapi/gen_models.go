@@ -261,6 +261,24 @@ type TFASettingsUpdatePayload struct {
 	TfaSettings *generated.TFASettings `json:"tfaSettings"`
 }
 
+// Return response for createTier mutation
+type TierCreatePayload struct {
+	// Created tier
+	Tier *generated.Tier `json:"tier"`
+}
+
+// Return response for deleteTier mutation
+type TierDeletePayload struct {
+	// Deleted tier ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateTier mutation
+type TierUpdatePayload struct {
+	// Updated tier
+	Tier *generated.Tier `json:"tier"`
+}
+
 // Return response for createUser mutation
 type UserCreatePayload struct {
 	// Created user

@@ -102,6 +102,11 @@ func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Curs
 	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))
 }
 
+// Tiers is the resolver for the tiers field.
+func (r *queryResolver) Tiers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TierWhereInput) (*generated.TierConnection, error) {
+	panic(fmt.Errorf("not implemented: Tiers - tiers"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))

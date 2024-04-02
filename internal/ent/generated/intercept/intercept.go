@@ -25,6 +25,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tier"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -518,6 +519,33 @@ func (f TraverseTFASettings) Traverse(ctx context.Context, q generated.Query) er
 	return fmt.Errorf("unexpected query type %T. expect *generated.TFASettingsQuery", q)
 }
 
+// The TierFunc type is an adapter to allow the use of ordinary function as a Querier.
+type TierFunc func(context.Context, *generated.TierQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f TierFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.TierQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.TierQuery", q)
+}
+
+// The TraverseTier type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseTier func(context.Context, *generated.TierQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseTier) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseTier) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.TierQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.TierQuery", q)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserFunc func(context.Context, *generated.UserQuery) (generated.Value, error)
 
@@ -634,6 +662,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.SubscriberQuery, predicate.Subscriber, subscriber.OrderOption]{typ: generated.TypeSubscriber, tq: q}, nil
 	case *generated.TFASettingsQuery:
 		return &query[*generated.TFASettingsQuery, predicate.TFASettings, tfasettings.OrderOption]{typ: generated.TypeTFASettings, tq: q}, nil
+	case *generated.TierQuery:
+		return &query[*generated.TierQuery, predicate.Tier, tier.OrderOption]{typ: generated.TypeTier, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
 	case *generated.UserSettingQuery:

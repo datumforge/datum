@@ -72,13 +72,15 @@ type OrganizationEdges struct {
 	Invites []*Invite `json:"invites,omitempty"`
 	// Subscribers holds the value of the subscribers edge.
 	Subscribers []*Subscriber `json:"subscribers,omitempty"`
+	// Tiers holds the value of the tiers edge.
+	Tiers []*Tier `json:"tiers,omitempty"`
 	// Members holds the value of the members edge.
 	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [12]bool
+	loadedTypes [13]bool
 	// totalCount holds the count of the edges above.
-	totalCount [12]map[string]int
+	totalCount [13]map[string]int
 
 	namedChildren             map[string][]*Organization
 	namedGroups               map[string][]*Group
@@ -89,6 +91,7 @@ type OrganizationEdges struct {
 	namedUsers                map[string][]*User
 	namedInvites              map[string][]*Invite
 	namedSubscribers          map[string][]*Subscriber
+	namedTiers                map[string][]*Tier
 	namedMembers              map[string][]*OrgMembership
 }
 
@@ -195,10 +198,19 @@ func (e OrganizationEdges) SubscribersOrErr() ([]*Subscriber, error) {
 	return nil, &NotLoadedError{edge: "subscribers"}
 }
 
+// TiersOrErr returns the Tiers value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) TiersOrErr() ([]*Tier, error) {
+	if e.loadedTypes[11] {
+		return e.Tiers, nil
+	}
+	return nil, &NotLoadedError{edge: "tiers"}
+}
+
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) MembersOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[11] {
+	if e.loadedTypes[12] {
 		return e.Members, nil
 	}
 	return nil, &NotLoadedError{edge: "members"}
@@ -375,6 +387,11 @@ func (o *Organization) QueryInvites() *InviteQuery {
 // QuerySubscribers queries the "subscribers" edge of the Organization entity.
 func (o *Organization) QuerySubscribers() *SubscriberQuery {
 	return NewOrganizationClient(o.config).QuerySubscribers(o)
+}
+
+// QueryTiers queries the "tiers" edge of the Organization entity.
+func (o *Organization) QueryTiers() *TierQuery {
+	return NewOrganizationClient(o.config).QueryTiers(o)
 }
 
 // QueryMembers queries the "members" edge of the Organization entity.
@@ -659,6 +676,30 @@ func (o *Organization) appendNamedSubscribers(name string, edges ...*Subscriber)
 		o.Edges.namedSubscribers[name] = []*Subscriber{}
 	} else {
 		o.Edges.namedSubscribers[name] = append(o.Edges.namedSubscribers[name], edges...)
+	}
+}
+
+// NamedTiers returns the Tiers named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedTiers(name string) ([]*Tier, error) {
+	if o.Edges.namedTiers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedTiers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedTiers(name string, edges ...*Tier) {
+	if o.Edges.namedTiers == nil {
+		o.Edges.namedTiers = make(map[string][]*Tier)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedTiers[name] = []*Tier{}
+	} else {
+		o.Edges.namedTiers[name] = append(o.Edges.namedTiers[name], edges...)
 	}
 }
 

@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/tier"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -334,6 +335,21 @@ func (ou *OrganizationUpdate) AddSubscribers(s ...*Subscriber) *OrganizationUpda
 	return ou.AddSubscriberIDs(ids...)
 }
 
+// AddTierIDs adds the "tiers" edge to the Tier entity by IDs.
+func (ou *OrganizationUpdate) AddTierIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddTierIDs(ids...)
+	return ou
+}
+
+// AddTiers adds the "tiers" edges to the Tier entity.
+func (ou *OrganizationUpdate) AddTiers(t ...*Tier) *OrganizationUpdate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ou.AddTierIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ou *OrganizationUpdate) AddMemberIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddMemberIDs(ids...)
@@ -547,6 +563,27 @@ func (ou *OrganizationUpdate) RemoveSubscribers(s ...*Subscriber) *OrganizationU
 		ids[i] = s[i].ID
 	}
 	return ou.RemoveSubscriberIDs(ids...)
+}
+
+// ClearTiers clears all "tiers" edges to the Tier entity.
+func (ou *OrganizationUpdate) ClearTiers() *OrganizationUpdate {
+	ou.mutation.ClearTiers()
+	return ou
+}
+
+// RemoveTierIDs removes the "tiers" edge to Tier entities by IDs.
+func (ou *OrganizationUpdate) RemoveTierIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveTierIDs(ids...)
+	return ou
+}
+
+// RemoveTiers removes "tiers" edges to Tier entities.
+func (ou *OrganizationUpdate) RemoveTiers(t ...*Tier) *OrganizationUpdate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ou.RemoveTierIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -1179,6 +1216,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.TiersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TiersTable,
+			Columns: []string{organization.TiersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tier.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Tier
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedTiersIDs(); len(nodes) > 0 && !ou.mutation.TiersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TiersTable,
+			Columns: []string{organization.TiersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tier.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Tier
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.TiersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TiersTable,
+			Columns: []string{organization.TiersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tier.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Tier
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.MembersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1543,6 +1628,21 @@ func (ouo *OrganizationUpdateOne) AddSubscribers(s ...*Subscriber) *Organization
 	return ouo.AddSubscriberIDs(ids...)
 }
 
+// AddTierIDs adds the "tiers" edge to the Tier entity by IDs.
+func (ouo *OrganizationUpdateOne) AddTierIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddTierIDs(ids...)
+	return ouo
+}
+
+// AddTiers adds the "tiers" edges to the Tier entity.
+func (ouo *OrganizationUpdateOne) AddTiers(t ...*Tier) *OrganizationUpdateOne {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ouo.AddTierIDs(ids...)
+}
+
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
 func (ouo *OrganizationUpdateOne) AddMemberIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddMemberIDs(ids...)
@@ -1756,6 +1856,27 @@ func (ouo *OrganizationUpdateOne) RemoveSubscribers(s ...*Subscriber) *Organizat
 		ids[i] = s[i].ID
 	}
 	return ouo.RemoveSubscriberIDs(ids...)
+}
+
+// ClearTiers clears all "tiers" edges to the Tier entity.
+func (ouo *OrganizationUpdateOne) ClearTiers() *OrganizationUpdateOne {
+	ouo.mutation.ClearTiers()
+	return ouo
+}
+
+// RemoveTierIDs removes the "tiers" edge to Tier entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveTierIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveTierIDs(ids...)
+	return ouo
+}
+
+// RemoveTiers removes "tiers" edges to Tier entities.
+func (ouo *OrganizationUpdateOne) RemoveTiers(t ...*Tier) *OrganizationUpdateOne {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ouo.RemoveTierIDs(ids...)
 }
 
 // ClearMembers clears all "members" edges to the OrgMembership entity.
@@ -2413,6 +2534,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Subscriber
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.TiersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TiersTable,
+			Columns: []string{organization.TiersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tier.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Tier
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedTiersIDs(); len(nodes) > 0 && !ouo.mutation.TiersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TiersTable,
+			Columns: []string{organization.TiersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tier.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Tier
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.TiersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TiersTable,
+			Columns: []string{organization.TiersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tier.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Tier
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

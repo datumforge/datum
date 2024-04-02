@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/tier"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -375,6 +376,21 @@ func (oc *OrganizationCreate) AddSubscribers(s ...*Subscriber) *OrganizationCrea
 		ids[i] = s[i].ID
 	}
 	return oc.AddSubscriberIDs(ids...)
+}
+
+// AddTierIDs adds the "tiers" edge to the Tier entity by IDs.
+func (oc *OrganizationCreate) AddTierIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddTierIDs(ids...)
+	return oc
+}
+
+// AddTiers adds the "tiers" edges to the Tier entity.
+func (oc *OrganizationCreate) AddTiers(t ...*Tier) *OrganizationCreate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return oc.AddTierIDs(ids...)
 }
 
 // AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
@@ -754,6 +770,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.Subscriber
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.TiersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TiersTable,
+			Columns: []string{organization.TiersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tier.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Tier
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

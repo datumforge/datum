@@ -1081,6 +1081,7 @@ type CreateOrganizationInput struct {
 	UserIDs                []string
 	InviteIDs              []string
 	SubscriberIDs          []string
+	TierIDs                []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -1140,6 +1141,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.SubscriberIDs; len(v) > 0 {
 		m.AddSubscriberIDs(v...)
 	}
+	if v := i.TierIDs; len(v) > 0 {
+		m.AddTierIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -1186,6 +1190,9 @@ type UpdateOrganizationInput struct {
 	ClearSubscribers             bool
 	AddSubscriberIDs             []string
 	RemoveSubscriberIDs          []string
+	ClearTiers                   bool
+	AddTierIDs                   []string
+	RemoveTierIDs                []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -1297,6 +1304,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveSubscriberIDs; len(v) > 0 {
 		m.RemoveSubscriberIDs(v...)
+	}
+	if i.ClearTiers {
+		m.ClearTiers()
+	}
+	if v := i.AddTierIDs; len(v) > 0 {
+		m.AddTierIDs(v...)
+	}
+	if v := i.RemoveTierIDs; len(v) > 0 {
+		m.RemoveTierIDs(v...)
 	}
 }
 
@@ -1816,6 +1832,114 @@ func (c *TFASettingsUpdate) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdat
 
 // SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdateOne builder.
 func (c *TFASettingsUpdateOne) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateTierInput represents a mutation input for creating tiers.
+type CreateTierInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Name           string
+	Description    *string
+	OrganizationID *string
+	OwnerID        *string
+}
+
+// Mutate applies the CreateTierInput on the TierMutation builder.
+func (i *CreateTierInput) Mutate(m *TierMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateTierInput on the TierCreate builder.
+func (c *TierCreate) SetInput(i CreateTierInput) *TierCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTierInput represents a mutation input for updating tiers.
+type UpdateTierInput struct {
+	ClearUpdatedAt      bool
+	UpdatedAt           *time.Time
+	ClearUpdatedBy      bool
+	UpdatedBy           *string
+	Name                *string
+	ClearDescription    bool
+	Description         *string
+	ClearOrganizationID bool
+	OrganizationID      *string
+	ClearOwner          bool
+	OwnerID             *string
+}
+
+// Mutate applies the UpdateTierInput on the TierMutation builder.
+func (i *UpdateTierInput) Mutate(m *TierMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if i.ClearOrganizationID {
+		m.ClearOrganizationID()
+	}
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTierInput on the TierUpdate builder.
+func (c *TierUpdate) SetInput(i UpdateTierInput) *TierUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTierInput on the TierUpdateOne builder.
+func (c *TierUpdateOne) SetInput(i UpdateTierInput) *TierUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

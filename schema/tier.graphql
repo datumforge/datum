@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up tier by ID
+    """
+     tier(
+        """
+        ID of the tier
+        """
+        id: ID!
+    ):  Tier!
+}
+
+extend type Mutation{
+    """
+    Create a new tier
+    """
+    createTier(
+        """
+        values of the tier
+        """
+        input: CreateTierInput!
+    ): TierCreatePayload!
+    """
+    Update an existing tier
+    """
+    updateTier(
+        """
+        ID of the tier
+        """
+        id: ID!
+        """
+        New values for the tier
+        """
+        input: UpdateTierInput!
+    ): TierUpdatePayload!
+    """
+    Delete an existing tier
+    """
+    deleteTier(
+        """
+        ID of the tier
+        """
+        id: ID!
+    ): TierDeletePayload!
+}
+
+"""
+Return response for createTier mutation
+"""
+type TierCreatePayload {
+    """
+    Created tier
+    """
+    tier: Tier!
+}
+
+"""
+Return response for updateTier mutation
+"""
+type TierUpdatePayload {
+    """
+    Updated tier
+    """
+    tier: Tier!
+}
+
+"""
+Return response for deleteTier mutation
+"""
+type TierDeletePayload {
+    """
+    Deleted tier ID
+    """
+    deletedID: ID!
+}

@@ -82,6 +82,8 @@ type Server struct {
 	Debug bool `json:"debug" koanf:"debug" default:"false"`
 	// Dev enables echo's dev mode options
 	Dev bool `json:"dev" koanf:"dev" default:"false"`
+	// DefaultRootOrgID is the default organization id to use for root level requests, this is seeded in the database
+	DefaultRootOrgID string `json:"defaultRootOrg" koanf:"defaultRootOrg" default:"01101101011010010111010001100010"`
 	// Listen sets the listen address to serve the echo server on
 	Listen string `json:"listen" koanf:"listen" jsonschema:"required" default:":17608"`
 	// ShutdownGracePeriod sets the grace period for in flight requests before shutting down

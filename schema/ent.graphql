@@ -374,7 +374,7 @@ input CreateSubscriberInput {
   indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean
-  ownerID: ID
+  ownerID: ID!
 }
 """
 CreateTFASettingsInput is used for create TFASettings object.
@@ -4049,7 +4049,7 @@ type Subscriber implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  ownerID: ID
+  ownerID: ID!
   """
   email address of the subscriber
   """
@@ -4070,7 +4070,7 @@ type Subscriber implements Node {
   indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean!
-  owner: Organization
+  owner: Organization!
 }
 """
 A connection to a list of items.
@@ -4230,8 +4230,6 @@ input SubscriberWhereInput {
   ownerIDContains: ID
   ownerIDHasPrefix: ID
   ownerIDHasSuffix: ID
-  ownerIDIsNil: Boolean
-  ownerIDNotNil: Boolean
   ownerIDEqualFold: ID
   ownerIDContainsFold: ID
   """
@@ -4913,7 +4911,6 @@ input UpdateSubscriberInput {
   """
   active: Boolean
   ownerID: ID
-  clearOwner: Boolean
 }
 """
 UpdateTFASettingsInput is used for update TFASettings object.

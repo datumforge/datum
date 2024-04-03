@@ -298,7 +298,7 @@ func (s *Subscriber) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = s.QueryOwner().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (ts *TFASettings) Owner(ctx context.Context) (*User, error) {

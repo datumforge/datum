@@ -42,6 +42,10 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("email is required"))
 	}
 
+	if req.OrganizationID == "" {
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("organization_id is required"))
+	}
+
 	// create user input for subscriber verification token
 	user := &User{
 		Email: req.Email,
@@ -55,11 +59,8 @@ func (h *Handler) SubscribeHandler(ctx echo.Context) error {
 
 	// create subscriber input
 	input := generated.CreateSubscriberInput{
-		Email: req.Email,
-	}
-
-	if req.OrganizationID != "" {
-		input.OwnerID = &req.OrganizationID
+		Email:   req.Email,
+		OwnerID: req.OrganizationID,
 	}
 
 	// set viewer context

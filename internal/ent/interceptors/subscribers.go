@@ -57,31 +57,20 @@ func filterSubscribersByAccess(ctx context.Context, q *generated.SubscriberQuery
 		return nil, err
 	}
 
-	// Check for system admin
-	isAdmin, err := q.Authz.CheckSystemAdminRole(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
 	userOrgs := orgList.GetObjects()
 
 	var accessibleSubscribers []*generated.Subscriber
 
 	for _, s := range subscribers {
-		if s.OwnerID != "" {
-			entityType := "organization"
+		entityType := "organization"
 
-			if !fgax.ListContains(entityType, userOrgs, s.OwnerID) {
-				q.Logger.Debugw("access denied to organization", "relation", fgax.CanView, "organization", s.OwnerID, "type", entityType)
+		if !fgax.ListContains(entityType, userOrgs, s.OwnerID) {
+			q.Logger.Debugw("access denied to organization", "relation", fgax.CanView, "organization", s.OwnerID, "type", entityType)
 
-				continue
-			}
-			// add subscriber to accessible subscribers
-			accessibleSubscribers = append(accessibleSubscribers, s)
-		} else if isAdmin {
-			// add subscriber to accessible subscribers
-			accessibleSubscribers = append(accessibleSubscribers, s)
+			continue
 		}
+		// add subscriber to accessible subscribers
+		accessibleSubscribers = append(accessibleSubscribers, s)
 	}
 
 	// return updated subscribers

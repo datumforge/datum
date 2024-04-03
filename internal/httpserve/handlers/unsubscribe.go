@@ -37,7 +37,7 @@ func (h *Handler) UnsubscribeHandler(ctx echo.Context) error {
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), req.Email)
 
 	if err := h.deleteSubscriber(ctxWithToken, req.Email, req.OrganizationID); err != nil {
-		h.Logger.Errorw("error un user", "error", err)
+		h.Logger.Errorw("error unknown user", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}

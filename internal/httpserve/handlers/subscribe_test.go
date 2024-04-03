@@ -43,24 +43,26 @@ func (suite *HandlerTestSuite) TestSubscribeHandler() {
 		from               string
 	}{
 		{
-			name:           "happy path, new subscriber",
-			email:          "brax@datum.net",
-			emailExpected:  true,
-			expectedStatus: http.StatusCreated,
-		},
-		{
-			name:           "subscriber already exists",
-			email:          "brax@datum.net",
-			emailExpected:  false,
-			expectedStatus: http.StatusConflict,
-		},
-		{
 			name:           "happy path, new subscriber for org",
 			email:          "brax@datum.net",
 			orgName:        org.Name,
 			orgID:          org.ID,
 			emailExpected:  true,
 			expectedStatus: http.StatusCreated,
+		},
+		{
+			name:           "subscriber already exists",
+			email:          "brax@datum.net",
+			orgName:        org.Name,
+			orgID:          org.ID,
+			emailExpected:  false,
+			expectedStatus: http.StatusConflict,
+		},
+		{
+			name:               "missing org",
+			email:              "braxy@datum.net",
+			expectedStatus:     http.StatusBadRequest,
+			expectedErrMessage: "organization_id is required",
 		},
 		{
 			name:               "missing email",

@@ -337,6 +337,10 @@
         "runMigrations": {
           "type": "boolean",
           "description": "run migrations on startup"
+        },
+        "migrationProvider": {
+          "type": "string",
+          "description": "migration provider to use for running migrations"
         }
       },
       "additionalProperties": false,

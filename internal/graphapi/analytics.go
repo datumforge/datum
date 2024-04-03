@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/pkg/analytics/posthog"
 	ph "github.com/posthog/posthog-go"
 )
 
@@ -72,11 +73,17 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	// this is a test of creating the client on the fly
 
 	// create the posthog client
-	phc := ph.New(c.Analytics.Token)
-	defer phc.Close()
+	phc := posthog.Config{
+		APIKey:  c.Analytics.Token,
+		Host:    "https://app.posthog.com",
+		Enabled: true,
+	}
 
-	c.Analytics.Event(event, props)
-	c.Analytics.Properties(i, obj, props)
+	em := phc.Init()
+	defer em.Cleanup()
+
+	em.Event(event, props)
+	em.Properties(i, obj, props)
 
 	// debug log the event
 	c.Logger.Debugw("event tracked", "event", event, "props", props)

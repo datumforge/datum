@@ -146,8 +146,11 @@ func (h *Handler) verifySubscriberToken(ctx context.Context, entSubscriber *gene
 				return err
 			}
 
+			// set viewer context
+			ctxWithToken := token.NewContextWithSignUpToken(ctx, entSubscriber.Email)
+
 			// resend email with new token to the subscriber
-			if err := h.sendSubscriberEmail(ctx, user, entSubscriber.OwnerID); err != nil {
+			if err := h.sendSubscriberEmail(ctxWithToken, user, entSubscriber.OwnerID); err != nil {
 				h.Logger.Errorw("error sending subscriber email", "error", err)
 
 				return err

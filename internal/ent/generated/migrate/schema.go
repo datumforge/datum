@@ -531,7 +531,7 @@ var (
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "ttl", Type: field.TypeTime},
 		{Name: "secret", Type: field.TypeBytes},
-		{Name: "owner_id", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString},
 	}
 	// SubscribersTable holds the schema information for the "subscribers" table.
 	SubscribersTable = &schema.Table{
@@ -543,7 +543,7 @@ var (
 				Symbol:     "subscribers_organizations_subscribers",
 				Columns:    []*schema.Column{SubscribersColumns[15]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{

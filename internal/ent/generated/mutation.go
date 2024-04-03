@@ -17993,22 +17993,9 @@ func (m *SubscriberMutation) OldOwnerID(ctx context.Context) (v string, err erro
 	return oldValue.OwnerID, nil
 }
 
-// ClearOwnerID clears the value of the "owner_id" field.
-func (m *SubscriberMutation) ClearOwnerID() {
-	m.owner = nil
-	m.clearedFields[subscriber.FieldOwnerID] = struct{}{}
-}
-
-// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
-func (m *SubscriberMutation) OwnerIDCleared() bool {
-	_, ok := m.clearedFields[subscriber.FieldOwnerID]
-	return ok
-}
-
 // ResetOwnerID resets all changes to the "owner_id" field.
 func (m *SubscriberMutation) ResetOwnerID() {
 	m.owner = nil
-	delete(m.clearedFields, subscriber.FieldOwnerID)
 }
 
 // SetEmail sets the "email" field.
@@ -18320,7 +18307,7 @@ func (m *SubscriberMutation) ClearOwner() {
 
 // OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
 func (m *SubscriberMutation) OwnerCleared() bool {
-	return m.OwnerIDCleared() || m.clearedowner
+	return m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -18658,9 +18645,6 @@ func (m *SubscriberMutation) ClearedFields() []string {
 	if m.FieldCleared(subscriber.FieldDeletedBy) {
 		fields = append(fields, subscriber.FieldDeletedBy)
 	}
-	if m.FieldCleared(subscriber.FieldOwnerID) {
-		fields = append(fields, subscriber.FieldOwnerID)
-	}
 	if m.FieldCleared(subscriber.FieldPhoneNumber) {
 		fields = append(fields, subscriber.FieldPhoneNumber)
 	}
@@ -18695,9 +18679,6 @@ func (m *SubscriberMutation) ClearField(name string) error {
 		return nil
 	case subscriber.FieldDeletedBy:
 		m.ClearDeletedBy()
-		return nil
-	case subscriber.FieldOwnerID:
-		m.ClearOwnerID()
 		return nil
 	case subscriber.FieldPhoneNumber:
 		m.ClearPhoneNumber()

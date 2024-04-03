@@ -1641,7 +1641,7 @@ type CreateSubscriberInput struct {
 	VerifiedEmail *bool
 	VerifiedPhone *bool
 	Active        *bool
-	OwnerID       *string
+	OwnerID       string
 }
 
 // Mutate applies the CreateSubscriberInput on the SubscriberMutation builder.
@@ -1671,9 +1671,7 @@ func (i *CreateSubscriberInput) Mutate(m *SubscriberMutation) {
 	if v := i.Active; v != nil {
 		m.SetActive(*v)
 	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
+	m.SetOwnerID(i.OwnerID)
 }
 
 // SetInput applies the change-set in the CreateSubscriberInput on the SubscriberCreate builder.
@@ -1694,7 +1692,6 @@ type UpdateSubscriberInput struct {
 	VerifiedEmail    *bool
 	VerifiedPhone    *bool
 	Active           *bool
-	ClearOwner       bool
 	OwnerID          *string
 }
 
@@ -1729,9 +1726,6 @@ func (i *UpdateSubscriberInput) Mutate(m *SubscriberMutation) {
 	}
 	if v := i.Active; v != nil {
 		m.SetActive(*v)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)

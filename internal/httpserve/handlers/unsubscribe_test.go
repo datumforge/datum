@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -12,9 +13,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	mock_fga "github.com/datumforge/fgax/mockery"
+
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
@@ -24,7 +28,32 @@ func (suite *HandlerTestSuite) TestUnsubscribeHandler() {
 	// add handler
 	suite.e.GET("unsubscribe", suite.h.UnsubscribeHandler)
 
-	ec := echocontext.NewTestEchoContext().Request().Context()
+	// bypass auth
+	ctx := context.Background()
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	mock_fga.WriteAny(t, suite.fga)
+
+	// setup test data
+	u := suite.db.User.Create().
+		SetEmail(gofakeit.Email()).
+		SetFirstName(gofakeit.FirstName()).
+		SetLastName(gofakeit.LastName()).
+		SaveX(ctx)
+
+	ec, err := auth.NewTestContextWithValidUser(u.ID)
+	require.NoError(t, err)
+
+	newCtx := ec.Request().Context()
+	newCtx = privacy.DecisionContext(newCtx, privacy.Allow)
+
+	reqCtx := context.WithValue(newCtx, echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	org := suite.db.Organization.Create().
+		SetName(gofakeit.Name()).
+		SaveX(reqCtx)
 
 	email := gofakeit.Email()
 
@@ -42,14 +71,11 @@ func (suite *HandlerTestSuite) TestUnsubscribeHandler() {
 		require.NoError(t, err)
 	}
 
-	// set privacy allow in order to allow the creation of the users without
-	// authentication in the tests
-	ctx := privacy.DecisionContext(ec, privacy.Allow)
-
 	// store token in db
 	et := suite.db.Subscriber.Create().
 		SetToken(user.EmailVerificationToken.String).
 		SetEmail(user.Email).
+		SetOwnerID(org.ID).
 		SetSecret(user.EmailVerificationSecret).
 		SetTTL(ttl).
 		SaveX(ctx)
@@ -86,7 +112,7 @@ func (suite *HandlerTestSuite) TestUnsubscribeHandler() {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			target := fmt.Sprintf("/unsubscribe?email=%s", tc.email)
+			target := fmt.Sprintf("/unsubscribe?email=%s&organization_id=%s", tc.email, org.ID)
 
 			req := httptest.NewRequest(http.MethodGet, target, nil)
 

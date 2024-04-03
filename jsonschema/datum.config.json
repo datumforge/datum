@@ -121,6 +121,10 @@
           "type": "boolean",
           "description": "Dev enables echo's dev mode options"
         },
+        "defaultRootOrg": {
+          "type": "string",
+          "description": "DefaultRootOrgID is the default organization id to use for root level requests, this is seeded in the database"
+        },
         "listen": {
           "type": "string",
           "description": "Listen sets the listen address to serve the echo server on"

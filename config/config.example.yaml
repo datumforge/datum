@@ -121,6 +121,7 @@ server:
         enabled: true
         prefixes: null
     debug: false
+    defaultRootOrg: "01101101011010010111010001100010"
     dev: false
     idleTimeout: 30000000000
     listen: :17608

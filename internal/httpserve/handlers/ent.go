@@ -109,15 +109,10 @@ func (h *Handler) updateSubscriberVerificationToken(ctx context.Context, user *U
 
 // deleteSubscriber deletes a subscriber by email and org in the database
 func (h *Handler) deleteSubscriber(ctx context.Context, email string, org string) error {
-	whereOrg := subscriber.OwnerID(org)
-	if org == "" {
-		whereOrg = subscriber.OwnerIDIsNil()
-	}
-
 	num, err := transaction.FromContext(ctx).Subscriber.Delete().
 		Where(
 			subscriber.EmailEQ(email),
-			whereOrg,
+			subscriber.OwnerID(org),
 		).
 		Exec(ctx)
 	if err != nil {

@@ -18,7 +18,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
@@ -79,9 +78,8 @@ func (Subscriber) Mixin() []ent.Mixin {
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
-		OrgOwnerMixin{ // empty org means Datum system Subscriber
+		OrgOwnerMixin{
 			Ref:        "subscribers",
-			Optional:   true,
 			AllowWhere: true,
 		},
 	}
@@ -95,9 +93,7 @@ func (Subscriber) Edges() []ent.Edge {
 }
 
 func (Subscriber) Hooks() []ent.Hook {
-	return []ent.Hook{
-		hooks.HookSubscriber(),
-	}
+	return []ent.Hook{}
 }
 
 // Indexes of the Subscriber
@@ -118,10 +114,9 @@ func (Subscriber) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 		entfga.Annotations{
-			ObjectType:      "organization",
-			IncludeHooks:    false,
-			IDField:         "OwnerID",
-			NillableIDField: true,
+			ObjectType:   "organization",
+			IncludeHooks: false,
+			IDField:      "OwnerID",
 		},
 	}
 }

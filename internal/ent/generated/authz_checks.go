@@ -1465,7 +1465,7 @@ func (m *SubscriberMutation) CheckAccessForEdit(ctx context.Context) error {
 	// check if the input is a CreateSubscriberInput
 	input, ok := gInput.(CreateSubscriberInput)
 	if ok {
-		ac.ObjectID = *input.OwnerID
+		ac.ObjectID = input.OwnerID
 
 	}
 

@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
@@ -28,7 +30,32 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	// add handler
 	suite.e.GET("subscribe/verify", suite.h.VerifySubscriptionHandler)
 
-	ec := echocontext.NewTestEchoContext().Request().Context()
+	// bypass auth
+	ctx := context.Background()
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	mock_fga.WriteAny(t, suite.fga)
+
+	// setup test data
+	user := suite.db.User.Create().
+		SetEmail(gofakeit.Email()).
+		SetFirstName(gofakeit.FirstName()).
+		SetLastName(gofakeit.LastName()).
+		SaveX(ctx)
+
+	ec, err := auth.NewTestContextWithValidUser(user.ID)
+	require.NoError(t, err)
+
+	newCtx := ec.Request().Context()
+	newCtx = privacy.DecisionContext(newCtx, privacy.Allow)
+
+	reqCtx := context.WithValue(newCtx, echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	org := suite.db.Organization.Create().
+		SetName("mitb").
+		SaveX(reqCtx)
 
 	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
@@ -93,11 +120,12 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 
 			// set privacy allow in order to allow the creation of the users without
 			// authentication in the tests
-			ctx := privacy.DecisionContext(ec, privacy.Allow)
+			ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
 			// store token in db
 			et := suite.db.Subscriber.Create().
 				SetToken(user.EmailVerificationToken.String).
+				SetOwnerID(org.ID).
 				SetEmail(user.Email).
 				SetSecret(user.EmailVerificationSecret).
 				SetTTL(ttl).
@@ -139,7 +167,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 				{
 					To:        tc.email,
 					From:      "mitb@datum.net",
-					Subject:   fmt.Sprintf(emails.Subscribed, "MITB"),
+					Subject:   fmt.Sprintf(emails.Subscribed, "mitb"),
 					Timestamp: sent,
 				},
 			}

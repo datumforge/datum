@@ -5123,7 +5123,7 @@ input CreateSubscriberInput {
   indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean
-  ownerID: ID
+  ownerID: ID!
 }
 """
 CreateTFASettingsInput is used for create TFASettings object.
@@ -8823,7 +8823,7 @@ type Subscriber implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  ownerID: ID
+  ownerID: ID!
   """
   email address of the subscriber
   """
@@ -8844,7 +8844,7 @@ type Subscriber implements Node {
   indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean!
-  owner: Organization
+  owner: Organization!
 }
 """
 A connection to a list of items.
@@ -9004,8 +9004,6 @@ input SubscriberWhereInput {
   ownerIDContains: ID
   ownerIDHasPrefix: ID
   ownerIDHasSuffix: ID
-  ownerIDIsNil: Boolean
-  ownerIDNotNil: Boolean
   ownerIDEqualFold: ID
   ownerIDContainsFold: ID
   """
@@ -9692,7 +9690,6 @@ input UpdateSubscriberInput {
   """
   active: Boolean
   ownerID: ID
-  clearOwner: Boolean
 }
 """
 UpdateTFASettingsInput is used for update TFASettings object.
@@ -33814,11 +33811,14 @@ func (ec *executionContext) _Subscriber_ownerID(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOID2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Subscriber_ownerID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -34072,11 +34072,14 @@ func (ec *executionContext) _Subscriber_owner(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*generated.Organization)
 	fc.Result = res
-	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
+	return ec.marshalNOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Subscriber_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -41636,7 +41639,7 @@ func (ec *executionContext) unmarshalInputCreateSubscriberInput(ctx context.Cont
 			it.Active = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53949,7 +53952,7 @@ func (ec *executionContext) unmarshalInputSubscriberWhereInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDIsNil", "ownerIDNotNil", "ownerIDEqualFold", "ownerIDContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "verifiedEmail", "verifiedEmailNEQ", "verifiedPhone", "verifiedPhoneNEQ", "active", "activeNEQ", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDEqualFold", "ownerIDContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "verifiedEmail", "verifiedEmailNEQ", "verifiedPhone", "verifiedPhoneNEQ", "active", "activeNEQ", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54649,20 +54652,6 @@ func (ec *executionContext) unmarshalInputSubscriberWhereInput(ctx context.Conte
 				return it, err
 			}
 			it.OwnerIDHasSuffix = data
-		case "ownerIDIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerIDIsNil = data
-		case "ownerIDNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerIDNotNil = data
 		case "ownerIDEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDEqualFold"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -57305,7 +57294,7 @@ func (ec *executionContext) unmarshalInputUpdateSubscriberInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "phoneNumber", "clearPhoneNumber", "verifiedEmail", "verifiedPhone", "active", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "phoneNumber", "clearPhoneNumber", "verifiedEmail", "verifiedPhone", "active", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -57389,13 +57378,6 @@ func (ec *executionContext) unmarshalInputUpdateSubscriberInput(ctx context.Cont
 				return it, err
 			}
 			it.OwnerID = data
-		case "clearOwner":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOwner"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearOwner = data
 		}
 	}
 
@@ -66291,6 +66273,9 @@ func (ec *executionContext) _Subscriber(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = ec._Subscriber_deletedBy(ctx, field, obj)
 		case "ownerID":
 			out.Values[i] = ec._Subscriber_ownerID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "email":
 			out.Values[i] = ec._Subscriber_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -66323,6 +66308,9 @@ func (ec *executionContext) _Subscriber(ctx context.Context, sel ast.SelectionSe
 					}
 				}()
 				res = ec._Subscriber_owner(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 

@@ -13,6 +13,7 @@ data:
   DATUM_REFRESHINTERVAL: {{ .Values.datum.refreshInterval | 10m }}
   DATUM_SERVER_DEBUG: {{ .Values.datum.server.debug | false }}
   DATUM_SERVER_DEV: {{ .Values.datum.server.dev | false }}
+  DATUM_SERVER_DEFAULTROOTORG: {{ .Values.datum.server.defaultRootOrg | "01101101011010010111010001100010" }}
   DATUM_SERVER_LISTEN: {{ .Values.datum.server.listen | ":17608" }}
   DATUM_SERVER_SHUTDOWNGRACEPERIOD: {{ .Values.datum.server.shutdownGracePeriod | 10s }}
   DATUM_SERVER_READTIMEOUT: {{ .Values.datum.server.readTimeout | 15s }}

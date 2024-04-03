@@ -1,17 +1,17 @@
 package graphapi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/pkg/analytics/posthog"
 	ph "github.com/posthog/posthog-go"
 )
 
 // CreateEvent creates an event for the mutation with the properties
-func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
+func CreateEvent(ctx context.Context, c *ent.Client, m ent.Mutation, v ent.Value) {
 	out, err := parseValue(v)
 	if err != nil {
 		return
@@ -72,12 +72,25 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	// and send the event with _our_ token
 	// this is a test of creating the client on the fly
 
+	// Example of how we would query the integration for the db
+	// viewer := viewer.FromContext(ctx)
+	// int, err := c.Integration.Query().Where(
+	// 	integration.OwnerIDEQ(viewer.GetOrganizationID()),
+	// 	integration.NameEQ("posthog"),
+	// ).Only(ctx)
+	// if err != nil {
+	// 	// keep going
+	// 	return
+	// }
+
+	// phc := posthog.Config{
+	// 	APIKey: int.Config // this field doesn't exist, but whatever we are storing the config for the integration
+	// }
+
+	// for now, lets use our config for the demo
+	phc := c.Analytics.EventConfig
+
 	// create the posthog client
-	phc := posthog.Config{
-		APIKey:  c.Analytics.Token,
-		Host:    "https://app.posthog.com",
-		Enabled: true,
-	}
 
 	em := phc.Init()
 	defer em.Cleanup()

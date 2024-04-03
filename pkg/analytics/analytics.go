@@ -1,14 +1,15 @@
 package analytics
 
 import (
+	"github.com/datumforge/datum/pkg/analytics/posthog"
 	ph "github.com/posthog/posthog-go"
 )
 
 // EventManager isn't your normal party planner
 type EventManager struct {
-	Enabled bool
-	Token   string
-	Handler Handler
+	Enabled     bool
+	EventConfig posthog.Config // temporary example
+	Handler     Handler
 }
 
 // Handler is an interface which can be used to call various event / event association parameters provided by the posthog API

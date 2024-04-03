@@ -65,6 +65,16 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 		props.Set("email", email)
 	}
 
+	// check if the organization has posthog enabled
+	// this should be a query to the `integration` by Organization and Integration name
+	// for now, lets just assume the organization has posthog enabled
+	// and send the event with _our_ token
+	// this is a test of creating the client on the fly
+
+	// create the posthog client
+	phc := ph.New(c.Analytics.Token)
+	defer phc.Close()
+
 	c.Analytics.Event(event, props)
 	c.Analytics.Properties(i, obj, props)
 
@@ -74,7 +84,7 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 
 // trackedEvent returns true if the mutation should be a tracked event
 // for now, lets just track high level create and delete events
-// TODO: make these configuratable by integration
+// TODO: make these configurable by integration
 func TrackedEvent(m ent.Mutation) bool {
 	switch m.Type() {
 	case "User", "Organization", "Group":

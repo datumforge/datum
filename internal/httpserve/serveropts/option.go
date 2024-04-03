@@ -337,6 +337,7 @@ func WithAnalytics() ServerOption {
 
 		s.Config.Handler.AnalyticsClient = &analytics.EventManager{
 			Enabled: true,
+			Token:   s.Config.Settings.PostHog.APIKey,
 			Handler: ph,
 		}
 	})

@@ -7,6 +7,7 @@ import (
 // EventManager isn't your normal party planner
 type EventManager struct {
 	Enabled bool
+	Token   string
 	Handler Handler
 }
 

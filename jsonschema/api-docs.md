@@ -346,6 +346,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**secondaryDbSource**|`string`|dsn of the secondary database if multi-write is enabled<br/>|no|
 |**cacheTTL**|`integer`|cache results for subsequent requests<br/>|no|
 |**runMigrations**|`boolean`|run migrations on startup<br/>|no|
+|**migrationProvider**|`string`|migration provider to use for running migrations<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="redis"></a>

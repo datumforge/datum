@@ -107,8 +107,8 @@ github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e h1:anHN8Bsa8x80oC
 github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e/go.mod h1:ZCbNvIShUhAHKlURvgedaGUAghCNZli2I87uLJSPiZ0=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PBRCAXbE29GW+HJXm8a99x0mGtSSE8iHM=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
-github.com/datumforge/entx v0.0.7 h1:G5DEJIa9X434OPiHRaoDEWADei+XrWD5LjeqFXDXqVk=
-github.com/datumforge/entx v0.0.7/go.mod h1:zAdGGTOdOdr5EVdaB/JMO2EqqEk5K/9DEeaCJFAVABo=
+github.com/datumforge/entx v0.0.8 h1:qTlvWRxnoZwXMX2mf1NHvSASVqWZYzs7tgBnY1u6j0s=
+github.com/datumforge/entx v0.0.8/go.mod h1:7eiomY5fsbc8HzO+pbydDaMUftV0PqMftUZ0BziuhJc=
 github.com/datumforge/fgax v0.1.5 h1:cU7MTw+/7STl6KUBACfvvuPO5gbPLW7P4RlYXGLfxgw=
 github.com/datumforge/fgax v0.1.5/go.mod h1:hOcVFfzYI7jI3jQu1KV+iEZzTJ5YzPbv5ptKlb9Vjf0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

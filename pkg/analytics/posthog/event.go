@@ -125,6 +125,16 @@ func (p *PostHog) NewOrganization(organizationID, userID string, properties post
 	})
 }
 
+// Properties sets generic properties
+func (p *PostHog) Properties(id, obj string, properties posthog.Properties) {
+	_ = p.client.Enqueue(posthog.GroupIdentify{
+		Type:       obj,
+		Key:        id,
+		Timestamp:  time.Now(),
+		Properties: properties,
+	})
+}
+
 // OrganizationProperties sets org properties
 func (p *PostHog) OrganizationProperties(organizationID string, properties posthog.Properties) {
 	_ = p.client.Enqueue(posthog.GroupIdentify{

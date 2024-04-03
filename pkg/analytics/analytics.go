@@ -17,6 +17,7 @@ type Handler interface {
 	OrganizationEvent(organizationID, userID, eventName string, properties ph.Properties)
 	NewOrganization(organizationID, userID string, properties ph.Properties)
 	OrganizationProperties(organizationID string, properties ph.Properties)
+	Properties(id, obj string, properties ph.Properties)
 	UserEvent(userID, eventName string, properties ph.Properties)
 	NewUser(userID string, properties ph.Properties)
 	UserProperties(userID string, properties ph.Properties)
@@ -49,6 +50,13 @@ func (e *EventManager) AssociateUser(userID string, organizationID string) {
 func (e *EventManager) NewOrganization(organizationID, userID string, properties ph.Properties) {
 	if e.Enabled {
 		e.Handler.NewOrganization(organizationID, userID, properties)
+	}
+}
+
+// Properties is a wrapper to set generic object properties
+func (e *EventManager) Properties(id, obj string, properties ph.Properties) {
+	if e.Enabled {
+		e.Handler.Properties(id, obj, properties)
 	}
 }
 

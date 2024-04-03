@@ -1,6 +1,7 @@
 package graphapi
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -93,8 +94,12 @@ func (r *Resolver) Handler(withPlayground bool) *Handler {
 	srv.Use(extension.AutomaticPersistedQuery{
 		Cache: lru.New(100), // nolint:gomnd
 	})
+
 	// add transactional db client
 	WithTransactions(srv, r.client)
+
+	// add analytics
+	WithEvents(r.client)
 
 	srv.Use(otelgqlgen.Middleware())
 
@@ -112,6 +117,24 @@ func (r *Resolver) Handler(withPlayground bool) *Handler {
 	}
 
 	return h
+}
+
+func WithEvents(c *ent.Client) {
+	// Add a global hook that runs on all types and all operations.
+	c.Use(func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			retVal, err := next.Mutate(ctx, m)
+			if err != nil {
+				return retVal, err
+			}
+
+			if trackedEvent(m) {
+				createEvent(c, m, retVal)
+			}
+
+			return retVal, nil
+		})
+	})
 }
 
 // WithTransactions adds the transactioner to the ent db client

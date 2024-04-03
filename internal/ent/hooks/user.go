@@ -7,7 +7,6 @@ import (
 	"entgo.io/ent"
 	"github.com/datumforge/entx"
 	petname "github.com/dustinkirkland/golang-petname"
-	ph "github.com/posthog/posthog-go"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
@@ -98,13 +97,6 @@ func HookUser() ent.Hook {
 				}
 
 				userCreated.Edges.Setting = setting
-
-				props := ph.NewProperties().
-					Set("user_id", userCreated.ID).
-					Set("email", userCreated.Email)
-
-				mutation.Analytics.Event("user_created", props)
-				mutation.Analytics.UserProperties(userCreated.ID, props)
 			}
 
 			return userCreated, err

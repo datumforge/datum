@@ -43,10 +43,11 @@ func HookOrganization() ent.Hook {
 				if displayName, ok := mutation.DisplayName(); ok {
 					if displayName == "" {
 						mutation.SetDisplayName(name)
-						url := gravatar.New(name, nil)
-						mutation.SetAvatarRemoteURL(url)
 					}
 				}
+
+				url := gravatar.New(name, nil)
+				mutation.SetAvatarRemoteURL(url)
 			}
 
 			v, err := next.Mutate(ctx, mutation)

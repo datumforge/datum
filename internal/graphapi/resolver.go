@@ -128,8 +128,8 @@ func WithEvents(c *ent.Client) {
 				return retVal, err
 			}
 
-			if trackedEvent(m) {
-				createEvent(c, m, retVal)
+			if TrackedEvent(m) {
+				CreateEvent(c, m, retVal)
 			}
 
 			return retVal, nil

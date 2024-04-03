@@ -9,8 +9,8 @@ import (
 	ph "github.com/posthog/posthog-go"
 )
 
-// createEvent creates an event for the mutation with the properties
-func createEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
+// CreateEvent creates an event for the mutation with the properties
+func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 	out, err := parseValue(v)
 	if err != nil {
 		return
@@ -75,7 +75,7 @@ func createEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 // trackedEvent returns true if the mutation should be a tracked event
 // for now, lets just track high level create and delete events
 // TODO: make these configuratable by integration
-func trackedEvent(m ent.Mutation) bool {
+func TrackedEvent(m ent.Mutation) bool {
 	switch m.Type() {
 	case "User", "Organization", "Group":
 		switch getOp(m) {

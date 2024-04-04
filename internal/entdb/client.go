@@ -134,6 +134,7 @@ func (c *client) runGooseMigrations() error {
 
 	if _, err := drv.Exec("PRAGMA foreign_keys = off;", nil); err != nil {
 		drv.Close()
+
 		return fmt.Errorf("failed to disable foreign keys: %w", err)
 	}
 
@@ -142,12 +143,14 @@ func (c *client) runGooseMigrations() error {
 	if err := goose.SetDialect(driver); err != nil {
 		return err
 	}
+
 	if err := goose.Up(drv, "migrations-goose"); err != nil {
 		return err
 	}
 
 	if _, err := drv.Exec("PRAGMA foreign_keys = on;", nil); err != nil {
 		drv.Close()
+
 		return fmt.Errorf("failed to enable foreign keys: %w", err)
 	}
 

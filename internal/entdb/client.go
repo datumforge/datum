@@ -2,15 +2,18 @@ package entdb
 
 import (
 	"context"
+	"database/sql"
 	"os"
 	"time"
 
 	"ariga.io/entcache"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/datumforge/entx"
+	"github.com/pressly/goose/v3"
 
 	"go.uber.org/zap"
 
+	migratedb "github.com/datumforge/datum/db"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/pkg/testutils"
@@ -53,8 +56,8 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 	client.pc = client.createEntDBClient(entConfig.GetPrimaryDB())
 
 	if c.RunMigrations {
-		if err := client.createSchema(ctx); err != nil {
-			client.logger.Errorf("failed creating schema resources", zap.Error(err))
+		if err := client.runMigrations(ctx); err != nil {
+			client.logger.Errorf("failed running migrations", zap.Error(err))
 
 			return nil, nil, err
 		}
@@ -72,8 +75,8 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 		client.sc = client.createEntDBClient(entConfig.GetSecondaryDB())
 
 		if c.RunMigrations {
-			if err := client.createSchema(ctx); err != nil {
-				client.logger.Errorf("failed creating schema resources", zap.Error(err))
+			if err := client.runMigrations(ctx); err != nil {
+				client.logger.Errorf("failed running migrations", zap.Error(err))
 
 				return nil, nil, err
 			}
@@ -105,7 +108,45 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 	return ec, entConfig, nil
 }
 
-func (c *client) createSchema(ctx context.Context) error {
+// runMigrations runs the migrations based on the configured migration provider on startup
+func (c *client) runMigrations(ctx context.Context) error {
+	switch c.config.MigrationProvider {
+	case "goose":
+		return c.runGooseMigrations()
+	default: // atlas
+		return c.runAtlasMigrations(ctx)
+	}
+}
+
+// runGooseMigrations runs the goose migrations
+func (c *client) runGooseMigrations() error {
+	driver, err := entx.CheckEntDialect(c.config.DriverName)
+	if err != nil {
+		return err
+	}
+
+	drv, err := sql.Open(driver, c.config.PrimaryDBSource)
+	if err != nil {
+		return err
+	}
+	defer drv.Close()
+
+	goose.SetBaseFS(migratedb.GooseMigrations)
+
+	if err := goose.SetDialect(driver); err != nil {
+		return err
+	}
+
+	if err := goose.Up(drv, "migrations-goose"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// runAtlasMigrations runs the atlas auto-migrations
+// this do not use the generated versioned migrations files from ent
+func (c *client) runAtlasMigrations(ctx context.Context) error {
 	// Run the automatic migration tool to create all schema resources.
 	// entcache.Driver will skip the caching layer when running the schema migration
 	if err := c.pc.Schema.Create(entcache.Skip(ctx)); err != nil {
@@ -131,6 +172,7 @@ func (c *client) createEntDBClient(db *entsql.Driver) *ent.Client {
 	return ent.NewClient(cOpts...)
 }
 
+// NewTestContainer creates a test container for testing purposes
 func NewTestContainer(ctx context.Context) *testutils.TC {
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")

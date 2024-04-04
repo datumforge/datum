@@ -31,6 +31,7 @@ tasks:
     desc: re-sets the checksum created by the atlas package so that a complete migration can be re-created if deleted
     cmds:
       - atlas migrate hash --dir="file://migrations"
+      - atlas migrate hash --dir="file://migrations-goose"
 
   console:
     desc: launches an interactive terminal to the local datum db with some tasty options

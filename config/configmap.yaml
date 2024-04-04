@@ -92,7 +92,7 @@ data:
   DATUM_DB_RUNMIGRATIONS: {{ .Values.datum.db.runMigrations | true }}
   DATUM_DB_MIGRATIONPROVIDER: {{ .Values.datum.db.migrationProvider | "atlas" }}
   DATUM_GEODETIC_ENABLED: {{ .Values.datum.geodetic.enabled | true }}
-  DATUM_GEODETIC_BASEURL: {{ .Values.datum.geodetic.baseUrl | "http://localhost:1337/" }}
+  DATUM_GEODETIC_BASEURL: {{ .Values.datum.geodetic.baseUrl | "http://localhost:1337" }}
   DATUM_GEODETIC_ENDPOINT: {{ .Values.datum.geodetic.endpoint | "query" }}
   DATUM_GEODETIC_DEBUG: {{ .Values.datum.geodetic.debug | false }}
   DATUM_REDIS_ENABLED: {{ .Values.datum.redis.enabled | true }}

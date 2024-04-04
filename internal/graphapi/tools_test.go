@@ -1,6 +1,8 @@
 package graphapi_test
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"log"
 	"net/http"
@@ -16,6 +18,7 @@ import (
 	"github.com/datumforge/fgax"
 	mock_fga "github.com/datumforge/fgax/mockery"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest"
 
 	"github.com/datumforge/datum/internal/datumclient"
@@ -233,4 +236,25 @@ func userContextWithID(userID string) (context.Context, error) {
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	return reqCtx, nil
+}
+
+func (suite *GraphTestSuite) captureOutput(funcToRun func()) string {
+	var buffer bytes.Buffer
+
+	oldLogger := suite.client.db.Logger
+	encoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+	writer := bufio.NewWriter(&buffer)
+
+	logger := zap.New(
+		zapcore.NewCore(encoder, zapcore.AddSync(writer), zapcore.DebugLevel)).
+		Sugar()
+
+	suite.client.db.Logger = *logger
+
+	funcToRun()
+	writer.Flush()
+
+	suite.client.db.Logger = oldLogger
+
+	return buffer.String()
 }

@@ -357,6 +357,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
+|**enabled**|`boolean`|Enable the geodetic client<br/>||
 |**baseUrl**|`string`|Base URL for the geodetic service<br/>||
 |**endpoint**|`string`|Endpoint for the graphql api<br/>||
 |**debug**|`boolean`|Enable debug mode<br/>||

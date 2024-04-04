@@ -68,8 +68,8 @@ func HookOrganization() ent.Hook {
 					return v, err
 				}
 
-				// create the database, if the org has a dedicated db
-				if orgCreated.DedicatedDb {
+				// create the database, if the org has a dedicated db and geodetic is available
+				if orgCreated.DedicatedDb && mutation.Geodetic != nil {
 					settings, err := orgCreated.Setting(ctx)
 					if err != nil {
 						mutation.Logger.Errorw("unable to get organization settings")

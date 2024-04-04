@@ -81,7 +81,11 @@ func serve(ctx context.Context) error {
 	defer redisClient.Close()
 
 	// Setup Geodetic client
-	gc := so.Config.Settings.Geodetic.NewDefaultClient()
+	if so.Config.Settings.Geodetic.Enabled {
+		gc := so.Config.Settings.Geodetic.NewDefaultClient()
+
+		entOpts = append(entOpts, ent.Geodetic(gc.(*geodetic.Client)))
+	}
 
 	// add otp manager, after redis is setup
 	so.AddServerOptions(
@@ -96,7 +100,6 @@ func serve(ctx context.Context) error {
 		ent.Marionette(so.Config.Handler.TaskMan),
 		ent.Analytics(so.Config.Handler.AnalyticsClient),
 		ent.TOTP(so.Config.Handler.OTPManager),
-		ent.Geodetic(gc.(*geodetic.Client)),
 	)
 
 	// Setup DB connection

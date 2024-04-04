@@ -388,6 +388,10 @@
     },
     "geodeticclient.Config": {
       "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable the geodetic client"
+        },
         "baseUrl": {
           "type": "string",
           "description": "Base URL for the geodetic service"

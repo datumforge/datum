@@ -305,6 +305,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldParentOrganizationID: {Type: field.TypeString, Column: organization.FieldParentOrganizationID},
 			organization.FieldPersonalOrg:          {Type: field.TypeBool, Column: organization.FieldPersonalOrg},
 			organization.FieldAvatarRemoteURL:      {Type: field.TypeString, Column: organization.FieldAvatarRemoteURL},
+			organization.FieldDedicatedDb:          {Type: field.TypeBool, Column: organization.FieldDedicatedDb},
 		},
 	}
 	graph.Nodes[11] = &sqlgraph.Node{
@@ -331,6 +332,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organizationsetting.FieldBillingAddress: {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
 			organizationsetting.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
 			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
+			organizationsetting.FieldGeoLocation:    {Type: field.TypeEnum, Column: organizationsetting.FieldGeoLocation},
 			organizationsetting.FieldOrganizationID: {Type: field.TypeString, Column: organizationsetting.FieldOrganizationID},
 		},
 	}
@@ -2365,6 +2367,11 @@ func (f *OrganizationFilter) WhereAvatarRemoteURL(p entql.StringP) {
 	f.Where(p.Field(organization.FieldAvatarRemoteURL))
 }
 
+// WhereDedicatedDb applies the entql bool predicate on the dedicated_db field.
+func (f *OrganizationFilter) WhereDedicatedDb(p entql.BoolP) {
+	f.Where(p.Field(organization.FieldDedicatedDb))
+}
+
 // WhereHasParent applies a predicate to check if query has an edge parent.
 func (f *OrganizationFilter) WhereHasParent() {
 	f.Where(entql.HasEdge("parent"))
@@ -2636,6 +2643,11 @@ func (f *OrganizationSettingFilter) WhereTaxIdentifier(p entql.StringP) {
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
 func (f *OrganizationSettingFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldTags))
+}
+
+// WhereGeoLocation applies the entql string predicate on the geo_location field.
+func (f *OrganizationSettingFilter) WhereGeoLocation(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldGeoLocation))
 }
 
 // WhereOrganizationID applies the entql string predicate on the organization_id field.

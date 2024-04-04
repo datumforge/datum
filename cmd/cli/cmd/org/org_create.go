@@ -33,6 +33,11 @@ func init() {
 
 	orgCreateCmd.Flags().StringP("parent-org-id", "p", "", "parent organization id, leave empty to create a root org")
 	datum.ViperBindFlag("org.create.parent-org-id", orgCreateCmd.Flags().Lookup("parent-org-id"))
+
+	// TODO: https://github.com/datumforge/datum/issues/734
+	// remove flag once the feature is implemented
+	orgCreateCmd.Flags().BoolP("dedicated-db", "D", false, "create a dedicated database for the organization")
+	datum.ViperBindFlag("org.create.dedicated-db", orgCreateCmd.Flags().Lookup("dedicated-db"))
 }
 
 func createOrg(ctx context.Context) error {
@@ -56,6 +61,7 @@ func createOrg(ctx context.Context) error {
 	displayName := viper.GetString("org.create.short-name")
 	description := viper.GetString("org.create.description")
 	parentOrgID := viper.GetString("org.create.parent-org-id")
+	dedicatedDB := viper.GetBool("org.create.dedicated-db")
 
 	input := datumclient.CreateOrganizationInput{
 		Name: name,
@@ -71,6 +77,10 @@ func createOrg(ctx context.Context) error {
 
 	if parentOrgID != "" {
 		input.ParentID = &parentOrgID
+	}
+
+	if dedicatedDB {
+		input.DedicatedDb = &dedicatedDB
 	}
 
 	o, err := cli.Client.CreateOrganization(ctx, input, cli.Interceptor)

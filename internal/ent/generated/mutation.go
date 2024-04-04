@@ -11605,6 +11605,7 @@ type OrganizationMutation struct {
 	description                   *string
 	personal_org                  *bool
 	avatar_remote_url             *string
+	dedicated_db                  *bool
 	clearedFields                 map[string]struct{}
 	parent                        *string
 	clearedparent                 bool
@@ -12311,6 +12312,42 @@ func (m *OrganizationMutation) ResetAvatarRemoteURL() {
 	delete(m.clearedFields, organization.FieldAvatarRemoteURL)
 }
 
+// SetDedicatedDb sets the "dedicated_db" field.
+func (m *OrganizationMutation) SetDedicatedDb(b bool) {
+	m.dedicated_db = &b
+}
+
+// DedicatedDb returns the value of the "dedicated_db" field in the mutation.
+func (m *OrganizationMutation) DedicatedDb() (r bool, exists bool) {
+	v := m.dedicated_db
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDedicatedDb returns the old "dedicated_db" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldDedicatedDb(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDedicatedDb is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDedicatedDb requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDedicatedDb: %w", err)
+	}
+	return oldValue.DedicatedDb, nil
+}
+
+// ResetDedicatedDb resets all changes to the "dedicated_db" field.
+func (m *OrganizationMutation) ResetDedicatedDb() {
+	m.dedicated_db = nil
+}
+
 // SetParentID sets the "parent" edge to the Organization entity by id.
 func (m *OrganizationMutation) SetParentID(id string) {
 	m.parent = &id
@@ -12964,7 +13001,7 @@ func (m *OrganizationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, organization.FieldCreatedAt)
 	}
@@ -13001,6 +13038,9 @@ func (m *OrganizationMutation) Fields() []string {
 	if m.avatar_remote_url != nil {
 		fields = append(fields, organization.FieldAvatarRemoteURL)
 	}
+	if m.dedicated_db != nil {
+		fields = append(fields, organization.FieldDedicatedDb)
+	}
 	return fields
 }
 
@@ -13033,6 +13073,8 @@ func (m *OrganizationMutation) Field(name string) (ent.Value, bool) {
 		return m.PersonalOrg()
 	case organization.FieldAvatarRemoteURL:
 		return m.AvatarRemoteURL()
+	case organization.FieldDedicatedDb:
+		return m.DedicatedDb()
 	}
 	return nil, false
 }
@@ -13066,6 +13108,8 @@ func (m *OrganizationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldPersonalOrg(ctx)
 	case organization.FieldAvatarRemoteURL:
 		return m.OldAvatarRemoteURL(ctx)
+	case organization.FieldDedicatedDb:
+		return m.OldDedicatedDb(ctx)
 	}
 	return nil, fmt.Errorf("unknown Organization field %s", name)
 }
@@ -13158,6 +13202,13 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAvatarRemoteURL(v)
+		return nil
+	case organization.FieldDedicatedDb:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDedicatedDb(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)
@@ -13306,6 +13357,9 @@ func (m *OrganizationMutation) ResetField(name string) error {
 		return nil
 	case organization.FieldAvatarRemoteURL:
 		m.ResetAvatarRemoteURL()
+		return nil
+	case organization.FieldDedicatedDb:
+		m.ResetDedicatedDb()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)
@@ -13686,6 +13740,7 @@ type OrganizationSettingMutation struct {
 	tax_identifier      *string
 	tags                *[]string
 	appendtags          []string
+	geo_location        *enums.Region
 	clearedFields       map[string]struct{}
 	organization        *string
 	clearedorganization bool
@@ -14467,6 +14522,55 @@ func (m *OrganizationSettingMutation) ResetTags() {
 	delete(m.clearedFields, organizationsetting.FieldTags)
 }
 
+// SetGeoLocation sets the "geo_location" field.
+func (m *OrganizationSettingMutation) SetGeoLocation(e enums.Region) {
+	m.geo_location = &e
+}
+
+// GeoLocation returns the value of the "geo_location" field in the mutation.
+func (m *OrganizationSettingMutation) GeoLocation() (r enums.Region, exists bool) {
+	v := m.geo_location
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGeoLocation returns the old "geo_location" field's value of the OrganizationSetting entity.
+// If the OrganizationSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationSettingMutation) OldGeoLocation(ctx context.Context) (v enums.Region, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGeoLocation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGeoLocation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGeoLocation: %w", err)
+	}
+	return oldValue.GeoLocation, nil
+}
+
+// ClearGeoLocation clears the value of the "geo_location" field.
+func (m *OrganizationSettingMutation) ClearGeoLocation() {
+	m.geo_location = nil
+	m.clearedFields[organizationsetting.FieldGeoLocation] = struct{}{}
+}
+
+// GeoLocationCleared returns if the "geo_location" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) GeoLocationCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldGeoLocation]
+	return ok
+}
+
+// ResetGeoLocation resets all changes to the "geo_location" field.
+func (m *OrganizationSettingMutation) ResetGeoLocation() {
+	m.geo_location = nil
+	delete(m.clearedFields, organizationsetting.FieldGeoLocation)
+}
+
 // SetOrganizationID sets the "organization_id" field.
 func (m *OrganizationSettingMutation) SetOrganizationID(s string) {
 	m.organization = &s
@@ -14577,7 +14681,7 @@ func (m *OrganizationSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationSettingMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, organizationsetting.FieldCreatedAt)
 	}
@@ -14617,6 +14721,9 @@ func (m *OrganizationSettingMutation) Fields() []string {
 	if m.tags != nil {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
+	if m.geo_location != nil {
+		fields = append(fields, organizationsetting.FieldGeoLocation)
+	}
 	if m.organization != nil {
 		fields = append(fields, organizationsetting.FieldOrganizationID)
 	}
@@ -14654,6 +14761,8 @@ func (m *OrganizationSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.TaxIdentifier()
 	case organizationsetting.FieldTags:
 		return m.Tags()
+	case organizationsetting.FieldGeoLocation:
+		return m.GeoLocation()
 	case organizationsetting.FieldOrganizationID:
 		return m.OrganizationID()
 	}
@@ -14691,6 +14800,8 @@ func (m *OrganizationSettingMutation) OldField(ctx context.Context, name string)
 		return m.OldTaxIdentifier(ctx)
 	case organizationsetting.FieldTags:
 		return m.OldTags(ctx)
+	case organizationsetting.FieldGeoLocation:
+		return m.OldGeoLocation(ctx)
 	case organizationsetting.FieldOrganizationID:
 		return m.OldOrganizationID(ctx)
 	}
@@ -14793,6 +14904,13 @@ func (m *OrganizationSettingMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetTags(v)
 		return nil
+	case organizationsetting.FieldGeoLocation:
+		v, ok := value.(enums.Region)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGeoLocation(v)
+		return nil
 	case organizationsetting.FieldOrganizationID:
 		v, ok := value.(string)
 		if !ok {
@@ -14869,6 +14987,9 @@ func (m *OrganizationSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(organizationsetting.FieldTags) {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
+	if m.FieldCleared(organizationsetting.FieldGeoLocation) {
+		fields = append(fields, organizationsetting.FieldGeoLocation)
+	}
 	if m.FieldCleared(organizationsetting.FieldOrganizationID) {
 		fields = append(fields, organizationsetting.FieldOrganizationID)
 	}
@@ -14925,6 +15046,9 @@ func (m *OrganizationSettingMutation) ClearField(name string) error {
 	case organizationsetting.FieldTags:
 		m.ClearTags()
 		return nil
+	case organizationsetting.FieldGeoLocation:
+		m.ClearGeoLocation()
+		return nil
 	case organizationsetting.FieldOrganizationID:
 		m.ClearOrganizationID()
 		return nil
@@ -14974,6 +15098,9 @@ func (m *OrganizationSettingMutation) ResetField(name string) error {
 		return nil
 	case organizationsetting.FieldTags:
 		m.ResetTags()
+		return nil
+	case organizationsetting.FieldGeoLocation:
+		m.ResetGeoLocation()
 		return nil
 	case organizationsetting.FieldOrganizationID:
 		m.ResetOrganizationID()

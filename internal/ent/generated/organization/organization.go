@@ -39,6 +39,8 @@ const (
 	FieldPersonalOrg = "personal_org"
 	// FieldAvatarRemoteURL holds the string denoting the avatar_remote_url field in the database.
 	FieldAvatarRemoteURL = "avatar_remote_url"
+	// FieldDedicatedDb holds the string denoting the dedicated_db field in the database.
+	FieldDedicatedDb = "dedicated_db"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
@@ -156,6 +158,7 @@ var Columns = []string{
 	FieldParentOrganizationID,
 	FieldPersonalOrg,
 	FieldAvatarRemoteURL,
+	FieldDedicatedDb,
 }
 
 var (
@@ -202,6 +205,8 @@ var (
 	DefaultPersonalOrg bool
 	// AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
 	AvatarRemoteURLValidator func(string) error
+	// DefaultDedicatedDb holds the default value on creation for the "dedicated_db" field.
+	DefaultDedicatedDb bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -272,6 +277,11 @@ func ByPersonalOrg(opts ...sql.OrderTermOption) OrderOption {
 // ByAvatarRemoteURL orders the results by the avatar_remote_url field.
 func ByAvatarRemoteURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvatarRemoteURL, opts...).ToFunc()
+}
+
+// ByDedicatedDb orders the results by the dedicated_db field.
+func ByDedicatedDb(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDedicatedDb, opts...).ToFunc()
 }
 
 // ByParentField orders the results by parent field.

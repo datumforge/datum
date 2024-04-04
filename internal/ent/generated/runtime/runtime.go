@@ -592,6 +592,10 @@ func init() {
 			return nil
 		}
 	}()
+	// organizationDescDedicatedDb is the schema descriptor for dedicated_db field.
+	organizationDescDedicatedDb := organizationFields[6].Descriptor()
+	// organization.DefaultDedicatedDb holds the default value on creation for the dedicated_db field.
+	organization.DefaultDedicatedDb = organizationDescDedicatedDb.Default.(bool)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.

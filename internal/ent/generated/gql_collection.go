@@ -1612,6 +1612,11 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, organization.FieldAvatarRemoteURL)
 				fieldSeen[organization.FieldAvatarRemoteURL] = struct{}{}
 			}
+		case "dedicatedDb":
+			if _, ok := fieldSeen[organization.FieldDedicatedDb]; !ok {
+				selectedFields = append(selectedFields, organization.FieldDedicatedDb)
+				fieldSeen[organization.FieldDedicatedDb] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -1774,6 +1779,11 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 			if _, ok := fieldSeen[organizationsetting.FieldTags]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldTags)
 				fieldSeen[organizationsetting.FieldTags] = struct{}{}
+			}
+		case "geoLocation":
+			if _, ok := fieldSeen[organizationsetting.FieldGeoLocation]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldGeoLocation)
+				fieldSeen[organizationsetting.FieldGeoLocation] = struct{}{}
 			}
 		case "organizationID":
 			if _, ok := fieldSeen[organizationsetting.FieldOrganizationID]; !ok {

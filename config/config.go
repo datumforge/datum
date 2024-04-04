@@ -7,6 +7,7 @@ import (
 
 	"github.com/datumforge/entx"
 	"github.com/datumforge/fgax"
+	"github.com/datumforge/geodetic/pkg/geodeticclient"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
@@ -50,6 +51,9 @@ type Config struct {
 
 	// DB contains the database configuration for the ent client
 	DB entx.Config `json:"db" koanf:"db"`
+
+	// Geodetic contains the geodetic client configuration
+	Geodetic geodeticclient.Config `json:"geodetic" koanf:"geodetic"`
 
 	// Redis contains the redis configuration for the key-value store
 	Redis cache.Config `json:"redis" koanf:"redis"`

@@ -270,6 +270,10 @@ input CreateOrganizationInput {
 	URL of the user's remote avatar
 	"""
 	avatarRemoteURL: String
+	"""
+	Whether the organization has a dedicated database
+	"""
+	dedicatedDb: Boolean
 	parentID: ID
 	groupIDs: [ID!]
 	integrationIDs: [ID!]
@@ -319,6 +323,10 @@ input CreateOrganizationSettingInput {
 	tags associated with the object
 	"""
 	tags: [String!]
+	"""
+	geographical location of the organization
+	"""
+	geoLocation: OrganizationSettingRegion
 	organizationID: ID
 }
 """
@@ -3413,6 +3421,10 @@ type Organization implements Node {
 	URL of the user's remote avatar
 	"""
 	avatarRemoteURL: String
+	"""
+	Whether the organization has a dedicated database
+	"""
+	dedicatedDb: Boolean!
 	parent: Organization
 	children(
 		"""
@@ -3561,6 +3573,10 @@ type OrganizationSetting implements Node {
 	"""
 	tags: [String!]
 	"""
+	geographical location of the organization
+	"""
+	geoLocation: OrganizationSettingRegion
+	"""
 	the ID of the organization the settings belong to
 	"""
 	organizationID: ID
@@ -3613,6 +3629,14 @@ type OrganizationSettingEdge {
 	A cursor for use in pagination.
 	"""
 	cursor: Cursor!
+}
+"""
+OrganizationSettingRegion is enum for the field geo_location
+"""
+enum OrganizationSettingRegion @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Region") {
+	AMER
+	EMEA
+	APAC
 }
 """
 Return response for updateOrganizationSetting mutation
@@ -3827,6 +3851,15 @@ input OrganizationSettingWhereInput {
 	taxIdentifierNotNil: Boolean
 	taxIdentifierEqualFold: String
 	taxIdentifierContainsFold: String
+	"""
+	geo_location field predicates
+	"""
+	geoLocation: OrganizationSettingRegion
+	geoLocationNEQ: OrganizationSettingRegion
+	geoLocationIn: [OrganizationSettingRegion!]
+	geoLocationNotIn: [OrganizationSettingRegion!]
+	geoLocationIsNil: Boolean
+	geoLocationNotNil: Boolean
 	"""
 	organization_id field predicates
 	"""
@@ -5830,6 +5863,11 @@ input UpdateOrganizationSettingInput {
 	tags: [String!]
 	appendTags: [String!]
 	clearTags: Boolean
+	"""
+	geographical location of the organization
+	"""
+	geoLocation: OrganizationSettingRegion
+	clearGeoLocation: Boolean
 	organizationID: ID
 	clearOrganization: Boolean
 }

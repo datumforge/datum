@@ -41,6 +41,7 @@ query GetOrganizationByID($organizationId: ID!) {
       billingAddress
       taxIdentifier
       tags
+      geoLocation
     }
     createdAt
     createdBy
@@ -94,6 +95,7 @@ query GetAllOrganizations {
           billingAddress
           taxIdentifier
           tags
+          geoLocation
         }
         createdAt
         updatedAt
@@ -147,6 +149,7 @@ query OrganizationsWhere($where: OrganizationWhereInput) {
           billingAddress
           taxIdentifier
           tags
+          geoLocation
         }
         createdAt
         updatedAt
@@ -178,6 +181,7 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
         billingAddress
         taxIdentifier
         tags
+        geoLocation
       }
       parent {
         id
@@ -222,6 +226,7 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
         billingAddress
         taxIdentifier
         tags
+        geoLocation
       }
     }
   }

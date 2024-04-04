@@ -42,6 +42,8 @@ type Organization struct {
 	PersonalOrg bool `json:"personal_org,omitempty"`
 	// URL of the user's remote avatar
 	AvatarRemoteURL *string `json:"avatar_remote_url,omitempty"`
+	// Whether the organization has a dedicated database
+	DedicatedDb bool `json:"dedicated_db,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationQuery when eager-loading is set.
 	Edges        OrganizationEdges `json:"edges"`
@@ -209,7 +211,7 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organization.FieldPersonalOrg:
+		case organization.FieldPersonalOrg, organization.FieldDedicatedDb:
 			values[i] = new(sql.NullBool)
 		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldDeletedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID, organization.FieldAvatarRemoteURL:
 			values[i] = new(sql.NullString)
@@ -308,6 +310,12 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				o.AvatarRemoteURL = new(string)
 				*o.AvatarRemoteURL = value.String
+			}
+		case organization.FieldDedicatedDb:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field dedicated_db", values[i])
+			} else if value.Valid {
+				o.DedicatedDb = value.Bool
 			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
@@ -442,6 +450,9 @@ func (o *Organization) String() string {
 		builder.WriteString("avatar_remote_url=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("dedicated_db=")
+	builder.WriteString(fmt.Sprintf("%v", o.DedicatedDb))
 	builder.WriteByte(')')
 	return builder.String()
 }

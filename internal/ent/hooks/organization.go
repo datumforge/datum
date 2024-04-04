@@ -5,11 +5,15 @@ import (
 
 	"entgo.io/ent"
 
+	geodeticenums "github.com/datumforge/geodetic/pkg/enums"
+	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
+
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/utils/gravatar"
+	"github.com/datumforge/datum/pkg/utils/marionette"
 )
 
 // HookOrganization runs on org mutations to set default values that are not provided
@@ -63,11 +67,54 @@ func HookOrganization() ent.Hook {
 				if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
 					return v, err
 				}
+
+				// create the database, if the org has a dedicated db and geodetic is available
+				if orgCreated.DedicatedDb && mutation.Geodetic != nil {
+					settings, err := orgCreated.Setting(ctx)
+					if err != nil {
+						mutation.Logger.Errorw("unable to get organization settings")
+
+						return nil, err
+					}
+
+					if err := mutation.Marionette.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+						return createDatabase(ctx, orgCreated.ID, settings.GeoLocation.String(), mutation)
+					}), marionette.WithErrorf("could not send create the database for %s", orgCreated.Name),
+					); err != nil {
+						mutation.Logger.Errorw("unable to queue database creation")
+
+						return v, err
+					}
+				}
 			}
 
 			return v, err
 		})
 	}, ent.OpCreate|ent.OpUpdateOne)
+}
+
+func createDatabase(ctx context.Context, orgID, geo string, mutation *generated.OrganizationMutation) error {
+	// set default geo if not provided
+	if geo == "" {
+		geo = enums.Amer.String()
+	}
+
+	input := geodetic.CreateDatabaseInput{
+		OrganizationID: orgID,
+		Geo:            &geo,
+		Provider:       &geodeticenums.Turso,
+	}
+
+	mutation.Logger.Infow("creating database", "org", input.OrganizationID, "geo", input.Geo, "provider", input.Provider)
+
+	if _, err := mutation.Geodetic.CreateDatabase(ctx, input); err != nil {
+		mutation.Logger.Errorw("error creating database", "error", err)
+
+		return err
+	}
+
+	// create the database
+	return nil
 }
 
 // defaultOrganizationSettings creates the default organizations settings for a new org

@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 )
@@ -186,6 +187,20 @@ func (osc *OrganizationSettingCreate) SetTags(s []string) *OrganizationSettingCr
 	return osc
 }
 
+// SetGeoLocation sets the "geo_location" field.
+func (osc *OrganizationSettingCreate) SetGeoLocation(e enums.Region) *OrganizationSettingCreate {
+	osc.mutation.SetGeoLocation(e)
+	return osc
+}
+
+// SetNillableGeoLocation sets the "geo_location" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableGeoLocation(e *enums.Region) *OrganizationSettingCreate {
+	if e != nil {
+		osc.SetGeoLocation(*e)
+	}
+	return osc
+}
+
 // SetOrganizationID sets the "organization_id" field.
 func (osc *OrganizationSettingCreate) SetOrganizationID(s string) *OrganizationSettingCreate {
 	osc.mutation.SetOrganizationID(s)
@@ -301,6 +316,11 @@ func (osc *OrganizationSettingCreate) check() error {
 			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
 		}
 	}
+	if v, ok := osc.mutation.GeoLocation(); ok {
+		if err := organizationsetting.GeoLocationValidator(v); err != nil {
+			return &ValidationError{Name: "geo_location", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.geo_location": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -388,6 +408,10 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 	if value, ok := osc.mutation.Tags(); ok {
 		_spec.SetField(organizationsetting.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
+	}
+	if value, ok := osc.mutation.GeoLocation(); ok {
+		_spec.SetField(organizationsetting.FieldGeoLocation, field.TypeEnum, value)
+		_node.GeoLocation = value
 	}
 	if nodes := osc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

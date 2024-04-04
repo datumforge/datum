@@ -3143,6 +3143,9 @@
                   "avatar_remote_url": {
                     "type": "string"
                   },
+                  "dedicated_db": {
+                    "type": "boolean"
+                  },
                   "parent": {
                     "type": "string"
                   },
@@ -3212,7 +3215,8 @@
                 },
                 "required": [
                   "name",
-                  "display_name"
+                  "display_name",
+                  "dedicated_db"
                 ]
               }
             }
@@ -3358,6 +3362,9 @@
                   },
                   "avatar_remote_url": {
                     "type": "string"
+                  },
+                  "dedicated_db": {
+                    "type": "boolean"
                   },
                   "parent": {
                     "type": "string"
@@ -6599,6 +6606,9 @@
           "avatar_remote_url": {
             "type": "string"
           },
+          "dedicated_db": {
+            "type": "boolean"
+          },
           "parent": {
             "$ref": "#/components/schemas/Organization"
           },
@@ -6669,7 +6679,8 @@
         "required": [
           "id",
           "name",
-          "display_name"
+          "display_name",
+          "dedicated_db"
         ]
       },
       "OrganizationSetting": {
@@ -6725,6 +6736,14 @@
             "items": {
               "type": "string"
             }
+          },
+          "geo_location": {
+            "type": "string",
+            "enum": [
+              "AMER",
+              "EMEA",
+              "APAC"
+            ]
           },
           "organization_id": {
             "type": "string"

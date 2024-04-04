@@ -12,6 +12,7 @@ Config contains the configuration for the datum server
 |[**auth**](#auth)|`object`|Auth settings including oauth2 providers and datum token configuration<br/>|yes|
 |[**authz**](#authz)|`object`||yes|
 |[**db**](#db)|`object`||yes|
+|[**geodetic**](#geodetic)|`object`|||
 |[**redis**](#redis)|`object`|Config for the redis client used to store key-value pairs<br/>||
 |[**tracer**](#tracer)|`object`|Config defines the configuration settings for opentelemetry tracing<br/>||
 |[**email**](#email)|`object`|Config for sending emails via SendGrid and managing marketing contacts<br/>||
@@ -347,6 +348,19 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**cacheTTL**|`integer`|cache results for subsequent requests<br/>|no|
 |**runMigrations**|`boolean`|run migrations on startup<br/>|no|
 |**migrationProvider**|`string`|migration provider to use for running migrations<br/>|no|
+
+**Additional Properties:** not allowed  
+<a name="geodetic"></a>
+## geodetic: object
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enable the geodetic client<br/>||
+|**baseUrl**|`string`|Base URL for the geodetic service<br/>||
+|**endpoint**|`string`|Endpoint for the graphql api<br/>||
+|**debug**|`boolean`|Enable debug mode<br/>||
 
 **Additional Properties:** not allowed  
 <a name="redis"></a>

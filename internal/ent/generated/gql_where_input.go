@@ -7176,6 +7176,14 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
 
+	// "geo_location" field predicates.
+	GeoLocation       *enums.Region  `json:"geoLocation,omitempty"`
+	GeoLocationNEQ    *enums.Region  `json:"geoLocationNEQ,omitempty"`
+	GeoLocationIn     []enums.Region `json:"geoLocationIn,omitempty"`
+	GeoLocationNotIn  []enums.Region `json:"geoLocationNotIn,omitempty"`
+	GeoLocationIsNil  bool           `json:"geoLocationIsNil,omitempty"`
+	GeoLocationNotNil bool           `json:"geoLocationNotNil,omitempty"`
+
 	// "organization_id" field predicates.
 	OrganizationID             *string  `json:"organizationID,omitempty"`
 	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
@@ -7748,6 +7756,24 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.TaxIdentifierContainsFold != nil {
 		predicates = append(predicates, organizationsetting.TaxIdentifierContainsFold(*i.TaxIdentifierContainsFold))
+	}
+	if i.GeoLocation != nil {
+		predicates = append(predicates, organizationsetting.GeoLocationEQ(*i.GeoLocation))
+	}
+	if i.GeoLocationNEQ != nil {
+		predicates = append(predicates, organizationsetting.GeoLocationNEQ(*i.GeoLocationNEQ))
+	}
+	if len(i.GeoLocationIn) > 0 {
+		predicates = append(predicates, organizationsetting.GeoLocationIn(i.GeoLocationIn...))
+	}
+	if len(i.GeoLocationNotIn) > 0 {
+		predicates = append(predicates, organizationsetting.GeoLocationNotIn(i.GeoLocationNotIn...))
+	}
+	if i.GeoLocationIsNil {
+		predicates = append(predicates, organizationsetting.GeoLocationIsNil())
+	}
+	if i.GeoLocationNotNil {
+		predicates = append(predicates, organizationsetting.GeoLocationNotNil())
 	}
 	if i.OrganizationID != nil {
 		predicates = append(predicates, organizationsetting.OrganizationIDEQ(*i.OrganizationID))

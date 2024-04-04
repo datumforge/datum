@@ -42,6 +42,7 @@ import (
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
 	"github.com/datumforge/fgax"
+	"github.com/datumforge/geodetic/pkg/geodeticclient"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
@@ -165,6 +166,7 @@ type (
 		Marionette    *marionette.TaskManager
 		Analytics     *analytics.EventManager
 		TOTP          *totp.Manager
+		Geodetic      *geodeticclient.Client
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -263,6 +265,13 @@ func Analytics(v *analytics.EventManager) Option {
 func TOTP(v *totp.Manager) Option {
 	return func(c *config) {
 		c.TOTP = v
+	}
+}
+
+// Geodetic configures the Geodetic.
+func Geodetic(v *geodeticclient.Client) Option {
+	return func(c *config) {
+		c.Geodetic = v
 	}
 }
 

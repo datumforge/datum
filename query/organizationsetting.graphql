@@ -14,6 +14,7 @@ query GetOrganizationSettingByID($organizationSettingId: ID!) {
     billingAddress
     taxIdentifier
     tags
+    geoLocation
     organization {
       id
     }
@@ -39,6 +40,7 @@ query GetOrganizationSettings() {
         billingAddress
         taxIdentifier
         tags
+        geoLocation
         organization {
           id
         }
@@ -67,6 +69,7 @@ query GetOrganizationSettingWhere($where: OrganizationSettingWhereInput!) {
         billingAddress
         taxIdentifier
         tags
+        geoLocation
         organization {
           id
         }
@@ -92,6 +95,7 @@ mutation UpdateOrganizationSetting($updateOrganizationSettingId: ID!, $input: Up
       billingAddress
       taxIdentifier
       tags
+      geoLocation
       organization {
         id
       }

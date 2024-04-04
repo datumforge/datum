@@ -476,6 +476,7 @@ type ComplexityRoot struct {
 		Children             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
 		CreatedAt            func(childComplexity int) int
 		CreatedBy            func(childComplexity int) int
+		DedicatedDb          func(childComplexity int) int
 		DeletedAt            func(childComplexity int) int
 		DeletedBy            func(childComplexity int) int
 		Description          func(childComplexity int) int
@@ -2898,6 +2899,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Organization.CreatedBy(childComplexity), true
 
+	case "Organization.dedicatedDb":
+		if e.complexity.Organization.DedicatedDb == nil {
+			break
+		}
+
+		return e.complexity.Organization.DedicatedDb(childComplexity), true
+
 	case "Organization.deletedAt":
 		if e.complexity.Organization.DeletedAt == nil {
 			break
@@ -5002,6 +5010,10 @@ input CreateOrganizationInput {
   URL of the user's remote avatar
   """
   avatarRemoteURL: String
+  """
+  Whether the organization has a dedicated database
+  """
+  dedicatedDb: Boolean
   parentID: ID
   groupIDs: [ID!]
   integrationIDs: [ID!]
@@ -7449,6 +7461,10 @@ type Organization implements Node {
   URL of the user's remote avatar
   """
   avatarRemoteURL: String
+  """
+  Whether the organization has a dedicated database
+  """
+  dedicatedDb: Boolean!
   parent: Organization
   children(
     """
@@ -14424,6 +14440,8 @@ func (ec *executionContext) fieldContext_Entitlement_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -15471,6 +15489,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -18865,6 +18885,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -20003,6 +20025,8 @@ func (ec *executionContext) fieldContext_Invite_owner(ctx context.Context, field
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -23712,6 +23736,8 @@ func (ec *executionContext) fieldContext_OauthProvider_owner(ctx context.Context
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -25707,6 +25733,8 @@ func (ec *executionContext) fieldContext_OrgMembership_organization(ctx context.
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -26773,6 +26801,50 @@ func (ec *executionContext) fieldContext_Organization_avatarRemoteURL(ctx contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Organization_dedicatedDb(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_dedicatedDb(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DedicatedDb, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_dedicatedDb(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Organization_parent(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Organization_parent(ctx, field)
 	if err != nil {
@@ -26833,6 +26905,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -27879,6 +27953,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -28014,6 +28090,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -28808,6 +28886,8 @@ func (ec *executionContext) fieldContext_OrganizationSetting_organization(ctx co
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -29372,6 +29452,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -30272,6 +30354,8 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_organizations(ctx c
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -32623,6 +32707,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -34025,6 +34111,8 @@ func (ec *executionContext) fieldContext_Subscriber_owner(ctx context.Context, f
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -36593,6 +36681,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -37998,6 +38088,8 @@ func (ec *executionContext) fieldContext_UserSetting_defaultOrg(ctx context.Cont
 				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_Organization_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_Organization_dedicatedDb(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -41095,7 +41187,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "avatarRemoteURL", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "subscriberIDs", "createOrgSettings"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "avatarRemoteURL", "dedicatedDb", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "subscriberIDs", "createOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41165,6 +41257,13 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.AvatarRemoteURL = data
+		case "dedicatedDb":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dedicatedDb"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DedicatedDb = data
 		case "parentID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -64037,6 +64136,11 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._Organization_personalOrg(ctx, field, obj)
 		case "avatarRemoteURL":
 			out.Values[i] = ec._Organization_avatarRemoteURL(ctx, field, obj)
+		case "dedicatedDb":
+			out.Values[i] = ec._Organization_dedicatedDb(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "parent":
 			field := field
 

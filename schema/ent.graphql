@@ -269,6 +269,10 @@ input CreateOrganizationInput {
   URL of the user's remote avatar
   """
   avatarRemoteURL: String
+  """
+  Whether the organization has a dedicated database
+  """
+  dedicatedDb: Boolean
   parentID: ID
   groupIDs: [ID!]
   integrationIDs: [ID!]
@@ -2716,6 +2720,10 @@ type Organization implements Node {
   URL of the user's remote avatar
   """
   avatarRemoteURL: String
+  """
+  Whether the organization has a dedicated database
+  """
+  dedicatedDb: Boolean!
   parent: Organization
   children(
     """

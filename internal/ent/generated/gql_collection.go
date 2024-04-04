@@ -1612,6 +1612,11 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, organization.FieldAvatarRemoteURL)
 				fieldSeen[organization.FieldAvatarRemoteURL] = struct{}{}
 			}
+		case "dedicatedDb":
+			if _, ok := fieldSeen[organization.FieldDedicatedDb]; !ok {
+				selectedFields = append(selectedFields, organization.FieldDedicatedDb)
+				fieldSeen[organization.FieldDedicatedDb] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

@@ -197,7 +197,9 @@ type CreateOrganizationInput struct {
 	// orgs directly associated with a user
 	PersonalOrg *bool `json:"personalOrg,omitempty"`
 	// URL of the user's remote avatar
-	AvatarRemoteURL        *string                         `json:"avatarRemoteURL,omitempty"`
+	AvatarRemoteURL *string `json:"avatarRemoteURL,omitempty"`
+	// Whether the organization has a dedicated database
+	DedicatedDb            *bool                           `json:"dedicatedDb,omitempty"`
 	ParentID               *string                         `json:"parentID,omitempty"`
 	GroupIDs               []string                        `json:"groupIDs,omitempty"`
 	IntegrationIDs         []string                        `json:"integrationIDs,omitempty"`
@@ -2257,7 +2259,9 @@ type Organization struct {
 	// orgs directly associated with a user
 	PersonalOrg *bool `json:"personalOrg,omitempty"`
 	// URL of the user's remote avatar
-	AvatarRemoteURL      *string                 `json:"avatarRemoteURL,omitempty"`
+	AvatarRemoteURL *string `json:"avatarRemoteURL,omitempty"`
+	// Whether the organization has a dedicated database
+	DedicatedDb          bool                    `json:"dedicatedDb"`
 	Parent               *Organization           `json:"parent,omitempty"`
 	Children             *OrganizationConnection `json:"children"`
 	Groups               []*Group                `json:"groups,omitempty"`

@@ -84,8 +84,13 @@ func (Organization) Fields() []ent.Field {
 		field.Bool("dedicated_db").
 			Comment("Whether the organization has a dedicated database").
 			Default(false). // default to shared db
+			// TODO: https://github.com/datumforge/datum/issues/734
+			// update this once feature functionality is enabled
+			// Annotations(
+			// 	entgql.Skip(),
+			// ),
 			Annotations(
-				entgql.Skip(),
+				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipOrderField),
 			),
 	}
 }

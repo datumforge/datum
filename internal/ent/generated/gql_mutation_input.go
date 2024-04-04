@@ -1071,6 +1071,7 @@ type CreateOrganizationInput struct {
 	Description            *string
 	PersonalOrg            *bool
 	AvatarRemoteURL        *string
+	DedicatedDb            *bool
 	ParentID               *string
 	GroupIDs               []string
 	IntegrationIDs         []string
@@ -1109,6 +1110,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.AvatarRemoteURL; v != nil {
 		m.SetAvatarRemoteURL(*v)
+	}
+	if v := i.DedicatedDb; v != nil {
+		m.SetDedicatedDb(*v)
 	}
 	if v := i.ParentID; v != nil {
 		m.SetParentID(*v)

@@ -3,6 +3,7 @@ package entdb
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"os"
 	"time"
 
@@ -131,14 +132,23 @@ func (c *client) runGooseMigrations() error {
 	}
 	defer drv.Close()
 
+	if _, err := drv.Exec("PRAGMA foreign_keys = off;", nil); err != nil {
+		drv.Close()
+		return fmt.Errorf("failed to disable foreign keys: %w", err)
+	}
+
 	goose.SetBaseFS(migratedb.GooseMigrations)
 
 	if err := goose.SetDialect(driver); err != nil {
 		return err
 	}
-
 	if err := goose.Up(drv, "migrations-goose"); err != nil {
 		return err
+	}
+
+	if _, err := drv.Exec("PRAGMA foreign_keys = on;", nil); err != nil {
+		drv.Close()
+		return fmt.Errorf("failed to enable foreign keys: %w", err)
 	}
 
 	return nil

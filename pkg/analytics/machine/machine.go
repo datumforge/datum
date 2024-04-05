@@ -1,7 +1,7 @@
 package machine
 
 import (
-	"github.com/denisbrodbeck/machineid"
+	"github.com/panta/machineid"
 )
 
 var (

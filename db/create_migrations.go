@@ -19,6 +19,7 @@ import (
 	atlas "ariga.io/atlas/sql/migrate"
 	"ariga.io/atlas/sql/sqltool"
 	"github.com/datumforge/datum/internal/ent/generated/migrate"
+	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 )
 
 func main() {

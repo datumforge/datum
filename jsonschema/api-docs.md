@@ -35,6 +35,7 @@ Server settings for the echo server
 |----|----|-----------|--------|
 |**debug**|`boolean`|Debug enables debug mode for the server<br/>|no|
 |**dev**|`boolean`|Dev enables echo's dev mode options<br/>|no|
+|**defaultRootOrg**|`string`|DefaultRootOrgID is the default organization id to use for root level requests, this is seeded in the database<br/>|no|
 |**listen**|`string`|Listen sets the listen address to serve the echo server on<br/>|yes|
 |**shutdownGracePeriod**|`integer`|ShutdownGracePeriod sets the grace period for in flight requests before shutting down<br/>|no|
 |**readTimeout**|`integer`|ReadTimeout sets the maximum duration for reading the entire request including the body<br/>|no|

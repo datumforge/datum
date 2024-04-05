@@ -147,10 +147,6 @@ func AddHandlers(gen *OAS) {
 	gen.AddRequestBody("VerifyRequest", &handlers.VerifyRequest{})
 	gen.AddSchema("VerifyReply", &handlers.VerifyReply{})
 	gen.AddResponse("VerifyReply", "The email was verified", "#/components/schemas/VerifyReply", handlers.VerifyReply{})
-	gen.AddSchema("SubscribeRequest", &handlers.SubscribeRequest{})
-	gen.AddRequestBody("SubscribeRequest", &handlers.SubscribeRequest{})
-	gen.AddSchema("SubscribeReply", &handlers.SubscribeReply{})
-	gen.AddResponse("SubscribeReply", "The user was subscribed", "#/components/schemas/SubscribeReply", handlers.SubscribeReply{})
 }
 
 // AddSchema is a method of the `OAS` struct that is used to add a schema to the OpenAPI schema

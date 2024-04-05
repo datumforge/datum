@@ -48,33 +48,12 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 	return meowuser, nil
 }
 
-// createSubscriber creates a subscriber in the database based on the input
-func (h *Handler) createSubscriber(ctx context.Context, input ent.CreateSubscriberInput, user *User) (*ent.Subscriber, error) {
-	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
-	if err != nil {
-		h.Logger.Errorw("unable to parse ttl", "error", err)
-		return nil, err
-	}
-
-	meowsubscriber, err := transaction.FromContext(ctx).Subscriber.Create().
-		SetInput(input).
-		SetToken(user.EmailVerificationToken.String).
-		SetSecret(user.EmailVerificationSecret).
-		SetTTL(ttl).
-		Save(ctx)
-	if err != nil {
-		h.Logger.Errorw("error creating new subscriber", "error", err)
-
-		return nil, err
-	}
-
-	return meowsubscriber, nil
-}
-
-// updateSubscriber updates a subscriber by in the database based on the input
-func (h *Handler) updateSubscriber(ctx context.Context, id string, input ent.UpdateSubscriberInput) error {
+// updateSubscriberVerifiedEmail updates a subscriber by in the database based on the input and sets to active with verified email
+func (h *Handler) updateSubscriberVerifiedEmail(ctx context.Context, id string, input ent.UpdateSubscriberInput) error {
 	_, err := transaction.FromContext(ctx).Subscriber.UpdateOneID(id).
 		SetInput(input).
+		SetActive(true).
+		SetVerifiedEmail(true).
 		Save(ctx)
 	if err != nil {
 		h.Logger.Errorw("error updating subscriber", "error", err)
@@ -102,32 +81,6 @@ func (h *Handler) updateSubscriberVerificationToken(ctx context.Context, user *U
 		h.Logger.Errorw("error updating subscriber tokens", "error", err)
 
 		return err
-	}
-
-	return nil
-}
-
-// deleteSubscriber deletes a subscriber by email and org in the database
-func (h *Handler) deleteSubscriber(ctx context.Context, email string, org string) error {
-	whereOrg := subscriber.OwnerID(org)
-	if org == "" {
-		whereOrg = subscriber.OwnerIDIsNil()
-	}
-
-	num, err := transaction.FromContext(ctx).Subscriber.Delete().
-		Where(
-			subscriber.EmailEQ(email),
-			whereOrg,
-		).
-		Exec(ctx)
-	if err != nil {
-		h.Logger.Errorw("error updating subscriber", "error", err)
-
-		return err
-	}
-
-	if num < 1 {
-		return ErrSubscriberNotFound
 	}
 
 	return nil

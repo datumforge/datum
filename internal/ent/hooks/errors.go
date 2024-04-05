@@ -33,6 +33,9 @@ var (
 	// ErrUserAlreadySubscriber is returned when an user attempts to subscribe to datum but is already a subscriber
 	ErrUserAlreadySubscriber = errors.New("user already a datum subscriber")
 
+	// ErrEmailRequired is returned when an email is required but not provided
+	ErrEmailRequired = errors.New("email is required but not provided")
+
 	// ErrMaxAttempts is returned when a user has reached the max attempts to resend an invitation to an org
 	ErrMaxAttempts = errors.New("too many attempts to resend org invitation")
 )

@@ -74,10 +74,10 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 
 // trackedEvent returns true if the mutation should be a tracked event
 // for now, lets just track high level create and delete events
-// TODO: make these configuratable by integration
+// TODO: make these configurable by integration
 func TrackedEvent(m ent.Mutation) bool {
 	switch m.Type() {
-	case "User", "Organization", "Group":
+	case "User", "Organization", "Group", "Subscriber":
 		switch getOp(m) {
 		case ActionCreate, ActionDelete:
 			return true

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -41,15 +40,14 @@ func subscribers(ctx context.Context) error {
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
-	// filter options
-	where := datumclient.SubscriberWhereInput{}
-
 	oID := viper.GetString("subscribers.get.orgid")
-
 	if oID == "" {
-		where.OwnerIDIsNil = lo.ToPtr(true)
-	} else {
-		where.OwnerID = &oID
+		return datum.NewRequiredFieldMissingError("org id")
+	}
+
+	// filter options
+	where := datumclient.SubscriberWhereInput{
+		OwnerID: &oID,
 	}
 
 	active := viper.GetBool("subscribers.get.active")

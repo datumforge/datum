@@ -269,13 +269,7 @@ type CreateSubscriberInput struct {
 	Email string `json:"email"`
 	// phone number of the subscriber
 	PhoneNumber *string `json:"phoneNumber,omitempty"`
-	// indicates if the email address has been verified
-	VerifiedEmail *bool `json:"verifiedEmail,omitempty"`
-	// indicates if the phone number has been verified
-	VerifiedPhone *bool `json:"verifiedPhone,omitempty"`
-	// indicates if the subscriber is active or not, active users will have at least one verified contact method
-	Active  *bool   `json:"active,omitempty"`
-	OwnerID *string `json:"ownerID,omitempty"`
+	OwnerID     string  `json:"ownerID"`
 }
 
 // CreateTFASettingsInput is used for create TFASettings object.
@@ -3006,7 +3000,7 @@ type Subscriber struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
-	OwnerID   *string    `json:"ownerID,omitempty"`
+	OwnerID   string     `json:"ownerID"`
 	// email address of the subscriber
 	Email string `json:"email"`
 	// phone number of the subscriber
@@ -3017,7 +3011,7 @@ type Subscriber struct {
 	VerifiedPhone bool `json:"verifiedPhone"`
 	// indicates if the subscriber is active or not, active users will have at least one verified contact method
 	Active bool          `json:"active"`
-	Owner  *Organization `json:"owner,omitempty"`
+	Owner  *Organization `json:"owner"`
 }
 
 func (Subscriber) IsNode() {}
@@ -3040,8 +3034,8 @@ type SubscriberCreatePayload struct {
 
 // Return response for deleteSubscriber mutation
 type SubscriberDeletePayload struct {
-	// Deleted subscriber ID
-	DeletedID string `json:"deletedID"`
+	// Deleted subscriber email
+	Email string `json:"email"`
 }
 
 // An edge in a connection.
@@ -3168,8 +3162,6 @@ type SubscriberWhereInput struct {
 	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
 	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
 	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
-	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
-	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
 	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
 	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// email field predicates
@@ -3701,14 +3693,7 @@ type UpdateSubscriberInput struct {
 	// phone number of the subscriber
 	PhoneNumber      *string `json:"phoneNumber,omitempty"`
 	ClearPhoneNumber *bool   `json:"clearPhoneNumber,omitempty"`
-	// indicates if the email address has been verified
-	VerifiedEmail *bool `json:"verifiedEmail,omitempty"`
-	// indicates if the phone number has been verified
-	VerifiedPhone *bool `json:"verifiedPhone,omitempty"`
-	// indicates if the subscriber is active or not, active users will have at least one verified contact method
-	Active     *bool   `json:"active,omitempty"`
-	OwnerID    *string `json:"ownerID,omitempty"`
-	ClearOwner *bool   `json:"clearOwner,omitempty"`
+	OwnerID          *string `json:"ownerID,omitempty"`
 }
 
 // UpdateTFASettingsInput is used for update TFASettings object.

@@ -53,13 +53,13 @@ func newValidClaimsOrgID(orgID string) *tokens.Claims {
 
 	claims := &tokens.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   "nano_id_of_user",
+			Subject:   "01HTN8NSQ17KJ62202FXT6QC9V",
 			Issuer:    "test suite",
 			IssuedAt:  jwt.NewNumericDate(iat),
 			NotBefore: jwt.NewNumericDate(nbf),
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
-		UserID:      "nano_id_of_user",
+		UserID:      "01HTN8NSQ17KJ62202FXT6QC9V",
 		Email:       "rustys@datum.net",
 		OrgID:       orgID,
 		ParentOrgID: "nano_id_of_parent_org",

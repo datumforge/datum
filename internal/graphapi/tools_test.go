@@ -38,6 +38,10 @@ import (
 
 var (
 	testUser *ent.User
+
+	// mock email send settings
+	maxWaitInMillis      = 2000
+	pollIntervalInMillis = 100
 )
 
 // TestGraphTestSuite runs all the tests in the GraphTestSuite

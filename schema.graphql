@@ -372,19 +372,7 @@ input CreateSubscriberInput {
 	phone number of the subscriber
 	"""
 	phoneNumber: String
-	"""
-	indicates if the email address has been verified
-	"""
-	verifiedEmail: Boolean
-	"""
-	indicates if the phone number has been verified
-	"""
-	verifiedPhone: Boolean
-	"""
-	indicates if the subscriber is active or not, active users will have at least one verified contact method
-	"""
-	active: Boolean
-	ownerID: ID
+	ownerID: ID!
 }
 """
 CreateTFASettingsInput is used for create TFASettings object.
@@ -2499,9 +2487,9 @@ type Mutation {
 	"""
 	updateSubscriber(
 		"""
-		ID of the subscriber
+		Email of the subscriber
 		"""
-		id: ID!
+		email: String!
 
 		"""
 		New values for the subscriber
@@ -2509,13 +2497,13 @@ type Mutation {
 		input: UpdateSubscriberInput!
 	): SubscriberUpdatePayload!
 	"""
-	Delete an existing subscriber
+	Delete an existing subscriber by Email
 	"""
 	deleteSubscriber(
 		"""
-		ID of the subscriber
+		Email of the subscriber
 		"""
-		id: ID!
+		email: String!
 	): SubscriberDeletePayload!
 	"""
 	Create a new tfaSettings
@@ -4964,13 +4952,13 @@ type Query {
 		id: ID!
 	): PersonalAccessToken!
 	"""
-	Look up subscriber by ID
+	Look up subscriber by Email
 	"""
 	subscriber(
 		"""
-		ID of the subscriber
+		Email of the subscriber
 		"""
-		id: ID!
+		email: String!
 	): Subscriber!
 	"""
 	Look up tfaSettings for the current user
@@ -5008,7 +4996,7 @@ type Subscriber implements Node {
 	updatedBy: String
 	deletedAt: Time
 	deletedBy: String
-	ownerID: ID
+	ownerID: ID!
 	"""
 	email address of the subscriber
 	"""
@@ -5029,7 +5017,7 @@ type Subscriber implements Node {
 	indicates if the subscriber is active or not, active users will have at least one verified contact method
 	"""
 	active: Boolean!
-	owner: Organization
+	owner: Organization!
 }
 """
 A connection to a list of items.
@@ -5062,9 +5050,9 @@ Return response for deleteSubscriber mutation
 """
 type SubscriberDeletePayload {
 	"""
-	Deleted subscriber ID
+	Deleted subscriber email
 	"""
-	deletedID: ID!
+	email: String!
 }
 """
 An edge in a connection.
@@ -5216,8 +5204,6 @@ input SubscriberWhereInput {
 	ownerIDContains: ID
 	ownerIDHasPrefix: ID
 	ownerIDHasSuffix: ID
-	ownerIDIsNil: Boolean
-	ownerIDNotNil: Boolean
 	ownerIDEqualFold: ID
 	ownerIDContainsFold: ID
 	"""
@@ -5916,20 +5902,7 @@ input UpdateSubscriberInput {
 	"""
 	phoneNumber: String
 	clearPhoneNumber: Boolean
-	"""
-	indicates if the email address has been verified
-	"""
-	verifiedEmail: Boolean
-	"""
-	indicates if the phone number has been verified
-	"""
-	verifiedPhone: Boolean
-	"""
-	indicates if the subscriber is active or not, active users will have at least one verified contact method
-	"""
-	active: Boolean
 	ownerID: ID
-	clearOwner: Boolean
 }
 """
 UpdateTFASettingsInput is used for update TFASettings object.

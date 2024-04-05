@@ -330,7 +330,7 @@ type ComplexityRoot struct {
 		DeleteOrgMembership       func(childComplexity int, id string) int
 		DeleteOrganization        func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
-		DeleteSubscriber          func(childComplexity int, id string) int
+		DeleteSubscriber          func(childComplexity int, email string) int
 		DeleteUser                func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
@@ -345,7 +345,7 @@ type ComplexityRoot struct {
 		UpdateOrganization        func(childComplexity int, id string, input generated.UpdateOrganizationInput) int
 		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
-		UpdateSubscriber          func(childComplexity int, id string, input generated.UpdateSubscriberInput) int
+		UpdateSubscriber          func(childComplexity int, email string, input generated.UpdateSubscriberInput) int
 		UpdateTFASettings         func(childComplexity int, input generated.UpdateTFASettingsInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
 		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
@@ -640,7 +640,7 @@ type ComplexityRoot struct {
 		Organizations        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
 		PersonalAccessToken  func(childComplexity int, id string) int
 		PersonalAccessTokens func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
-		Subscriber           func(childComplexity int, id string) int
+		Subscriber           func(childComplexity int, email string) int
 		Subscribers          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) int
 		TfaSettings          func(childComplexity int, id *string) int
 		TfaSettingsSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) int
@@ -678,7 +678,7 @@ type ComplexityRoot struct {
 	}
 
 	SubscriberDeletePayload struct {
-		DeletedID func(childComplexity int) int
+		Email func(childComplexity int) int
 	}
 
 	SubscriberEdge struct {
@@ -849,8 +849,8 @@ type MutationResolver interface {
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
 	CreateSubscriber(ctx context.Context, input generated.CreateSubscriberInput) (*SubscriberCreatePayload, error)
-	UpdateSubscriber(ctx context.Context, id string, input generated.UpdateSubscriberInput) (*SubscriberUpdatePayload, error)
-	DeleteSubscriber(ctx context.Context, id string) (*SubscriberDeletePayload, error)
+	UpdateSubscriber(ctx context.Context, email string, input generated.UpdateSubscriberInput) (*SubscriberUpdatePayload, error)
+	DeleteSubscriber(ctx context.Context, email string) (*SubscriberDeletePayload, error)
 	CreateTFASettings(ctx context.Context, input generated.CreateTFASettingsInput) (*TFASettingsCreatePayload, error)
 	UpdateTFASettings(ctx context.Context, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
@@ -893,7 +893,7 @@ type QueryResolver interface {
 	OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error)
 	OrgMembership(ctx context.Context, id string) (*generated.OrgMembership, error)
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
-	Subscriber(ctx context.Context, id string) (*generated.Subscriber, error)
+	Subscriber(ctx context.Context, email string) (*generated.Subscriber, error)
 	TfaSettings(ctx context.Context, id *string) (*generated.TFASettings, error)
 	User(ctx context.Context, id string) (*generated.User, error)
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
@@ -2186,7 +2186,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteSubscriber(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.DeleteSubscriber(childComplexity, args["email"].(string)), true
 
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
@@ -2366,7 +2366,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateSubscriber(childComplexity, args["id"].(string), args["input"].(generated.UpdateSubscriberInput)), true
+		return e.complexity.Mutation.UpdateSubscriber(childComplexity, args["email"].(string), args["input"].(generated.UpdateSubscriberInput)), true
 
 	case "Mutation.updateTFASettings":
 		if e.complexity.Mutation.UpdateTFASettings == nil {
@@ -3788,7 +3788,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Subscriber(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Subscriber(childComplexity, args["email"].(string)), true
 
 	case "Query.subscribers":
 		if e.complexity.Query.Subscribers == nil {
@@ -4000,12 +4000,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SubscriberCreatePayload.Subscriber(childComplexity), true
 
-	case "SubscriberDeletePayload.deletedID":
-		if e.complexity.SubscriberDeletePayload.DeletedID == nil {
+	case "SubscriberDeletePayload.email":
+		if e.complexity.SubscriberDeletePayload.Email == nil {
 			break
 		}
 
-		return e.complexity.SubscriberDeletePayload.DeletedID(childComplexity), true
+		return e.complexity.SubscriberDeletePayload.Email(childComplexity), true
 
 	case "SubscriberEdge.cursor":
 		if e.complexity.SubscriberEdge.Cursor == nil {
@@ -5111,19 +5111,7 @@ input CreateSubscriberInput {
   phone number of the subscriber
   """
   phoneNumber: String
-  """
-  indicates if the email address has been verified
-  """
-  verifiedEmail: Boolean
-  """
-  indicates if the phone number has been verified
-  """
-  verifiedPhone: Boolean
-  """
-  indicates if the subscriber is active or not, active users will have at least one verified contact method
-  """
-  active: Boolean
-  ownerID: ID
+  ownerID: ID!
 }
 """
 CreateTFASettingsInput is used for create TFASettings object.
@@ -8823,7 +8811,7 @@ type Subscriber implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
-  ownerID: ID
+  ownerID: ID!
   """
   email address of the subscriber
   """
@@ -8844,7 +8832,7 @@ type Subscriber implements Node {
   indicates if the subscriber is active or not, active users will have at least one verified contact method
   """
   active: Boolean!
-  owner: Organization
+  owner: Organization!
 }
 """
 A connection to a list of items.
@@ -9004,8 +8992,6 @@ input SubscriberWhereInput {
   ownerIDContains: ID
   ownerIDHasPrefix: ID
   ownerIDHasSuffix: ID
-  ownerIDIsNil: Boolean
-  ownerIDNotNil: Boolean
   ownerIDEqualFold: ID
   ownerIDContainsFold: ID
   """
@@ -9679,20 +9665,7 @@ input UpdateSubscriberInput {
   """
   phoneNumber: String
   clearPhoneNumber: Boolean
-  """
-  indicates if the email address has been verified
-  """
-  verifiedEmail: Boolean
-  """
-  indicates if the phone number has been verified
-  """
-  verifiedPhone: Boolean
-  """
-  indicates if the subscriber is active or not, active users will have at least one verified contact method
-  """
-  active: Boolean
   ownerID: ID
-  clearOwner: Boolean
 }
 """
 UpdateTFASettingsInput is used for update TFASettings object.
@@ -11412,13 +11385,13 @@ type PersonalAccessTokenDeletePayload {
 }`, BuiltIn: false},
 	{Name: "../../schema/subscriber.graphql", Input: `extend type Query {
     """
-    Look up subscriber by ID
+    Look up subscriber by Email
     """
      subscriber(
         """
-        ID of the subscriber
+        Email of the subscriber
         """
-        id: ID!
+        email: String!
     ):  Subscriber!
 }
 
@@ -11437,22 +11410,22 @@ extend type Mutation{
     """
     updateSubscriber(
         """
-        ID of the subscriber
+        Email of the subscriber
         """
-        id: ID!
+        email: String!
         """
         New values for the subscriber
         """
         input: UpdateSubscriberInput!
     ): SubscriberUpdatePayload!
     """
-    Delete an existing subscriber
+    Delete an existing subscriber by Email
     """
     deleteSubscriber(
         """
-        ID of the subscriber
+        Email of the subscriber
         """
-        id: ID!
+        email: String!
     ): SubscriberDeletePayload!
 }
 
@@ -11481,9 +11454,9 @@ Return response for deleteSubscriber mutation
 """
 type SubscriberDeletePayload {
     """
-    Deleted subscriber ID
+    Deleted subscriber email
     """
-    deletedID: ID!
+    email: String!
 }`, BuiltIn: false},
 	{Name: "../../schema/tfasettings.graphql", Input: `extend type Query {
     """
@@ -12025,14 +11998,14 @@ func (ec *executionContext) field_Mutation_deleteSubscriber_args(ctx context.Con
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	if tmp, ok := rawArgs["email"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["email"] = arg0
 	return args, nil
 }
 
@@ -12367,14 +12340,14 @@ func (ec *executionContext) field_Mutation_updateSubscriber_args(ctx context.Con
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	if tmp, ok := rawArgs["email"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["email"] = arg0
 	var arg1 generated.UpdateSubscriberInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
@@ -13378,14 +13351,14 @@ func (ec *executionContext) field_Query_subscriber_args(ctx context.Context, raw
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	if tmp, ok := rawArgs["email"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["email"] = arg0
 	return args, nil
 }
 
@@ -22477,7 +22450,7 @@ func (ec *executionContext) _Mutation_updateSubscriber(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSubscriber(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateSubscriberInput))
+		return ec.resolvers.Mutation().UpdateSubscriber(rctx, fc.Args["email"].(string), fc.Args["input"].(generated.UpdateSubscriberInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22536,7 +22509,7 @@ func (ec *executionContext) _Mutation_deleteSubscriber(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteSubscriber(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().DeleteSubscriber(rctx, fc.Args["email"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22561,8 +22534,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteSubscriber(ctx context.C
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "deletedID":
-				return ec.fieldContext_SubscriberDeletePayload_deletedID(ctx, field)
+			case "email":
+				return ec.fieldContext_SubscriberDeletePayload_email(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SubscriberDeletePayload", field.Name)
 		},
@@ -33024,7 +32997,7 @@ func (ec *executionContext) _Query_subscriber(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Subscriber(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().Subscriber(rctx, fc.Args["email"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33814,11 +33787,14 @@ func (ec *executionContext) _Subscriber_ownerID(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOID2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Subscriber_ownerID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -34072,11 +34048,14 @@ func (ec *executionContext) _Subscriber_owner(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*generated.Organization)
 	fc.Result = res
-	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
+	return ec.marshalNOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Subscriber_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -34363,8 +34342,8 @@ func (ec *executionContext) fieldContext_SubscriberCreatePayload_subscriber(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _SubscriberDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *SubscriberDeletePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SubscriberDeletePayload_deletedID(ctx, field)
+func (ec *executionContext) _SubscriberDeletePayload_email(ctx context.Context, field graphql.CollectedField, obj *SubscriberDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SubscriberDeletePayload_email(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34377,7 +34356,7 @@ func (ec *executionContext) _SubscriberDeletePayload_deletedID(ctx context.Conte
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedID, nil
+		return obj.Email, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34391,17 +34370,17 @@ func (ec *executionContext) _SubscriberDeletePayload_deletedID(ctx context.Conte
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SubscriberDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SubscriberDeletePayload_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SubscriberDeletePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -41564,7 +41543,7 @@ func (ec *executionContext) unmarshalInputCreateSubscriberInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "phoneNumber", "verifiedEmail", "verifiedPhone", "active", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "phoneNumber", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41613,30 +41592,9 @@ func (ec *executionContext) unmarshalInputCreateSubscriberInput(ctx context.Cont
 				return it, err
 			}
 			it.PhoneNumber = data
-		case "verifiedEmail":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedEmail"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.VerifiedEmail = data
-		case "verifiedPhone":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedPhone"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.VerifiedPhone = data
-		case "active":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Active = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -53949,7 +53907,7 @@ func (ec *executionContext) unmarshalInputSubscriberWhereInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDIsNil", "ownerIDNotNil", "ownerIDEqualFold", "ownerIDContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "verifiedEmail", "verifiedEmailNEQ", "verifiedPhone", "verifiedPhoneNEQ", "active", "activeNEQ", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ownerID", "ownerIDNEQ", "ownerIDIn", "ownerIDNotIn", "ownerIDGT", "ownerIDGTE", "ownerIDLT", "ownerIDLTE", "ownerIDContains", "ownerIDHasPrefix", "ownerIDHasSuffix", "ownerIDEqualFold", "ownerIDContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "phoneNumber", "phoneNumberNEQ", "phoneNumberIn", "phoneNumberNotIn", "phoneNumberGT", "phoneNumberGTE", "phoneNumberLT", "phoneNumberLTE", "phoneNumberContains", "phoneNumberHasPrefix", "phoneNumberHasSuffix", "phoneNumberIsNil", "phoneNumberNotNil", "phoneNumberEqualFold", "phoneNumberContainsFold", "verifiedEmail", "verifiedEmailNEQ", "verifiedPhone", "verifiedPhoneNEQ", "active", "activeNEQ", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54649,20 +54607,6 @@ func (ec *executionContext) unmarshalInputSubscriberWhereInput(ctx context.Conte
 				return it, err
 			}
 			it.OwnerIDHasSuffix = data
-		case "ownerIDIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerIDIsNil = data
-		case "ownerIDNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OwnerIDNotNil = data
 		case "ownerIDEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerIDEqualFold"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -57305,7 +57249,7 @@ func (ec *executionContext) unmarshalInputUpdateSubscriberInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "phoneNumber", "clearPhoneNumber", "verifiedEmail", "verifiedPhone", "active", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "email", "phoneNumber", "clearPhoneNumber", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -57361,27 +57305,6 @@ func (ec *executionContext) unmarshalInputUpdateSubscriberInput(ctx context.Cont
 				return it, err
 			}
 			it.ClearPhoneNumber = data
-		case "verifiedEmail":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedEmail"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.VerifiedEmail = data
-		case "verifiedPhone":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verifiedPhone"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.VerifiedPhone = data
-		case "active":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Active = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -57389,13 +57312,6 @@ func (ec *executionContext) unmarshalInputUpdateSubscriberInput(ctx context.Cont
 				return it, err
 			}
 			it.OwnerID = data
-		case "clearOwner":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOwner"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearOwner = data
 		}
 	}
 
@@ -66291,6 +66207,9 @@ func (ec *executionContext) _Subscriber(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = ec._Subscriber_deletedBy(ctx, field, obj)
 		case "ownerID":
 			out.Values[i] = ec._Subscriber_ownerID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "email":
 			out.Values[i] = ec._Subscriber_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -66323,6 +66242,9 @@ func (ec *executionContext) _Subscriber(ctx context.Context, sel ast.SelectionSe
 					}
 				}()
 				res = ec._Subscriber_owner(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -66465,8 +66387,8 @@ func (ec *executionContext) _SubscriberDeletePayload(ctx context.Context, sel as
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("SubscriberDeletePayload")
-		case "deletedID":
-			out.Values[i] = ec._SubscriberDeletePayload_deletedID(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._SubscriberDeletePayload_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

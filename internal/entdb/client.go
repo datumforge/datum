@@ -126,7 +126,7 @@ func (c *client) runGooseMigrations() error {
 		return err
 	}
 
-	drv, err := sql.Open(driver, c.config.PrimaryDBSource)
+	drv, err := sql.Open(c.config.DriverName, c.config.PrimaryDBSource)
 	if err != nil {
 		return err
 	}

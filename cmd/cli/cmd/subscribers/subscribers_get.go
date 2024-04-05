@@ -41,6 +41,9 @@ func subscribers(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	oID := viper.GetString("subscribers.get.orgid")
+	if oID == "" {
+		return datum.NewRequiredFieldMissingError("org id")
+	}
 
 	// filter options
 	where := datumclient.SubscriberWhereInput{

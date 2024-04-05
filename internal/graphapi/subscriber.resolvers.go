@@ -6,27 +6,68 @@ package graphapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/hooks"
 )
 
 // CreateSubscriber is the resolver for the createSubscriber field.
 func (r *mutationResolver) CreateSubscriber(ctx context.Context, input generated.CreateSubscriberInput) (*SubscriberCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateSubscriber - createSubscriber"))
+	sub, err := withTransactionalMutation(ctx).Subscriber.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if errors.Is(err, hooks.ErrEmailRequired) {
+			return nil, err
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		r.logger.Errorw("failed to create subscriber", "error", err)
+
+		return nil, ErrInternalServerError
+	}
+
+	return &SubscriberCreatePayload{Subscriber: sub}, nil
 }
 
 // UpdateSubscriber is the resolver for the updateSubscriber field.
-func (r *mutationResolver) UpdateSubscriber(ctx context.Context, id string, input generated.UpdateSubscriberInput) (*SubscriberUpdatePayload, error) {
+func (r *mutationResolver) UpdateSubscriber(ctx context.Context, email string, input generated.UpdateSubscriberInput) (*SubscriberUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateSubscriber - updateSubscriber"))
 }
 
 // DeleteSubscriber is the resolver for the deleteSubscriber field.
-func (r *mutationResolver) DeleteSubscriber(ctx context.Context, id string) (*SubscriberDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteSubscriber - deleteSubscriber"))
+func (r *mutationResolver) DeleteSubscriber(ctx context.Context, email string) (*SubscriberDeletePayload, error) {
+	num, err := withTransactionalMutation(ctx).Subscriber.Delete().Where(subscriber.EmailEQ(email)).Exec(ctx)
+	if err != nil {
+		r.logger.Errorw("failed to delete subscriber", "error", err)
+
+		return nil, ErrInternalServerError
+	}
+
+	if num == 0 {
+		return nil, ErrSubscriberNotFound
+	}
+
+	return &SubscriberDeletePayload{Email: email}, nil
 }
 
 // Subscriber is the resolver for the subscriber field.
-func (r *queryResolver) Subscriber(ctx context.Context, id string) (*generated.Subscriber, error) {
+func (r *queryResolver) Subscriber(ctx context.Context, email string) (*generated.Subscriber, error) {
 	panic(fmt.Errorf("not implemented: Subscriber - subscriber"))
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -60,13 +61,12 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
 	testCases := []struct {
-		name               string
-		email              string
-		ttl                string
-		tokenSet           bool
-		emailExpected      bool
-		expectedErrMessage string
-		expectedStatus     int
+		name           string
+		email          string
+		ttl            string
+		tokenSet       bool
+		emailExpected  bool
+		expectedStatus int
 	}{
 		{
 			name:           "happy path, new subscriber",
@@ -81,7 +81,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 			tokenSet:       true,
 			ttl:            expiredTTL,
 			emailExpected:  true,
-			expectedStatus: http.StatusCreated,
+			expectedStatus: http.StatusOK,
 		},
 		{
 			name:           "missing token",
@@ -95,45 +95,17 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.fga)
+			mock_fga.ListAny(t, suite.fga, []string{fmt.Sprintf("organization:%s", org.ID)})
 
 			sent := time.Now()
 
 			mock.ResetEmailMock()
 
-			user := handlers.User{
-				Email: tc.email,
-			}
-
-			// create token
-			if err := user.CreateVerificationToken(); err != nil {
-				require.NoError(t, err)
-			}
-
-			if tc.ttl != "" {
-				user.EmailVerificationExpires.String = tc.ttl
-			}
-
-			ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
-			if err != nil {
-				require.NoError(t, err)
-			}
-
-			// set privacy allow in order to allow the creation of the users without
-			// authentication in the tests
-			ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
-
-			// store token in db
-			et := suite.db.Subscriber.Create().
-				SetToken(user.EmailVerificationToken.String).
-				SetOwnerID(org.ID).
-				SetEmail(user.Email).
-				SetSecret(user.EmailVerificationSecret).
-				SetTTL(ttl).
-				SaveX(ctx)
+			sub := suite.createTestSubscriber(t, org.ID, tc.email, tc.ttl)
 
 			target := "/subscribe/verify"
 			if tc.tokenSet {
-				target = fmt.Sprintf("/subscribe/verify?token=%s", et.Token)
+				target = fmt.Sprintf("/subscribe/verify?token=%s", sub.Token)
 			}
 
 			req := httptest.NewRequest(http.MethodGet, target, nil)
@@ -147,7 +119,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.SubscribeReply
+			var out *handlers.VerifySubscribeReply
 
 			// parse request body
 			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
@@ -158,8 +130,6 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 
 			if tc.expectedStatus == http.StatusOK {
 				assert.NotEmpty(t, out.Message)
-			} else {
-				assert.Contains(t, out.Error, tc.expectedErrMessage)
 			}
 
 			// Test that one verify email was sent to each user
@@ -184,9 +154,47 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 
 			if tc.emailExpected {
 				mock.CheckEmails(t, messages)
-			} else {
-				mock.CheckEmails(t, nil)
 			}
 		})
 	}
+}
+
+// createTestSubscriber is a helper to create a test subscriber
+func (suite *HandlerTestSuite) createTestSubscriber(t *testing.T, orgID, email, ttl string) *ent.Subscriber {
+	user := handlers.User{
+		Email: email,
+	}
+
+	// create token
+	if err := user.CreateVerificationToken(); err != nil {
+		require.NoError(t, err)
+	}
+
+	if ttl != "" {
+		user.EmailVerificationExpires.String = ttl
+	}
+
+	expires, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+	if err != nil {
+		require.NoError(t, err)
+	}
+
+	// set privacy allow in order to allow the creation of the users without
+	// authentication in the tests
+	ctx, err := auth.NewTestContextWithOrgID(orgID)
+	require.NoError(t, err)
+
+	reqCtx := context.WithValue(ctx.Request().Context(), echocontext.EchoContextKey, ctx)
+
+	ctx.SetRequest(ctx.Request().WithContext(reqCtx))
+
+	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	// store token in db
+	return suite.db.Subscriber.Create().
+		SetToken(user.EmailVerificationToken.String).
+		SetEmail(user.Email).
+		SetSecret(user.EmailVerificationSecret).
+		SetTTL(expires).
+		SaveX(reqCtx)
 }

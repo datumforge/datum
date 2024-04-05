@@ -18,6 +18,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
@@ -48,13 +49,16 @@ func (Subscriber) Fields() []ent.Field {
 			}),
 		field.Bool("verified_email").
 			Comment("indicates if the email address has been verified").
-			Default(false),
+			Default(false).
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 		field.Bool("verified_phone").
 			Comment("indicates if the phone number has been verified").
-			Default(false),
+			Default(false).
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 		field.Bool("active").
 			Comment("indicates if the subscriber is active or not, active users will have at least one verified contact method").
-			Default(false),
+			Default(false).
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 		field.String("token").
 			Comment("the verification token sent to the user via email which should only be provided to the /subscribe endpoint + handler").
 			Unique().
@@ -93,7 +97,9 @@ func (Subscriber) Edges() []ent.Edge {
 }
 
 func (Subscriber) Hooks() []ent.Hook {
-	return []ent.Hook{}
+	return []ent.Hook{
+		hooks.HookSubscriber(),
+	}
 }
 
 // Indexes of the Subscriber

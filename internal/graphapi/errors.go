@@ -14,6 +14,9 @@ var (
 
 	// ErrCascadeDelete is returned when an error occurs while performing cascade deletes on associated objects
 	ErrCascadeDelete = errors.New("error deleting associated objects")
+
+	// ErrSubscriberNotFound is returned when a subscriber is not found
+	ErrSubscriberNotFound = errors.New("subscriber not found")
 )
 
 // PermissionDeniedError is returned when user is not authorized to perform the requested query or mutation

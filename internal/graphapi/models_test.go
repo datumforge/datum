@@ -8,10 +8,13 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	mock_fga "github.com/datumforge/fgax/mockery"
+	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
 type OrganizationBuilder struct {
@@ -115,6 +118,21 @@ type InviteCleanup struct {
 
 	// Fields
 	ID string
+}
+
+type SubscriberBuilder struct {
+	client *client
+
+	// Fields
+	Email string
+	OrgID string
+}
+
+type SubscriberCleanup struct {
+	client *client
+
+	// Fields
+	Email string
 }
 
 type PersonalAccessTokenBuilder struct {
@@ -324,7 +342,7 @@ func (g *GroupCleanup) MustDelete(ctx context.Context, t *testing.T) {
 	mock_fga.ClearMocks(g.client.fga)
 }
 
-// MustNew group builder is used to create, without authz checks, groups in the database
+// MustNew invite builder is used to create, without authz checks, invites in the database
 func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
@@ -373,6 +391,45 @@ func (i *InviteCleanup) MustDelete(ctx context.Context, t *testing.T) {
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(i.client.fga)
+}
+
+// MustNew subscriber builder is used to create, without authz checks, subscribers in the database
+func (i *SubscriberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Subscriber {
+	// create owner if not provided
+	orgID := i.OrgID
+
+	if orgID == "" {
+		org := (&OrganizationBuilder{client: i.client}).MustNew(ctx, t)
+		orgID = org.ID
+	}
+
+	validCtx, err := auth.NewTestContextWithOrgID(orgID)
+	require.NoError(t, err)
+
+	reqCtx := context.WithValue(validCtx.Request().Context(), echocontext.EchoContextKey, validCtx)
+
+	validCtx.SetRequest(validCtx.Request().WithContext(reqCtx))
+
+	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	// create user if not provided
+	rec := i.Email
+
+	if rec == "" {
+		rec = gofakeit.Email()
+	}
+
+	// mock check
+	mock_fga.ListAny(t, i.client.fga, []string{fmt.Sprintf("organization:%s", orgID)})
+
+	sub := i.client.db.Subscriber.Create().
+		SetEmail(rec).
+		SetActive(true).SaveX(reqCtx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(i.client.fga)
+
+	return sub
 }
 
 // MustNew group builder is used to create, without authz checks, personal access tokens in the database

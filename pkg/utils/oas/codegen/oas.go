@@ -197,7 +197,7 @@ func (s *OAS) AddQueryParameter(name string, value Parameter) {
 		Schema: &openapi3.SchemaRef{
 			Value: &openapi3.Schema{
 				Default: value.Default,
-				Type:    value.Type,
+				Type:    (*openapi3.Types)(&value.Types),
 			},
 		},
 	}
@@ -210,7 +210,7 @@ type Parameter struct {
 	Description string      `json:"description" yaml:"description"`
 	Required    bool        `json:"required" yaml:"required"`
 	Default     interface{} `json:"default" yaml:"default"`
-	Type        string      `json:"type" yaml:"type"`
+	Types       []string    `json:"type" yaml:"type"`
 	In          string      `json:"in" yaml:"in"`
 }
 
@@ -218,7 +218,7 @@ type Parameter struct {
 var TokenQuery = Parameter{
 	Name:        "token",
 	Description: "the token to parse out of a URL",
-	Type:        "integer",
+	Types:       []string{"integer"},
 	Required:    true,
 	In:          "query",
 }

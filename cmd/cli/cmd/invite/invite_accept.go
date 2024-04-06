@@ -8,8 +8,8 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/datumclient"
 )
 
 var inviteAcceptCmd = &cobra.Command{

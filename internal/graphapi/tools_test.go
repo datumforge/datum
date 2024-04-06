@@ -21,11 +21,11 @@ import (
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest"
 
-	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/pkg/analytics"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/marionette"

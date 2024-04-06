@@ -1,9 +1,9 @@
 model:
   package: datumclient
-  filename: ./internal/datumclient/models.go
+  filename: ./pkg/datumclient/models.go
 client:
   package: datumclient
-  filename: ./internal/datumclient/graphclient.go
+  filename: ./pkg/datumclient/graphclient.go
 models:
   Int:
     model: github.com/99designs/gqlgen/graphql.Int64

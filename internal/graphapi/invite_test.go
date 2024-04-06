@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
+	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 

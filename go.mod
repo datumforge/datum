@@ -32,6 +32,7 @@ require (
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v1.0.0
+	github.com/panta/machineid v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.19.2
 	github.com/prometheus/client_golang v1.19.0
@@ -212,7 +213,6 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e
 	github.com/datumforge/entx v0.0.8
-	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

@@ -67,11 +67,21 @@ func (Template) Fields() []ent.Field {
 			Optional(),
 		field.Bytes("pair").
 			GoType(Pair{}).
+			Annotations(
+				entgql.Type("JSON"),
+				entoas.Schema(ogen.String().AsArray()),
+				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
+			).
 			DefaultFunc(func() Pair {
 				return Pair{K: []byte("K"), V: []byte("V")}
 			}),
 		field.String("url").
 			GoType(&url.URL{}).
+			Annotations(
+				entgql.Type("JSON"),
+				entoas.Schema(ogen.String().AsArray()),
+				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
+			).
 			ValueScanner(field.BinaryValueScanner[*url.URL]{}),
 	}
 }

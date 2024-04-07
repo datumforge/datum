@@ -48,6 +48,7 @@ func (Template) Fields() []ent.Field {
 			Optional(),
 		field.JSON("jsonconfig", JSONObject{}).
 			Annotations(
+				entgql.Type("JSON"),
 				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
 			).
 			Optional(),

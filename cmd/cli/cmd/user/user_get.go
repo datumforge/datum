@@ -10,6 +10,7 @@ import (
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/tokens"
+	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
 var userGetCmd = &cobra.Command{
@@ -47,6 +48,8 @@ func users(ctx context.Context) error {
 
 	var s []byte
 
+	writer := tables.NewTableWriter(userCmd.OutOrStdout(), "ID", "Email", "FirstName", "LastName", "AuthProvider")
+
 	if self {
 		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
 		if err != nil {
@@ -57,27 +60,47 @@ func users(ctx context.Context) error {
 	}
 
 	// if a user ID is provided, filter on that user, otherwise get all
-	if userID == "" {
-		users, err := cli.Client.GetAllUsers(ctx, cli.Interceptor)
-		if err != nil {
-			return err
-		}
-
-		s, err = json.Marshal(users)
-		if err != nil {
-			return err
-		}
-	} else {
+	if userID != "" {
 		user, err := cli.Client.GetUserByID(ctx, userID, cli.Interceptor)
 		if err != nil {
 			return err
 		}
 
-		s, err = json.Marshal(user)
-		if err != nil {
-			return err
+		if viper.GetString("output.format") == "json" {
+			s, err := json.Marshal(user.User)
+			if err != nil {
+				return err
+			}
+
+			return datum.JSONPrint(s)
 		}
+
+		writer.AddRow(user.User.ID, user.User.Email, user.User.FirstName, user.User.LastName, user.User.AuthProvider)
+
+		writer.Render()
+
+		return nil
 	}
 
-	return datum.JSONPrint(s)
+	users, err := cli.Client.GetAllUsers(ctx, cli.Interceptor)
+	if err != nil {
+		return err
+	}
+
+	s, err = json.Marshal(users)
+	if err != nil {
+		return err
+	}
+
+	if viper.GetString("output.format") == "json" {
+		return datum.JSONPrint(s)
+	}
+
+	for _, u := range users.Users.Edges {
+		writer.AddRow(u.Node.ID, u.Node.Email, u.Node.FirstName, u.Node.LastName, u.Node.AuthProvider)
+	}
+
+	writer.Render()
+
+	return nil
 }

@@ -9,6 +9,7 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
 var userSettingGetCmd = &cobra.Command{
@@ -42,28 +43,49 @@ func userSettings(ctx context.Context) error {
 
 	var s []byte
 
-	// if setting ID is not provided, get settings which will automatically filter by user id
-	if settingsID == "" {
-		settings, err := cli.Client.GetUserSettings(ctx, cli.Interceptor)
-		if err != nil {
-			return err
-		}
+	writer := tables.NewTableWriter(userSettingCmd.OutOrStdout(), "DefaultOrgName", "DefaultorgID", "2FA", "Status", "EmailConfirmed")
 
-		s, err = json.Marshal(settings)
-		if err != nil {
-			return err
-		}
-	} else {
+	// if setting ID is not provided, get settings which will automatically filter by user id
+	if settingsID != "" {
 		user, err := cli.Client.GetUserSettingByID(ctx, settingsID, cli.Interceptor)
 		if err != nil {
 			return err
 		}
 
-		s, err = json.Marshal(user)
-		if err != nil {
-			return err
+		if viper.GetString("output.format") == "json" {
+			s, err := json.Marshal(user.UserSetting)
+			if err != nil {
+				return err
+			}
+
+			return datum.JSONPrint(s)
 		}
+
+		writer.AddRow(user.UserSetting.DefaultOrg.Name, user.UserSetting.DefaultOrg.ID, *user.UserSetting.IsTfaEnabled, user.UserSetting.Status, user.UserSetting.EmailConfirmed)
+		writer.Render()
+
+		return nil
 	}
 
-	return datum.JSONPrint(s)
+	settings, err := cli.Client.GetUserSettings(ctx, cli.Interceptor)
+	if err != nil {
+		return err
+	}
+
+	s, err = json.Marshal(settings.UserSettings)
+	if err != nil {
+		return err
+	}
+
+	if viper.GetString("output.format") == "json" {
+		return datum.JSONPrint(s)
+	}
+
+	for _, setting := range settings.UserSettings.Edges {
+		writer.AddRow(setting.Node.DefaultOrg.Name, setting.Node.DefaultOrg.ID, *setting.Node.IsTfaEnabled, setting.Node.Status, setting.Node.EmailConfirmed)
+	}
+
+	writer.Render()
+
+	return nil
 }

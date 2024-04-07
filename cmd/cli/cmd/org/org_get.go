@@ -9,6 +9,8 @@ import (
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/pkg/datumclient"
+	"github.com/datumforge/datum/pkg/tokens"
+	"github.com/datumforge/datum/pkg/utils/cli/tables"
 )
 
 var orgGetCmd = &cobra.Command{
@@ -22,7 +24,10 @@ var orgGetCmd = &cobra.Command{
 func init() {
 	orgCmd.AddCommand(orgGetCmd)
 
-	orgGetCmd.Flags().StringP("id", "i", "", "org id to query")
+	orgGetCmd.Flags().BoolP("current", "c", false, "get current org info, requires authentication")
+	datum.ViperBindFlag("org.get.current", orgGetCmd.Flags().Lookup("current"))
+
+	orgGetCmd.Flags().StringP("id", "i", "", "get a specific organization by ID")
 	datum.ViperBindFlag("org.get.id", orgGetCmd.Flags().Lookup("id"))
 }
 
@@ -42,28 +47,59 @@ func orgs(ctx context.Context) error {
 
 	var s []byte
 
-	// if an org ID is provided, filter on that organization, otherwise get all
-	if oID == "" {
-		orgs, err := cli.Client.GetAllOrganizations(ctx, cli.Interceptor)
+	current := viper.GetBool("org.get.current")
+
+	writer := tables.NewTableWriter(orgCmd.OutOrStdout(), "ID", "Name", "Description", "PersonalOrg", "Children", "Members")
+
+	if current {
+		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
 		if err != nil {
 			return err
 		}
 
-		s, err = json.Marshal(orgs)
-		if err != nil {
-			return err
-		}
-	} else {
+		oID = claims.ParseOrgID().String()
+	}
+	// if an org ID is provided, filter on that organization, otherwise get all
+	if oID != "" {
 		org, err := cli.Client.GetOrganizationByID(ctx, oID, cli.Interceptor)
 		if err != nil {
 			return err
 		}
 
-		s, err = json.Marshal(org)
-		if err != nil {
-			return err
+		if viper.GetString("output.format") == "json" {
+			s, err := json.Marshal(org.Organization)
+			if err != nil {
+				return err
+			}
+
+			return datum.JSONPrint(s)
 		}
+
+		writer.AddRow(org.Organization.ID, org.Organization.Name, *org.Organization.Description, *org.Organization.PersonalOrg, len(org.Organization.Children.Edges), len(org.Organization.Members))
+		writer.Render()
+
+		return nil
 	}
 
-	return datum.JSONPrint(s)
+	orgs, err := cli.Client.GetAllOrganizations(ctx, cli.Interceptor)
+	if err != nil {
+		return err
+	}
+
+	s, err = json.Marshal(orgs.Organizations)
+	if err != nil {
+		return err
+	}
+
+	if viper.GetString("output.format") == "json" {
+		return datum.JSONPrint(s)
+	}
+
+	for _, o := range orgs.Organizations.Edges {
+		writer.AddRow(o.Node.ID, o.Node.Name, *o.Node.Description, *o.Node.PersonalOrg, len(o.Node.Children.Edges), len(o.Node.Members))
+	}
+
+	writer.Render()
+
+	return nil
 }

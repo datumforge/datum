@@ -85,4 +85,4 @@ models:
       - github.com/datumforge/datum/internal/ent/generated.Noder
   JSON:
     model:
-      - github.com/datumforge/entx.json.RawMessage
+      - github.com/datumforge/entx.RawMessage

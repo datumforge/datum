@@ -169,9 +169,15 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 
 // MustDelete is used to cleanup, without authz checks, orgs in the database
 func (o *OrganizationCleanup) MustDelete(ctx context.Context, t *testing.T) {
+	// mock checks
+	mock_fga.ListAny(t, o.client.fga, []string{fmt.Sprintf("organization:%s", o.OrgID)})
+
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	o.client.db.Organization.DeleteOneID(o.OrgID).ExecX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(o.client.fga)
 }
 
 // MustNew user builder is used to create, without authz checks, users in the database

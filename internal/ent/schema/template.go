@@ -47,6 +47,9 @@ func (Template) Fields() []ent.Field {
 			Comment("the description of the template").
 			Optional(),
 		field.JSON("jsonconfig", JSONObject{}).
+			Annotations(
+				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
+			).
 			Optional(),
 		field.Other("otherconfig", &schematype.TemplateConfig{}).
 			SchemaType(map[string]string{

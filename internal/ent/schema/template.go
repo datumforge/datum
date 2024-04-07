@@ -8,11 +8,13 @@ import (
 	"net/url"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	emixin "github.com/datumforge/entx/mixin"
+	"github.com/ogen-go/ogen"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/schematype"
@@ -49,6 +51,7 @@ func (Template) Fields() []ent.Field {
 		field.JSON("jsonconfig", JSONObject{}).
 			Annotations(
 				entgql.Type("JSON"),
+				entoas.Schema(ogen.String().AsArray()),
 				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
 			).
 			Optional(),

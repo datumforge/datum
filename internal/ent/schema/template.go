@@ -46,9 +46,9 @@ func (Template) Fields() []ent.Field {
 		field.String("description").
 			Comment("the description of the template").
 			Optional(),
-		field.JSON("config", JSONObject{}).
+		field.JSON("jsonconfig", JSONObject{}).
 			Optional(),
-		field.Other("config", &schematype.TemplateConfig{}).
+		field.Other("otherconfig", &schematype.TemplateConfig{}).
 			SchemaType(map[string]string{
 				dialect.SQLite: "json",
 			}).

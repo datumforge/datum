@@ -28,7 +28,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -76,8 +78,12 @@ type Client struct {
 	OrgMembership *OrgMembershipClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// OrganizationHistory is the client for interacting with the OrganizationHistory builders.
+	OrganizationHistory *OrganizationHistoryClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
 	OrganizationSetting *OrganizationSettingClient
+	// OrganizationSettingHistory is the client for interacting with the OrganizationSettingHistory builders.
+	OrganizationSettingHistory *OrganizationSettingHistoryClient
 	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
 	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
@@ -119,7 +125,9 @@ func (c *Client) init() {
 	c.OhAuthTooToken = NewOhAuthTooTokenClient(c.config)
 	c.OrgMembership = NewOrgMembershipClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
+	c.OrganizationHistory = NewOrganizationHistoryClient(c.config)
 	c.OrganizationSetting = NewOrganizationSettingClient(c.config)
+	c.OrganizationSettingHistory = NewOrganizationSettingHistoryClient(c.config)
 	c.PasswordResetToken = NewPasswordResetTokenClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Subscriber = NewSubscriberClient(c.config)
@@ -307,27 +315,29 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                    ctx,
-		config:                 cfg,
-		EmailVerificationToken: NewEmailVerificationTokenClient(cfg),
-		Entitlement:            NewEntitlementClient(cfg),
-		Group:                  NewGroupClient(cfg),
-		GroupMembership:        NewGroupMembershipClient(cfg),
-		GroupSetting:           NewGroupSettingClient(cfg),
-		Integration:            NewIntegrationClient(cfg),
-		Invite:                 NewInviteClient(cfg),
-		OauthProvider:          NewOauthProviderClient(cfg),
-		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
-		OrgMembership:          NewOrgMembershipClient(cfg),
-		Organization:           NewOrganizationClient(cfg),
-		OrganizationSetting:    NewOrganizationSettingClient(cfg),
-		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
-		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		Subscriber:             NewSubscriberClient(cfg),
-		TFASettings:            NewTFASettingsClient(cfg),
-		User:                   NewUserClient(cfg),
-		UserSetting:            NewUserSettingClient(cfg),
-		Webauthn:               NewWebauthnClient(cfg),
+		ctx:                        ctx,
+		config:                     cfg,
+		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
+		Entitlement:                NewEntitlementClient(cfg),
+		Group:                      NewGroupClient(cfg),
+		GroupMembership:            NewGroupMembershipClient(cfg),
+		GroupSetting:               NewGroupSettingClient(cfg),
+		Integration:                NewIntegrationClient(cfg),
+		Invite:                     NewInviteClient(cfg),
+		OauthProvider:              NewOauthProviderClient(cfg),
+		OhAuthTooToken:             NewOhAuthTooTokenClient(cfg),
+		OrgMembership:              NewOrgMembershipClient(cfg),
+		Organization:               NewOrganizationClient(cfg),
+		OrganizationHistory:        NewOrganizationHistoryClient(cfg),
+		OrganizationSetting:        NewOrganizationSettingClient(cfg),
+		OrganizationSettingHistory: NewOrganizationSettingHistoryClient(cfg),
+		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
+		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
+		Subscriber:                 NewSubscriberClient(cfg),
+		TFASettings:                NewTFASettingsClient(cfg),
+		User:                       NewUserClient(cfg),
+		UserSetting:                NewUserSettingClient(cfg),
+		Webauthn:                   NewWebauthnClient(cfg),
 	}, nil
 }
 
@@ -345,27 +355,29 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                    ctx,
-		config:                 cfg,
-		EmailVerificationToken: NewEmailVerificationTokenClient(cfg),
-		Entitlement:            NewEntitlementClient(cfg),
-		Group:                  NewGroupClient(cfg),
-		GroupMembership:        NewGroupMembershipClient(cfg),
-		GroupSetting:           NewGroupSettingClient(cfg),
-		Integration:            NewIntegrationClient(cfg),
-		Invite:                 NewInviteClient(cfg),
-		OauthProvider:          NewOauthProviderClient(cfg),
-		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
-		OrgMembership:          NewOrgMembershipClient(cfg),
-		Organization:           NewOrganizationClient(cfg),
-		OrganizationSetting:    NewOrganizationSettingClient(cfg),
-		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
-		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
-		Subscriber:             NewSubscriberClient(cfg),
-		TFASettings:            NewTFASettingsClient(cfg),
-		User:                   NewUserClient(cfg),
-		UserSetting:            NewUserSettingClient(cfg),
-		Webauthn:               NewWebauthnClient(cfg),
+		ctx:                        ctx,
+		config:                     cfg,
+		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
+		Entitlement:                NewEntitlementClient(cfg),
+		Group:                      NewGroupClient(cfg),
+		GroupMembership:            NewGroupMembershipClient(cfg),
+		GroupSetting:               NewGroupSettingClient(cfg),
+		Integration:                NewIntegrationClient(cfg),
+		Invite:                     NewInviteClient(cfg),
+		OauthProvider:              NewOauthProviderClient(cfg),
+		OhAuthTooToken:             NewOhAuthTooTokenClient(cfg),
+		OrgMembership:              NewOrgMembershipClient(cfg),
+		Organization:               NewOrganizationClient(cfg),
+		OrganizationHistory:        NewOrganizationHistoryClient(cfg),
+		OrganizationSetting:        NewOrganizationSettingClient(cfg),
+		OrganizationSettingHistory: NewOrganizationSettingHistoryClient(cfg),
+		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
+		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
+		Subscriber:                 NewSubscriberClient(cfg),
+		TFASettings:                NewTFASettingsClient(cfg),
+		User:                       NewUserClient(cfg),
+		UserSetting:                NewUserSettingClient(cfg),
+		Webauthn:                   NewWebauthnClient(cfg),
 	}, nil
 }
 
@@ -397,9 +409,9 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
-		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
-		c.Webauthn,
+		c.OrgMembership, c.Organization, c.OrganizationHistory, c.OrganizationSetting,
+		c.OrganizationSettingHistory, c.PasswordResetToken, c.PersonalAccessToken,
+		c.Subscriber, c.TFASettings, c.User, c.UserSetting, c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -411,9 +423,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
-		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
-		c.Webauthn,
+		c.OrgMembership, c.Organization, c.OrganizationHistory, c.OrganizationSetting,
+		c.OrganizationSettingHistory, c.PasswordResetToken, c.PersonalAccessToken,
+		c.Subscriber, c.TFASettings, c.User, c.UserSetting, c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -444,8 +456,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.OrgMembership.mutate(ctx, m)
 	case *OrganizationMutation:
 		return c.Organization.mutate(ctx, m)
+	case *OrganizationHistoryMutation:
+		return c.OrganizationHistory.mutate(ctx, m)
 	case *OrganizationSettingMutation:
 		return c.OrganizationSetting.mutate(ctx, m)
+	case *OrganizationSettingHistoryMutation:
+		return c.OrganizationSettingHistory.mutate(ctx, m)
 	case *PasswordResetTokenMutation:
 		return c.PasswordResetToken.mutate(ctx, m)
 	case *PersonalAccessTokenMutation:
@@ -2442,6 +2458,139 @@ func (c *OrganizationClient) mutate(ctx context.Context, m *OrganizationMutation
 	}
 }
 
+// OrganizationHistoryClient is a client for the OrganizationHistory schema.
+type OrganizationHistoryClient struct {
+	config
+}
+
+// NewOrganizationHistoryClient returns a client for the OrganizationHistory from the given config.
+func NewOrganizationHistoryClient(c config) *OrganizationHistoryClient {
+	return &OrganizationHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organizationhistory.Hooks(f(g(h())))`.
+func (c *OrganizationHistoryClient) Use(hooks ...Hook) {
+	c.hooks.OrganizationHistory = append(c.hooks.OrganizationHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `organizationhistory.Intercept(f(g(h())))`.
+func (c *OrganizationHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OrganizationHistory = append(c.inters.OrganizationHistory, interceptors...)
+}
+
+// Create returns a builder for creating a OrganizationHistory entity.
+func (c *OrganizationHistoryClient) Create() *OrganizationHistoryCreate {
+	mutation := newOrganizationHistoryMutation(c.config, OpCreate)
+	return &OrganizationHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrganizationHistory entities.
+func (c *OrganizationHistoryClient) CreateBulk(builders ...*OrganizationHistoryCreate) *OrganizationHistoryCreateBulk {
+	return &OrganizationHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OrganizationHistoryClient) MapCreateBulk(slice any, setFunc func(*OrganizationHistoryCreate, int)) *OrganizationHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OrganizationHistoryCreateBulk{err: fmt.Errorf("calling to OrganizationHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OrganizationHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OrganizationHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrganizationHistory.
+func (c *OrganizationHistoryClient) Update() *OrganizationHistoryUpdate {
+	mutation := newOrganizationHistoryMutation(c.config, OpUpdate)
+	return &OrganizationHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationHistoryClient) UpdateOne(oh *OrganizationHistory) *OrganizationHistoryUpdateOne {
+	mutation := newOrganizationHistoryMutation(c.config, OpUpdateOne, withOrganizationHistory(oh))
+	return &OrganizationHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationHistoryClient) UpdateOneID(id string) *OrganizationHistoryUpdateOne {
+	mutation := newOrganizationHistoryMutation(c.config, OpUpdateOne, withOrganizationHistoryID(id))
+	return &OrganizationHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrganizationHistory.
+func (c *OrganizationHistoryClient) Delete() *OrganizationHistoryDelete {
+	mutation := newOrganizationHistoryMutation(c.config, OpDelete)
+	return &OrganizationHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrganizationHistoryClient) DeleteOne(oh *OrganizationHistory) *OrganizationHistoryDeleteOne {
+	return c.DeleteOneID(oh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OrganizationHistoryClient) DeleteOneID(id string) *OrganizationHistoryDeleteOne {
+	builder := c.Delete().Where(organizationhistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for OrganizationHistory.
+func (c *OrganizationHistoryClient) Query() *OrganizationHistoryQuery {
+	return &OrganizationHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOrganizationHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OrganizationHistory entity by its id.
+func (c *OrganizationHistoryClient) Get(ctx context.Context, id string) (*OrganizationHistory, error) {
+	return c.Query().Where(organizationhistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationHistoryClient) GetX(ctx context.Context, id string) *OrganizationHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationHistoryClient) Hooks() []Hook {
+	return c.hooks.OrganizationHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *OrganizationHistoryClient) Interceptors() []Interceptor {
+	return c.inters.OrganizationHistory
+}
+
+func (c *OrganizationHistoryClient) mutate(ctx context.Context, m *OrganizationHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OrganizationHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OrganizationHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OrganizationHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OrganizationHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown OrganizationHistory mutation op: %q", m.Op())
+	}
+}
+
 // OrganizationSettingClient is a client for the OrganizationSetting schema.
 type OrganizationSettingClient struct {
 	config
@@ -2593,6 +2742,139 @@ func (c *OrganizationSettingClient) mutate(ctx context.Context, m *OrganizationS
 		return (&OrganizationSettingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown OrganizationSetting mutation op: %q", m.Op())
+	}
+}
+
+// OrganizationSettingHistoryClient is a client for the OrganizationSettingHistory schema.
+type OrganizationSettingHistoryClient struct {
+	config
+}
+
+// NewOrganizationSettingHistoryClient returns a client for the OrganizationSettingHistory from the given config.
+func NewOrganizationSettingHistoryClient(c config) *OrganizationSettingHistoryClient {
+	return &OrganizationSettingHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organizationsettinghistory.Hooks(f(g(h())))`.
+func (c *OrganizationSettingHistoryClient) Use(hooks ...Hook) {
+	c.hooks.OrganizationSettingHistory = append(c.hooks.OrganizationSettingHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `organizationsettinghistory.Intercept(f(g(h())))`.
+func (c *OrganizationSettingHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OrganizationSettingHistory = append(c.inters.OrganizationSettingHistory, interceptors...)
+}
+
+// Create returns a builder for creating a OrganizationSettingHistory entity.
+func (c *OrganizationSettingHistoryClient) Create() *OrganizationSettingHistoryCreate {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpCreate)
+	return &OrganizationSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrganizationSettingHistory entities.
+func (c *OrganizationSettingHistoryClient) CreateBulk(builders ...*OrganizationSettingHistoryCreate) *OrganizationSettingHistoryCreateBulk {
+	return &OrganizationSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OrganizationSettingHistoryClient) MapCreateBulk(slice any, setFunc func(*OrganizationSettingHistoryCreate, int)) *OrganizationSettingHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OrganizationSettingHistoryCreateBulk{err: fmt.Errorf("calling to OrganizationSettingHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OrganizationSettingHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OrganizationSettingHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrganizationSettingHistory.
+func (c *OrganizationSettingHistoryClient) Update() *OrganizationSettingHistoryUpdate {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpUpdate)
+	return &OrganizationSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationSettingHistoryClient) UpdateOne(osh *OrganizationSettingHistory) *OrganizationSettingHistoryUpdateOne {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpUpdateOne, withOrganizationSettingHistory(osh))
+	return &OrganizationSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationSettingHistoryClient) UpdateOneID(id string) *OrganizationSettingHistoryUpdateOne {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpUpdateOne, withOrganizationSettingHistoryID(id))
+	return &OrganizationSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrganizationSettingHistory.
+func (c *OrganizationSettingHistoryClient) Delete() *OrganizationSettingHistoryDelete {
+	mutation := newOrganizationSettingHistoryMutation(c.config, OpDelete)
+	return &OrganizationSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrganizationSettingHistoryClient) DeleteOne(osh *OrganizationSettingHistory) *OrganizationSettingHistoryDeleteOne {
+	return c.DeleteOneID(osh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OrganizationSettingHistoryClient) DeleteOneID(id string) *OrganizationSettingHistoryDeleteOne {
+	builder := c.Delete().Where(organizationsettinghistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationSettingHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for OrganizationSettingHistory.
+func (c *OrganizationSettingHistoryClient) Query() *OrganizationSettingHistoryQuery {
+	return &OrganizationSettingHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOrganizationSettingHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OrganizationSettingHistory entity by its id.
+func (c *OrganizationSettingHistoryClient) Get(ctx context.Context, id string) (*OrganizationSettingHistory, error) {
+	return c.Query().Where(organizationsettinghistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationSettingHistoryClient) GetX(ctx context.Context, id string) *OrganizationSettingHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationSettingHistoryClient) Hooks() []Hook {
+	return c.hooks.OrganizationSettingHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *OrganizationSettingHistoryClient) Interceptors() []Interceptor {
+	return c.inters.OrganizationSettingHistory
+}
+
+func (c *OrganizationSettingHistoryClient) mutate(ctx context.Context, m *OrganizationSettingHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OrganizationSettingHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OrganizationSettingHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OrganizationSettingHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OrganizationSettingHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown OrganizationSettingHistory mutation op: %q", m.Op())
 	}
 }
 
@@ -3887,13 +4169,15 @@ type (
 	hooks struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
-		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
+		Organization, OrganizationHistory, OrganizationSetting,
+		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
 		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
-		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
+		Organization, OrganizationHistory, OrganizationSetting,
+		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
 		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Interceptor
 	}
 )

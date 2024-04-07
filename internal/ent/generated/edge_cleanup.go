@@ -134,7 +134,17 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func OrganizationHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func OrganizationSettingEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func OrganizationSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

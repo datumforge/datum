@@ -141,6 +141,18 @@ func (f OrganizationFunc) Mutate(ctx context.Context, m generated.Mutation) (gen
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationMutation", m)
 }
 
+// The OrganizationHistoryFunc type is an adapter to allow the use of ordinary
+// function as OrganizationHistory mutator.
+type OrganizationHistoryFunc func(context.Context, *generated.OrganizationHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrganizationHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.OrganizationHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationHistoryMutation", m)
+}
+
 // The OrganizationSettingFunc type is an adapter to allow the use of ordinary
 // function as OrganizationSetting mutator.
 type OrganizationSettingFunc func(context.Context, *generated.OrganizationSettingMutation) (generated.Value, error)
@@ -151,6 +163,18 @@ func (f OrganizationSettingFunc) Mutate(ctx context.Context, m generated.Mutatio
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationSettingMutation", m)
+}
+
+// The OrganizationSettingHistoryFunc type is an adapter to allow the use of ordinary
+// function as OrganizationSettingHistory mutator.
+type OrganizationSettingHistoryFunc func(context.Context, *generated.OrganizationSettingHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrganizationSettingHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.OrganizationSettingHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationSettingHistoryMutation", m)
 }
 
 // The PasswordResetTokenFunc type is an adapter to allow the use of ordinary

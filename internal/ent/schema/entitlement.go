@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -53,6 +54,9 @@ func (Entitlement) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }
 

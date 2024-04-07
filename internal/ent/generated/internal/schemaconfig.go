@@ -19,7 +19,9 @@ type SchemaConfig struct {
 	OrgMembership                    string // OrgMembership table.
 	Organization                     string // Organization table.
 	OrganizationPersonalAccessTokens string // Organization-personal_access_tokens->PersonalAccessToken table.
+	OrganizationHistory              string // OrganizationHistory table.
 	OrganizationSetting              string // OrganizationSetting table.
+	OrganizationSettingHistory       string // OrganizationSettingHistory table.
 	PasswordResetToken               string // PasswordResetToken table.
 	PersonalAccessToken              string // PersonalAccessToken table.
 	Subscriber                       string // Subscriber table.

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -64,6 +65,9 @@ func (GroupMembership) Annotations() []schema.Annotation {
 			ObjectType:   "group",
 			IncludeHooks: true,
 			IDField:      "GroupID",
+		},
+		enthistory.Annotations{
+			Exclude: true,
 		},
 	}
 }

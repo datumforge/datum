@@ -375,6 +375,30 @@ func (f OrganizationMutationRuleFunc) EvalMutation(ctx context.Context, m genera
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationMutation", m)
 }
 
+// The OrganizationHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrganizationHistoryQueryRuleFunc func(context.Context, *generated.OrganizationHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrganizationHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrganizationHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OrganizationHistoryQuery", q)
+}
+
+// The OrganizationHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrganizationHistoryMutationRuleFunc func(context.Context, *generated.OrganizationHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrganizationHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.OrganizationHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationHistoryMutation", m)
+}
+
 // The OrganizationSettingQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OrganizationSettingQueryRuleFunc func(context.Context, *generated.OrganizationSettingQuery) error
@@ -397,6 +421,30 @@ func (f OrganizationSettingMutationRuleFunc) EvalMutation(ctx context.Context, m
 		return f(ctx, m)
 	}
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationSettingMutation", m)
+}
+
+// The OrganizationSettingHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrganizationSettingHistoryQueryRuleFunc func(context.Context, *generated.OrganizationSettingHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrganizationSettingHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrganizationSettingHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OrganizationSettingHistoryQuery", q)
+}
+
+// The OrganizationSettingHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrganizationSettingHistoryMutationRuleFunc func(context.Context, *generated.OrganizationSettingHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrganizationSettingHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.OrganizationSettingHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationSettingHistoryMutation", m)
 }
 
 // The PasswordResetTokenQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -624,7 +672,11 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.OrganizationQuery:
 		return q.Filter(), nil
+	case *generated.OrganizationHistoryQuery:
+		return q.Filter(), nil
 	case *generated.OrganizationSettingQuery:
+		return q.Filter(), nil
+	case *generated.OrganizationSettingHistoryQuery:
 		return q.Filter(), nil
 	case *generated.PasswordResetTokenQuery:
 		return q.Filter(), nil
@@ -669,7 +721,11 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.OrganizationMutation:
 		return m.Filter(), nil
+	case *generated.OrganizationHistoryMutation:
+		return m.Filter(), nil
 	case *generated.OrganizationSettingMutation:
+		return m.Filter(), nil
+	case *generated.OrganizationSettingHistoryMutation:
 		return m.Filter(), nil
 	case *generated.PasswordResetTokenMutation:
 		return m.Filter(), nil

@@ -59,6 +59,11 @@ func (Template) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.SQLite: "json",
 			}).
+			Annotations(
+				entgql.Type("JSON"),
+				entoas.Schema(ogen.String().AsArray()),
+				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
+			).
 			Optional(),
 		field.Bytes("pair").
 			GoType(Pair{}).

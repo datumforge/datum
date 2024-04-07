@@ -3423,7 +3423,8 @@
                       "AMER",
                       "EMEA",
                       "APAC"
-                    ]
+                    ],
+                    "default": "AMER"
                   },
                   "organization_id": {
                     "type": "string"
@@ -3599,7 +3600,8 @@
                       "AMER",
                       "EMEA",
                       "APAC"
-                    ]
+                    ],
+                    "default": "AMER"
                   },
                   "organization_id": {
                     "type": "string"
@@ -7443,7 +7445,8 @@
               "AMER",
               "EMEA",
               "APAC"
-            ]
+            ],
+            "default": "AMER"
           },
           "organization_id": {
             "type": "string"
@@ -7531,7 +7534,8 @@
               "AMER",
               "EMEA",
               "APAC"
-            ]
+            ],
+            "default": "AMER"
           },
           "organization_id": {
             "type": "string"

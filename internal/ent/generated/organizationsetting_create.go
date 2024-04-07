@@ -289,6 +289,10 @@ func (osc *OrganizationSettingCreate) defaults() error {
 		v := organizationsetting.DefaultTags
 		osc.mutation.SetTags(v)
 	}
+	if _, ok := osc.mutation.GeoLocation(); !ok {
+		v := organizationsetting.DefaultGeoLocation
+		osc.mutation.SetGeoLocation(v)
+	}
 	if _, ok := osc.mutation.ID(); !ok {
 		if organizationsetting.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized organizationsetting.DefaultID (forgotten import generated/runtime?)")

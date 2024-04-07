@@ -315,6 +315,10 @@ func (oshc *OrganizationSettingHistoryCreate) defaults() {
 		v := organizationsettinghistory.DefaultTags
 		oshc.mutation.SetTags(v)
 	}
+	if _, ok := oshc.mutation.GeoLocation(); !ok {
+		v := organizationsettinghistory.DefaultGeoLocation
+		oshc.mutation.SetGeoLocation(v)
+	}
 	if _, ok := oshc.mutation.ID(); !ok {
 		v := organizationsettinghistory.DefaultID()
 		oshc.mutation.SetID(v)

@@ -113,6 +113,8 @@ func OperationValidator(o enthistory.OpType) error {
 	}
 }
 
+const DefaultGeoLocation enums.Region = "AMER"
+
 // GeoLocationValidator is a validator for the "geo_location" field enum values. It is called by the builders before save.
 func GeoLocationValidator(gl enums.Region) error {
 	switch gl.String() {

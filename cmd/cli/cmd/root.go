@@ -83,6 +83,9 @@ func init() {
 
 	RootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
 	ViperBindFlag("logging.pretty", RootCmd.PersistentFlags().Lookup("pretty"))
+
+	RootCmd.PersistentFlags().StringP("format", "z", "table", "output format (json, table)")
+	ViperBindFlag("output.format", RootCmd.PersistentFlags().Lookup("format"))
 }
 
 // initConfig reads in config file and ENV variables if set.

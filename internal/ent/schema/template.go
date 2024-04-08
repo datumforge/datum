@@ -47,6 +47,13 @@ func (Template) Fields() []ent.Field {
 				entoas.Schema(ogen.String().AsArray()),
 			).
 			Optional(),
+		field.JSON("thatjsonbaby", map[string]interface{}{}).
+			Comment("the jsonschema object of the template").
+			Annotations(
+				entgql.Type("JSON"),
+				entoas.Schema(ogen.String().AsArray()),
+			).
+			Optional(),
 	}
 }
 

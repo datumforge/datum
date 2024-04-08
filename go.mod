@@ -14,7 +14,7 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.0.2
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
-	github.com/datumforge/enthistory v0.0.3
+	github.com/datumforge/enthistory v0.0.4
 	github.com/datumforge/fgax v0.1.5
 	github.com/datumforge/geodetic v0.0.2
 	github.com/docker/go-connections v0.5.0

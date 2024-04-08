@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -34,7 +35,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 21)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 22)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -504,6 +505,29 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[18] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   template.Table,
+			Columns: template.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: template.FieldID,
+			},
+		},
+		Type: "Template",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			template.FieldCreatedAt:   {Type: field.TypeTime, Column: template.FieldCreatedAt},
+			template.FieldUpdatedAt:   {Type: field.TypeTime, Column: template.FieldUpdatedAt},
+			template.FieldCreatedBy:   {Type: field.TypeString, Column: template.FieldCreatedBy},
+			template.FieldUpdatedBy:   {Type: field.TypeString, Column: template.FieldUpdatedBy},
+			template.FieldDeletedAt:   {Type: field.TypeTime, Column: template.FieldDeletedAt},
+			template.FieldDeletedBy:   {Type: field.TypeString, Column: template.FieldDeletedBy},
+			template.FieldOwnerID:     {Type: field.TypeString, Column: template.FieldOwnerID},
+			template.FieldName:        {Type: field.TypeString, Column: template.FieldName},
+			template.FieldDescription: {Type: field.TypeString, Column: template.FieldDescription},
+			template.FieldJsonconfig:  {Type: field.TypeJSON, Column: template.FieldJsonconfig},
+		},
+	}
+	graph.Nodes[19] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -532,7 +556,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
 		},
 	}
-	graph.Nodes[19] = &sqlgraph.Node{
+	graph.Nodes[20] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -561,7 +585,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldPhoneNumber:       {Type: field.TypeString, Column: usersetting.FieldPhoneNumber},
 		},
 	}
-	graph.Nodes[20] = &sqlgraph.Node{
+	graph.Nodes[21] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   webauthn.Table,
 			Columns: webauthn.Columns,
@@ -794,6 +818,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Group",
 	)
 	graph.MustAddE(
+		"templates",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TemplatesTable,
+			Columns: []string{organization.TemplatesColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"Template",
+	)
+	graph.MustAddE(
 		"integrations",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -972,6 +1008,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"TFASettings",
 		"User",
+	)
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   template.OwnerTable,
+			Columns: []string{template.OwnerColumn},
+			Bidi:    false,
+		},
+		"Template",
+		"Organization",
 	)
 	graph.MustAddE(
 		"personal_access_tokens",
@@ -2476,6 +2524,20 @@ func (f *OrganizationFilter) WhereHasGroupsWith(preds ...predicate.Group) {
 	})))
 }
 
+// WhereHasTemplates applies a predicate to check if query has an edge templates.
+func (f *OrganizationFilter) WhereHasTemplates() {
+	f.Where(entql.HasEdge("templates"))
+}
+
+// WhereHasTemplatesWith applies a predicate to check if query has an edge templates with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasTemplatesWith(preds ...predicate.Template) {
+	f.Where(entql.HasEdgeWith("templates", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // WhereHasIntegrations applies a predicate to check if query has an edge integrations.
 func (f *OrganizationFilter) WhereHasIntegrations() {
 	f.Where(entql.HasEdge("integrations"))
@@ -3472,6 +3534,110 @@ func (f *TFASettingsFilter) WhereHasOwnerWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (tq *TemplateQuery) addPredicate(pred func(s *sql.Selector)) {
+	tq.predicates = append(tq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the TemplateQuery builder.
+func (tq *TemplateQuery) Filter() *TemplateFilter {
+	return &TemplateFilter{config: tq.config, predicateAdder: tq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *TemplateMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the TemplateMutation builder.
+func (m *TemplateMutation) Filter() *TemplateFilter {
+	return &TemplateFilter{config: m.config, predicateAdder: m}
+}
+
+// TemplateFilter provides a generic filtering capability at runtime for TemplateQuery.
+type TemplateFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *TemplateFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *TemplateFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(template.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *TemplateFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(template.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *TemplateFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(template.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *TemplateFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(template.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *TemplateFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(template.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *TemplateFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(template.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *TemplateFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(template.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *TemplateFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(template.FieldOwnerID))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *TemplateFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(template.FieldName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *TemplateFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(template.FieldDescription))
+}
+
+// WhereJsonconfig applies the entql json.RawMessage predicate on the jsonconfig field.
+func (f *TemplateFilter) WhereJsonconfig(p entql.BytesP) {
+	f.Where(p.Field(template.FieldJsonconfig))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *TemplateFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *TemplateFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (uq *UserQuery) addPredicate(pred func(s *sql.Selector)) {
 	uq.predicates = append(uq.predicates, pred)
 }
@@ -3500,7 +3666,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[18].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -3765,7 +3931,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[20].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -3913,7 +4079,7 @@ type WebauthnFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *WebauthnFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[20].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[21].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

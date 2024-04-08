@@ -5,6 +5,7 @@ package generated
 import (
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
 )
 
@@ -1074,6 +1075,7 @@ type CreateOrganizationInput struct {
 	DedicatedDb            *bool
 	ParentID               *string
 	GroupIDs               []string
+	TemplateIDs            []string
 	IntegrationIDs         []string
 	SettingID              *string
 	EntitlementIDs         []string
@@ -1119,6 +1121,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.GroupIDs; len(v) > 0 {
 		m.AddGroupIDs(v...)
+	}
+	if v := i.TemplateIDs; len(v) > 0 {
+		m.AddTemplateIDs(v...)
 	}
 	if v := i.IntegrationIDs; len(v) > 0 {
 		m.AddIntegrationIDs(v...)
@@ -1167,6 +1172,9 @@ type UpdateOrganizationInput struct {
 	ClearGroups                  bool
 	AddGroupIDs                  []string
 	RemoveGroupIDs               []string
+	ClearTemplates               bool
+	AddTemplateIDs               []string
+	RemoveTemplateIDs            []string
 	ClearIntegrations            bool
 	AddIntegrationIDs            []string
 	RemoveIntegrationIDs         []string
@@ -1232,6 +1240,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveGroupIDs; len(v) > 0 {
 		m.RemoveGroupIDs(v...)
+	}
+	if i.ClearTemplates {
+		m.ClearTemplates()
+	}
+	if v := i.AddTemplateIDs; len(v) > 0 {
+		m.AddTemplateIDs(v...)
+	}
+	if v := i.RemoveTemplateIDs; len(v) > 0 {
+		m.RemoveTemplateIDs(v...)
 	}
 	if i.ClearIntegrations {
 		m.ClearIntegrations()
@@ -1832,6 +1849,108 @@ func (c *TFASettingsUpdate) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdat
 
 // SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdateOne builder.
 func (c *TFASettingsUpdateOne) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateTemplateInput represents a mutation input for creating templates.
+type CreateTemplateInput struct {
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	Name        string
+	Description *string
+	Jsonconfig  customtypes.JSONObject
+	OwnerID     string
+}
+
+// Mutate applies the CreateTemplateInput on the TemplateMutation builder.
+func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.Jsonconfig; v != nil {
+		m.SetJsonconfig(v)
+	}
+	m.SetOwnerID(i.OwnerID)
+}
+
+// SetInput applies the change-set in the CreateTemplateInput on the TemplateCreate builder.
+func (c *TemplateCreate) SetInput(i CreateTemplateInput) *TemplateCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTemplateInput represents a mutation input for updating templates.
+type UpdateTemplateInput struct {
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Name             *string
+	ClearDescription bool
+	Description      *string
+	ClearJsonconfig  bool
+	Jsonconfig       customtypes.JSONObject
+	OwnerID          *string
+}
+
+// Mutate applies the UpdateTemplateInput on the TemplateMutation builder.
+func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if i.ClearJsonconfig {
+		m.ClearJsonconfig()
+	}
+	if v := i.Jsonconfig; v != nil {
+		m.SetJsonconfig(v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTemplateInput on the TemplateUpdate builder.
+func (c *TemplateUpdate) SetInput(i UpdateTemplateInput) *TemplateUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTemplateInput on the TemplateUpdateOne builder.
+func (c *TemplateUpdateOne) SetInput(i UpdateTemplateInput) *TemplateUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

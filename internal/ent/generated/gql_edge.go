@@ -161,6 +161,18 @@ func (o *Organization) Groups(ctx context.Context) (result []*Group, err error) 
 	return result, err
 }
 
+func (o *Organization) Templates(ctx context.Context) (result []*Template, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedTemplates(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.TemplatesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryTemplates().All(ctx)
+	}
+	return result, err
+}
+
 func (o *Organization) Integrations(ctx context.Context) (result []*Integration, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = o.NamedIntegrations(graphql.GetFieldContext(ctx).Field.Alias)
@@ -307,6 +319,14 @@ func (ts *TFASettings) Owner(ctx context.Context) (*User, error) {
 		result, err = ts.QueryOwner().Only(ctx)
 	}
 	return result, MaskNotFound(err)
+}
+
+func (t *Template) Owner(ctx context.Context) (*Organization, error) {
+	result, err := t.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = t.QueryOwner().Only(ctx)
+	}
+	return result, err
 }
 
 func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAccessToken, err error) {

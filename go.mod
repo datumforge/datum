@@ -54,7 +54,7 @@ require (
 	golang.org/x/oauth2 v0.19.0
 	golang.org/x/term v0.19.0
 	google.golang.org/api v0.172.0
-	modernc.org/sqlite v1.29.5
+	modernc.org/sqlite v1.29.6
 )
 
 require (

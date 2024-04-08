@@ -573,7 +573,10 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	// mocks checks for all calls
 	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 6)
+	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 3)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 

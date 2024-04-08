@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -99,6 +100,9 @@ func (PersonalAccessToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }
 

@@ -104,6 +104,9 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 	// add authz hooks
 	ec.WithAuthz()
 
+	// add history hooks
+	ec.WithHistory()
+
 	ec.Intercept(interceptors.QueryLogger(client.logger))
 
 	return ec, entConfig, nil

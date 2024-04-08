@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/enthistory"
 	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
@@ -121,6 +122,9 @@ func (Group) Annotations() []schema.Annotation {
 		entfga.Annotations{
 			ObjectType:   "group",
 			IncludeHooks: false,
+		},
+		enthistory.Annotations{
+			Exclude: true,
 		},
 	}
 }

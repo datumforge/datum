@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -63,6 +64,9 @@ func (Integration) Annotations() []schema.Annotation {
 			ObjectType:   "organization",
 			IncludeHooks: false,
 			IDField:      "OwnerID",
+		},
+		enthistory.Annotations{
+			Exclude: true,
 		},
 	}
 }

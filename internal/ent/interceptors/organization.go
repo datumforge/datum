@@ -2,7 +2,6 @@ package interceptors
 
 import (
 	"context"
-	"strings"
 
 	"entgo.io/ent"
 	"github.com/datumforge/fgax"
@@ -34,11 +33,37 @@ func InterceptorOrganization() ent.Interceptor {
 func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v ent.Value) ([]*generated.Organization, error) {
 	q.Logger.Debugw("intercepting list organization query")
 
-	orgs, ok := v.([]*generated.Organization)
-	if !ok {
-		q.Logger.Errorw("unexpected type for organization query")
+	// return early if no organizations
+	if v == nil {
+		return nil, nil
+	}
 
-		return nil, ErrInternalServerError
+	qc := ent.QueryFromContext(ctx)
+
+	var orgs []*generated.Organization
+
+	// check if query is for an exists query, which returns a slice of organization ids
+	// instead of the organization objects
+	if qc.Op == ExistOperation {
+		orgIDs, ok := v.([]string)
+		if !ok {
+			q.Logger.Errorw("unexpected type for group exist query")
+
+			return nil, ErrInternalServerError
+		}
+
+		for _, o := range orgIDs {
+			orgs = append(orgs, &generated.Organization{ID: o})
+		}
+	} else {
+		var ok bool
+
+		orgs, ok = v.([]*generated.Organization)
+		if !ok {
+			q.Logger.Errorw("unexpected type for organization query")
+
+			return nil, ErrInternalServerError
+		}
 	}
 
 	// by pass checks on invite
@@ -52,6 +77,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 		return []*generated.Organization{orgs[0]}, nil
 	}
 
+	// get userID for tuple checks
 	userID, err := getAuthenticatedUserID(ctx)
 	if err != nil {
 		q.Logger.Errorw("unable to get authenticated user id", "error", err)
@@ -70,7 +96,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 	var accessibleOrgs []*generated.Organization
 
 	for _, o := range orgs {
-		entityType := strings.ToLower(o.Update().Mutation().Type())
+		entityType := "organization"
 
 		// check root org
 		if !fgax.ListContains(entityType, userOrgs, o.ID) {

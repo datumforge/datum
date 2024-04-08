@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -111,6 +112,9 @@ func (UserSetting) Annotations() []schema.Annotation {
 		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }
 

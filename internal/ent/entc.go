@@ -19,6 +19,7 @@ import (
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
+	"github.com/datumforge/enthistory"
 	"github.com/datumforge/entx"
 	geodetic "github.com/datumforge/geodetic/pkg/geodeticclient"
 
@@ -43,7 +44,7 @@ func main() {
 	// Ensure the schema directory exists before running entc.
 	_ = os.Mkdir("schema", 0755)
 
-	ex, err := entoas.NewExtension(
+	eoas, err := entoas.NewExtension(
 		entoas.SimpleModels(),
 		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
 			spec.SetOpenAPI("3.1.0")
@@ -130,6 +131,17 @@ func main() {
 		log.Fatalf("creating entgql extension: %v", err)
 	}
 
+	historyExt := enthistory.NewHistoryExtension(
+		enthistory.WithAuditing(),
+		enthistory.WithImmutableFields(),
+		enthistory.WithHistoryTimeIndex(),
+		enthistory.WithNillableFields(),
+		enthistory.WithSchemaPath("./internal/ent/schema"),
+	)
+	if err != nil {
+		log.Fatalf("creating enthistory extension: %v", err)
+	}
+
 	if err := entc.Generate("./internal/ent/schema", &gen.Config{
 		Target:    "./internal/ent/generated",
 		Templates: entgql.AllTemplates,
@@ -184,10 +196,11 @@ func main() {
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
 			gqlExt,
-			ex,
+			eoas,
 			entfga.NewFGAExtension(
 				entfga.WithSoftDeletes(),
 			),
+			historyExt,
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

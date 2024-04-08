@@ -75,6 +75,7 @@ func (OrganizationSetting) Fields() []ent.Field {
 		field.Enum("geo_location").
 			GoType(enums.Region("")).
 			Comment("geographical location of the organization").
+			Default(enums.Amer.String()).
 			Optional(),
 		field.String("organization_id").
 			Comment("the ID of the organization the settings belong to").

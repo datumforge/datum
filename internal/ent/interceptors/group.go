@@ -2,7 +2,6 @@ package interceptors
 
 import (
 	"context"
-	"strings"
 
 	"entgo.io/ent"
 	"github.com/datumforge/fgax"
@@ -31,11 +30,37 @@ func InterceptorGroup() ent.Interceptor {
 func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Value) ([]*generated.Group, error) {
 	q.Logger.Debugw("intercepting list group query")
 
-	groups, ok := v.([]*generated.Group)
-	if !ok {
-		q.Logger.Errorw("unexpected type for group query")
+	// return early if no groups
+	if v == nil {
+		return nil, nil
+	}
 
-		return nil, ErrInternalServerError
+	qc := ent.QueryFromContext(ctx)
+
+	var groups []*generated.Group
+
+	// check if query is for an exists query, which returns a slice of group ids
+	// instead of the group objects
+	if qc.Op == ExistOperation {
+		groupIDs, ok := v.([]string)
+		if !ok {
+			q.Logger.Errorw("unexpected type for group exist query")
+
+			return nil, ErrInternalServerError
+		}
+
+		for _, g := range groupIDs {
+			groups = append(groups, &generated.Group{ID: g})
+		}
+	} else {
+		var ok bool
+
+		groups, ok = v.([]*generated.Group)
+		if !ok {
+			q.Logger.Errorw("unexpected type for group query")
+
+			return nil, ErrInternalServerError
+		}
 	}
 
 	// get userID for tuple checks
@@ -56,7 +81,7 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 	var accessibleGroups []*generated.Group
 
 	for _, g := range groups {
-		entityType := strings.ToLower(g.Update().Mutation().Type())
+		entityType := "group"
 
 		if !fgax.ListContains(entityType, userGroups, g.ID) {
 			q.Logger.Infow("access denied to group", "relation", fgax.CanView, "group_id", g.ID, "type", entityType)

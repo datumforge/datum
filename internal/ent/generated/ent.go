@@ -22,7 +22,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -91,25 +93,27 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			emailverificationtoken.Table: emailverificationtoken.ValidColumn,
-			entitlement.Table:            entitlement.ValidColumn,
-			group.Table:                  group.ValidColumn,
-			groupmembership.Table:        groupmembership.ValidColumn,
-			groupsetting.Table:           groupsetting.ValidColumn,
-			integration.Table:            integration.ValidColumn,
-			invite.Table:                 invite.ValidColumn,
-			oauthprovider.Table:          oauthprovider.ValidColumn,
-			ohauthtootoken.Table:         ohauthtootoken.ValidColumn,
-			orgmembership.Table:          orgmembership.ValidColumn,
-			organization.Table:           organization.ValidColumn,
-			organizationsetting.Table:    organizationsetting.ValidColumn,
-			passwordresettoken.Table:     passwordresettoken.ValidColumn,
-			personalaccesstoken.Table:    personalaccesstoken.ValidColumn,
-			subscriber.Table:             subscriber.ValidColumn,
-			tfasettings.Table:            tfasettings.ValidColumn,
-			user.Table:                   user.ValidColumn,
-			usersetting.Table:            usersetting.ValidColumn,
-			webauthn.Table:               webauthn.ValidColumn,
+			emailverificationtoken.Table:     emailverificationtoken.ValidColumn,
+			entitlement.Table:                entitlement.ValidColumn,
+			group.Table:                      group.ValidColumn,
+			groupmembership.Table:            groupmembership.ValidColumn,
+			groupsetting.Table:               groupsetting.ValidColumn,
+			integration.Table:                integration.ValidColumn,
+			invite.Table:                     invite.ValidColumn,
+			oauthprovider.Table:              oauthprovider.ValidColumn,
+			ohauthtootoken.Table:             ohauthtootoken.ValidColumn,
+			orgmembership.Table:              orgmembership.ValidColumn,
+			organization.Table:               organization.ValidColumn,
+			organizationhistory.Table:        organizationhistory.ValidColumn,
+			organizationsetting.Table:        organizationsetting.ValidColumn,
+			organizationsettinghistory.Table: organizationsettinghistory.ValidColumn,
+			passwordresettoken.Table:         passwordresettoken.ValidColumn,
+			personalaccesstoken.Table:        personalaccesstoken.ValidColumn,
+			subscriber.Table:                 subscriber.ValidColumn,
+			tfasettings.Table:                tfasettings.ValidColumn,
+			user.Table:                       user.ValidColumn,
+			usersetting.Table:                usersetting.ValidColumn,
+			webauthn.Table:                   webauthn.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

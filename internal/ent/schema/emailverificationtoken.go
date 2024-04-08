@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+	"github.com/datumforge/enthistory"
 	"github.com/datumforge/entx"
 
 	emixin "github.com/datumforge/entx/mixin"
@@ -94,6 +95,9 @@ func (EmailVerificationToken) Annotations() []schema.Annotation {
 		entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 		entoas.ListOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
+		enthistory.Annotations{
+			Exclude: true,
+		},
 	}
 }
 

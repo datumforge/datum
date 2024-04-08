@@ -515,9 +515,12 @@ func (suite *GraphTestSuite) TestMutationDeleteOrganization() {
 			// mock read of tuple
 			mock_fga.CheckAny(t, suite.client.fga, tc.accessAllowed)
 
+			if tc.accessAllowed {
+				mock_fga.ListAny(t, suite.client.fga, listObjects)
+			}
+
 			// additional check happens when the resource is found
 			if tc.errorMsg == "" {
-				mock_fga.ListAny(t, suite.client.fga, listObjects)
 				mock_fga.WriteAny(t, suite.client.fga)
 			}
 
@@ -573,7 +576,11 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	// mocks checks for all calls
 	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 6)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 3)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
 

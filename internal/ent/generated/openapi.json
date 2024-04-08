@@ -3009,6 +3009,635 @@
         }
       }
     },
+    "/organization-histories": {
+      "get": {
+        "tags": [
+          "OrganizationHistory"
+        ],
+        "summary": "List OrganizationHistories",
+        "description": "List OrganizationHistories.",
+        "operationId": "listOrganizationHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result OrganizationHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationHistory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OrganizationHistory"
+        ],
+        "summary": "Create a new OrganizationHistory",
+        "description": "Creates a new OrganizationHistory and persists it to storage.",
+        "operationId": "createOrganizationHistory",
+        "requestBody": {
+          "description": "OrganizationHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "display_name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "parent_organization_id": {
+                    "type": "string"
+                  },
+                  "personal_org": {
+                    "type": "boolean"
+                  },
+                  "avatar_remote_url": {
+                    "type": "string"
+                  },
+                  "dedicated_db": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "name",
+                  "display_name",
+                  "dedicated_db"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrganizationHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organization-histories/{id}": {
+      "get": {
+        "tags": [
+          "OrganizationHistory"
+        ],
+        "summary": "Find a OrganizationHistory by ID",
+        "description": "Finds the OrganizationHistory with the requested ID and returns it.",
+        "operationId": "readOrganizationHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OrganizationHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OrganizationHistory"
+        ],
+        "summary": "Deletes a OrganizationHistory by ID",
+        "description": "Deletes the OrganizationHistory with the requested ID.",
+        "operationId": "deleteOrganizationHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OrganizationHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OrganizationHistory"
+        ],
+        "summary": "Updates a OrganizationHistory",
+        "description": "Updates a OrganizationHistory and persists changes to storage.",
+        "operationId": "updateOrganizationHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "OrganizationHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "display_name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "avatar_remote_url": {
+                    "type": "string"
+                  },
+                  "dedicated_db": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrganizationHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organization-setting-histories": {
+      "get": {
+        "tags": [
+          "OrganizationSettingHistory"
+        ],
+        "summary": "List OrganizationSettingHistories",
+        "description": "List OrganizationSettingHistories.",
+        "operationId": "listOrganizationSettingHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result OrganizationSettingHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationSettingHistory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OrganizationSettingHistory"
+        ],
+        "summary": "Create a new OrganizationSettingHistory",
+        "description": "Creates a new OrganizationSettingHistory and persists it to storage.",
+        "operationId": "createOrganizationSettingHistory",
+        "requestBody": {
+          "description": "OrganizationSettingHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "domains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "billing_contact": {
+                    "type": "string"
+                  },
+                  "billing_email": {
+                    "type": "string"
+                  },
+                  "billing_phone": {
+                    "type": "string"
+                  },
+                  "billing_address": {
+                    "type": "string"
+                  },
+                  "tax_identifier": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "geo_location": {
+                    "type": "string",
+                    "enum": [
+                      "AMER",
+                      "EMEA",
+                      "APAC"
+                    ],
+                    "default": "AMER"
+                  },
+                  "organization_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrganizationSettingHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationSettingHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organization-setting-histories/{id}": {
+      "get": {
+        "tags": [
+          "OrganizationSettingHistory"
+        ],
+        "summary": "Find a OrganizationSettingHistory by ID",
+        "description": "Finds the OrganizationSettingHistory with the requested ID and returns it.",
+        "operationId": "readOrganizationSettingHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationSettingHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OrganizationSettingHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationSettingHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OrganizationSettingHistory"
+        ],
+        "summary": "Deletes a OrganizationSettingHistory by ID",
+        "description": "Deletes the OrganizationSettingHistory with the requested ID.",
+        "operationId": "deleteOrganizationSettingHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationSettingHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OrganizationSettingHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OrganizationSettingHistory"
+        ],
+        "summary": "Updates a OrganizationSettingHistory",
+        "description": "Updates a OrganizationSettingHistory and persists changes to storage.",
+        "operationId": "updateOrganizationSettingHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationSettingHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "OrganizationSettingHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "domains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "billing_contact": {
+                    "type": "string"
+                  },
+                  "billing_email": {
+                    "type": "string"
+                  },
+                  "billing_phone": {
+                    "type": "string"
+                  },
+                  "billing_address": {
+                    "type": "string"
+                  },
+                  "tax_identifier": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "geo_location": {
+                    "type": "string",
+                    "enum": [
+                      "AMER",
+                      "EMEA",
+                      "APAC"
+                    ],
+                    "default": "AMER"
+                  },
+                  "organization_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrganizationSettingHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationSettingHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/organization-settings/{id}/organization": {
       "get": {
         "tags": [
@@ -6683,6 +7312,79 @@
           "dedicated_db"
         ]
       },
+      "OrganizationHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string"
+          },
+          "personal_org": {
+            "type": "boolean"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "dedicated_db": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "name",
+          "display_name",
+          "dedicated_db"
+        ]
+      },
       "OrganizationSetting": {
         "type": "object",
         "properties": {
@@ -6743,7 +7445,8 @@
               "AMER",
               "EMEA",
               "APAC"
-            ]
+            ],
+            "default": "AMER"
           },
           "organization_id": {
             "type": "string"
@@ -6754,6 +7457,94 @@
         },
         "required": [
           "id"
+        ]
+      },
+      "OrganizationSettingHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "billing_contact": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "billing_address": {
+            "type": "string"
+          },
+          "tax_identifier": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "geo_location": {
+            "type": "string",
+            "enum": [
+              "AMER",
+              "EMEA",
+              "APAC"
+            ],
+            "default": "AMER"
+          },
+          "organization_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation"
         ]
       },
       "PasswordResetToken": {

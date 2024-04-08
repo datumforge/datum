@@ -16,7 +16,9 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -600,6 +602,36 @@ func init() {
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
 	organization.DefaultID = organizationDescID.Default.(func() string)
+	organizationhistoryFields := schema.OrganizationHistory{}.Fields()
+	_ = organizationhistoryFields
+	// organizationhistoryDescHistoryTime is the schema descriptor for history_time field.
+	organizationhistoryDescHistoryTime := organizationhistoryFields[0].Descriptor()
+	// organizationhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	organizationhistory.DefaultHistoryTime = organizationhistoryDescHistoryTime.Default.(func() time.Time)
+	// organizationhistoryDescCreatedAt is the schema descriptor for created_at field.
+	organizationhistoryDescCreatedAt := organizationhistoryFields[3].Descriptor()
+	// organizationhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	organizationhistory.DefaultCreatedAt = organizationhistoryDescCreatedAt.Default.(func() time.Time)
+	// organizationhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	organizationhistoryDescUpdatedAt := organizationhistoryFields[4].Descriptor()
+	// organizationhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	organizationhistory.DefaultUpdatedAt = organizationhistoryDescUpdatedAt.Default.(func() time.Time)
+	// organizationhistoryDescDisplayName is the schema descriptor for display_name field.
+	organizationhistoryDescDisplayName := organizationhistoryFields[11].Descriptor()
+	// organizationhistory.DefaultDisplayName holds the default value on creation for the display_name field.
+	organizationhistory.DefaultDisplayName = organizationhistoryDescDisplayName.Default.(string)
+	// organizationhistoryDescPersonalOrg is the schema descriptor for personal_org field.
+	organizationhistoryDescPersonalOrg := organizationhistoryFields[14].Descriptor()
+	// organizationhistory.DefaultPersonalOrg holds the default value on creation for the personal_org field.
+	organizationhistory.DefaultPersonalOrg = organizationhistoryDescPersonalOrg.Default.(bool)
+	// organizationhistoryDescDedicatedDb is the schema descriptor for dedicated_db field.
+	organizationhistoryDescDedicatedDb := organizationhistoryFields[16].Descriptor()
+	// organizationhistory.DefaultDedicatedDb holds the default value on creation for the dedicated_db field.
+	organizationhistory.DefaultDedicatedDb = organizationhistoryDescDedicatedDb.Default.(bool)
+	// organizationhistoryDescID is the schema descriptor for id field.
+	organizationhistoryDescID := organizationhistoryFields[7].Descriptor()
+	// organizationhistory.DefaultID holds the default value on creation for the id field.
+	organizationhistory.DefaultID = organizationhistoryDescID.Default.(func() string)
 	organizationsettingMixin := schema.OrganizationSetting{}.Mixin()
 	organizationsetting.Policy = privacy.NewPolicies(schema.OrganizationSetting{})
 	organizationsetting.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -654,6 +686,28 @@ func init() {
 	organizationsettingDescID := organizationsettingMixinFields1[0].Descriptor()
 	// organizationsetting.DefaultID holds the default value on creation for the id field.
 	organizationsetting.DefaultID = organizationsettingDescID.Default.(func() string)
+	organizationsettinghistoryFields := schema.OrganizationSettingHistory{}.Fields()
+	_ = organizationsettinghistoryFields
+	// organizationsettinghistoryDescHistoryTime is the schema descriptor for history_time field.
+	organizationsettinghistoryDescHistoryTime := organizationsettinghistoryFields[0].Descriptor()
+	// organizationsettinghistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	organizationsettinghistory.DefaultHistoryTime = organizationsettinghistoryDescHistoryTime.Default.(func() time.Time)
+	// organizationsettinghistoryDescCreatedAt is the schema descriptor for created_at field.
+	organizationsettinghistoryDescCreatedAt := organizationsettinghistoryFields[3].Descriptor()
+	// organizationsettinghistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	organizationsettinghistory.DefaultCreatedAt = organizationsettinghistoryDescCreatedAt.Default.(func() time.Time)
+	// organizationsettinghistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	organizationsettinghistoryDescUpdatedAt := organizationsettinghistoryFields[4].Descriptor()
+	// organizationsettinghistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	organizationsettinghistory.DefaultUpdatedAt = organizationsettinghistoryDescUpdatedAt.Default.(func() time.Time)
+	// organizationsettinghistoryDescTags is the schema descriptor for tags field.
+	organizationsettinghistoryDescTags := organizationsettinghistoryFields[16].Descriptor()
+	// organizationsettinghistory.DefaultTags holds the default value on creation for the tags field.
+	organizationsettinghistory.DefaultTags = organizationsettinghistoryDescTags.Default.([]string)
+	// organizationsettinghistoryDescID is the schema descriptor for id field.
+	organizationsettinghistoryDescID := organizationsettinghistoryFields[7].Descriptor()
+	// organizationsettinghistory.DefaultID holds the default value on creation for the id field.
+	organizationsettinghistory.DefaultID = organizationsettinghistoryDescID.Default.(func() string)
 	passwordresettokenMixin := schema.PasswordResetToken{}.Mixin()
 	passwordresettoken.Policy = privacy.NewPolicies(schema.PasswordResetToken{})
 	passwordresettoken.Hooks[0] = func(next ent.Mutator) ent.Mutator {

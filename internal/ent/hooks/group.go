@@ -136,7 +136,13 @@ func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupM
 
 func groupDeleteHook(ctx context.Context, m *generated.GroupMutation) error {
 	// Add relationship tuples if authz is enabled
-	objID, _ := m.ID()
+	objID, ok := m.ID()
+	if !ok {
+		// TODO (sfunk): ensure tuples get cascade deleted
+		// continue for now
+		return nil
+	}
+
 	objType := strings.ToLower(m.Type())
 	object := fmt.Sprintf("%s:%s", objType, objID)
 

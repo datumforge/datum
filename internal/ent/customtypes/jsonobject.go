@@ -17,7 +17,7 @@ type JSONObject map[string]interface{}
 //}
 //
 //// Scan implements the Scanner interface.
-//func (p *Pair) Scan(value interface{}) (err error) {
+// func (p *Pair) Scan(value interface{}) (err error) {
 //	switch v := value.(type) {
 //	case nil:
 //	case []byte:

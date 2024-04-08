@@ -66,8 +66,8 @@ func createTemplate(ctx context.Context) error {
 	}
 
 	input := datumclient.CreateTemplateInput{
-		Name:       name,
-		Jsonconfig: data,
+		Name:         name,
+		Thatjsonbaby: data,
 	}
 
 	if description != "" {

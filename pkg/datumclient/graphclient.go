@@ -4,6 +4,7 @@ package datumclient
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -50,6 +51,10 @@ type DatumClient interface {
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
 	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
 	Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error)
+	CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error)
+	UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error)
+	GetAllTemplates(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplates, error)
+	GetTemplate(ctx context.Context, getTemplateID string, interceptors ...clientv2.RequestInterceptor) (*GetTemplate, error)
 	GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error)
 	CreateTFASettings(ctx context.Context, input CreateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASettings, error)
 	UpdateTFASettings(ctx context.Context, input UpdateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASettings, error)
@@ -4948,6 +4953,418 @@ func (t *Subscribers_Subscribers) GetEdges() []*Subscribers_Subscribers_Edges {
 	return t.Edges
 }
 
+type CreateTemplate_CreateTemplate_Template_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateTemplate_CreateTemplate_Template_Owner) GetID() string {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template_Owner{}
+	}
+	return t.ID
+}
+
+type CreateTemplate_CreateTemplate_Template struct {
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       CreateTemplate_CreateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *CreateTemplate_CreateTemplate_Template) GetID() string {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.ID
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.UpdatedBy
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.DeletedAt
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetDeletedBy() *string {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.DeletedBy
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetName() string {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.Name
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetDescription() *string {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return t.Description
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetJsonconfig() *json.RawMessage {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return &t.Jsonconfig
+}
+func (t *CreateTemplate_CreateTemplate_Template) GetOwner() *CreateTemplate_CreateTemplate_Template_Owner {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return &t.Owner
+}
+
+type CreateTemplate_CreateTemplate struct {
+	Template CreateTemplate_CreateTemplate_Template "json:\"template\" graphql:\"template\""
+}
+
+func (t *CreateTemplate_CreateTemplate) GetTemplate() *CreateTemplate_CreateTemplate_Template {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate{}
+	}
+	return &t.Template
+}
+
+type UpdateTemplate_UpdateTemplate_Template_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateTemplate_UpdateTemplate_Template_Owner) GetID() string {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template_Owner{}
+	}
+	return t.ID
+}
+
+type UpdateTemplate_UpdateTemplate_Template struct {
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *UpdateTemplate_UpdateTemplate_Template) GetID() string {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.ID
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.DeletedAt
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetDeletedBy() *string {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.DeletedBy
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetName() string {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.Name
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetDescription() *string {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return t.Description
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetJsonconfig() *json.RawMessage {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return &t.Jsonconfig
+}
+func (t *UpdateTemplate_UpdateTemplate_Template) GetOwner() *UpdateTemplate_UpdateTemplate_Template_Owner {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return &t.Owner
+}
+
+type UpdateTemplate_UpdateTemplate struct {
+	Template UpdateTemplate_UpdateTemplate_Template "json:\"template\" graphql:\"template\""
+}
+
+func (t *UpdateTemplate_UpdateTemplate) GetTemplate() *UpdateTemplate_UpdateTemplate_Template {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate{}
+	}
+	return &t.Template
+}
+
+type GetAllTemplates_Templates_Edges_Node_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAllTemplates_Templates_Edges_Node_Owner) GetID() string {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node_Owner{}
+	}
+	return t.ID
+}
+
+type GetAllTemplates_Templates_Edges_Node struct {
+	ID          string                                     "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                     "json:\"name\" graphql:\"name\""
+	Description *string                                    "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       GetAllTemplates_Templates_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *GetAllTemplates_Templates_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.DeletedAt
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.DeletedBy
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetJsonconfig() *json.RawMessage {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return &t.Jsonconfig
+}
+func (t *GetAllTemplates_Templates_Edges_Node) GetOwner() *GetAllTemplates_Templates_Edges_Node_Owner {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return &t.Owner
+}
+
+type GetAllTemplates_Templates_Edges struct {
+	Node *GetAllTemplates_Templates_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllTemplates_Templates_Edges) GetNode() *GetAllTemplates_Templates_Edges_Node {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllTemplates_Templates struct {
+	Edges []*GetAllTemplates_Templates_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllTemplates_Templates) GetEdges() []*GetAllTemplates_Templates_Edges {
+	if t == nil {
+		t = &GetAllTemplates_Templates{}
+	}
+	return t.Edges
+}
+
+type GetTemplate_Template_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetTemplate_Template_Owner) GetID() string {
+	if t == nil {
+		t = &GetTemplate_Template_Owner{}
+	}
+	return t.ID
+}
+
+type GetTemplate_Template struct {
+	ID          string                     "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                     "json:\"name\" graphql:\"name\""
+	Description *string                    "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       GetTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+}
+
+func (t *GetTemplate_Template) GetID() string {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.ID
+}
+func (t *GetTemplate_Template) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.CreatedAt
+}
+func (t *GetTemplate_Template) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetTemplate_Template) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.CreatedBy
+}
+func (t *GetTemplate_Template) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetTemplate_Template) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.DeletedAt
+}
+func (t *GetTemplate_Template) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.DeletedBy
+}
+func (t *GetTemplate_Template) GetName() string {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.Name
+}
+func (t *GetTemplate_Template) GetDescription() *string {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return t.Description
+}
+func (t *GetTemplate_Template) GetJsonconfig() *json.RawMessage {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return &t.Jsonconfig
+}
+func (t *GetTemplate_Template) GetOwner() *GetTemplate_Template_Owner {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return &t.Owner
+}
+
 type GetTFASettings_TfaSettings struct {
 	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
 	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
@@ -7279,6 +7696,50 @@ func (t *Subscribers) GetSubscribers() *Subscribers_Subscribers {
 	return &t.Subscribers
 }
 
+type CreateTemplate struct {
+	CreateTemplate CreateTemplate_CreateTemplate "json:\"createTemplate\" graphql:\"createTemplate\""
+}
+
+func (t *CreateTemplate) GetCreateTemplate() *CreateTemplate_CreateTemplate {
+	if t == nil {
+		t = &CreateTemplate{}
+	}
+	return &t.CreateTemplate
+}
+
+type UpdateTemplate struct {
+	UpdateTemplate UpdateTemplate_UpdateTemplate "json:\"updateTemplate\" graphql:\"updateTemplate\""
+}
+
+func (t *UpdateTemplate) GetUpdateTemplate() *UpdateTemplate_UpdateTemplate {
+	if t == nil {
+		t = &UpdateTemplate{}
+	}
+	return &t.UpdateTemplate
+}
+
+type GetAllTemplates struct {
+	Templates GetAllTemplates_Templates "json:\"templates\" graphql:\"templates\""
+}
+
+func (t *GetAllTemplates) GetTemplates() *GetAllTemplates_Templates {
+	if t == nil {
+		t = &GetAllTemplates{}
+	}
+	return &t.Templates
+}
+
+type GetTemplate struct {
+	Template GetTemplate_Template "json:\"template\" graphql:\"template\""
+}
+
+func (t *GetTemplate) GetTemplate() *GetTemplate_Template {
+	if t == nil {
+		t = &GetTemplate{}
+	}
+	return &t.Template
+}
+
 type GetTFASettings struct {
 	TfaSettings GetTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
 }
@@ -9014,6 +9475,157 @@ func (c *Client) Subscribers(ctx context.Context, where *SubscriberWhereInput, i
 	return &res, nil
 }
 
+const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateInput!) {
+	createTemplate(input: $input) {
+		template {
+			id
+			createdAt
+			updatedAt
+			createdBy
+			updatedBy
+			deletedAt
+			deletedBy
+			name
+			description
+			jsonconfig
+			owner {
+				id
+			}
+		}
+	}
+}
+`
+
+func (c *Client) CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res CreateTemplate
+	if err := c.Client.Post(ctx, "CreateTemplate", CreateTemplateDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateTemplateDocument = `mutation UpdateTemplate ($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
+	updateTemplate(id: $updateTemplateId, input: $input) {
+		template {
+			id
+			createdAt
+			updatedAt
+			createdBy
+			updatedBy
+			deletedAt
+			deletedBy
+			name
+			description
+			jsonconfig
+			owner {
+				id
+			}
+		}
+	}
+}
+`
+
+func (c *Client) UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error) {
+	vars := map[string]interface{}{
+		"updateTemplateId": updateTemplateID,
+		"input":            input,
+	}
+
+	var res UpdateTemplate
+	if err := c.Client.Post(ctx, "UpdateTemplate", UpdateTemplateDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllTemplatesDocument = `query GetAllTemplates {
+	templates {
+		edges {
+			node {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				deletedAt
+				deletedBy
+				name
+				description
+				jsonconfig
+				owner {
+					id
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllTemplates(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplates, error) {
+	vars := map[string]interface{}{}
+
+	var res GetAllTemplates
+	if err := c.Client.Post(ctx, "GetAllTemplates", GetAllTemplatesDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetTemplateDocument = `query GetTemplate ($getTemplateId: ID!) {
+	template(id: $getTemplateId) {
+		id
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		deletedAt
+		deletedBy
+		name
+		description
+		jsonconfig
+		owner {
+			id
+		}
+	}
+}
+`
+
+func (c *Client) GetTemplate(ctx context.Context, getTemplateID string, interceptors ...clientv2.RequestInterceptor) (*GetTemplate, error) {
+	vars := map[string]interface{}{
+		"getTemplateId": getTemplateID,
+	}
+
+	var res GetTemplate
+	if err := c.Client.Post(ctx, "GetTemplate", GetTemplateDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetTFASettingsDocument = `query GetTFASettings {
 	tfaSettings {
 		totpAllowed
@@ -9628,6 +10240,10 @@ var DocumentOperationNames = map[string]string{
 	GetPersonalAccessTokenByIDDocument:  "GetPersonalAccessTokenByID",
 	DeletePersonalAccessTokenDocument:   "DeletePersonalAccessToken",
 	SubscribersDocument:                 "Subscribers",
+	CreateTemplateDocument:              "CreateTemplate",
+	UpdateTemplateDocument:              "UpdateTemplate",
+	GetAllTemplatesDocument:             "GetAllTemplates",
+	GetTemplateDocument:                 "GetTemplate",
 	GetTFASettingsDocument:              "GetTFASettings",
 	CreateTFASettingsDocument:           "CreateTFASettings",
 	UpdateTFASettingsDocument:           "UpdateTFASettings",

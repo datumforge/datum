@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/ogen-go/ogen"
 
@@ -59,6 +60,9 @@ func (Template) Indexes() []ent.Index {
 
 func (Template) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		enthistory.Annotations{
+			Exclude: true,
+		},
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),

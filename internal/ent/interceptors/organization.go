@@ -42,8 +42,8 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 
 	var orgs []*generated.Organization
 
-	// check if query is for a an exists query, which returns a slice of group ids
-	// instead of the group objects
+	// check if query is for an exists query, which returns a slice of organization ids
+	// instead of the organization objects
 	if qc.Op == ExistOperation {
 		orgIDs, ok := v.([]string)
 		if !ok {

@@ -50,8 +50,8 @@ func filterSubscribersByAccess(ctx context.Context, q *generated.SubscriberQuery
 		err         error
 	)
 
-	// check if query is for a an exists query, which returns a slice of group ids
-	// instead of the group objects
+	// check if query is for an exists query, which returns a slice of subscriber ids
+	// instead of the subscriber objects
 	if qc.Op == ExistOperation {
 		subs, ok := v.([]string)
 		if !ok {

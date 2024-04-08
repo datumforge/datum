@@ -1,10 +1,6 @@
 package schema
 
 import (
-	"bytes"
-	"database/sql/driver"
-	"encoding/gob"
-	"fmt"
 	"net/url"
 
 	"entgo.io/contrib/entgql"
@@ -16,11 +12,10 @@ import (
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/ogen-go/ogen"
 
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/schematype"
 )
-
-type JSONObject map[string]interface{}
 
 type Template struct {
 	ent.Schema
@@ -48,7 +43,7 @@ func (Template) Fields() []ent.Field {
 		field.String("description").
 			Comment("the description of the template").
 			Optional(),
-		field.JSON("jsonconfig", JSONObject{}).
+		field.JSON("jsonconfig", customtypes.JSONObject{}).
 			Annotations(
 				entgql.Type("JSON"),
 				entoas.Schema(ogen.String().AsArray()),
@@ -66,14 +61,14 @@ func (Template) Fields() []ent.Field {
 			).
 			Optional(),
 		field.Bytes("pair").
-			GoType(Pair{}).
+			GoType(customtypes.Pair{}).
 			Annotations(
 				entgql.Type("JSON"),
 				entoas.Schema(ogen.String().AsArray()),
 				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
 			).
-			DefaultFunc(func() Pair {
-				return Pair{K: []byte("K"), V: []byte("V")}
+			DefaultFunc(func() customtypes.Pair {
+				return customtypes.Pair{K: []byte("K"), V: []byte("V")}
 			}),
 		field.String("url").
 			GoType(&url.URL{}).
@@ -100,31 +95,4 @@ func (Template) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
-}
-
-type Pair struct {
-	K, V []byte
-}
-
-// Value implements the driver Valuer interface
-func (p Pair) Value() (driver.Value, error) {
-	var b bytes.Buffer
-	if err := gob.NewEncoder(&b).Encode(p); err != nil {
-		return nil, err
-	}
-
-	return b.Bytes(), nil
-}
-
-// Scan implements the Scanner interface.
-func (p *Pair) Scan(value interface{}) (err error) {
-	switch v := value.(type) {
-	case nil:
-	case []byte:
-		err = gob.NewDecoder(bytes.NewBuffer(v)).Decode(p)
-	default:
-		err = fmt.Errorf("unexpected type %T", v)
-	}
-
-	return
 }

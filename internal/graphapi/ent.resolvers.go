@@ -6,6 +6,7 @@ package graphapi
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"entgo.io/contrib/entgql"
@@ -102,6 +103,11 @@ func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Curs
 	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))
 }
 
+// Templates is the resolver for the templates field.
+func (r *queryResolver) Templates(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) (*generated.TemplateConnection, error) {
+	panic(fmt.Errorf("not implemented: Templates - templates"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
@@ -119,6 +125,26 @@ func (r *queryResolver) UserSettings(ctx context.Context, after *entgql.Cursor[s
 // AuthStyle is the resolver for the authStyle field.
 func (r *createOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error {
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
+}
+
+// Jsonconfig is the resolver for the jsonconfig field.
+func (r *createTemplateInputResolver) Jsonconfig(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: Jsonconfig - jsonconfig"))
+}
+
+// Otherconfig is the resolver for the otherconfig field.
+func (r *createTemplateInputResolver) Otherconfig(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: Otherconfig - otherconfig"))
+}
+
+// Pair is the resolver for the pair field.
+func (r *createTemplateInputResolver) Pair(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: Pair - pair"))
+}
+
+// URL is the resolver for the url field.
+func (r *createTemplateInputResolver) URL(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URL - url"))
 }
 
 // AuthStyle is the resolver for the authStyle field.
@@ -161,6 +187,111 @@ func (r *oauthProviderWhereInputResolver) AuthStyleLte(ctx context.Context, obj 
 	panic(fmt.Errorf("not implemented: AuthStyleLte - authStyleLTE"))
 }
 
+// Otherconfig is the resolver for the otherconfig field.
+func (r *templateWhereInputResolver) Otherconfig(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: Otherconfig - otherconfig"))
+}
+
+// OtherconfigNeq is the resolver for the otherconfigNEQ field.
+func (r *templateWhereInputResolver) OtherconfigNeq(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: OtherconfigNeq - otherconfigNEQ"))
+}
+
+// OtherconfigIn is the resolver for the otherconfigIn field.
+func (r *templateWhereInputResolver) OtherconfigIn(ctx context.Context, obj *generated.TemplateWhereInput, data []json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: OtherconfigIn - otherconfigIn"))
+}
+
+// OtherconfigNotIn is the resolver for the otherconfigNotIn field.
+func (r *templateWhereInputResolver) OtherconfigNotIn(ctx context.Context, obj *generated.TemplateWhereInput, data []json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: OtherconfigNotIn - otherconfigNotIn"))
+}
+
+// OtherconfigGt is the resolver for the otherconfigGT field.
+func (r *templateWhereInputResolver) OtherconfigGt(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: OtherconfigGt - otherconfigGT"))
+}
+
+// OtherconfigGte is the resolver for the otherconfigGTE field.
+func (r *templateWhereInputResolver) OtherconfigGte(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: OtherconfigGte - otherconfigGTE"))
+}
+
+// OtherconfigLt is the resolver for the otherconfigLT field.
+func (r *templateWhereInputResolver) OtherconfigLt(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: OtherconfigLt - otherconfigLT"))
+}
+
+// OtherconfigLte is the resolver for the otherconfigLTE field.
+func (r *templateWhereInputResolver) OtherconfigLte(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: OtherconfigLte - otherconfigLTE"))
+}
+
+// URL is the resolver for the url field.
+func (r *templateWhereInputResolver) URL(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URL - url"))
+}
+
+// URLNeq is the resolver for the urlNEQ field.
+func (r *templateWhereInputResolver) URLNeq(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLNeq - urlNEQ"))
+}
+
+// URLIn is the resolver for the urlIn field.
+func (r *templateWhereInputResolver) URLIn(ctx context.Context, obj *generated.TemplateWhereInput, data []json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLIn - urlIn"))
+}
+
+// URLNotIn is the resolver for the urlNotIn field.
+func (r *templateWhereInputResolver) URLNotIn(ctx context.Context, obj *generated.TemplateWhereInput, data []json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLNotIn - urlNotIn"))
+}
+
+// URLGt is the resolver for the urlGT field.
+func (r *templateWhereInputResolver) URLGt(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLGt - urlGT"))
+}
+
+// URLGte is the resolver for the urlGTE field.
+func (r *templateWhereInputResolver) URLGte(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLGte - urlGTE"))
+}
+
+// URLLt is the resolver for the urlLT field.
+func (r *templateWhereInputResolver) URLLt(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLLt - urlLT"))
+}
+
+// URLLte is the resolver for the urlLTE field.
+func (r *templateWhereInputResolver) URLLte(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLLte - urlLTE"))
+}
+
+// URLContains is the resolver for the urlContains field.
+func (r *templateWhereInputResolver) URLContains(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLContains - urlContains"))
+}
+
+// URLHasPrefix is the resolver for the urlHasPrefix field.
+func (r *templateWhereInputResolver) URLHasPrefix(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLHasPrefix - urlHasPrefix"))
+}
+
+// URLHasSuffix is the resolver for the urlHasSuffix field.
+func (r *templateWhereInputResolver) URLHasSuffix(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLHasSuffix - urlHasSuffix"))
+}
+
+// URLEqualFold is the resolver for the urlEqualFold field.
+func (r *templateWhereInputResolver) URLEqualFold(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLEqualFold - urlEqualFold"))
+}
+
+// URLContainsFold is the resolver for the urlContainsFold field.
+func (r *templateWhereInputResolver) URLContainsFold(ctx context.Context, obj *generated.TemplateWhereInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: URLContainsFold - urlContainsFold"))
+}
+
 // AuthStyle is the resolver for the authStyle field.
 func (r *updateOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *generated.UpdateOauthProviderInput, data *int) error {
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
@@ -185,9 +316,19 @@ func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
 	return &createOrganizationInputResolver{r}
 }
 
+// CreateTemplateInput returns CreateTemplateInputResolver implementation.
+func (r *Resolver) CreateTemplateInput() CreateTemplateInputResolver {
+	return &createTemplateInputResolver{r}
+}
+
 // OauthProviderWhereInput returns OauthProviderWhereInputResolver implementation.
 func (r *Resolver) OauthProviderWhereInput() OauthProviderWhereInputResolver {
 	return &oauthProviderWhereInputResolver{r}
+}
+
+// TemplateWhereInput returns TemplateWhereInputResolver implementation.
+func (r *Resolver) TemplateWhereInput() TemplateWhereInputResolver {
+	return &templateWhereInputResolver{r}
 }
 
 // UpdateGroupInput returns UpdateGroupInputResolver implementation.
@@ -213,7 +354,9 @@ type queryResolver struct{ *Resolver }
 type createGroupInputResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
+type createTemplateInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
+type templateWhereInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }

@@ -58,6 +58,8 @@ type OrganizationEdges struct {
 	Children []*Organization `json:"children,omitempty"`
 	// Groups holds the value of the groups edge.
 	Groups []*Group `json:"groups,omitempty"`
+	// Templates holds the value of the templates edge.
+	Templates []*Template `json:"templates,omitempty"`
 	// Integrations holds the value of the integrations edge.
 	Integrations []*Integration `json:"integrations,omitempty"`
 	// Setting holds the value of the setting edge.
@@ -78,12 +80,13 @@ type OrganizationEdges struct {
 	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [12]bool
+	loadedTypes [13]bool
 	// totalCount holds the count of the edges above.
-	totalCount [12]map[string]int
+	totalCount [13]map[string]int
 
 	namedChildren             map[string][]*Organization
 	namedGroups               map[string][]*Group
+	namedTemplates            map[string][]*Template
 	namedIntegrations         map[string][]*Integration
 	namedEntitlements         map[string][]*Entitlement
 	namedPersonalAccessTokens map[string][]*PersonalAccessToken
@@ -123,10 +126,19 @@ func (e OrganizationEdges) GroupsOrErr() ([]*Group, error) {
 	return nil, &NotLoadedError{edge: "groups"}
 }
 
+// TemplatesOrErr returns the Templates value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) TemplatesOrErr() ([]*Template, error) {
+	if e.loadedTypes[3] {
+		return e.Templates, nil
+	}
+	return nil, &NotLoadedError{edge: "templates"}
+}
+
 // IntegrationsOrErr returns the Integrations value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.Integrations, nil
 	}
 	return nil, &NotLoadedError{edge: "integrations"}
@@ -137,7 +149,7 @@ func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
 func (e OrganizationEdges) SettingOrErr() (*OrganizationSetting, error) {
 	if e.Setting != nil {
 		return e.Setting, nil
-	} else if e.loadedTypes[4] {
+	} else if e.loadedTypes[5] {
 		return nil, &NotFoundError{label: organizationsetting.Label}
 	}
 	return nil, &NotLoadedError{edge: "setting"}
@@ -146,7 +158,7 @@ func (e OrganizationEdges) SettingOrErr() (*OrganizationSetting, error) {
 // EntitlementsOrErr returns the Entitlements value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) EntitlementsOrErr() ([]*Entitlement, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.Entitlements, nil
 	}
 	return nil, &NotLoadedError{edge: "entitlements"}
@@ -155,7 +167,7 @@ func (e OrganizationEdges) EntitlementsOrErr() ([]*Entitlement, error) {
 // PersonalAccessTokensOrErr returns the PersonalAccessTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.PersonalAccessTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "personal_access_tokens"}
@@ -164,7 +176,7 @@ func (e OrganizationEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, 
 // OauthproviderOrErr returns the Oauthprovider value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.Oauthprovider, nil
 	}
 	return nil, &NotLoadedError{edge: "oauthprovider"}
@@ -173,7 +185,7 @@ func (e OrganizationEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
 // UsersOrErr returns the Users value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.Users, nil
 	}
 	return nil, &NotLoadedError{edge: "users"}
@@ -182,7 +194,7 @@ func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
 // InvitesOrErr returns the Invites value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) InvitesOrErr() ([]*Invite, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[10] {
 		return e.Invites, nil
 	}
 	return nil, &NotLoadedError{edge: "invites"}
@@ -191,7 +203,7 @@ func (e OrganizationEdges) InvitesOrErr() ([]*Invite, error) {
 // SubscribersOrErr returns the Subscribers value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) SubscribersOrErr() ([]*Subscriber, error) {
-	if e.loadedTypes[10] {
+	if e.loadedTypes[11] {
 		return e.Subscribers, nil
 	}
 	return nil, &NotLoadedError{edge: "subscribers"}
@@ -200,7 +212,7 @@ func (e OrganizationEdges) SubscribersOrErr() ([]*Subscriber, error) {
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) MembersOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[11] {
+	if e.loadedTypes[12] {
 		return e.Members, nil
 	}
 	return nil, &NotLoadedError{edge: "members"}
@@ -343,6 +355,11 @@ func (o *Organization) QueryChildren() *OrganizationQuery {
 // QueryGroups queries the "groups" edge of the Organization entity.
 func (o *Organization) QueryGroups() *GroupQuery {
 	return NewOrganizationClient(o.config).QueryGroups(o)
+}
+
+// QueryTemplates queries the "templates" edge of the Organization entity.
+func (o *Organization) QueryTemplates() *TemplateQuery {
+	return NewOrganizationClient(o.config).QueryTemplates(o)
 }
 
 // QueryIntegrations queries the "integrations" edge of the Organization entity.
@@ -502,6 +519,30 @@ func (o *Organization) appendNamedGroups(name string, edges ...*Group) {
 		o.Edges.namedGroups[name] = []*Group{}
 	} else {
 		o.Edges.namedGroups[name] = append(o.Edges.namedGroups[name], edges...)
+	}
+}
+
+// NamedTemplates returns the Templates named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedTemplates(name string) ([]*Template, error) {
+	if o.Edges.namedTemplates == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedTemplates[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedTemplates(name string, edges ...*Template) {
+	if o.Edges.namedTemplates == nil {
+		o.Edges.namedTemplates = make(map[string][]*Template)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedTemplates[name] = []*Template{}
+	} else {
+		o.Edges.namedTemplates[name] = append(o.Edges.namedTemplates[name], edges...)
 	}
 }
 

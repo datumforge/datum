@@ -495,6 +495,30 @@ func (f TFASettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generat
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TFASettingsMutation", m)
 }
 
+// The TemplateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TemplateQueryRuleFunc func(context.Context, *generated.TemplateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TemplateQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.TemplateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.TemplateQuery", q)
+}
+
+// The TemplateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TemplateMutationRuleFunc func(context.Context, *generated.TemplateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TemplateMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.TemplateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TemplateMutation", m)
+}
+
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserQueryRuleFunc func(context.Context, *generated.UserQuery) error
@@ -634,6 +658,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.TFASettingsQuery:
 		return q.Filter(), nil
+	case *generated.TemplateQuery:
+		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
 	case *generated.UserSettingQuery:
@@ -678,6 +704,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.SubscriberMutation:
 		return m.Filter(), nil
 	case *generated.TFASettingsMutation:
+		return m.Filter(), nil
+	case *generated.TemplateMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
 		return m.Filter(), nil

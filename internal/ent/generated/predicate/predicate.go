@@ -54,6 +54,20 @@ type Subscriber func(*sql.Selector)
 // TFASettings is the predicate function for tfasettings builders.
 type TFASettings func(*sql.Selector)
 
+// Template is the predicate function for template builders.
+type Template func(*sql.Selector)
+
+// TemplateOrErr calls the predicate only if the error is not nit.
+func TemplateOrErr(p Template, err error) Template {
+	return func(s *sql.Selector) {
+		if err != nil {
+			s.AddError(err)
+			return
+		}
+		p(s)
+	}
+}
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 

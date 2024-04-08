@@ -27,6 +27,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -107,6 +108,7 @@ func checkColumn(table, column string) error {
 			personalaccesstoken.Table:    personalaccesstoken.ValidColumn,
 			subscriber.Table:             subscriber.ValidColumn,
 			tfasettings.Table:            tfasettings.ValidColumn,
+			template.Table:               template.ValidColumn,
 			user.Table:                   user.ValidColumn,
 			usersetting.Table:            usersetting.ValidColumn,
 			webauthn.Table:               webauthn.ValidColumn,

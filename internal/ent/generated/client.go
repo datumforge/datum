@@ -33,6 +33,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -86,6 +87,8 @@ type Client struct {
 	Subscriber *SubscriberClient
 	// TFASettings is the client for interacting with the TFASettings builders.
 	TFASettings *TFASettingsClient
+	// Template is the client for interacting with the Template builders.
+	Template *TemplateClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserSetting is the client for interacting with the UserSetting builders.
@@ -124,6 +127,7 @@ func (c *Client) init() {
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Subscriber = NewSubscriberClient(c.config)
 	c.TFASettings = NewTFASettingsClient(c.config)
+	c.Template = NewTemplateClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserSetting = NewUserSettingClient(c.config)
 	c.Webauthn = NewWebauthnClient(c.config)
@@ -325,6 +329,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
 		Subscriber:             NewSubscriberClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
+		Template:               NewTemplateClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
 		Webauthn:               NewWebauthnClient(cfg),
@@ -363,6 +368,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
 		Subscriber:             NewSubscriberClient(cfg),
 		TFASettings:            NewTFASettingsClient(cfg),
+		Template:               NewTemplateClient(cfg),
 		User:                   NewUserClient(cfg),
 		UserSetting:            NewUserSettingClient(cfg),
 		Webauthn:               NewWebauthnClient(cfg),
@@ -398,8 +404,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
-		c.Webauthn,
+		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.Template, c.User,
+		c.UserSetting, c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -412,8 +418,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
 		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
 		c.OrgMembership, c.Organization, c.OrganizationSetting, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.User, c.UserSetting,
-		c.Webauthn,
+		c.PersonalAccessToken, c.Subscriber, c.TFASettings, c.Template, c.User,
+		c.UserSetting, c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -454,6 +460,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Subscriber.mutate(ctx, m)
 	case *TFASettingsMutation:
 		return c.TFASettings.mutate(ctx, m)
+	case *TemplateMutation:
+		return c.Template.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserSettingMutation:
@@ -2244,6 +2252,25 @@ func (c *OrganizationClient) QueryGroups(o *Organization) *GroupQuery {
 	return query
 }
 
+// QueryTemplates queries the templates edge of a Organization.
+func (c *OrganizationClient) QueryTemplates(o *Organization) *TemplateQuery {
+	query := (&TemplateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(template.Table, template.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.TemplatesTable, organization.TemplatesColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Template
+		step.Edge.Schema = schemaConfig.Template
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryIntegrations queries the integrations edge of a Organization.
 func (c *OrganizationClient) QueryIntegrations(o *Organization) *IntegrationQuery {
 	query := (&IntegrationClient{config: c.config}).Query()
@@ -3231,6 +3258,160 @@ func (c *TFASettingsClient) mutate(ctx context.Context, m *TFASettingsMutation) 
 	}
 }
 
+// TemplateClient is a client for the Template schema.
+type TemplateClient struct {
+	config
+}
+
+// NewTemplateClient returns a client for the Template from the given config.
+func NewTemplateClient(c config) *TemplateClient {
+	return &TemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `template.Hooks(f(g(h())))`.
+func (c *TemplateClient) Use(hooks ...Hook) {
+	c.hooks.Template = append(c.hooks.Template, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `template.Intercept(f(g(h())))`.
+func (c *TemplateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Template = append(c.inters.Template, interceptors...)
+}
+
+// Create returns a builder for creating a Template entity.
+func (c *TemplateClient) Create() *TemplateCreate {
+	mutation := newTemplateMutation(c.config, OpCreate)
+	return &TemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Template entities.
+func (c *TemplateClient) CreateBulk(builders ...*TemplateCreate) *TemplateCreateBulk {
+	return &TemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TemplateClient) MapCreateBulk(slice any, setFunc func(*TemplateCreate, int)) *TemplateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TemplateCreateBulk{err: fmt.Errorf("calling to TemplateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TemplateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Template.
+func (c *TemplateClient) Update() *TemplateUpdate {
+	mutation := newTemplateMutation(c.config, OpUpdate)
+	return &TemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TemplateClient) UpdateOne(t *Template) *TemplateUpdateOne {
+	mutation := newTemplateMutation(c.config, OpUpdateOne, withTemplate(t))
+	return &TemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TemplateClient) UpdateOneID(id string) *TemplateUpdateOne {
+	mutation := newTemplateMutation(c.config, OpUpdateOne, withTemplateID(id))
+	return &TemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Template.
+func (c *TemplateClient) Delete() *TemplateDelete {
+	mutation := newTemplateMutation(c.config, OpDelete)
+	return &TemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TemplateClient) DeleteOne(t *Template) *TemplateDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TemplateClient) DeleteOneID(id string) *TemplateDeleteOne {
+	builder := c.Delete().Where(template.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for Template.
+func (c *TemplateClient) Query() *TemplateQuery {
+	return &TemplateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTemplate},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Template entity by its id.
+func (c *TemplateClient) Get(ctx context.Context, id string) (*Template, error) {
+	return c.Query().Where(template.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TemplateClient) GetX(ctx context.Context, id string) *Template {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a Template.
+func (c *TemplateClient) QueryOwner(t *Template) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(template.Table, template.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, template.OwnerTable, template.OwnerColumn),
+		)
+		schemaConfig := t.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Template
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TemplateClient) Hooks() []Hook {
+	hooks := c.hooks.Template
+	return append(hooks[:len(hooks):len(hooks)], template.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *TemplateClient) Interceptors() []Interceptor {
+	inters := c.inters.Template
+	return append(inters[:len(inters):len(inters)], template.Interceptors[:]...)
+}
+
+func (c *TemplateClient) mutate(ctx context.Context, m *TemplateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TemplateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TemplateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown Template mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -3888,13 +4069,14 @@ type (
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Hook
+		Subscriber, TFASettings, Template, User, UserSetting, Webauthn []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationSetting, PasswordResetToken, PersonalAccessToken,
-		Subscriber, TFASettings, User, UserSetting, Webauthn []ent.Interceptor
+		Subscriber, TFASettings, Template, User, UserSetting,
+		Webauthn []ent.Interceptor
 	}
 )
 

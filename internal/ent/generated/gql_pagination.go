@@ -27,6 +27,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -3749,6 +3750,299 @@ func (ts *TFASettings) ToEdge(order *TFASettingsOrder) *TFASettingsEdge {
 	return &TFASettingsEdge{
 		Node:   ts,
 		Cursor: order.Field.toCursor(ts),
+	}
+}
+
+// TemplateEdge is the edge representation of Template.
+type TemplateEdge struct {
+	Node   *Template `json:"node"`
+	Cursor Cursor    `json:"cursor"`
+}
+
+// TemplateConnection is the connection containing edges to Template.
+type TemplateConnection struct {
+	Edges      []*TemplateEdge `json:"edges"`
+	PageInfo   PageInfo        `json:"pageInfo"`
+	TotalCount int             `json:"totalCount"`
+}
+
+func (c *TemplateConnection) build(nodes []*Template, pager *templatePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Template
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Template {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Template {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TemplateEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TemplateEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TemplatePaginateOption enables pagination customization.
+type TemplatePaginateOption func(*templatePager) error
+
+// WithTemplateOrder configures pagination ordering.
+func WithTemplateOrder(order *TemplateOrder) TemplatePaginateOption {
+	if order == nil {
+		order = DefaultTemplateOrder
+	}
+	o := *order
+	return func(pager *templatePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultTemplateOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithTemplateFilter configures pagination filter.
+func WithTemplateFilter(filter func(*TemplateQuery) (*TemplateQuery, error)) TemplatePaginateOption {
+	return func(pager *templatePager) error {
+		if filter == nil {
+			return errors.New("TemplateQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type templatePager struct {
+	reverse bool
+	order   *TemplateOrder
+	filter  func(*TemplateQuery) (*TemplateQuery, error)
+}
+
+func newTemplatePager(opts []TemplatePaginateOption, reverse bool) (*templatePager, error) {
+	pager := &templatePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultTemplateOrder
+	}
+	return pager, nil
+}
+
+func (p *templatePager) applyFilter(query *TemplateQuery) (*TemplateQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *templatePager) toCursor(t *Template) Cursor {
+	return p.order.Field.toCursor(t)
+}
+
+func (p *templatePager) applyCursors(query *TemplateQuery, after, before *Cursor) (*TemplateQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultTemplateOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *templatePager) applyOrder(query *TemplateQuery) *TemplateQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultTemplateOrder.Field {
+		query = query.Order(DefaultTemplateOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *templatePager) orderExpr(query *TemplateQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTemplateOrder.Field {
+			b.Comma().Ident(DefaultTemplateOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Template.
+func (t *TemplateQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TemplatePaginateOption,
+) (*TemplateConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTemplatePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if t, err = pager.applyFilter(t); err != nil {
+		return nil, err
+	}
+	conn := &TemplateConnection{Edges: []*TemplateEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = t.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if t, err = pager.applyCursors(t, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		t.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := t.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	t = pager.applyOrder(t)
+	nodes, err := t.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// TemplateOrderFieldName orders Template by name.
+	TemplateOrderFieldName = &TemplateOrderField{
+		Value: func(t *Template) (ent.Value, error) {
+			return t.Name, nil
+		},
+		column: template.FieldName,
+		toTerm: template.ByName,
+		toCursor: func(t *Template) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TemplateOrderField) String() string {
+	var str string
+	switch f.column {
+	case TemplateOrderFieldName.column:
+		str = "name"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TemplateOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TemplateOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TemplateOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *TemplateOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid TemplateOrderField", str)
+	}
+	return nil
+}
+
+// TemplateOrderField defines the ordering field of Template.
+type TemplateOrderField struct {
+	// Value extracts the ordering value from the given Template.
+	Value    func(*Template) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) template.OrderOption
+	toCursor func(*Template) Cursor
+}
+
+// TemplateOrder defines the ordering of Template.
+type TemplateOrder struct {
+	Direction OrderDirection      `json:"direction"`
+	Field     *TemplateOrderField `json:"field"`
+}
+
+// DefaultTemplateOrder is the default ordering of Template.
+var DefaultTemplateOrder = &TemplateOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TemplateOrderField{
+		Value: func(t *Template) (ent.Value, error) {
+			return t.ID, nil
+		},
+		column: template.FieldID,
+		toTerm: template.ByID,
+		toCursor: func(t *Template) Cursor {
+			return Cursor{ID: t.ID}
+		},
+	},
+}
+
+// ToEdge converts Template into TemplateEdge.
+func (t *Template) ToEdge(order *TemplateOrder) *TemplateEdge {
+	if order == nil {
+		order = DefaultTemplateOrder
+	}
+	return &TemplateEdge{
+		Node:   t,
+		Cursor: order.Field.toCursor(t),
 	}
 }
 

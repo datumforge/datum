@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -265,6 +266,21 @@ func (oc *OrganizationCreate) AddGroups(g ...*Group) *OrganizationCreate {
 		ids[i] = g[i].ID
 	}
 	return oc.AddGroupIDs(ids...)
+}
+
+// AddTemplateIDs adds the "templates" edge to the Template entity by IDs.
+func (oc *OrganizationCreate) AddTemplateIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddTemplateIDs(ids...)
+	return oc
+}
+
+// AddTemplates adds the "templates" edges to the Template entity.
+func (oc *OrganizationCreate) AddTemplates(t ...*Template) *OrganizationCreate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return oc.AddTemplateIDs(ids...)
 }
 
 // AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
@@ -636,6 +652,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.Group
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.TemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.TemplatesTable,
+			Columns: []string{organization.TemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(template.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Template
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

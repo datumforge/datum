@@ -23,6 +23,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -38,6 +39,7 @@ type OrganizationQuery struct {
 	withParent                    *OrganizationQuery
 	withChildren                  *OrganizationQuery
 	withGroups                    *GroupQuery
+	withTemplates                 *TemplateQuery
 	withIntegrations              *IntegrationQuery
 	withSetting                   *OrganizationSettingQuery
 	withEntitlements              *EntitlementQuery
@@ -51,6 +53,7 @@ type OrganizationQuery struct {
 	loadTotal                     []func(context.Context, []*Organization) error
 	withNamedChildren             map[string]*OrganizationQuery
 	withNamedGroups               map[string]*GroupQuery
+	withNamedTemplates            map[string]*TemplateQuery
 	withNamedIntegrations         map[string]*IntegrationQuery
 	withNamedEntitlements         map[string]*EntitlementQuery
 	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
@@ -164,6 +167,31 @@ func (oq *OrganizationQuery) QueryGroups() *GroupQuery {
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.Group
 		step.Edge.Schema = schemaConfig.Group
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTemplates chains the current query on the "templates" edge.
+func (oq *OrganizationQuery) QueryTemplates() *TemplateQuery {
+	query := (&TemplateClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(template.Table, template.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.TemplatesTable, organization.TemplatesColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Template
+		step.Edge.Schema = schemaConfig.Template
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -590,6 +618,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withParent:               oq.withParent.Clone(),
 		withChildren:             oq.withChildren.Clone(),
 		withGroups:               oq.withGroups.Clone(),
+		withTemplates:            oq.withTemplates.Clone(),
 		withIntegrations:         oq.withIntegrations.Clone(),
 		withSetting:              oq.withSetting.Clone(),
 		withEntitlements:         oq.withEntitlements.Clone(),
@@ -635,6 +664,17 @@ func (oq *OrganizationQuery) WithGroups(opts ...func(*GroupQuery)) *Organization
 		opt(query)
 	}
 	oq.withGroups = query
+	return oq
+}
+
+// WithTemplates tells the query-builder to eager-load the nodes that are connected to
+// the "templates" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithTemplates(opts ...func(*TemplateQuery)) *OrganizationQuery {
+	query := (&TemplateClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withTemplates = query
 	return oq
 }
 
@@ -821,10 +861,11 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [12]bool{
+		loadedTypes = [13]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
+			oq.withTemplates != nil,
 			oq.withIntegrations != nil,
 			oq.withSetting != nil,
 			oq.withEntitlements != nil,
@@ -876,6 +917,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadGroups(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Groups = []*Group{} },
 			func(n *Organization, e *Group) { n.Edges.Groups = append(n.Edges.Groups, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withTemplates; query != nil {
+		if err := oq.loadTemplates(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Templates = []*Template{} },
+			func(n *Organization, e *Template) { n.Edges.Templates = append(n.Edges.Templates, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -954,6 +1002,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadGroups(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedGroups(name) },
 			func(n *Organization, e *Group) { n.appendNamedGroups(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedTemplates {
+		if err := oq.loadTemplates(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedTemplates(name) },
+			func(n *Organization, e *Template) { n.appendNamedTemplates(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1095,6 +1150,36 @@ func (oq *OrganizationQuery) loadGroups(ctx context.Context, query *GroupQuery, 
 	}
 	query.Where(predicate.Group(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(organization.GroupsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadTemplates(ctx context.Context, query *TemplateQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Template)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(template.FieldOwnerID)
+	}
+	query.Where(predicate.Template(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.TemplatesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -1560,6 +1645,20 @@ func (oq *OrganizationQuery) WithNamedGroups(name string, opts ...func(*GroupQue
 		oq.withNamedGroups = make(map[string]*GroupQuery)
 	}
 	oq.withNamedGroups[name] = query
+	return oq
+}
+
+// WithNamedTemplates tells the query-builder to eager-load the nodes that are connected to the "templates"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedTemplates(name string, opts ...func(*TemplateQuery)) *OrganizationQuery {
+	query := (&TemplateClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedTemplates == nil {
+		oq.withNamedTemplates = make(map[string]*TemplateQuery)
+	}
+	oq.withNamedTemplates[name] = query
 	return oq
 }
 

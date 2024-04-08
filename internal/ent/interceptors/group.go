@@ -30,11 +30,9 @@ func InterceptorGroup() ent.Interceptor {
 func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Value) ([]*generated.Group, error) {
 	q.Logger.Debugw("intercepting list group query")
 
-	// get userID for tuple checks
-	userID, err := auth.GetUserIDFromContext(ctx)
-	if err != nil {
-		q.Logger.Errorw("unable to get user id from echo context")
-		return nil, err
+	// return early if no groups
+	if v == nil {
+		return nil, nil
 	}
 
 	qc := ent.QueryFromContext(ctx)
@@ -43,7 +41,7 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 
 	// check if query is for a an exists query, which returns a slice of group ids
 	// instead of the group objects
-	if qc.Op == "Exist" {
+	if qc.Op == ExistOperation {
 		groupIDs, ok := v.([]string)
 		if !ok {
 			q.Logger.Errorw("unexpected type for group exist query")
@@ -63,6 +61,13 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 
 			return nil, ErrInternalServerError
 		}
+	}
+
+	// get userID for tuple checks
+	userID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		q.Logger.Errorw("unable to get user id from echo context")
+		return nil, err
 	}
 
 	// See all groups user has view access

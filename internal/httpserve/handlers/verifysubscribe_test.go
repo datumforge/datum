@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -17,9 +18,11 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/middleware/echocontext"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/emails/mock"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
@@ -28,7 +31,12 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 	// add handler
 	suite.e.GET("subscribe/verify", suite.h.VerifySubscriptionHandler)
 
-	ec := echocontext.NewTestEchoContext().Request().Context()
+	ec, err := auth.NewTestContextWithValidUser(ulids.New().String())
+	require.NoError(t, err)
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	expiredTTL := time.Now().AddDate(0, 0, -1).Format(time.RFC3339Nano)
 
@@ -93,7 +101,7 @@ func (suite *HandlerTestSuite) TestVerifySubscribeHandler() {
 
 			// set privacy allow in order to allow the creation of the users without
 			// authentication in the tests
-			ctx := privacy.DecisionContext(ec, privacy.Allow)
+			ctx := privacy.DecisionContext(reqCtx, privacy.Allow)
 
 			// store token in db
 			et := suite.db.Subscriber.Create().

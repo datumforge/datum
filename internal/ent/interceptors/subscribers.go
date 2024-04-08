@@ -8,6 +8,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/auth"
@@ -37,11 +38,49 @@ func InterceptorSubscriber() ent.Interceptor {
 func filterSubscribersByAccess(ctx context.Context, q *generated.SubscriberQuery, v ent.Value) ([]*generated.Subscriber, error) {
 	q.Logger.Debugw("intercepting list subscriber query")
 
-	subscribers, ok := v.([]*generated.Subscriber)
-	if !ok {
-		q.Logger.Infow("unexpected type for subscriber query, will continue without filtering")
-
+	// return early if no subscribers
+	if v == nil {
 		return nil, nil
+	}
+
+	qc := ent.QueryFromContext(ctx)
+
+	var (
+		subscribers []*generated.Subscriber
+		err         error
+	)
+
+	// check if query is for a an exists query, which returns a slice of group ids
+	// instead of the group objects
+	if qc.Op == ExistOperation {
+		subs, ok := v.([]string)
+		if !ok {
+			q.Logger.Errorw("unexpected type for subscriber exist query")
+
+			return nil, ErrInternalServerError
+		}
+
+		// return early if no subscribers
+		if len(subs) == 0 {
+			return nil, nil
+		}
+
+		// get the full subscriber objects to get the OwnerID
+		subscribers, err = q.Where(subscriber.IDIn(subs...)).All(ctx)
+		if err != nil {
+			q.Logger.Errorw("unable to get subscribers", "error", err)
+
+			return nil, err
+		}
+	} else {
+		var ok bool
+
+		subscribers, ok = v.([]*generated.Subscriber)
+		if !ok {
+			q.Logger.Infow("unexpected type for subscriber query, will continue without filtering")
+
+			return nil, nil
+		}
 	}
 
 	// get userID for tuple checks

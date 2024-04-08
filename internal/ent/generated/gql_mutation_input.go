@@ -1855,14 +1855,15 @@ func (c *TFASettingsUpdateOne) SetInput(i UpdateTFASettingsInput) *TFASettingsUp
 
 // CreateTemplateInput represents a mutation input for creating templates.
 type CreateTemplateInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
-	Name        string
-	Description *string
-	Jsonconfig  customtypes.JSONObject
-	OwnerID     string
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Name         string
+	Description  *string
+	Jsonconfig   customtypes.JSONObject
+	Thatjsonbaby map[string]interface{}
+	OwnerID      string
 }
 
 // Mutate applies the CreateTemplateInput on the TemplateMutation builder.
@@ -1886,6 +1887,9 @@ func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
 	if v := i.Jsonconfig; v != nil {
 		m.SetJsonconfig(v)
 	}
+	if v := i.Thatjsonbaby; v != nil {
+		m.SetThatjsonbaby(v)
+	}
 	m.SetOwnerID(i.OwnerID)
 }
 
@@ -1897,16 +1901,18 @@ func (c *TemplateCreate) SetInput(i CreateTemplateInput) *TemplateCreate {
 
 // UpdateTemplateInput represents a mutation input for updating templates.
 type UpdateTemplateInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
-	Name             *string
-	ClearDescription bool
-	Description      *string
-	ClearJsonconfig  bool
-	Jsonconfig       customtypes.JSONObject
-	OwnerID          *string
+	ClearUpdatedAt    bool
+	UpdatedAt         *time.Time
+	ClearUpdatedBy    bool
+	UpdatedBy         *string
+	Name              *string
+	ClearDescription  bool
+	Description       *string
+	ClearJsonconfig   bool
+	Jsonconfig        customtypes.JSONObject
+	ClearThatjsonbaby bool
+	Thatjsonbaby      map[string]interface{}
+	OwnerID           *string
 }
 
 // Mutate applies the UpdateTemplateInput on the TemplateMutation builder.
@@ -1937,6 +1943,12 @@ func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
 	}
 	if v := i.Jsonconfig; v != nil {
 		m.SetJsonconfig(v)
+	}
+	if i.ClearThatjsonbaby {
+		m.ClearThatjsonbaby()
+	}
+	if v := i.Thatjsonbaby; v != nil {
+		m.SetThatjsonbaby(v)
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)

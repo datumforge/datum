@@ -514,16 +514,17 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Template",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			template.FieldCreatedAt:   {Type: field.TypeTime, Column: template.FieldCreatedAt},
-			template.FieldUpdatedAt:   {Type: field.TypeTime, Column: template.FieldUpdatedAt},
-			template.FieldCreatedBy:   {Type: field.TypeString, Column: template.FieldCreatedBy},
-			template.FieldUpdatedBy:   {Type: field.TypeString, Column: template.FieldUpdatedBy},
-			template.FieldDeletedAt:   {Type: field.TypeTime, Column: template.FieldDeletedAt},
-			template.FieldDeletedBy:   {Type: field.TypeString, Column: template.FieldDeletedBy},
-			template.FieldOwnerID:     {Type: field.TypeString, Column: template.FieldOwnerID},
-			template.FieldName:        {Type: field.TypeString, Column: template.FieldName},
-			template.FieldDescription: {Type: field.TypeString, Column: template.FieldDescription},
-			template.FieldJsonconfig:  {Type: field.TypeJSON, Column: template.FieldJsonconfig},
+			template.FieldCreatedAt:    {Type: field.TypeTime, Column: template.FieldCreatedAt},
+			template.FieldUpdatedAt:    {Type: field.TypeTime, Column: template.FieldUpdatedAt},
+			template.FieldCreatedBy:    {Type: field.TypeString, Column: template.FieldCreatedBy},
+			template.FieldUpdatedBy:    {Type: field.TypeString, Column: template.FieldUpdatedBy},
+			template.FieldDeletedAt:    {Type: field.TypeTime, Column: template.FieldDeletedAt},
+			template.FieldDeletedBy:    {Type: field.TypeString, Column: template.FieldDeletedBy},
+			template.FieldOwnerID:      {Type: field.TypeString, Column: template.FieldOwnerID},
+			template.FieldName:         {Type: field.TypeString, Column: template.FieldName},
+			template.FieldDescription:  {Type: field.TypeString, Column: template.FieldDescription},
+			template.FieldJsonconfig:   {Type: field.TypeJSON, Column: template.FieldJsonconfig},
+			template.FieldThatjsonbaby: {Type: field.TypeJSON, Column: template.FieldThatjsonbaby},
 		},
 	}
 	graph.Nodes[19] = &sqlgraph.Node{
@@ -3621,6 +3622,11 @@ func (f *TemplateFilter) WhereDescription(p entql.StringP) {
 // WhereJsonconfig applies the entql json.RawMessage predicate on the jsonconfig field.
 func (f *TemplateFilter) WhereJsonconfig(p entql.BytesP) {
 	f.Where(p.Field(template.FieldJsonconfig))
+}
+
+// WhereThatjsonbaby applies the entql json.RawMessage predicate on the thatjsonbaby field.
+func (f *TemplateFilter) WhereThatjsonbaby(p entql.BytesP) {
+	f.Where(p.Field(template.FieldThatjsonbaby))
 }
 
 // WhereHasOwner applies a predicate to check if query has an edge owner.

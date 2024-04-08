@@ -782,17 +782,18 @@ type ComplexityRoot struct {
 	}
 
 	Template struct {
-		CreatedAt   func(childComplexity int) int
-		CreatedBy   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		DeletedBy   func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Jsonconfig  func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Owner       func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UpdatedBy   func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		CreatedBy    func(childComplexity int) int
+		DeletedAt    func(childComplexity int) int
+		DeletedBy    func(childComplexity int) int
+		Description  func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Jsonconfig   func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Owner        func(childComplexity int) int
+		Thatjsonbaby func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		UpdatedBy    func(childComplexity int) int
 	}
 
 	TemplateConnection struct {
@@ -998,6 +999,7 @@ type SubscriptionResolver interface {
 }
 type TemplateResolver interface {
 	Jsonconfig(ctx context.Context, obj *generated.Template) (json.RawMessage, error)
+	Thatjsonbaby(ctx context.Context, obj *generated.Template) (json.RawMessage, error)
 }
 
 type CreateGroupInputResolver interface {
@@ -1011,6 +1013,7 @@ type CreateOrganizationInputResolver interface {
 }
 type CreateTemplateInputResolver interface {
 	Jsonconfig(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error
+	Thatjsonbaby(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error
 }
 type OauthProviderWhereInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error
@@ -1038,6 +1041,8 @@ type UpdateTFASettingsInputResolver interface {
 }
 type UpdateTemplateInputResolver interface {
 	Jsonconfig(ctx context.Context, obj *generated.UpdateTemplateInput, data json.RawMessage) error
+
+	Thatjsonbaby(ctx context.Context, obj *generated.UpdateTemplateInput, data json.RawMessage) error
 }
 
 type executableSchema struct {
@@ -4652,6 +4657,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Template.Owner(childComplexity), true
 
+	case "Template.thatjsonbaby":
+		if e.complexity.Template.Thatjsonbaby == nil {
+			break
+		}
+
+		return e.complexity.Template.Thatjsonbaby(childComplexity), true
+
 	case "Template.updatedAt":
 		if e.complexity.Template.UpdatedAt == nil {
 			break
@@ -5718,6 +5730,10 @@ input CreateTemplateInput {
   the jsonschema object of the template
   """
   jsonconfig: JSON
+  """
+  the jsonschema object of the template
+  """
+  thatjsonbaby: JSON
   ownerID: ID!
 }
 """
@@ -10512,6 +10528,10 @@ type Template implements Node {
   the jsonschema object of the template
   """
   jsonconfig: JSON
+  """
+  the jsonschema object of the template
+  """
+  thatjsonbaby: JSON
   owner: Organization!
 }
 """
@@ -11187,6 +11207,11 @@ input UpdateTemplateInput {
   """
   jsonconfig: JSON
   clearJsonconfig: Boolean
+  """
+  the jsonschema object of the template
+  """
+  thatjsonbaby: JSON
+  clearThatjsonbaby: Boolean
   ownerID: ID
 }
 """
@@ -29003,6 +29028,8 @@ func (ec *executionContext) fieldContext_Organization_templates(ctx context.Cont
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "thatjsonbaby":
+				return ec.fieldContext_Template_thatjsonbaby(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
 			}
@@ -36627,6 +36654,8 @@ func (ec *executionContext) fieldContext_Query_template(ctx context.Context, fie
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "thatjsonbaby":
+				return ec.fieldContext_Template_thatjsonbaby(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
 			}
@@ -39579,6 +39608,47 @@ func (ec *executionContext) fieldContext_Template_jsonconfig(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Template_thatjsonbaby(ctx context.Context, field graphql.CollectedField, obj *generated.Template) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Template_thatjsonbaby(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Template().Thatjsonbaby(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(json.RawMessage)
+	fc.Result = res
+	return ec.marshalOJSON2encodingᚋjsonᚐRawMessage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Template_thatjsonbaby(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Template",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Template_owner(ctx context.Context, field graphql.CollectedField, obj *generated.Template) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Template_owner(ctx, field)
 	if err != nil {
@@ -39881,6 +39951,8 @@ func (ec *executionContext) fieldContext_TemplateCreatePayload_template(ctx cont
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "thatjsonbaby":
+				return ec.fieldContext_Template_thatjsonbaby(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
 			}
@@ -39990,6 +40062,8 @@ func (ec *executionContext) fieldContext_TemplateEdge_node(ctx context.Context, 
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "thatjsonbaby":
+				return ec.fieldContext_Template_thatjsonbaby(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
 			}
@@ -40102,6 +40176,8 @@ func (ec *executionContext) fieldContext_TemplateUpdatePayload_template(ctx cont
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "thatjsonbaby":
+				return ec.fieldContext_Template_thatjsonbaby(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
 			}
@@ -46229,7 +46305,7 @@ func (ec *executionContext) unmarshalInputCreateTemplateInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "jsonconfig", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "jsonconfig", "thatjsonbaby", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46285,6 +46361,15 @@ func (ec *executionContext) unmarshalInputCreateTemplateInput(ctx context.Contex
 				return it, err
 			}
 			if err = ec.resolvers.CreateTemplateInput().Jsonconfig(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "thatjsonbaby":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thatjsonbaby"))
+			data, err := ec.unmarshalOJSON2encodingᚋjsonᚐRawMessage(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateTemplateInput().Thatjsonbaby(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "ownerID":
@@ -65686,7 +65771,7 @@ func (ec *executionContext) unmarshalInputUpdateTemplateInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "jsonconfig", "clearJsonconfig", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "jsonconfig", "clearJsonconfig", "thatjsonbaby", "clearThatjsonbaby", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -65758,6 +65843,22 @@ func (ec *executionContext) unmarshalInputUpdateTemplateInput(ctx context.Contex
 				return it, err
 			}
 			it.ClearJsonconfig = data
+		case "thatjsonbaby":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thatjsonbaby"))
+			data, err := ec.unmarshalOJSON2encodingᚋjsonᚐRawMessage(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.UpdateTemplateInput().Thatjsonbaby(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "clearThatjsonbaby":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearThatjsonbaby"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearThatjsonbaby = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -75467,6 +75568,39 @@ func (ec *executionContext) _Template(ctx context.Context, sel ast.SelectionSet,
 					}
 				}()
 				res = ec._Template_jsonconfig(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "thatjsonbaby":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Template_thatjsonbaby(ctx, field, obj)
 				return res
 			}
 

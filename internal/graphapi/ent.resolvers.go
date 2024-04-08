@@ -127,6 +127,11 @@ func (r *templateResolver) Jsonconfig(ctx context.Context, obj *generated.Templa
 	panic(fmt.Errorf("not implemented: Jsonconfig - jsonconfig"))
 }
 
+// Thatjsonbaby is the resolver for the thatjsonbaby field.
+func (r *templateResolver) Thatjsonbaby(ctx context.Context, obj *generated.Template) (json.RawMessage, error) {
+	panic(fmt.Errorf("not implemented: Thatjsonbaby - thatjsonbaby"))
+}
+
 // AuthStyle is the resolver for the authStyle field.
 func (r *createOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error {
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
@@ -135,6 +140,11 @@ func (r *createOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *g
 // Jsonconfig is the resolver for the jsonconfig field.
 func (r *createTemplateInputResolver) Jsonconfig(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
 	panic(fmt.Errorf("not implemented: Jsonconfig - jsonconfig"))
+}
+
+// Thatjsonbaby is the resolver for the thatjsonbaby field.
+func (r *createTemplateInputResolver) Thatjsonbaby(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: Thatjsonbaby - thatjsonbaby"))
 }
 
 // AuthStyle is the resolver for the authStyle field.
@@ -185,6 +195,11 @@ func (r *updateOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *g
 // Jsonconfig is the resolver for the jsonconfig field.
 func (r *updateTemplateInputResolver) Jsonconfig(ctx context.Context, obj *generated.UpdateTemplateInput, data json.RawMessage) error {
 	panic(fmt.Errorf("not implemented: Jsonconfig - jsonconfig"))
+}
+
+// Thatjsonbaby is the resolver for the thatjsonbaby field.
+func (r *updateTemplateInputResolver) Thatjsonbaby(ctx context.Context, obj *generated.UpdateTemplateInput, data json.RawMessage) error {
+	panic(fmt.Errorf("not implemented: Thatjsonbaby - thatjsonbaby"))
 }
 
 // OauthProvider returns OauthProviderResolver implementation.

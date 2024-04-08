@@ -23166,6 +23166,7 @@ type TemplateMutation struct {
 	name          *string
 	description   *string
 	jsonconfig    *customtypes.JSONObject
+	thatjsonbaby  *map[string]interface{}
 	clearedFields map[string]struct{}
 	owner         *string
 	clearedowner  bool
@@ -23742,6 +23743,55 @@ func (m *TemplateMutation) ResetJsonconfig() {
 	delete(m.clearedFields, template.FieldJsonconfig)
 }
 
+// SetThatjsonbaby sets the "thatjsonbaby" field.
+func (m *TemplateMutation) SetThatjsonbaby(value map[string]interface{}) {
+	m.thatjsonbaby = &value
+}
+
+// Thatjsonbaby returns the value of the "thatjsonbaby" field in the mutation.
+func (m *TemplateMutation) Thatjsonbaby() (r map[string]interface{}, exists bool) {
+	v := m.thatjsonbaby
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldThatjsonbaby returns the old "thatjsonbaby" field's value of the Template entity.
+// If the Template object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateMutation) OldThatjsonbaby(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldThatjsonbaby is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldThatjsonbaby requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldThatjsonbaby: %w", err)
+	}
+	return oldValue.Thatjsonbaby, nil
+}
+
+// ClearThatjsonbaby clears the value of the "thatjsonbaby" field.
+func (m *TemplateMutation) ClearThatjsonbaby() {
+	m.thatjsonbaby = nil
+	m.clearedFields[template.FieldThatjsonbaby] = struct{}{}
+}
+
+// ThatjsonbabyCleared returns if the "thatjsonbaby" field was cleared in this mutation.
+func (m *TemplateMutation) ThatjsonbabyCleared() bool {
+	_, ok := m.clearedFields[template.FieldThatjsonbaby]
+	return ok
+}
+
+// ResetThatjsonbaby resets all changes to the "thatjsonbaby" field.
+func (m *TemplateMutation) ResetThatjsonbaby() {
+	m.thatjsonbaby = nil
+	delete(m.clearedFields, template.FieldThatjsonbaby)
+}
+
 // ClearOwner clears the "owner" edge to the Organization entity.
 func (m *TemplateMutation) ClearOwner() {
 	m.clearedowner = true
@@ -23803,7 +23853,7 @@ func (m *TemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TemplateMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, template.FieldCreatedAt)
 	}
@@ -23834,6 +23884,9 @@ func (m *TemplateMutation) Fields() []string {
 	if m.jsonconfig != nil {
 		fields = append(fields, template.FieldJsonconfig)
 	}
+	if m.thatjsonbaby != nil {
+		fields = append(fields, template.FieldThatjsonbaby)
+	}
 	return fields
 }
 
@@ -23862,6 +23915,8 @@ func (m *TemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case template.FieldJsonconfig:
 		return m.Jsonconfig()
+	case template.FieldThatjsonbaby:
+		return m.Thatjsonbaby()
 	}
 	return nil, false
 }
@@ -23891,6 +23946,8 @@ func (m *TemplateMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldDescription(ctx)
 	case template.FieldJsonconfig:
 		return m.OldJsonconfig(ctx)
+	case template.FieldThatjsonbaby:
+		return m.OldThatjsonbaby(ctx)
 	}
 	return nil, fmt.Errorf("unknown Template field %s", name)
 }
@@ -23970,6 +24027,13 @@ func (m *TemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetJsonconfig(v)
 		return nil
+	case template.FieldThatjsonbaby:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetThatjsonbaby(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Template field %s", name)
 }
@@ -24024,6 +24088,9 @@ func (m *TemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(template.FieldJsonconfig) {
 		fields = append(fields, template.FieldJsonconfig)
 	}
+	if m.FieldCleared(template.FieldThatjsonbaby) {
+		fields = append(fields, template.FieldThatjsonbaby)
+	}
 	return fields
 }
 
@@ -24062,6 +24129,9 @@ func (m *TemplateMutation) ClearField(name string) error {
 	case template.FieldJsonconfig:
 		m.ClearJsonconfig()
 		return nil
+	case template.FieldThatjsonbaby:
+		m.ClearThatjsonbaby()
+		return nil
 	}
 	return fmt.Errorf("unknown Template nullable field %s", name)
 }
@@ -24099,6 +24169,9 @@ func (m *TemplateMutation) ResetField(name string) error {
 		return nil
 	case template.FieldJsonconfig:
 		m.ResetJsonconfig()
+		return nil
+	case template.FieldThatjsonbaby:
+		m.ResetThatjsonbaby()
 		return nil
 	}
 	return fmt.Errorf("unknown Template field %s", name)

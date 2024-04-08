@@ -111,6 +111,10 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),
 			),
+		edge.To("templates", Template.Type).
+			Annotations(
+				entx.CascadeAnnotationField("Owner"),
+			),
 		edge.To("integrations", Integration.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),

@@ -2,25 +2,25 @@ version: '3'
 
 includes:
   cli: 
-    taskfile: ./cmd/cli
+    taskfile: ./cmd/cli/Taskfile.yml
     dir: ./cmd/cli
   docker: 
-    taskfile: ./docker
+    taskfile: ./docker/Taskfile.yml
     dir: ./docker
     aliases: [compose]
   fga: 
-    taskfile: ./fga
+    taskfile: ./fga/Taskfile.yml
     dir: ./fga
   db: 
-    taskfile: ./db
+    taskfile: ./db/Taskfile.yml
     dir: ./db
     aliases: [atlas]
   oas: 
-    taskfile: ./pkg/utils/oas
+    taskfile: ./pkg/utils/oas/Taskfile.yml
     dir: ./pkg/utils/oas
     aliases: [oas]
   config: 
-    taskfile: ./jsonschema
+    taskfile: ./jsonschema/Taskfile.yml
 
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"

@@ -12,7 +12,7 @@ models:
       -  github.com/99designs/gqlgen/graphql.String
   JSON:
     model:
-      -  github.com/datumforge/entx.json.RawMessage
+      -  github.com/datumforge/entx.RawMessage
 schema: ["schema.graphql" ]
 query: ["query/*.graphql"]
 generate:

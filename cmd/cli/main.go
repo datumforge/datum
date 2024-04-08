@@ -16,6 +16,7 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/register"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/reset"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/subscribers"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/template"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/tokens"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/user"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/usersetting"

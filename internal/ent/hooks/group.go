@@ -138,6 +138,7 @@ func groupDeleteHook(ctx context.Context, m *generated.GroupMutation) error {
 	// Add relationship tuples if authz is enabled
 	objID, ok := m.ID()
 	if !ok {
+		// TODO (sfunk): ensure tuples get cascade deleted
 		// continue for now
 		return nil
 	}

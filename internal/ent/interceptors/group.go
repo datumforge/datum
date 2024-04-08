@@ -40,7 +40,9 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 	qc := ent.QueryFromContext(ctx)
 
 	var groups []*generated.Group
-	// check if query is for a single group on an exists query
+
+	// check if query is for a an exists query, which returns a slice of group ids
+	// instead of the group objects
 	if qc.Op == "Exist" {
 		groupIDs, ok := v.([]string)
 		if !ok {

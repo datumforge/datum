@@ -26,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -574,6 +575,33 @@ func (f TraverseTFASettings) Traverse(ctx context.Context, q generated.Query) er
 	return fmt.Errorf("unexpected query type %T. expect *generated.TFASettingsQuery", q)
 }
 
+// The TemplateFunc type is an adapter to allow the use of ordinary function as a Querier.
+type TemplateFunc func(context.Context, *generated.TemplateQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f TemplateFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.TemplateQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.TemplateQuery", q)
+}
+
+// The TraverseTemplate type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseTemplate func(context.Context, *generated.TemplateQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseTemplate) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseTemplate) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.TemplateQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.TemplateQuery", q)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserFunc func(context.Context, *generated.UserQuery) (generated.Value, error)
 
@@ -694,6 +722,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.SubscriberQuery, predicate.Subscriber, subscriber.OrderOption]{typ: generated.TypeSubscriber, tq: q}, nil
 	case *generated.TFASettingsQuery:
 		return &query[*generated.TFASettingsQuery, predicate.TFASettings, tfasettings.OrderOption]{typ: generated.TypeTFASettings, tq: q}, nil
+	case *generated.TemplateQuery:
+		return &query[*generated.TemplateQuery, predicate.Template, template.OrderOption]{typ: generated.TypeTemplate, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
 	case *generated.UserSettingQuery:

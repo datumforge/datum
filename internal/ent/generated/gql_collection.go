@@ -25,6 +25,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
+	"github.com/datumforge/datum/internal/ent/generated/template"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -1453,6 +1454,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedGroups(alias, func(wq *GroupQuery) {
 				*wq = *query
 			})
+		case "templates":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplateClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedTemplates(alias, func(wq *TemplateQuery) {
+				*wq = *query
+			})
 		case "integrations":
 			var (
 				alias = field.Alias
@@ -2550,6 +2563,149 @@ func newTFASettingsPaginateArgs(rv map[string]any) *tfasettingsPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*TFASettingsWhereInput); ok {
 		args.opts = append(args.opts, WithTFASettingsFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (t *TemplateQuery) CollectFields(ctx context.Context, satisfies ...string) (*TemplateQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return t, nil
+	}
+	if err := t.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
+func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(template.Columns))
+		selectedFields = []string{template.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: t.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			t.withOwner = query
+			if _, ok := fieldSeen[template.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, template.FieldOwnerID)
+				fieldSeen[template.FieldOwnerID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[template.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, template.FieldCreatedAt)
+				fieldSeen[template.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[template.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, template.FieldUpdatedAt)
+				fieldSeen[template.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[template.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, template.FieldCreatedBy)
+				fieldSeen[template.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[template.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, template.FieldUpdatedBy)
+				fieldSeen[template.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[template.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, template.FieldDeletedAt)
+				fieldSeen[template.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[template.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, template.FieldDeletedBy)
+				fieldSeen[template.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[template.FieldName]; !ok {
+				selectedFields = append(selectedFields, template.FieldName)
+				fieldSeen[template.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[template.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, template.FieldDescription)
+				fieldSeen[template.FieldDescription] = struct{}{}
+			}
+		case "jsonconfig":
+			if _, ok := fieldSeen[template.FieldJsonconfig]; !ok {
+				selectedFields = append(selectedFields, template.FieldJsonconfig)
+				fieldSeen[template.FieldJsonconfig] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		t.Select(selectedFields...)
+	}
+	return nil
+}
+
+type templatePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TemplatePaginateOption
+}
+
+func newTemplatePaginateArgs(rv map[string]any) *templatePaginateArgs {
+	args := &templatePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &TemplateOrder{Field: &TemplateOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithTemplateOrder(order))
+			}
+		case *TemplateOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithTemplateOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*TemplateWhereInput); ok {
+		args.opts = append(args.opts, WithTemplateFilter(v.Filter))
 	}
 	return args
 }

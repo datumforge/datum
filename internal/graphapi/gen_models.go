@@ -261,6 +261,24 @@ type TFASettingsUpdatePayload struct {
 	TfaSettings *generated.TFASettings `json:"tfaSettings"`
 }
 
+// Return response for createTemplate mutation
+type TemplateCreatePayload struct {
+	// Created template
+	Template *generated.Template `json:"template"`
+}
+
+// Return response for deleteTemplate mutation
+type TemplateDeletePayload struct {
+	// Deleted template ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateTemplate mutation
+type TemplateUpdatePayload struct {
+	// Updated template
+	Template *generated.Template `json:"template"`
+}
+
 // Return response for createUser mutation
 type UserCreatePayload struct {
 	// Created user

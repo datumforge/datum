@@ -102,6 +102,11 @@ func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Curs
 	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))
 }
 
+// Templates is the resolver for the templates field.
+func (r *queryResolver) Templates(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) (*generated.TemplateConnection, error) {
+	panic(fmt.Errorf("not implemented: Templates - templates"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))

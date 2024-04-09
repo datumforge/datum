@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	echo "github.com/datumforge/echox"
+	ph "github.com/posthog/posthog-go"
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/ent/enums"
@@ -82,6 +83,15 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	if err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
+
+	props := ph.NewProperties().
+		Set("user_id", user.ID).
+		Set("email", user.Email).
+		Set("organization_id", claims.OrgID).
+		Set("auth_provider", r.AuthProvider)
+
+	h.AnalyticsClient.Event("user_authenticated", props)
+	h.AnalyticsClient.UserProperties(user.ID, props)
 
 	out := LoginReply{
 		Message:      "success",

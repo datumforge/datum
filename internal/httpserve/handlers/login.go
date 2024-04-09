@@ -62,7 +62,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return err
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	if err := h.updateUserLastSeen(userCtx, user.ID); err != nil {
@@ -71,10 +71,17 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
+	org, err := h.getOrgByID(userCtx, claims.OrgID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
 		Set("email", user.Email).
-		Set("organization_id", claims.OrgID)
+		Set("organization_id", claims.OrgID).
+		Set("organization_name", org.Name).
+		Set("auth_provider", "CREDENTIALS") // this login path is only used by credentials and we shouldn't need to look the user up to check the provider?
 
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)

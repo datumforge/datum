@@ -50,7 +50,7 @@ func (Template) Fields() []ent.Field {
 		field.JSON("thatjsonbaby", map[string]interface{}{}).
 			Comment("the jsonschema object of the template").
 			Annotations(
-				//				entgql.Type("JSON"),
+				entgql.Type("JSON"),
 				entoas.Schema(ogen.String().AsArray()),
 			).
 			Optional(),

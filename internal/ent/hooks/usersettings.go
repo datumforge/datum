@@ -8,8 +8,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
-	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
@@ -26,19 +24,19 @@ func HookUserSetting() ent.Hook {
 				}
 			}
 
-			// delete tfa settings if tfa is disabled
-			tfaEnabled, ok := mutation.IsTfaEnabled()
-			if ok && !tfaEnabled {
-				userID, err := auth.GetUserIDFromContext(ctx)
-				if err != nil {
-					return nil, err
-				}
+			// // delete tfa settings if tfa is disabled
+			// tfaEnabled, ok := mutation.IsTfaEnabled()
+			// if ok && !tfaEnabled {
+			// 	userID, err := auth.GetUserIDFromContext(ctx)
+			// 	if err != nil {
+			// 		return nil, err
+			// 	}
 
-				_, err = mutation.Client().TFASettings.Delete().Where(tfasettings.OwnerID(userID)).Exec(ctx)
-				if err != nil {
-					return nil, err
-				}
-			}
+			// 	// _, err = mutation.Client().TFASetting.Delete().Where(tfasettings.OwnerID(userID)).Exec(ctx)
+			// 	// if err != nil {
+			// 	// 	return nil, err
+			// 	// }
+			// }
 
 			return next.Mutate(ctx, mutation)
 		})

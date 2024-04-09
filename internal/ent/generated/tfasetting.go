@@ -10,12 +10,12 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
-// TFASettings is the model entity for the TFASettings schema.
-type TFASettings struct {
+// TFASetting is the model entity for the TFASetting schema.
+type TFASetting struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
@@ -46,13 +46,13 @@ type TFASettings struct {
 	// specifies a user may complete authentication by verifying a TOTP code delivered through an authenticator app
 	TotpAllowed bool `json:"totp_allowed,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the TFASettingsQuery when eager-loading is set.
-	Edges        TFASettingsEdges `json:"edges"`
+	// The values are being populated by the TFASettingQuery when eager-loading is set.
+	Edges        TFASettingEdges `json:"edges"`
 	selectValues sql.SelectValues
 }
 
-// TFASettingsEdges holds the relations/edges for other nodes in the graph.
-type TFASettingsEdges struct {
+// TFASettingEdges holds the relations/edges for other nodes in the graph.
+type TFASettingEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *User `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -64,7 +64,7 @@ type TFASettingsEdges struct {
 
 // OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e TFASettingsEdges) OwnerOrErr() (*User, error) {
+func (e TFASettingEdges) OwnerOrErr() (*User, error) {
 	if e.Owner != nil {
 		return e.Owner, nil
 	} else if e.loadedTypes[0] {
@@ -74,17 +74,17 @@ func (e TFASettingsEdges) OwnerOrErr() (*User, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*TFASettings) scanValues(columns []string) ([]any, error) {
+func (*TFASetting) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tfasettings.FieldRecoveryCodes:
+		case tfasetting.FieldRecoveryCodes:
 			values[i] = new([]byte)
-		case tfasettings.FieldVerified, tfasettings.FieldPhoneOtpAllowed, tfasettings.FieldEmailOtpAllowed, tfasettings.FieldTotpAllowed:
+		case tfasetting.FieldVerified, tfasetting.FieldPhoneOtpAllowed, tfasetting.FieldEmailOtpAllowed, tfasetting.FieldTotpAllowed:
 			values[i] = new(sql.NullBool)
-		case tfasettings.FieldID, tfasettings.FieldCreatedBy, tfasettings.FieldUpdatedBy, tfasettings.FieldDeletedBy, tfasettings.FieldOwnerID, tfasettings.FieldTfaSecret:
+		case tfasetting.FieldID, tfasetting.FieldCreatedBy, tfasetting.FieldUpdatedBy, tfasetting.FieldDeletedBy, tfasetting.FieldOwnerID, tfasetting.FieldTfaSecret:
 			values[i] = new(sql.NullString)
-		case tfasettings.FieldCreatedAt, tfasettings.FieldUpdatedAt, tfasettings.FieldDeletedAt:
+		case tfasetting.FieldCreatedAt, tfasetting.FieldUpdatedAt, tfasetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -94,75 +94,75 @@ func (*TFASettings) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the TFASettings fields.
-func (ts *TFASettings) assignValues(columns []string, values []any) error {
+// to the TFASetting fields.
+func (ts *TFASetting) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case tfasettings.FieldID:
+		case tfasetting.FieldID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				ts.ID = value.String
 			}
-		case tfasettings.FieldCreatedAt:
+		case tfasetting.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				ts.CreatedAt = value.Time
 			}
-		case tfasettings.FieldUpdatedAt:
+		case tfasetting.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				ts.UpdatedAt = value.Time
 			}
-		case tfasettings.FieldCreatedBy:
+		case tfasetting.FieldCreatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
 				ts.CreatedBy = value.String
 			}
-		case tfasettings.FieldUpdatedBy:
+		case tfasetting.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				ts.UpdatedBy = value.String
 			}
-		case tfasettings.FieldDeletedAt:
+		case tfasetting.FieldDeletedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
 			} else if value.Valid {
 				ts.DeletedAt = value.Time
 			}
-		case tfasettings.FieldDeletedBy:
+		case tfasetting.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
 				ts.DeletedBy = value.String
 			}
-		case tfasettings.FieldOwnerID:
+		case tfasetting.FieldOwnerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
 			} else if value.Valid {
 				ts.OwnerID = value.String
 			}
-		case tfasettings.FieldTfaSecret:
+		case tfasetting.FieldTfaSecret:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tfa_secret", values[i])
 			} else if value.Valid {
 				ts.TfaSecret = new(string)
 				*ts.TfaSecret = value.String
 			}
-		case tfasettings.FieldVerified:
+		case tfasetting.FieldVerified:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field verified", values[i])
 			} else if value.Valid {
 				ts.Verified = value.Bool
 			}
-		case tfasettings.FieldRecoveryCodes:
+		case tfasetting.FieldRecoveryCodes:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field recovery_codes", values[i])
 			} else if value != nil && len(*value) > 0 {
@@ -170,19 +170,19 @@ func (ts *TFASettings) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field recovery_codes: %w", err)
 				}
 			}
-		case tfasettings.FieldPhoneOtpAllowed:
+		case tfasetting.FieldPhoneOtpAllowed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field phone_otp_allowed", values[i])
 			} else if value.Valid {
 				ts.PhoneOtpAllowed = value.Bool
 			}
-		case tfasettings.FieldEmailOtpAllowed:
+		case tfasetting.FieldEmailOtpAllowed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field email_otp_allowed", values[i])
 			} else if value.Valid {
 				ts.EmailOtpAllowed = value.Bool
 			}
-		case tfasettings.FieldTotpAllowed:
+		case tfasetting.FieldTotpAllowed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field totp_allowed", values[i])
 			} else if value.Valid {
@@ -195,39 +195,39 @@ func (ts *TFASettings) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the TFASettings.
+// Value returns the ent.Value that was dynamically selected and assigned to the TFASetting.
 // This includes values selected through modifiers, order, etc.
-func (ts *TFASettings) Value(name string) (ent.Value, error) {
+func (ts *TFASetting) Value(name string) (ent.Value, error) {
 	return ts.selectValues.Get(name)
 }
 
-// QueryOwner queries the "owner" edge of the TFASettings entity.
-func (ts *TFASettings) QueryOwner() *UserQuery {
-	return NewTFASettingsClient(ts.config).QueryOwner(ts)
+// QueryOwner queries the "owner" edge of the TFASetting entity.
+func (ts *TFASetting) QueryOwner() *UserQuery {
+	return NewTFASettingClient(ts.config).QueryOwner(ts)
 }
 
-// Update returns a builder for updating this TFASettings.
-// Note that you need to call TFASettings.Unwrap() before calling this method if this TFASettings
+// Update returns a builder for updating this TFASetting.
+// Note that you need to call TFASetting.Unwrap() before calling this method if this TFASetting
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (ts *TFASettings) Update() *TFASettingsUpdateOne {
-	return NewTFASettingsClient(ts.config).UpdateOne(ts)
+func (ts *TFASetting) Update() *TFASettingUpdateOne {
+	return NewTFASettingClient(ts.config).UpdateOne(ts)
 }
 
-// Unwrap unwraps the TFASettings entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the TFASetting entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (ts *TFASettings) Unwrap() *TFASettings {
+func (ts *TFASetting) Unwrap() *TFASetting {
 	_tx, ok := ts.config.driver.(*txDriver)
 	if !ok {
-		panic("generated: TFASettings is not a transactional entity")
+		panic("generated: TFASetting is not a transactional entity")
 	}
 	ts.config.driver = _tx.drv
 	return ts
 }
 
 // String implements the fmt.Stringer.
-func (ts *TFASettings) String() string {
+func (ts *TFASetting) String() string {
 	var builder strings.Builder
-	builder.WriteString("TFASettings(")
+	builder.WriteString("TFASetting(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ts.ID))
 	builder.WriteString("created_at=")
 	builder.WriteString(ts.CreatedAt.Format(time.ANSIC))
@@ -273,5 +273,5 @@ func (ts *TFASettings) String() string {
 	return builder.String()
 }
 
-// TFASettingsSlice is a parsable slice of TFASettings.
-type TFASettingsSlice []*TFASettings
+// TFASettings is a parsable slice of TFASetting.
+type TFASettings []*TFASetting

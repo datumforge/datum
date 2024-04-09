@@ -20,7 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -36,7 +36,7 @@ type UserQuery struct {
 	inters                           []Interceptor
 	predicates                       []predicate.User
 	withPersonalAccessTokens         *PersonalAccessTokenQuery
-	withTfaSettings                  *TFASettingsQuery
+	withTfaSettings                  *TFASettingQuery
 	withSetting                      *UserSettingQuery
 	withEmailVerificationTokens      *EmailVerificationTokenQuery
 	withPasswordResetTokens          *PasswordResetTokenQuery
@@ -48,7 +48,7 @@ type UserQuery struct {
 	modifiers                        []func(*sql.Selector)
 	loadTotal                        []func(context.Context, []*User) error
 	withNamedPersonalAccessTokens    map[string]*PersonalAccessTokenQuery
-	withNamedTfaSettings             map[string]*TFASettingsQuery
+	withNamedTfaSettings             map[string]*TFASettingQuery
 	withNamedEmailVerificationTokens map[string]*EmailVerificationTokenQuery
 	withNamedPasswordResetTokens     map[string]*PasswordResetTokenQuery
 	withNamedGroups                  map[string]*GroupQuery
@@ -118,8 +118,8 @@ func (uq *UserQuery) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 }
 
 // QueryTfaSettings chains the current query on the "tfa_settings" edge.
-func (uq *UserQuery) QueryTfaSettings() *TFASettingsQuery {
-	query := (&TFASettingsClient{config: uq.config}).Query()
+func (uq *UserQuery) QueryTfaSettings() *TFASettingQuery {
+	query := (&TFASettingClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -130,12 +130,12 @@ func (uq *UserQuery) QueryTfaSettings() *TFASettingsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(tfasettings.Table, tfasettings.FieldID),
+			sqlgraph.To(tfasetting.Table, tfasetting.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.TfaSettingsTable, user.TfaSettingsColumn),
 		)
 		schemaConfig := uq.schemaConfig
-		step.To.Schema = schemaConfig.TFASettings
-		step.Edge.Schema = schemaConfig.TFASettings
+		step.To.Schema = schemaConfig.TFASetting
+		step.Edge.Schema = schemaConfig.TFASetting
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -563,8 +563,8 @@ func (uq *UserQuery) WithPersonalAccessTokens(opts ...func(*PersonalAccessTokenQ
 
 // WithTfaSettings tells the query-builder to eager-load the nodes that are connected to
 // the "tfa_settings" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithTfaSettings(opts ...func(*TFASettingsQuery)) *UserQuery {
-	query := (&TFASettingsClient{config: uq.config}).Query()
+func (uq *UserQuery) WithTfaSettings(opts ...func(*TFASettingQuery)) *UserQuery {
+	query := (&TFASettingClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -791,8 +791,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	}
 	if query := uq.withTfaSettings; query != nil {
 		if err := uq.loadTfaSettings(ctx, query, nodes,
-			func(n *User) { n.Edges.TfaSettings = []*TFASettings{} },
-			func(n *User, e *TFASettings) { n.Edges.TfaSettings = append(n.Edges.TfaSettings, e) }); err != nil {
+			func(n *User) { n.Edges.TfaSettings = []*TFASetting{} },
+			func(n *User, e *TFASetting) { n.Edges.TfaSettings = append(n.Edges.TfaSettings, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -865,7 +865,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	for name, query := range uq.withNamedTfaSettings {
 		if err := uq.loadTfaSettings(ctx, query, nodes,
 			func(n *User) { n.appendNamedTfaSettings(name) },
-			func(n *User, e *TFASettings) { n.appendNamedTfaSettings(name, e) }); err != nil {
+			func(n *User, e *TFASetting) { n.appendNamedTfaSettings(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -956,7 +956,7 @@ func (uq *UserQuery) loadPersonalAccessTokens(ctx context.Context, query *Person
 	}
 	return nil
 }
-func (uq *UserQuery) loadTfaSettings(ctx context.Context, query *TFASettingsQuery, nodes []*User, init func(*User), assign func(*User, *TFASettings)) error {
+func (uq *UserQuery) loadTfaSettings(ctx context.Context, query *TFASettingQuery, nodes []*User, init func(*User), assign func(*User, *TFASetting)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
 	for i := range nodes {
@@ -967,9 +967,9 @@ func (uq *UserQuery) loadTfaSettings(ctx context.Context, query *TFASettingsQuer
 		}
 	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(tfasettings.FieldOwnerID)
+		query.ctx.AppendFieldOnce(tfasetting.FieldOwnerID)
 	}
-	query.Where(predicate.TFASettings(func(s *sql.Selector) {
+	query.Where(predicate.TFASetting(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.TfaSettingsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
@@ -1394,13 +1394,13 @@ func (uq *UserQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*Pe
 
 // WithNamedTfaSettings tells the query-builder to eager-load the nodes that are connected to the "tfa_settings"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedTfaSettings(name string, opts ...func(*TFASettingsQuery)) *UserQuery {
-	query := (&TFASettingsClient{config: uq.config}).Query()
+func (uq *UserQuery) WithNamedTfaSettings(name string, opts ...func(*TFASettingQuery)) *UserQuery {
+	query := (&TFASettingClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
 	if uq.withNamedTfaSettings == nil {
-		uq.withNamedTfaSettings = make(map[string]*TFASettingsQuery)
+		uq.withNamedTfaSettings = make(map[string]*TFASettingQuery)
 	}
 	uq.withNamedTfaSettings[name] = query
 	return uq

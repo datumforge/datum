@@ -657,7 +657,7 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "tfasettings_owner_id",
+				Name:    "tfasetting_owner_id",
 				Unique:  true,
 				Columns: []*schema.Column{TfaSettingsColumns[13]},
 				Annotation: &entsql.IndexAnnotation{

@@ -313,7 +313,7 @@ func (s *Subscriber) Owner(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
-func (ts *TFASettings) Owner(ctx context.Context) (*User, error) {
+func (ts *TFASetting) Owner(ctx context.Context) (*User, error) {
 	result, err := ts.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = ts.QueryOwner().Only(ctx)
@@ -341,7 +341,7 @@ func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAcce
 	return result, err
 }
 
-func (u *User) TfaSettings(ctx context.Context) (result []*TFASettings, err error) {
+func (u *User) TfaSettings(ctx context.Context) (result []*TFASetting, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = u.NamedTfaSettings(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {

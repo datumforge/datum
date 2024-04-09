@@ -16,7 +16,7 @@ import (
 
 func HookEnableTFA() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
-		return hook.TFASettingsFunc(func(ctx context.Context, mutation *generated.TFASettingsMutation) (generated.Value, error) {
+		return hook.TFASettingFunc(func(ctx context.Context, mutation *generated.TFASettingMutation) (generated.Value, error) {
 			// once verified, create recovery codes
 			verified, ok := mutation.Verified()
 
@@ -56,7 +56,7 @@ func HookEnableTFA() ent.Hook {
 }
 
 // constructTOTPUser constructs a TOTP user object from the mutation
-func constructTOTPUser(ctx context.Context, mutation *generated.TFASettingsMutation) (*totp.User, error) {
+func constructTOTPUser(ctx context.Context, mutation *generated.TFASettingMutation) (*totp.User, error) {
 	userID, ok := mutation.OwnerID()
 	if !ok {
 		var err error

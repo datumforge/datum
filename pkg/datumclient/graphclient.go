@@ -55,9 +55,10 @@ type DatumClient interface {
 	UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error)
 	GetAllTemplates(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplates, error)
 	GetTemplate(ctx context.Context, getTemplateID string, interceptors ...clientv2.RequestInterceptor) (*GetTemplate, error)
+	GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error)
 	GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error)
-	CreateTFASettings(ctx context.Context, input CreateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASettings, error)
-	UpdateTFASettings(ctx context.Context, input UpdateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASettings, error)
+	CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error)
+	UpdateTFASetting(ctx context.Context, input UpdateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASetting, error)
 	GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error)
 	GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error)
 	GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error)
@@ -5366,100 +5367,86 @@ func (t *GetTemplate_Template) GetOwner() *GetTemplate_Template_Owner {
 }
 
 type GetTFASettings_TfaSettings struct {
+	Edges []*GetTFASettings_TfaSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetTFASettings_TfaSettings) GetEdges() []*GetTFASettings_TfaSettings_Edges {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings{}
+	}
+	return t.Edges
+}
+
+type CreateTFASetting_CreateTFASetting_TfaSetting struct {
 	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
 	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
 	Verified      bool     "json:\"verified\" graphql:\"verified\""
 }
 
-func (t *GetTFASettings_TfaSettings) GetTotpAllowed() *bool {
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetTotpAllowed() *bool {
 	if t == nil {
-		t = &GetTFASettings_TfaSettings{}
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
 	}
 	return t.TotpAllowed
 }
-func (t *GetTFASettings_TfaSettings) GetRecoveryCodes() []string {
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetRecoveryCodes() []string {
 	if t == nil {
-		t = &GetTFASettings_TfaSettings{}
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
 	}
 	return t.RecoveryCodes
 }
-func (t *GetTFASettings_TfaSettings) GetVerified() bool {
+func (t *CreateTFASetting_CreateTFASetting_TfaSetting) GetVerified() bool {
 	if t == nil {
-		t = &GetTFASettings_TfaSettings{}
+		t = &CreateTFASetting_CreateTFASetting_TfaSetting{}
 	}
 	return t.Verified
 }
 
-type CreateTFASettings_CreateTFASettings_TfaSettings struct {
+type CreateTFASetting_CreateTFASetting struct {
+	TfaSetting CreateTFASetting_CreateTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
+}
+
+func (t *CreateTFASetting_CreateTFASetting) GetTfaSetting() *CreateTFASetting_CreateTFASetting_TfaSetting {
+	if t == nil {
+		t = &CreateTFASetting_CreateTFASetting{}
+	}
+	return &t.TfaSetting
+}
+
+type UpdateTFASetting_UpdateTFASetting_TfaSetting struct {
 	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
 	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
 	Verified      bool     "json:\"verified\" graphql:\"verified\""
 }
 
-func (t *CreateTFASettings_CreateTFASettings_TfaSettings) GetTotpAllowed() *bool {
+func (t *UpdateTFASetting_UpdateTFASetting_TfaSetting) GetTotpAllowed() *bool {
 	if t == nil {
-		t = &CreateTFASettings_CreateTFASettings_TfaSettings{}
+		t = &UpdateTFASetting_UpdateTFASetting_TfaSetting{}
 	}
 	return t.TotpAllowed
 }
-func (t *CreateTFASettings_CreateTFASettings_TfaSettings) GetRecoveryCodes() []string {
+func (t *UpdateTFASetting_UpdateTFASetting_TfaSetting) GetRecoveryCodes() []string {
 	if t == nil {
-		t = &CreateTFASettings_CreateTFASettings_TfaSettings{}
+		t = &UpdateTFASetting_UpdateTFASetting_TfaSetting{}
 	}
 	return t.RecoveryCodes
 }
-func (t *CreateTFASettings_CreateTFASettings_TfaSettings) GetVerified() bool {
+func (t *UpdateTFASetting_UpdateTFASetting_TfaSetting) GetVerified() bool {
 	if t == nil {
-		t = &CreateTFASettings_CreateTFASettings_TfaSettings{}
+		t = &UpdateTFASetting_UpdateTFASetting_TfaSetting{}
 	}
 	return t.Verified
 }
 
-type CreateTFASettings_CreateTFASettings struct {
-	TfaSettings CreateTFASettings_CreateTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
+type UpdateTFASetting_UpdateTFASetting struct {
+	TfaSetting UpdateTFASetting_UpdateTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
 }
 
-func (t *CreateTFASettings_CreateTFASettings) GetTfaSettings() *CreateTFASettings_CreateTFASettings_TfaSettings {
+func (t *UpdateTFASetting_UpdateTFASetting) GetTfaSetting() *UpdateTFASetting_UpdateTFASetting_TfaSetting {
 	if t == nil {
-		t = &CreateTFASettings_CreateTFASettings{}
+		t = &UpdateTFASetting_UpdateTFASetting{}
 	}
-	return &t.TfaSettings
-}
-
-type UpdateTFASettings_UpdateTFASettings_TfaSettings struct {
-	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
-	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
-	Verified      bool     "json:\"verified\" graphql:\"verified\""
-}
-
-func (t *UpdateTFASettings_UpdateTFASettings_TfaSettings) GetTotpAllowed() *bool {
-	if t == nil {
-		t = &UpdateTFASettings_UpdateTFASettings_TfaSettings{}
-	}
-	return t.TotpAllowed
-}
-func (t *UpdateTFASettings_UpdateTFASettings_TfaSettings) GetRecoveryCodes() []string {
-	if t == nil {
-		t = &UpdateTFASettings_UpdateTFASettings_TfaSettings{}
-	}
-	return t.RecoveryCodes
-}
-func (t *UpdateTFASettings_UpdateTFASettings_TfaSettings) GetVerified() bool {
-	if t == nil {
-		t = &UpdateTFASettings_UpdateTFASettings_TfaSettings{}
-	}
-	return t.Verified
-}
-
-type UpdateTFASettings_UpdateTFASettings struct {
-	TfaSettings UpdateTFASettings_UpdateTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
-}
-
-func (t *UpdateTFASettings_UpdateTFASettings) GetTfaSettings() *UpdateTFASettings_UpdateTFASettings_TfaSettings {
-	if t == nil {
-		t = &UpdateTFASettings_UpdateTFASettings{}
-	}
-	return &t.TfaSettings
+	return &t.TfaSetting
 }
 
 type GetUserByID_User_Setting_DefaultOrg struct {
@@ -7751,26 +7738,26 @@ func (t *GetTFASettings) GetTfaSettings() *GetTFASettings_TfaSettings {
 	return &t.TfaSettings
 }
 
-type CreateTFASettings struct {
-	CreateTFASettings CreateTFASettings_CreateTFASettings "json:\"createTFASettings\" graphql:\"createTFASettings\""
+type CreateTFASetting struct {
+	CreateTFASetting CreateTFASetting_CreateTFASetting "json:\"createTFASetting\" graphql:\"createTFASetting\""
 }
 
-func (t *CreateTFASettings) GetCreateTFASettings() *CreateTFASettings_CreateTFASettings {
+func (t *CreateTFASetting) GetCreateTFASetting() *CreateTFASetting_CreateTFASetting {
 	if t == nil {
-		t = &CreateTFASettings{}
+		t = &CreateTFASetting{}
 	}
-	return &t.CreateTFASettings
+	return &t.CreateTFASetting
 }
 
-type UpdateTFASettings struct {
-	UpdateTFASettings UpdateTFASettings_UpdateTFASettings "json:\"updateTFASettings\" graphql:\"updateTFASettings\""
+type UpdateTFASetting struct {
+	UpdateTFASetting UpdateTFASetting_UpdateTFASetting "json:\"updateTFASetting\" graphql:\"updateTFASetting\""
 }
 
-func (t *UpdateTFASettings) GetUpdateTFASettings() *UpdateTFASettings_UpdateTFASettings {
+func (t *UpdateTFASetting) GetUpdateTFASetting() *UpdateTFASetting_UpdateTFASetting {
 	if t == nil {
-		t = &UpdateTFASettings{}
+		t = &UpdateTFASetting{}
 	}
-	return &t.UpdateTFASettings
+	return &t.UpdateTFASetting
 }
 
 type GetUserByID struct {
@@ -9635,6 +9622,34 @@ const GetTFASettingsDocument = `query GetTFASettings {
 }
 `
 
+func (c *Client) GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error) {
+	vars := map[string]interface{}{}
+
+	var res GetTFASetting
+	if err := c.Client.Post(ctx, "GetTFASetting", GetTFASettingDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetTFASettingsDocument = `query GetTFASettings {
+	tfaSettings {
+		edges {
+			node {
+				totpAllowed
+				recoveryCodes
+				verified
+			}
+		}
+	}
+}
+`
+
 func (c *Client) GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error) {
 	vars := map[string]interface{}{}
 
@@ -9650,9 +9665,9 @@ func (c *Client) GetTFASettings(ctx context.Context, interceptors ...clientv2.Re
 	return &res, nil
 }
 
-const CreateTFASettingsDocument = `mutation CreateTFASettings ($input: CreateTFASettingsInput!) {
-	createTFASettings(input: $input) {
-		tfaSettings {
+const CreateTFASettingDocument = `mutation CreateTFASetting ($input: CreateTFASettingInput!) {
+	createTFASetting(input: $input) {
+		tfaSetting {
 			totpAllowed
 			recoveryCodes
 			verified
@@ -9661,13 +9676,13 @@ const CreateTFASettingsDocument = `mutation CreateTFASettings ($input: CreateTFA
 }
 `
 
-func (c *Client) CreateTFASettings(ctx context.Context, input CreateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASettings, error) {
+func (c *Client) CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error) {
 	vars := map[string]interface{}{
 		"input": input,
 	}
 
-	var res CreateTFASettings
-	if err := c.Client.Post(ctx, "CreateTFASettings", CreateTFASettingsDocument, &res, vars, interceptors...); err != nil {
+	var res CreateTFASetting
+	if err := c.Client.Post(ctx, "CreateTFASetting", CreateTFASettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -9678,9 +9693,9 @@ func (c *Client) CreateTFASettings(ctx context.Context, input CreateTFASettingsI
 	return &res, nil
 }
 
-const UpdateTFASettingsDocument = `mutation UpdateTFASettings ($input: UpdateTFASettingsInput!) {
-	updateTFASettings(input: $input) {
-		tfaSettings {
+const UpdateTFASettingDocument = `mutation UpdateTFASetting ($input: UpdateTFASettingInput!) {
+	updateTFASetting(input: $input) {
+		tfaSetting {
 			totpAllowed
 			recoveryCodes
 			verified
@@ -9689,13 +9704,13 @@ const UpdateTFASettingsDocument = `mutation UpdateTFASettings ($input: UpdateTFA
 }
 `
 
-func (c *Client) UpdateTFASettings(ctx context.Context, input UpdateTFASettingsInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASettings, error) {
+func (c *Client) UpdateTFASetting(ctx context.Context, input UpdateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASetting, error) {
 	vars := map[string]interface{}{
 		"input": input,
 	}
 
-	var res UpdateTFASettings
-	if err := c.Client.Post(ctx, "UpdateTFASettings", UpdateTFASettingsDocument, &res, vars, interceptors...); err != nil {
+	var res UpdateTFASetting
+	if err := c.Client.Post(ctx, "UpdateTFASetting", UpdateTFASettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -10245,8 +10260,8 @@ var DocumentOperationNames = map[string]string{
 	GetAllTemplatesDocument:             "GetAllTemplates",
 	GetTemplateDocument:                 "GetTemplate",
 	GetTFASettingsDocument:              "GetTFASettings",
-	CreateTFASettingsDocument:           "CreateTFASettings",
-	UpdateTFASettingsDocument:           "UpdateTFASettings",
+	CreateTFASettingDocument:            "CreateTFASetting",
+	UpdateTFASettingDocument:            "UpdateTFASetting",
 	GetUserByIDDocument:                 "GetUserByID",
 	GetUserByIDWithOrgsDocument:         "GetUserByIDWithOrgs",
 	GetAllUsersDocument:                 "GetAllUsers",

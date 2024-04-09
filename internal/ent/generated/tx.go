@@ -46,10 +46,10 @@ type Tx struct {
 	PersonalAccessToken *PersonalAccessTokenClient
 	// Subscriber is the client for interacting with the Subscriber builders.
 	Subscriber *SubscriberClient
-	// TFASettings is the client for interacting with the TFASettings builders.
-	TFASettings *TFASettingsClient
 	// Template is the client for interacting with the Template builders.
 	Template *TemplateClient
+	// TFASetting is the client for interacting with the TFASetting builders.
+	TFASetting *TFASettingClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserSetting is the client for interacting with the UserSetting builders.
@@ -204,8 +204,8 @@ func (tx *Tx) init() {
 	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Subscriber = NewSubscriberClient(tx.config)
-	tx.TFASettings = NewTFASettingsClient(tx.config)
 	tx.Template = NewTemplateClient(tx.config)
+	tx.TFASetting = NewTFASettingClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)
 	tx.Webauthn = NewWebauthnClient(tx.config)

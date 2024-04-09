@@ -1250,19 +1250,19 @@ func HasTfaSettings() predicate.User {
 			sqlgraph.Edge(sqlgraph.O2M, false, TfaSettingsTable, TfaSettingsColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.TFASettings
-		step.Edge.Schema = schemaConfig.TFASettings
+		step.To.Schema = schemaConfig.TFASetting
+		step.Edge.Schema = schemaConfig.TFASetting
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
 // HasTfaSettingsWith applies the HasEdge predicate on the "tfa_settings" edge with a given conditions (other predicates).
-func HasTfaSettingsWith(preds ...predicate.TFASettings) predicate.User {
+func HasTfaSettingsWith(preds ...predicate.TFASetting) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := newTfaSettingsStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.TFASettings
-		step.Edge.Schema = schemaConfig.TFASettings
+		step.To.Schema = schemaConfig.TFASetting
+		step.Edge.Schema = schemaConfig.TFASetting
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

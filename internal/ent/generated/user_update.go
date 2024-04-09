@@ -20,7 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -302,14 +302,14 @@ func (uu *UserUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserUp
 	return uu.AddPersonalAccessTokenIDs(ids...)
 }
 
-// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by IDs.
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASetting entity by IDs.
 func (uu *UserUpdate) AddTfaSettingIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddTfaSettingIDs(ids...)
 	return uu
 }
 
-// AddTfaSettings adds the "tfa_settings" edges to the TFASettings entity.
-func (uu *UserUpdate) AddTfaSettings(t ...*TFASettings) *UserUpdate {
+// AddTfaSettings adds the "tfa_settings" edges to the TFASetting entity.
+func (uu *UserUpdate) AddTfaSettings(t ...*TFASetting) *UserUpdate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -459,20 +459,20 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 	return uu.RemovePersonalAccessTokenIDs(ids...)
 }
 
-// ClearTfaSettings clears all "tfa_settings" edges to the TFASettings entity.
+// ClearTfaSettings clears all "tfa_settings" edges to the TFASetting entity.
 func (uu *UserUpdate) ClearTfaSettings() *UserUpdate {
 	uu.mutation.ClearTfaSettings()
 	return uu
 }
 
-// RemoveTfaSettingIDs removes the "tfa_settings" edge to TFASettings entities by IDs.
+// RemoveTfaSettingIDs removes the "tfa_settings" edge to TFASetting entities by IDs.
 func (uu *UserUpdate) RemoveTfaSettingIDs(ids ...string) *UserUpdate {
 	uu.mutation.RemoveTfaSettingIDs(ids...)
 	return uu
 }
 
-// RemoveTfaSettings removes "tfa_settings" edges to TFASettings entities.
-func (uu *UserUpdate) RemoveTfaSettings(t ...*TFASettings) *UserUpdate {
+// RemoveTfaSettings removes "tfa_settings" edges to TFASetting entities.
+func (uu *UserUpdate) RemoveTfaSettings(t ...*TFASetting) *UserUpdate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -881,10 +881,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.TfaSettingsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.TFASettings
+		edge.Schema = uu.schemaConfig.TFASetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uu.mutation.RemovedTfaSettingsIDs(); len(nodes) > 0 && !uu.mutation.TfaSettingsCleared() {
@@ -895,10 +895,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.TfaSettingsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.TFASettings
+		edge.Schema = uu.schemaConfig.TFASetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -912,10 +912,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.TfaSettingsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.TFASettings
+		edge.Schema = uu.schemaConfig.TFASetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1613,14 +1613,14 @@ func (uuo *UserUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessToken) *Us
 	return uuo.AddPersonalAccessTokenIDs(ids...)
 }
 
-// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by IDs.
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASetting entity by IDs.
 func (uuo *UserUpdateOne) AddTfaSettingIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddTfaSettingIDs(ids...)
 	return uuo
 }
 
-// AddTfaSettings adds the "tfa_settings" edges to the TFASettings entity.
-func (uuo *UserUpdateOne) AddTfaSettings(t ...*TFASettings) *UserUpdateOne {
+// AddTfaSettings adds the "tfa_settings" edges to the TFASetting entity.
+func (uuo *UserUpdateOne) AddTfaSettings(t ...*TFASetting) *UserUpdateOne {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -1770,20 +1770,20 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 	return uuo.RemovePersonalAccessTokenIDs(ids...)
 }
 
-// ClearTfaSettings clears all "tfa_settings" edges to the TFASettings entity.
+// ClearTfaSettings clears all "tfa_settings" edges to the TFASetting entity.
 func (uuo *UserUpdateOne) ClearTfaSettings() *UserUpdateOne {
 	uuo.mutation.ClearTfaSettings()
 	return uuo
 }
 
-// RemoveTfaSettingIDs removes the "tfa_settings" edge to TFASettings entities by IDs.
+// RemoveTfaSettingIDs removes the "tfa_settings" edge to TFASetting entities by IDs.
 func (uuo *UserUpdateOne) RemoveTfaSettingIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.RemoveTfaSettingIDs(ids...)
 	return uuo
 }
 
-// RemoveTfaSettings removes "tfa_settings" edges to TFASettings entities.
-func (uuo *UserUpdateOne) RemoveTfaSettings(t ...*TFASettings) *UserUpdateOne {
+// RemoveTfaSettings removes "tfa_settings" edges to TFASetting entities.
+func (uuo *UserUpdateOne) RemoveTfaSettings(t ...*TFASetting) *UserUpdateOne {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -2222,10 +2222,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.TfaSettingsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.TFASettings
+		edge.Schema = uuo.schemaConfig.TFASetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uuo.mutation.RemovedTfaSettingsIDs(); len(nodes) > 0 && !uuo.mutation.TfaSettingsCleared() {
@@ -2236,10 +2236,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.TfaSettingsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.TFASettings
+		edge.Schema = uuo.schemaConfig.TFASetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -2253,10 +2253,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.TfaSettingsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.TFASettings
+		edge.Schema = uuo.schemaConfig.TFASetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

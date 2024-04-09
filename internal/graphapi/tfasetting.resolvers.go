@@ -10,14 +10,14 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/rout"
 )
 
-// CreateTFASettings is the resolver for the createTFASettings field.
-func (r *mutationResolver) CreateTFASettings(ctx context.Context, input generated.CreateTFASettingsInput) (*TFASettingsCreatePayload, error) {
+// CreateTFASetting is the resolver for the createTFASetting field.
+func (r *mutationResolver) CreateTFASetting(ctx context.Context, input generated.CreateTFASettingInput) (*TFASettingCreatePayload, error) {
 	// setup view context
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
@@ -28,16 +28,16 @@ func (r *mutationResolver) CreateTFASettings(ctx context.Context, input generate
 
 	input.OwnerID = &userID
 
-	settings, err := withTransactionalMutation(ctx).TFASettings.Create().SetInput(input).Save(ctx)
+	settings, err := withTransactionalMutation(ctx).TFASetting.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &TFASettingsCreatePayload{TfaSettings: settings}, nil
+	return &TFASettingCreatePayload{TfaSetting: settings}, nil
 }
 
-// UpdateTFASettings is the resolver for the updateTFASettings field.
-func (r *mutationResolver) UpdateTFASettings(ctx context.Context, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error) {
+// UpdateTFASetting is the resolver for the updateTFASetting field.
+func (r *mutationResolver) UpdateTFASetting(ctx context.Context, input generated.UpdateTFASettingInput) (*TFASettingUpdatePayload, error) {
 	// setup view context
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
@@ -46,7 +46,7 @@ func (r *mutationResolver) UpdateTFASettings(ctx context.Context, input generate
 		return nil, err
 	}
 
-	settings, err := withTransactionalMutation(ctx).TFASettings.Query().Where(tfasettings.OwnerID(userID)).Only(ctx)
+	settings, err := withTransactionalMutation(ctx).TFASetting.Query().Where(tfasetting.OwnerID(userID)).Only(ctx)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -72,11 +72,11 @@ func (r *mutationResolver) UpdateTFASettings(ctx context.Context, input generate
 		return nil, err
 	}
 
-	return &TFASettingsUpdatePayload{TfaSettings: settings}, nil
+	return &TFASettingUpdatePayload{TfaSetting: settings}, nil
 }
 
-// TfaSettings is the resolver for the tfaSettings field.
-func (r *queryResolver) TfaSettings(ctx context.Context, id *string) (*generated.TFASettings, error) {
+// TfaSetting is the resolver for the tfaSettings field.
+func (r *queryResolver) TfaSetting(ctx context.Context, id *string) (*generated.TFASetting, error) {
 	// setup view context
 	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
 
@@ -86,16 +86,16 @@ func (r *queryResolver) TfaSettings(ctx context.Context, id *string) (*generated
 	}
 
 	var (
-		settings *generated.TFASettings
+		settings *generated.TFASetting
 	)
 
 	if id != nil && *id != "" {
-		settings, err = withTransactionalMutation(ctx).TFASettings.Get(ctx, *id)
+		settings, err = withTransactionalMutation(ctx).TFASetting.Get(ctx, *id)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		settings, err = withTransactionalMutation(ctx).TFASettings.Query().Where(tfasettings.OwnerID(userID)).Only(ctx)
+		settings, err = withTransactionalMutation(ctx).TFASetting.Query().Where(tfasetting.OwnerID(userID)).Only(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -105,6 +105,6 @@ func (r *queryResolver) TfaSettings(ctx context.Context, id *string) (*generated
 }
 
 // RegenBackupCodes is the resolver for the regenBackupCodes field.
-func (r *updateTFASettingsInputResolver) RegenBackupCodes(ctx context.Context, obj *generated.UpdateTFASettingsInput, data *bool) error {
+func (r *updateTFASettingInputResolver) RegenBackupCodes(ctx context.Context, obj *generated.UpdateTFASettingInput, data *bool) error {
 	return nil
 }

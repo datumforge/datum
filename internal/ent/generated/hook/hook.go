@@ -213,16 +213,16 @@ func (f SubscriberFunc) Mutate(ctx context.Context, m generated.Mutation) (gener
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SubscriberMutation", m)
 }
 
-// The TFASettingsFunc type is an adapter to allow the use of ordinary
-// function as TFASettings mutator.
-type TFASettingsFunc func(context.Context, *generated.TFASettingsMutation) (generated.Value, error)
+// The TFASettingFunc type is an adapter to allow the use of ordinary
+// function as TFASetting mutator.
+type TFASettingFunc func(context.Context, *generated.TFASettingMutation) (generated.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f TFASettingsFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.TFASettingsMutation); ok {
+func (f TFASettingFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.TFASettingMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.TFASettingsMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.TFASettingMutation", m)
 }
 
 // The TemplateFunc type is an adapter to allow the use of ordinary

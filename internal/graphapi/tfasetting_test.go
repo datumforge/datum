@@ -41,7 +41,7 @@ func (suite *GraphTestSuite) TestQueryTFASetting() {
 		{
 			name:     "valid user, but not auth",
 			userID:   user2.ID,
-			errorMsg: "tfa_settings not found",
+			errorMsg: "tfa_setting not found",
 		},
 	}
 
@@ -52,7 +52,7 @@ func (suite *GraphTestSuite) TestQueryTFASetting() {
 			reqCtx, err := userContextWithID(tc.userID)
 			require.NoError(t, err)
 
-			resp, err := suite.client.datum.GetTFASettings(reqCtx)
+			resp, err := suite.client.datum.GetTFASetting(reqCtx)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -87,12 +87,12 @@ func (suite *GraphTestSuite) TestMutationCreateTFASetting() {
 
 	testCases := []struct {
 		name   string
-		input  datumclient.CreateTFASettingsInput
+		input  datumclient.CreateTFASettingInput
 		errMsg string
 	}{
 		{
 			name: "happy path",
-			input: datumclient.CreateTFASettingsInput{
+			input: datumclient.CreateTFASettingInput{
 				TotpAllowed: lo.ToPtr(true),
 			},
 		},
@@ -101,7 +101,7 @@ func (suite *GraphTestSuite) TestMutationCreateTFASetting() {
 	for _, tc := range testCases {
 		t.Run("Create "+tc.name, func(t *testing.T) {
 			// update user
-			resp, err := suite.client.datum.CreateTFASettings(reqCtx, tc.input)
+			resp, err := suite.client.datum.CreateTFASetting(reqCtx, tc.input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -113,11 +113,11 @@ func (suite *GraphTestSuite) TestMutationCreateTFASetting() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			require.NotNil(t, resp.CreateTFASettings.TfaSettings)
+			require.NotNil(t, resp.CreateTFASetting.TfaSetting)
 
 			// Make sure provided values match
-			assert.Equal(t, tc.input.TotpAllowed, resp.CreateTFASettings.TfaSettings.TotpAllowed)
-			assert.Empty(t, resp.CreateTFASettings.TfaSettings.RecoveryCodes)
+			assert.Equal(t, tc.input.TotpAllowed, resp.CreateTFASetting.TfaSetting.TotpAllowed)
+			assert.Empty(t, resp.CreateTFASetting.TfaSetting.RecoveryCodes)
 
 			// make sure user setting was not updated
 			userSetting, err := user.Setting(ctx)
@@ -148,24 +148,24 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 
 	testCases := []struct {
 		name   string
-		input  datumclient.UpdateTFASettingsInput
+		input  datumclient.UpdateTFASettingInput
 		errMsg string
 	}{
 		{
 			name: "update verify",
-			input: datumclient.UpdateTFASettingsInput{
+			input: datumclient.UpdateTFASettingInput{
 				Verified: lo.ToPtr(true),
 			},
 		},
 		{
 			name: "regen codes",
-			input: datumclient.UpdateTFASettingsInput{
+			input: datumclient.UpdateTFASettingInput{
 				RegenBackupCodes: lo.ToPtr(true),
 			},
 		},
 		{
 			name: "regen codes - false",
-			input: datumclient.UpdateTFASettingsInput{
+			input: datumclient.UpdateTFASettingInput{
 				RegenBackupCodes: lo.ToPtr(false),
 			},
 		},
@@ -176,7 +176,7 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
 			// update user
-			resp, err := suite.client.datum.UpdateTFASettings(reqCtx, tc.input)
+			resp, err := suite.client.datum.UpdateTFASetting(reqCtx, tc.input)
 
 			if tc.errMsg != "" {
 				require.Error(t, err)
@@ -188,17 +188,17 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 
 			require.NoError(t, err)
 			require.NotNil(t, resp)
-			require.NotNil(t, resp.UpdateTFASettings.TfaSettings)
+			require.NotNil(t, resp.UpdateTFASetting.TfaSetting)
 
 			// Make sure provided values match
-			assert.NotEmpty(t, resp.UpdateTFASettings.TfaSettings.RecoveryCodes)
+			assert.NotEmpty(t, resp.UpdateTFASetting.TfaSetting.RecoveryCodes)
 
 			// backup codes should only be regenerated on explicit request
 			if tc.input.RegenBackupCodes != nil {
 				if *tc.input.RegenBackupCodes {
-					assert.NotEqual(t, recoveryCodes, resp.UpdateTFASettings.TfaSettings.RecoveryCodes)
+					assert.NotEqual(t, recoveryCodes, resp.UpdateTFASetting.TfaSetting.RecoveryCodes)
 				} else {
-					assert.Equal(t, recoveryCodes, resp.UpdateTFASettings.TfaSettings.RecoveryCodes)
+					assert.Equal(t, recoveryCodes, resp.UpdateTFASetting.TfaSetting.RecoveryCodes)
 				}
 			}
 
@@ -211,12 +211,12 @@ func (suite *GraphTestSuite) TestMutationUpdateTFASetting() {
 			require.NoError(t, err)
 			require.Len(t, userSettings.UserSettings.Edges, 1)
 
-			if resp.UpdateTFASettings.TfaSettings.Verified {
+			if resp.UpdateTFASetting.TfaSetting.Verified {
 				assert.True(t, *userSettings.UserSettings.Edges[0].Node.IsTfaEnabled)
 			}
 
 			// set at the end so we can compare later
-			recoveryCodes = resp.UpdateTFASettings.TfaSettings.RecoveryCodes
+			recoveryCodes = resp.UpdateTFASetting.TfaSetting.RecoveryCodes
 		})
 	}
 }

@@ -5402,11 +5402,11 @@
     "/tfa-settings": {
       "get": {
         "tags": [
-          "TFASettings"
+          "TFASetting"
         ],
-        "summary": "List TFASettings",
-        "description": "List TFASettings.",
-        "operationId": "listTFASettings",
+        "summary": "List TFASetting",
+        "description": "List TFASetting.",
+        "operationId": "listTFASetting",
         "parameters": [
           {
             "name": "page",
@@ -5430,13 +5430,13 @@
         ],
         "responses": {
           "200": {
-            "description": "result TFASettings list",
+            "description": "result TFASetting list",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TFASettings"
+                    "$ref": "#/components/schemas/TFASetting"
                   }
                 }
               }
@@ -5458,13 +5458,13 @@
       },
       "post": {
         "tags": [
-          "TFASettings"
+          "TFASetting"
         ],
-        "summary": "Create a new TFASettings",
-        "description": "Creates a new TFASettings and persists it to storage.",
-        "operationId": "createTFASettings",
+        "summary": "Create a new TFASetting",
+        "description": "Creates a new TFASetting and persists it to storage.",
+        "operationId": "createTFASetting",
         "requestBody": {
-          "description": "TFASettings to create",
+          "description": "TFASetting to create",
           "content": {
             "application/json": {
               "schema": {
@@ -5493,11 +5493,11 @@
         },
         "responses": {
           "200": {
-            "description": "TFASettings created",
+            "description": "TFASetting created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TFASettings"
+                  "$ref": "#/components/schemas/TFASetting"
                 }
               }
             }
@@ -5517,16 +5517,16 @@
     "/tfa-settings/{id}": {
       "get": {
         "tags": [
-          "TFASettings"
+          "TFASetting"
         ],
-        "summary": "Find a TFASettings by ID",
-        "description": "Finds the TFASettings with the requested ID and returns it.",
-        "operationId": "readTFASettings",
+        "summary": "Find a TFASetting by ID",
+        "description": "Finds the TFASetting with the requested ID and returns it.",
+        "operationId": "readTFASetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the TFASettings",
+            "description": "ID of the TFASetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -5535,11 +5535,11 @@
         ],
         "responses": {
           "200": {
-            "description": "TFASettings with requested ID was found",
+            "description": "TFASetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TFASettings"
+                  "$ref": "#/components/schemas/TFASetting"
                 }
               }
             }
@@ -5560,16 +5560,16 @@
       },
       "patch": {
         "tags": [
-          "TFASettings"
+          "TFASetting"
         ],
-        "summary": "Updates a TFASettings",
-        "description": "Updates a TFASettings and persists changes to storage.",
-        "operationId": "updateTFASettings",
+        "summary": "Updates a TFASetting",
+        "description": "Updates a TFASetting and persists changes to storage.",
+        "operationId": "updateTFASetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the TFASettings",
+            "description": "ID of the TFASetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -5577,7 +5577,7 @@
           }
         ],
         "requestBody": {
-          "description": "TFASettings properties to update",
+          "description": "TFASetting properties to update",
           "content": {
             "application/json": {
               "schema": {
@@ -5603,11 +5603,11 @@
         },
         "responses": {
           "200": {
-            "description": "TFASettings updated",
+            "description": "TFASetting updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TFASettings"
+                  "$ref": "#/components/schemas/TFASetting"
                 }
               }
             }
@@ -5630,16 +5630,16 @@
     "/tfa-settings/{id}/owner": {
       "get": {
         "tags": [
-          "TFASettings"
+          "TFASetting"
         ],
         "summary": "Find the attached User",
-        "description": "Find the attached User of the TFASettings with the given ID",
-        "operationId": "readTFASettingsOwner",
+        "description": "Find the attached User of the TFASetting with the given ID",
+        "operationId": "readTFASettingOwner",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the TFASettings",
+            "description": "ID of the TFASetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -5648,7 +5648,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User attached to TFASettings with requested ID was found",
+            "description": "User attached to TFASetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
@@ -7039,7 +7039,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TFASettings"
+                    "$ref": "#/components/schemas/TFASetting"
                   }
                 }
               }
@@ -8158,7 +8158,7 @@
           "token"
         ]
       },
-      "TFASettings": {
+      "TFASetting": {
         "type": "object",
         "properties": {
           "id": {
@@ -8275,7 +8275,7 @@
           "tfa_settings": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TFASettings"
+              "$ref": "#/components/schemas/TFASetting"
             }
           },
           "setting": {

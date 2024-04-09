@@ -11,29 +11,29 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 )
 
-// TFASettingsDelete is the builder for deleting a TFASettings entity.
-type TFASettingsDelete struct {
+// TFASettingDelete is the builder for deleting a TFASetting entity.
+type TFASettingDelete struct {
 	config
 	hooks    []Hook
-	mutation *TFASettingsMutation
+	mutation *TFASettingMutation
 }
 
-// Where appends a list predicates to the TFASettingsDelete builder.
-func (tsd *TFASettingsDelete) Where(ps ...predicate.TFASettings) *TFASettingsDelete {
+// Where appends a list predicates to the TFASettingDelete builder.
+func (tsd *TFASettingDelete) Where(ps ...predicate.TFASetting) *TFASettingDelete {
 	tsd.mutation.Where(ps...)
 	return tsd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (tsd *TFASettingsDelete) Exec(ctx context.Context) (int, error) {
+func (tsd *TFASettingDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, tsd.sqlExec, tsd.mutation, tsd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tsd *TFASettingsDelete) ExecX(ctx context.Context) int {
+func (tsd *TFASettingDelete) ExecX(ctx context.Context) int {
 	n, err := tsd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -41,9 +41,9 @@ func (tsd *TFASettingsDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (tsd *TFASettingsDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(tfasettings.Table, sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString))
-	_spec.Node.Schema = tsd.schemaConfig.TFASettings
+func (tsd *TFASettingDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(tfasetting.Table, sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString))
+	_spec.Node.Schema = tsd.schemaConfig.TFASetting
 	ctx = internal.NewSchemaConfigContext(ctx, tsd.schemaConfig)
 	if ps := tsd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -60,32 +60,32 @@ func (tsd *TFASettingsDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// TFASettingsDeleteOne is the builder for deleting a single TFASettings entity.
-type TFASettingsDeleteOne struct {
-	tsd *TFASettingsDelete
+// TFASettingDeleteOne is the builder for deleting a single TFASetting entity.
+type TFASettingDeleteOne struct {
+	tsd *TFASettingDelete
 }
 
-// Where appends a list predicates to the TFASettingsDelete builder.
-func (tsdo *TFASettingsDeleteOne) Where(ps ...predicate.TFASettings) *TFASettingsDeleteOne {
+// Where appends a list predicates to the TFASettingDelete builder.
+func (tsdo *TFASettingDeleteOne) Where(ps ...predicate.TFASetting) *TFASettingDeleteOne {
 	tsdo.tsd.mutation.Where(ps...)
 	return tsdo
 }
 
 // Exec executes the deletion query.
-func (tsdo *TFASettingsDeleteOne) Exec(ctx context.Context) error {
+func (tsdo *TFASettingDeleteOne) Exec(ctx context.Context) error {
 	n, err := tsdo.tsd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{tfasettings.Label}
+		return &NotFoundError{tfasetting.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tsdo *TFASettingsDeleteOne) ExecX(ctx context.Context) {
+func (tsdo *TFASettingDeleteOne) ExecX(ctx context.Context) {
 	if err := tsdo.Exec(ctx); err != nil {
 		panic(err)
 	}

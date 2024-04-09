@@ -92,9 +92,11 @@ func (r *queryResolver) Subscribers(ctx context.Context, after *entgql.Cursor[st
 	return withTransactionalMutation(ctx).Subscriber.Query().Paginate(ctx, after, first, before, last, generated.WithSubscriberFilter(where.Filter))
 }
 
-// TfaSettingsSlice is the resolver for the tfaSettingsSlice field.
-func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error) {
-	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))
+// TfaSettings is the resolver for the tfaSettings field.
+func (r *queryResolver) TfaSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) (*generated.TFASettingConnection, error) {
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
+	return withTransactionalMutation(ctx).TFASetting.Query().Paginate(ctx, after, first, before, last, generated.WithTFASettingFilter(where.Filter))
 }
 
 // Templates is the resolver for the templates field.
@@ -137,9 +139,9 @@ func (r *Resolver) UpdateOrganizationInput() UpdateOrganizationInputResolver {
 	return &updateOrganizationInputResolver{r}
 }
 
-// UpdateTFASettingsInput returns UpdateTFASettingsInputResolver implementation.
-func (r *Resolver) UpdateTFASettingsInput() UpdateTFASettingsInputResolver {
-	return &updateTFASettingsInputResolver{r}
+// UpdateTFASettingInput returns UpdateTFASettingInputResolver implementation.
+func (r *Resolver) UpdateTFASettingInput() UpdateTFASettingInputResolver {
+	return &updateTFASettingInputResolver{r}
 }
 
 type queryResolver struct{ *Resolver }
@@ -147,4 +149,4 @@ type createGroupInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }
-type updateTFASettingsInputResolver struct{ *Resolver }
+type updateTFASettingInputResolver struct{ *Resolver }

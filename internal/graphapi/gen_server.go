@@ -51,7 +51,7 @@ type ResolverRoot interface {
 	CreateOrganizationInput() CreateOrganizationInputResolver
 	UpdateGroupInput() UpdateGroupInputResolver
 	UpdateOrganizationInput() UpdateOrganizationInputResolver
-	UpdateTFASettingsInput() UpdateTFASettingsInputResolver
+	UpdateTFASettingInput() UpdateTFASettingInputResolver
 }
 
 type DirectiveRoot struct {
@@ -316,8 +316,8 @@ type ComplexityRoot struct {
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
 		CreateSubscriber          func(childComplexity int, input generated.CreateSubscriberInput) int
-		CreateTFASettings         func(childComplexity int, input generated.CreateTFASettingsInput) int
 		CreateTemplate            func(childComplexity int, input generated.CreateTemplateInput) int
+		CreateTFASetting          func(childComplexity int, input generated.CreateTFASettingInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
@@ -346,8 +346,8 @@ type ComplexityRoot struct {
 		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
 		UpdateSubscriber          func(childComplexity int, id string, input generated.UpdateSubscriberInput) int
-		UpdateTFASettings         func(childComplexity int, input generated.UpdateTFASettingsInput) int
 		UpdateTemplate            func(childComplexity int, id string, input generated.UpdateTemplateInput) int
+		UpdateTFASetting          func(childComplexity int, input generated.UpdateTFASettingInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
 		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
 	}
@@ -687,8 +687,8 @@ type ComplexityRoot struct {
 		Subscribers          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) int
 		Template             func(childComplexity int, id string) int
 		Templates            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) int
-		TfaSettings          func(childComplexity int, id *string) int
-		TfaSettingsSlice     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) int
+		TfaSetting           func(childComplexity int, id *string) int
+		TfaSettings          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) int
 		User                 func(childComplexity int, id string) int
 		UserSetting          func(childComplexity int, id string) int
 		UserSettings         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) int
@@ -739,7 +739,7 @@ type ComplexityRoot struct {
 		Subscribe func(childComplexity int, subscriber string) int
 	}
 
-	TFASettings struct {
+	TFASetting struct {
 		CreatedAt     func(childComplexity int) int
 		CreatedBy     func(childComplexity int) int
 		DeletedAt     func(childComplexity int) int
@@ -754,23 +754,23 @@ type ComplexityRoot struct {
 		Verified      func(childComplexity int) int
 	}
 
-	TFASettingsConnection struct {
+	TFASettingConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	TFASettingsCreatePayload struct {
-		TfaSettings func(childComplexity int) int
+	TFASettingCreatePayload struct {
+		TfaSetting func(childComplexity int) int
 	}
 
-	TFASettingsEdge struct {
+	TFASettingEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
 	}
 
-	TFASettingsUpdatePayload struct {
-		TfaSettings func(childComplexity int) int
+	TFASettingUpdatePayload struct {
+		TfaSetting func(childComplexity int) int
 	}
 
 	Template struct {
@@ -936,8 +936,8 @@ type MutationResolver interface {
 	CreateTemplate(ctx context.Context, input generated.CreateTemplateInput) (*TemplateCreatePayload, error)
 	UpdateTemplate(ctx context.Context, id string, input generated.UpdateTemplateInput) (*TemplateUpdatePayload, error)
 	DeleteTemplate(ctx context.Context, id string) (*TemplateDeletePayload, error)
-	CreateTFASettings(ctx context.Context, input generated.CreateTFASettingsInput) (*TFASettingsCreatePayload, error)
-	UpdateTFASettings(ctx context.Context, input generated.UpdateTFASettingsInput) (*TFASettingsUpdatePayload, error)
+	CreateTFASetting(ctx context.Context, input generated.CreateTFASettingInput) (*TFASettingCreatePayload, error)
+	UpdateTFASetting(ctx context.Context, input generated.UpdateTFASettingInput) (*TFASettingUpdatePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
@@ -960,8 +960,8 @@ type QueryResolver interface {
 	OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error)
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
 	Subscribers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) (*generated.SubscriberConnection, error)
-	TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error)
 	Templates(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) (*generated.TemplateConnection, error)
+	TfaSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) (*generated.TFASettingConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
 	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
 	Entitlement(ctx context.Context, id string) (*generated.Entitlement, error)
@@ -978,7 +978,7 @@ type QueryResolver interface {
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
 	Subscriber(ctx context.Context, id string) (*generated.Subscriber, error)
 	Template(ctx context.Context, id string) (*generated.Template, error)
-	TfaSettings(ctx context.Context, id *string) (*generated.TFASettings, error)
+	TfaSetting(ctx context.Context, id *string) (*generated.TFASetting, error)
 	User(ctx context.Context, id string) (*generated.User, error)
 	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
 }
@@ -1000,8 +1000,8 @@ type UpdateOrganizationInputResolver interface {
 	AddOrgMembers(ctx context.Context, obj *generated.UpdateOrganizationInput, data []*generated.CreateOrgMembershipInput) error
 	UpdateOrgSettings(ctx context.Context, obj *generated.UpdateOrganizationInput, data *generated.UpdateOrganizationSettingInput) error
 }
-type UpdateTFASettingsInputResolver interface {
-	RegenBackupCodes(ctx context.Context, obj *generated.UpdateTFASettingsInput, data *bool) error
+type UpdateTFASettingInputResolver interface {
+	RegenBackupCodes(ctx context.Context, obj *generated.UpdateTFASettingInput, data *bool) error
 }
 
 type executableSchema struct {
@@ -2100,17 +2100,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateSubscriber(childComplexity, args["input"].(generated.CreateSubscriberInput)), true
 
-	case "Mutation.createTFASettings":
-		if e.complexity.Mutation.CreateTFASettings == nil {
+	case "Mutation.createTFASetting":
+		if e.complexity.Mutation.CreateTFASetting == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createTFASettings_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createTFASetting_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTFASettings(childComplexity, args["input"].(generated.CreateTFASettingsInput)), true
+		return e.complexity.Mutation.CreateTFASetting(childComplexity, args["input"].(generated.CreateTFASettingInput)), true
 
 	case "Mutation.createTemplate":
 		if e.complexity.Mutation.CreateTemplate == nil {
@@ -2460,17 +2460,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateSubscriber(childComplexity, args["id"].(string), args["input"].(generated.UpdateSubscriberInput)), true
 
-	case "Mutation.updateTFASettings":
-		if e.complexity.Mutation.UpdateTFASettings == nil {
+	case "Mutation.updateTFASetting":
+		if e.complexity.Mutation.UpdateTFASetting == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateTFASettings_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateTFASetting_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTFASettings(childComplexity, args["input"].(generated.UpdateTFASettingsInput)), true
+		return e.complexity.Mutation.UpdateTFASetting(childComplexity, args["input"].(generated.UpdateTFASettingInput)), true
 
 	case "Mutation.updateTemplate":
 		if e.complexity.Mutation.UpdateTemplate == nil {
@@ -4192,19 +4192,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TfaSettings(childComplexity, args["id"].(*string)), true
-
-	case "Query.tfaSettingsSlice":
-		if e.complexity.Query.TfaSettingsSlice == nil {
-			break
-		}
-
-		args, err := ec.field_Query_tfaSettingsSlice_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.TfaSettingsSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.TFASettingsWhereInput)), true
+		return e.complexity.Query.TfaSettings(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.TFASettingWhereInput)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -4420,138 +4408,138 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Subscription.Subscribe(childComplexity, args["subscriber"].(string)), true
 
-	case "TFASettings.createdAt":
-		if e.complexity.TFASettings.CreatedAt == nil {
+	case "TFASetting.createdAt":
+		if e.complexity.TFASetting.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.CreatedAt(childComplexity), true
+		return e.complexity.TFASetting.CreatedAt(childComplexity), true
 
-	case "TFASettings.createdBy":
-		if e.complexity.TFASettings.CreatedBy == nil {
+	case "TFASetting.createdBy":
+		if e.complexity.TFASetting.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.CreatedBy(childComplexity), true
+		return e.complexity.TFASetting.CreatedBy(childComplexity), true
 
-	case "TFASettings.deletedAt":
-		if e.complexity.TFASettings.DeletedAt == nil {
+	case "TFASetting.deletedAt":
+		if e.complexity.TFASetting.DeletedAt == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.DeletedAt(childComplexity), true
+		return e.complexity.TFASetting.DeletedAt(childComplexity), true
 
-	case "TFASettings.deletedBy":
-		if e.complexity.TFASettings.DeletedBy == nil {
+	case "TFASetting.deletedBy":
+		if e.complexity.TFASetting.DeletedBy == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.DeletedBy(childComplexity), true
+		return e.complexity.TFASetting.DeletedBy(childComplexity), true
 
-	case "TFASettings.id":
-		if e.complexity.TFASettings.ID == nil {
+	case "TFASetting.id":
+		if e.complexity.TFASetting.ID == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.ID(childComplexity), true
+		return e.complexity.TFASetting.ID(childComplexity), true
 
-	case "TFASettings.owner":
-		if e.complexity.TFASettings.Owner == nil {
+	case "TFASetting.owner":
+		if e.complexity.TFASetting.Owner == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.Owner(childComplexity), true
+		return e.complexity.TFASetting.Owner(childComplexity), true
 
-	case "TFASettings.recoveryCodes":
-		if e.complexity.TFASettings.RecoveryCodes == nil {
+	case "TFASetting.recoveryCodes":
+		if e.complexity.TFASetting.RecoveryCodes == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.RecoveryCodes(childComplexity), true
+		return e.complexity.TFASetting.RecoveryCodes(childComplexity), true
 
-	case "TFASettings.tfaSecret":
-		if e.complexity.TFASettings.TfaSecret == nil {
+	case "TFASetting.tfaSecret":
+		if e.complexity.TFASetting.TfaSecret == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.TfaSecret(childComplexity), true
+		return e.complexity.TFASetting.TfaSecret(childComplexity), true
 
-	case "TFASettings.totpAllowed":
-		if e.complexity.TFASettings.TotpAllowed == nil {
+	case "TFASetting.totpAllowed":
+		if e.complexity.TFASetting.TotpAllowed == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.TotpAllowed(childComplexity), true
+		return e.complexity.TFASetting.TotpAllowed(childComplexity), true
 
-	case "TFASettings.updatedAt":
-		if e.complexity.TFASettings.UpdatedAt == nil {
+	case "TFASetting.updatedAt":
+		if e.complexity.TFASetting.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.UpdatedAt(childComplexity), true
+		return e.complexity.TFASetting.UpdatedAt(childComplexity), true
 
-	case "TFASettings.updatedBy":
-		if e.complexity.TFASettings.UpdatedBy == nil {
+	case "TFASetting.updatedBy":
+		if e.complexity.TFASetting.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.UpdatedBy(childComplexity), true
+		return e.complexity.TFASetting.UpdatedBy(childComplexity), true
 
-	case "TFASettings.verified":
-		if e.complexity.TFASettings.Verified == nil {
+	case "TFASetting.verified":
+		if e.complexity.TFASetting.Verified == nil {
 			break
 		}
 
-		return e.complexity.TFASettings.Verified(childComplexity), true
+		return e.complexity.TFASetting.Verified(childComplexity), true
 
-	case "TFASettingsConnection.edges":
-		if e.complexity.TFASettingsConnection.Edges == nil {
+	case "TFASettingConnection.edges":
+		if e.complexity.TFASettingConnection.Edges == nil {
 			break
 		}
 
-		return e.complexity.TFASettingsConnection.Edges(childComplexity), true
+		return e.complexity.TFASettingConnection.Edges(childComplexity), true
 
-	case "TFASettingsConnection.pageInfo":
-		if e.complexity.TFASettingsConnection.PageInfo == nil {
+	case "TFASettingConnection.pageInfo":
+		if e.complexity.TFASettingConnection.PageInfo == nil {
 			break
 		}
 
-		return e.complexity.TFASettingsConnection.PageInfo(childComplexity), true
+		return e.complexity.TFASettingConnection.PageInfo(childComplexity), true
 
-	case "TFASettingsConnection.totalCount":
-		if e.complexity.TFASettingsConnection.TotalCount == nil {
+	case "TFASettingConnection.totalCount":
+		if e.complexity.TFASettingConnection.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.TFASettingsConnection.TotalCount(childComplexity), true
+		return e.complexity.TFASettingConnection.TotalCount(childComplexity), true
 
-	case "TFASettingsCreatePayload.tfaSettings":
-		if e.complexity.TFASettingsCreatePayload.TfaSettings == nil {
+	case "TFASettingCreatePayload.tfaSetting":
+		if e.complexity.TFASettingCreatePayload.TfaSetting == nil {
 			break
 		}
 
-		return e.complexity.TFASettingsCreatePayload.TfaSettings(childComplexity), true
+		return e.complexity.TFASettingCreatePayload.TfaSetting(childComplexity), true
 
-	case "TFASettingsEdge.cursor":
-		if e.complexity.TFASettingsEdge.Cursor == nil {
+	case "TFASettingEdge.cursor":
+		if e.complexity.TFASettingEdge.Cursor == nil {
 			break
 		}
 
-		return e.complexity.TFASettingsEdge.Cursor(childComplexity), true
+		return e.complexity.TFASettingEdge.Cursor(childComplexity), true
 
-	case "TFASettingsEdge.node":
-		if e.complexity.TFASettingsEdge.Node == nil {
+	case "TFASettingEdge.node":
+		if e.complexity.TFASettingEdge.Node == nil {
 			break
 		}
 
-		return e.complexity.TFASettingsEdge.Node(childComplexity), true
+		return e.complexity.TFASettingEdge.Node(childComplexity), true
 
-	case "TFASettingsUpdatePayload.tfaSettings":
-		if e.complexity.TFASettingsUpdatePayload.TfaSettings == nil {
+	case "TFASettingUpdatePayload.tfaSetting":
+		if e.complexity.TFASettingUpdatePayload.TfaSetting == nil {
 			break
 		}
 
-		return e.complexity.TFASettingsUpdatePayload.TfaSettings(childComplexity), true
+		return e.complexity.TFASettingUpdatePayload.TfaSetting(childComplexity), true
 
 	case "Template.createdAt":
 		if e.complexity.Template.CreatedAt == nil {
@@ -5099,8 +5087,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOrganizationSettingInput,
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
 		ec.unmarshalInputCreateSubscriberInput,
-		ec.unmarshalInputCreateTFASettingsInput,
 		ec.unmarshalInputCreateTemplateInput,
+		ec.unmarshalInputCreateTFASettingInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserSettingInput,
 		ec.unmarshalInputEntitlementWhereInput,
@@ -5122,9 +5110,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputOrganizationWhereInput,
 		ec.unmarshalInputPersonalAccessTokenWhereInput,
 		ec.unmarshalInputSubscriberWhereInput,
-		ec.unmarshalInputTFASettingsWhereInput,
 		ec.unmarshalInputTemplateOrder,
 		ec.unmarshalInputTemplateWhereInput,
+		ec.unmarshalInputTFASettingWhereInput,
 		ec.unmarshalInputUpdateEntitlementInput,
 		ec.unmarshalInputUpdateGroupInput,
 		ec.unmarshalInputUpdateGroupMembershipInput,
@@ -5138,8 +5126,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateOrganizationSettingInput,
 		ec.unmarshalInputUpdatePersonalAccessTokenInput,
 		ec.unmarshalInputUpdateSubscriberInput,
-		ec.unmarshalInputUpdateTFASettingsInput,
 		ec.unmarshalInputUpdateTemplateInput,
+		ec.unmarshalInputUpdateTFASettingInput,
 		ec.unmarshalInputUpdateUserInput,
 		ec.unmarshalInputUpdateUserSettingInput,
 		ec.unmarshalInputUserOrder,
@@ -5647,10 +5635,10 @@ input CreateSubscriberInput {
   ownerID: ID
 }
 """
-CreateTFASettingsInput is used for create TFASettings object.
+CreateTFASettingInput is used for create TFASetting object.
 Input was generated by ent.
 """
-input CreateTFASettingsInput {
+input CreateTFASettingInput {
   createdAt: Time
   updatedAt: Time
   createdBy: String
@@ -9887,7 +9875,7 @@ type Query {
     """
     where: SubscriberWhereInput
   ): SubscriberConnection!
-  tfaSettingsSlice(
+  tfaSettings(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -9909,7 +9897,7 @@ type Query {
     last: Int
 
     """
-    Filtering options for TFASettingsSlice returned from the connection.
+    Filtering options for TFASettings returned from the connection.
     """
     where: TFASettingsWhereInput
   ): TFASettingsConnection!
@@ -10250,7 +10238,7 @@ input SubscriberWhereInput {
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
 }
-type TFASettings implements Node {
+type TFASetting implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
@@ -10279,11 +10267,11 @@ type TFASettings implements Node {
 """
 A connection to a list of items.
 """
-type TFASettingsConnection {
+type TFASettingConnection {
   """
   A list of edges.
   """
-  edges: [TFASettingsEdge]
+  edges: [TFASettingEdge]
   """
   Information to aid in pagination.
   """
@@ -10296,24 +10284,24 @@ type TFASettingsConnection {
 """
 An edge in a connection.
 """
-type TFASettingsEdge {
+type TFASettingEdge {
   """
   The item at the end of the edge.
   """
-  node: TFASettings
+  node: TFASetting
   """
   A cursor for use in pagination.
   """
   cursor: Cursor!
 }
 """
-TFASettingsWhereInput is used for filtering TFASettings objects.
+TFASettingWhereInput is used for filtering TFASetting objects.
 Input was generated by ent.
 """
-input TFASettingsWhereInput {
-  not: TFASettingsWhereInput
-  and: [TFASettingsWhereInput!]
-  or: [TFASettingsWhereInput!]
+input TFASettingWhereInput {
+  not: TFASettingWhereInput
+  and: [TFASettingWhereInput!]
+  or: [TFASettingWhereInput!]
   """
   id field predicates
   """
@@ -11114,10 +11102,10 @@ input UpdateSubscriberInput {
   clearOwner: Boolean
 }
 """
-UpdateTFASettingsInput is used for update TFASettings object.
+UpdateTFASettingInput is used for update TFASetting object.
 Input was generated by ent.
 """
-input UpdateTFASettingsInput {
+input UpdateTFASettingInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
   updatedBy: String
@@ -11315,7 +11303,7 @@ type User implements Node {
   """
   authProvider: UserAuthProvider!
   personalAccessTokens: [PersonalAccessToken!]
-  tfaSettings: [TFASettings!]
+  tfaSettings: [TFASetting!]
   setting: UserSetting!
   groups: [Group!]
   organizations: [Organization!]
@@ -11936,7 +11924,7 @@ input UserWhereInput {
   tfa_settings edge predicates
   """
   hasTfaSettings: Boolean
-  hasTfaSettingsWith: [TFASettingsWhereInput!]
+  hasTfaSettingsWith: [TFASettingWhereInput!]
   """
   setting edge predicates
   """
@@ -13006,58 +12994,58 @@ type TemplateDeletePayload {
 }`, BuiltIn: false},
 	{Name: "../../schema/tfasettings.graphql", Input: `extend type Query {
     """
-    Look up tfaSettings for the current user
+    Look up tfaSetting for the current user
     """
-     tfaSettings(
+     tfaSetting(
         """
-        ID of the tfaSettings
+        ID of the tfaSetting
         """
         id: ID
-    ):  TFASettings!
+    ):  TFASetting!
 }
 
 extend type Mutation{
     """
-    Create a new tfaSettings
+    Create a new tfaSetting
     """
-    createTFASettings(
+    createTFASetting(
         """
-        values of the tfaSettings
+        values of the tfaSetting
         """
-        input: CreateTFASettingsInput!
-    ): TFASettingsCreatePayload!
+        input: CreateTFASettingInput!
+    ): TFASettingCreatePayload!
     """
-    Update an existing tfaSettings
+    Update an existing tfaSetting
     """
-    updateTFASettings(
+    updateTFASetting(
         """
-        New values for the tfaSettings
+        New values for the tfaSetting
         """
-        input: UpdateTFASettingsInput!
-    ): TFASettingsUpdatePayload!
+        input: UpdateTFASettingInput!
+    ): TFASettingUpdatePayload!
 }
 
 """
-Return response for createTFASettings mutation
+Return response for createTFASetting mutation
 """
-type TFASettingsCreatePayload {
+type TFASettingCreatePayload {
     """
-    Created tfaSettings
+    Created tfaSetting
     """
-    tfaSettings: TFASettings!
+    tfaSetting: TFASetting!
 }
 
 """
-Return response for updateTFASettings mutation
+Return response for updateTFASetting mutation
 """
-type TFASettingsUpdatePayload {
+type TFASettingUpdatePayload {
     """
-    Updated tfaSettings
+    Updated tfaSetting
     """
-    tfaSettings: TFASettings!
+    tfaSetting: TFASetting!
 }
 
-extend input UpdateTFASettingsInput {
+extend input UpdateTFASettingInput {
     """
     Whether to regenerate backup codes
     """
@@ -13360,13 +13348,13 @@ func (ec *executionContext) field_Mutation_createSubscriber_args(ctx context.Con
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createTFASetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 generated.CreateTFASettingsInput
+	var arg0 generated.CreateTFASettingInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTFASettingsInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateTFASettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTFASettingInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -13936,13 +13924,13 @@ func (ec *executionContext) field_Mutation_updateSubscriber_args(ctx context.Con
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updateTFASettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateTFASetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 generated.UpdateTFASettingsInput
+	var arg0 generated.UpdateTFASettingInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingsInput(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateTFASettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -15127,30 +15115,15 @@ func (ec *executionContext) field_Query_tfaSettingsSlice_args(ctx context.Contex
 		}
 	}
 	args["last"] = arg3
-	var arg4 *generated.TFASettingsWhereInput
+	var arg4 *generated.TFASettingWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx, tmp)
+		arg4, err = ec.unmarshalOTFASettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["where"] = arg4
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_tfaSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -24428,7 +24401,7 @@ func (ec *executionContext) _Mutation_createTFASettings(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTFASettings(rctx, fc.Args["input"].(generated.CreateTFASettingsInput))
+		return ec.resolvers.Mutation().CreateTFASetting(rctx, fc.Args["input"].(generated.CreateTFASettingInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24440,12 +24413,12 @@ func (ec *executionContext) _Mutation_createTFASettings(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*TFASettingsCreatePayload)
+	res := resTmp.(*TFASettingCreatePayload)
 	fc.Result = res
-	return ec.marshalNTFASettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsCreatePayload(ctx, field.Selections, res)
+	return ec.marshalNTFASettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingCreatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createTFASettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_createTFASetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -24453,10 +24426,10 @@ func (ec *executionContext) fieldContext_Mutation_createTFASettings(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tfaSettings":
-				return ec.fieldContext_TFASettingsCreatePayload_tfaSettings(ctx, field)
+			case "tfaSetting":
+				return ec.fieldContext_TFASettingCreatePayload_tfaSetting(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsCreatePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASettingCreatePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -24466,15 +24439,15 @@ func (ec *executionContext) fieldContext_Mutation_createTFASettings(ctx context.
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTFASettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_createTFASetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateTFASettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateTFASettings(ctx, field)
+func (ec *executionContext) _Mutation_updateTFASetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTFASetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -24487,7 +24460,7 @@ func (ec *executionContext) _Mutation_updateTFASettings(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTFASettings(rctx, fc.Args["input"].(generated.UpdateTFASettingsInput))
+		return ec.resolvers.Mutation().UpdateTFASetting(rctx, fc.Args["input"].(generated.UpdateTFASettingInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -24499,12 +24472,12 @@ func (ec *executionContext) _Mutation_updateTFASettings(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*TFASettingsUpdatePayload)
+	res := resTmp.(*TFASettingUpdatePayload)
 	fc.Result = res
-	return ec.marshalNTFASettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsUpdatePayload(ctx, field.Selections, res)
+	return ec.marshalNTFASettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingUpdatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateTFASettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateTFASetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -24512,10 +24485,10 @@ func (ec *executionContext) fieldContext_Mutation_updateTFASettings(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "tfaSettings":
-				return ec.fieldContext_TFASettingsUpdatePayload_tfaSettings(ctx, field)
+			case "tfaSetting":
+				return ec.fieldContext_TFASettingUpdatePayload_tfaSetting(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsUpdatePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASettingUpdatePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -24525,7 +24498,7 @@ func (ec *executionContext) fieldContext_Mutation_updateTFASettings(ctx context.
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateTFASettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateTFASetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -35147,8 +35120,8 @@ func (ec *executionContext) fieldContext_Query_subscribers(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_tfaSettingsSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_tfaSettingsSlice(ctx, field)
+func (ec *executionContext) _Query_tfaSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_tfaSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -35161,7 +35134,7 @@ func (ec *executionContext) _Query_tfaSettingsSlice(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TfaSettingsSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.TFASettingsWhereInput))
+		return ec.resolvers.Query().TfaSettings(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.TFASettingWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35173,12 +35146,12 @@ func (ec *executionContext) _Query_tfaSettingsSlice(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.TFASettingsConnection)
+	res := resTmp.(*generated.TFASettingConnection)
 	fc.Result = res
-	return ec.marshalNTFASettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsConnection(ctx, field.Selections, res)
+	return ec.marshalNTFASettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_tfaSettingsSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -35187,13 +35160,13 @@ func (ec *executionContext) fieldContext_Query_tfaSettingsSlice(ctx context.Cont
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "edges":
-				return ec.fieldContext_TFASettingsConnection_edges(ctx, field)
+				return ec.fieldContext_TFASettingConnection_edges(ctx, field)
 			case "pageInfo":
-				return ec.fieldContext_TFASettingsConnection_pageInfo(ctx, field)
+				return ec.fieldContext_TFASettingConnection_pageInfo(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_TFASettingsConnection_totalCount(ctx, field)
+				return ec.fieldContext_TFASettingConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASettingConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -35203,7 +35176,7 @@ func (ec *executionContext) fieldContext_Query_tfaSettingsSlice(ctx context.Cont
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_tfaSettingsSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_tfaSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -36629,7 +36602,7 @@ func (ec *executionContext) _Query_tfaSettings(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TfaSettings(rctx, fc.Args["id"].(*string))
+		return ec.resolvers.Query().TfaSetting(rctx, fc.Args["id"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -36641,12 +36614,12 @@ func (ec *executionContext) _Query_tfaSettings(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.TFASettings)
+	res := resTmp.(*generated.TFASetting)
 	fc.Result = res
-	return ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
+	return ec.marshalNTFASetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_tfaSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -36655,31 +36628,31 @@ func (ec *executionContext) fieldContext_Query_tfaSettings(ctx context.Context, 
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
+				return ec.fieldContext_TFASetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
+				return ec.fieldContext_TFASetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
+				return ec.fieldContext_TFASetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
+				return ec.fieldContext_TFASetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
+				return ec.fieldContext_TFASetting_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
+				return ec.fieldContext_TFASetting_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+				return ec.fieldContext_TFASetting_deletedBy(ctx, field)
 			case "tfaSecret":
-				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+				return ec.fieldContext_TFASetting_tfaSecret(ctx, field)
 			case "verified":
-				return ec.fieldContext_TFASettings_verified(ctx, field)
+				return ec.fieldContext_TFASetting_verified(ctx, field)
 			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
+				return ec.fieldContext_TFASetting_recoveryCodes(ctx, field)
 			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
+				return ec.fieldContext_TFASetting_totpAllowed(ctx, field)
 			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
+				return ec.fieldContext_TFASetting_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASetting", field.Name)
 		},
 	}
 	defer func() {
@@ -36689,7 +36662,7 @@ func (ec *executionContext) fieldContext_Query_tfaSettings(ctx context.Context, 
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_tfaSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_tfaSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -38187,8 +38160,8 @@ func (ec *executionContext) fieldContext_Subscription_subscribe(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_id(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_id(ctx, field)
+func (ec *executionContext) _TFASetting_id(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38218,9 +38191,9 @@ func (ec *executionContext) _TFASettings_id(ctx context.Context, field graphql.C
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38231,8 +38204,8 @@ func (ec *executionContext) fieldContext_TFASettings_id(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_createdAt(ctx, field)
+func (ec *executionContext) _TFASetting_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38259,9 +38232,9 @@ func (ec *executionContext) _TFASettings_createdAt(ctx context.Context, field gr
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38272,8 +38245,8 @@ func (ec *executionContext) fieldContext_TFASettings_createdAt(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_updatedAt(ctx, field)
+func (ec *executionContext) _TFASetting_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38300,9 +38273,9 @@ func (ec *executionContext) _TFASettings_updatedAt(ctx context.Context, field gr
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38313,8 +38286,8 @@ func (ec *executionContext) fieldContext_TFASettings_updatedAt(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_createdBy(ctx, field)
+func (ec *executionContext) _TFASetting_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_createdBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38341,9 +38314,9 @@ func (ec *executionContext) _TFASettings_createdBy(ctx context.Context, field gr
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38354,8 +38327,8 @@ func (ec *executionContext) fieldContext_TFASettings_createdBy(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_updatedBy(ctx, field)
+func (ec *executionContext) _TFASetting_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_updatedBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38382,9 +38355,9 @@ func (ec *executionContext) _TFASettings_updatedBy(ctx context.Context, field gr
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38395,8 +38368,8 @@ func (ec *executionContext) fieldContext_TFASettings_updatedBy(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_deletedAt(ctx, field)
+func (ec *executionContext) _TFASetting_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_deletedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38423,9 +38396,9 @@ func (ec *executionContext) _TFASettings_deletedAt(ctx context.Context, field gr
 	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38436,8 +38409,8 @@ func (ec *executionContext) fieldContext_TFASettings_deletedAt(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_deletedBy(ctx, field)
+func (ec *executionContext) _TFASetting_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_deletedBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38464,9 +38437,9 @@ func (ec *executionContext) _TFASettings_deletedBy(ctx context.Context, field gr
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38477,8 +38450,8 @@ func (ec *executionContext) fieldContext_TFASettings_deletedBy(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_tfaSecret(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+func (ec *executionContext) _TFASetting_tfaSecret(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_tfaSecret(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38505,9 +38478,9 @@ func (ec *executionContext) _TFASettings_tfaSecret(ctx context.Context, field gr
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_tfaSecret(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_tfaSecret(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38518,8 +38491,8 @@ func (ec *executionContext) fieldContext_TFASettings_tfaSecret(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_verified(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_verified(ctx, field)
+func (ec *executionContext) _TFASetting_verified(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_verified(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38549,9 +38522,9 @@ func (ec *executionContext) _TFASettings_verified(ctx context.Context, field gra
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_verified(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_verified(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38562,8 +38535,8 @@ func (ec *executionContext) fieldContext_TFASettings_verified(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
+func (ec *executionContext) _TFASetting_recoveryCodes(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_recoveryCodes(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38590,9 +38563,9 @@ func (ec *executionContext) _TFASettings_recoveryCodes(ctx context.Context, fiel
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_recoveryCodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_recoveryCodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38603,8 +38576,8 @@ func (ec *executionContext) fieldContext_TFASettings_recoveryCodes(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_totpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_totpAllowed(ctx, field)
+func (ec *executionContext) _TFASetting_totpAllowed(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_totpAllowed(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38631,9 +38604,9 @@ func (ec *executionContext) _TFASettings_totpAllowed(ctx context.Context, field 
 	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_totpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_totpAllowed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38644,8 +38617,8 @@ func (ec *executionContext) fieldContext_TFASettings_totpAllowed(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettings_owner(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettings_owner(ctx, field)
+func (ec *executionContext) _TFASetting_owner(ctx context.Context, field graphql.CollectedField, obj *generated.TFASetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASetting_owner(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38672,9 +38645,9 @@ func (ec *executionContext) _TFASettings_owner(ctx context.Context, field graphq
 	return ec.marshalOUser2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettings_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASetting_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettings",
+		Object:     "TFASetting",
 		Field:      field,
 		IsMethod:   true,
 		IsResolver: false,
@@ -38735,8 +38708,8 @@ func (ec *executionContext) fieldContext_TFASettings_owner(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsConnection_edges(ctx, field)
+func (ec *executionContext) _TFASettingConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingConnection_edges(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38758,32 +38731,32 @@ func (ec *executionContext) _TFASettingsConnection_edges(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.TFASettingsEdge)
+	res := resTmp.([]*generated.TFASettingEdge)
 	fc.Result = res
-	return ec.marshalOTFASettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx, field.Selections, res)
+	return ec.marshalOTFASettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingEdge(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettingsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASettingConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettingsConnection",
+		Object:     "TFASettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "node":
-				return ec.fieldContext_TFASettingsEdge_node(ctx, field)
+				return ec.fieldContext_TFASettingEdge_node(ctx, field)
 			case "cursor":
-				return ec.fieldContext_TFASettingsEdge_cursor(ctx, field)
+				return ec.fieldContext_TFASettingEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettingsEdge", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASettingEdge", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsConnection_pageInfo(ctx, field)
+func (ec *executionContext) _TFASettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingConnection_pageInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38813,9 +38786,9 @@ func (ec *executionContext) _TFASettingsConnection_pageInfo(ctx context.Context,
 	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettingsConnection",
+		Object:     "TFASettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38836,8 +38809,8 @@ func (ec *executionContext) fieldContext_TFASettingsConnection_pageInfo(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsConnection_totalCount(ctx, field)
+func (ec *executionContext) _TFASettingConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingConnection_totalCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38867,9 +38840,9 @@ func (ec *executionContext) _TFASettingsConnection_totalCount(ctx context.Contex
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASettingConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettingsConnection",
+		Object:     "TFASettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38880,8 +38853,8 @@ func (ec *executionContext) fieldContext_TFASettingsConnection_totalCount(ctx co
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettingsCreatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField, obj *TFASettingsCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsCreatePayload_tfaSettings(ctx, field)
+func (ec *executionContext) _TFASettingCreatePayload_tfaSetting(ctx context.Context, field graphql.CollectedField, obj *TFASettingCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingCreatePayload_tfaSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38894,7 +38867,7 @@ func (ec *executionContext) _TFASettingsCreatePayload_tfaSettings(ctx context.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TfaSettings, nil
+		return obj.TfaSetting, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -38906,52 +38879,52 @@ func (ec *executionContext) _TFASettingsCreatePayload_tfaSettings(ctx context.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.TFASettings)
+	res := resTmp.(*generated.TFASetting)
 	fc.Result = res
-	return ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
+	return ec.marshalNTFASetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettingsCreatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASettingCreatePayload_tfaSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettingsCreatePayload",
+		Object:     "TFASettingCreatePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
+				return ec.fieldContext_TFASetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
+				return ec.fieldContext_TFASetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
+				return ec.fieldContext_TFASetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
+				return ec.fieldContext_TFASetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
+				return ec.fieldContext_TFASetting_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
+				return ec.fieldContext_TFASetting_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+				return ec.fieldContext_TFASetting_deletedBy(ctx, field)
 			case "tfaSecret":
-				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+				return ec.fieldContext_TFASetting_tfaSecret(ctx, field)
 			case "verified":
-				return ec.fieldContext_TFASettings_verified(ctx, field)
+				return ec.fieldContext_TFASetting_verified(ctx, field)
 			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
+				return ec.fieldContext_TFASetting_recoveryCodes(ctx, field)
 			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
+				return ec.fieldContext_TFASetting_totpAllowed(ctx, field)
 			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
+				return ec.fieldContext_TFASetting_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASetting", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettingsEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsEdge_node(ctx, field)
+func (ec *executionContext) _TFASettingEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingEdge_node(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -38973,52 +38946,52 @@ func (ec *executionContext) _TFASettingsEdge_node(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.TFASettings)
+	res := resTmp.(*generated.TFASetting)
 	fc.Result = res
-	return ec.marshalOTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
+	return ec.marshalOTFASetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettingsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASettingEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettingsEdge",
+		Object:     "TFASettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
+				return ec.fieldContext_TFASetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
+				return ec.fieldContext_TFASetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
+				return ec.fieldContext_TFASetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
+				return ec.fieldContext_TFASetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
+				return ec.fieldContext_TFASetting_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
+				return ec.fieldContext_TFASetting_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+				return ec.fieldContext_TFASetting_deletedBy(ctx, field)
 			case "tfaSecret":
-				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+				return ec.fieldContext_TFASetting_tfaSecret(ctx, field)
 			case "verified":
-				return ec.fieldContext_TFASettings_verified(ctx, field)
+				return ec.fieldContext_TFASetting_verified(ctx, field)
 			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
+				return ec.fieldContext_TFASetting_recoveryCodes(ctx, field)
 			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
+				return ec.fieldContext_TFASetting_totpAllowed(ctx, field)
 			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
+				return ec.fieldContext_TFASetting_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASetting", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettingsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsEdge_cursor(ctx, field)
+func (ec *executionContext) _TFASettingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.TFASettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingEdge_cursor(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -39048,9 +39021,9 @@ func (ec *executionContext) _TFASettingsEdge_cursor(ctx context.Context, field g
 	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettingsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASettingEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettingsEdge",
+		Object:     "TFASettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -39061,8 +39034,8 @@ func (ec *executionContext) fieldContext_TFASettingsEdge_cursor(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _TFASettingsUpdatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField, obj *TFASettingsUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TFASettingsUpdatePayload_tfaSettings(ctx, field)
+func (ec *executionContext) _TFASettingUpdatePayload_tfaSetting(ctx context.Context, field graphql.CollectedField, obj *TFASettingUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TFASettingUpdatePayload_tfaSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -39075,7 +39048,7 @@ func (ec *executionContext) _TFASettingsUpdatePayload_tfaSettings(ctx context.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TfaSettings, nil
+		return obj.TfaSetting, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -39087,45 +39060,45 @@ func (ec *executionContext) _TFASettingsUpdatePayload_tfaSettings(ctx context.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.TFASettings)
+	res := resTmp.(*generated.TFASetting)
 	fc.Result = res
-	return ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, field.Selections, res)
+	return ec.marshalNTFASetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TFASettingsUpdatePayload_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TFASettingUpdatePayload_tfaSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "TFASettingsUpdatePayload",
+		Object:     "TFASettingUpdatePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
+				return ec.fieldContext_TFASetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
+				return ec.fieldContext_TFASetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
+				return ec.fieldContext_TFASetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
+				return ec.fieldContext_TFASetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
+				return ec.fieldContext_TFASetting_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
+				return ec.fieldContext_TFASetting_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+				return ec.fieldContext_TFASetting_deletedBy(ctx, field)
 			case "tfaSecret":
-				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+				return ec.fieldContext_TFASetting_tfaSecret(ctx, field)
 			case "verified":
-				return ec.fieldContext_TFASettings_verified(ctx, field)
+				return ec.fieldContext_TFASetting_verified(ctx, field)
 			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
+				return ec.fieldContext_TFASetting_recoveryCodes(ctx, field)
 			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
+				return ec.fieldContext_TFASetting_totpAllowed(ctx, field)
 			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
+				return ec.fieldContext_TFASetting_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -40890,9 +40863,9 @@ func (ec *executionContext) _User_tfaSettings(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.TFASettings)
+	res := resTmp.([]*generated.TFASetting)
 	fc.Result = res
-	return ec.marshalOTFASettings2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsᚄ(ctx, field.Selections, res)
+	return ec.marshalOTFASetting2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_tfaSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -40904,31 +40877,31 @@ func (ec *executionContext) fieldContext_User_tfaSettings(ctx context.Context, f
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_TFASettings_id(ctx, field)
+				return ec.fieldContext_TFASetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_TFASettings_createdAt(ctx, field)
+				return ec.fieldContext_TFASetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_TFASettings_updatedAt(ctx, field)
+				return ec.fieldContext_TFASetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_TFASettings_createdBy(ctx, field)
+				return ec.fieldContext_TFASetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_TFASettings_updatedBy(ctx, field)
+				return ec.fieldContext_TFASetting_updatedBy(ctx, field)
 			case "deletedAt":
-				return ec.fieldContext_TFASettings_deletedAt(ctx, field)
+				return ec.fieldContext_TFASetting_deletedAt(ctx, field)
 			case "deletedBy":
-				return ec.fieldContext_TFASettings_deletedBy(ctx, field)
+				return ec.fieldContext_TFASetting_deletedBy(ctx, field)
 			case "tfaSecret":
-				return ec.fieldContext_TFASettings_tfaSecret(ctx, field)
+				return ec.fieldContext_TFASetting_tfaSecret(ctx, field)
 			case "verified":
-				return ec.fieldContext_TFASettings_verified(ctx, field)
+				return ec.fieldContext_TFASetting_verified(ctx, field)
 			case "recoveryCodes":
-				return ec.fieldContext_TFASettings_recoveryCodes(ctx, field)
+				return ec.fieldContext_TFASetting_recoveryCodes(ctx, field)
 			case "totpAllowed":
-				return ec.fieldContext_TFASettings_totpAllowed(ctx, field)
+				return ec.fieldContext_TFASetting_totpAllowed(ctx, field)
 			case "owner":
-				return ec.fieldContext_TFASettings_owner(ctx, field)
+				return ec.fieldContext_TFASetting_owner(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TFASettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TFASetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -46126,8 +46099,8 @@ func (ec *executionContext) unmarshalInputCreateSubscriberInput(ctx context.Cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateTFASettingsInput(ctx context.Context, obj interface{}) (generated.CreateTFASettingsInput, error) {
-	var it generated.CreateTFASettingsInput
+func (ec *executionContext) unmarshalInputCreateTFASettingInput(ctx context.Context, obj interface{}) (generated.CreateTFASettingInput, error) {
+	var it generated.CreateTFASettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -62177,8 +62150,8 @@ func (ec *executionContext) unmarshalInputSubscriberWhereInput(ctx context.Conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputTFASettingsWhereInput(ctx context.Context, obj interface{}) (generated.TFASettingsWhereInput, error) {
-	var it generated.TFASettingsWhereInput
+func (ec *executionContext) unmarshalInputTFASettingWhereInput(ctx context.Context, obj interface{}) (generated.TFASettingWhereInput, error) {
+	var it generated.TFASettingWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -62193,21 +62166,21 @@ func (ec *executionContext) unmarshalInputTFASettingsWhereInput(ctx context.Cont
 		switch k {
 		case "not":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx, v)
+			data, err := ec.unmarshalOTFASettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Not = data
 		case "and":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOTFASettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.And = data
 		case "or":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOTFASettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -65547,8 +65520,8 @@ func (ec *executionContext) unmarshalInputUpdateSubscriberInput(ctx context.Cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateTFASettingsInput(ctx context.Context, obj interface{}) (generated.UpdateTFASettingsInput, error) {
-	var it generated.UpdateTFASettingsInput
+func (ec *executionContext) unmarshalInputUpdateTFASettingInput(ctx context.Context, obj interface{}) (generated.UpdateTFASettingInput, error) {
+	var it generated.UpdateTFASettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -65616,7 +65589,7 @@ func (ec *executionContext) unmarshalInputUpdateTFASettingsInput(ctx context.Con
 			if err != nil {
 				return it, err
 			}
-			if err = ec.resolvers.UpdateTFASettingsInput().RegenBackupCodes(ctx, &it, data); err != nil {
+			if err = ec.resolvers.UpdateTFASettingInput().RegenBackupCodes(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -68762,7 +68735,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			it.HasTfaSettings = data
 		case "hasTfaSettingsWith":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTfaSettingsWith"))
-			data, err := ec.unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOTFASettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -68926,7 +68899,7 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Subscriber(ctx, sel, obj)
-	case *generated.TFASettings:
+	case *generated.TFASetting:
 		if obj == nil {
 			return graphql.Null
 		}
@@ -71293,14 +71266,14 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "createTFASettings":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTFASettings(ctx, field)
+				return ec._Mutation_createTFASetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updateTFASettings":
+		case "updateTFASetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateTFASettings(ctx, field)
+				return ec._Mutation_updateTFASetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -74250,7 +74223,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "tfaSettingsSlice":
+		case "tfaSettings":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -74259,7 +74232,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_tfaSettingsSlice(ctx, field)
+				res = ec._Query_tfaSettings(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -74655,7 +74628,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_tfaSettings(ctx, field)
+				res = ec._Query_tfaSetting(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -75075,45 +75048,45 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 }
 
-var tFASettingsImplementors = []string{"TFASettings", "Node"}
+var tFASettingImplementors = []string{"TFASetting", "Node"}
 
-func (ec *executionContext) _TFASettings(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettings) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsImplementors)
+func (ec *executionContext) _TFASetting(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASetting) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettings")
+			out.Values[i] = graphql.MarshalString("TFASetting")
 		case "id":
-			out.Values[i] = ec._TFASettings_id(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
-			out.Values[i] = ec._TFASettings_createdAt(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_createdAt(ctx, field, obj)
 		case "updatedAt":
-			out.Values[i] = ec._TFASettings_updatedAt(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_updatedAt(ctx, field, obj)
 		case "createdBy":
-			out.Values[i] = ec._TFASettings_createdBy(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_createdBy(ctx, field, obj)
 		case "updatedBy":
-			out.Values[i] = ec._TFASettings_updatedBy(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_updatedBy(ctx, field, obj)
 		case "deletedAt":
-			out.Values[i] = ec._TFASettings_deletedAt(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_deletedAt(ctx, field, obj)
 		case "deletedBy":
-			out.Values[i] = ec._TFASettings_deletedBy(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_deletedBy(ctx, field, obj)
 		case "tfaSecret":
-			out.Values[i] = ec._TFASettings_tfaSecret(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_tfaSecret(ctx, field, obj)
 		case "verified":
-			out.Values[i] = ec._TFASettings_verified(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_verified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "recoveryCodes":
-			out.Values[i] = ec._TFASettings_recoveryCodes(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_recoveryCodes(ctx, field, obj)
 		case "totpAllowed":
-			out.Values[i] = ec._TFASettings_totpAllowed(ctx, field, obj)
+			out.Values[i] = ec._TFASetting_totpAllowed(ctx, field, obj)
 		case "owner":
 			field := field
 
@@ -75123,7 +75096,7 @@ func (ec *executionContext) _TFASettings(ctx context.Context, sel ast.SelectionS
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._TFASettings_owner(ctx, field, obj)
+				res = ec._TFASetting_owner(ctx, field, obj)
 				return res
 			}
 
@@ -75170,26 +75143,26 @@ func (ec *executionContext) _TFASettings(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
-var tFASettingsConnectionImplementors = []string{"TFASettingsConnection"}
+var tFASettingConnectionImplementors = []string{"TFASettingConnection"}
 
-func (ec *executionContext) _TFASettingsConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettingsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsConnectionImplementors)
+func (ec *executionContext) _TFASettingConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettingConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsConnection")
+			out.Values[i] = graphql.MarshalString("TFASettingConnection")
 		case "edges":
-			out.Values[i] = ec._TFASettingsConnection_edges(ctx, field, obj)
+			out.Values[i] = ec._TFASettingConnection_edges(ctx, field, obj)
 		case "pageInfo":
-			out.Values[i] = ec._TFASettingsConnection_pageInfo(ctx, field, obj)
+			out.Values[i] = ec._TFASettingConnection_pageInfo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "totalCount":
-			out.Values[i] = ec._TFASettingsConnection_totalCount(ctx, field, obj)
+			out.Values[i] = ec._TFASettingConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -75216,19 +75189,19 @@ func (ec *executionContext) _TFASettingsConnection(ctx context.Context, sel ast.
 	return out
 }
 
-var tFASettingsCreatePayloadImplementors = []string{"TFASettingsCreatePayload"}
+var tFASettingCreatePayloadImplementors = []string{"TFASettingCreatePayload"}
 
-func (ec *executionContext) _TFASettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingsCreatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsCreatePayloadImplementors)
+func (ec *executionContext) _TFASettingCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingCreatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsCreatePayload")
-		case "tfaSettings":
-			out.Values[i] = ec._TFASettingsCreatePayload_tfaSettings(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("TFASettingCreatePayload")
+		case "tfaSetting":
+			out.Values[i] = ec._TFASettingCreatePayload_tfaSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -75255,21 +75228,21 @@ func (ec *executionContext) _TFASettingsCreatePayload(ctx context.Context, sel a
 	return out
 }
 
-var tFASettingsEdgeImplementors = []string{"TFASettingsEdge"}
+var tFASettingEdgeImplementors = []string{"TFASettingEdge"}
 
-func (ec *executionContext) _TFASettingsEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettingsEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsEdgeImplementors)
+func (ec *executionContext) _TFASettingEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.TFASettingEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingEdgeImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsEdge")
+			out.Values[i] = graphql.MarshalString("TFASettingEdge")
 		case "node":
-			out.Values[i] = ec._TFASettingsEdge_node(ctx, field, obj)
+			out.Values[i] = ec._TFASettingEdge_node(ctx, field, obj)
 		case "cursor":
-			out.Values[i] = ec._TFASettingsEdge_cursor(ctx, field, obj)
+			out.Values[i] = ec._TFASettingEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -75296,19 +75269,19 @@ func (ec *executionContext) _TFASettingsEdge(ctx context.Context, sel ast.Select
 	return out
 }
 
-var tFASettingsUpdatePayloadImplementors = []string{"TFASettingsUpdatePayload"}
+var tFASettingUpdatePayloadImplementors = []string{"TFASettingUpdatePayload"}
 
-func (ec *executionContext) _TFASettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingsUpdatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingsUpdatePayloadImplementors)
+func (ec *executionContext) _TFASettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *TFASettingUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tFASettingUpdatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("TFASettingsUpdatePayload")
-		case "tfaSettings":
-			out.Values[i] = ec._TFASettingsUpdatePayload_tfaSettings(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("TFASettingUpdatePayload")
+		case "tfaSetting":
+			out.Values[i] = ec._TFASettingUpdatePayload_tfaSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -76838,8 +76811,8 @@ func (ec *executionContext) unmarshalNCreateSubscriberInput2githubᚗcomᚋdatum
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTFASettingsInput(ctx context.Context, v interface{}) (generated.CreateTFASettingsInput, error) {
-	res, err := ec.unmarshalInputCreateTFASettingsInput(ctx, v)
+func (ec *executionContext) unmarshalNCreateTFASettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTFASettingInput(ctx context.Context, v interface{}) (generated.CreateTFASettingInput, error) {
+	res, err := ec.unmarshalInputCreateTFASettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -78127,64 +78100,64 @@ func (ec *executionContext) unmarshalNSubscriberWhereInput2ᚖgithubᚗcomᚋdat
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNTFASettings2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v generated.TFASettings) graphql.Marshaler {
-	return ec._TFASettings(ctx, sel, &v)
+func (ec *executionContext) marshalNTFASetting2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx context.Context, sel ast.SelectionSet, v generated.TFASetting) graphql.Marshaler {
+	return ec._TFASetting(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettings) graphql.Marshaler {
+func (ec *executionContext) marshalNTFASetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx context.Context, sel ast.SelectionSet, v *generated.TFASetting) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._TFASettings(ctx, sel, v)
+	return ec._TFASetting(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTFASettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.TFASettingsConnection) graphql.Marshaler {
-	return ec._TFASettingsConnection(ctx, sel, &v)
+func (ec *executionContext) marshalNTFASettingConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingConnection(ctx context.Context, sel ast.SelectionSet, v generated.TFASettingConnection) graphql.Marshaler {
+	return ec._TFASettingConnection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTFASettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsConnection(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettingsConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNTFASettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingConnection(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettingConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._TFASettingsConnection(ctx, sel, v)
+	return ec._TFASettingConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTFASettingsCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingsCreatePayload) graphql.Marshaler {
-	return ec._TFASettingsCreatePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNTFASettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingCreatePayload) graphql.Marshaler {
+	return ec._TFASettingCreatePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTFASettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingsCreatePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNTFASettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingCreatePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._TFASettingsCreatePayload(ctx, sel, v)
+	return ec._TFASettingCreatePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTFASettingsUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingsUpdatePayload) graphql.Marshaler {
-	return ec._TFASettingsUpdatePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNTFASettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v TFASettingUpdatePayload) graphql.Marshaler {
+	return ec._TFASettingUpdatePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTFASettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingsUpdatePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNTFASettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐTFASettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *TFASettingUpdatePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._TFASettingsUpdatePayload(ctx, sel, v)
+	return ec._TFASettingUpdatePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx context.Context, v interface{}) (*generated.TFASettingsWhereInput, error) {
-	res, err := ec.unmarshalInputTFASettingsWhereInput(ctx, v)
+func (ec *executionContext) unmarshalNTFASettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInput(ctx context.Context, v interface{}) (*generated.TFASettingWhereInput, error) {
+	res, err := ec.unmarshalInputTFASettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -78390,8 +78363,8 @@ func (ec *executionContext) unmarshalNUpdateSubscriberInput2githubᚗcomᚋdatum
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateTFASettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingsInput(ctx context.Context, v interface{}) (generated.UpdateTFASettingsInput, error) {
-	res, err := ec.unmarshalInputUpdateTFASettingsInput(ctx, v)
+func (ec *executionContext) unmarshalNUpdateTFASettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateTFASettingInput(ctx context.Context, v interface{}) (generated.UpdateTFASettingInput, error) {
+	res, err := ec.unmarshalInputUpdateTFASettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -81686,7 +81659,7 @@ func (ec *executionContext) unmarshalOSubscriberWhereInput2ᚖgithubᚗcomᚋdat
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOTFASettings2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.TFASettings) graphql.Marshaler {
+func (ec *executionContext) marshalOTFASetting2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.TFASetting) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -81713,7 +81686,7 @@ func (ec *executionContext) marshalOTFASettings2ᚕᚖgithubᚗcomᚋdatumforge�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx, sel, v[i])
+			ret[i] = ec.marshalNTFASetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -81733,14 +81706,14 @@ func (ec *executionContext) marshalOTFASettings2ᚕᚖgithubᚗcomᚋdatumforge�
 	return ret
 }
 
-func (ec *executionContext) marshalOTFASettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettings(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettings) graphql.Marshaler {
+func (ec *executionContext) marshalOTFASetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASetting(ctx context.Context, sel ast.SelectionSet, v *generated.TFASetting) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._TFASettings(ctx, sel, v)
+	return ec._TFASetting(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOTFASettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.TFASettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOTFASettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.TFASettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -81767,7 +81740,7 @@ func (ec *executionContext) marshalOTFASettingsEdge2ᚕᚖgithubᚗcomᚋdatumfo
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOTFASettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOTFASettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -81781,14 +81754,14 @@ func (ec *executionContext) marshalOTFASettingsEdge2ᚕᚖgithubᚗcomᚋdatumfo
 	return ret
 }
 
-func (ec *executionContext) marshalOTFASettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsEdge(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOTFASettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingEdge(ctx context.Context, sel ast.SelectionSet, v *generated.TFASettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._TFASettingsEdge(ctx, sel, v)
+	return ec._TFASettingEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.TFASettingsWhereInput, error) {
+func (ec *executionContext) unmarshalOTFASettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.TFASettingWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -81797,10 +81770,10 @@ func (ec *executionContext) unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcom�
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*generated.TFASettingsWhereInput, len(vSlice))
+	res := make([]*generated.TFASettingWhereInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNTFASettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -81808,11 +81781,11 @@ func (ec *executionContext) unmarshalOTFASettingsWhereInput2ᚕᚖgithubᚗcom�
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOTFASettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingsWhereInput(ctx context.Context, v interface{}) (*generated.TFASettingsWhereInput, error) {
+func (ec *executionContext) unmarshalOTFASettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInput(ctx context.Context, v interface{}) (*generated.TFASettingWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputTFASettingsWhereInput(ctx, v)
+	res, err := ec.unmarshalInputTFASettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

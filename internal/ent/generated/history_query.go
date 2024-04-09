@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 )
 
 func (o *Organization) History() *OrganizationHistoryQuery {
@@ -101,5 +102,51 @@ func (oshq *OrganizationSettingHistoryQuery) AsOf(ctx context.Context, time time
 	return oshq.
 		Where(organizationsettinghistory.HistoryTimeLTE(time)).
 		Order(organizationsettinghistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (t *Template) History() *TemplateHistoryQuery {
+	historyClient := NewTemplateHistoryClient(t.config)
+	return historyClient.Query().Where(templatehistory.Ref(t.ID))
+}
+
+func (th *TemplateHistory) Next(ctx context.Context) (*TemplateHistory, error) {
+	client := NewTemplateHistoryClient(th.config)
+	return client.Query().
+		Where(
+			templatehistory.Ref(th.Ref),
+			templatehistory.HistoryTimeGT(th.HistoryTime),
+		).
+		Order(templatehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (th *TemplateHistory) Prev(ctx context.Context) (*TemplateHistory, error) {
+	client := NewTemplateHistoryClient(th.config)
+	return client.Query().
+		Where(
+			templatehistory.Ref(th.Ref),
+			templatehistory.HistoryTimeLT(th.HistoryTime),
+		).
+		Order(templatehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (thq *TemplateHistoryQuery) Earliest(ctx context.Context) (*TemplateHistory, error) {
+	return thq.
+		Order(templatehistory.ByHistoryTime()).
+		First(ctx)
+}
+
+func (thq *TemplateHistoryQuery) Latest(ctx context.Context) (*TemplateHistory, error) {
+	return thq.
+		Order(templatehistory.ByHistoryTime(sql.OrderDesc())).
+		First(ctx)
+}
+
+func (thq *TemplateHistoryQuery) AsOf(ctx context.Context, time time.Time) (*TemplateHistory, error) {
+	return thq.
+		Where(templatehistory.HistoryTimeLTE(time)).
+		Order(templatehistory.ByHistoryTime(sql.OrderDesc())).
 		First(ctx)
 }

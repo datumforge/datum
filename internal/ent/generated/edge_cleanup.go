@@ -221,6 +221,13 @@ func TemplateEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func TemplateHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup templatehistory edge"))
+
+	return nil
+}
+
 func UserEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup user edge"))

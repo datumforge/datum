@@ -237,6 +237,18 @@ func (f TemplateFunc) Mutate(ctx context.Context, m generated.Mutation) (generat
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.TemplateMutation", m)
 }
 
+// The TemplateHistoryFunc type is an adapter to allow the use of ordinary
+// function as TemplateHistory mutator.
+type TemplateHistoryFunc func(context.Context, *generated.TemplateHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TemplateHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.TemplateHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.TemplateHistoryMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *generated.UserMutation) (generated.Value, error)

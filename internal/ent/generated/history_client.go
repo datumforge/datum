@@ -14,4 +14,7 @@ func (c *Client) WithHistory() {
 	for _, hook := range enthistory.HistoryHooks[*OrganizationSettingMutation]() {
 		c.OrganizationSetting.Use(hook)
 	}
+	for _, hook := range enthistory.HistoryHooks[*TemplateMutation]() {
+		c.Template.Use(hook)
+	}
 }

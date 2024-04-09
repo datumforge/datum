@@ -27,6 +27,7 @@ type SchemaConfig struct {
 	Subscriber                       string // Subscriber table.
 	TFASettings                      string // TFASettings table.
 	Template                         string // Template table.
+	TemplateHistory                  string // TemplateHistory table.
 	User                             string // User table.
 	UserSetting                      string // UserSetting table.
 	Webauthn                         string // Webauthn table.

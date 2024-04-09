@@ -15,17 +15,17 @@ import (
 	"time"
 )
 
-// OrganizationSettingHistory holds the schema definition for the OrganizationSettingHistory entity.
-type OrganizationSettingHistory struct {
+// TemplateHistory holds the schema definition for the TemplateHistory entity.
+type TemplateHistory struct {
 	ent.Schema
 }
 
-// Annotations of the OrganizationSettingHistory.
-func (OrganizationSettingHistory) Annotations() []schema.Annotation {
+// Annotations of the TemplateHistory.
+func (TemplateHistory) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entx.SchemaGenSkip(true),
 		entsql.Annotation{
-			Table: "organization_setting_history",
+			Table: "template_history",
 		},
 		enthistory.Annotations{
 			IsHistory: true,
@@ -34,8 +34,8 @@ func (OrganizationSettingHistory) Annotations() []schema.Annotation {
 	}
 }
 
-// Fields of the OrganizationSettingHistory.
-func (OrganizationSettingHistory) Fields() []ent.Field {
+// Fields of the TemplateHistory.
+func (TemplateHistory) Fields() []ent.Field {
 	historyFields := []ent.Field{
 		field.Time("history_time").
 			Default(time.Now).
@@ -51,21 +51,21 @@ func (OrganizationSettingHistory) Fields() []ent.Field {
 	// get the fields from the mixins
 	// we only want to include mixin fields, not edges
 	// so this prevents FKs back to the main tables
-	mixins := OrganizationSetting{}.Mixin()
+	mixins := Template{}.Mixin()
 	for _, mixin := range mixins {
 		for _, field := range mixin.Fields() {
 			historyFields = append(historyFields, field)
 		}
 	}
 
-	original := OrganizationSetting{}
+	original := Template{}
 	for _, field := range original.Fields() {
 		historyFields = append(historyFields, field)
 	}
 
 	return historyFields
 }
-func (OrganizationSettingHistory) Indexes() []ent.Index {
+func (TemplateHistory) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("history_time"),
 	}

@@ -24,6 +24,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -976,6 +977,24 @@ func init() {
 	templateDescID := templateMixinFields2[0].Descriptor()
 	// template.DefaultID holds the default value on creation for the id field.
 	template.DefaultID = templateDescID.Default.(func() string)
+	templatehistoryFields := schema.TemplateHistory{}.Fields()
+	_ = templatehistoryFields
+	// templatehistoryDescHistoryTime is the schema descriptor for history_time field.
+	templatehistoryDescHistoryTime := templatehistoryFields[0].Descriptor()
+	// templatehistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	templatehistory.DefaultHistoryTime = templatehistoryDescHistoryTime.Default.(func() time.Time)
+	// templatehistoryDescCreatedAt is the schema descriptor for created_at field.
+	templatehistoryDescCreatedAt := templatehistoryFields[3].Descriptor()
+	// templatehistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	templatehistory.DefaultCreatedAt = templatehistoryDescCreatedAt.Default.(func() time.Time)
+	// templatehistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	templatehistoryDescUpdatedAt := templatehistoryFields[4].Descriptor()
+	// templatehistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	templatehistory.DefaultUpdatedAt = templatehistoryDescUpdatedAt.Default.(func() time.Time)
+	// templatehistoryDescID is the schema descriptor for id field.
+	templatehistoryDescID := templatehistoryFields[9].Descriptor()
+	// templatehistory.DefaultID holds the default value on creation for the id field.
+	templatehistory.DefaultID = templatehistoryDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

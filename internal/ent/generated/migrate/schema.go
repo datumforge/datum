@@ -694,6 +694,36 @@ var (
 			},
 		},
 	}
+	// TemplateHistoryColumns holds the columns for the "template_history" table.
+	TemplateHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "jsonconfig", Type: field.TypeJSON, Nullable: true},
+	}
+	// TemplateHistoryTable holds the schema information for the "template_history" table.
+	TemplateHistoryTable = &schema.Table{
+		Name:       "template_history",
+		Columns:    TemplateHistoryColumns,
+		PrimaryKey: []*schema.Column{TemplateHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "templatehistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{TemplateHistoryColumns[1]},
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -856,6 +886,7 @@ var (
 		SubscribersTable,
 		TfaSettingsTable,
 		TemplatesTable,
+		TemplateHistoryTable,
 		UsersTable,
 		UserSettingsTable,
 		WebauthnsTable,
@@ -888,6 +919,9 @@ func init() {
 	SubscribersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	TemplatesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	TemplateHistoryTable.Annotation = &entsql.Annotation{
+		Table: "template_history",
+	}
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable

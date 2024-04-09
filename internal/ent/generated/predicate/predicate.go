@@ -63,6 +63,9 @@ type TFASettings func(*sql.Selector)
 // Template is the predicate function for template builders.
 type Template func(*sql.Selector)
 
+// TemplateHistory is the predicate function for templatehistory builders.
+type TemplateHistory func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
 

@@ -30,6 +30,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -4602,6 +4603,299 @@ func (t *Template) ToEdge(order *TemplateOrder) *TemplateEdge {
 	return &TemplateEdge{
 		Node:   t,
 		Cursor: order.Field.toCursor(t),
+	}
+}
+
+// TemplateHistoryEdge is the edge representation of TemplateHistory.
+type TemplateHistoryEdge struct {
+	Node   *TemplateHistory `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// TemplateHistoryConnection is the connection containing edges to TemplateHistory.
+type TemplateHistoryConnection struct {
+	Edges      []*TemplateHistoryEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+func (c *TemplateHistoryConnection) build(nodes []*TemplateHistory, pager *templatehistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *TemplateHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *TemplateHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *TemplateHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TemplateHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TemplateHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TemplateHistoryPaginateOption enables pagination customization.
+type TemplateHistoryPaginateOption func(*templatehistoryPager) error
+
+// WithTemplateHistoryOrder configures pagination ordering.
+func WithTemplateHistoryOrder(order *TemplateHistoryOrder) TemplateHistoryPaginateOption {
+	if order == nil {
+		order = DefaultTemplateHistoryOrder
+	}
+	o := *order
+	return func(pager *templatehistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultTemplateHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithTemplateHistoryFilter configures pagination filter.
+func WithTemplateHistoryFilter(filter func(*TemplateHistoryQuery) (*TemplateHistoryQuery, error)) TemplateHistoryPaginateOption {
+	return func(pager *templatehistoryPager) error {
+		if filter == nil {
+			return errors.New("TemplateHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type templatehistoryPager struct {
+	reverse bool
+	order   *TemplateHistoryOrder
+	filter  func(*TemplateHistoryQuery) (*TemplateHistoryQuery, error)
+}
+
+func newTemplateHistoryPager(opts []TemplateHistoryPaginateOption, reverse bool) (*templatehistoryPager, error) {
+	pager := &templatehistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultTemplateHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *templatehistoryPager) applyFilter(query *TemplateHistoryQuery) (*TemplateHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *templatehistoryPager) toCursor(th *TemplateHistory) Cursor {
+	return p.order.Field.toCursor(th)
+}
+
+func (p *templatehistoryPager) applyCursors(query *TemplateHistoryQuery, after, before *Cursor) (*TemplateHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultTemplateHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *templatehistoryPager) applyOrder(query *TemplateHistoryQuery) *TemplateHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultTemplateHistoryOrder.Field {
+		query = query.Order(DefaultTemplateHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *templatehistoryPager) orderExpr(query *TemplateHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTemplateHistoryOrder.Field {
+			b.Comma().Ident(DefaultTemplateHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to TemplateHistory.
+func (th *TemplateHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TemplateHistoryPaginateOption,
+) (*TemplateHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTemplateHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if th, err = pager.applyFilter(th); err != nil {
+		return nil, err
+	}
+	conn := &TemplateHistoryConnection{Edges: []*TemplateHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = th.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if th, err = pager.applyCursors(th, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		th.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := th.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	th = pager.applyOrder(th)
+	nodes, err := th.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// TemplateHistoryOrderFieldName orders TemplateHistory by name.
+	TemplateHistoryOrderFieldName = &TemplateHistoryOrderField{
+		Value: func(th *TemplateHistory) (ent.Value, error) {
+			return th.Name, nil
+		},
+		column: templatehistory.FieldName,
+		toTerm: templatehistory.ByName,
+		toCursor: func(th *TemplateHistory) Cursor {
+			return Cursor{
+				ID:    th.ID,
+				Value: th.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TemplateHistoryOrderField) String() string {
+	var str string
+	switch f.column {
+	case TemplateHistoryOrderFieldName.column:
+		str = "name"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TemplateHistoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TemplateHistoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TemplateHistoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *TemplateHistoryOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid TemplateHistoryOrderField", str)
+	}
+	return nil
+}
+
+// TemplateHistoryOrderField defines the ordering field of TemplateHistory.
+type TemplateHistoryOrderField struct {
+	// Value extracts the ordering value from the given TemplateHistory.
+	Value    func(*TemplateHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) templatehistory.OrderOption
+	toCursor func(*TemplateHistory) Cursor
+}
+
+// TemplateHistoryOrder defines the ordering of TemplateHistory.
+type TemplateHistoryOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *TemplateHistoryOrderField `json:"field"`
+}
+
+// DefaultTemplateHistoryOrder is the default ordering of TemplateHistory.
+var DefaultTemplateHistoryOrder = &TemplateHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TemplateHistoryOrderField{
+		Value: func(th *TemplateHistory) (ent.Value, error) {
+			return th.ID, nil
+		},
+		column: templatehistory.FieldID,
+		toTerm: templatehistory.ByID,
+		toCursor: func(th *TemplateHistory) Cursor {
+			return Cursor{ID: th.ID}
+		},
+	},
+}
+
+// ToEdge converts TemplateHistory into TemplateHistoryEdge.
+func (th *TemplateHistory) ToEdge(order *TemplateHistoryOrder) *TemplateHistoryEdge {
+	if order == nil {
+		order = DefaultTemplateHistoryOrder
+	}
+	return &TemplateHistoryEdge{
+		Node:   th,
+		Cursor: order.Field.toCursor(th),
 	}
 }
 

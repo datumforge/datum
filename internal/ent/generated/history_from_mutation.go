@@ -563,3 +563,221 @@ func (m *OrganizationSettingMutation) CreateHistoryFromDelete(ctx context.Contex
 
 	return nil
 }
+
+func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.TemplateHistory.Create()
+	if tx != nil {
+		create = tx.TemplateHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if jsonconfig, exists := m.Jsonconfig(); exists {
+		create = create.SetJsonconfig(jsonconfig)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *TemplateMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		template, err := client.Template.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.TemplateHistory.Create()
+		if tx != nil {
+			create = tx.TemplateHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(template.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(template.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(template.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(template.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(template.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(template.DeletedBy)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(template.OwnerID)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(template.Name)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(template.Description)
+		}
+
+		if jsonconfig, exists := m.Jsonconfig(); exists {
+			create = create.SetJsonconfig(jsonconfig)
+		} else {
+			create = create.SetJsonconfig(template.Jsonconfig)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		template, err := client.Template.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.TemplateHistory.Create()
+		if tx != nil {
+			create = tx.TemplateHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(template.CreatedAt).
+			SetUpdatedAt(template.UpdatedAt).
+			SetCreatedBy(template.CreatedBy).
+			SetUpdatedBy(template.UpdatedBy).
+			SetDeletedAt(template.DeletedAt).
+			SetDeletedBy(template.DeletedBy).
+			SetOwnerID(template.OwnerID).
+			SetName(template.Name).
+			SetDescription(template.Description).
+			SetJsonconfig(template.Jsonconfig).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}

@@ -13,6 +13,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/enthistory"
 )
 
@@ -179,6 +180,63 @@ func (osh *OrganizationSettingHistory) Diff(history *OrganizationSettingHistory)
 	return nil, IdenticalHistoryError
 }
 
+func (th *TemplateHistory) changes(new *TemplateHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(th.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(templatehistory.FieldCreatedAt, th.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(th.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(templatehistory.FieldUpdatedAt, th.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(th.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(templatehistory.FieldCreatedBy, th.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(th.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(templatehistory.FieldDeletedAt, th.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(th.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(templatehistory.FieldDeletedBy, th.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(th.OwnerID, new.OwnerID) {
+		changes = append(changes, NewChange(templatehistory.FieldOwnerID, th.OwnerID, new.OwnerID))
+	}
+	if !reflect.DeepEqual(th.Name, new.Name) {
+		changes = append(changes, NewChange(templatehistory.FieldName, th.Name, new.Name))
+	}
+	if !reflect.DeepEqual(th.Description, new.Description) {
+		changes = append(changes, NewChange(templatehistory.FieldDescription, th.Description, new.Description))
+	}
+	if !reflect.DeepEqual(th.Jsonconfig, new.Jsonconfig) {
+		changes = append(changes, NewChange(templatehistory.FieldJsonconfig, th.Jsonconfig, new.Jsonconfig))
+	}
+	return changes
+}
+
+func (th *TemplateHistory) Diff(history *TemplateHistory) (*HistoryDiff[TemplateHistory], error) {
+	if th.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	thUnix, historyUnix := th.HistoryTime.Unix(), history.HistoryTime.Unix()
+	thOlder := thUnix < historyUnix || (thUnix == historyUnix && th.ID < history.ID)
+	historyOlder := thUnix > historyUnix || (thUnix == historyUnix && th.ID > history.ID)
+
+	if thOlder {
+		return &HistoryDiff[TemplateHistory]{
+			Old:     th,
+			New:     history,
+			Changes: th.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[TemplateHistory]{
+			Old:     history,
+			New:     th,
+			Changes: history.changes(th),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
 func (c Change) String(op enthistory.OpType) string {
 	var newstr, oldstr string
 	if c.New != nil {
@@ -220,6 +278,12 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	records = append(records, record...)
 
 	record, err = auditOrganizationSettingHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
+	record, err = auditTemplateHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
 	}
@@ -347,6 +411,58 @@ func auditOrganizationSettingHistory(ctx context.Context, config config) ([][]st
 			default:
 				if i == 0 {
 					record.Changes = (&OrganizationSettingHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type templatehistoryref struct {
+	Ref string
+}
+
+func auditTemplateHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []templatehistoryref
+	client := NewTemplateHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(templatehistory.ByRef()).
+		Select(templatehistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(templatehistory.Ref(currRef.Ref)).
+			Order(templatehistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "TemplateHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&TemplateHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&TemplateHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&TemplateHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}

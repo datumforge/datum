@@ -32,6 +32,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -67,6 +68,7 @@ const (
 	TypeSubscriber                 = "Subscriber"
 	TypeTFASettings                = "TFASettings"
 	TypeTemplate                   = "Template"
+	TypeTemplateHistory            = "TemplateHistory"
 	TypeUser                       = "User"
 	TypeUserSetting                = "UserSetting"
 	TypeWebauthn                   = "Webauthn"
@@ -24176,6 +24178,1160 @@ func (m *TemplateMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Template edge %s", name)
+}
+
+// TemplateHistoryMutation represents an operation that mutates the TemplateHistory nodes in the graph.
+type TemplateHistoryMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	history_time  *time.Time
+	operation     *enthistory.OpType
+	ref           *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	created_by    *string
+	updated_by    *string
+	deleted_at    *time.Time
+	deleted_by    *string
+	owner_id      *string
+	name          *string
+	description   *string
+	jsonconfig    *customtypes.JSONObject
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*TemplateHistory, error)
+	predicates    []predicate.TemplateHistory
+}
+
+var _ ent.Mutation = (*TemplateHistoryMutation)(nil)
+
+// templatehistoryOption allows management of the mutation configuration using functional options.
+type templatehistoryOption func(*TemplateHistoryMutation)
+
+// newTemplateHistoryMutation creates new mutation for the TemplateHistory entity.
+func newTemplateHistoryMutation(c config, op Op, opts ...templatehistoryOption) *TemplateHistoryMutation {
+	m := &TemplateHistoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTemplateHistory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTemplateHistoryID sets the ID field of the mutation.
+func withTemplateHistoryID(id string) templatehistoryOption {
+	return func(m *TemplateHistoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TemplateHistory
+		)
+		m.oldValue = func(ctx context.Context) (*TemplateHistory, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TemplateHistory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTemplateHistory sets the old TemplateHistory of the mutation.
+func withTemplateHistory(node *TemplateHistory) templatehistoryOption {
+	return func(m *TemplateHistoryMutation) {
+		m.oldValue = func(context.Context) (*TemplateHistory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TemplateHistoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TemplateHistoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of TemplateHistory entities.
+func (m *TemplateHistoryMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TemplateHistoryMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TemplateHistoryMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().TemplateHistory.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetHistoryTime sets the "history_time" field.
+func (m *TemplateHistoryMutation) SetHistoryTime(t time.Time) {
+	m.history_time = &t
+}
+
+// HistoryTime returns the value of the "history_time" field in the mutation.
+func (m *TemplateHistoryMutation) HistoryTime() (r time.Time, exists bool) {
+	v := m.history_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHistoryTime returns the old "history_time" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldHistoryTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHistoryTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHistoryTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHistoryTime: %w", err)
+	}
+	return oldValue.HistoryTime, nil
+}
+
+// ResetHistoryTime resets all changes to the "history_time" field.
+func (m *TemplateHistoryMutation) ResetHistoryTime() {
+	m.history_time = nil
+}
+
+// SetOperation sets the "operation" field.
+func (m *TemplateHistoryMutation) SetOperation(et enthistory.OpType) {
+	m.operation = &et
+}
+
+// Operation returns the value of the "operation" field in the mutation.
+func (m *TemplateHistoryMutation) Operation() (r enthistory.OpType, exists bool) {
+	v := m.operation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperation returns the old "operation" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldOperation(ctx context.Context) (v enthistory.OpType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperation: %w", err)
+	}
+	return oldValue.Operation, nil
+}
+
+// ResetOperation resets all changes to the "operation" field.
+func (m *TemplateHistoryMutation) ResetOperation() {
+	m.operation = nil
+}
+
+// SetRef sets the "ref" field.
+func (m *TemplateHistoryMutation) SetRef(s string) {
+	m.ref = &s
+}
+
+// Ref returns the value of the "ref" field in the mutation.
+func (m *TemplateHistoryMutation) Ref() (r string, exists bool) {
+	v := m.ref
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRef returns the old "ref" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldRef(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRef is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRef requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRef: %w", err)
+	}
+	return oldValue.Ref, nil
+}
+
+// ClearRef clears the value of the "ref" field.
+func (m *TemplateHistoryMutation) ClearRef() {
+	m.ref = nil
+	m.clearedFields[templatehistory.FieldRef] = struct{}{}
+}
+
+// RefCleared returns if the "ref" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) RefCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldRef]
+	return ok
+}
+
+// ResetRef resets all changes to the "ref" field.
+func (m *TemplateHistoryMutation) ResetRef() {
+	m.ref = nil
+	delete(m.clearedFields, templatehistory.FieldRef)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TemplateHistoryMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TemplateHistoryMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *TemplateHistoryMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[templatehistory.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TemplateHistoryMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, templatehistory.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TemplateHistoryMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TemplateHistoryMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *TemplateHistoryMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[templatehistory.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TemplateHistoryMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, templatehistory.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *TemplateHistoryMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *TemplateHistoryMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *TemplateHistoryMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[templatehistory.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *TemplateHistoryMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, templatehistory.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *TemplateHistoryMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *TemplateHistoryMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *TemplateHistoryMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[templatehistory.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *TemplateHistoryMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, templatehistory.FieldUpdatedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TemplateHistoryMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TemplateHistoryMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *TemplateHistoryMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[templatehistory.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TemplateHistoryMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, templatehistory.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *TemplateHistoryMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *TemplateHistoryMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *TemplateHistoryMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[templatehistory.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *TemplateHistoryMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, templatehistory.FieldDeletedBy)
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (m *TemplateHistoryMutation) SetOwnerID(s string) {
+	m.owner_id = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *TemplateHistoryMutation) OwnerID() (r string, exists bool) {
+	v := m.owner_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *TemplateHistoryMutation) ResetOwnerID() {
+	m.owner_id = nil
+}
+
+// SetName sets the "name" field.
+func (m *TemplateHistoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *TemplateHistoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *TemplateHistoryMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *TemplateHistoryMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *TemplateHistoryMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *TemplateHistoryMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[templatehistory.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *TemplateHistoryMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, templatehistory.FieldDescription)
+}
+
+// SetJsonconfig sets the "jsonconfig" field.
+func (m *TemplateHistoryMutation) SetJsonconfig(co customtypes.JSONObject) {
+	m.jsonconfig = &co
+}
+
+// Jsonconfig returns the value of the "jsonconfig" field in the mutation.
+func (m *TemplateHistoryMutation) Jsonconfig() (r customtypes.JSONObject, exists bool) {
+	v := m.jsonconfig
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldJsonconfig returns the old "jsonconfig" field's value of the TemplateHistory entity.
+// If the TemplateHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateHistoryMutation) OldJsonconfig(ctx context.Context) (v customtypes.JSONObject, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldJsonconfig is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldJsonconfig requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldJsonconfig: %w", err)
+	}
+	return oldValue.Jsonconfig, nil
+}
+
+// ClearJsonconfig clears the value of the "jsonconfig" field.
+func (m *TemplateHistoryMutation) ClearJsonconfig() {
+	m.jsonconfig = nil
+	m.clearedFields[templatehistory.FieldJsonconfig] = struct{}{}
+}
+
+// JsonconfigCleared returns if the "jsonconfig" field was cleared in this mutation.
+func (m *TemplateHistoryMutation) JsonconfigCleared() bool {
+	_, ok := m.clearedFields[templatehistory.FieldJsonconfig]
+	return ok
+}
+
+// ResetJsonconfig resets all changes to the "jsonconfig" field.
+func (m *TemplateHistoryMutation) ResetJsonconfig() {
+	m.jsonconfig = nil
+	delete(m.clearedFields, templatehistory.FieldJsonconfig)
+}
+
+// Where appends a list predicates to the TemplateHistoryMutation builder.
+func (m *TemplateHistoryMutation) Where(ps ...predicate.TemplateHistory) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TemplateHistoryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TemplateHistoryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.TemplateHistory, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TemplateHistoryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TemplateHistoryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (TemplateHistory).
+func (m *TemplateHistoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TemplateHistoryMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.history_time != nil {
+		fields = append(fields, templatehistory.FieldHistoryTime)
+	}
+	if m.operation != nil {
+		fields = append(fields, templatehistory.FieldOperation)
+	}
+	if m.ref != nil {
+		fields = append(fields, templatehistory.FieldRef)
+	}
+	if m.created_at != nil {
+		fields = append(fields, templatehistory.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, templatehistory.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, templatehistory.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, templatehistory.FieldUpdatedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, templatehistory.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, templatehistory.FieldDeletedBy)
+	}
+	if m.owner_id != nil {
+		fields = append(fields, templatehistory.FieldOwnerID)
+	}
+	if m.name != nil {
+		fields = append(fields, templatehistory.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, templatehistory.FieldDescription)
+	}
+	if m.jsonconfig != nil {
+		fields = append(fields, templatehistory.FieldJsonconfig)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TemplateHistoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case templatehistory.FieldHistoryTime:
+		return m.HistoryTime()
+	case templatehistory.FieldOperation:
+		return m.Operation()
+	case templatehistory.FieldRef:
+		return m.Ref()
+	case templatehistory.FieldCreatedAt:
+		return m.CreatedAt()
+	case templatehistory.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case templatehistory.FieldCreatedBy:
+		return m.CreatedBy()
+	case templatehistory.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case templatehistory.FieldDeletedAt:
+		return m.DeletedAt()
+	case templatehistory.FieldDeletedBy:
+		return m.DeletedBy()
+	case templatehistory.FieldOwnerID:
+		return m.OwnerID()
+	case templatehistory.FieldName:
+		return m.Name()
+	case templatehistory.FieldDescription:
+		return m.Description()
+	case templatehistory.FieldJsonconfig:
+		return m.Jsonconfig()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TemplateHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case templatehistory.FieldHistoryTime:
+		return m.OldHistoryTime(ctx)
+	case templatehistory.FieldOperation:
+		return m.OldOperation(ctx)
+	case templatehistory.FieldRef:
+		return m.OldRef(ctx)
+	case templatehistory.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case templatehistory.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case templatehistory.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case templatehistory.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case templatehistory.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case templatehistory.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case templatehistory.FieldOwnerID:
+		return m.OldOwnerID(ctx)
+	case templatehistory.FieldName:
+		return m.OldName(ctx)
+	case templatehistory.FieldDescription:
+		return m.OldDescription(ctx)
+	case templatehistory.FieldJsonconfig:
+		return m.OldJsonconfig(ctx)
+	}
+	return nil, fmt.Errorf("unknown TemplateHistory field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TemplateHistoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case templatehistory.FieldHistoryTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHistoryTime(v)
+		return nil
+	case templatehistory.FieldOperation:
+		v, ok := value.(enthistory.OpType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperation(v)
+		return nil
+	case templatehistory.FieldRef:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRef(v)
+		return nil
+	case templatehistory.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case templatehistory.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case templatehistory.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case templatehistory.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case templatehistory.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case templatehistory.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case templatehistory.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
+	case templatehistory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case templatehistory.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case templatehistory.FieldJsonconfig:
+		v, ok := value.(customtypes.JSONObject)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetJsonconfig(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TemplateHistory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TemplateHistoryMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TemplateHistoryMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TemplateHistoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown TemplateHistory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TemplateHistoryMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(templatehistory.FieldRef) {
+		fields = append(fields, templatehistory.FieldRef)
+	}
+	if m.FieldCleared(templatehistory.FieldCreatedAt) {
+		fields = append(fields, templatehistory.FieldCreatedAt)
+	}
+	if m.FieldCleared(templatehistory.FieldUpdatedAt) {
+		fields = append(fields, templatehistory.FieldUpdatedAt)
+	}
+	if m.FieldCleared(templatehistory.FieldCreatedBy) {
+		fields = append(fields, templatehistory.FieldCreatedBy)
+	}
+	if m.FieldCleared(templatehistory.FieldUpdatedBy) {
+		fields = append(fields, templatehistory.FieldUpdatedBy)
+	}
+	if m.FieldCleared(templatehistory.FieldDeletedAt) {
+		fields = append(fields, templatehistory.FieldDeletedAt)
+	}
+	if m.FieldCleared(templatehistory.FieldDeletedBy) {
+		fields = append(fields, templatehistory.FieldDeletedBy)
+	}
+	if m.FieldCleared(templatehistory.FieldDescription) {
+		fields = append(fields, templatehistory.FieldDescription)
+	}
+	if m.FieldCleared(templatehistory.FieldJsonconfig) {
+		fields = append(fields, templatehistory.FieldJsonconfig)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TemplateHistoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TemplateHistoryMutation) ClearField(name string) error {
+	switch name {
+	case templatehistory.FieldRef:
+		m.ClearRef()
+		return nil
+	case templatehistory.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case templatehistory.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case templatehistory.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case templatehistory.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case templatehistory.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case templatehistory.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case templatehistory.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case templatehistory.FieldJsonconfig:
+		m.ClearJsonconfig()
+		return nil
+	}
+	return fmt.Errorf("unknown TemplateHistory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TemplateHistoryMutation) ResetField(name string) error {
+	switch name {
+	case templatehistory.FieldHistoryTime:
+		m.ResetHistoryTime()
+		return nil
+	case templatehistory.FieldOperation:
+		m.ResetOperation()
+		return nil
+	case templatehistory.FieldRef:
+		m.ResetRef()
+		return nil
+	case templatehistory.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case templatehistory.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case templatehistory.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case templatehistory.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case templatehistory.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case templatehistory.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case templatehistory.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
+	case templatehistory.FieldName:
+		m.ResetName()
+		return nil
+	case templatehistory.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case templatehistory.FieldJsonconfig:
+		m.ResetJsonconfig()
+		return nil
+	}
+	return fmt.Errorf("unknown TemplateHistory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TemplateHistoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TemplateHistoryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TemplateHistoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TemplateHistoryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TemplateHistoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TemplateHistoryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TemplateHistoryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown TemplateHistory unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TemplateHistoryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown TemplateHistory edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.

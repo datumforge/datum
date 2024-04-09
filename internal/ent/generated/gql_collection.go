@@ -26,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -2706,6 +2707,150 @@ func newTemplatePaginateArgs(rv map[string]any) *templatePaginateArgs {
 	}
 	if v, ok := rv[whereField].(*TemplateWhereInput); ok {
 		args.opts = append(args.opts, WithTemplateFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (th *TemplateHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*TemplateHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return th, nil
+	}
+	if err := th.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return th, nil
+}
+
+func (th *TemplateHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(templatehistory.Columns))
+		selectedFields = []string{templatehistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[templatehistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldHistoryTime)
+				fieldSeen[templatehistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[templatehistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldOperation)
+				fieldSeen[templatehistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[templatehistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldRef)
+				fieldSeen[templatehistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[templatehistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldCreatedAt)
+				fieldSeen[templatehistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[templatehistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldUpdatedAt)
+				fieldSeen[templatehistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[templatehistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldCreatedBy)
+				fieldSeen[templatehistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[templatehistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldUpdatedBy)
+				fieldSeen[templatehistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[templatehistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldDeletedAt)
+				fieldSeen[templatehistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[templatehistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldDeletedBy)
+				fieldSeen[templatehistory.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[templatehistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldName)
+				fieldSeen[templatehistory.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[templatehistory.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldDescription)
+				fieldSeen[templatehistory.FieldDescription] = struct{}{}
+			}
+		case "jsonconfig":
+			if _, ok := fieldSeen[templatehistory.FieldJsonconfig]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldJsonconfig)
+				fieldSeen[templatehistory.FieldJsonconfig] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		th.Select(selectedFields...)
+	}
+	return nil
+}
+
+type templatehistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TemplateHistoryPaginateOption
+}
+
+func newTemplateHistoryPaginateArgs(rv map[string]any) *templatehistoryPaginateArgs {
+	args := &templatehistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &TemplateHistoryOrder{Field: &TemplateHistoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithTemplateHistoryOrder(order))
+			}
+		case *TemplateHistoryOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithTemplateHistoryOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*TemplateHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithTemplateHistoryFilter(v.Filter))
 	}
 	return args
 }

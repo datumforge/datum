@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -35,7 +36,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 22)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 23)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   emailverificationtoken.Table,
@@ -528,6 +529,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[19] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   templatehistory.Table,
+			Columns: templatehistory.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: templatehistory.FieldID,
+			},
+		},
+		Type: "TemplateHistory",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			templatehistory.FieldHistoryTime: {Type: field.TypeTime, Column: templatehistory.FieldHistoryTime},
+			templatehistory.FieldOperation:   {Type: field.TypeEnum, Column: templatehistory.FieldOperation},
+			templatehistory.FieldRef:         {Type: field.TypeString, Column: templatehistory.FieldRef},
+			templatehistory.FieldCreatedAt:   {Type: field.TypeTime, Column: templatehistory.FieldCreatedAt},
+			templatehistory.FieldUpdatedAt:   {Type: field.TypeTime, Column: templatehistory.FieldUpdatedAt},
+			templatehistory.FieldCreatedBy:   {Type: field.TypeString, Column: templatehistory.FieldCreatedBy},
+			templatehistory.FieldUpdatedBy:   {Type: field.TypeString, Column: templatehistory.FieldUpdatedBy},
+			templatehistory.FieldDeletedAt:   {Type: field.TypeTime, Column: templatehistory.FieldDeletedAt},
+			templatehistory.FieldDeletedBy:   {Type: field.TypeString, Column: templatehistory.FieldDeletedBy},
+			templatehistory.FieldOwnerID:     {Type: field.TypeString, Column: templatehistory.FieldOwnerID},
+			templatehistory.FieldName:        {Type: field.TypeString, Column: templatehistory.FieldName},
+			templatehistory.FieldDescription: {Type: field.TypeString, Column: templatehistory.FieldDescription},
+			templatehistory.FieldJsonconfig:  {Type: field.TypeJSON, Column: templatehistory.FieldJsonconfig},
+		},
+	}
+	graph.Nodes[20] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -556,7 +583,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
 		},
 	}
-	graph.Nodes[20] = &sqlgraph.Node{
+	graph.Nodes[21] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -585,7 +612,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldPhoneNumber:       {Type: field.TypeString, Column: usersetting.FieldPhoneNumber},
 		},
 	}
-	graph.Nodes[21] = &sqlgraph.Node{
+	graph.Nodes[22] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   webauthn.Table,
 			Columns: webauthn.Columns,
@@ -3638,6 +3665,111 @@ func (f *TemplateFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (thq *TemplateHistoryQuery) addPredicate(pred func(s *sql.Selector)) {
+	thq.predicates = append(thq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the TemplateHistoryQuery builder.
+func (thq *TemplateHistoryQuery) Filter() *TemplateHistoryFilter {
+	return &TemplateHistoryFilter{config: thq.config, predicateAdder: thq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *TemplateHistoryMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the TemplateHistoryMutation builder.
+func (m *TemplateHistoryMutation) Filter() *TemplateHistoryFilter {
+	return &TemplateHistoryFilter{config: m.config, predicateAdder: m}
+}
+
+// TemplateHistoryFilter provides a generic filtering capability at runtime for TemplateHistoryQuery.
+type TemplateHistoryFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *TemplateHistoryFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *TemplateHistoryFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldID))
+}
+
+// WhereHistoryTime applies the entql time.Time predicate on the history_time field.
+func (f *TemplateHistoryFilter) WhereHistoryTime(p entql.TimeP) {
+	f.Where(p.Field(templatehistory.FieldHistoryTime))
+}
+
+// WhereOperation applies the entql string predicate on the operation field.
+func (f *TemplateHistoryFilter) WhereOperation(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldOperation))
+}
+
+// WhereRef applies the entql string predicate on the ref field.
+func (f *TemplateHistoryFilter) WhereRef(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldRef))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *TemplateHistoryFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(templatehistory.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *TemplateHistoryFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(templatehistory.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *TemplateHistoryFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *TemplateHistoryFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *TemplateHistoryFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(templatehistory.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *TemplateHistoryFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *TemplateHistoryFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldOwnerID))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *TemplateHistoryFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *TemplateHistoryFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(templatehistory.FieldDescription))
+}
+
+// WhereJsonconfig applies the entql json.RawMessage predicate on the jsonconfig field.
+func (f *TemplateHistoryFilter) WhereJsonconfig(p entql.BytesP) {
+	f.Where(p.Field(templatehistory.FieldJsonconfig))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (uq *UserQuery) addPredicate(pred func(s *sql.Selector)) {
 	uq.predicates = append(uq.predicates, pred)
 }
@@ -3666,7 +3798,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[19].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[20].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -3931,7 +4063,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[20].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[21].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -4079,7 +4211,7 @@ type WebauthnFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *WebauthnFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[21].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[22].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

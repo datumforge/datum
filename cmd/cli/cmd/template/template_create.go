@@ -24,27 +24,25 @@ var templateCreateCmd = &cobra.Command{
 func init() {
 	templateCmd.AddCommand(templateCreateCmd)
 
-	templateCreateCmd.Flags().StringP("name", "n", "", "name of the organization")
+	templateCreateCmd.Flags().StringP("name", "n", "", "name of the template")
 	datum.ViperBindFlag("template.create.name", templateCreateCmd.Flags().Lookup("name"))
 
-	templateCreateCmd.Flags().StringP("description", "d", "", "description of the organization")
+	templateCreateCmd.Flags().StringP("description", "d", "", "description of the template")
 	datum.ViperBindFlag("template.create.description", templateCreateCmd.Flags().Lookup("description"))
 
-	templateCreateCmd.Flags().StringP("org-id", "o", "", "parent organization id, leave empty to create a root org")
+	templateCreateCmd.Flags().StringP("org-id", "o", "", "organization id, leave empty to create within current org")
 	datum.ViperBindFlag("template.create.org-id", templateCreateCmd.Flags().Lookup("org-id"))
 
-	templateCreateCmd.Flags().StringP("jsonconfig", "j", "", "json config for the template")
+	templateCreateCmd.Flags().StringP("jsonconfig", "j", "", "json payload for the template")
 	datum.ViperBindFlag("template.create.jsonconfig", templateCreateCmd.Flags().Lookup("jsonconfig"))
 }
 
 func createTemplate(ctx context.Context) error {
-	// setup datum http client
 	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
 		return err
 	}
 
-	// save session cookies on function exit
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
@@ -52,7 +50,7 @@ func createTemplate(ctx context.Context) error {
 
 	name := viper.GetString("template.create.name")
 	if name == "" {
-		return datum.NewRequiredFieldMissingError("organization name")
+		return datum.NewRequiredFieldMissingError("template name")
 	}
 
 	description := viper.GetString("template.create.description")

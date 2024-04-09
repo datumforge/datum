@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// JSONObject is a custom type for JSON object templates
 type JSONObject map[string]interface{}
 
 // MarshalGQL implement the Marshaler interface for gqlgen
@@ -35,30 +36,3 @@ func (j *JSONObject) UnmarshalGQL(v interface{}) error {
 
 	return err
 }
-
-// type Pair struct {
-//	K, V []byte
-//}
-//
-//// Value implements the driver Valuer interface
-// func (p Pair) Value() (driver.Value, error) {
-//	var b bytes.Buffer
-//	if err := gob.NewEncoder(&b).Encode(p); err != nil {
-//		return nil, err
-//	}
-//
-//	return b.Bytes(), nil
-//}
-//
-//// Scan implements the Scanner interface.
-// func (p *Pair) Scan(value interface{}) (err error) {
-//	switch v := value.(type) {
-//	case nil:
-//	case []byte:
-//		err = gob.NewDecoder(bytes.NewBuffer(v)).Decode(p)
-//	default:
-//		err = fmt.Errorf("unexpected type %T", v)
-//	}
-//
-//	return
-//}

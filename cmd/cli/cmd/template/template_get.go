@@ -15,34 +15,31 @@ import (
 
 var templateGetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get details of existing datum orgs",
+	Short: "Get details of existing datum templates",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return orgs(cmd.Context())
+		return templates(cmd.Context())
 	},
 }
 
 func init() {
 	templateCmd.AddCommand(templateGetCmd)
 
-	templateGetCmd.Flags().BoolP("current", "c", false, "get current org info, requires authentication")
+	templateGetCmd.Flags().BoolP("current", "c", false, "get template from currently logged in organization")
 	datum.ViperBindFlag("template.get.current", templateGetCmd.Flags().Lookup("current"))
 
-	templateGetCmd.Flags().StringP("id", "i", "", "get a specific organization by ID")
+	templateGetCmd.Flags().StringP("id", "i", "", "get a specific template by ID")
 	datum.ViperBindFlag("template.get.id", templateGetCmd.Flags().Lookup("id"))
 }
 
-func orgs(ctx context.Context) error {
-	// setup datum http client
+func templates(ctx context.Context) error {
 	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
 		return err
 	}
 
-	// save session cookies on function exit
 	client, _ := cli.Client.(*datumclient.Client)
 	defer datum.StoreSessionCookies(client)
 
-	// filter options
 	oID := viper.GetString("template.get.id")
 
 	var s []byte
@@ -74,7 +71,7 @@ func orgs(ctx context.Context) error {
 
 			return datum.JSONPrint(s)
 		}
-
+		// this doesn't visually show you the json in the table but leaving it in for now
 		writer.AddRow(template.Template.ID, template.Template.Name, *template.Template.Description, template.Template.Jsonconfig)
 		writer.Render()
 
@@ -94,7 +91,7 @@ func orgs(ctx context.Context) error {
 	if viper.GetString("output.format") == "json" {
 		return datum.JSONPrint(s)
 	}
-
+	// table writer doesn't visually show details of the json (it shows as bytes) but leaving in for now
 	for _, template := range templates.Templates.Edges {
 		writer.AddRow(template.Node.ID, template.Node.Name, *template.Node.Description, template.Node.Jsonconfig)
 	}

@@ -421,10 +421,6 @@ input CreateTemplateInput {
   the jsonschema object of the template
   """
   jsonconfig: JSON
-  """
-  the jsonschema object of the template
-  """
-  thatjsonbaby: JSON
   ownerID: ID!
 }
 """
@@ -5219,10 +5215,6 @@ type Template implements Node {
   the jsonschema object of the template
   """
   jsonconfig: JSON
-  """
-  the jsonschema object of the template
-  """
-  thatjsonbaby: JSON
   owner: Organization!
 }
 """
@@ -5898,11 +5890,6 @@ input UpdateTemplateInput {
   """
   jsonconfig: JSON
   clearJsonconfig: Boolean
-  """
-  the jsonschema object of the template
-  """
-  thatjsonbaby: JSON
-  clearThatjsonbaby: Boolean
   ownerID: ID
 }
 """

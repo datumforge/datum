@@ -11,7 +11,6 @@ mutation CreateTemplate($input: CreateTemplateInput!) {
       name
       description
       jsonconfig
-      thatjsonbaby
       owner {
         id
       }
@@ -32,7 +31,7 @@ mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
       name
       description
       jsonconfig
-      thatjsonbaby
+      
       owner {
         id
       }
@@ -54,7 +53,6 @@ query GetAllTemplates {
         name
         description
         jsonconfig
-        thatjsonbaby
         owner {
           id
         }
@@ -75,7 +73,6 @@ query GetTemplate($getTemplateId: ID!) {
     name
     description
     jsonconfig
-    thatjsonbaby
     owner {
       id
     }

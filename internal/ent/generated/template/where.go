@@ -702,16 +702,6 @@ func JsonconfigNotNil() predicate.Template {
 	return predicate.Template(sql.FieldNotNull(FieldJsonconfig))
 }
 
-// ThatjsonbabyIsNil applies the IsNil predicate on the "thatjsonbaby" field.
-func ThatjsonbabyIsNil() predicate.Template {
-	return predicate.Template(sql.FieldIsNull(FieldThatjsonbaby))
-}
-
-// ThatjsonbabyNotNil applies the NotNil predicate on the "thatjsonbaby" field.
-func ThatjsonbabyNotNil() predicate.Template {
-	return predicate.Template(sql.FieldNotNull(FieldThatjsonbaby))
-}
-
 // HasOwner applies the HasEdge predicate on the "owner" edge.
 func HasOwner() predicate.Template {
 	return predicate.Template(func(s *sql.Selector) {

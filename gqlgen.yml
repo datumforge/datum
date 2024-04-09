@@ -86,3 +86,4 @@ models:
   JSON:
     model:
       - github.com/datumforge/entx.RawMessage
+      - github.com/datumforge/datum/internal/ent/customtypes.JSONObject

@@ -4965,18 +4965,17 @@ func (t *CreateTemplate_CreateTemplate_Template_Owner) GetID() string {
 }
 
 type CreateTemplate_CreateTemplate_Template struct {
-	ID           string                                       "json:\"id\" graphql:\"id\""
-	CreatedAt    *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt    *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy    *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt    *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy    *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name         string                                       "json:\"name\" graphql:\"name\""
-	Description  *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig   json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
-	Thatjsonbaby json.RawMessage                              "json:\"thatjsonbaby,omitempty\" graphql:\"thatjsonbaby\""
-	Owner        CreateTemplate_CreateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       CreateTemplate_CreateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
 }
 
 func (t *CreateTemplate_CreateTemplate_Template) GetID() string {
@@ -5039,12 +5038,6 @@ func (t *CreateTemplate_CreateTemplate_Template) GetJsonconfig() *json.RawMessag
 	}
 	return &t.Jsonconfig
 }
-func (t *CreateTemplate_CreateTemplate_Template) GetThatjsonbaby() *json.RawMessage {
-	if t == nil {
-		t = &CreateTemplate_CreateTemplate_Template{}
-	}
-	return &t.Thatjsonbaby
-}
 func (t *CreateTemplate_CreateTemplate_Template) GetOwner() *CreateTemplate_CreateTemplate_Template_Owner {
 	if t == nil {
 		t = &CreateTemplate_CreateTemplate_Template{}
@@ -5075,18 +5068,17 @@ func (t *UpdateTemplate_UpdateTemplate_Template_Owner) GetID() string {
 }
 
 type UpdateTemplate_UpdateTemplate_Template struct {
-	ID           string                                       "json:\"id\" graphql:\"id\""
-	CreatedAt    *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt    *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy    *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt    *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy    *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name         string                                       "json:\"name\" graphql:\"name\""
-	Description  *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig   json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
-	Thatjsonbaby json.RawMessage                              "json:\"thatjsonbaby,omitempty\" graphql:\"thatjsonbaby\""
-	Owner        UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                   "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
 }
 
 func (t *UpdateTemplate_UpdateTemplate_Template) GetID() string {
@@ -5149,12 +5141,6 @@ func (t *UpdateTemplate_UpdateTemplate_Template) GetJsonconfig() *json.RawMessag
 	}
 	return &t.Jsonconfig
 }
-func (t *UpdateTemplate_UpdateTemplate_Template) GetThatjsonbaby() *json.RawMessage {
-	if t == nil {
-		t = &UpdateTemplate_UpdateTemplate_Template{}
-	}
-	return &t.Thatjsonbaby
-}
 func (t *UpdateTemplate_UpdateTemplate_Template) GetOwner() *UpdateTemplate_UpdateTemplate_Template_Owner {
 	if t == nil {
 		t = &UpdateTemplate_UpdateTemplate_Template{}
@@ -5185,18 +5171,17 @@ func (t *GetAllTemplates_Templates_Edges_Node_Owner) GetID() string {
 }
 
 type GetAllTemplates_Templates_Edges_Node struct {
-	ID           string                                     "json:\"id\" graphql:\"id\""
-	CreatedAt    *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt    *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy    *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt    *time.Time                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy    *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name         string                                     "json:\"name\" graphql:\"name\""
-	Description  *string                                    "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig   json.RawMessage                            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
-	Thatjsonbaby json.RawMessage                            "json:\"thatjsonbaby,omitempty\" graphql:\"thatjsonbaby\""
-	Owner        GetAllTemplates_Templates_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                                     "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                                     "json:\"name\" graphql:\"name\""
+	Description *string                                    "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage                            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       GetAllTemplates_Templates_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
 }
 
 func (t *GetAllTemplates_Templates_Edges_Node) GetID() string {
@@ -5259,12 +5244,6 @@ func (t *GetAllTemplates_Templates_Edges_Node) GetJsonconfig() *json.RawMessage 
 	}
 	return &t.Jsonconfig
 }
-func (t *GetAllTemplates_Templates_Edges_Node) GetThatjsonbaby() *json.RawMessage {
-	if t == nil {
-		t = &GetAllTemplates_Templates_Edges_Node{}
-	}
-	return &t.Thatjsonbaby
-}
 func (t *GetAllTemplates_Templates_Edges_Node) GetOwner() *GetAllTemplates_Templates_Edges_Node_Owner {
 	if t == nil {
 		t = &GetAllTemplates_Templates_Edges_Node{}
@@ -5306,18 +5285,17 @@ func (t *GetTemplate_Template_Owner) GetID() string {
 }
 
 type GetTemplate_Template struct {
-	ID           string                     "json:\"id\" graphql:\"id\""
-	CreatedAt    *time.Time                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt    *time.Time                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy    *string                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy    *string                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	DeletedAt    *time.Time                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
-	DeletedBy    *string                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
-	Name         string                     "json:\"name\" graphql:\"name\""
-	Description  *string                    "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig   json.RawMessage            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
-	Thatjsonbaby json.RawMessage            "json:\"thatjsonbaby,omitempty\" graphql:\"thatjsonbaby\""
-	Owner        GetTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
+	ID          string                     "json:\"id\" graphql:\"id\""
+	CreatedAt   *time.Time                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	DeletedAt   *time.Time                 "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy   *string                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	Name        string                     "json:\"name\" graphql:\"name\""
+	Description *string                    "json:\"description,omitempty\" graphql:\"description\""
+	Jsonconfig  json.RawMessage            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Owner       GetTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
 }
 
 func (t *GetTemplate_Template) GetID() string {
@@ -5379,12 +5357,6 @@ func (t *GetTemplate_Template) GetJsonconfig() *json.RawMessage {
 		t = &GetTemplate_Template{}
 	}
 	return &t.Jsonconfig
-}
-func (t *GetTemplate_Template) GetThatjsonbaby() *json.RawMessage {
-	if t == nil {
-		t = &GetTemplate_Template{}
-	}
-	return &t.Thatjsonbaby
 }
 func (t *GetTemplate_Template) GetOwner() *GetTemplate_Template_Owner {
 	if t == nil {
@@ -9516,7 +9488,6 @@ const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateI
 			name
 			description
 			jsonconfig
-			thatjsonbaby
 			owner {
 				id
 			}
@@ -9555,7 +9526,6 @@ const UpdateTemplateDocument = `mutation UpdateTemplate ($updateTemplateId: ID!,
 			name
 			description
 			jsonconfig
-			thatjsonbaby
 			owner {
 				id
 			}
@@ -9596,7 +9566,6 @@ const GetAllTemplatesDocument = `query GetAllTemplates {
 				name
 				description
 				jsonconfig
-				thatjsonbaby
 				owner {
 					id
 				}
@@ -9633,7 +9602,6 @@ const GetTemplateDocument = `query GetTemplate ($getTemplateId: ID!) {
 		name
 		description
 		jsonconfig
-		thatjsonbaby
 		owner {
 			id
 		}

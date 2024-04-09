@@ -40,8 +40,6 @@ type Template struct {
 	Description string `json:"description,omitempty"`
 	// the jsonschema object of the template
 	Jsonconfig customtypes.JSONObject `json:"jsonconfig,omitempty"`
-	// the jsonschema object of the template
-	Thatjsonbaby map[string]interface{} `json:"thatjsonbaby,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TemplateQuery when eager-loading is set.
 	Edges        TemplateEdges `json:"edges"`
@@ -75,7 +73,7 @@ func (*Template) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case template.FieldJsonconfig, template.FieldThatjsonbaby:
+		case template.FieldJsonconfig:
 			values[i] = new([]byte)
 		case template.FieldID, template.FieldCreatedBy, template.FieldUpdatedBy, template.FieldDeletedBy, template.FieldOwnerID, template.FieldName, template.FieldDescription:
 			values[i] = new(sql.NullString)
@@ -164,14 +162,6 @@ func (t *Template) assignValues(columns []string, values []any) error {
 					return fmt.Errorf("unmarshal field jsonconfig: %w", err)
 				}
 			}
-		case template.FieldThatjsonbaby:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field thatjsonbaby", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &t.Thatjsonbaby); err != nil {
-					return fmt.Errorf("unmarshal field thatjsonbaby: %w", err)
-				}
-			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
 		}
@@ -242,9 +232,6 @@ func (t *Template) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("jsonconfig=")
 	builder.WriteString(fmt.Sprintf("%v", t.Jsonconfig))
-	builder.WriteString(", ")
-	builder.WriteString("thatjsonbaby=")
-	builder.WriteString(fmt.Sprintf("%v", t.Thatjsonbaby))
 	builder.WriteByte(')')
 	return builder.String()
 }

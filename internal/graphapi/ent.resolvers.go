@@ -6,7 +6,6 @@ package graphapi
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"entgo.io/contrib/entgql"
@@ -122,29 +121,9 @@ func (r *queryResolver) UserSettings(ctx context.Context, after *entgql.Cursor[s
 	return withTransactionalMutation(ctx).UserSetting.Query().Paginate(ctx, after, first, before, last, generated.WithUserSettingFilter(where.Filter))
 }
 
-// Jsonconfig is the resolver for the jsonconfig field.
-func (r *templateResolver) Jsonconfig(ctx context.Context, obj *generated.Template) (json.RawMessage, error) {
-	panic(fmt.Errorf("not implemented: Jsonconfig - jsonconfig"))
-}
-
-// Thatjsonbaby is the resolver for the thatjsonbaby field.
-func (r *templateResolver) Thatjsonbaby(ctx context.Context, obj *generated.Template) (json.RawMessage, error) {
-	panic(fmt.Errorf("not implemented: Thatjsonbaby - thatjsonbaby"))
-}
-
 // AuthStyle is the resolver for the authStyle field.
 func (r *createOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error {
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
-}
-
-// Jsonconfig is the resolver for the jsonconfig field.
-func (r *createTemplateInputResolver) Jsonconfig(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
-	panic(fmt.Errorf("not implemented: Jsonconfig - jsonconfig"))
-}
-
-// Thatjsonbaby is the resolver for the thatjsonbaby field.
-func (r *createTemplateInputResolver) Thatjsonbaby(ctx context.Context, obj *generated.CreateTemplateInput, data json.RawMessage) error {
-	panic(fmt.Errorf("not implemented: Thatjsonbaby - thatjsonbaby"))
 }
 
 // AuthStyle is the resolver for the authStyle field.
@@ -192,24 +171,11 @@ func (r *updateOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *g
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
 }
 
-// Jsonconfig is the resolver for the jsonconfig field.
-func (r *updateTemplateInputResolver) Jsonconfig(ctx context.Context, obj *generated.UpdateTemplateInput, data json.RawMessage) error {
-	panic(fmt.Errorf("not implemented: Jsonconfig - jsonconfig"))
-}
-
-// Thatjsonbaby is the resolver for the thatjsonbaby field.
-func (r *updateTemplateInputResolver) Thatjsonbaby(ctx context.Context, obj *generated.UpdateTemplateInput, data json.RawMessage) error {
-	panic(fmt.Errorf("not implemented: Thatjsonbaby - thatjsonbaby"))
-}
-
 // OauthProvider returns OauthProviderResolver implementation.
 func (r *Resolver) OauthProvider() OauthProviderResolver { return &oauthProviderResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-
-// Template returns TemplateResolver implementation.
-func (r *Resolver) Template() TemplateResolver { return &templateResolver{r} }
 
 // CreateGroupInput returns CreateGroupInputResolver implementation.
 func (r *Resolver) CreateGroupInput() CreateGroupInputResolver { return &createGroupInputResolver{r} }
@@ -222,11 +188,6 @@ func (r *Resolver) CreateOauthProviderInput() CreateOauthProviderInputResolver {
 // CreateOrganizationInput returns CreateOrganizationInputResolver implementation.
 func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
 	return &createOrganizationInputResolver{r}
-}
-
-// CreateTemplateInput returns CreateTemplateInputResolver implementation.
-func (r *Resolver) CreateTemplateInput() CreateTemplateInputResolver {
-	return &createTemplateInputResolver{r}
 }
 
 // OauthProviderWhereInput returns OauthProviderWhereInputResolver implementation.
@@ -252,21 +213,13 @@ func (r *Resolver) UpdateTFASettingsInput() UpdateTFASettingsInputResolver {
 	return &updateTFASettingsInputResolver{r}
 }
 
-// UpdateTemplateInput returns UpdateTemplateInputResolver implementation.
-func (r *Resolver) UpdateTemplateInput() UpdateTemplateInputResolver {
-	return &updateTemplateInputResolver{r}
-}
-
 type oauthProviderResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type templateResolver struct{ *Resolver }
 type createGroupInputResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
-type createTemplateInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }
 type updateTFASettingsInputResolver struct{ *Resolver }
-type updateTemplateInputResolver struct{ *Resolver }

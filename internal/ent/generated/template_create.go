@@ -138,12 +138,6 @@ func (tc *TemplateCreate) SetJsonconfig(co customtypes.JSONObject) *TemplateCrea
 	return tc
 }
 
-// SetThatjsonbaby sets the "thatjsonbaby" field.
-func (tc *TemplateCreate) SetThatjsonbaby(m map[string]interface{}) *TemplateCreate {
-	tc.mutation.SetThatjsonbaby(m)
-	return tc
-}
-
 // SetID sets the "id" field.
 func (tc *TemplateCreate) SetID(s string) *TemplateCreate {
 	tc.mutation.SetID(s)
@@ -311,10 +305,6 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Jsonconfig(); ok {
 		_spec.SetField(template.FieldJsonconfig, field.TypeJSON, value)
 		_node.Jsonconfig = value
-	}
-	if value, ok := tc.mutation.Thatjsonbaby(); ok {
-		_spec.SetField(template.FieldThatjsonbaby, field.TypeJSON, value)
-		_node.Thatjsonbaby = value
 	}
 	if nodes := tc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

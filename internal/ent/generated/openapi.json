@@ -5724,12 +5724,6 @@
                       "type": "string"
                     }
                   },
-                  "thatjsonbaby": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "owner": {
                     "type": "string"
                   }
@@ -5878,12 +5872,6 @@
                     "type": "string"
                   },
                   "jsonconfig": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "thatjsonbaby": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -8190,12 +8178,6 @@
             "type": "string"
           },
           "jsonconfig": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "thatjsonbaby": {
             "type": "array",
             "items": {
               "type": "string"

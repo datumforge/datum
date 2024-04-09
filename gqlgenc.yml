@@ -13,6 +13,7 @@ models:
   JSON:
     model:
       -  github.com/datumforge/entx.RawMessage
+      -  github.com/datumforge/datum/internal/ent/customtypes.JSONObject
 schema: ["schema.graphql" ]
 query: ["query/*.graphql"]
 generate:

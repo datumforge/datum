@@ -35,8 +35,6 @@ const (
 	FieldDescription = "description"
 	// FieldJsonconfig holds the string denoting the jsonconfig field in the database.
 	FieldJsonconfig = "jsonconfig"
-	// FieldThatjsonbaby holds the string denoting the thatjsonbaby field in the database.
-	FieldThatjsonbaby = "thatjsonbaby"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// Table holds the table name of the template in the database.
@@ -63,7 +61,6 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldJsonconfig,
-	FieldThatjsonbaby,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

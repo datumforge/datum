@@ -678,7 +678,6 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "jsonconfig", Type: field.TypeJSON, Nullable: true},
-		{Name: "thatjsonbaby", Type: field.TypeJSON, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString},
 	}
 	// TemplatesTable holds the schema information for the "templates" table.
@@ -689,7 +688,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "templates_organizations_templates",
-				Columns:    []*schema.Column{TemplatesColumns[11]},
+				Columns:    []*schema.Column{TemplatesColumns[10]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

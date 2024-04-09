@@ -164,18 +164,6 @@ func (tu *TemplateUpdate) ClearJsonconfig() *TemplateUpdate {
 	return tu
 }
 
-// SetThatjsonbaby sets the "thatjsonbaby" field.
-func (tu *TemplateUpdate) SetThatjsonbaby(m map[string]interface{}) *TemplateUpdate {
-	tu.mutation.SetThatjsonbaby(m)
-	return tu
-}
-
-// ClearThatjsonbaby clears the value of the "thatjsonbaby" field.
-func (tu *TemplateUpdate) ClearThatjsonbaby() *TemplateUpdate {
-	tu.mutation.ClearThatjsonbaby()
-	return tu
-}
-
 // SetOwner sets the "owner" edge to the Organization entity.
 func (tu *TemplateUpdate) SetOwner(o *Organization) *TemplateUpdate {
 	return tu.SetOwnerID(o.ID)
@@ -303,12 +291,6 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.JsonconfigCleared() {
 		_spec.ClearField(template.FieldJsonconfig, field.TypeJSON)
-	}
-	if value, ok := tu.mutation.Thatjsonbaby(); ok {
-		_spec.SetField(template.FieldThatjsonbaby, field.TypeJSON, value)
-	}
-	if tu.mutation.ThatjsonbabyCleared() {
-		_spec.ClearField(template.FieldThatjsonbaby, field.TypeJSON)
 	}
 	if tu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -495,18 +477,6 @@ func (tuo *TemplateUpdateOne) ClearJsonconfig() *TemplateUpdateOne {
 	return tuo
 }
 
-// SetThatjsonbaby sets the "thatjsonbaby" field.
-func (tuo *TemplateUpdateOne) SetThatjsonbaby(m map[string]interface{}) *TemplateUpdateOne {
-	tuo.mutation.SetThatjsonbaby(m)
-	return tuo
-}
-
-// ClearThatjsonbaby clears the value of the "thatjsonbaby" field.
-func (tuo *TemplateUpdateOne) ClearThatjsonbaby() *TemplateUpdateOne {
-	tuo.mutation.ClearThatjsonbaby()
-	return tuo
-}
-
 // SetOwner sets the "owner" edge to the Organization entity.
 func (tuo *TemplateUpdateOne) SetOwner(o *Organization) *TemplateUpdateOne {
 	return tuo.SetOwnerID(o.ID)
@@ -664,12 +634,6 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 	}
 	if tuo.mutation.JsonconfigCleared() {
 		_spec.ClearField(template.FieldJsonconfig, field.TypeJSON)
-	}
-	if value, ok := tuo.mutation.Thatjsonbaby(); ok {
-		_spec.SetField(template.FieldThatjsonbaby, field.TypeJSON, value)
-	}
-	if tuo.mutation.ThatjsonbabyCleared() {
-		_spec.ClearField(template.FieldThatjsonbaby, field.TypeJSON)
 	}
 	if tuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

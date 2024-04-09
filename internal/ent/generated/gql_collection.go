@@ -2647,11 +2647,6 @@ func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 				selectedFields = append(selectedFields, template.FieldJsonconfig)
 				fieldSeen[template.FieldJsonconfig] = struct{}{}
 			}
-		case "thatjsonbaby":
-			if _, ok := fieldSeen[template.FieldThatjsonbaby]; !ok {
-				selectedFields = append(selectedFields, template.FieldThatjsonbaby)
-				fieldSeen[template.FieldThatjsonbaby] = struct{}{}
-			}
 		case "id":
 		case "__typename":
 		default:

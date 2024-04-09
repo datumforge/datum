@@ -306,9 +306,7 @@ type CreateTemplateInput struct {
 	Description *string `json:"description,omitempty"`
 	// the jsonschema object of the template
 	Jsonconfig json.RawMessage `json:"jsonconfig,omitempty"`
-	// the jsonschema object of the template
-	Thatjsonbaby json.RawMessage `json:"thatjsonbaby,omitempty"`
-	OwnerID      string          `json:"ownerID"`
+	OwnerID    string          `json:"ownerID"`
 }
 
 // CreateUserInput is used for create User object.
@@ -3918,9 +3916,7 @@ type Template struct {
 	Description *string `json:"description,omitempty"`
 	// the jsonschema object of the template
 	Jsonconfig json.RawMessage `json:"jsonconfig,omitempty"`
-	// the jsonschema object of the template
-	Thatjsonbaby json.RawMessage `json:"thatjsonbaby,omitempty"`
-	Owner        *Organization   `json:"owner"`
+	Owner      *Organization   `json:"owner"`
 }
 
 func (Template) IsNode() {}
@@ -4450,10 +4446,7 @@ type UpdateTemplateInput struct {
 	// the jsonschema object of the template
 	Jsonconfig      json.RawMessage `json:"jsonconfig,omitempty"`
 	ClearJsonconfig *bool           `json:"clearJsonconfig,omitempty"`
-	// the jsonschema object of the template
-	Thatjsonbaby      json.RawMessage `json:"thatjsonbaby,omitempty"`
-	ClearThatjsonbaby *bool           `json:"clearThatjsonbaby,omitempty"`
-	OwnerID           *string         `json:"ownerID,omitempty"`
+	OwnerID         *string         `json:"ownerID,omitempty"`
 }
 
 // UpdateUserInput is used for update User object.

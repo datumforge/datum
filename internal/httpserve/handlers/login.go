@@ -75,7 +75,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		Set("user_id", user.ID).
 		Set("email", user.Email).
 		Set("organization_id", claims.OrgID).
-		Set("auth_provider", "CREDENTIALS")
+		Set("auth_provider", user.AuthProvider)
 
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)

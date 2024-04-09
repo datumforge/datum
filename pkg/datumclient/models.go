@@ -148,7 +148,7 @@ type CreateOauthProviderInput struct {
 	// the token url of the provider
 	TokenURL string `json:"tokenURL"`
 	// the auth style, 0: auto detect 1: third party log in 2: log in with username and password
-	AuthStyle int64 `json:"authStyle"`
+	AuthStyle string `json:"authStyle"`
 	// the URL to request user information by token
 	InfoURL string  `json:"infoURL"`
 	OwnerID *string `json:"ownerID,omitempty"`
@@ -1650,7 +1650,7 @@ type OauthProvider struct {
 	// the token url of the provider
 	TokenURL string `json:"tokenURL"`
 	// the auth style, 0: auto detect 1: third party log in 2: log in with username and password
-	AuthStyle int64 `json:"authStyle"`
+	AuthStyle string `json:"authStyle"`
 	// the URL to request user information by token
 	InfoURL string        `json:"infoURL"`
 	Owner   *Organization `json:"owner,omitempty"`
@@ -1891,14 +1891,14 @@ type OauthProviderWhereInput struct {
 	TokenURLEqualFold    *string  `json:"tokenURLEqualFold,omitempty"`
 	TokenURLContainsFold *string  `json:"tokenURLContainsFold,omitempty"`
 	// auth_style field predicates
-	AuthStyle      *int64  `json:"authStyle,omitempty"`
-	AuthStyleNeq   *int64  `json:"authStyleNEQ,omitempty"`
-	AuthStyleIn    []int64 `json:"authStyleIn,omitempty"`
-	AuthStyleNotIn []int64 `json:"authStyleNotIn,omitempty"`
-	AuthStyleGt    *int64  `json:"authStyleGT,omitempty"`
-	AuthStyleGte   *int64  `json:"authStyleGTE,omitempty"`
-	AuthStyleLt    *int64  `json:"authStyleLT,omitempty"`
-	AuthStyleLte   *int64  `json:"authStyleLTE,omitempty"`
+	AuthStyle      *string  `json:"authStyle,omitempty"`
+	AuthStyleNeq   *string  `json:"authStyleNEQ,omitempty"`
+	AuthStyleIn    []string `json:"authStyleIn,omitempty"`
+	AuthStyleNotIn []string `json:"authStyleNotIn,omitempty"`
+	AuthStyleGt    *string  `json:"authStyleGT,omitempty"`
+	AuthStyleGte   *string  `json:"authStyleGTE,omitempty"`
+	AuthStyleLt    *string  `json:"authStyleLT,omitempty"`
+	AuthStyleLte   *string  `json:"authStyleLTE,omitempty"`
 	// info_url field predicates
 	InfoURL             *string  `json:"infoURL,omitempty"`
 	InfoURLNeq          *string  `json:"infoURLNEQ,omitempty"`
@@ -4244,7 +4244,7 @@ type UpdateOauthProviderInput struct {
 	// the token url of the provider
 	TokenURL *string `json:"tokenURL,omitempty"`
 	// the auth style, 0: auto detect 1: third party log in 2: log in with username and password
-	AuthStyle *int64 `json:"authStyle,omitempty"`
+	AuthStyle *string `json:"authStyle,omitempty"`
 	// the URL to request user information by token
 	InfoURL    *string `json:"infoURL,omitempty"`
 	OwnerID    *string `json:"ownerID,omitempty"`

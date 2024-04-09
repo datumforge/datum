@@ -2033,10 +2033,7 @@
                     "type": "string"
                   },
                   "auth_style": {
-                    "type": "integer",
-                    "format": "int32",
-                    "maximum": 255,
-                    "minimum": 0
+                    "type": "integer"
                   },
                   "info_url": {
                     "type": "string"
@@ -2211,10 +2208,7 @@
                     "type": "string"
                   },
                   "auth_style": {
-                    "type": "integer",
-                    "format": "int32",
-                    "maximum": 255,
-                    "minimum": 0
+                    "type": "integer"
                   },
                   "info_url": {
                     "type": "string"
@@ -7433,10 +7427,7 @@
             "type": "string"
           },
           "auth_style": {
-            "type": "integer",
-            "format": "int32",
-            "maximum": 255,
-            "minimum": 0
+            "type": "integer"
           },
           "info_url": {
             "type": "string"

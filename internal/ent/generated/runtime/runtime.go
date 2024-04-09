@@ -900,10 +900,10 @@ func init() {
 	subscriberDescID := subscriberMixinFields1[0].Descriptor()
 	// subscriber.DefaultID holds the default value on creation for the id field.
 	subscriber.DefaultID = subscriberDescID.Default.(func() string)
-	tfasettingsMixin := schema.TFASettings{}.Mixin()
+	tfasettingsMixin := schema.TFASetting{}.Mixin()
 	tfasettingsMixinHooks0 := tfasettingsMixin[0].Hooks()
 	tfasettingsMixinHooks2 := tfasettingsMixin[2].Hooks()
-	tfasettingsHooks := schema.TFASettings{}.Hooks()
+	tfasettingsHooks := schema.TFASetting{}.Hooks()
 	tfasettings.Hooks[0] = tfasettingsMixinHooks0[0]
 	tfasettings.Hooks[1] = tfasettingsMixinHooks2[0]
 	tfasettings.Hooks[2] = tfasettingsHooks[0]
@@ -913,7 +913,7 @@ func init() {
 	_ = tfasettingsMixinFields0
 	tfasettingsMixinFields1 := tfasettingsMixin[1].Fields()
 	_ = tfasettingsMixinFields1
-	tfasettingsFields := schema.TFASettings{}.Fields()
+	tfasettingsFields := schema.TFASetting{}.Fields()
 	_ = tfasettingsFields
 	// tfasettingsDescCreatedAt is the schema descriptor for created_at field.
 	tfasettingsDescCreatedAt := tfasettingsMixinFields0[0].Descriptor()

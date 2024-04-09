@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -202,23 +203,23 @@ func (opu *OauthProviderUpdate) SetNillableTokenURL(s *string) *OauthProviderUpd
 }
 
 // SetAuthStyle sets the "auth_style" field.
-func (opu *OauthProviderUpdate) SetAuthStyle(u uint8) *OauthProviderUpdate {
+func (opu *OauthProviderUpdate) SetAuthStyle(c customtypes.Uint8) *OauthProviderUpdate {
 	opu.mutation.ResetAuthStyle()
-	opu.mutation.SetAuthStyle(u)
+	opu.mutation.SetAuthStyle(c)
 	return opu
 }
 
 // SetNillableAuthStyle sets the "auth_style" field if the given value is not nil.
-func (opu *OauthProviderUpdate) SetNillableAuthStyle(u *uint8) *OauthProviderUpdate {
-	if u != nil {
-		opu.SetAuthStyle(*u)
+func (opu *OauthProviderUpdate) SetNillableAuthStyle(c *customtypes.Uint8) *OauthProviderUpdate {
+	if c != nil {
+		opu.SetAuthStyle(*c)
 	}
 	return opu
 }
 
-// AddAuthStyle adds u to the "auth_style" field.
-func (opu *OauthProviderUpdate) AddAuthStyle(u int8) *OauthProviderUpdate {
-	opu.mutation.AddAuthStyle(u)
+// AddAuthStyle adds c to the "auth_style" field.
+func (opu *OauthProviderUpdate) AddAuthStyle(c customtypes.Uint8) *OauthProviderUpdate {
+	opu.mutation.AddAuthStyle(c)
 	return opu
 }
 
@@ -601,23 +602,23 @@ func (opuo *OauthProviderUpdateOne) SetNillableTokenURL(s *string) *OauthProvide
 }
 
 // SetAuthStyle sets the "auth_style" field.
-func (opuo *OauthProviderUpdateOne) SetAuthStyle(u uint8) *OauthProviderUpdateOne {
+func (opuo *OauthProviderUpdateOne) SetAuthStyle(c customtypes.Uint8) *OauthProviderUpdateOne {
 	opuo.mutation.ResetAuthStyle()
-	opuo.mutation.SetAuthStyle(u)
+	opuo.mutation.SetAuthStyle(c)
 	return opuo
 }
 
 // SetNillableAuthStyle sets the "auth_style" field if the given value is not nil.
-func (opuo *OauthProviderUpdateOne) SetNillableAuthStyle(u *uint8) *OauthProviderUpdateOne {
-	if u != nil {
-		opuo.SetAuthStyle(*u)
+func (opuo *OauthProviderUpdateOne) SetNillableAuthStyle(c *customtypes.Uint8) *OauthProviderUpdateOne {
+	if c != nil {
+		opuo.SetAuthStyle(*c)
 	}
 	return opuo
 }
 
-// AddAuthStyle adds u to the "auth_style" field.
-func (opuo *OauthProviderUpdateOne) AddAuthStyle(u int8) *OauthProviderUpdateOne {
-	opuo.mutation.AddAuthStyle(u)
+// AddAuthStyle adds c to the "auth_style" field.
+func (opuo *OauthProviderUpdateOne) AddAuthStyle(c customtypes.Uint8) *OauthProviderUpdateOne {
+	opuo.mutation.AddAuthStyle(c)
 	return opuo
 }
 

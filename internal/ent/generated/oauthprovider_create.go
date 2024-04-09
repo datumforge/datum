@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
@@ -148,8 +149,8 @@ func (opc *OauthProviderCreate) SetTokenURL(s string) *OauthProviderCreate {
 }
 
 // SetAuthStyle sets the "auth_style" field.
-func (opc *OauthProviderCreate) SetAuthStyle(u uint8) *OauthProviderCreate {
-	opc.mutation.SetAuthStyle(u)
+func (opc *OauthProviderCreate) SetAuthStyle(c customtypes.Uint8) *OauthProviderCreate {
+	opc.mutation.SetAuthStyle(c)
 	return opc
 }
 

@@ -14,13 +14,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
-// TFASettings holds the schema definition for the TFASettings entity
-type TFASettings struct {
+// TFASetting holds the schema definition for the TFASetting entity
+type TFASetting struct {
 	ent.Schema
 }
 
-// Fields of the TFASettings
-func (TFASettings) Fields() []ent.Field {
+// Fields of the TFASetting
+func (TFASetting) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("tfa_secret").
 			Comment("TFA secret for the user").
@@ -68,8 +68,8 @@ func (TFASettings) Fields() []ent.Field {
 	}
 }
 
-// Mixin of the TFASettings
-func (TFASettings) Mixin() []ent.Mixin {
+// Mixin of the TFASetting
+func (TFASetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		emixin.IDMixin{},
@@ -83,15 +83,15 @@ func (TFASettings) Mixin() []ent.Mixin {
 	}
 }
 
-// Hooks of the TFASettings
-func (TFASettings) Hooks() []ent.Hook {
+// Hooks of the TFASetting
+func (TFASetting) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookEnableTFA(), // sets 2fa on user settings and stores recovery codes
 	}
 }
 
-// Annotations of the TFASettings
-func (TFASettings) Annotations() []schema.Annotation {
+// Annotations of the TFASetting
+func (TFASetting) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),

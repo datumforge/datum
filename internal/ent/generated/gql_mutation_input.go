@@ -726,7 +726,7 @@ type CreateOauthProviderInput struct {
 	Scopes       string
 	AuthURL      string
 	TokenURL     string
-	AuthStyle    uint8
+	AuthStyle    customtypes.Uint8
 	InfoURL      string
 	OwnerID      *string
 }
@@ -778,7 +778,7 @@ type UpdateOauthProviderInput struct {
 	Scopes         *string
 	AuthURL        *string
 	TokenURL       *string
-	AuthStyle      *uint8
+	AuthStyle      *customtypes.Uint8
 	InfoURL        *string
 	ClearOwner     bool
 	OwnerID        *string

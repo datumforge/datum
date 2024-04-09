@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -4197,14 +4198,14 @@ type OauthProviderWhereInput struct {
 	TokenURLContainsFold *string  `json:"tokenURLContainsFold,omitempty"`
 
 	// "auth_style" field predicates.
-	AuthStyle      *uint8  `json:"authStyle,omitempty"`
-	AuthStyleNEQ   *uint8  `json:"authStyleNEQ,omitempty"`
-	AuthStyleIn    []uint8 `json:"authStyleIn,omitempty"`
-	AuthStyleNotIn []uint8 `json:"authStyleNotIn,omitempty"`
-	AuthStyleGT    *uint8  `json:"authStyleGT,omitempty"`
-	AuthStyleGTE   *uint8  `json:"authStyleGTE,omitempty"`
-	AuthStyleLT    *uint8  `json:"authStyleLT,omitempty"`
-	AuthStyleLTE   *uint8  `json:"authStyleLTE,omitempty"`
+	AuthStyle      *customtypes.Uint8  `json:"authStyle,omitempty"`
+	AuthStyleNEQ   *customtypes.Uint8  `json:"authStyleNEQ,omitempty"`
+	AuthStyleIn    []customtypes.Uint8 `json:"authStyleIn,omitempty"`
+	AuthStyleNotIn []customtypes.Uint8 `json:"authStyleNotIn,omitempty"`
+	AuthStyleGT    *customtypes.Uint8  `json:"authStyleGT,omitempty"`
+	AuthStyleGTE   *customtypes.Uint8  `json:"authStyleGTE,omitempty"`
+	AuthStyleLT    *customtypes.Uint8  `json:"authStyleLT,omitempty"`
+	AuthStyleLTE   *customtypes.Uint8  `json:"authStyleLTE,omitempty"`
 
 	// "info_url" field predicates.
 	InfoURL             *string  `json:"infoURL,omitempty"`

@@ -8289,8 +8289,8 @@ type OauthProviderMutation struct {
 	scopes        *string
 	auth_url      *string
 	token_url     *string
-	auth_style    *uint8
-	addauth_style *int8
+	auth_style    *customtypes.Uint8
+	addauth_style *customtypes.Uint8
 	info_url      *string
 	clearedFields map[string]struct{}
 	owner         *string
@@ -8951,13 +8951,13 @@ func (m *OauthProviderMutation) ResetTokenURL() {
 }
 
 // SetAuthStyle sets the "auth_style" field.
-func (m *OauthProviderMutation) SetAuthStyle(u uint8) {
-	m.auth_style = &u
+func (m *OauthProviderMutation) SetAuthStyle(c customtypes.Uint8) {
+	m.auth_style = &c
 	m.addauth_style = nil
 }
 
 // AuthStyle returns the value of the "auth_style" field in the mutation.
-func (m *OauthProviderMutation) AuthStyle() (r uint8, exists bool) {
+func (m *OauthProviderMutation) AuthStyle() (r customtypes.Uint8, exists bool) {
 	v := m.auth_style
 	if v == nil {
 		return
@@ -8968,7 +8968,7 @@ func (m *OauthProviderMutation) AuthStyle() (r uint8, exists bool) {
 // OldAuthStyle returns the old "auth_style" field's value of the OauthProvider entity.
 // If the OauthProvider object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OauthProviderMutation) OldAuthStyle(ctx context.Context) (v uint8, err error) {
+func (m *OauthProviderMutation) OldAuthStyle(ctx context.Context) (v customtypes.Uint8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAuthStyle is only allowed on UpdateOne operations")
 	}
@@ -8982,17 +8982,17 @@ func (m *OauthProviderMutation) OldAuthStyle(ctx context.Context) (v uint8, err 
 	return oldValue.AuthStyle, nil
 }
 
-// AddAuthStyle adds u to the "auth_style" field.
-func (m *OauthProviderMutation) AddAuthStyle(u int8) {
+// AddAuthStyle adds c to the "auth_style" field.
+func (m *OauthProviderMutation) AddAuthStyle(c customtypes.Uint8) {
 	if m.addauth_style != nil {
-		*m.addauth_style += u
+		*m.addauth_style += c
 	} else {
-		m.addauth_style = &u
+		m.addauth_style = &c
 	}
 }
 
 // AddedAuthStyle returns the value that was added to the "auth_style" field in this mutation.
-func (m *OauthProviderMutation) AddedAuthStyle() (r int8, exists bool) {
+func (m *OauthProviderMutation) AddedAuthStyle() (r customtypes.Uint8, exists bool) {
 	v := m.addauth_style
 	if v == nil {
 		return
@@ -9339,7 +9339,7 @@ func (m *OauthProviderMutation) SetField(name string, value ent.Value) error {
 		m.SetTokenURL(v)
 		return nil
 	case oauthprovider.FieldAuthStyle:
-		v, ok := value.(uint8)
+		v, ok := value.(customtypes.Uint8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -9383,7 +9383,7 @@ func (m *OauthProviderMutation) AddedField(name string) (ent.Value, bool) {
 func (m *OauthProviderMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case oauthprovider.FieldAuthStyle:
-		v, ok := value.(int8)
+		v, ok := value.(customtypes.Uint8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

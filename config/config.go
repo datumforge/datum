@@ -28,6 +28,7 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/sentry"
+	objstoreconfig "github.com/datumforge/datum/pkg/utils/storage/config"
 	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
@@ -78,6 +79,9 @@ type Config struct {
 
 	// Ratelimit contains the configuration for the rate limiter
 	Ratelimit ratelimit.Config `json:"ratelimit" koanf:"ratelimit"`
+
+	// Storage contains the configuration for the storage provider
+	ObjStorage objstoreconfig.Config `json:"objstorage" koanf:"objstorage"`
 }
 
 // Server settings for the echo server

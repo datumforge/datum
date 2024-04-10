@@ -65,6 +65,11 @@ func CreateEvent(c *ent.Client, m ent.Mutation, v ent.Value) {
 		props.Set("email", email)
 	}
 
+	authprovider, ok := out["auth_provider"]
+	if ok {
+		props.Set("auth_provider", authprovider)
+	}
+
 	c.Analytics.Event(event, props)
 	c.Analytics.Properties(i, obj, props)
 

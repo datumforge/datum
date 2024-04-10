@@ -20,6 +20,8 @@ type Storage struct {
 
 // Config is the configuration for Storage - need to blow this out but initial focus was on s3
 type Config struct {
+	// Enabled is a flag to enable or disable the storage
+	Enabled bool `json:"enabled" koanf:"enabled"`
 	// CredentialsFile is the path to the credentials file
 	CredentialsFile string `json:"credentialsFile" koanf:"credentialsFile"`
 	// Bucket is the name of the bucket

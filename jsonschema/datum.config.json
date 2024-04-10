@@ -407,6 +407,10 @@
     },
     "fs.Config": {
       "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable the storage"
+        },
         "root": {
           "type": "string",
           "description": "Root is the root directory for the filesystem storage"
@@ -418,6 +422,10 @@
     },
     "gcs.Config": {
       "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable the storage"
+        },
         "credentialsFile": {
           "type": "string",
           "description": "CredentialsFile is the path to the credentials file"

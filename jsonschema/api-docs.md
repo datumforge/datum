@@ -624,6 +624,7 @@ Config is the configuration for Storage - need to blow this out but initial focu
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
 |**credentialsFile**|`string`|CredentialsFile is the path to the credentials file<br/>||
 |**bucket**|`string`|Bucket is the name of the bucket<br/>||
 
@@ -638,6 +639,7 @@ Config is the configuration for Storage
 
 |Name|Type|Description|Required|
 |----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
 |**root**|`string`|Root is the root directory for the filesystem storage<br/>||
 
 **Additional Properties:** not allowed  

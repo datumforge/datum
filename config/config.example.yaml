@@ -75,10 +75,12 @@ geodetic:
     endpoint: query
 objstorage:
     fs:
+        enabled: false
         root: ""
     gcs:
         bucket: ""
         credentialsFile: ""
+        enabled: false
     s3:
         accessKeyID: ""
         bucket: ""

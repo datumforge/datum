@@ -18,6 +18,8 @@ type Storage struct {
 
 // Config is the configuration for Storage
 type Config struct {
+	// Enabled is a flag to enable or disable the storage
+	Enabled bool `json:"enabled" koanf:"enabled"`
 	// Root is the root directory for the filesystem storage
 	Root string `json:"root" koanf:"root"`
 }

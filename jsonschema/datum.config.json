@@ -111,6 +111,25 @@
       ],
       "description": "Auth settings including oauth2 providers and datum token configuration"
     },
+    "config.ObjectStorage": {
+      "properties": {
+        "s3": {
+          "$ref": "#/$defs/s3.Config",
+          "description": "S3 contains the s3 configuration for the object storage"
+        },
+        "gcs": {
+          "$ref": "#/$defs/gcs.Config",
+          "description": "GCS contains the gcs configuration for the object storage"
+        },
+        "fs": {
+          "$ref": "#/$defs/fs.Config",
+          "description": "FS contains the fs configuration for the object storage"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "ObjectStorage contains the configuration for the object storage provider"
+    },
     "config.Server": {
       "properties": {
         "debug": {
@@ -386,6 +405,40 @@
         "hostUrl"
       ]
     },
+    "fs.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable the storage"
+        },
+        "root": {
+          "type": "string",
+          "description": "Root is the root directory for the filesystem storage"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Config is the configuration for Storage"
+    },
+    "gcs.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable the storage"
+        },
+        "credentialsFile": {
+          "type": "string",
+          "description": "CredentialsFile is the path to the credentials file"
+        },
+        "bucket": {
+          "type": "string",
+          "description": "Bucket is the name of the bucket"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Config is the configuration for Storage - need to blow this out but initial focus was on s3"
+    },
     "geodeticclient.Config": {
       "properties": {
         "enabled": {
@@ -657,6 +710,41 @@
       "additionalProperties": false,
       "type": "object",
       "description": "Config contains the types used in executing redirects via the redirect middleware"
+    },
+    "s3.Config": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled is a flag to enable or disable the storage"
+        },
+        "accessKeyID": {
+          "type": "string",
+          "description": "AccessKeyID is the access key id"
+        },
+        "bucket": {
+          "type": "string",
+          "description": "Bucket is the name of the bucket"
+        },
+        "endpoint": {
+          "type": "string",
+          "description": "Endpoint is the endpoint to use for the s3 client"
+        },
+        "region": {
+          "type": "string",
+          "description": "Region is the region to use for the s3 client"
+        },
+        "secretAccessKey": {
+          "type": "string",
+          "description": "SecretAccessKey is the secret access key"
+        },
+        "uploadConcurrency": {
+          "type": "integer",
+          "description": "UploadConcurrency is the number of goroutines to spin up when uploading parts"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Config is the configuration for Storage"
     },
     "secure.Config": {
       "properties": {
@@ -955,6 +1043,10 @@
     "ratelimit": {
       "$ref": "#/$defs/ratelimit.Config",
       "description": "Ratelimit contains the configuration for the rate limiter"
+    },
+    "objstorage": {
+      "$ref": "#/$defs/config.ObjectStorage",
+      "description": "Storage contains the configuration for the storage provider"
     }
   },
   "additionalProperties": false,

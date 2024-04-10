@@ -21,6 +21,7 @@ Config contains the configuration for the datum server
 |[**posthog**](#posthog)|`object`|Config is the configuration for PostHog<br/>||
 |[**totp**](#totp)|`object`|||
 |[**ratelimit**](#ratelimit)|`object`|Config defines the configuration settings for the default rate limiter<br/>||
+|[**objstorage**](#objstorage)|`object`|ObjectStorage contains the configuration for the object storage provider<br/>||
 
 **Additional Properties:** not allowed  
 <a name="server"></a>
@@ -577,6 +578,69 @@ Config defines the configuration settings for the default rate limiter
 |**limit**|`number`|||
 |**burst**|`integer`|||
 |**expires**|`integer`|||
+
+**Additional Properties:** not allowed  
+<a name="objstorage"></a>
+## objstorage: object
+
+ObjectStorage contains the configuration for the object storage provider
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|[**s3**](#objstorages3)|`object`|Config is the configuration for Storage<br/>||
+|[**gcs**](#objstoragegcs)|`object`|Config is the configuration for Storage - need to blow this out but initial focus was on s3<br/>||
+|[**fs**](#objstoragefs)|`object`|Config is the configuration for Storage<br/>||
+
+**Additional Properties:** not allowed  
+<a name="objstorages3"></a>
+### objstorage\.s3: object
+
+Config is the configuration for Storage
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
+|**accessKeyID**|`string`|AccessKeyID is the access key id<br/>||
+|**bucket**|`string`|Bucket is the name of the bucket<br/>||
+|**endpoint**|`string`|Endpoint is the endpoint to use for the s3 client<br/>||
+|**region**|`string`|Region is the region to use for the s3 client<br/>||
+|**secretAccessKey**|`string`|SecretAccessKey is the secret access key<br/>||
+|**uploadConcurrency**|`integer`|UploadConcurrency is the number of goroutines to spin up when uploading parts<br/>||
+
+**Additional Properties:** not allowed  
+<a name="objstoragegcs"></a>
+### objstorage\.gcs: object
+
+Config is the configuration for Storage - need to blow this out but initial focus was on s3
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
+|**credentialsFile**|`string`|CredentialsFile is the path to the credentials file<br/>||
+|**bucket**|`string`|Bucket is the name of the bucket<br/>||
+
+**Additional Properties:** not allowed  
+<a name="objstoragefs"></a>
+### objstorage\.fs: object
+
+Config is the configuration for Storage
+
+
+**Properties**
+
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
+|**root**|`string`|Root is the root directory for the filesystem storage<br/>||
 
 **Additional Properties:** not allowed  
 

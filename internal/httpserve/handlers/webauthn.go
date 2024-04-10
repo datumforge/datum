@@ -89,7 +89,7 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	setSessionMap[sessions.EmailKey] = r.Email
 	setSessionMap[sessions.UserIDKey] = user.ID
 
-	if err := h.SessionConfig.SaveAndStoreSession(userCtx, ctx.Response().Writer, setSessionMap, user.ID); err != nil {
+	if _, err := h.SessionConfig.SaveAndStoreSession(userCtx, ctx.Response().Writer, setSessionMap, user.ID); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
@@ -196,7 +196,7 @@ func (h *Handler) BeginWebauthnLogin(ctx echo.Context) error {
 	setSessionMap[sessions.WebAuthnKey] = session
 	setSessionMap[sessions.UserTypeKey] = webauthnLogin
 
-	if err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, ""); err != nil {
+	if _, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, ""); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 

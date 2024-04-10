@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/passwd"
 	"github.com/datumforge/datum/pkg/rout"
+	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 )
 
@@ -28,6 +29,7 @@ type LoginReply struct {
 	rout.Reply
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token,omitempty"`
+	Session      string `json:"session,omitempty"`
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int64  `json:"expires_in"`
 	Message      string `json:"message"`
@@ -80,11 +82,20 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)
 
+	// return the session value for the UI to use
+	// the UI will need to set the cookie because authentication is handled
+	// server side
+	s, err := sessions.SessionToken(ctx.Request().Context())
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
 	out := LoginReply{
 		Reply:        rout.Reply{Success: true},
 		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
+		Session:      s,
 		TokenType:    "access_token",
 		ExpiresIn:    claims.ExpiresAt.Unix(),
 	}

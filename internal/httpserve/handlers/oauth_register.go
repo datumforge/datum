@@ -80,9 +80,12 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	setSessionMap[sessions.EmailKey] = r.Email
 	setSessionMap[sessions.UserIDKey] = user.ID
 
-	if _, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID); err != nil {
+	c, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID)
+	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
+
+	ctx.SetRequest(ctx.Request().WithContext(c))
 
 	props := ph.NewProperties().
 		Set("user_id", user.ID).

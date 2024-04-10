@@ -29,7 +29,7 @@ func (OrganizationSettingHistory) Annotations() []schema.Annotation {
 		},
 		enthistory.Annotations{
 			IsHistory: true,
-			Exclude: true,
+			Exclude:   true,
 		},
 	}
 }
@@ -52,7 +52,7 @@ func (OrganizationSettingHistory) Fields() []ent.Field {
 	// we only want to include mixin fields, not edges
 	// so this prevents FKs back to the main tables
 	mixins := OrganizationSetting{}.Mixin()
-	for _, mixin  := range mixins {
+	for _, mixin := range mixins {
 		for _, field := range mixin.Fields() {
 			historyFields = append(historyFields, field)
 		}

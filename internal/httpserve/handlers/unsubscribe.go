@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	ph "github.com/posthog/posthog-go"
 
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/pkg/rout"
@@ -41,6 +42,12 @@ func (h *Handler) UnsubscribeHandler(ctx echo.Context) error {
 
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
+
+	props := ph.NewProperties().
+		Set("email", req.Email).
+		Set("organization_id", req.OrganizationID)
+
+	h.AnalyticsClient.Event("unsubscribe", props)
 
 	out := &UnsubscribeReply{
 		Reply:   rout.Reply{Success: true},

@@ -160,3 +160,13 @@ data:
   DATUM_RATELIMIT_LIMIT: {{ .Values.datum.ratelimit.limit | 10 }}
   DATUM_RATELIMIT_BURST: {{ .Values.datum.ratelimit.burst | 30 }}
   DATUM_RATELIMIT_EXPIRES: {{ .Values.datum.ratelimit.expires | 10m }}
+  DATUM_OBJSTORAGE_S3_ENABLED: {{ .Values.datum.objstorage.s3.enabled }}
+  DATUM_OBJSTORAGE_S3_ACCESSKEYID: {{ .Values.datum.objstorage.s3.accessKeyID }}
+  DATUM_OBJSTORAGE_S3_BUCKET: {{ .Values.datum.objstorage.s3.bucket }}
+  DATUM_OBJSTORAGE_S3_ENDPOINT: {{ .Values.datum.objstorage.s3.endpoint }}
+  DATUM_OBJSTORAGE_S3_REGION: {{ .Values.datum.objstorage.s3.region }}
+  DATUM_OBJSTORAGE_S3_SECRETACCESSKEY: {{ .Values.datum.objstorage.s3.secretAccessKey }}
+  DATUM_OBJSTORAGE_S3_UPLOADCONCURRENCY: {{ .Values.datum.objstorage.s3.uploadConcurrency }}
+  DATUM_OBJSTORAGE_GCS_CREDENTIALSFILE: {{ .Values.datum.objstorage.gcs.credentialsFile }}
+  DATUM_OBJSTORAGE_GCS_BUCKET: {{ .Values.datum.objstorage.gcs.bucket }}
+  DATUM_OBJSTORAGE_FS_ROOT: {{ .Values.datum.objstorage.fs.root }}

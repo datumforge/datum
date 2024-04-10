@@ -18,7 +18,8 @@ type Storage struct {
 
 // Config is the configuration for Storage
 type Config struct {
-	Root string
+	// Root is the root directory for the filesystem storage
+	Root string `json:"root" koanf:"root"`
 }
 
 // NewStorage returns a new filesystem storage with the provided configuration

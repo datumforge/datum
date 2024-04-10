@@ -28,7 +28,9 @@ import (
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/sentry"
-	objstoreconfig "github.com/datumforge/datum/pkg/utils/storage/config"
+	"github.com/datumforge/datum/pkg/utils/storage/fs"
+	"github.com/datumforge/datum/pkg/utils/storage/gcs"
+	"github.com/datumforge/datum/pkg/utils/storage/s3"
 	"github.com/datumforge/datum/pkg/utils/totp"
 )
 
@@ -81,7 +83,17 @@ type Config struct {
 	Ratelimit ratelimit.Config `json:"ratelimit" koanf:"ratelimit"`
 
 	// Storage contains the configuration for the storage provider
-	ObjStorage objstoreconfig.Config `json:"objstorage" koanf:"objstorage"`
+	ObjStorage ObjectStorage `json:"objstorage" koanf:"objstorage"`
+}
+
+// ObjectStorage contains the configuration for the object storage provider
+type ObjectStorage struct {
+	// S3 contains the s3 configuration for the object storage
+	S3 s3.Config `json:"s3" koanf:"s3"`
+	// GCS contains the gcs configuration for the object storage
+	GCS gcs.Config `json:"gcs" koanf:"gcs"`
+	// FS contains the fs configuration for the object storage
+	FS fs.Config `json:"fs" koanf:"fs"`
 }
 
 // Server settings for the echo server

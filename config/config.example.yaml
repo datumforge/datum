@@ -73,6 +73,20 @@ geodetic:
     debug: false
     enabled: true
     endpoint: query
+objstorage:
+    fs:
+        root: ""
+    gcs:
+        bucket: ""
+        credentialsFile: ""
+    s3:
+        accessKeyID: ""
+        bucket: ""
+        enabled: false
+        endpoint: ""
+        region: ""
+        secretAccessKey: ""
+        uploadConcurrency: null
 posthog:
     apiKey: ""
     enabled: false

@@ -27,15 +27,22 @@ type Storage struct {
 
 // Config is the configuration for Storage
 type Config struct {
-	AccessKeyID     string `json:"accessKeyID" koanf:"accessKeyID"`
-	Bucket          string `json:"bucket" koanf:"bucket"`
-	Endpoint        string `json:"endpoint" koanf:"endpoint"`
-	Region          string `json:"region" koanf:"region"`
+	// Enabled is a flag to enable or disable the storage
+	Enabled bool `json:"enabled" koanf:"enabled"`
+	// AccessKeyID is the access key id
+	AccessKeyID string `json:"accessKeyID" koanf:"accessKeyID"`
+	// Bucket is the name of the bucket
+	Bucket string `json:"bucket" koanf:"bucket"`
+	// Endpoint is the endpoint to use for the s3 client
+	Endpoint string `json:"endpoint" koanf:"endpoint"`
+	// Region is the region to use for the s3 client
+	Region string `json:"region" koanf:"region"`
+	// SecretAccessKey is the secret access key
 	SecretAccessKey string `json:"secretAccessKey" koanf:"secretAccessKey"`
 	// UploadConcurrency is the number of goroutines to spin up when uploading parts
 	UploadConcurrency *int64 `json:"uploadConcurrency" koanf:"uploadConcurrency"`
 	// CustomHTTPClient is a custom http client wrapper for s3 interfaces
-	CustomHTTPClient CustomAPIHTTPClient
+	CustomHTTPClient CustomAPIHTTPClient `json:"-" koanf:"-"`
 }
 
 // CustomAPIHTTPClient is a custom http client wrapper for s3 interfaces

@@ -62,7 +62,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
 		h.Logger.Errorw("unable to save session", "error", err)
 
-		return err
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	if err := h.updateUserLastSeen(userCtx, user.ID); err != nil {
@@ -74,7 +74,8 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
 		Set("email", user.Email).
-		Set("organization_id", claims.OrgID)
+		Set("organization_id", claims.OrgID).
+		Set("auth_provider", user.AuthProvider)
 
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)

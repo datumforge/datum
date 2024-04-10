@@ -83,8 +83,8 @@ const (
 	PersonalAccessTokensColumn = "owner_id"
 	// TfaSettingsTable is the table that holds the tfa_settings relation/edge.
 	TfaSettingsTable = "tfa_settings"
-	// TfaSettingsInverseTable is the table name for the TFASettings entity.
-	// It exists in this package in order to avoid circular dependency with the "tfasettings" package.
+	// TfaSettingsInverseTable is the table name for the TFASetting entity.
+	// It exists in this package in order to avoid circular dependency with the "tfasetting" package.
 	TfaSettingsInverseTable = "tfa_settings"
 	// TfaSettingsColumn is the table column denoting the tfa_settings relation/edge.
 	TfaSettingsColumn = "owner_id"

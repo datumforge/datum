@@ -27,7 +27,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -548,31 +548,31 @@ func (f TraverseSubscriber) Traverse(ctx context.Context, q generated.Query) err
 	return fmt.Errorf("unexpected query type %T. expect *generated.SubscriberQuery", q)
 }
 
-// The TFASettingsFunc type is an adapter to allow the use of ordinary function as a Querier.
-type TFASettingsFunc func(context.Context, *generated.TFASettingsQuery) (generated.Value, error)
+// The TFASettingFunc type is an adapter to allow the use of ordinary function as a Querier.
+type TFASettingFunc func(context.Context, *generated.TFASettingQuery) (generated.Value, error)
 
 // Query calls f(ctx, q).
-func (f TFASettingsFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.TFASettingsQuery); ok {
+func (f TFASettingFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.TFASettingQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.TFASettingsQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.TFASettingQuery", q)
 }
 
-// The TraverseTFASettings type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseTFASettings func(context.Context, *generated.TFASettingsQuery) error
+// The TraverseTFASetting type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseTFASetting func(context.Context, *generated.TFASettingQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseTFASettings) Intercept(next generated.Querier) generated.Querier {
+func (f TraverseTFASetting) Intercept(next generated.Querier) generated.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseTFASettings) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.TFASettingsQuery); ok {
+func (f TraverseTFASetting) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.TFASettingQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.TFASettingsQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *generated.TFASettingQuery", q)
 }
 
 // The TemplateFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -720,8 +720,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
 	case *generated.SubscriberQuery:
 		return &query[*generated.SubscriberQuery, predicate.Subscriber, subscriber.OrderOption]{typ: generated.TypeSubscriber, tq: q}, nil
-	case *generated.TFASettingsQuery:
-		return &query[*generated.TFASettingsQuery, predicate.TFASettings, tfasettings.OrderOption]{typ: generated.TypeTFASettings, tq: q}, nil
+	case *generated.TFASettingQuery:
+		return &query[*generated.TFASettingQuery, predicate.TFASetting, tfasetting.OrderOption]{typ: generated.TypeTFASetting, tq: q}, nil
 	case *generated.TemplateQuery:
 		return &query[*generated.TemplateQuery, predicate.Template, template.OrderOption]{typ: generated.TypeTemplate, tq: q}, nil
 	case *generated.UserQuery:

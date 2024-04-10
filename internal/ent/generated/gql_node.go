@@ -24,7 +24,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/hashicorp/go-multierror"
@@ -81,7 +81,7 @@ func (n *PersonalAccessToken) IsNode() {}
 func (n *Subscriber) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *TFASettings) IsNode() {}
+func (n *TFASetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Template) IsNode() {}
@@ -330,10 +330,10 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
-	case tfasettings.Table:
-		query := c.TFASettings.Query().
-			Where(tfasettings.ID(id))
-		query, err := query.CollectFields(ctx, "TFASettings")
+	case tfasetting.Table:
+		query := c.TFASetting.Query().
+			Where(tfasetting.ID(id))
+		query, err := query.CollectFields(ctx, "TFASetting")
 		if err != nil {
 			return nil, err
 		}
@@ -691,10 +691,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
-	case tfasettings.Table:
-		query := c.TFASettings.Query().
-			Where(tfasettings.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "TFASettings")
+	case tfasetting.Table:
+		query := c.TFASetting.Query().
+			Where(tfasetting.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "TFASetting")
 		if err != nil {
 			return nil, err
 		}

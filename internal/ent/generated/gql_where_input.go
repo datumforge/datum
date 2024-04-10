@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -25,7 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/enthistory"
@@ -4197,14 +4198,14 @@ type OauthProviderWhereInput struct {
 	TokenURLContainsFold *string  `json:"tokenURLContainsFold,omitempty"`
 
 	// "auth_style" field predicates.
-	AuthStyle      *uint8  `json:"authStyle,omitempty"`
-	AuthStyleNEQ   *uint8  `json:"authStyleNEQ,omitempty"`
-	AuthStyleIn    []uint8 `json:"authStyleIn,omitempty"`
-	AuthStyleNotIn []uint8 `json:"authStyleNotIn,omitempty"`
-	AuthStyleGT    *uint8  `json:"authStyleGT,omitempty"`
-	AuthStyleGTE   *uint8  `json:"authStyleGTE,omitempty"`
-	AuthStyleLT    *uint8  `json:"authStyleLT,omitempty"`
-	AuthStyleLTE   *uint8  `json:"authStyleLTE,omitempty"`
+	AuthStyle      *customtypes.Uint8  `json:"authStyle,omitempty"`
+	AuthStyleNEQ   *customtypes.Uint8  `json:"authStyleNEQ,omitempty"`
+	AuthStyleIn    []customtypes.Uint8 `json:"authStyleIn,omitempty"`
+	AuthStyleNotIn []customtypes.Uint8 `json:"authStyleNotIn,omitempty"`
+	AuthStyleGT    *customtypes.Uint8  `json:"authStyleGT,omitempty"`
+	AuthStyleGTE   *customtypes.Uint8  `json:"authStyleGTE,omitempty"`
+	AuthStyleLT    *customtypes.Uint8  `json:"authStyleLT,omitempty"`
+	AuthStyleLTE   *customtypes.Uint8  `json:"authStyleLTE,omitempty"`
 
 	// "info_url" field predicates.
 	InfoURL             *string  `json:"infoURL,omitempty"`
@@ -10877,12 +10878,12 @@ func (i *SubscriberWhereInput) P() (predicate.Subscriber, error) {
 	}
 }
 
-// TFASettingsWhereInput represents a where input for filtering TFASettings queries.
-type TFASettingsWhereInput struct {
-	Predicates []predicate.TFASettings  `json:"-"`
-	Not        *TFASettingsWhereInput   `json:"not,omitempty"`
-	Or         []*TFASettingsWhereInput `json:"or,omitempty"`
-	And        []*TFASettingsWhereInput `json:"and,omitempty"`
+// TFASettingWhereInput represents a where input for filtering TFASetting queries.
+type TFASettingWhereInput struct {
+	Predicates []predicate.TFASetting  `json:"-"`
+	Not        *TFASettingWhereInput   `json:"not,omitempty"`
+	Or         []*TFASettingWhereInput `json:"or,omitempty"`
+	And        []*TFASettingWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID             *string  `json:"id,omitempty"`
@@ -11016,18 +11017,18 @@ type TFASettingsWhereInput struct {
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *TFASettingsWhereInput) AddPredicates(predicates ...predicate.TFASettings) {
+func (i *TFASettingWhereInput) AddPredicates(predicates ...predicate.TFASetting) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the TFASettingsWhereInput filter on the TFASettingsQuery builder.
-func (i *TFASettingsWhereInput) Filter(q *TFASettingsQuery) (*TFASettingsQuery, error) {
+// Filter applies the TFASettingWhereInput filter on the TFASettingQuery builder.
+func (i *TFASettingWhereInput) Filter(q *TFASettingQuery) (*TFASettingQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyTFASettingsWhereInput {
+		if err == ErrEmptyTFASettingWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -11035,19 +11036,19 @@ func (i *TFASettingsWhereInput) Filter(q *TFASettingsQuery) (*TFASettingsQuery, 
 	return q.Where(p), nil
 }
 
-// ErrEmptyTFASettingsWhereInput is returned in case the TFASettingsWhereInput is empty.
-var ErrEmptyTFASettingsWhereInput = errors.New("generated: empty predicate TFASettingsWhereInput")
+// ErrEmptyTFASettingWhereInput is returned in case the TFASettingWhereInput is empty.
+var ErrEmptyTFASettingWhereInput = errors.New("generated: empty predicate TFASettingWhereInput")
 
-// P returns a predicate for filtering tfasettingsslice.
+// P returns a predicate for filtering tfasettings.
 // An error is returned if the input is empty or invalid.
-func (i *TFASettingsWhereInput) P() (predicate.TFASettings, error) {
-	var predicates []predicate.TFASettings
+func (i *TFASettingWhereInput) P() (predicate.TFASetting, error) {
+	var predicates []predicate.TFASetting
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, tfasettings.Not(p))
+		predicates = append(predicates, tfasetting.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -11057,7 +11058,7 @@ func (i *TFASettingsWhereInput) P() (predicate.TFASettings, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.TFASettings, 0, n)
+		or := make([]predicate.TFASetting, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -11065,7 +11066,7 @@ func (i *TFASettingsWhereInput) P() (predicate.TFASettings, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, tfasettings.Or(or...))
+		predicates = append(predicates, tfasetting.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -11075,7 +11076,7 @@ func (i *TFASettingsWhereInput) P() (predicate.TFASettings, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.TFASettings, 0, n)
+		and := make([]predicate.TFASetting, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -11083,332 +11084,332 @@ func (i *TFASettingsWhereInput) P() (predicate.TFASettings, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, tfasettings.And(and...))
+		predicates = append(predicates, tfasetting.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, tfasettings.IDEQ(*i.ID))
+		predicates = append(predicates, tfasetting.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, tfasettings.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, tfasetting.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, tfasettings.IDIn(i.IDIn...))
+		predicates = append(predicates, tfasetting.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, tfasettings.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, tfasetting.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, tfasettings.IDGT(*i.IDGT))
+		predicates = append(predicates, tfasetting.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, tfasettings.IDGTE(*i.IDGTE))
+		predicates = append(predicates, tfasetting.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, tfasettings.IDLT(*i.IDLT))
+		predicates = append(predicates, tfasetting.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, tfasettings.IDLTE(*i.IDLTE))
+		predicates = append(predicates, tfasetting.IDLTE(*i.IDLTE))
 	}
 	if i.IDEqualFold != nil {
-		predicates = append(predicates, tfasettings.IDEqualFold(*i.IDEqualFold))
+		predicates = append(predicates, tfasetting.IDEqualFold(*i.IDEqualFold))
 	}
 	if i.IDContainsFold != nil {
-		predicates = append(predicates, tfasettings.IDContainsFold(*i.IDContainsFold))
+		predicates = append(predicates, tfasetting.IDContainsFold(*i.IDContainsFold))
 	}
 	if i.CreatedAt != nil {
-		predicates = append(predicates, tfasettings.CreatedAtEQ(*i.CreatedAt))
+		predicates = append(predicates, tfasetting.CreatedAtEQ(*i.CreatedAt))
 	}
 	if i.CreatedAtNEQ != nil {
-		predicates = append(predicates, tfasettings.CreatedAtNEQ(*i.CreatedAtNEQ))
+		predicates = append(predicates, tfasetting.CreatedAtNEQ(*i.CreatedAtNEQ))
 	}
 	if len(i.CreatedAtIn) > 0 {
-		predicates = append(predicates, tfasettings.CreatedAtIn(i.CreatedAtIn...))
+		predicates = append(predicates, tfasetting.CreatedAtIn(i.CreatedAtIn...))
 	}
 	if len(i.CreatedAtNotIn) > 0 {
-		predicates = append(predicates, tfasettings.CreatedAtNotIn(i.CreatedAtNotIn...))
+		predicates = append(predicates, tfasetting.CreatedAtNotIn(i.CreatedAtNotIn...))
 	}
 	if i.CreatedAtGT != nil {
-		predicates = append(predicates, tfasettings.CreatedAtGT(*i.CreatedAtGT))
+		predicates = append(predicates, tfasetting.CreatedAtGT(*i.CreatedAtGT))
 	}
 	if i.CreatedAtGTE != nil {
-		predicates = append(predicates, tfasettings.CreatedAtGTE(*i.CreatedAtGTE))
+		predicates = append(predicates, tfasetting.CreatedAtGTE(*i.CreatedAtGTE))
 	}
 	if i.CreatedAtLT != nil {
-		predicates = append(predicates, tfasettings.CreatedAtLT(*i.CreatedAtLT))
+		predicates = append(predicates, tfasetting.CreatedAtLT(*i.CreatedAtLT))
 	}
 	if i.CreatedAtLTE != nil {
-		predicates = append(predicates, tfasettings.CreatedAtLTE(*i.CreatedAtLTE))
+		predicates = append(predicates, tfasetting.CreatedAtLTE(*i.CreatedAtLTE))
 	}
 	if i.CreatedAtIsNil {
-		predicates = append(predicates, tfasettings.CreatedAtIsNil())
+		predicates = append(predicates, tfasetting.CreatedAtIsNil())
 	}
 	if i.CreatedAtNotNil {
-		predicates = append(predicates, tfasettings.CreatedAtNotNil())
+		predicates = append(predicates, tfasetting.CreatedAtNotNil())
 	}
 	if i.UpdatedAt != nil {
-		predicates = append(predicates, tfasettings.UpdatedAtEQ(*i.UpdatedAt))
+		predicates = append(predicates, tfasetting.UpdatedAtEQ(*i.UpdatedAt))
 	}
 	if i.UpdatedAtNEQ != nil {
-		predicates = append(predicates, tfasettings.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+		predicates = append(predicates, tfasetting.UpdatedAtNEQ(*i.UpdatedAtNEQ))
 	}
 	if len(i.UpdatedAtIn) > 0 {
-		predicates = append(predicates, tfasettings.UpdatedAtIn(i.UpdatedAtIn...))
+		predicates = append(predicates, tfasetting.UpdatedAtIn(i.UpdatedAtIn...))
 	}
 	if len(i.UpdatedAtNotIn) > 0 {
-		predicates = append(predicates, tfasettings.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+		predicates = append(predicates, tfasetting.UpdatedAtNotIn(i.UpdatedAtNotIn...))
 	}
 	if i.UpdatedAtGT != nil {
-		predicates = append(predicates, tfasettings.UpdatedAtGT(*i.UpdatedAtGT))
+		predicates = append(predicates, tfasetting.UpdatedAtGT(*i.UpdatedAtGT))
 	}
 	if i.UpdatedAtGTE != nil {
-		predicates = append(predicates, tfasettings.UpdatedAtGTE(*i.UpdatedAtGTE))
+		predicates = append(predicates, tfasetting.UpdatedAtGTE(*i.UpdatedAtGTE))
 	}
 	if i.UpdatedAtLT != nil {
-		predicates = append(predicates, tfasettings.UpdatedAtLT(*i.UpdatedAtLT))
+		predicates = append(predicates, tfasetting.UpdatedAtLT(*i.UpdatedAtLT))
 	}
 	if i.UpdatedAtLTE != nil {
-		predicates = append(predicates, tfasettings.UpdatedAtLTE(*i.UpdatedAtLTE))
+		predicates = append(predicates, tfasetting.UpdatedAtLTE(*i.UpdatedAtLTE))
 	}
 	if i.UpdatedAtIsNil {
-		predicates = append(predicates, tfasettings.UpdatedAtIsNil())
+		predicates = append(predicates, tfasetting.UpdatedAtIsNil())
 	}
 	if i.UpdatedAtNotNil {
-		predicates = append(predicates, tfasettings.UpdatedAtNotNil())
+		predicates = append(predicates, tfasetting.UpdatedAtNotNil())
 	}
 	if i.CreatedBy != nil {
-		predicates = append(predicates, tfasettings.CreatedByEQ(*i.CreatedBy))
+		predicates = append(predicates, tfasetting.CreatedByEQ(*i.CreatedBy))
 	}
 	if i.CreatedByNEQ != nil {
-		predicates = append(predicates, tfasettings.CreatedByNEQ(*i.CreatedByNEQ))
+		predicates = append(predicates, tfasetting.CreatedByNEQ(*i.CreatedByNEQ))
 	}
 	if len(i.CreatedByIn) > 0 {
-		predicates = append(predicates, tfasettings.CreatedByIn(i.CreatedByIn...))
+		predicates = append(predicates, tfasetting.CreatedByIn(i.CreatedByIn...))
 	}
 	if len(i.CreatedByNotIn) > 0 {
-		predicates = append(predicates, tfasettings.CreatedByNotIn(i.CreatedByNotIn...))
+		predicates = append(predicates, tfasetting.CreatedByNotIn(i.CreatedByNotIn...))
 	}
 	if i.CreatedByGT != nil {
-		predicates = append(predicates, tfasettings.CreatedByGT(*i.CreatedByGT))
+		predicates = append(predicates, tfasetting.CreatedByGT(*i.CreatedByGT))
 	}
 	if i.CreatedByGTE != nil {
-		predicates = append(predicates, tfasettings.CreatedByGTE(*i.CreatedByGTE))
+		predicates = append(predicates, tfasetting.CreatedByGTE(*i.CreatedByGTE))
 	}
 	if i.CreatedByLT != nil {
-		predicates = append(predicates, tfasettings.CreatedByLT(*i.CreatedByLT))
+		predicates = append(predicates, tfasetting.CreatedByLT(*i.CreatedByLT))
 	}
 	if i.CreatedByLTE != nil {
-		predicates = append(predicates, tfasettings.CreatedByLTE(*i.CreatedByLTE))
+		predicates = append(predicates, tfasetting.CreatedByLTE(*i.CreatedByLTE))
 	}
 	if i.CreatedByContains != nil {
-		predicates = append(predicates, tfasettings.CreatedByContains(*i.CreatedByContains))
+		predicates = append(predicates, tfasetting.CreatedByContains(*i.CreatedByContains))
 	}
 	if i.CreatedByHasPrefix != nil {
-		predicates = append(predicates, tfasettings.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+		predicates = append(predicates, tfasetting.CreatedByHasPrefix(*i.CreatedByHasPrefix))
 	}
 	if i.CreatedByHasSuffix != nil {
-		predicates = append(predicates, tfasettings.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+		predicates = append(predicates, tfasetting.CreatedByHasSuffix(*i.CreatedByHasSuffix))
 	}
 	if i.CreatedByIsNil {
-		predicates = append(predicates, tfasettings.CreatedByIsNil())
+		predicates = append(predicates, tfasetting.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
-		predicates = append(predicates, tfasettings.CreatedByNotNil())
+		predicates = append(predicates, tfasetting.CreatedByNotNil())
 	}
 	if i.CreatedByEqualFold != nil {
-		predicates = append(predicates, tfasettings.CreatedByEqualFold(*i.CreatedByEqualFold))
+		predicates = append(predicates, tfasetting.CreatedByEqualFold(*i.CreatedByEqualFold))
 	}
 	if i.CreatedByContainsFold != nil {
-		predicates = append(predicates, tfasettings.CreatedByContainsFold(*i.CreatedByContainsFold))
+		predicates = append(predicates, tfasetting.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
-		predicates = append(predicates, tfasettings.UpdatedByEQ(*i.UpdatedBy))
+		predicates = append(predicates, tfasetting.UpdatedByEQ(*i.UpdatedBy))
 	}
 	if i.UpdatedByNEQ != nil {
-		predicates = append(predicates, tfasettings.UpdatedByNEQ(*i.UpdatedByNEQ))
+		predicates = append(predicates, tfasetting.UpdatedByNEQ(*i.UpdatedByNEQ))
 	}
 	if len(i.UpdatedByIn) > 0 {
-		predicates = append(predicates, tfasettings.UpdatedByIn(i.UpdatedByIn...))
+		predicates = append(predicates, tfasetting.UpdatedByIn(i.UpdatedByIn...))
 	}
 	if len(i.UpdatedByNotIn) > 0 {
-		predicates = append(predicates, tfasettings.UpdatedByNotIn(i.UpdatedByNotIn...))
+		predicates = append(predicates, tfasetting.UpdatedByNotIn(i.UpdatedByNotIn...))
 	}
 	if i.UpdatedByGT != nil {
-		predicates = append(predicates, tfasettings.UpdatedByGT(*i.UpdatedByGT))
+		predicates = append(predicates, tfasetting.UpdatedByGT(*i.UpdatedByGT))
 	}
 	if i.UpdatedByGTE != nil {
-		predicates = append(predicates, tfasettings.UpdatedByGTE(*i.UpdatedByGTE))
+		predicates = append(predicates, tfasetting.UpdatedByGTE(*i.UpdatedByGTE))
 	}
 	if i.UpdatedByLT != nil {
-		predicates = append(predicates, tfasettings.UpdatedByLT(*i.UpdatedByLT))
+		predicates = append(predicates, tfasetting.UpdatedByLT(*i.UpdatedByLT))
 	}
 	if i.UpdatedByLTE != nil {
-		predicates = append(predicates, tfasettings.UpdatedByLTE(*i.UpdatedByLTE))
+		predicates = append(predicates, tfasetting.UpdatedByLTE(*i.UpdatedByLTE))
 	}
 	if i.UpdatedByContains != nil {
-		predicates = append(predicates, tfasettings.UpdatedByContains(*i.UpdatedByContains))
+		predicates = append(predicates, tfasetting.UpdatedByContains(*i.UpdatedByContains))
 	}
 	if i.UpdatedByHasPrefix != nil {
-		predicates = append(predicates, tfasettings.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+		predicates = append(predicates, tfasetting.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
 	}
 	if i.UpdatedByHasSuffix != nil {
-		predicates = append(predicates, tfasettings.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+		predicates = append(predicates, tfasetting.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
 	}
 	if i.UpdatedByIsNil {
-		predicates = append(predicates, tfasettings.UpdatedByIsNil())
+		predicates = append(predicates, tfasetting.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
-		predicates = append(predicates, tfasettings.UpdatedByNotNil())
+		predicates = append(predicates, tfasetting.UpdatedByNotNil())
 	}
 	if i.UpdatedByEqualFold != nil {
-		predicates = append(predicates, tfasettings.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+		predicates = append(predicates, tfasetting.UpdatedByEqualFold(*i.UpdatedByEqualFold))
 	}
 	if i.UpdatedByContainsFold != nil {
-		predicates = append(predicates, tfasettings.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+		predicates = append(predicates, tfasetting.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.DeletedAt != nil {
-		predicates = append(predicates, tfasettings.DeletedAtEQ(*i.DeletedAt))
+		predicates = append(predicates, tfasetting.DeletedAtEQ(*i.DeletedAt))
 	}
 	if i.DeletedAtNEQ != nil {
-		predicates = append(predicates, tfasettings.DeletedAtNEQ(*i.DeletedAtNEQ))
+		predicates = append(predicates, tfasetting.DeletedAtNEQ(*i.DeletedAtNEQ))
 	}
 	if len(i.DeletedAtIn) > 0 {
-		predicates = append(predicates, tfasettings.DeletedAtIn(i.DeletedAtIn...))
+		predicates = append(predicates, tfasetting.DeletedAtIn(i.DeletedAtIn...))
 	}
 	if len(i.DeletedAtNotIn) > 0 {
-		predicates = append(predicates, tfasettings.DeletedAtNotIn(i.DeletedAtNotIn...))
+		predicates = append(predicates, tfasetting.DeletedAtNotIn(i.DeletedAtNotIn...))
 	}
 	if i.DeletedAtGT != nil {
-		predicates = append(predicates, tfasettings.DeletedAtGT(*i.DeletedAtGT))
+		predicates = append(predicates, tfasetting.DeletedAtGT(*i.DeletedAtGT))
 	}
 	if i.DeletedAtGTE != nil {
-		predicates = append(predicates, tfasettings.DeletedAtGTE(*i.DeletedAtGTE))
+		predicates = append(predicates, tfasetting.DeletedAtGTE(*i.DeletedAtGTE))
 	}
 	if i.DeletedAtLT != nil {
-		predicates = append(predicates, tfasettings.DeletedAtLT(*i.DeletedAtLT))
+		predicates = append(predicates, tfasetting.DeletedAtLT(*i.DeletedAtLT))
 	}
 	if i.DeletedAtLTE != nil {
-		predicates = append(predicates, tfasettings.DeletedAtLTE(*i.DeletedAtLTE))
+		predicates = append(predicates, tfasetting.DeletedAtLTE(*i.DeletedAtLTE))
 	}
 	if i.DeletedAtIsNil {
-		predicates = append(predicates, tfasettings.DeletedAtIsNil())
+		predicates = append(predicates, tfasetting.DeletedAtIsNil())
 	}
 	if i.DeletedAtNotNil {
-		predicates = append(predicates, tfasettings.DeletedAtNotNil())
+		predicates = append(predicates, tfasetting.DeletedAtNotNil())
 	}
 	if i.DeletedBy != nil {
-		predicates = append(predicates, tfasettings.DeletedByEQ(*i.DeletedBy))
+		predicates = append(predicates, tfasetting.DeletedByEQ(*i.DeletedBy))
 	}
 	if i.DeletedByNEQ != nil {
-		predicates = append(predicates, tfasettings.DeletedByNEQ(*i.DeletedByNEQ))
+		predicates = append(predicates, tfasetting.DeletedByNEQ(*i.DeletedByNEQ))
 	}
 	if len(i.DeletedByIn) > 0 {
-		predicates = append(predicates, tfasettings.DeletedByIn(i.DeletedByIn...))
+		predicates = append(predicates, tfasetting.DeletedByIn(i.DeletedByIn...))
 	}
 	if len(i.DeletedByNotIn) > 0 {
-		predicates = append(predicates, tfasettings.DeletedByNotIn(i.DeletedByNotIn...))
+		predicates = append(predicates, tfasetting.DeletedByNotIn(i.DeletedByNotIn...))
 	}
 	if i.DeletedByGT != nil {
-		predicates = append(predicates, tfasettings.DeletedByGT(*i.DeletedByGT))
+		predicates = append(predicates, tfasetting.DeletedByGT(*i.DeletedByGT))
 	}
 	if i.DeletedByGTE != nil {
-		predicates = append(predicates, tfasettings.DeletedByGTE(*i.DeletedByGTE))
+		predicates = append(predicates, tfasetting.DeletedByGTE(*i.DeletedByGTE))
 	}
 	if i.DeletedByLT != nil {
-		predicates = append(predicates, tfasettings.DeletedByLT(*i.DeletedByLT))
+		predicates = append(predicates, tfasetting.DeletedByLT(*i.DeletedByLT))
 	}
 	if i.DeletedByLTE != nil {
-		predicates = append(predicates, tfasettings.DeletedByLTE(*i.DeletedByLTE))
+		predicates = append(predicates, tfasetting.DeletedByLTE(*i.DeletedByLTE))
 	}
 	if i.DeletedByContains != nil {
-		predicates = append(predicates, tfasettings.DeletedByContains(*i.DeletedByContains))
+		predicates = append(predicates, tfasetting.DeletedByContains(*i.DeletedByContains))
 	}
 	if i.DeletedByHasPrefix != nil {
-		predicates = append(predicates, tfasettings.DeletedByHasPrefix(*i.DeletedByHasPrefix))
+		predicates = append(predicates, tfasetting.DeletedByHasPrefix(*i.DeletedByHasPrefix))
 	}
 	if i.DeletedByHasSuffix != nil {
-		predicates = append(predicates, tfasettings.DeletedByHasSuffix(*i.DeletedByHasSuffix))
+		predicates = append(predicates, tfasetting.DeletedByHasSuffix(*i.DeletedByHasSuffix))
 	}
 	if i.DeletedByIsNil {
-		predicates = append(predicates, tfasettings.DeletedByIsNil())
+		predicates = append(predicates, tfasetting.DeletedByIsNil())
 	}
 	if i.DeletedByNotNil {
-		predicates = append(predicates, tfasettings.DeletedByNotNil())
+		predicates = append(predicates, tfasetting.DeletedByNotNil())
 	}
 	if i.DeletedByEqualFold != nil {
-		predicates = append(predicates, tfasettings.DeletedByEqualFold(*i.DeletedByEqualFold))
+		predicates = append(predicates, tfasetting.DeletedByEqualFold(*i.DeletedByEqualFold))
 	}
 	if i.DeletedByContainsFold != nil {
-		predicates = append(predicates, tfasettings.DeletedByContainsFold(*i.DeletedByContainsFold))
+		predicates = append(predicates, tfasetting.DeletedByContainsFold(*i.DeletedByContainsFold))
 	}
 	if i.TfaSecret != nil {
-		predicates = append(predicates, tfasettings.TfaSecretEQ(*i.TfaSecret))
+		predicates = append(predicates, tfasetting.TfaSecretEQ(*i.TfaSecret))
 	}
 	if i.TfaSecretNEQ != nil {
-		predicates = append(predicates, tfasettings.TfaSecretNEQ(*i.TfaSecretNEQ))
+		predicates = append(predicates, tfasetting.TfaSecretNEQ(*i.TfaSecretNEQ))
 	}
 	if len(i.TfaSecretIn) > 0 {
-		predicates = append(predicates, tfasettings.TfaSecretIn(i.TfaSecretIn...))
+		predicates = append(predicates, tfasetting.TfaSecretIn(i.TfaSecretIn...))
 	}
 	if len(i.TfaSecretNotIn) > 0 {
-		predicates = append(predicates, tfasettings.TfaSecretNotIn(i.TfaSecretNotIn...))
+		predicates = append(predicates, tfasetting.TfaSecretNotIn(i.TfaSecretNotIn...))
 	}
 	if i.TfaSecretGT != nil {
-		predicates = append(predicates, tfasettings.TfaSecretGT(*i.TfaSecretGT))
+		predicates = append(predicates, tfasetting.TfaSecretGT(*i.TfaSecretGT))
 	}
 	if i.TfaSecretGTE != nil {
-		predicates = append(predicates, tfasettings.TfaSecretGTE(*i.TfaSecretGTE))
+		predicates = append(predicates, tfasetting.TfaSecretGTE(*i.TfaSecretGTE))
 	}
 	if i.TfaSecretLT != nil {
-		predicates = append(predicates, tfasettings.TfaSecretLT(*i.TfaSecretLT))
+		predicates = append(predicates, tfasetting.TfaSecretLT(*i.TfaSecretLT))
 	}
 	if i.TfaSecretLTE != nil {
-		predicates = append(predicates, tfasettings.TfaSecretLTE(*i.TfaSecretLTE))
+		predicates = append(predicates, tfasetting.TfaSecretLTE(*i.TfaSecretLTE))
 	}
 	if i.TfaSecretContains != nil {
-		predicates = append(predicates, tfasettings.TfaSecretContains(*i.TfaSecretContains))
+		predicates = append(predicates, tfasetting.TfaSecretContains(*i.TfaSecretContains))
 	}
 	if i.TfaSecretHasPrefix != nil {
-		predicates = append(predicates, tfasettings.TfaSecretHasPrefix(*i.TfaSecretHasPrefix))
+		predicates = append(predicates, tfasetting.TfaSecretHasPrefix(*i.TfaSecretHasPrefix))
 	}
 	if i.TfaSecretHasSuffix != nil {
-		predicates = append(predicates, tfasettings.TfaSecretHasSuffix(*i.TfaSecretHasSuffix))
+		predicates = append(predicates, tfasetting.TfaSecretHasSuffix(*i.TfaSecretHasSuffix))
 	}
 	if i.TfaSecretIsNil {
-		predicates = append(predicates, tfasettings.TfaSecretIsNil())
+		predicates = append(predicates, tfasetting.TfaSecretIsNil())
 	}
 	if i.TfaSecretNotNil {
-		predicates = append(predicates, tfasettings.TfaSecretNotNil())
+		predicates = append(predicates, tfasetting.TfaSecretNotNil())
 	}
 	if i.TfaSecretEqualFold != nil {
-		predicates = append(predicates, tfasettings.TfaSecretEqualFold(*i.TfaSecretEqualFold))
+		predicates = append(predicates, tfasetting.TfaSecretEqualFold(*i.TfaSecretEqualFold))
 	}
 	if i.TfaSecretContainsFold != nil {
-		predicates = append(predicates, tfasettings.TfaSecretContainsFold(*i.TfaSecretContainsFold))
+		predicates = append(predicates, tfasetting.TfaSecretContainsFold(*i.TfaSecretContainsFold))
 	}
 	if i.Verified != nil {
-		predicates = append(predicates, tfasettings.VerifiedEQ(*i.Verified))
+		predicates = append(predicates, tfasetting.VerifiedEQ(*i.Verified))
 	}
 	if i.VerifiedNEQ != nil {
-		predicates = append(predicates, tfasettings.VerifiedNEQ(*i.VerifiedNEQ))
+		predicates = append(predicates, tfasetting.VerifiedNEQ(*i.VerifiedNEQ))
 	}
 	if i.TotpAllowed != nil {
-		predicates = append(predicates, tfasettings.TotpAllowedEQ(*i.TotpAllowed))
+		predicates = append(predicates, tfasetting.TotpAllowedEQ(*i.TotpAllowed))
 	}
 	if i.TotpAllowedNEQ != nil {
-		predicates = append(predicates, tfasettings.TotpAllowedNEQ(*i.TotpAllowedNEQ))
+		predicates = append(predicates, tfasetting.TotpAllowedNEQ(*i.TotpAllowedNEQ))
 	}
 	if i.TotpAllowedIsNil {
-		predicates = append(predicates, tfasettings.TotpAllowedIsNil())
+		predicates = append(predicates, tfasetting.TotpAllowedIsNil())
 	}
 	if i.TotpAllowedNotNil {
-		predicates = append(predicates, tfasettings.TotpAllowedNotNil())
+		predicates = append(predicates, tfasetting.TotpAllowedNotNil())
 	}
 
 	if i.HasOwner != nil {
-		p := tfasettings.HasOwner()
+		p := tfasetting.HasOwner()
 		if !*i.HasOwner {
-			p = tfasettings.Not(p)
+			p = tfasetting.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
@@ -11421,15 +11422,15 @@ func (i *TFASettingsWhereInput) P() (predicate.TFASettings, error) {
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, tfasettings.HasOwnerWith(with...))
+		predicates = append(predicates, tfasetting.HasOwnerWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyTFASettingsWhereInput
+		return nil, ErrEmptyTFASettingWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return tfasettings.And(predicates...), nil
+		return tfasetting.And(predicates...), nil
 	}
 }
 
@@ -12284,8 +12285,8 @@ type UserWhereInput struct {
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
 
 	// "tfa_settings" edge predicates.
-	HasTfaSettings     *bool                    `json:"hasTfaSettings,omitempty"`
-	HasTfaSettingsWith []*TFASettingsWhereInput `json:"hasTfaSettingsWith,omitempty"`
+	HasTfaSettings     *bool                   `json:"hasTfaSettings,omitempty"`
+	HasTfaSettingsWith []*TFASettingWhereInput `json:"hasTfaSettingsWith,omitempty"`
 
 	// "setting" edge predicates.
 	HasSetting     *bool                    `json:"hasSetting,omitempty"`
@@ -13069,7 +13070,7 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 		predicates = append(predicates, p)
 	}
 	if len(i.HasTfaSettingsWith) > 0 {
-		with := make([]predicate.TFASettings, 0, len(i.HasTfaSettingsWith))
+		with := make([]predicate.TFASetting, 0, len(i.HasTfaSettingsWith))
 		for _, w := range i.HasTfaSettingsWith {
 			p, err := w.P()
 			if err != nil {

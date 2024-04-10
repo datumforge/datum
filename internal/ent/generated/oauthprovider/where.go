@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -133,8 +134,9 @@ func TokenURL(v string) predicate.OauthProvider {
 }
 
 // AuthStyle applies equality check predicate on the "auth_style" field. It's identical to AuthStyleEQ.
-func AuthStyle(v uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldEQ(FieldAuthStyle, v))
+func AuthStyle(v customtypes.Uint8) predicate.OauthProvider {
+	vc := uint8(v)
+	return predicate.OauthProvider(sql.FieldEQ(FieldAuthStyle, vc))
 }
 
 // InfoURL applies equality check predicate on the "info_url" field. It's identical to InfoURLEQ.
@@ -973,43 +975,57 @@ func TokenURLContainsFold(v string) predicate.OauthProvider {
 }
 
 // AuthStyleEQ applies the EQ predicate on the "auth_style" field.
-func AuthStyleEQ(v uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldEQ(FieldAuthStyle, v))
+func AuthStyleEQ(v customtypes.Uint8) predicate.OauthProvider {
+	vc := uint8(v)
+	return predicate.OauthProvider(sql.FieldEQ(FieldAuthStyle, vc))
 }
 
 // AuthStyleNEQ applies the NEQ predicate on the "auth_style" field.
-func AuthStyleNEQ(v uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldNEQ(FieldAuthStyle, v))
+func AuthStyleNEQ(v customtypes.Uint8) predicate.OauthProvider {
+	vc := uint8(v)
+	return predicate.OauthProvider(sql.FieldNEQ(FieldAuthStyle, vc))
 }
 
 // AuthStyleIn applies the In predicate on the "auth_style" field.
-func AuthStyleIn(vs ...uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldIn(FieldAuthStyle, vs...))
+func AuthStyleIn(vs ...customtypes.Uint8) predicate.OauthProvider {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = uint8(vs[i])
+	}
+	return predicate.OauthProvider(sql.FieldIn(FieldAuthStyle, v...))
 }
 
 // AuthStyleNotIn applies the NotIn predicate on the "auth_style" field.
-func AuthStyleNotIn(vs ...uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldNotIn(FieldAuthStyle, vs...))
+func AuthStyleNotIn(vs ...customtypes.Uint8) predicate.OauthProvider {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = uint8(vs[i])
+	}
+	return predicate.OauthProvider(sql.FieldNotIn(FieldAuthStyle, v...))
 }
 
 // AuthStyleGT applies the GT predicate on the "auth_style" field.
-func AuthStyleGT(v uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldGT(FieldAuthStyle, v))
+func AuthStyleGT(v customtypes.Uint8) predicate.OauthProvider {
+	vc := uint8(v)
+	return predicate.OauthProvider(sql.FieldGT(FieldAuthStyle, vc))
 }
 
 // AuthStyleGTE applies the GTE predicate on the "auth_style" field.
-func AuthStyleGTE(v uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldGTE(FieldAuthStyle, v))
+func AuthStyleGTE(v customtypes.Uint8) predicate.OauthProvider {
+	vc := uint8(v)
+	return predicate.OauthProvider(sql.FieldGTE(FieldAuthStyle, vc))
 }
 
 // AuthStyleLT applies the LT predicate on the "auth_style" field.
-func AuthStyleLT(v uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldLT(FieldAuthStyle, v))
+func AuthStyleLT(v customtypes.Uint8) predicate.OauthProvider {
+	vc := uint8(v)
+	return predicate.OauthProvider(sql.FieldLT(FieldAuthStyle, vc))
 }
 
 // AuthStyleLTE applies the LTE predicate on the "auth_style" field.
-func AuthStyleLTE(v uint8) predicate.OauthProvider {
-	return predicate.OauthProvider(sql.FieldLTE(FieldAuthStyle, v))
+func AuthStyleLTE(v customtypes.Uint8) predicate.OauthProvider {
+	vc := uint8(v)
+	return predicate.OauthProvider(sql.FieldLTE(FieldAuthStyle, vc))
 }
 
 // InfoURLEQ applies the EQ predicate on the "info_url" field.

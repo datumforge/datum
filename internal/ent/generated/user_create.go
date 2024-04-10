@@ -18,7 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -266,14 +266,14 @@ func (uc *UserCreate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserCr
 	return uc.AddPersonalAccessTokenIDs(ids...)
 }
 
-// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by IDs.
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASetting entity by IDs.
 func (uc *UserCreate) AddTfaSettingIDs(ids ...string) *UserCreate {
 	uc.mutation.AddTfaSettingIDs(ids...)
 	return uc
 }
 
-// AddTfaSettings adds the "tfa_settings" edges to the TFASettings entity.
-func (uc *UserCreate) AddTfaSettings(t ...*TFASettings) *UserCreate {
+// AddTfaSettings adds the "tfa_settings" edges to the TFASetting entity.
+func (uc *UserCreate) AddTfaSettings(t ...*TFASetting) *UserCreate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -646,10 +646,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.TfaSettingsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uc.schemaConfig.TFASettings
+		edge.Schema = uc.schemaConfig.TFASetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

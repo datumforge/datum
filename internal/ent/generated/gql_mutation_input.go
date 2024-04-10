@@ -726,7 +726,7 @@ type CreateOauthProviderInput struct {
 	Scopes       string
 	AuthURL      string
 	TokenURL     string
-	AuthStyle    uint8
+	AuthStyle    customtypes.Uint8
 	InfoURL      string
 	OwnerID      *string
 }
@@ -778,7 +778,7 @@ type UpdateOauthProviderInput struct {
 	Scopes         *string
 	AuthURL        *string
 	TokenURL       *string
-	AuthStyle      *uint8
+	AuthStyle      *customtypes.Uint8
 	InfoURL        *string
 	ClearOwner     bool
 	OwnerID        *string
@@ -1767,8 +1767,8 @@ func (c *SubscriberUpdateOne) SetInput(i UpdateSubscriberInput) *SubscriberUpdat
 	return c
 }
 
-// CreateTFASettingsInput represents a mutation input for creating tfasettingsslice.
-type CreateTFASettingsInput struct {
+// CreateTFASettingInput represents a mutation input for creating tfasettings.
+type CreateTFASettingInput struct {
 	CreatedAt   *time.Time
 	UpdatedAt   *time.Time
 	CreatedBy   *string
@@ -1777,8 +1777,8 @@ type CreateTFASettingsInput struct {
 	OwnerID     *string
 }
 
-// Mutate applies the CreateTFASettingsInput on the TFASettingsMutation builder.
-func (i *CreateTFASettingsInput) Mutate(m *TFASettingsMutation) {
+// Mutate applies the CreateTFASettingInput on the TFASettingMutation builder.
+func (i *CreateTFASettingInput) Mutate(m *TFASettingMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -1799,14 +1799,14 @@ func (i *CreateTFASettingsInput) Mutate(m *TFASettingsMutation) {
 	}
 }
 
-// SetInput applies the change-set in the CreateTFASettingsInput on the TFASettingsCreate builder.
-func (c *TFASettingsCreate) SetInput(i CreateTFASettingsInput) *TFASettingsCreate {
+// SetInput applies the change-set in the CreateTFASettingInput on the TFASettingCreate builder.
+func (c *TFASettingCreate) SetInput(i CreateTFASettingInput) *TFASettingCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateTFASettingsInput represents a mutation input for updating tfasettingsslice.
-type UpdateTFASettingsInput struct {
+// UpdateTFASettingInput represents a mutation input for updating tfasettings.
+type UpdateTFASettingInput struct {
 	ClearUpdatedAt   bool
 	UpdatedAt        *time.Time
 	ClearUpdatedBy   bool
@@ -1816,8 +1816,8 @@ type UpdateTFASettingsInput struct {
 	TotpAllowed      *bool
 }
 
-// Mutate applies the UpdateTFASettingsInput on the TFASettingsMutation builder.
-func (i *UpdateTFASettingsInput) Mutate(m *TFASettingsMutation) {
+// Mutate applies the UpdateTFASettingInput on the TFASettingMutation builder.
+func (i *UpdateTFASettingInput) Mutate(m *TFASettingMutation) {
 	if i.ClearUpdatedAt {
 		m.ClearUpdatedAt()
 	}
@@ -1841,14 +1841,14 @@ func (i *UpdateTFASettingsInput) Mutate(m *TFASettingsMutation) {
 	}
 }
 
-// SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdate builder.
-func (c *TFASettingsUpdate) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdate {
+// SetInput applies the change-set in the UpdateTFASettingInput on the TFASettingUpdate builder.
+func (c *TFASettingUpdate) SetInput(i UpdateTFASettingInput) *TFASettingUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateTFASettingsInput on the TFASettingsUpdateOne builder.
-func (c *TFASettingsUpdateOne) SetInput(i UpdateTFASettingsInput) *TFASettingsUpdateOne {
+// SetInput applies the change-set in the UpdateTFASettingInput on the TFASettingUpdateOne builder.
+func (c *TFASettingUpdateOne) SetInput(i UpdateTFASettingInput) *TFASettingUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

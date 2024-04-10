@@ -26,7 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -2442,7 +2442,7 @@ func newSubscriberPaginateArgs(rv map[string]any) *subscriberPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (ts *TFASettingsQuery) CollectFields(ctx context.Context, satisfies ...string) (*TFASettingsQuery, error) {
+func (ts *TFASettingQuery) CollectFields(ctx context.Context, satisfies ...string) (*TFASettingQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
 		return ts, nil
@@ -2453,12 +2453,12 @@ func (ts *TFASettingsQuery) CollectFields(ctx context.Context, satisfies ...stri
 	return ts, nil
 }
 
-func (ts *TFASettingsQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (ts *TFASettingQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(tfasettings.Columns))
-		selectedFields = []string{tfasettings.FieldID}
+		fieldSeen      = make(map[string]struct{}, len(tfasetting.Columns))
+		selectedFields = []string{tfasetting.FieldID}
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
@@ -2472,59 +2472,59 @@ func (ts *TFASettingsQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				return err
 			}
 			ts.withOwner = query
-			if _, ok := fieldSeen[tfasettings.FieldOwnerID]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldOwnerID)
-				fieldSeen[tfasettings.FieldOwnerID] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldOwnerID)
+				fieldSeen[tfasetting.FieldOwnerID] = struct{}{}
 			}
 		case "createdAt":
-			if _, ok := fieldSeen[tfasettings.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldCreatedAt)
-				fieldSeen[tfasettings.FieldCreatedAt] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldCreatedAt)
+				fieldSeen[tfasetting.FieldCreatedAt] = struct{}{}
 			}
 		case "updatedAt":
-			if _, ok := fieldSeen[tfasettings.FieldUpdatedAt]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldUpdatedAt)
-				fieldSeen[tfasettings.FieldUpdatedAt] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldUpdatedAt)
+				fieldSeen[tfasetting.FieldUpdatedAt] = struct{}{}
 			}
 		case "createdBy":
-			if _, ok := fieldSeen[tfasettings.FieldCreatedBy]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldCreatedBy)
-				fieldSeen[tfasettings.FieldCreatedBy] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldCreatedBy)
+				fieldSeen[tfasetting.FieldCreatedBy] = struct{}{}
 			}
 		case "updatedBy":
-			if _, ok := fieldSeen[tfasettings.FieldUpdatedBy]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldUpdatedBy)
-				fieldSeen[tfasettings.FieldUpdatedBy] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldUpdatedBy)
+				fieldSeen[tfasetting.FieldUpdatedBy] = struct{}{}
 			}
 		case "deletedAt":
-			if _, ok := fieldSeen[tfasettings.FieldDeletedAt]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldDeletedAt)
-				fieldSeen[tfasettings.FieldDeletedAt] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldDeletedAt)
+				fieldSeen[tfasetting.FieldDeletedAt] = struct{}{}
 			}
 		case "deletedBy":
-			if _, ok := fieldSeen[tfasettings.FieldDeletedBy]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldDeletedBy)
-				fieldSeen[tfasettings.FieldDeletedBy] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldDeletedBy)
+				fieldSeen[tfasetting.FieldDeletedBy] = struct{}{}
 			}
 		case "tfaSecret":
-			if _, ok := fieldSeen[tfasettings.FieldTfaSecret]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldTfaSecret)
-				fieldSeen[tfasettings.FieldTfaSecret] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldTfaSecret]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldTfaSecret)
+				fieldSeen[tfasetting.FieldTfaSecret] = struct{}{}
 			}
 		case "verified":
-			if _, ok := fieldSeen[tfasettings.FieldVerified]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldVerified)
-				fieldSeen[tfasettings.FieldVerified] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldVerified]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldVerified)
+				fieldSeen[tfasetting.FieldVerified] = struct{}{}
 			}
 		case "recoveryCodes":
-			if _, ok := fieldSeen[tfasettings.FieldRecoveryCodes]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldRecoveryCodes)
-				fieldSeen[tfasettings.FieldRecoveryCodes] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldRecoveryCodes]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldRecoveryCodes)
+				fieldSeen[tfasetting.FieldRecoveryCodes] = struct{}{}
 			}
 		case "totpAllowed":
-			if _, ok := fieldSeen[tfasettings.FieldTotpAllowed]; !ok {
-				selectedFields = append(selectedFields, tfasettings.FieldTotpAllowed)
-				fieldSeen[tfasettings.FieldTotpAllowed] = struct{}{}
+			if _, ok := fieldSeen[tfasetting.FieldTotpAllowed]; !ok {
+				selectedFields = append(selectedFields, tfasetting.FieldTotpAllowed)
+				fieldSeen[tfasetting.FieldTotpAllowed] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -2538,14 +2538,14 @@ func (ts *TFASettingsQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 	return nil
 }
 
-type tfasettingsPaginateArgs struct {
+type tfasettingPaginateArgs struct {
 	first, last   *int
 	after, before *Cursor
-	opts          []TFASettingsPaginateOption
+	opts          []TFASettingPaginateOption
 }
 
-func newTFASettingsPaginateArgs(rv map[string]any) *tfasettingsPaginateArgs {
-	args := &tfasettingsPaginateArgs{}
+func newTFASettingPaginateArgs(rv map[string]any) *tfasettingPaginateArgs {
+	args := &tfasettingPaginateArgs{}
 	if rv == nil {
 		return args
 	}
@@ -2561,8 +2561,8 @@ func newTFASettingsPaginateArgs(rv map[string]any) *tfasettingsPaginateArgs {
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
 	}
-	if v, ok := rv[whereField].(*TFASettingsWhereInput); ok {
-		args.opts = append(args.opts, WithTFASettingsFilter(v.Filter))
+	if v, ok := rv[whereField].(*TFASettingWhereInput); ok {
+		args.opts = append(args.opts, WithTFASettingFilter(v.Filter))
 	}
 	return args
 }
@@ -2747,12 +2747,12 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&TFASettingsClient{config: u.config}).Query()
+				query = (&TFASettingClient{config: u.config}).Query()
 			)
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			u.WithNamedTfaSettings(alias, func(wq *TFASettingsQuery) {
+			u.WithNamedTfaSettings(alias, func(wq *TFASettingQuery) {
 				*wq = *query
 			})
 		case "setting":

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -9,7 +10,9 @@ import (
 
 	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
+	"github.com/ogen-go/ogen"
 
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -36,6 +39,11 @@ func (OauthProvider) Fields() []ent.Field {
 		field.String("token_url").
 			Comment("the token url of the provider"),
 		field.Uint8("auth_style").
+			GoType(customtypes.Uint8(0)).
+			Annotations(
+				entgql.Type("Uint"),
+				entoas.Schema(ogen.Int()),
+			).
 			Comment("the auth style, 0: auto detect 1: third party log in 2: log in with username and password"),
 		field.String("info_url").
 			Comment("the URL to request user information by token"),

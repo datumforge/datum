@@ -519,28 +519,28 @@ func (f SubscriberMutationRuleFunc) EvalMutation(ctx context.Context, m generate
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.SubscriberMutation", m)
 }
 
-// The TFASettingsQueryRuleFunc type is an adapter to allow the use of ordinary
+// The TFASettingQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type TFASettingsQueryRuleFunc func(context.Context, *generated.TFASettingsQuery) error
+type TFASettingQueryRuleFunc func(context.Context, *generated.TFASettingQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f TFASettingsQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.TFASettingsQuery); ok {
+func (f TFASettingQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.TFASettingQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.TFASettingsQuery", q)
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.TFASettingQuery", q)
 }
 
-// The TFASettingsMutationRuleFunc type is an adapter to allow the use of ordinary
+// The TFASettingMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type TFASettingsMutationRuleFunc func(context.Context, *generated.TFASettingsMutation) error
+type TFASettingMutationRuleFunc func(context.Context, *generated.TFASettingMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f TFASettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.TFASettingsMutation); ok {
+func (f TFASettingMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.TFASettingMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TFASettingsMutation", m)
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TFASettingMutation", m)
 }
 
 // The TemplateQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -708,7 +708,7 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.SubscriberQuery:
 		return q.Filter(), nil
-	case *generated.TFASettingsQuery:
+	case *generated.TFASettingQuery:
 		return q.Filter(), nil
 	case *generated.TemplateQuery:
 		return q.Filter(), nil
@@ -759,7 +759,7 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.SubscriberMutation:
 		return m.Filter(), nil
-	case *generated.TFASettingsMutation:
+	case *generated.TFASettingMutation:
 		return m.Filter(), nil
 	case *generated.TemplateMutation:
 		return m.Filter(), nil

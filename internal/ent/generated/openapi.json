@@ -2033,10 +2033,7 @@
                     "type": "string"
                   },
                   "auth_style": {
-                    "type": "integer",
-                    "format": "int32",
-                    "maximum": 255,
-                    "minimum": 0
+                    "type": "integer"
                   },
                   "info_url": {
                     "type": "string"
@@ -2211,10 +2208,7 @@
                     "type": "string"
                   },
                   "auth_style": {
-                    "type": "integer",
-                    "format": "int32",
-                    "maximum": 255,
-                    "minimum": 0
+                    "type": "integer"
                   },
                   "info_url": {
                     "type": "string"
@@ -5960,16 +5954,16 @@
     "/tfa-settings/{id}/owner": {
       "get": {
         "tags": [
-          "TFASettings"
+          "TFASetting"
         ],
         "summary": "Find the attached User",
-        "description": "Find the attached User of the TFASettings with the given ID",
-        "operationId": "readTFASettingsOwner",
+        "description": "Find the attached User of the TFASetting with the given ID",
+        "operationId": "readTFASettingOwner",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the TFASettings",
+            "description": "ID of the TFASetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -5978,7 +5972,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User attached to TFASettings with requested ID was found",
+            "description": "User attached to TFASetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
@@ -6878,7 +6872,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TFASettings"
+                    "$ref": "#/components/schemas/TFASetting"
                   }
                 }
               }
@@ -7433,10 +7427,7 @@
             "type": "string"
           },
           "auth_style": {
-            "type": "integer",
-            "format": "int32",
-            "maximum": 255,
-            "minimum": 0
+            "type": "integer"
           },
           "info_url": {
             "type": "string"
@@ -8102,7 +8093,7 @@
           "active"
         ]
       },
-      "TFASettings": {
+      "TFASetting": {
         "type": "object",
         "properties": {
           "id": {
@@ -8265,7 +8256,7 @@
           "tfa_settings": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TFASettings"
+              "$ref": "#/components/schemas/TFASetting"
             }
           },
           "setting": {

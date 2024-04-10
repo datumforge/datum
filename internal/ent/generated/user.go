@@ -64,7 +64,7 @@ type UserEdges struct {
 	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// TfaSettings holds the value of the tfa_settings edge.
-	TfaSettings []*TFASettings `json:"tfa_settings,omitempty"`
+	TfaSettings []*TFASetting `json:"tfa_settings,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
@@ -88,7 +88,7 @@ type UserEdges struct {
 	totalCount [7]map[string]int
 
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
-	namedTfaSettings             map[string][]*TFASettings
+	namedTfaSettings             map[string][]*TFASetting
 	namedEmailVerificationTokens map[string][]*EmailVerificationToken
 	namedPasswordResetTokens     map[string][]*PasswordResetToken
 	namedGroups                  map[string][]*Group
@@ -109,7 +109,7 @@ func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
 
 // TfaSettingsOrErr returns the TfaSettings value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) TfaSettingsOrErr() ([]*TFASettings, error) {
+func (e UserEdges) TfaSettingsOrErr() ([]*TFASetting, error) {
 	if e.loadedTypes[1] {
 		return e.TfaSettings, nil
 	}
@@ -346,7 +346,7 @@ func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 }
 
 // QueryTfaSettings queries the "tfa_settings" edge of the User entity.
-func (u *User) QueryTfaSettings() *TFASettingsQuery {
+func (u *User) QueryTfaSettings() *TFASettingQuery {
 	return NewUserClient(u.config).QueryTfaSettings(u)
 }
 
@@ -500,7 +500,7 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 
 // NamedTfaSettings returns the TfaSettings named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (u *User) NamedTfaSettings(name string) ([]*TFASettings, error) {
+func (u *User) NamedTfaSettings(name string) ([]*TFASetting, error) {
 	if u.Edges.namedTfaSettings == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
@@ -511,12 +511,12 @@ func (u *User) NamedTfaSettings(name string) ([]*TFASettings, error) {
 	return nodes, nil
 }
 
-func (u *User) appendNamedTfaSettings(name string, edges ...*TFASettings) {
+func (u *User) appendNamedTfaSettings(name string, edges ...*TFASetting) {
 	if u.Edges.namedTfaSettings == nil {
-		u.Edges.namedTfaSettings = make(map[string][]*TFASettings)
+		u.Edges.namedTfaSettings = make(map[string][]*TFASetting)
 	}
 	if len(edges) == 0 {
-		u.Edges.namedTfaSettings[name] = []*TFASettings{}
+		u.Edges.namedTfaSettings[name] = []*TFASetting{}
 	} else {
 		u.Edges.namedTfaSettings[name] = append(u.Edges.namedTfaSettings[name], edges...)
 	}

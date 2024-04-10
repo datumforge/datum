@@ -11,60 +11,60 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
-// TFASettingsQuery is the builder for querying TFASettings entities.
-type TFASettingsQuery struct {
+// TFASettingQuery is the builder for querying TFASetting entities.
+type TFASettingQuery struct {
 	config
 	ctx        *QueryContext
-	order      []tfasettings.OrderOption
+	order      []tfasetting.OrderOption
 	inters     []Interceptor
-	predicates []predicate.TFASettings
+	predicates []predicate.TFASetting
 	withOwner  *UserQuery
 	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*TFASettings) error
+	loadTotal  []func(context.Context, []*TFASetting) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the TFASettingsQuery builder.
-func (tsq *TFASettingsQuery) Where(ps ...predicate.TFASettings) *TFASettingsQuery {
+// Where adds a new predicate for the TFASettingQuery builder.
+func (tsq *TFASettingQuery) Where(ps ...predicate.TFASetting) *TFASettingQuery {
 	tsq.predicates = append(tsq.predicates, ps...)
 	return tsq
 }
 
 // Limit the number of records to be returned by this query.
-func (tsq *TFASettingsQuery) Limit(limit int) *TFASettingsQuery {
+func (tsq *TFASettingQuery) Limit(limit int) *TFASettingQuery {
 	tsq.ctx.Limit = &limit
 	return tsq
 }
 
 // Offset to start from.
-func (tsq *TFASettingsQuery) Offset(offset int) *TFASettingsQuery {
+func (tsq *TFASettingQuery) Offset(offset int) *TFASettingQuery {
 	tsq.ctx.Offset = &offset
 	return tsq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (tsq *TFASettingsQuery) Unique(unique bool) *TFASettingsQuery {
+func (tsq *TFASettingQuery) Unique(unique bool) *TFASettingQuery {
 	tsq.ctx.Unique = &unique
 	return tsq
 }
 
 // Order specifies how the records should be ordered.
-func (tsq *TFASettingsQuery) Order(o ...tfasettings.OrderOption) *TFASettingsQuery {
+func (tsq *TFASettingQuery) Order(o ...tfasetting.OrderOption) *TFASettingQuery {
 	tsq.order = append(tsq.order, o...)
 	return tsq
 }
 
 // QueryOwner chains the current query on the "owner" edge.
-func (tsq *TFASettingsQuery) QueryOwner() *UserQuery {
+func (tsq *TFASettingQuery) QueryOwner() *UserQuery {
 	query := (&UserClient{config: tsq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := tsq.prepareQuery(ctx); err != nil {
@@ -75,34 +75,34 @@ func (tsq *TFASettingsQuery) QueryOwner() *UserQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(tfasettings.Table, tfasettings.FieldID, selector),
+			sqlgraph.From(tfasetting.Table, tfasetting.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, tfasettings.OwnerTable, tfasettings.OwnerColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, tfasetting.OwnerTable, tfasetting.OwnerColumn),
 		)
 		schemaConfig := tsq.schemaConfig
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.TFASettings
+		step.Edge.Schema = schemaConfig.TFASetting
 		fromU = sqlgraph.SetNeighbors(tsq.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
 }
 
-// First returns the first TFASettings entity from the query.
-// Returns a *NotFoundError when no TFASettings was found.
-func (tsq *TFASettingsQuery) First(ctx context.Context) (*TFASettings, error) {
+// First returns the first TFASetting entity from the query.
+// Returns a *NotFoundError when no TFASetting was found.
+func (tsq *TFASettingQuery) First(ctx context.Context) (*TFASetting, error) {
 	nodes, err := tsq.Limit(1).All(setContextOp(ctx, tsq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{tfasettings.Label}
+		return nil, &NotFoundError{tfasetting.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (tsq *TFASettingsQuery) FirstX(ctx context.Context) *TFASettings {
+func (tsq *TFASettingQuery) FirstX(ctx context.Context) *TFASetting {
 	node, err := tsq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -110,22 +110,22 @@ func (tsq *TFASettingsQuery) FirstX(ctx context.Context) *TFASettings {
 	return node
 }
 
-// FirstID returns the first TFASettings ID from the query.
-// Returns a *NotFoundError when no TFASettings ID was found.
-func (tsq *TFASettingsQuery) FirstID(ctx context.Context) (id string, err error) {
+// FirstID returns the first TFASetting ID from the query.
+// Returns a *NotFoundError when no TFASetting ID was found.
+func (tsq *TFASettingQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
 	if ids, err = tsq.Limit(1).IDs(setContextOp(ctx, tsq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{tfasettings.Label}
+		err = &NotFoundError{tfasetting.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tsq *TFASettingsQuery) FirstIDX(ctx context.Context) string {
+func (tsq *TFASettingQuery) FirstIDX(ctx context.Context) string {
 	id, err := tsq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -133,10 +133,10 @@ func (tsq *TFASettingsQuery) FirstIDX(ctx context.Context) string {
 	return id
 }
 
-// Only returns a single TFASettings entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one TFASettings entity is found.
-// Returns a *NotFoundError when no TFASettings entities are found.
-func (tsq *TFASettingsQuery) Only(ctx context.Context) (*TFASettings, error) {
+// Only returns a single TFASetting entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one TFASetting entity is found.
+// Returns a *NotFoundError when no TFASetting entities are found.
+func (tsq *TFASettingQuery) Only(ctx context.Context) (*TFASetting, error) {
 	nodes, err := tsq.Limit(2).All(setContextOp(ctx, tsq.ctx, "Only"))
 	if err != nil {
 		return nil, err
@@ -145,14 +145,14 @@ func (tsq *TFASettingsQuery) Only(ctx context.Context) (*TFASettings, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{tfasettings.Label}
+		return nil, &NotFoundError{tfasetting.Label}
 	default:
-		return nil, &NotSingularError{tfasettings.Label}
+		return nil, &NotSingularError{tfasetting.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (tsq *TFASettingsQuery) OnlyX(ctx context.Context) *TFASettings {
+func (tsq *TFASettingQuery) OnlyX(ctx context.Context) *TFASetting {
 	node, err := tsq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -160,10 +160,10 @@ func (tsq *TFASettingsQuery) OnlyX(ctx context.Context) *TFASettings {
 	return node
 }
 
-// OnlyID is like Only, but returns the only TFASettings ID in the query.
-// Returns a *NotSingularError when more than one TFASettings ID is found.
+// OnlyID is like Only, but returns the only TFASetting ID in the query.
+// Returns a *NotSingularError when more than one TFASetting ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tsq *TFASettingsQuery) OnlyID(ctx context.Context) (id string, err error) {
+func (tsq *TFASettingQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
 	if ids, err = tsq.Limit(2).IDs(setContextOp(ctx, tsq.ctx, "OnlyID")); err != nil {
 		return
@@ -172,15 +172,15 @@ func (tsq *TFASettingsQuery) OnlyID(ctx context.Context) (id string, err error) 
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{tfasettings.Label}
+		err = &NotFoundError{tfasetting.Label}
 	default:
-		err = &NotSingularError{tfasettings.Label}
+		err = &NotSingularError{tfasetting.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tsq *TFASettingsQuery) OnlyIDX(ctx context.Context) string {
+func (tsq *TFASettingQuery) OnlyIDX(ctx context.Context) string {
 	id, err := tsq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -188,18 +188,18 @@ func (tsq *TFASettingsQuery) OnlyIDX(ctx context.Context) string {
 	return id
 }
 
-// All executes the query and returns a list of TFASettingsSlice.
-func (tsq *TFASettingsQuery) All(ctx context.Context) ([]*TFASettings, error) {
+// All executes the query and returns a list of TFASettings.
+func (tsq *TFASettingQuery) All(ctx context.Context) ([]*TFASetting, error) {
 	ctx = setContextOp(ctx, tsq.ctx, "All")
 	if err := tsq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*TFASettings, *TFASettingsQuery]()
-	return withInterceptors[[]*TFASettings](ctx, tsq, qr, tsq.inters)
+	qr := querierAll[[]*TFASetting, *TFASettingQuery]()
+	return withInterceptors[[]*TFASetting](ctx, tsq, qr, tsq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (tsq *TFASettingsQuery) AllX(ctx context.Context) []*TFASettings {
+func (tsq *TFASettingQuery) AllX(ctx context.Context) []*TFASetting {
 	nodes, err := tsq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -207,20 +207,20 @@ func (tsq *TFASettingsQuery) AllX(ctx context.Context) []*TFASettings {
 	return nodes
 }
 
-// IDs executes the query and returns a list of TFASettings IDs.
-func (tsq *TFASettingsQuery) IDs(ctx context.Context) (ids []string, err error) {
+// IDs executes the query and returns a list of TFASetting IDs.
+func (tsq *TFASettingQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if tsq.ctx.Unique == nil && tsq.path != nil {
 		tsq.Unique(true)
 	}
 	ctx = setContextOp(ctx, tsq.ctx, "IDs")
-	if err = tsq.Select(tfasettings.FieldID).Scan(ctx, &ids); err != nil {
+	if err = tsq.Select(tfasetting.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tsq *TFASettingsQuery) IDsX(ctx context.Context) []string {
+func (tsq *TFASettingQuery) IDsX(ctx context.Context) []string {
 	ids, err := tsq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -229,16 +229,16 @@ func (tsq *TFASettingsQuery) IDsX(ctx context.Context) []string {
 }
 
 // Count returns the count of the given query.
-func (tsq *TFASettingsQuery) Count(ctx context.Context) (int, error) {
+func (tsq *TFASettingQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, tsq.ctx, "Count")
 	if err := tsq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, tsq, querierCount[*TFASettingsQuery](), tsq.inters)
+	return withInterceptors[int](ctx, tsq, querierCount[*TFASettingQuery](), tsq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (tsq *TFASettingsQuery) CountX(ctx context.Context) int {
+func (tsq *TFASettingQuery) CountX(ctx context.Context) int {
 	count, err := tsq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -247,7 +247,7 @@ func (tsq *TFASettingsQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (tsq *TFASettingsQuery) Exist(ctx context.Context) (bool, error) {
+func (tsq *TFASettingQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, tsq.ctx, "Exist")
 	switch _, err := tsq.FirstID(ctx); {
 	case IsNotFound(err):
@@ -260,7 +260,7 @@ func (tsq *TFASettingsQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (tsq *TFASettingsQuery) ExistX(ctx context.Context) bool {
+func (tsq *TFASettingQuery) ExistX(ctx context.Context) bool {
 	exist, err := tsq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -268,18 +268,18 @@ func (tsq *TFASettingsQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the TFASettingsQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the TFASettingQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (tsq *TFASettingsQuery) Clone() *TFASettingsQuery {
+func (tsq *TFASettingQuery) Clone() *TFASettingQuery {
 	if tsq == nil {
 		return nil
 	}
-	return &TFASettingsQuery{
+	return &TFASettingQuery{
 		config:     tsq.config,
 		ctx:        tsq.ctx.Clone(),
-		order:      append([]tfasettings.OrderOption{}, tsq.order...),
+		order:      append([]tfasetting.OrderOption{}, tsq.order...),
 		inters:     append([]Interceptor{}, tsq.inters...),
-		predicates: append([]predicate.TFASettings{}, tsq.predicates...),
+		predicates: append([]predicate.TFASetting{}, tsq.predicates...),
 		withOwner:  tsq.withOwner.Clone(),
 		// clone intermediate query.
 		sql:  tsq.sql.Clone(),
@@ -289,7 +289,7 @@ func (tsq *TFASettingsQuery) Clone() *TFASettingsQuery {
 
 // WithOwner tells the query-builder to eager-load the nodes that are connected to
 // the "owner" edge. The optional arguments are used to configure the query builder of the edge.
-func (tsq *TFASettingsQuery) WithOwner(opts ...func(*UserQuery)) *TFASettingsQuery {
+func (tsq *TFASettingQuery) WithOwner(opts ...func(*UserQuery)) *TFASettingQuery {
 	query := (&UserClient{config: tsq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -308,15 +308,15 @@ func (tsq *TFASettingsQuery) WithOwner(opts ...func(*UserQuery)) *TFASettingsQue
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.TFASettings.Query().
-//		GroupBy(tfasettings.FieldCreatedAt).
+//	client.TFASetting.Query().
+//		GroupBy(tfasetting.FieldCreatedAt).
 //		Aggregate(generated.Count()).
 //		Scan(ctx, &v)
-func (tsq *TFASettingsQuery) GroupBy(field string, fields ...string) *TFASettingsGroupBy {
+func (tsq *TFASettingQuery) GroupBy(field string, fields ...string) *TFASettingGroupBy {
 	tsq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &TFASettingsGroupBy{build: tsq}
+	grbuild := &TFASettingGroupBy{build: tsq}
 	grbuild.flds = &tsq.ctx.Fields
-	grbuild.label = tfasettings.Label
+	grbuild.label = tfasetting.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -330,23 +330,23 @@ func (tsq *TFASettingsQuery) GroupBy(field string, fields ...string) *TFASetting
 //		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
-//	client.TFASettings.Query().
-//		Select(tfasettings.FieldCreatedAt).
+//	client.TFASetting.Query().
+//		Select(tfasetting.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (tsq *TFASettingsQuery) Select(fields ...string) *TFASettingsSelect {
+func (tsq *TFASettingQuery) Select(fields ...string) *TFASettingSelect {
 	tsq.ctx.Fields = append(tsq.ctx.Fields, fields...)
-	sbuild := &TFASettingsSelect{TFASettingsQuery: tsq}
-	sbuild.label = tfasettings.Label
+	sbuild := &TFASettingSelect{TFASettingQuery: tsq}
+	sbuild.label = tfasetting.Label
 	sbuild.flds, sbuild.scan = &tsq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a TFASettingsSelect configured with the given aggregations.
-func (tsq *TFASettingsQuery) Aggregate(fns ...AggregateFunc) *TFASettingsSelect {
+// Aggregate returns a TFASettingSelect configured with the given aggregations.
+func (tsq *TFASettingQuery) Aggregate(fns ...AggregateFunc) *TFASettingSelect {
 	return tsq.Select().Aggregate(fns...)
 }
 
-func (tsq *TFASettingsQuery) prepareQuery(ctx context.Context) error {
+func (tsq *TFASettingQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range tsq.inters {
 		if inter == nil {
 			return fmt.Errorf("generated: uninitialized interceptor (forgotten import generated/runtime?)")
@@ -358,7 +358,7 @@ func (tsq *TFASettingsQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range tsq.ctx.Fields {
-		if !tfasettings.ValidColumn(f) {
+		if !tfasetting.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("generated: invalid field %q for query", f)}
 		}
 	}
@@ -372,24 +372,24 @@ func (tsq *TFASettingsQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (tsq *TFASettingsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TFASettings, error) {
+func (tsq *TFASettingQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TFASetting, error) {
 	var (
-		nodes       = []*TFASettings{}
+		nodes       = []*TFASetting{}
 		_spec       = tsq.querySpec()
 		loadedTypes = [1]bool{
 			tsq.withOwner != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*TFASettings).scanValues(nil, columns)
+		return (*TFASetting).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &TFASettings{config: tsq.config}
+		node := &TFASetting{config: tsq.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
-	_spec.Node.Schema = tsq.schemaConfig.TFASettings
+	_spec.Node.Schema = tsq.schemaConfig.TFASetting
 	ctx = internal.NewSchemaConfigContext(ctx, tsq.schemaConfig)
 	if len(tsq.modifiers) > 0 {
 		_spec.Modifiers = tsq.modifiers
@@ -405,7 +405,7 @@ func (tsq *TFASettingsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	}
 	if query := tsq.withOwner; query != nil {
 		if err := tsq.loadOwner(ctx, query, nodes, nil,
-			func(n *TFASettings, e *User) { n.Edges.Owner = e }); err != nil {
+			func(n *TFASetting, e *User) { n.Edges.Owner = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -417,9 +417,9 @@ func (tsq *TFASettingsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	return nodes, nil
 }
 
-func (tsq *TFASettingsQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []*TFASettings, init func(*TFASettings), assign func(*TFASettings, *User)) error {
+func (tsq *TFASettingQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []*TFASetting, init func(*TFASetting), assign func(*TFASetting, *User)) error {
 	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*TFASettings)
+	nodeids := make(map[string][]*TFASetting)
 	for i := range nodes {
 		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
@@ -447,9 +447,9 @@ func (tsq *TFASettingsQuery) loadOwner(ctx context.Context, query *UserQuery, no
 	return nil
 }
 
-func (tsq *TFASettingsQuery) sqlCount(ctx context.Context) (int, error) {
+func (tsq *TFASettingQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := tsq.querySpec()
-	_spec.Node.Schema = tsq.schemaConfig.TFASettings
+	_spec.Node.Schema = tsq.schemaConfig.TFASetting
 	ctx = internal.NewSchemaConfigContext(ctx, tsq.schemaConfig)
 	if len(tsq.modifiers) > 0 {
 		_spec.Modifiers = tsq.modifiers
@@ -461,8 +461,8 @@ func (tsq *TFASettingsQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, tsq.driver, _spec)
 }
 
-func (tsq *TFASettingsQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(tfasettings.Table, tfasettings.Columns, sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString))
+func (tsq *TFASettingQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(tfasetting.Table, tfasetting.Columns, sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString))
 	_spec.From = tsq.sql
 	if unique := tsq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -471,14 +471,14 @@ func (tsq *TFASettingsQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := tsq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, tfasettings.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, tfasetting.FieldID)
 		for i := range fields {
-			if fields[i] != tfasettings.FieldID {
+			if fields[i] != tfasetting.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
 		if tsq.withOwner != nil {
-			_spec.Node.AddColumnOnce(tfasettings.FieldOwnerID)
+			_spec.Node.AddColumnOnce(tfasetting.FieldOwnerID)
 		}
 	}
 	if ps := tsq.predicates; len(ps) > 0 {
@@ -504,12 +504,12 @@ func (tsq *TFASettingsQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (tsq *TFASettingsQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (tsq *TFASettingQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(tsq.driver.Dialect())
-	t1 := builder.Table(tfasettings.Table)
+	t1 := builder.Table(tfasetting.Table)
 	columns := tsq.ctx.Fields
 	if len(columns) == 0 {
-		columns = tfasettings.Columns
+		columns = tfasetting.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if tsq.sql != nil {
@@ -519,7 +519,7 @@ func (tsq *TFASettingsQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if tsq.ctx.Unique != nil && *tsq.ctx.Unique {
 		selector.Distinct()
 	}
-	t1.Schema(tsq.schemaConfig.TFASettings)
+	t1.Schema(tsq.schemaConfig.TFASetting)
 	ctx = internal.NewSchemaConfigContext(ctx, tsq.schemaConfig)
 	selector.WithContext(ctx)
 	for _, p := range tsq.predicates {
@@ -539,28 +539,28 @@ func (tsq *TFASettingsQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// TFASettingsGroupBy is the group-by builder for TFASettings entities.
-type TFASettingsGroupBy struct {
+// TFASettingGroupBy is the group-by builder for TFASetting entities.
+type TFASettingGroupBy struct {
 	selector
-	build *TFASettingsQuery
+	build *TFASettingQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (tsgb *TFASettingsGroupBy) Aggregate(fns ...AggregateFunc) *TFASettingsGroupBy {
+func (tsgb *TFASettingGroupBy) Aggregate(fns ...AggregateFunc) *TFASettingGroupBy {
 	tsgb.fns = append(tsgb.fns, fns...)
 	return tsgb
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (tsgb *TFASettingsGroupBy) Scan(ctx context.Context, v any) error {
+func (tsgb *TFASettingGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, tsgb.build.ctx, "GroupBy")
 	if err := tsgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TFASettingsQuery, *TFASettingsGroupBy](ctx, tsgb.build, tsgb, tsgb.build.inters, v)
+	return scanWithInterceptors[*TFASettingQuery, *TFASettingGroupBy](ctx, tsgb.build, tsgb, tsgb.build.inters, v)
 }
 
-func (tsgb *TFASettingsGroupBy) sqlScan(ctx context.Context, root *TFASettingsQuery, v any) error {
+func (tsgb *TFASettingGroupBy) sqlScan(ctx context.Context, root *TFASettingQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(tsgb.fns))
 	for _, fn := range tsgb.fns {
@@ -587,28 +587,28 @@ func (tsgb *TFASettingsGroupBy) sqlScan(ctx context.Context, root *TFASettingsQu
 	return sql.ScanSlice(rows, v)
 }
 
-// TFASettingsSelect is the builder for selecting fields of TFASettings entities.
-type TFASettingsSelect struct {
-	*TFASettingsQuery
+// TFASettingSelect is the builder for selecting fields of TFASetting entities.
+type TFASettingSelect struct {
+	*TFASettingQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (tss *TFASettingsSelect) Aggregate(fns ...AggregateFunc) *TFASettingsSelect {
+func (tss *TFASettingSelect) Aggregate(fns ...AggregateFunc) *TFASettingSelect {
 	tss.fns = append(tss.fns, fns...)
 	return tss
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (tss *TFASettingsSelect) Scan(ctx context.Context, v any) error {
+func (tss *TFASettingSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, tss.ctx, "Select")
 	if err := tss.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TFASettingsQuery, *TFASettingsSelect](ctx, tss.TFASettingsQuery, tss, tss.inters, v)
+	return scanWithInterceptors[*TFASettingQuery, *TFASettingSelect](ctx, tss.TFASettingQuery, tss, tss.inters, v)
 }
 
-func (tss *TFASettingsSelect) sqlScan(ctx context.Context, root *TFASettingsQuery, v any) error {
+func (tss *TFASettingSelect) sqlScan(ctx context.Context, root *TFASettingQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(tss.fns))
 	for _, fn := range tss.fns {

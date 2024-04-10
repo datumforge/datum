@@ -249,16 +249,16 @@ type SubscriberUpdatePayload struct {
 type Subscription struct {
 }
 
-// Return response for createTFASettings mutation
-type TFASettingsCreatePayload struct {
-	// Created tfaSettings
-	TfaSettings *generated.TFASettings `json:"tfaSettings"`
+// Return response for createTFASetting mutation
+type TFASettingCreatePayload struct {
+	// Created tfaSetting
+	TfaSetting *generated.TFASetting `json:"tfaSetting"`
 }
 
-// Return response for updateTFASettings mutation
-type TFASettingsUpdatePayload struct {
-	// Updated tfaSettings
-	TfaSettings *generated.TFASettings `json:"tfaSettings"`
+// Return response for updateTFASetting mutation
+type TFASettingUpdatePayload struct {
+	// Updated tfaSetting
+	TfaSetting *generated.TFASetting `json:"tfaSetting"`
 }
 
 // Return response for createTemplate mutation

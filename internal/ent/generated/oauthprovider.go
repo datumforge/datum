@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
@@ -45,7 +46,7 @@ type OauthProvider struct {
 	// the token url of the provider
 	TokenURL string `json:"token_url,omitempty"`
 	// the auth style, 0: auto detect 1: third party log in 2: log in with username and password
-	AuthStyle uint8 `json:"auth_style,omitempty"`
+	AuthStyle customtypes.Uint8 `json:"auth_style,omitempty"`
 	// the URL to request user information by token
 	InfoURL string `json:"info_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -193,7 +194,7 @@ func (op *OauthProvider) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_style", values[i])
 			} else if value.Valid {
-				op.AuthStyle = uint8(value.Int64)
+				op.AuthStyle = customtypes.Uint8(value.Int64)
 			}
 		case oauthprovider.FieldInfoURL:
 			if value, ok := values[i].(*sql.NullString); !ok {

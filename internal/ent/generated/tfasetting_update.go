@@ -13,45 +13,45 @@ import (
 	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
-// TFASettingsUpdate is the builder for updating TFASettings entities.
-type TFASettingsUpdate struct {
+// TFASettingUpdate is the builder for updating TFASetting entities.
+type TFASettingUpdate struct {
 	config
 	hooks    []Hook
-	mutation *TFASettingsMutation
+	mutation *TFASettingMutation
 }
 
-// Where appends a list predicates to the TFASettingsUpdate builder.
-func (tsu *TFASettingsUpdate) Where(ps ...predicate.TFASettings) *TFASettingsUpdate {
+// Where appends a list predicates to the TFASettingUpdate builder.
+func (tsu *TFASettingUpdate) Where(ps ...predicate.TFASetting) *TFASettingUpdate {
 	tsu.mutation.Where(ps...)
 	return tsu
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (tsu *TFASettingsUpdate) SetUpdatedAt(t time.Time) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetUpdatedAt(t time.Time) *TFASettingUpdate {
 	tsu.mutation.SetUpdatedAt(t)
 	return tsu
 }
 
 // ClearUpdatedAt clears the value of the "updated_at" field.
-func (tsu *TFASettingsUpdate) ClearUpdatedAt() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearUpdatedAt() *TFASettingUpdate {
 	tsu.mutation.ClearUpdatedAt()
 	return tsu
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (tsu *TFASettingsUpdate) SetUpdatedBy(s string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetUpdatedBy(s string) *TFASettingUpdate {
 	tsu.mutation.SetUpdatedBy(s)
 	return tsu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableUpdatedBy(s *string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableUpdatedBy(s *string) *TFASettingUpdate {
 	if s != nil {
 		tsu.SetUpdatedBy(*s)
 	}
@@ -59,19 +59,19 @@ func (tsu *TFASettingsUpdate) SetNillableUpdatedBy(s *string) *TFASettingsUpdate
 }
 
 // ClearUpdatedBy clears the value of the "updated_by" field.
-func (tsu *TFASettingsUpdate) ClearUpdatedBy() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearUpdatedBy() *TFASettingUpdate {
 	tsu.mutation.ClearUpdatedBy()
 	return tsu
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (tsu *TFASettingsUpdate) SetDeletedAt(t time.Time) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetDeletedAt(t time.Time) *TFASettingUpdate {
 	tsu.mutation.SetDeletedAt(t)
 	return tsu
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableDeletedAt(t *time.Time) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableDeletedAt(t *time.Time) *TFASettingUpdate {
 	if t != nil {
 		tsu.SetDeletedAt(*t)
 	}
@@ -79,19 +79,19 @@ func (tsu *TFASettingsUpdate) SetNillableDeletedAt(t *time.Time) *TFASettingsUpd
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (tsu *TFASettingsUpdate) ClearDeletedAt() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearDeletedAt() *TFASettingUpdate {
 	tsu.mutation.ClearDeletedAt()
 	return tsu
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (tsu *TFASettingsUpdate) SetDeletedBy(s string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetDeletedBy(s string) *TFASettingUpdate {
 	tsu.mutation.SetDeletedBy(s)
 	return tsu
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableDeletedBy(s *string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableDeletedBy(s *string) *TFASettingUpdate {
 	if s != nil {
 		tsu.SetDeletedBy(*s)
 	}
@@ -99,19 +99,19 @@ func (tsu *TFASettingsUpdate) SetNillableDeletedBy(s *string) *TFASettingsUpdate
 }
 
 // ClearDeletedBy clears the value of the "deleted_by" field.
-func (tsu *TFASettingsUpdate) ClearDeletedBy() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearDeletedBy() *TFASettingUpdate {
 	tsu.mutation.ClearDeletedBy()
 	return tsu
 }
 
 // SetOwnerID sets the "owner_id" field.
-func (tsu *TFASettingsUpdate) SetOwnerID(s string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetOwnerID(s string) *TFASettingUpdate {
 	tsu.mutation.SetOwnerID(s)
 	return tsu
 }
 
 // SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableOwnerID(s *string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableOwnerID(s *string) *TFASettingUpdate {
 	if s != nil {
 		tsu.SetOwnerID(*s)
 	}
@@ -119,19 +119,19 @@ func (tsu *TFASettingsUpdate) SetNillableOwnerID(s *string) *TFASettingsUpdate {
 }
 
 // ClearOwnerID clears the value of the "owner_id" field.
-func (tsu *TFASettingsUpdate) ClearOwnerID() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearOwnerID() *TFASettingUpdate {
 	tsu.mutation.ClearOwnerID()
 	return tsu
 }
 
 // SetTfaSecret sets the "tfa_secret" field.
-func (tsu *TFASettingsUpdate) SetTfaSecret(s string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetTfaSecret(s string) *TFASettingUpdate {
 	tsu.mutation.SetTfaSecret(s)
 	return tsu
 }
 
 // SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableTfaSecret(s *string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableTfaSecret(s *string) *TFASettingUpdate {
 	if s != nil {
 		tsu.SetTfaSecret(*s)
 	}
@@ -139,19 +139,19 @@ func (tsu *TFASettingsUpdate) SetNillableTfaSecret(s *string) *TFASettingsUpdate
 }
 
 // ClearTfaSecret clears the value of the "tfa_secret" field.
-func (tsu *TFASettingsUpdate) ClearTfaSecret() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearTfaSecret() *TFASettingUpdate {
 	tsu.mutation.ClearTfaSecret()
 	return tsu
 }
 
 // SetVerified sets the "verified" field.
-func (tsu *TFASettingsUpdate) SetVerified(b bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetVerified(b bool) *TFASettingUpdate {
 	tsu.mutation.SetVerified(b)
 	return tsu
 }
 
 // SetNillableVerified sets the "verified" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableVerified(b *bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableVerified(b *bool) *TFASettingUpdate {
 	if b != nil {
 		tsu.SetVerified(*b)
 	}
@@ -159,31 +159,31 @@ func (tsu *TFASettingsUpdate) SetNillableVerified(b *bool) *TFASettingsUpdate {
 }
 
 // SetRecoveryCodes sets the "recovery_codes" field.
-func (tsu *TFASettingsUpdate) SetRecoveryCodes(s []string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetRecoveryCodes(s []string) *TFASettingUpdate {
 	tsu.mutation.SetRecoveryCodes(s)
 	return tsu
 }
 
 // AppendRecoveryCodes appends s to the "recovery_codes" field.
-func (tsu *TFASettingsUpdate) AppendRecoveryCodes(s []string) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) AppendRecoveryCodes(s []string) *TFASettingUpdate {
 	tsu.mutation.AppendRecoveryCodes(s)
 	return tsu
 }
 
 // ClearRecoveryCodes clears the value of the "recovery_codes" field.
-func (tsu *TFASettingsUpdate) ClearRecoveryCodes() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearRecoveryCodes() *TFASettingUpdate {
 	tsu.mutation.ClearRecoveryCodes()
 	return tsu
 }
 
 // SetPhoneOtpAllowed sets the "phone_otp_allowed" field.
-func (tsu *TFASettingsUpdate) SetPhoneOtpAllowed(b bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetPhoneOtpAllowed(b bool) *TFASettingUpdate {
 	tsu.mutation.SetPhoneOtpAllowed(b)
 	return tsu
 }
 
 // SetNillablePhoneOtpAllowed sets the "phone_otp_allowed" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillablePhoneOtpAllowed(b *bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillablePhoneOtpAllowed(b *bool) *TFASettingUpdate {
 	if b != nil {
 		tsu.SetPhoneOtpAllowed(*b)
 	}
@@ -191,19 +191,19 @@ func (tsu *TFASettingsUpdate) SetNillablePhoneOtpAllowed(b *bool) *TFASettingsUp
 }
 
 // ClearPhoneOtpAllowed clears the value of the "phone_otp_allowed" field.
-func (tsu *TFASettingsUpdate) ClearPhoneOtpAllowed() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearPhoneOtpAllowed() *TFASettingUpdate {
 	tsu.mutation.ClearPhoneOtpAllowed()
 	return tsu
 }
 
 // SetEmailOtpAllowed sets the "email_otp_allowed" field.
-func (tsu *TFASettingsUpdate) SetEmailOtpAllowed(b bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetEmailOtpAllowed(b bool) *TFASettingUpdate {
 	tsu.mutation.SetEmailOtpAllowed(b)
 	return tsu
 }
 
 // SetNillableEmailOtpAllowed sets the "email_otp_allowed" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableEmailOtpAllowed(b *bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableEmailOtpAllowed(b *bool) *TFASettingUpdate {
 	if b != nil {
 		tsu.SetEmailOtpAllowed(*b)
 	}
@@ -211,19 +211,19 @@ func (tsu *TFASettingsUpdate) SetNillableEmailOtpAllowed(b *bool) *TFASettingsUp
 }
 
 // ClearEmailOtpAllowed clears the value of the "email_otp_allowed" field.
-func (tsu *TFASettingsUpdate) ClearEmailOtpAllowed() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearEmailOtpAllowed() *TFASettingUpdate {
 	tsu.mutation.ClearEmailOtpAllowed()
 	return tsu
 }
 
 // SetTotpAllowed sets the "totp_allowed" field.
-func (tsu *TFASettingsUpdate) SetTotpAllowed(b bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetTotpAllowed(b bool) *TFASettingUpdate {
 	tsu.mutation.SetTotpAllowed(b)
 	return tsu
 }
 
 // SetNillableTotpAllowed sets the "totp_allowed" field if the given value is not nil.
-func (tsu *TFASettingsUpdate) SetNillableTotpAllowed(b *bool) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetNillableTotpAllowed(b *bool) *TFASettingUpdate {
 	if b != nil {
 		tsu.SetTotpAllowed(*b)
 	}
@@ -231,29 +231,29 @@ func (tsu *TFASettingsUpdate) SetNillableTotpAllowed(b *bool) *TFASettingsUpdate
 }
 
 // ClearTotpAllowed clears the value of the "totp_allowed" field.
-func (tsu *TFASettingsUpdate) ClearTotpAllowed() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearTotpAllowed() *TFASettingUpdate {
 	tsu.mutation.ClearTotpAllowed()
 	return tsu
 }
 
 // SetOwner sets the "owner" edge to the User entity.
-func (tsu *TFASettingsUpdate) SetOwner(u *User) *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) SetOwner(u *User) *TFASettingUpdate {
 	return tsu.SetOwnerID(u.ID)
 }
 
-// Mutation returns the TFASettingsMutation object of the builder.
-func (tsu *TFASettingsUpdate) Mutation() *TFASettingsMutation {
+// Mutation returns the TFASettingMutation object of the builder.
+func (tsu *TFASettingUpdate) Mutation() *TFASettingMutation {
 	return tsu.mutation
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
-func (tsu *TFASettingsUpdate) ClearOwner() *TFASettingsUpdate {
+func (tsu *TFASettingUpdate) ClearOwner() *TFASettingUpdate {
 	tsu.mutation.ClearOwner()
 	return tsu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (tsu *TFASettingsUpdate) Save(ctx context.Context) (int, error) {
+func (tsu *TFASettingUpdate) Save(ctx context.Context) (int, error) {
 	if err := tsu.defaults(); err != nil {
 		return 0, err
 	}
@@ -261,7 +261,7 @@ func (tsu *TFASettingsUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tsu *TFASettingsUpdate) SaveX(ctx context.Context) int {
+func (tsu *TFASettingUpdate) SaveX(ctx context.Context) int {
 	affected, err := tsu.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -270,32 +270,32 @@ func (tsu *TFASettingsUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (tsu *TFASettingsUpdate) Exec(ctx context.Context) error {
+func (tsu *TFASettingUpdate) Exec(ctx context.Context) error {
 	_, err := tsu.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tsu *TFASettingsUpdate) ExecX(ctx context.Context) {
+func (tsu *TFASettingUpdate) ExecX(ctx context.Context) {
 	if err := tsu.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tsu *TFASettingsUpdate) defaults() error {
+func (tsu *TFASettingUpdate) defaults() error {
 	if _, ok := tsu.mutation.UpdatedAt(); !ok && !tsu.mutation.UpdatedAtCleared() {
-		if tfasettings.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("generated: uninitialized tfasettings.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		if tfasetting.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized tfasetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
-		v := tfasettings.UpdateDefaultUpdatedAt()
+		v := tfasetting.UpdateDefaultUpdatedAt()
 		tsu.mutation.SetUpdatedAt(v)
 	}
 	return nil
 }
 
-func (tsu *TFASettingsUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(tfasettings.Table, tfasettings.Columns, sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString))
+func (tsu *TFASettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	_spec := sqlgraph.NewUpdateSpec(tfasetting.Table, tfasetting.Columns, sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString))
 	if ps := tsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -304,109 +304,109 @@ func (tsu *TFASettingsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if tsu.mutation.CreatedAtCleared() {
-		_spec.ClearField(tfasettings.FieldCreatedAt, field.TypeTime)
+		_spec.ClearField(tfasetting.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := tsu.mutation.UpdatedAt(); ok {
-		_spec.SetField(tfasettings.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(tfasetting.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if tsu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(tfasettings.FieldUpdatedAt, field.TypeTime)
+		_spec.ClearField(tfasetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if tsu.mutation.CreatedByCleared() {
-		_spec.ClearField(tfasettings.FieldCreatedBy, field.TypeString)
+		_spec.ClearField(tfasetting.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := tsu.mutation.UpdatedBy(); ok {
-		_spec.SetField(tfasettings.FieldUpdatedBy, field.TypeString, value)
+		_spec.SetField(tfasetting.FieldUpdatedBy, field.TypeString, value)
 	}
 	if tsu.mutation.UpdatedByCleared() {
-		_spec.ClearField(tfasettings.FieldUpdatedBy, field.TypeString)
+		_spec.ClearField(tfasetting.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := tsu.mutation.DeletedAt(); ok {
-		_spec.SetField(tfasettings.FieldDeletedAt, field.TypeTime, value)
+		_spec.SetField(tfasetting.FieldDeletedAt, field.TypeTime, value)
 	}
 	if tsu.mutation.DeletedAtCleared() {
-		_spec.ClearField(tfasettings.FieldDeletedAt, field.TypeTime)
+		_spec.ClearField(tfasetting.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := tsu.mutation.DeletedBy(); ok {
-		_spec.SetField(tfasettings.FieldDeletedBy, field.TypeString, value)
+		_spec.SetField(tfasetting.FieldDeletedBy, field.TypeString, value)
 	}
 	if tsu.mutation.DeletedByCleared() {
-		_spec.ClearField(tfasettings.FieldDeletedBy, field.TypeString)
+		_spec.ClearField(tfasetting.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := tsu.mutation.TfaSecret(); ok {
-		_spec.SetField(tfasettings.FieldTfaSecret, field.TypeString, value)
+		_spec.SetField(tfasetting.FieldTfaSecret, field.TypeString, value)
 	}
 	if tsu.mutation.TfaSecretCleared() {
-		_spec.ClearField(tfasettings.FieldTfaSecret, field.TypeString)
+		_spec.ClearField(tfasetting.FieldTfaSecret, field.TypeString)
 	}
 	if value, ok := tsu.mutation.Verified(); ok {
-		_spec.SetField(tfasettings.FieldVerified, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldVerified, field.TypeBool, value)
 	}
 	if value, ok := tsu.mutation.RecoveryCodes(); ok {
-		_spec.SetField(tfasettings.FieldRecoveryCodes, field.TypeJSON, value)
+		_spec.SetField(tfasetting.FieldRecoveryCodes, field.TypeJSON, value)
 	}
 	if value, ok := tsu.mutation.AppendedRecoveryCodes(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tfasettings.FieldRecoveryCodes, value)
+			sqljson.Append(u, tfasetting.FieldRecoveryCodes, value)
 		})
 	}
 	if tsu.mutation.RecoveryCodesCleared() {
-		_spec.ClearField(tfasettings.FieldRecoveryCodes, field.TypeJSON)
+		_spec.ClearField(tfasetting.FieldRecoveryCodes, field.TypeJSON)
 	}
 	if value, ok := tsu.mutation.PhoneOtpAllowed(); ok {
-		_spec.SetField(tfasettings.FieldPhoneOtpAllowed, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldPhoneOtpAllowed, field.TypeBool, value)
 	}
 	if tsu.mutation.PhoneOtpAllowedCleared() {
-		_spec.ClearField(tfasettings.FieldPhoneOtpAllowed, field.TypeBool)
+		_spec.ClearField(tfasetting.FieldPhoneOtpAllowed, field.TypeBool)
 	}
 	if value, ok := tsu.mutation.EmailOtpAllowed(); ok {
-		_spec.SetField(tfasettings.FieldEmailOtpAllowed, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldEmailOtpAllowed, field.TypeBool, value)
 	}
 	if tsu.mutation.EmailOtpAllowedCleared() {
-		_spec.ClearField(tfasettings.FieldEmailOtpAllowed, field.TypeBool)
+		_spec.ClearField(tfasetting.FieldEmailOtpAllowed, field.TypeBool)
 	}
 	if value, ok := tsu.mutation.TotpAllowed(); ok {
-		_spec.SetField(tfasettings.FieldTotpAllowed, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldTotpAllowed, field.TypeBool, value)
 	}
 	if tsu.mutation.TotpAllowedCleared() {
-		_spec.ClearField(tfasettings.FieldTotpAllowed, field.TypeBool)
+		_spec.ClearField(tfasetting.FieldTotpAllowed, field.TypeBool)
 	}
 	if tsu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tfasettings.OwnerTable,
-			Columns: []string{tfasettings.OwnerColumn},
+			Table:   tfasetting.OwnerTable,
+			Columns: []string{tfasetting.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = tsu.schemaConfig.TFASettings
+		edge.Schema = tsu.schemaConfig.TFASetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tsu.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tfasettings.OwnerTable,
-			Columns: []string{tfasettings.OwnerColumn},
+			Table:   tfasetting.OwnerTable,
+			Columns: []string{tfasetting.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = tsu.schemaConfig.TFASettings
+		edge.Schema = tsu.schemaConfig.TFASetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_spec.Node.Schema = tsu.schemaConfig.TFASettings
+	_spec.Node.Schema = tsu.schemaConfig.TFASetting
 	ctx = internal.NewSchemaConfigContext(ctx, tsu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, tsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{tfasettings.Label}
+			err = &NotFoundError{tfasetting.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -416,34 +416,34 @@ func (tsu *TFASettingsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	return n, nil
 }
 
-// TFASettingsUpdateOne is the builder for updating a single TFASettings entity.
-type TFASettingsUpdateOne struct {
+// TFASettingUpdateOne is the builder for updating a single TFASetting entity.
+type TFASettingUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *TFASettingsMutation
+	mutation *TFASettingMutation
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (tsuo *TFASettingsUpdateOne) SetUpdatedAt(t time.Time) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetUpdatedAt(t time.Time) *TFASettingUpdateOne {
 	tsuo.mutation.SetUpdatedAt(t)
 	return tsuo
 }
 
 // ClearUpdatedAt clears the value of the "updated_at" field.
-func (tsuo *TFASettingsUpdateOne) ClearUpdatedAt() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearUpdatedAt() *TFASettingUpdateOne {
 	tsuo.mutation.ClearUpdatedAt()
 	return tsuo
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (tsuo *TFASettingsUpdateOne) SetUpdatedBy(s string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetUpdatedBy(s string) *TFASettingUpdateOne {
 	tsuo.mutation.SetUpdatedBy(s)
 	return tsuo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableUpdatedBy(s *string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableUpdatedBy(s *string) *TFASettingUpdateOne {
 	if s != nil {
 		tsuo.SetUpdatedBy(*s)
 	}
@@ -451,19 +451,19 @@ func (tsuo *TFASettingsUpdateOne) SetNillableUpdatedBy(s *string) *TFASettingsUp
 }
 
 // ClearUpdatedBy clears the value of the "updated_by" field.
-func (tsuo *TFASettingsUpdateOne) ClearUpdatedBy() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearUpdatedBy() *TFASettingUpdateOne {
 	tsuo.mutation.ClearUpdatedBy()
 	return tsuo
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (tsuo *TFASettingsUpdateOne) SetDeletedAt(t time.Time) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetDeletedAt(t time.Time) *TFASettingUpdateOne {
 	tsuo.mutation.SetDeletedAt(t)
 	return tsuo
 }
 
 // SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableDeletedAt(t *time.Time) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableDeletedAt(t *time.Time) *TFASettingUpdateOne {
 	if t != nil {
 		tsuo.SetDeletedAt(*t)
 	}
@@ -471,19 +471,19 @@ func (tsuo *TFASettingsUpdateOne) SetNillableDeletedAt(t *time.Time) *TFASetting
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (tsuo *TFASettingsUpdateOne) ClearDeletedAt() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearDeletedAt() *TFASettingUpdateOne {
 	tsuo.mutation.ClearDeletedAt()
 	return tsuo
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (tsuo *TFASettingsUpdateOne) SetDeletedBy(s string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetDeletedBy(s string) *TFASettingUpdateOne {
 	tsuo.mutation.SetDeletedBy(s)
 	return tsuo
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableDeletedBy(s *string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableDeletedBy(s *string) *TFASettingUpdateOne {
 	if s != nil {
 		tsuo.SetDeletedBy(*s)
 	}
@@ -491,19 +491,19 @@ func (tsuo *TFASettingsUpdateOne) SetNillableDeletedBy(s *string) *TFASettingsUp
 }
 
 // ClearDeletedBy clears the value of the "deleted_by" field.
-func (tsuo *TFASettingsUpdateOne) ClearDeletedBy() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearDeletedBy() *TFASettingUpdateOne {
 	tsuo.mutation.ClearDeletedBy()
 	return tsuo
 }
 
 // SetOwnerID sets the "owner_id" field.
-func (tsuo *TFASettingsUpdateOne) SetOwnerID(s string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetOwnerID(s string) *TFASettingUpdateOne {
 	tsuo.mutation.SetOwnerID(s)
 	return tsuo
 }
 
 // SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableOwnerID(s *string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableOwnerID(s *string) *TFASettingUpdateOne {
 	if s != nil {
 		tsuo.SetOwnerID(*s)
 	}
@@ -511,19 +511,19 @@ func (tsuo *TFASettingsUpdateOne) SetNillableOwnerID(s *string) *TFASettingsUpda
 }
 
 // ClearOwnerID clears the value of the "owner_id" field.
-func (tsuo *TFASettingsUpdateOne) ClearOwnerID() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearOwnerID() *TFASettingUpdateOne {
 	tsuo.mutation.ClearOwnerID()
 	return tsuo
 }
 
 // SetTfaSecret sets the "tfa_secret" field.
-func (tsuo *TFASettingsUpdateOne) SetTfaSecret(s string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetTfaSecret(s string) *TFASettingUpdateOne {
 	tsuo.mutation.SetTfaSecret(s)
 	return tsuo
 }
 
 // SetNillableTfaSecret sets the "tfa_secret" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableTfaSecret(s *string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableTfaSecret(s *string) *TFASettingUpdateOne {
 	if s != nil {
 		tsuo.SetTfaSecret(*s)
 	}
@@ -531,19 +531,19 @@ func (tsuo *TFASettingsUpdateOne) SetNillableTfaSecret(s *string) *TFASettingsUp
 }
 
 // ClearTfaSecret clears the value of the "tfa_secret" field.
-func (tsuo *TFASettingsUpdateOne) ClearTfaSecret() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearTfaSecret() *TFASettingUpdateOne {
 	tsuo.mutation.ClearTfaSecret()
 	return tsuo
 }
 
 // SetVerified sets the "verified" field.
-func (tsuo *TFASettingsUpdateOne) SetVerified(b bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetVerified(b bool) *TFASettingUpdateOne {
 	tsuo.mutation.SetVerified(b)
 	return tsuo
 }
 
 // SetNillableVerified sets the "verified" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableVerified(b *bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableVerified(b *bool) *TFASettingUpdateOne {
 	if b != nil {
 		tsuo.SetVerified(*b)
 	}
@@ -551,31 +551,31 @@ func (tsuo *TFASettingsUpdateOne) SetNillableVerified(b *bool) *TFASettingsUpdat
 }
 
 // SetRecoveryCodes sets the "recovery_codes" field.
-func (tsuo *TFASettingsUpdateOne) SetRecoveryCodes(s []string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetRecoveryCodes(s []string) *TFASettingUpdateOne {
 	tsuo.mutation.SetRecoveryCodes(s)
 	return tsuo
 }
 
 // AppendRecoveryCodes appends s to the "recovery_codes" field.
-func (tsuo *TFASettingsUpdateOne) AppendRecoveryCodes(s []string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) AppendRecoveryCodes(s []string) *TFASettingUpdateOne {
 	tsuo.mutation.AppendRecoveryCodes(s)
 	return tsuo
 }
 
 // ClearRecoveryCodes clears the value of the "recovery_codes" field.
-func (tsuo *TFASettingsUpdateOne) ClearRecoveryCodes() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearRecoveryCodes() *TFASettingUpdateOne {
 	tsuo.mutation.ClearRecoveryCodes()
 	return tsuo
 }
 
 // SetPhoneOtpAllowed sets the "phone_otp_allowed" field.
-func (tsuo *TFASettingsUpdateOne) SetPhoneOtpAllowed(b bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetPhoneOtpAllowed(b bool) *TFASettingUpdateOne {
 	tsuo.mutation.SetPhoneOtpAllowed(b)
 	return tsuo
 }
 
 // SetNillablePhoneOtpAllowed sets the "phone_otp_allowed" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillablePhoneOtpAllowed(b *bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillablePhoneOtpAllowed(b *bool) *TFASettingUpdateOne {
 	if b != nil {
 		tsuo.SetPhoneOtpAllowed(*b)
 	}
@@ -583,19 +583,19 @@ func (tsuo *TFASettingsUpdateOne) SetNillablePhoneOtpAllowed(b *bool) *TFASettin
 }
 
 // ClearPhoneOtpAllowed clears the value of the "phone_otp_allowed" field.
-func (tsuo *TFASettingsUpdateOne) ClearPhoneOtpAllowed() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearPhoneOtpAllowed() *TFASettingUpdateOne {
 	tsuo.mutation.ClearPhoneOtpAllowed()
 	return tsuo
 }
 
 // SetEmailOtpAllowed sets the "email_otp_allowed" field.
-func (tsuo *TFASettingsUpdateOne) SetEmailOtpAllowed(b bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetEmailOtpAllowed(b bool) *TFASettingUpdateOne {
 	tsuo.mutation.SetEmailOtpAllowed(b)
 	return tsuo
 }
 
 // SetNillableEmailOtpAllowed sets the "email_otp_allowed" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableEmailOtpAllowed(b *bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableEmailOtpAllowed(b *bool) *TFASettingUpdateOne {
 	if b != nil {
 		tsuo.SetEmailOtpAllowed(*b)
 	}
@@ -603,19 +603,19 @@ func (tsuo *TFASettingsUpdateOne) SetNillableEmailOtpAllowed(b *bool) *TFASettin
 }
 
 // ClearEmailOtpAllowed clears the value of the "email_otp_allowed" field.
-func (tsuo *TFASettingsUpdateOne) ClearEmailOtpAllowed() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearEmailOtpAllowed() *TFASettingUpdateOne {
 	tsuo.mutation.ClearEmailOtpAllowed()
 	return tsuo
 }
 
 // SetTotpAllowed sets the "totp_allowed" field.
-func (tsuo *TFASettingsUpdateOne) SetTotpAllowed(b bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetTotpAllowed(b bool) *TFASettingUpdateOne {
 	tsuo.mutation.SetTotpAllowed(b)
 	return tsuo
 }
 
 // SetNillableTotpAllowed sets the "totp_allowed" field if the given value is not nil.
-func (tsuo *TFASettingsUpdateOne) SetNillableTotpAllowed(b *bool) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetNillableTotpAllowed(b *bool) *TFASettingUpdateOne {
 	if b != nil {
 		tsuo.SetTotpAllowed(*b)
 	}
@@ -623,42 +623,42 @@ func (tsuo *TFASettingsUpdateOne) SetNillableTotpAllowed(b *bool) *TFASettingsUp
 }
 
 // ClearTotpAllowed clears the value of the "totp_allowed" field.
-func (tsuo *TFASettingsUpdateOne) ClearTotpAllowed() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearTotpAllowed() *TFASettingUpdateOne {
 	tsuo.mutation.ClearTotpAllowed()
 	return tsuo
 }
 
 // SetOwner sets the "owner" edge to the User entity.
-func (tsuo *TFASettingsUpdateOne) SetOwner(u *User) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) SetOwner(u *User) *TFASettingUpdateOne {
 	return tsuo.SetOwnerID(u.ID)
 }
 
-// Mutation returns the TFASettingsMutation object of the builder.
-func (tsuo *TFASettingsUpdateOne) Mutation() *TFASettingsMutation {
+// Mutation returns the TFASettingMutation object of the builder.
+func (tsuo *TFASettingUpdateOne) Mutation() *TFASettingMutation {
 	return tsuo.mutation
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
-func (tsuo *TFASettingsUpdateOne) ClearOwner() *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) ClearOwner() *TFASettingUpdateOne {
 	tsuo.mutation.ClearOwner()
 	return tsuo
 }
 
-// Where appends a list predicates to the TFASettingsUpdate builder.
-func (tsuo *TFASettingsUpdateOne) Where(ps ...predicate.TFASettings) *TFASettingsUpdateOne {
+// Where appends a list predicates to the TFASettingUpdate builder.
+func (tsuo *TFASettingUpdateOne) Where(ps ...predicate.TFASetting) *TFASettingUpdateOne {
 	tsuo.mutation.Where(ps...)
 	return tsuo
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (tsuo *TFASettingsUpdateOne) Select(field string, fields ...string) *TFASettingsUpdateOne {
+func (tsuo *TFASettingUpdateOne) Select(field string, fields ...string) *TFASettingUpdateOne {
 	tsuo.fields = append([]string{field}, fields...)
 	return tsuo
 }
 
-// Save executes the query and returns the updated TFASettings entity.
-func (tsuo *TFASettingsUpdateOne) Save(ctx context.Context) (*TFASettings, error) {
+// Save executes the query and returns the updated TFASetting entity.
+func (tsuo *TFASettingUpdateOne) Save(ctx context.Context) (*TFASetting, error) {
 	if err := tsuo.defaults(); err != nil {
 		return nil, err
 	}
@@ -666,7 +666,7 @@ func (tsuo *TFASettingsUpdateOne) Save(ctx context.Context) (*TFASettings, error
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tsuo *TFASettingsUpdateOne) SaveX(ctx context.Context) *TFASettings {
+func (tsuo *TFASettingUpdateOne) SaveX(ctx context.Context) *TFASetting {
 	node, err := tsuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -675,45 +675,45 @@ func (tsuo *TFASettingsUpdateOne) SaveX(ctx context.Context) *TFASettings {
 }
 
 // Exec executes the query on the entity.
-func (tsuo *TFASettingsUpdateOne) Exec(ctx context.Context) error {
+func (tsuo *TFASettingUpdateOne) Exec(ctx context.Context) error {
 	_, err := tsuo.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tsuo *TFASettingsUpdateOne) ExecX(ctx context.Context) {
+func (tsuo *TFASettingUpdateOne) ExecX(ctx context.Context) {
 	if err := tsuo.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tsuo *TFASettingsUpdateOne) defaults() error {
+func (tsuo *TFASettingUpdateOne) defaults() error {
 	if _, ok := tsuo.mutation.UpdatedAt(); !ok && !tsuo.mutation.UpdatedAtCleared() {
-		if tfasettings.UpdateDefaultUpdatedAt == nil {
-			return fmt.Errorf("generated: uninitialized tfasettings.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		if tfasetting.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized tfasetting.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
 		}
-		v := tfasettings.UpdateDefaultUpdatedAt()
+		v := tfasetting.UpdateDefaultUpdatedAt()
 		tsuo.mutation.SetUpdatedAt(v)
 	}
 	return nil
 }
 
-func (tsuo *TFASettingsUpdateOne) sqlSave(ctx context.Context) (_node *TFASettings, err error) {
-	_spec := sqlgraph.NewUpdateSpec(tfasettings.Table, tfasettings.Columns, sqlgraph.NewFieldSpec(tfasettings.FieldID, field.TypeString))
+func (tsuo *TFASettingUpdateOne) sqlSave(ctx context.Context) (_node *TFASetting, err error) {
+	_spec := sqlgraph.NewUpdateSpec(tfasetting.Table, tfasetting.Columns, sqlgraph.NewFieldSpec(tfasetting.FieldID, field.TypeString))
 	id, ok := tsuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`generated: missing "TFASettings.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`generated: missing "TFASetting.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := tsuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, tfasettings.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, tfasetting.FieldID)
 		for _, f := range fields {
-			if !tfasettings.ValidColumn(f) {
+			if !tfasetting.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("generated: invalid field %q for query", f)}
 			}
-			if f != tfasettings.FieldID {
+			if f != tfasetting.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -726,112 +726,112 @@ func (tsuo *TFASettingsUpdateOne) sqlSave(ctx context.Context) (_node *TFASettin
 		}
 	}
 	if tsuo.mutation.CreatedAtCleared() {
-		_spec.ClearField(tfasettings.FieldCreatedAt, field.TypeTime)
+		_spec.ClearField(tfasetting.FieldCreatedAt, field.TypeTime)
 	}
 	if value, ok := tsuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(tfasettings.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(tfasetting.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if tsuo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(tfasettings.FieldUpdatedAt, field.TypeTime)
+		_spec.ClearField(tfasetting.FieldUpdatedAt, field.TypeTime)
 	}
 	if tsuo.mutation.CreatedByCleared() {
-		_spec.ClearField(tfasettings.FieldCreatedBy, field.TypeString)
+		_spec.ClearField(tfasetting.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := tsuo.mutation.UpdatedBy(); ok {
-		_spec.SetField(tfasettings.FieldUpdatedBy, field.TypeString, value)
+		_spec.SetField(tfasetting.FieldUpdatedBy, field.TypeString, value)
 	}
 	if tsuo.mutation.UpdatedByCleared() {
-		_spec.ClearField(tfasettings.FieldUpdatedBy, field.TypeString)
+		_spec.ClearField(tfasetting.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := tsuo.mutation.DeletedAt(); ok {
-		_spec.SetField(tfasettings.FieldDeletedAt, field.TypeTime, value)
+		_spec.SetField(tfasetting.FieldDeletedAt, field.TypeTime, value)
 	}
 	if tsuo.mutation.DeletedAtCleared() {
-		_spec.ClearField(tfasettings.FieldDeletedAt, field.TypeTime)
+		_spec.ClearField(tfasetting.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := tsuo.mutation.DeletedBy(); ok {
-		_spec.SetField(tfasettings.FieldDeletedBy, field.TypeString, value)
+		_spec.SetField(tfasetting.FieldDeletedBy, field.TypeString, value)
 	}
 	if tsuo.mutation.DeletedByCleared() {
-		_spec.ClearField(tfasettings.FieldDeletedBy, field.TypeString)
+		_spec.ClearField(tfasetting.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := tsuo.mutation.TfaSecret(); ok {
-		_spec.SetField(tfasettings.FieldTfaSecret, field.TypeString, value)
+		_spec.SetField(tfasetting.FieldTfaSecret, field.TypeString, value)
 	}
 	if tsuo.mutation.TfaSecretCleared() {
-		_spec.ClearField(tfasettings.FieldTfaSecret, field.TypeString)
+		_spec.ClearField(tfasetting.FieldTfaSecret, field.TypeString)
 	}
 	if value, ok := tsuo.mutation.Verified(); ok {
-		_spec.SetField(tfasettings.FieldVerified, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldVerified, field.TypeBool, value)
 	}
 	if value, ok := tsuo.mutation.RecoveryCodes(); ok {
-		_spec.SetField(tfasettings.FieldRecoveryCodes, field.TypeJSON, value)
+		_spec.SetField(tfasetting.FieldRecoveryCodes, field.TypeJSON, value)
 	}
 	if value, ok := tsuo.mutation.AppendedRecoveryCodes(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, tfasettings.FieldRecoveryCodes, value)
+			sqljson.Append(u, tfasetting.FieldRecoveryCodes, value)
 		})
 	}
 	if tsuo.mutation.RecoveryCodesCleared() {
-		_spec.ClearField(tfasettings.FieldRecoveryCodes, field.TypeJSON)
+		_spec.ClearField(tfasetting.FieldRecoveryCodes, field.TypeJSON)
 	}
 	if value, ok := tsuo.mutation.PhoneOtpAllowed(); ok {
-		_spec.SetField(tfasettings.FieldPhoneOtpAllowed, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldPhoneOtpAllowed, field.TypeBool, value)
 	}
 	if tsuo.mutation.PhoneOtpAllowedCleared() {
-		_spec.ClearField(tfasettings.FieldPhoneOtpAllowed, field.TypeBool)
+		_spec.ClearField(tfasetting.FieldPhoneOtpAllowed, field.TypeBool)
 	}
 	if value, ok := tsuo.mutation.EmailOtpAllowed(); ok {
-		_spec.SetField(tfasettings.FieldEmailOtpAllowed, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldEmailOtpAllowed, field.TypeBool, value)
 	}
 	if tsuo.mutation.EmailOtpAllowedCleared() {
-		_spec.ClearField(tfasettings.FieldEmailOtpAllowed, field.TypeBool)
+		_spec.ClearField(tfasetting.FieldEmailOtpAllowed, field.TypeBool)
 	}
 	if value, ok := tsuo.mutation.TotpAllowed(); ok {
-		_spec.SetField(tfasettings.FieldTotpAllowed, field.TypeBool, value)
+		_spec.SetField(tfasetting.FieldTotpAllowed, field.TypeBool, value)
 	}
 	if tsuo.mutation.TotpAllowedCleared() {
-		_spec.ClearField(tfasettings.FieldTotpAllowed, field.TypeBool)
+		_spec.ClearField(tfasetting.FieldTotpAllowed, field.TypeBool)
 	}
 	if tsuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tfasettings.OwnerTable,
-			Columns: []string{tfasettings.OwnerColumn},
+			Table:   tfasetting.OwnerTable,
+			Columns: []string{tfasetting.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = tsuo.schemaConfig.TFASettings
+		edge.Schema = tsuo.schemaConfig.TFASetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tsuo.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tfasettings.OwnerTable,
-			Columns: []string{tfasettings.OwnerColumn},
+			Table:   tfasetting.OwnerTable,
+			Columns: []string{tfasetting.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = tsuo.schemaConfig.TFASettings
+		edge.Schema = tsuo.schemaConfig.TFASetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_spec.Node.Schema = tsuo.schemaConfig.TFASettings
+	_spec.Node.Schema = tsuo.schemaConfig.TFASetting
 	ctx = internal.NewSchemaConfigContext(ctx, tsuo.schemaConfig)
-	_node = &TFASettings{config: tsuo.config}
+	_node = &TFASetting{config: tsuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, tsuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{tfasettings.Label}
+			err = &NotFoundError{tfasetting.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

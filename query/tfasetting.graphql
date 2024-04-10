@@ -1,14 +1,27 @@
-query GetTFASettings {
-  tfaSettings {
+query GetTFASetting {
+  tfaSetting {
     totpAllowed
     recoveryCodes
     verified
   }
 }
 
-mutation CreateTFASettings($input: CreateTFASettingsInput!) {
-  createTFASettings(input: $input) {
-    tfaSettings {
+
+query GetTFASettings {
+  tfaSettings {
+    edges {
+      node {
+        totpAllowed
+        recoveryCodes
+        verified
+      }
+    }
+  }
+}
+
+mutation CreateTFASetting($input: CreateTFASettingInput!) {
+  createTFASetting(input: $input) {
+    tfaSetting {
       totpAllowed
       recoveryCodes
       verified
@@ -16,9 +29,9 @@ mutation CreateTFASettings($input: CreateTFASettingsInput!) {
   }
 }
 
-mutation UpdateTFASettings($input: UpdateTFASettingsInput!) {
-  updateTFASettings(input: $input) {
-    tfaSettings {
+mutation UpdateTFASetting($input: UpdateTFASettingInput!) {
+  updateTFASetting(input: $input) {
+    tfaSetting {
       totpAllowed
       recoveryCodes
       verified

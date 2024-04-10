@@ -234,8 +234,8 @@ func (u *UserCleanup) MustDelete(ctx context.Context, t *testing.T) {
 }
 
 // MustNew user builder is used to create, without authz checks, org members in the database
-func (tf *TFASettingBuilder) MustNew(ctx context.Context, t *testing.T, userID string) *ent.TFASettings {
-	return tf.client.db.TFASettings.Create().
+func (tf *TFASettingBuilder) MustNew(ctx context.Context, t *testing.T, userID string) *ent.TFASetting {
+	return tf.client.db.TFASetting.Create().
 		SetTotpAllowed(true).
 		SetOwnerID(userID).
 		SaveX(ctx)

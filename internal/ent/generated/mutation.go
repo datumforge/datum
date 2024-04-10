@@ -32,7 +32,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -65,7 +65,7 @@ const (
 	TypePasswordResetToken         = "PasswordResetToken"
 	TypePersonalAccessToken        = "PersonalAccessToken"
 	TypeSubscriber                 = "Subscriber"
-	TypeTFASettings                = "TFASettings"
+	TypeTFASetting                 = "TFASetting"
 	TypeTemplate                   = "Template"
 	TypeUser                       = "User"
 	TypeUserSetting                = "UserSetting"
@@ -8289,8 +8289,8 @@ type OauthProviderMutation struct {
 	scopes        *string
 	auth_url      *string
 	token_url     *string
-	auth_style    *uint8
-	addauth_style *int8
+	auth_style    *customtypes.Uint8
+	addauth_style *customtypes.Uint8
 	info_url      *string
 	clearedFields map[string]struct{}
 	owner         *string
@@ -8951,13 +8951,13 @@ func (m *OauthProviderMutation) ResetTokenURL() {
 }
 
 // SetAuthStyle sets the "auth_style" field.
-func (m *OauthProviderMutation) SetAuthStyle(u uint8) {
-	m.auth_style = &u
+func (m *OauthProviderMutation) SetAuthStyle(c customtypes.Uint8) {
+	m.auth_style = &c
 	m.addauth_style = nil
 }
 
 // AuthStyle returns the value of the "auth_style" field in the mutation.
-func (m *OauthProviderMutation) AuthStyle() (r uint8, exists bool) {
+func (m *OauthProviderMutation) AuthStyle() (r customtypes.Uint8, exists bool) {
 	v := m.auth_style
 	if v == nil {
 		return
@@ -8968,7 +8968,7 @@ func (m *OauthProviderMutation) AuthStyle() (r uint8, exists bool) {
 // OldAuthStyle returns the old "auth_style" field's value of the OauthProvider entity.
 // If the OauthProvider object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OauthProviderMutation) OldAuthStyle(ctx context.Context) (v uint8, err error) {
+func (m *OauthProviderMutation) OldAuthStyle(ctx context.Context) (v customtypes.Uint8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAuthStyle is only allowed on UpdateOne operations")
 	}
@@ -8982,17 +8982,17 @@ func (m *OauthProviderMutation) OldAuthStyle(ctx context.Context) (v uint8, err 
 	return oldValue.AuthStyle, nil
 }
 
-// AddAuthStyle adds u to the "auth_style" field.
-func (m *OauthProviderMutation) AddAuthStyle(u int8) {
+// AddAuthStyle adds c to the "auth_style" field.
+func (m *OauthProviderMutation) AddAuthStyle(c customtypes.Uint8) {
 	if m.addauth_style != nil {
-		*m.addauth_style += u
+		*m.addauth_style += c
 	} else {
-		m.addauth_style = &u
+		m.addauth_style = &c
 	}
 }
 
 // AddedAuthStyle returns the value that was added to the "auth_style" field in this mutation.
-func (m *OauthProviderMutation) AddedAuthStyle() (r int8, exists bool) {
+func (m *OauthProviderMutation) AddedAuthStyle() (r customtypes.Uint8, exists bool) {
 	v := m.addauth_style
 	if v == nil {
 		return
@@ -9339,7 +9339,7 @@ func (m *OauthProviderMutation) SetField(name string, value ent.Value) error {
 		m.SetTokenURL(v)
 		return nil
 	case oauthprovider.FieldAuthStyle:
-		v, ok := value.(uint8)
+		v, ok := value.(customtypes.Uint8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -9383,7 +9383,7 @@ func (m *OauthProviderMutation) AddedField(name string) (ent.Value, bool) {
 func (m *OauthProviderMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case oauthprovider.FieldAuthStyle:
-		v, ok := value.(int8)
+		v, ok := value.(customtypes.Uint8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -21869,8 +21869,8 @@ func (m *SubscriberMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Subscriber edge %s", name)
 }
 
-// TFASettingsMutation represents an operation that mutates the TFASettings nodes in the graph.
-type TFASettingsMutation struct {
+// TFASettingMutation represents an operation that mutates the TFASetting nodes in the graph.
+type TFASettingMutation struct {
 	config
 	op                   Op
 	typ                  string
@@ -21892,21 +21892,21 @@ type TFASettingsMutation struct {
 	owner                *string
 	clearedowner         bool
 	done                 bool
-	oldValue             func(context.Context) (*TFASettings, error)
-	predicates           []predicate.TFASettings
+	oldValue             func(context.Context) (*TFASetting, error)
+	predicates           []predicate.TFASetting
 }
 
-var _ ent.Mutation = (*TFASettingsMutation)(nil)
+var _ ent.Mutation = (*TFASettingMutation)(nil)
 
-// tfasettingsOption allows management of the mutation configuration using functional options.
-type tfasettingsOption func(*TFASettingsMutation)
+// tfasettingOption allows management of the mutation configuration using functional options.
+type tfasettingOption func(*TFASettingMutation)
 
-// newTFASettingsMutation creates new mutation for the TFASettings entity.
-func newTFASettingsMutation(c config, op Op, opts ...tfasettingsOption) *TFASettingsMutation {
-	m := &TFASettingsMutation{
+// newTFASettingMutation creates new mutation for the TFASetting entity.
+func newTFASettingMutation(c config, op Op, opts ...tfasettingOption) *TFASettingMutation {
+	m := &TFASettingMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeTFASettings,
+		typ:           TypeTFASetting,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -21915,20 +21915,20 @@ func newTFASettingsMutation(c config, op Op, opts ...tfasettingsOption) *TFASett
 	return m
 }
 
-// withTFASettingsID sets the ID field of the mutation.
-func withTFASettingsID(id string) tfasettingsOption {
-	return func(m *TFASettingsMutation) {
+// withTFASettingID sets the ID field of the mutation.
+func withTFASettingID(id string) tfasettingOption {
+	return func(m *TFASettingMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *TFASettings
+			value *TFASetting
 		)
-		m.oldValue = func(ctx context.Context) (*TFASettings, error) {
+		m.oldValue = func(ctx context.Context) (*TFASetting, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().TFASettings.Get(ctx, id)
+					value, err = m.Client().TFASetting.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -21937,10 +21937,10 @@ func withTFASettingsID(id string) tfasettingsOption {
 	}
 }
 
-// withTFASettings sets the old TFASettings of the mutation.
-func withTFASettings(node *TFASettings) tfasettingsOption {
-	return func(m *TFASettingsMutation) {
-		m.oldValue = func(context.Context) (*TFASettings, error) {
+// withTFASetting sets the old TFASetting of the mutation.
+func withTFASetting(node *TFASetting) tfasettingOption {
+	return func(m *TFASettingMutation) {
+		m.oldValue = func(context.Context) (*TFASetting, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -21949,7 +21949,7 @@ func withTFASettings(node *TFASettings) tfasettingsOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m TFASettingsMutation) Client() *Client {
+func (m TFASettingMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -21957,7 +21957,7 @@ func (m TFASettingsMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m TFASettingsMutation) Tx() (*Tx, error) {
+func (m TFASettingMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("generated: mutation is not running in a transaction")
 	}
@@ -21967,14 +21967,14 @@ func (m TFASettingsMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of TFASettings entities.
-func (m *TFASettingsMutation) SetID(id string) {
+// operation is only accepted on creation of TFASetting entities.
+func (m *TFASettingMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TFASettingsMutation) ID() (id string, exists bool) {
+func (m *TFASettingMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -21985,7 +21985,7 @@ func (m *TFASettingsMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TFASettingsMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *TFASettingMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -21994,19 +21994,19 @@ func (m *TFASettingsMutation) IDs(ctx context.Context) ([]string, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().TFASettings.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().TFASetting.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *TFASettingsMutation) SetCreatedAt(t time.Time) {
+func (m *TFASettingMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *TFASettingsMutation) CreatedAt() (r time.Time, exists bool) {
+func (m *TFASettingMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -22014,10 +22014,10 @@ func (m *TFASettingsMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *TFASettingMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -22032,30 +22032,30 @@ func (m *TFASettingsMutation) OldCreatedAt(ctx context.Context) (v time.Time, er
 }
 
 // ClearCreatedAt clears the value of the "created_at" field.
-func (m *TFASettingsMutation) ClearCreatedAt() {
+func (m *TFASettingMutation) ClearCreatedAt() {
 	m.created_at = nil
-	m.clearedFields[tfasettings.FieldCreatedAt] = struct{}{}
+	m.clearedFields[tfasetting.FieldCreatedAt] = struct{}{}
 }
 
 // CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *TFASettingsMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldCreatedAt]
+func (m *TFASettingMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldCreatedAt]
 	return ok
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *TFASettingsMutation) ResetCreatedAt() {
+func (m *TFASettingMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, tfasettings.FieldCreatedAt)
+	delete(m.clearedFields, tfasetting.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (m *TFASettingsMutation) SetUpdatedAt(t time.Time) {
+func (m *TFASettingMutation) SetUpdatedAt(t time.Time) {
 	m.updated_at = &t
 }
 
 // UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *TFASettingsMutation) UpdatedAt() (r time.Time, exists bool) {
+func (m *TFASettingMutation) UpdatedAt() (r time.Time, exists bool) {
 	v := m.updated_at
 	if v == nil {
 		return
@@ -22063,10 +22063,10 @@ func (m *TFASettingsMutation) UpdatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedAt returns the old "updated_at" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedAt returns the old "updated_at" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *TFASettingMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
 	}
@@ -22081,30 +22081,30 @@ func (m *TFASettingsMutation) OldUpdatedAt(ctx context.Context) (v time.Time, er
 }
 
 // ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *TFASettingsMutation) ClearUpdatedAt() {
+func (m *TFASettingMutation) ClearUpdatedAt() {
 	m.updated_at = nil
-	m.clearedFields[tfasettings.FieldUpdatedAt] = struct{}{}
+	m.clearedFields[tfasetting.FieldUpdatedAt] = struct{}{}
 }
 
 // UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *TFASettingsMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldUpdatedAt]
+func (m *TFASettingMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldUpdatedAt]
 	return ok
 }
 
 // ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *TFASettingsMutation) ResetUpdatedAt() {
+func (m *TFASettingMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, tfasettings.FieldUpdatedAt)
+	delete(m.clearedFields, tfasetting.FieldUpdatedAt)
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *TFASettingsMutation) SetCreatedBy(s string) {
+func (m *TFASettingMutation) SetCreatedBy(s string) {
 	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *TFASettingsMutation) CreatedBy() (r string, exists bool) {
+func (m *TFASettingMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -22112,10 +22112,10 @@ func (m *TFASettingsMutation) CreatedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldCreatedBy returns the old "created_by" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedBy returns the old "created_by" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *TFASettingMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -22130,30 +22130,30 @@ func (m *TFASettingsMutation) OldCreatedBy(ctx context.Context) (v string, err e
 }
 
 // ClearCreatedBy clears the value of the "created_by" field.
-func (m *TFASettingsMutation) ClearCreatedBy() {
+func (m *TFASettingMutation) ClearCreatedBy() {
 	m.created_by = nil
-	m.clearedFields[tfasettings.FieldCreatedBy] = struct{}{}
+	m.clearedFields[tfasetting.FieldCreatedBy] = struct{}{}
 }
 
 // CreatedByCleared returns if the "created_by" field was cleared in this mutation.
-func (m *TFASettingsMutation) CreatedByCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldCreatedBy]
+func (m *TFASettingMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldCreatedBy]
 	return ok
 }
 
 // ResetCreatedBy resets all changes to the "created_by" field.
-func (m *TFASettingsMutation) ResetCreatedBy() {
+func (m *TFASettingMutation) ResetCreatedBy() {
 	m.created_by = nil
-	delete(m.clearedFields, tfasettings.FieldCreatedBy)
+	delete(m.clearedFields, tfasetting.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *TFASettingsMutation) SetUpdatedBy(s string) {
+func (m *TFASettingMutation) SetUpdatedBy(s string) {
 	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *TFASettingsMutation) UpdatedBy() (r string, exists bool) {
+func (m *TFASettingMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -22161,10 +22161,10 @@ func (m *TFASettingsMutation) UpdatedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedBy returns the old "updated_by" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedBy returns the old "updated_by" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *TFASettingMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -22179,30 +22179,30 @@ func (m *TFASettingsMutation) OldUpdatedBy(ctx context.Context) (v string, err e
 }
 
 // ClearUpdatedBy clears the value of the "updated_by" field.
-func (m *TFASettingsMutation) ClearUpdatedBy() {
+func (m *TFASettingMutation) ClearUpdatedBy() {
 	m.updated_by = nil
-	m.clearedFields[tfasettings.FieldUpdatedBy] = struct{}{}
+	m.clearedFields[tfasetting.FieldUpdatedBy] = struct{}{}
 }
 
 // UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
-func (m *TFASettingsMutation) UpdatedByCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldUpdatedBy]
+func (m *TFASettingMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldUpdatedBy]
 	return ok
 }
 
 // ResetUpdatedBy resets all changes to the "updated_by" field.
-func (m *TFASettingsMutation) ResetUpdatedBy() {
+func (m *TFASettingMutation) ResetUpdatedBy() {
 	m.updated_by = nil
-	delete(m.clearedFields, tfasettings.FieldUpdatedBy)
+	delete(m.clearedFields, tfasetting.FieldUpdatedBy)
 }
 
 // SetDeletedAt sets the "deleted_at" field.
-func (m *TFASettingsMutation) SetDeletedAt(t time.Time) {
+func (m *TFASettingMutation) SetDeletedAt(t time.Time) {
 	m.deleted_at = &t
 }
 
 // DeletedAt returns the value of the "deleted_at" field in the mutation.
-func (m *TFASettingsMutation) DeletedAt() (r time.Time, exists bool) {
+func (m *TFASettingMutation) DeletedAt() (r time.Time, exists bool) {
 	v := m.deleted_at
 	if v == nil {
 		return
@@ -22210,10 +22210,10 @@ func (m *TFASettingsMutation) DeletedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldDeletedAt returns the old "deleted_at" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedAt returns the old "deleted_at" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+func (m *TFASettingMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
 	}
@@ -22228,30 +22228,30 @@ func (m *TFASettingsMutation) OldDeletedAt(ctx context.Context) (v time.Time, er
 }
 
 // ClearDeletedAt clears the value of the "deleted_at" field.
-func (m *TFASettingsMutation) ClearDeletedAt() {
+func (m *TFASettingMutation) ClearDeletedAt() {
 	m.deleted_at = nil
-	m.clearedFields[tfasettings.FieldDeletedAt] = struct{}{}
+	m.clearedFields[tfasetting.FieldDeletedAt] = struct{}{}
 }
 
 // DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
-func (m *TFASettingsMutation) DeletedAtCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldDeletedAt]
+func (m *TFASettingMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldDeletedAt]
 	return ok
 }
 
 // ResetDeletedAt resets all changes to the "deleted_at" field.
-func (m *TFASettingsMutation) ResetDeletedAt() {
+func (m *TFASettingMutation) ResetDeletedAt() {
 	m.deleted_at = nil
-	delete(m.clearedFields, tfasettings.FieldDeletedAt)
+	delete(m.clearedFields, tfasetting.FieldDeletedAt)
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (m *TFASettingsMutation) SetDeletedBy(s string) {
+func (m *TFASettingMutation) SetDeletedBy(s string) {
 	m.deleted_by = &s
 }
 
 // DeletedBy returns the value of the "deleted_by" field in the mutation.
-func (m *TFASettingsMutation) DeletedBy() (r string, exists bool) {
+func (m *TFASettingMutation) DeletedBy() (r string, exists bool) {
 	v := m.deleted_by
 	if v == nil {
 		return
@@ -22259,10 +22259,10 @@ func (m *TFASettingsMutation) DeletedBy() (r string, exists bool) {
 	return *v, true
 }
 
-// OldDeletedBy returns the old "deleted_by" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldDeletedBy returns the old "deleted_by" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+func (m *TFASettingMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
 	}
@@ -22277,30 +22277,30 @@ func (m *TFASettingsMutation) OldDeletedBy(ctx context.Context) (v string, err e
 }
 
 // ClearDeletedBy clears the value of the "deleted_by" field.
-func (m *TFASettingsMutation) ClearDeletedBy() {
+func (m *TFASettingMutation) ClearDeletedBy() {
 	m.deleted_by = nil
-	m.clearedFields[tfasettings.FieldDeletedBy] = struct{}{}
+	m.clearedFields[tfasetting.FieldDeletedBy] = struct{}{}
 }
 
 // DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
-func (m *TFASettingsMutation) DeletedByCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldDeletedBy]
+func (m *TFASettingMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldDeletedBy]
 	return ok
 }
 
 // ResetDeletedBy resets all changes to the "deleted_by" field.
-func (m *TFASettingsMutation) ResetDeletedBy() {
+func (m *TFASettingMutation) ResetDeletedBy() {
 	m.deleted_by = nil
-	delete(m.clearedFields, tfasettings.FieldDeletedBy)
+	delete(m.clearedFields, tfasetting.FieldDeletedBy)
 }
 
 // SetOwnerID sets the "owner_id" field.
-func (m *TFASettingsMutation) SetOwnerID(s string) {
+func (m *TFASettingMutation) SetOwnerID(s string) {
 	m.owner = &s
 }
 
 // OwnerID returns the value of the "owner_id" field in the mutation.
-func (m *TFASettingsMutation) OwnerID() (r string, exists bool) {
+func (m *TFASettingMutation) OwnerID() (r string, exists bool) {
 	v := m.owner
 	if v == nil {
 		return
@@ -22308,10 +22308,10 @@ func (m *TFASettingsMutation) OwnerID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldOwnerID returns the old "owner_id" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldOwnerID returns the old "owner_id" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+func (m *TFASettingMutation) OldOwnerID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
 	}
@@ -22326,30 +22326,30 @@ func (m *TFASettingsMutation) OldOwnerID(ctx context.Context) (v string, err err
 }
 
 // ClearOwnerID clears the value of the "owner_id" field.
-func (m *TFASettingsMutation) ClearOwnerID() {
+func (m *TFASettingMutation) ClearOwnerID() {
 	m.owner = nil
-	m.clearedFields[tfasettings.FieldOwnerID] = struct{}{}
+	m.clearedFields[tfasetting.FieldOwnerID] = struct{}{}
 }
 
 // OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
-func (m *TFASettingsMutation) OwnerIDCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldOwnerID]
+func (m *TFASettingMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldOwnerID]
 	return ok
 }
 
 // ResetOwnerID resets all changes to the "owner_id" field.
-func (m *TFASettingsMutation) ResetOwnerID() {
+func (m *TFASettingMutation) ResetOwnerID() {
 	m.owner = nil
-	delete(m.clearedFields, tfasettings.FieldOwnerID)
+	delete(m.clearedFields, tfasetting.FieldOwnerID)
 }
 
 // SetTfaSecret sets the "tfa_secret" field.
-func (m *TFASettingsMutation) SetTfaSecret(s string) {
+func (m *TFASettingMutation) SetTfaSecret(s string) {
 	m.tfa_secret = &s
 }
 
 // TfaSecret returns the value of the "tfa_secret" field in the mutation.
-func (m *TFASettingsMutation) TfaSecret() (r string, exists bool) {
+func (m *TFASettingMutation) TfaSecret() (r string, exists bool) {
 	v := m.tfa_secret
 	if v == nil {
 		return
@@ -22357,10 +22357,10 @@ func (m *TFASettingsMutation) TfaSecret() (r string, exists bool) {
 	return *v, true
 }
 
-// OldTfaSecret returns the old "tfa_secret" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldTfaSecret returns the old "tfa_secret" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldTfaSecret(ctx context.Context) (v *string, err error) {
+func (m *TFASettingMutation) OldTfaSecret(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTfaSecret is only allowed on UpdateOne operations")
 	}
@@ -22375,30 +22375,30 @@ func (m *TFASettingsMutation) OldTfaSecret(ctx context.Context) (v *string, err 
 }
 
 // ClearTfaSecret clears the value of the "tfa_secret" field.
-func (m *TFASettingsMutation) ClearTfaSecret() {
+func (m *TFASettingMutation) ClearTfaSecret() {
 	m.tfa_secret = nil
-	m.clearedFields[tfasettings.FieldTfaSecret] = struct{}{}
+	m.clearedFields[tfasetting.FieldTfaSecret] = struct{}{}
 }
 
 // TfaSecretCleared returns if the "tfa_secret" field was cleared in this mutation.
-func (m *TFASettingsMutation) TfaSecretCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldTfaSecret]
+func (m *TFASettingMutation) TfaSecretCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldTfaSecret]
 	return ok
 }
 
 // ResetTfaSecret resets all changes to the "tfa_secret" field.
-func (m *TFASettingsMutation) ResetTfaSecret() {
+func (m *TFASettingMutation) ResetTfaSecret() {
 	m.tfa_secret = nil
-	delete(m.clearedFields, tfasettings.FieldTfaSecret)
+	delete(m.clearedFields, tfasetting.FieldTfaSecret)
 }
 
 // SetVerified sets the "verified" field.
-func (m *TFASettingsMutation) SetVerified(b bool) {
+func (m *TFASettingMutation) SetVerified(b bool) {
 	m.verified = &b
 }
 
 // Verified returns the value of the "verified" field in the mutation.
-func (m *TFASettingsMutation) Verified() (r bool, exists bool) {
+func (m *TFASettingMutation) Verified() (r bool, exists bool) {
 	v := m.verified
 	if v == nil {
 		return
@@ -22406,10 +22406,10 @@ func (m *TFASettingsMutation) Verified() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldVerified returns the old "verified" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldVerified returns the old "verified" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldVerified(ctx context.Context) (v bool, err error) {
+func (m *TFASettingMutation) OldVerified(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldVerified is only allowed on UpdateOne operations")
 	}
@@ -22424,18 +22424,18 @@ func (m *TFASettingsMutation) OldVerified(ctx context.Context) (v bool, err erro
 }
 
 // ResetVerified resets all changes to the "verified" field.
-func (m *TFASettingsMutation) ResetVerified() {
+func (m *TFASettingMutation) ResetVerified() {
 	m.verified = nil
 }
 
 // SetRecoveryCodes sets the "recovery_codes" field.
-func (m *TFASettingsMutation) SetRecoveryCodes(s []string) {
+func (m *TFASettingMutation) SetRecoveryCodes(s []string) {
 	m.recovery_codes = &s
 	m.appendrecovery_codes = nil
 }
 
 // RecoveryCodes returns the value of the "recovery_codes" field in the mutation.
-func (m *TFASettingsMutation) RecoveryCodes() (r []string, exists bool) {
+func (m *TFASettingMutation) RecoveryCodes() (r []string, exists bool) {
 	v := m.recovery_codes
 	if v == nil {
 		return
@@ -22443,10 +22443,10 @@ func (m *TFASettingsMutation) RecoveryCodes() (r []string, exists bool) {
 	return *v, true
 }
 
-// OldRecoveryCodes returns the old "recovery_codes" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldRecoveryCodes returns the old "recovery_codes" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldRecoveryCodes(ctx context.Context) (v []string, err error) {
+func (m *TFASettingMutation) OldRecoveryCodes(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldRecoveryCodes is only allowed on UpdateOne operations")
 	}
@@ -22461,12 +22461,12 @@ func (m *TFASettingsMutation) OldRecoveryCodes(ctx context.Context) (v []string,
 }
 
 // AppendRecoveryCodes adds s to the "recovery_codes" field.
-func (m *TFASettingsMutation) AppendRecoveryCodes(s []string) {
+func (m *TFASettingMutation) AppendRecoveryCodes(s []string) {
 	m.appendrecovery_codes = append(m.appendrecovery_codes, s...)
 }
 
 // AppendedRecoveryCodes returns the list of values that were appended to the "recovery_codes" field in this mutation.
-func (m *TFASettingsMutation) AppendedRecoveryCodes() ([]string, bool) {
+func (m *TFASettingMutation) AppendedRecoveryCodes() ([]string, bool) {
 	if len(m.appendrecovery_codes) == 0 {
 		return nil, false
 	}
@@ -22474,32 +22474,32 @@ func (m *TFASettingsMutation) AppendedRecoveryCodes() ([]string, bool) {
 }
 
 // ClearRecoveryCodes clears the value of the "recovery_codes" field.
-func (m *TFASettingsMutation) ClearRecoveryCodes() {
+func (m *TFASettingMutation) ClearRecoveryCodes() {
 	m.recovery_codes = nil
 	m.appendrecovery_codes = nil
-	m.clearedFields[tfasettings.FieldRecoveryCodes] = struct{}{}
+	m.clearedFields[tfasetting.FieldRecoveryCodes] = struct{}{}
 }
 
 // RecoveryCodesCleared returns if the "recovery_codes" field was cleared in this mutation.
-func (m *TFASettingsMutation) RecoveryCodesCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldRecoveryCodes]
+func (m *TFASettingMutation) RecoveryCodesCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldRecoveryCodes]
 	return ok
 }
 
 // ResetRecoveryCodes resets all changes to the "recovery_codes" field.
-func (m *TFASettingsMutation) ResetRecoveryCodes() {
+func (m *TFASettingMutation) ResetRecoveryCodes() {
 	m.recovery_codes = nil
 	m.appendrecovery_codes = nil
-	delete(m.clearedFields, tfasettings.FieldRecoveryCodes)
+	delete(m.clearedFields, tfasetting.FieldRecoveryCodes)
 }
 
 // SetPhoneOtpAllowed sets the "phone_otp_allowed" field.
-func (m *TFASettingsMutation) SetPhoneOtpAllowed(b bool) {
+func (m *TFASettingMutation) SetPhoneOtpAllowed(b bool) {
 	m.phone_otp_allowed = &b
 }
 
 // PhoneOtpAllowed returns the value of the "phone_otp_allowed" field in the mutation.
-func (m *TFASettingsMutation) PhoneOtpAllowed() (r bool, exists bool) {
+func (m *TFASettingMutation) PhoneOtpAllowed() (r bool, exists bool) {
 	v := m.phone_otp_allowed
 	if v == nil {
 		return
@@ -22507,10 +22507,10 @@ func (m *TFASettingsMutation) PhoneOtpAllowed() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldPhoneOtpAllowed returns the old "phone_otp_allowed" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldPhoneOtpAllowed returns the old "phone_otp_allowed" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldPhoneOtpAllowed(ctx context.Context) (v bool, err error) {
+func (m *TFASettingMutation) OldPhoneOtpAllowed(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPhoneOtpAllowed is only allowed on UpdateOne operations")
 	}
@@ -22525,30 +22525,30 @@ func (m *TFASettingsMutation) OldPhoneOtpAllowed(ctx context.Context) (v bool, e
 }
 
 // ClearPhoneOtpAllowed clears the value of the "phone_otp_allowed" field.
-func (m *TFASettingsMutation) ClearPhoneOtpAllowed() {
+func (m *TFASettingMutation) ClearPhoneOtpAllowed() {
 	m.phone_otp_allowed = nil
-	m.clearedFields[tfasettings.FieldPhoneOtpAllowed] = struct{}{}
+	m.clearedFields[tfasetting.FieldPhoneOtpAllowed] = struct{}{}
 }
 
 // PhoneOtpAllowedCleared returns if the "phone_otp_allowed" field was cleared in this mutation.
-func (m *TFASettingsMutation) PhoneOtpAllowedCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldPhoneOtpAllowed]
+func (m *TFASettingMutation) PhoneOtpAllowedCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldPhoneOtpAllowed]
 	return ok
 }
 
 // ResetPhoneOtpAllowed resets all changes to the "phone_otp_allowed" field.
-func (m *TFASettingsMutation) ResetPhoneOtpAllowed() {
+func (m *TFASettingMutation) ResetPhoneOtpAllowed() {
 	m.phone_otp_allowed = nil
-	delete(m.clearedFields, tfasettings.FieldPhoneOtpAllowed)
+	delete(m.clearedFields, tfasetting.FieldPhoneOtpAllowed)
 }
 
 // SetEmailOtpAllowed sets the "email_otp_allowed" field.
-func (m *TFASettingsMutation) SetEmailOtpAllowed(b bool) {
+func (m *TFASettingMutation) SetEmailOtpAllowed(b bool) {
 	m.email_otp_allowed = &b
 }
 
 // EmailOtpAllowed returns the value of the "email_otp_allowed" field in the mutation.
-func (m *TFASettingsMutation) EmailOtpAllowed() (r bool, exists bool) {
+func (m *TFASettingMutation) EmailOtpAllowed() (r bool, exists bool) {
 	v := m.email_otp_allowed
 	if v == nil {
 		return
@@ -22556,10 +22556,10 @@ func (m *TFASettingsMutation) EmailOtpAllowed() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldEmailOtpAllowed returns the old "email_otp_allowed" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldEmailOtpAllowed returns the old "email_otp_allowed" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldEmailOtpAllowed(ctx context.Context) (v bool, err error) {
+func (m *TFASettingMutation) OldEmailOtpAllowed(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldEmailOtpAllowed is only allowed on UpdateOne operations")
 	}
@@ -22574,30 +22574,30 @@ func (m *TFASettingsMutation) OldEmailOtpAllowed(ctx context.Context) (v bool, e
 }
 
 // ClearEmailOtpAllowed clears the value of the "email_otp_allowed" field.
-func (m *TFASettingsMutation) ClearEmailOtpAllowed() {
+func (m *TFASettingMutation) ClearEmailOtpAllowed() {
 	m.email_otp_allowed = nil
-	m.clearedFields[tfasettings.FieldEmailOtpAllowed] = struct{}{}
+	m.clearedFields[tfasetting.FieldEmailOtpAllowed] = struct{}{}
 }
 
 // EmailOtpAllowedCleared returns if the "email_otp_allowed" field was cleared in this mutation.
-func (m *TFASettingsMutation) EmailOtpAllowedCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldEmailOtpAllowed]
+func (m *TFASettingMutation) EmailOtpAllowedCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldEmailOtpAllowed]
 	return ok
 }
 
 // ResetEmailOtpAllowed resets all changes to the "email_otp_allowed" field.
-func (m *TFASettingsMutation) ResetEmailOtpAllowed() {
+func (m *TFASettingMutation) ResetEmailOtpAllowed() {
 	m.email_otp_allowed = nil
-	delete(m.clearedFields, tfasettings.FieldEmailOtpAllowed)
+	delete(m.clearedFields, tfasetting.FieldEmailOtpAllowed)
 }
 
 // SetTotpAllowed sets the "totp_allowed" field.
-func (m *TFASettingsMutation) SetTotpAllowed(b bool) {
+func (m *TFASettingMutation) SetTotpAllowed(b bool) {
 	m.totp_allowed = &b
 }
 
 // TotpAllowed returns the value of the "totp_allowed" field in the mutation.
-func (m *TFASettingsMutation) TotpAllowed() (r bool, exists bool) {
+func (m *TFASettingMutation) TotpAllowed() (r bool, exists bool) {
 	v := m.totp_allowed
 	if v == nil {
 		return
@@ -22605,10 +22605,10 @@ func (m *TFASettingsMutation) TotpAllowed() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldTotpAllowed returns the old "totp_allowed" field's value of the TFASettings entity.
-// If the TFASettings object wasn't provided to the builder, the object is fetched from the database.
+// OldTotpAllowed returns the old "totp_allowed" field's value of the TFASetting entity.
+// If the TFASetting object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TFASettingsMutation) OldTotpAllowed(ctx context.Context) (v bool, err error) {
+func (m *TFASettingMutation) OldTotpAllowed(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTotpAllowed is only allowed on UpdateOne operations")
 	}
@@ -22623,38 +22623,38 @@ func (m *TFASettingsMutation) OldTotpAllowed(ctx context.Context) (v bool, err e
 }
 
 // ClearTotpAllowed clears the value of the "totp_allowed" field.
-func (m *TFASettingsMutation) ClearTotpAllowed() {
+func (m *TFASettingMutation) ClearTotpAllowed() {
 	m.totp_allowed = nil
-	m.clearedFields[tfasettings.FieldTotpAllowed] = struct{}{}
+	m.clearedFields[tfasetting.FieldTotpAllowed] = struct{}{}
 }
 
 // TotpAllowedCleared returns if the "totp_allowed" field was cleared in this mutation.
-func (m *TFASettingsMutation) TotpAllowedCleared() bool {
-	_, ok := m.clearedFields[tfasettings.FieldTotpAllowed]
+func (m *TFASettingMutation) TotpAllowedCleared() bool {
+	_, ok := m.clearedFields[tfasetting.FieldTotpAllowed]
 	return ok
 }
 
 // ResetTotpAllowed resets all changes to the "totp_allowed" field.
-func (m *TFASettingsMutation) ResetTotpAllowed() {
+func (m *TFASettingMutation) ResetTotpAllowed() {
 	m.totp_allowed = nil
-	delete(m.clearedFields, tfasettings.FieldTotpAllowed)
+	delete(m.clearedFields, tfasetting.FieldTotpAllowed)
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
-func (m *TFASettingsMutation) ClearOwner() {
+func (m *TFASettingMutation) ClearOwner() {
 	m.clearedowner = true
-	m.clearedFields[tfasettings.FieldOwnerID] = struct{}{}
+	m.clearedFields[tfasetting.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the User entity was cleared.
-func (m *TFASettingsMutation) OwnerCleared() bool {
+func (m *TFASettingMutation) OwnerCleared() bool {
 	return m.OwnerIDCleared() || m.clearedowner
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // OwnerID instead. It exists only for internal usage by the builders.
-func (m *TFASettingsMutation) OwnerIDs() (ids []string) {
+func (m *TFASettingMutation) OwnerIDs() (ids []string) {
 	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
@@ -22662,20 +22662,20 @@ func (m *TFASettingsMutation) OwnerIDs() (ids []string) {
 }
 
 // ResetOwner resets all changes to the "owner" edge.
-func (m *TFASettingsMutation) ResetOwner() {
+func (m *TFASettingMutation) ResetOwner() {
 	m.owner = nil
 	m.clearedowner = false
 }
 
-// Where appends a list predicates to the TFASettingsMutation builder.
-func (m *TFASettingsMutation) Where(ps ...predicate.TFASettings) {
+// Where appends a list predicates to the TFASettingMutation builder.
+func (m *TFASettingMutation) Where(ps ...predicate.TFASetting) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the TFASettingsMutation builder. Using this method,
+// WhereP appends storage-level predicates to the TFASettingMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *TFASettingsMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.TFASettings, len(ps))
+func (m *TFASettingMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.TFASetting, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -22683,63 +22683,63 @@ func (m *TFASettingsMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *TFASettingsMutation) Op() Op {
+func (m *TFASettingMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *TFASettingsMutation) SetOp(op Op) {
+func (m *TFASettingMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (TFASettings).
-func (m *TFASettingsMutation) Type() string {
+// Type returns the node type of this mutation (TFASetting).
+func (m *TFASettingMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *TFASettingsMutation) Fields() []string {
+func (m *TFASettingMutation) Fields() []string {
 	fields := make([]string, 0, 13)
 	if m.created_at != nil {
-		fields = append(fields, tfasettings.FieldCreatedAt)
+		fields = append(fields, tfasetting.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, tfasettings.FieldUpdatedAt)
+		fields = append(fields, tfasetting.FieldUpdatedAt)
 	}
 	if m.created_by != nil {
-		fields = append(fields, tfasettings.FieldCreatedBy)
+		fields = append(fields, tfasetting.FieldCreatedBy)
 	}
 	if m.updated_by != nil {
-		fields = append(fields, tfasettings.FieldUpdatedBy)
+		fields = append(fields, tfasetting.FieldUpdatedBy)
 	}
 	if m.deleted_at != nil {
-		fields = append(fields, tfasettings.FieldDeletedAt)
+		fields = append(fields, tfasetting.FieldDeletedAt)
 	}
 	if m.deleted_by != nil {
-		fields = append(fields, tfasettings.FieldDeletedBy)
+		fields = append(fields, tfasetting.FieldDeletedBy)
 	}
 	if m.owner != nil {
-		fields = append(fields, tfasettings.FieldOwnerID)
+		fields = append(fields, tfasetting.FieldOwnerID)
 	}
 	if m.tfa_secret != nil {
-		fields = append(fields, tfasettings.FieldTfaSecret)
+		fields = append(fields, tfasetting.FieldTfaSecret)
 	}
 	if m.verified != nil {
-		fields = append(fields, tfasettings.FieldVerified)
+		fields = append(fields, tfasetting.FieldVerified)
 	}
 	if m.recovery_codes != nil {
-		fields = append(fields, tfasettings.FieldRecoveryCodes)
+		fields = append(fields, tfasetting.FieldRecoveryCodes)
 	}
 	if m.phone_otp_allowed != nil {
-		fields = append(fields, tfasettings.FieldPhoneOtpAllowed)
+		fields = append(fields, tfasetting.FieldPhoneOtpAllowed)
 	}
 	if m.email_otp_allowed != nil {
-		fields = append(fields, tfasettings.FieldEmailOtpAllowed)
+		fields = append(fields, tfasetting.FieldEmailOtpAllowed)
 	}
 	if m.totp_allowed != nil {
-		fields = append(fields, tfasettings.FieldTotpAllowed)
+		fields = append(fields, tfasetting.FieldTotpAllowed)
 	}
 	return fields
 }
@@ -22747,33 +22747,33 @@ func (m *TFASettingsMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *TFASettingsMutation) Field(name string) (ent.Value, bool) {
+func (m *TFASettingMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case tfasettings.FieldCreatedAt:
+	case tfasetting.FieldCreatedAt:
 		return m.CreatedAt()
-	case tfasettings.FieldUpdatedAt:
+	case tfasetting.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case tfasettings.FieldCreatedBy:
+	case tfasetting.FieldCreatedBy:
 		return m.CreatedBy()
-	case tfasettings.FieldUpdatedBy:
+	case tfasetting.FieldUpdatedBy:
 		return m.UpdatedBy()
-	case tfasettings.FieldDeletedAt:
+	case tfasetting.FieldDeletedAt:
 		return m.DeletedAt()
-	case tfasettings.FieldDeletedBy:
+	case tfasetting.FieldDeletedBy:
 		return m.DeletedBy()
-	case tfasettings.FieldOwnerID:
+	case tfasetting.FieldOwnerID:
 		return m.OwnerID()
-	case tfasettings.FieldTfaSecret:
+	case tfasetting.FieldTfaSecret:
 		return m.TfaSecret()
-	case tfasettings.FieldVerified:
+	case tfasetting.FieldVerified:
 		return m.Verified()
-	case tfasettings.FieldRecoveryCodes:
+	case tfasetting.FieldRecoveryCodes:
 		return m.RecoveryCodes()
-	case tfasettings.FieldPhoneOtpAllowed:
+	case tfasetting.FieldPhoneOtpAllowed:
 		return m.PhoneOtpAllowed()
-	case tfasettings.FieldEmailOtpAllowed:
+	case tfasetting.FieldEmailOtpAllowed:
 		return m.EmailOtpAllowed()
-	case tfasettings.FieldTotpAllowed:
+	case tfasetting.FieldTotpAllowed:
 		return m.TotpAllowed()
 	}
 	return nil, false
@@ -22782,128 +22782,128 @@ func (m *TFASettingsMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *TFASettingsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *TFASettingMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case tfasettings.FieldCreatedAt:
+	case tfasetting.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case tfasettings.FieldUpdatedAt:
+	case tfasetting.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case tfasettings.FieldCreatedBy:
+	case tfasetting.FieldCreatedBy:
 		return m.OldCreatedBy(ctx)
-	case tfasettings.FieldUpdatedBy:
+	case tfasetting.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
-	case tfasettings.FieldDeletedAt:
+	case tfasetting.FieldDeletedAt:
 		return m.OldDeletedAt(ctx)
-	case tfasettings.FieldDeletedBy:
+	case tfasetting.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
-	case tfasettings.FieldOwnerID:
+	case tfasetting.FieldOwnerID:
 		return m.OldOwnerID(ctx)
-	case tfasettings.FieldTfaSecret:
+	case tfasetting.FieldTfaSecret:
 		return m.OldTfaSecret(ctx)
-	case tfasettings.FieldVerified:
+	case tfasetting.FieldVerified:
 		return m.OldVerified(ctx)
-	case tfasettings.FieldRecoveryCodes:
+	case tfasetting.FieldRecoveryCodes:
 		return m.OldRecoveryCodes(ctx)
-	case tfasettings.FieldPhoneOtpAllowed:
+	case tfasetting.FieldPhoneOtpAllowed:
 		return m.OldPhoneOtpAllowed(ctx)
-	case tfasettings.FieldEmailOtpAllowed:
+	case tfasetting.FieldEmailOtpAllowed:
 		return m.OldEmailOtpAllowed(ctx)
-	case tfasettings.FieldTotpAllowed:
+	case tfasetting.FieldTotpAllowed:
 		return m.OldTotpAllowed(ctx)
 	}
-	return nil, fmt.Errorf("unknown TFASettings field %s", name)
+	return nil, fmt.Errorf("unknown TFASetting field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *TFASettingsMutation) SetField(name string, value ent.Value) error {
+func (m *TFASettingMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case tfasettings.FieldCreatedAt:
+	case tfasetting.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case tfasettings.FieldUpdatedAt:
+	case tfasetting.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case tfasettings.FieldCreatedBy:
+	case tfasetting.FieldCreatedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
-	case tfasettings.FieldUpdatedBy:
+	case tfasetting.FieldUpdatedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
 		return nil
-	case tfasettings.FieldDeletedAt:
+	case tfasetting.FieldDeletedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedAt(v)
 		return nil
-	case tfasettings.FieldDeletedBy:
+	case tfasetting.FieldDeletedBy:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
 		return nil
-	case tfasettings.FieldOwnerID:
+	case tfasetting.FieldOwnerID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOwnerID(v)
 		return nil
-	case tfasettings.FieldTfaSecret:
+	case tfasetting.FieldTfaSecret:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTfaSecret(v)
 		return nil
-	case tfasettings.FieldVerified:
+	case tfasetting.FieldVerified:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVerified(v)
 		return nil
-	case tfasettings.FieldRecoveryCodes:
+	case tfasetting.FieldRecoveryCodes:
 		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRecoveryCodes(v)
 		return nil
-	case tfasettings.FieldPhoneOtpAllowed:
+	case tfasetting.FieldPhoneOtpAllowed:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPhoneOtpAllowed(v)
 		return nil
-	case tfasettings.FieldEmailOtpAllowed:
+	case tfasetting.FieldEmailOtpAllowed:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmailOtpAllowed(v)
 		return nil
-	case tfasettings.FieldTotpAllowed:
+	case tfasetting.FieldTotpAllowed:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -22911,186 +22911,186 @@ func (m *TFASettingsMutation) SetField(name string, value ent.Value) error {
 		m.SetTotpAllowed(v)
 		return nil
 	}
-	return fmt.Errorf("unknown TFASettings field %s", name)
+	return fmt.Errorf("unknown TFASetting field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *TFASettingsMutation) AddedFields() []string {
+func (m *TFASettingMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *TFASettingsMutation) AddedField(name string) (ent.Value, bool) {
+func (m *TFASettingMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *TFASettingsMutation) AddField(name string, value ent.Value) error {
+func (m *TFASettingMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown TFASettings numeric field %s", name)
+	return fmt.Errorf("unknown TFASetting numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *TFASettingsMutation) ClearedFields() []string {
+func (m *TFASettingMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(tfasettings.FieldCreatedAt) {
-		fields = append(fields, tfasettings.FieldCreatedAt)
+	if m.FieldCleared(tfasetting.FieldCreatedAt) {
+		fields = append(fields, tfasetting.FieldCreatedAt)
 	}
-	if m.FieldCleared(tfasettings.FieldUpdatedAt) {
-		fields = append(fields, tfasettings.FieldUpdatedAt)
+	if m.FieldCleared(tfasetting.FieldUpdatedAt) {
+		fields = append(fields, tfasetting.FieldUpdatedAt)
 	}
-	if m.FieldCleared(tfasettings.FieldCreatedBy) {
-		fields = append(fields, tfasettings.FieldCreatedBy)
+	if m.FieldCleared(tfasetting.FieldCreatedBy) {
+		fields = append(fields, tfasetting.FieldCreatedBy)
 	}
-	if m.FieldCleared(tfasettings.FieldUpdatedBy) {
-		fields = append(fields, tfasettings.FieldUpdatedBy)
+	if m.FieldCleared(tfasetting.FieldUpdatedBy) {
+		fields = append(fields, tfasetting.FieldUpdatedBy)
 	}
-	if m.FieldCleared(tfasettings.FieldDeletedAt) {
-		fields = append(fields, tfasettings.FieldDeletedAt)
+	if m.FieldCleared(tfasetting.FieldDeletedAt) {
+		fields = append(fields, tfasetting.FieldDeletedAt)
 	}
-	if m.FieldCleared(tfasettings.FieldDeletedBy) {
-		fields = append(fields, tfasettings.FieldDeletedBy)
+	if m.FieldCleared(tfasetting.FieldDeletedBy) {
+		fields = append(fields, tfasetting.FieldDeletedBy)
 	}
-	if m.FieldCleared(tfasettings.FieldOwnerID) {
-		fields = append(fields, tfasettings.FieldOwnerID)
+	if m.FieldCleared(tfasetting.FieldOwnerID) {
+		fields = append(fields, tfasetting.FieldOwnerID)
 	}
-	if m.FieldCleared(tfasettings.FieldTfaSecret) {
-		fields = append(fields, tfasettings.FieldTfaSecret)
+	if m.FieldCleared(tfasetting.FieldTfaSecret) {
+		fields = append(fields, tfasetting.FieldTfaSecret)
 	}
-	if m.FieldCleared(tfasettings.FieldRecoveryCodes) {
-		fields = append(fields, tfasettings.FieldRecoveryCodes)
+	if m.FieldCleared(tfasetting.FieldRecoveryCodes) {
+		fields = append(fields, tfasetting.FieldRecoveryCodes)
 	}
-	if m.FieldCleared(tfasettings.FieldPhoneOtpAllowed) {
-		fields = append(fields, tfasettings.FieldPhoneOtpAllowed)
+	if m.FieldCleared(tfasetting.FieldPhoneOtpAllowed) {
+		fields = append(fields, tfasetting.FieldPhoneOtpAllowed)
 	}
-	if m.FieldCleared(tfasettings.FieldEmailOtpAllowed) {
-		fields = append(fields, tfasettings.FieldEmailOtpAllowed)
+	if m.FieldCleared(tfasetting.FieldEmailOtpAllowed) {
+		fields = append(fields, tfasetting.FieldEmailOtpAllowed)
 	}
-	if m.FieldCleared(tfasettings.FieldTotpAllowed) {
-		fields = append(fields, tfasettings.FieldTotpAllowed)
+	if m.FieldCleared(tfasetting.FieldTotpAllowed) {
+		fields = append(fields, tfasetting.FieldTotpAllowed)
 	}
 	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *TFASettingsMutation) FieldCleared(name string) bool {
+func (m *TFASettingMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *TFASettingsMutation) ClearField(name string) error {
+func (m *TFASettingMutation) ClearField(name string) error {
 	switch name {
-	case tfasettings.FieldCreatedAt:
+	case tfasetting.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
-	case tfasettings.FieldUpdatedAt:
+	case tfasetting.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
-	case tfasettings.FieldCreatedBy:
+	case tfasetting.FieldCreatedBy:
 		m.ClearCreatedBy()
 		return nil
-	case tfasettings.FieldUpdatedBy:
+	case tfasetting.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
-	case tfasettings.FieldDeletedAt:
+	case tfasetting.FieldDeletedAt:
 		m.ClearDeletedAt()
 		return nil
-	case tfasettings.FieldDeletedBy:
+	case tfasetting.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
-	case tfasettings.FieldOwnerID:
+	case tfasetting.FieldOwnerID:
 		m.ClearOwnerID()
 		return nil
-	case tfasettings.FieldTfaSecret:
+	case tfasetting.FieldTfaSecret:
 		m.ClearTfaSecret()
 		return nil
-	case tfasettings.FieldRecoveryCodes:
+	case tfasetting.FieldRecoveryCodes:
 		m.ClearRecoveryCodes()
 		return nil
-	case tfasettings.FieldPhoneOtpAllowed:
+	case tfasetting.FieldPhoneOtpAllowed:
 		m.ClearPhoneOtpAllowed()
 		return nil
-	case tfasettings.FieldEmailOtpAllowed:
+	case tfasetting.FieldEmailOtpAllowed:
 		m.ClearEmailOtpAllowed()
 		return nil
-	case tfasettings.FieldTotpAllowed:
+	case tfasetting.FieldTotpAllowed:
 		m.ClearTotpAllowed()
 		return nil
 	}
-	return fmt.Errorf("unknown TFASettings nullable field %s", name)
+	return fmt.Errorf("unknown TFASetting nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *TFASettingsMutation) ResetField(name string) error {
+func (m *TFASettingMutation) ResetField(name string) error {
 	switch name {
-	case tfasettings.FieldCreatedAt:
+	case tfasetting.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case tfasettings.FieldUpdatedAt:
+	case tfasetting.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case tfasettings.FieldCreatedBy:
+	case tfasetting.FieldCreatedBy:
 		m.ResetCreatedBy()
 		return nil
-	case tfasettings.FieldUpdatedBy:
+	case tfasetting.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
-	case tfasettings.FieldDeletedAt:
+	case tfasetting.FieldDeletedAt:
 		m.ResetDeletedAt()
 		return nil
-	case tfasettings.FieldDeletedBy:
+	case tfasetting.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
-	case tfasettings.FieldOwnerID:
+	case tfasetting.FieldOwnerID:
 		m.ResetOwnerID()
 		return nil
-	case tfasettings.FieldTfaSecret:
+	case tfasetting.FieldTfaSecret:
 		m.ResetTfaSecret()
 		return nil
-	case tfasettings.FieldVerified:
+	case tfasetting.FieldVerified:
 		m.ResetVerified()
 		return nil
-	case tfasettings.FieldRecoveryCodes:
+	case tfasetting.FieldRecoveryCodes:
 		m.ResetRecoveryCodes()
 		return nil
-	case tfasettings.FieldPhoneOtpAllowed:
+	case tfasetting.FieldPhoneOtpAllowed:
 		m.ResetPhoneOtpAllowed()
 		return nil
-	case tfasettings.FieldEmailOtpAllowed:
+	case tfasetting.FieldEmailOtpAllowed:
 		m.ResetEmailOtpAllowed()
 		return nil
-	case tfasettings.FieldTotpAllowed:
+	case tfasetting.FieldTotpAllowed:
 		m.ResetTotpAllowed()
 		return nil
 	}
-	return fmt.Errorf("unknown TFASettings field %s", name)
+	return fmt.Errorf("unknown TFASetting field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *TFASettingsMutation) AddedEdges() []string {
+func (m *TFASettingMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
 	if m.owner != nil {
-		edges = append(edges, tfasettings.EdgeOwner)
+		edges = append(edges, tfasetting.EdgeOwner)
 	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *TFASettingsMutation) AddedIDs(name string) []ent.Value {
+func (m *TFASettingMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case tfasettings.EdgeOwner:
+	case tfasetting.EdgeOwner:
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
@@ -23099,31 +23099,31 @@ func (m *TFASettingsMutation) AddedIDs(name string) []ent.Value {
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *TFASettingsMutation) RemovedEdges() []string {
+func (m *TFASettingMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *TFASettingsMutation) RemovedIDs(name string) []ent.Value {
+func (m *TFASettingMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *TFASettingsMutation) ClearedEdges() []string {
+func (m *TFASettingMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
 	if m.clearedowner {
-		edges = append(edges, tfasettings.EdgeOwner)
+		edges = append(edges, tfasetting.EdgeOwner)
 	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *TFASettingsMutation) EdgeCleared(name string) bool {
+func (m *TFASettingMutation) EdgeCleared(name string) bool {
 	switch name {
-	case tfasettings.EdgeOwner:
+	case tfasetting.EdgeOwner:
 		return m.clearedowner
 	}
 	return false
@@ -23131,24 +23131,24 @@ func (m *TFASettingsMutation) EdgeCleared(name string) bool {
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *TFASettingsMutation) ClearEdge(name string) error {
+func (m *TFASettingMutation) ClearEdge(name string) error {
 	switch name {
-	case tfasettings.EdgeOwner:
+	case tfasetting.EdgeOwner:
 		m.ClearOwner()
 		return nil
 	}
-	return fmt.Errorf("unknown TFASettings unique edge %s", name)
+	return fmt.Errorf("unknown TFASetting unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *TFASettingsMutation) ResetEdge(name string) error {
+func (m *TFASettingMutation) ResetEdge(name string) error {
 	switch name {
-	case tfasettings.EdgeOwner:
+	case tfasetting.EdgeOwner:
 		m.ResetOwner()
 		return nil
 	}
-	return fmt.Errorf("unknown TFASettings edge %s", name)
+	return fmt.Errorf("unknown TFASetting edge %s", name)
 }
 
 // TemplateMutation represents an operation that mutates the Template nodes in the graph.
@@ -25162,7 +25162,7 @@ func (m *UserMutation) ResetPersonalAccessTokens() {
 	m.removedpersonal_access_tokens = nil
 }
 
-// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASettings entity by ids.
+// AddTfaSettingIDs adds the "tfa_settings" edge to the TFASetting entity by ids.
 func (m *UserMutation) AddTfaSettingIDs(ids ...string) {
 	if m.tfa_settings == nil {
 		m.tfa_settings = make(map[string]struct{})
@@ -25172,17 +25172,17 @@ func (m *UserMutation) AddTfaSettingIDs(ids ...string) {
 	}
 }
 
-// ClearTfaSettings clears the "tfa_settings" edge to the TFASettings entity.
+// ClearTfaSettings clears the "tfa_settings" edge to the TFASetting entity.
 func (m *UserMutation) ClearTfaSettings() {
 	m.clearedtfa_settings = true
 }
 
-// TfaSettingsCleared reports if the "tfa_settings" edge to the TFASettings entity was cleared.
+// TfaSettingsCleared reports if the "tfa_settings" edge to the TFASetting entity was cleared.
 func (m *UserMutation) TfaSettingsCleared() bool {
 	return m.clearedtfa_settings
 }
 
-// RemoveTfaSettingIDs removes the "tfa_settings" edge to the TFASettings entity by IDs.
+// RemoveTfaSettingIDs removes the "tfa_settings" edge to the TFASetting entity by IDs.
 func (m *UserMutation) RemoveTfaSettingIDs(ids ...string) {
 	if m.removedtfa_settings == nil {
 		m.removedtfa_settings = make(map[string]struct{})
@@ -25193,7 +25193,7 @@ func (m *UserMutation) RemoveTfaSettingIDs(ids ...string) {
 	}
 }
 
-// RemovedTfaSettings returns the removed IDs of the "tfa_settings" edge to the TFASettings entity.
+// RemovedTfaSettings returns the removed IDs of the "tfa_settings" edge to the TFASetting entity.
 func (m *UserMutation) RemovedTfaSettingsIDs() (ids []string) {
 	for id := range m.removedtfa_settings {
 		ids = append(ids, id)

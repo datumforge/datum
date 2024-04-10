@@ -22,7 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -479,28 +479,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[17] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   tfasettings.Table,
-			Columns: tfasettings.Columns,
+			Table:   tfasetting.Table,
+			Columns: tfasetting.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeString,
-				Column: tfasettings.FieldID,
+				Column: tfasetting.FieldID,
 			},
 		},
-		Type: "TFASettings",
+		Type: "TFASetting",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			tfasettings.FieldCreatedAt:       {Type: field.TypeTime, Column: tfasettings.FieldCreatedAt},
-			tfasettings.FieldUpdatedAt:       {Type: field.TypeTime, Column: tfasettings.FieldUpdatedAt},
-			tfasettings.FieldCreatedBy:       {Type: field.TypeString, Column: tfasettings.FieldCreatedBy},
-			tfasettings.FieldUpdatedBy:       {Type: field.TypeString, Column: tfasettings.FieldUpdatedBy},
-			tfasettings.FieldDeletedAt:       {Type: field.TypeTime, Column: tfasettings.FieldDeletedAt},
-			tfasettings.FieldDeletedBy:       {Type: field.TypeString, Column: tfasettings.FieldDeletedBy},
-			tfasettings.FieldOwnerID:         {Type: field.TypeString, Column: tfasettings.FieldOwnerID},
-			tfasettings.FieldTfaSecret:       {Type: field.TypeString, Column: tfasettings.FieldTfaSecret},
-			tfasettings.FieldVerified:        {Type: field.TypeBool, Column: tfasettings.FieldVerified},
-			tfasettings.FieldRecoveryCodes:   {Type: field.TypeJSON, Column: tfasettings.FieldRecoveryCodes},
-			tfasettings.FieldPhoneOtpAllowed: {Type: field.TypeBool, Column: tfasettings.FieldPhoneOtpAllowed},
-			tfasettings.FieldEmailOtpAllowed: {Type: field.TypeBool, Column: tfasettings.FieldEmailOtpAllowed},
-			tfasettings.FieldTotpAllowed:     {Type: field.TypeBool, Column: tfasettings.FieldTotpAllowed},
+			tfasetting.FieldCreatedAt:       {Type: field.TypeTime, Column: tfasetting.FieldCreatedAt},
+			tfasetting.FieldUpdatedAt:       {Type: field.TypeTime, Column: tfasetting.FieldUpdatedAt},
+			tfasetting.FieldCreatedBy:       {Type: field.TypeString, Column: tfasetting.FieldCreatedBy},
+			tfasetting.FieldUpdatedBy:       {Type: field.TypeString, Column: tfasetting.FieldUpdatedBy},
+			tfasetting.FieldDeletedAt:       {Type: field.TypeTime, Column: tfasetting.FieldDeletedAt},
+			tfasetting.FieldDeletedBy:       {Type: field.TypeString, Column: tfasetting.FieldDeletedBy},
+			tfasetting.FieldOwnerID:         {Type: field.TypeString, Column: tfasetting.FieldOwnerID},
+			tfasetting.FieldTfaSecret:       {Type: field.TypeString, Column: tfasetting.FieldTfaSecret},
+			tfasetting.FieldVerified:        {Type: field.TypeBool, Column: tfasetting.FieldVerified},
+			tfasetting.FieldRecoveryCodes:   {Type: field.TypeJSON, Column: tfasetting.FieldRecoveryCodes},
+			tfasetting.FieldPhoneOtpAllowed: {Type: field.TypeBool, Column: tfasetting.FieldPhoneOtpAllowed},
+			tfasetting.FieldEmailOtpAllowed: {Type: field.TypeBool, Column: tfasetting.FieldEmailOtpAllowed},
+			tfasetting.FieldTotpAllowed:     {Type: field.TypeBool, Column: tfasetting.FieldTotpAllowed},
 		},
 	}
 	graph.Nodes[18] = &sqlgraph.Node{
@@ -1002,11 +1002,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   tfasettings.OwnerTable,
-			Columns: []string{tfasettings.OwnerColumn},
+			Table:   tfasetting.OwnerTable,
+			Columns: []string{tfasetting.OwnerColumn},
 			Bidi:    false,
 		},
-		"TFASettings",
+		"TFASetting",
 		"User",
 	)
 	graph.MustAddE(
@@ -1043,7 +1043,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"User",
-		"TFASettings",
+		"TFASetting",
 	)
 	graph.MustAddE(
 		"setting",
@@ -3415,33 +3415,33 @@ func (f *SubscriberFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (tsq *TFASettingsQuery) addPredicate(pred func(s *sql.Selector)) {
+func (tsq *TFASettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	tsq.predicates = append(tsq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the TFASettingsQuery builder.
-func (tsq *TFASettingsQuery) Filter() *TFASettingsFilter {
-	return &TFASettingsFilter{config: tsq.config, predicateAdder: tsq}
+// Filter returns a Filter implementation to apply filters on the TFASettingQuery builder.
+func (tsq *TFASettingQuery) Filter() *TFASettingFilter {
+	return &TFASettingFilter{config: tsq.config, predicateAdder: tsq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *TFASettingsMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *TFASettingMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the TFASettingsMutation builder.
-func (m *TFASettingsMutation) Filter() *TFASettingsFilter {
-	return &TFASettingsFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the TFASettingMutation builder.
+func (m *TFASettingMutation) Filter() *TFASettingFilter {
+	return &TFASettingFilter{config: m.config, predicateAdder: m}
 }
 
-// TFASettingsFilter provides a generic filtering capability at runtime for TFASettingsQuery.
-type TFASettingsFilter struct {
+// TFASettingFilter provides a generic filtering capability at runtime for TFASettingQuery.
+type TFASettingFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *TFASettingsFilter) Where(p entql.P) {
+func (f *TFASettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[17].Type, p, s); err != nil {
 			s.AddError(err)
@@ -3450,82 +3450,82 @@ func (f *TFASettingsFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql string predicate on the id field.
-func (f *TFASettingsFilter) WhereID(p entql.StringP) {
-	f.Where(p.Field(tfasettings.FieldID))
+func (f *TFASettingFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(tfasetting.FieldID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *TFASettingsFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(tfasettings.FieldCreatedAt))
+func (f *TFASettingFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(tfasetting.FieldCreatedAt))
 }
 
 // WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *TFASettingsFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(tfasettings.FieldUpdatedAt))
+func (f *TFASettingFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(tfasetting.FieldUpdatedAt))
 }
 
 // WhereCreatedBy applies the entql string predicate on the created_by field.
-func (f *TFASettingsFilter) WhereCreatedBy(p entql.StringP) {
-	f.Where(p.Field(tfasettings.FieldCreatedBy))
+func (f *TFASettingFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(tfasetting.FieldCreatedBy))
 }
 
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
-func (f *TFASettingsFilter) WhereUpdatedBy(p entql.StringP) {
-	f.Where(p.Field(tfasettings.FieldUpdatedBy))
+func (f *TFASettingFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(tfasetting.FieldUpdatedBy))
 }
 
 // WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
-func (f *TFASettingsFilter) WhereDeletedAt(p entql.TimeP) {
-	f.Where(p.Field(tfasettings.FieldDeletedAt))
+func (f *TFASettingFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(tfasetting.FieldDeletedAt))
 }
 
 // WhereDeletedBy applies the entql string predicate on the deleted_by field.
-func (f *TFASettingsFilter) WhereDeletedBy(p entql.StringP) {
-	f.Where(p.Field(tfasettings.FieldDeletedBy))
+func (f *TFASettingFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(tfasetting.FieldDeletedBy))
 }
 
 // WhereOwnerID applies the entql string predicate on the owner_id field.
-func (f *TFASettingsFilter) WhereOwnerID(p entql.StringP) {
-	f.Where(p.Field(tfasettings.FieldOwnerID))
+func (f *TFASettingFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(tfasetting.FieldOwnerID))
 }
 
 // WhereTfaSecret applies the entql string predicate on the tfa_secret field.
-func (f *TFASettingsFilter) WhereTfaSecret(p entql.StringP) {
-	f.Where(p.Field(tfasettings.FieldTfaSecret))
+func (f *TFASettingFilter) WhereTfaSecret(p entql.StringP) {
+	f.Where(p.Field(tfasetting.FieldTfaSecret))
 }
 
 // WhereVerified applies the entql bool predicate on the verified field.
-func (f *TFASettingsFilter) WhereVerified(p entql.BoolP) {
-	f.Where(p.Field(tfasettings.FieldVerified))
+func (f *TFASettingFilter) WhereVerified(p entql.BoolP) {
+	f.Where(p.Field(tfasetting.FieldVerified))
 }
 
 // WhereRecoveryCodes applies the entql json.RawMessage predicate on the recovery_codes field.
-func (f *TFASettingsFilter) WhereRecoveryCodes(p entql.BytesP) {
-	f.Where(p.Field(tfasettings.FieldRecoveryCodes))
+func (f *TFASettingFilter) WhereRecoveryCodes(p entql.BytesP) {
+	f.Where(p.Field(tfasetting.FieldRecoveryCodes))
 }
 
 // WherePhoneOtpAllowed applies the entql bool predicate on the phone_otp_allowed field.
-func (f *TFASettingsFilter) WherePhoneOtpAllowed(p entql.BoolP) {
-	f.Where(p.Field(tfasettings.FieldPhoneOtpAllowed))
+func (f *TFASettingFilter) WherePhoneOtpAllowed(p entql.BoolP) {
+	f.Where(p.Field(tfasetting.FieldPhoneOtpAllowed))
 }
 
 // WhereEmailOtpAllowed applies the entql bool predicate on the email_otp_allowed field.
-func (f *TFASettingsFilter) WhereEmailOtpAllowed(p entql.BoolP) {
-	f.Where(p.Field(tfasettings.FieldEmailOtpAllowed))
+func (f *TFASettingFilter) WhereEmailOtpAllowed(p entql.BoolP) {
+	f.Where(p.Field(tfasetting.FieldEmailOtpAllowed))
 }
 
 // WhereTotpAllowed applies the entql bool predicate on the totp_allowed field.
-func (f *TFASettingsFilter) WhereTotpAllowed(p entql.BoolP) {
-	f.Where(p.Field(tfasettings.FieldTotpAllowed))
+func (f *TFASettingFilter) WhereTotpAllowed(p entql.BoolP) {
+	f.Where(p.Field(tfasetting.FieldTotpAllowed))
 }
 
 // WhereHasOwner applies a predicate to check if query has an edge owner.
-func (f *TFASettingsFilter) WhereHasOwner() {
+func (f *TFASettingFilter) WhereHasOwner() {
 	f.Where(entql.HasEdge("owner"))
 }
 
 // WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
-func (f *TFASettingsFilter) WhereHasOwnerWith(preds ...predicate.User) {
+func (f *TFASettingFilter) WhereHasOwnerWith(preds ...predicate.User) {
 	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -3782,7 +3782,7 @@ func (f *UserFilter) WhereHasTfaSettings() {
 }
 
 // WhereHasTfaSettingsWith applies a predicate to check if query has an edge tfa_settings with a given conditions (other predicates).
-func (f *UserFilter) WhereHasTfaSettingsWith(preds ...predicate.TFASettings) {
+func (f *UserFilter) WhereHasTfaSettingsWith(preds ...predicate.TFASetting) {
 	f.Where(entql.HasEdgeWith("tfa_settings", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)

@@ -13,19 +13,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
-// AuthStyle is the resolver for the authStyle field.
-func (r *oauthProviderResolver) AuthStyle(ctx context.Context, obj *generated.OauthProvider) (int, error) {
-	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
-}
-
 // Node is the resolver for the node field.
 func (r *queryResolver) Node(ctx context.Context, id string) (generated.Noder, error) {
-	panic(fmt.Errorf("not implemented: Node - node"))
+	return withTransactionalMutation(ctx).Noder(ctx, id)
 }
 
 // Nodes is the resolver for the nodes field.
 func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.Noder, error) {
-	panic(fmt.Errorf("not implemented: Nodes - nodes"))
+	return withTransactionalMutation(ctx).Noders(ctx, ids)
 }
 
 // Entitlements is the resolver for the entitlements field.
@@ -97,9 +92,11 @@ func (r *queryResolver) Subscribers(ctx context.Context, after *entgql.Cursor[st
 	return withTransactionalMutation(ctx).Subscriber.Query().Paginate(ctx, after, first, before, last, generated.WithSubscriberFilter(where.Filter))
 }
 
-// TfaSettingsSlice is the resolver for the tfaSettingsSlice field.
-func (r *queryResolver) TfaSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingsWhereInput) (*generated.TFASettingsConnection, error) {
-	panic(fmt.Errorf("not implemented: TfaSettingsSlice - tfaSettingsSlice"))
+// TfaSettings is the resolver for the tfaSettings field.
+func (r *queryResolver) TfaSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) (*generated.TFASettingConnection, error) {
+	ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+
+	return withTransactionalMutation(ctx).TFASetting.Query().Paginate(ctx, after, first, before, last, generated.WithTFASettingFilter(where.Filter))
 }
 
 // Templates is the resolver for the templates field.
@@ -123,105 +120,33 @@ func (r *queryResolver) UserSettings(ctx context.Context, after *entgql.Cursor[s
 	return withTransactionalMutation(ctx).UserSetting.Query().Paginate(ctx, after, first, before, last, generated.WithUserSettingFilter(where.Filter))
 }
 
-// AuthStyle is the resolver for the authStyle field.
-func (r *createOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error {
-	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
-}
-
-// AuthStyle is the resolver for the authStyle field.
-func (r *oauthProviderWhereInputResolver) AuthStyle(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error {
-	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
-}
-
-// AuthStyleNeq is the resolver for the authStyleNEQ field.
-func (r *oauthProviderWhereInputResolver) AuthStyleNeq(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error {
-	panic(fmt.Errorf("not implemented: AuthStyleNeq - authStyleNEQ"))
-}
-
-// AuthStyleIn is the resolver for the authStyleIn field.
-func (r *oauthProviderWhereInputResolver) AuthStyleIn(ctx context.Context, obj *generated.OauthProviderWhereInput, data []int) error {
-	panic(fmt.Errorf("not implemented: AuthStyleIn - authStyleIn"))
-}
-
-// AuthStyleNotIn is the resolver for the authStyleNotIn field.
-func (r *oauthProviderWhereInputResolver) AuthStyleNotIn(ctx context.Context, obj *generated.OauthProviderWhereInput, data []int) error {
-	panic(fmt.Errorf("not implemented: AuthStyleNotIn - authStyleNotIn"))
-}
-
-// AuthStyleGt is the resolver for the authStyleGT field.
-func (r *oauthProviderWhereInputResolver) AuthStyleGt(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error {
-	panic(fmt.Errorf("not implemented: AuthStyleGt - authStyleGT"))
-}
-
-// AuthStyleGte is the resolver for the authStyleGTE field.
-func (r *oauthProviderWhereInputResolver) AuthStyleGte(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error {
-	panic(fmt.Errorf("not implemented: AuthStyleGte - authStyleGTE"))
-}
-
-// AuthStyleLt is the resolver for the authStyleLT field.
-func (r *oauthProviderWhereInputResolver) AuthStyleLt(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error {
-	panic(fmt.Errorf("not implemented: AuthStyleLt - authStyleLT"))
-}
-
-// AuthStyleLte is the resolver for the authStyleLTE field.
-func (r *oauthProviderWhereInputResolver) AuthStyleLte(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error {
-	panic(fmt.Errorf("not implemented: AuthStyleLte - authStyleLTE"))
-}
-
-// AuthStyle is the resolver for the authStyle field.
-func (r *updateOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *generated.UpdateOauthProviderInput, data *int) error {
-	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))
-}
-
-// OauthProvider returns OauthProviderResolver implementation.
-func (r *Resolver) OauthProvider() OauthProviderResolver { return &oauthProviderResolver{r} }
-
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 // CreateGroupInput returns CreateGroupInputResolver implementation.
 func (r *Resolver) CreateGroupInput() CreateGroupInputResolver { return &createGroupInputResolver{r} }
 
-// CreateOauthProviderInput returns CreateOauthProviderInputResolver implementation.
-func (r *Resolver) CreateOauthProviderInput() CreateOauthProviderInputResolver {
-	return &createOauthProviderInputResolver{r}
-}
-
 // CreateOrganizationInput returns CreateOrganizationInputResolver implementation.
 func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
 	return &createOrganizationInputResolver{r}
 }
 
-// OauthProviderWhereInput returns OauthProviderWhereInputResolver implementation.
-func (r *Resolver) OauthProviderWhereInput() OauthProviderWhereInputResolver {
-	return &oauthProviderWhereInputResolver{r}
-}
-
 // UpdateGroupInput returns UpdateGroupInputResolver implementation.
 func (r *Resolver) UpdateGroupInput() UpdateGroupInputResolver { return &updateGroupInputResolver{r} }
-
-// UpdateOauthProviderInput returns UpdateOauthProviderInputResolver implementation.
-func (r *Resolver) UpdateOauthProviderInput() UpdateOauthProviderInputResolver {
-	return &updateOauthProviderInputResolver{r}
-}
 
 // UpdateOrganizationInput returns UpdateOrganizationInputResolver implementation.
 func (r *Resolver) UpdateOrganizationInput() UpdateOrganizationInputResolver {
 	return &updateOrganizationInputResolver{r}
 }
 
-// UpdateTFASettingsInput returns UpdateTFASettingsInputResolver implementation.
-func (r *Resolver) UpdateTFASettingsInput() UpdateTFASettingsInputResolver {
-	return &updateTFASettingsInputResolver{r}
+// UpdateTFASettingInput returns UpdateTFASettingInputResolver implementation.
+func (r *Resolver) UpdateTFASettingInput() UpdateTFASettingInputResolver {
+	return &updateTFASettingInputResolver{r}
 }
 
-type oauthProviderResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type createGroupInputResolver struct{ *Resolver }
-type createOauthProviderInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
-type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateGroupInputResolver struct{ *Resolver }
-type updateOauthProviderInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }
-type updateTFASettingsInputResolver struct{ *Resolver }
+type updateTFASettingInputResolver struct{ *Resolver }

@@ -19,7 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
-	"github.com/datumforge/datum/internal/ent/generated/tfasettings"
+	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
@@ -207,9 +207,9 @@ func SubscriberEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
-func TFASettingsEdgeCleanup(ctx context.Context, id string) error {
+func TFASettingEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
-	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup tfasettings edge"))
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup tfasetting edge"))
 
 	return nil
 }
@@ -232,9 +232,9 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 		}
 	}
 
-	if exists, err := FromContext(ctx).TFASettings.Query().Where((tfasettings.HasOwnerWith(user.ID(id)))).Exist(ctx); err == nil && exists {
-		if tfasettingsCount, err := FromContext(ctx).TFASettings.Delete().Where(tfasettings.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
-			FromContext(ctx).Logger.Debugw("deleting tfasettings", "count", tfasettingsCount, "err", err)
+	if exists, err := FromContext(ctx).TFASetting.Query().Where((tfasetting.HasOwnerWith(user.ID(id)))).Exist(ctx); err == nil && exists {
+		if tfasettingCount, err := FromContext(ctx).TFASetting.Delete().Where(tfasetting.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting tfasetting", "count", tfasettingCount, "err", err)
 			return err
 		}
 	}

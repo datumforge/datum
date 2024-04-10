@@ -54,7 +54,7 @@ tasks:
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
-      - golangci-lint run --config=.golangci.yaml --verbose
+      - golangci-lint run --config=.golangci.yaml --verbose --fast
 
   go:test:
     desc: runs and outputs results of created go tests

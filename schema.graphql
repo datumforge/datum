@@ -5464,8 +5464,8 @@ type Query {
 		"""
 		Filtering options for TFASettings returned from the connection.
 		"""
-		where: TFASettingsWhereInput
-	): TFASettingsConnection!
+		where: TFASettingWhereInput
+	): TFASettingConnection!
 	templates(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -5495,8 +5495,8 @@ type Query {
 		"""
 		Filtering options for Templates returned from the connection.
 		"""
-		where: TFASettingWhereInput
-	): TFASettingConnection!
+		where: TemplateWhereInput
+	): TemplateConnection!
 	users(
 		"""
 		Returns the elements in the list that come after the specified cursor.

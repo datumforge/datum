@@ -900,37 +900,6 @@ func init() {
 	subscriberDescID := subscriberMixinFields1[0].Descriptor()
 	// subscriber.DefaultID holds the default value on creation for the id field.
 	subscriber.DefaultID = subscriberDescID.Default.(func() string)
-	templateMixin := schema.Template{}.Mixin()
-	templateMixinHooks0 := templateMixin[0].Hooks()
-	templateMixinHooks1 := templateMixin[1].Hooks()
-	template.Hooks[0] = templateMixinHooks0[0]
-	template.Hooks[1] = templateMixinHooks1[0]
-	templateMixinInters1 := templateMixin[1].Interceptors()
-	template.Interceptors[0] = templateMixinInters1[0]
-	templateMixinFields0 := templateMixin[0].Fields()
-	_ = templateMixinFields0
-	templateMixinFields2 := templateMixin[2].Fields()
-	_ = templateMixinFields2
-	templateFields := schema.Template{}.Fields()
-	_ = templateFields
-	// templateDescCreatedAt is the schema descriptor for created_at field.
-	templateDescCreatedAt := templateMixinFields0[0].Descriptor()
-	// template.DefaultCreatedAt holds the default value on creation for the created_at field.
-	template.DefaultCreatedAt = templateDescCreatedAt.Default.(func() time.Time)
-	// templateDescUpdatedAt is the schema descriptor for updated_at field.
-	templateDescUpdatedAt := templateMixinFields0[1].Descriptor()
-	// template.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	template.DefaultUpdatedAt = templateDescUpdatedAt.Default.(func() time.Time)
-	// template.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	template.UpdateDefaultUpdatedAt = templateDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// templateDescName is the schema descriptor for name field.
-	templateDescName := templateFields[0].Descriptor()
-	// template.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	template.NameValidator = templateDescName.Validators[0].(func(string) error)
-	// templateDescID is the schema descriptor for id field.
-	templateDescID := templateMixinFields2[0].Descriptor()
-	// template.DefaultID holds the default value on creation for the id field.
-	template.DefaultID = templateDescID.Default.(func() string)
 	tfasettingMixin := schema.TFASetting{}.Mixin()
 	tfasettingMixinHooks0 := tfasettingMixin[0].Hooks()
 	tfasettingMixinHooks2 := tfasettingMixin[2].Hooks()
@@ -976,6 +945,37 @@ func init() {
 	tfasettingDescID := tfasettingMixinFields1[0].Descriptor()
 	// tfasetting.DefaultID holds the default value on creation for the id field.
 	tfasetting.DefaultID = tfasettingDescID.Default.(func() string)
+	templateMixin := schema.Template{}.Mixin()
+	templateMixinHooks0 := templateMixin[0].Hooks()
+	templateMixinHooks1 := templateMixin[1].Hooks()
+	template.Hooks[0] = templateMixinHooks0[0]
+	template.Hooks[1] = templateMixinHooks1[0]
+	templateMixinInters1 := templateMixin[1].Interceptors()
+	template.Interceptors[0] = templateMixinInters1[0]
+	templateMixinFields0 := templateMixin[0].Fields()
+	_ = templateMixinFields0
+	templateMixinFields2 := templateMixin[2].Fields()
+	_ = templateMixinFields2
+	templateFields := schema.Template{}.Fields()
+	_ = templateFields
+	// templateDescCreatedAt is the schema descriptor for created_at field.
+	templateDescCreatedAt := templateMixinFields0[0].Descriptor()
+	// template.DefaultCreatedAt holds the default value on creation for the created_at field.
+	template.DefaultCreatedAt = templateDescCreatedAt.Default.(func() time.Time)
+	// templateDescUpdatedAt is the schema descriptor for updated_at field.
+	templateDescUpdatedAt := templateMixinFields0[1].Descriptor()
+	// template.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	template.DefaultUpdatedAt = templateDescUpdatedAt.Default.(func() time.Time)
+	// template.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	template.UpdateDefaultUpdatedAt = templateDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// templateDescName is the schema descriptor for name field.
+	templateDescName := templateFields[0].Descriptor()
+	// template.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	template.NameValidator = templateDescName.Validators[0].(func(string) error)
+	// templateDescID is the schema descriptor for id field.
+	templateDescID := templateMixinFields2[0].Descriptor()
+	// template.DefaultID holds the default value on creation for the id field.
+	template.DefaultID = templateDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

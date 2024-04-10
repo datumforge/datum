@@ -316,8 +316,8 @@ type ComplexityRoot struct {
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
 		CreateSubscriber          func(childComplexity int, input generated.CreateSubscriberInput) int
-		CreateTemplate            func(childComplexity int, input generated.CreateTemplateInput) int
 		CreateTFASetting          func(childComplexity int, input generated.CreateTFASettingInput) int
+		CreateTemplate            func(childComplexity int, input generated.CreateTemplateInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
@@ -346,8 +346,8 @@ type ComplexityRoot struct {
 		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
 		UpdateSubscriber          func(childComplexity int, id string, input generated.UpdateSubscriberInput) int
-		UpdateTemplate            func(childComplexity int, id string, input generated.UpdateTemplateInput) int
 		UpdateTFASetting          func(childComplexity int, input generated.UpdateTFASettingInput) int
+		UpdateTemplate            func(childComplexity int, id string, input generated.UpdateTemplateInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
 		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
 	}
@@ -960,8 +960,8 @@ type QueryResolver interface {
 	OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error)
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
 	Subscribers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) (*generated.SubscriberConnection, error)
-	Templates(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) (*generated.TemplateConnection, error)
 	TfaSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) (*generated.TFASettingConnection, error)
+	Templates(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) (*generated.TemplateConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
 	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
 	Entitlement(ctx context.Context, id string) (*generated.Entitlement, error)
@@ -4182,6 +4182,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Templates(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.TemplateOrder), args["where"].(*generated.TemplateWhereInput)), true
 
+	case "Query.tfaSetting":
+		if e.complexity.Query.TfaSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tfaSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TfaSetting(childComplexity, args["id"].(*string)), true
+
 	case "Query.tfaSettings":
 		if e.complexity.Query.TfaSettings == nil {
 			break
@@ -5087,8 +5099,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOrganizationSettingInput,
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
 		ec.unmarshalInputCreateSubscriberInput,
-		ec.unmarshalInputCreateTemplateInput,
 		ec.unmarshalInputCreateTFASettingInput,
+		ec.unmarshalInputCreateTemplateInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserSettingInput,
 		ec.unmarshalInputEntitlementWhereInput,
@@ -5110,9 +5122,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputOrganizationWhereInput,
 		ec.unmarshalInputPersonalAccessTokenWhereInput,
 		ec.unmarshalInputSubscriberWhereInput,
+		ec.unmarshalInputTFASettingWhereInput,
 		ec.unmarshalInputTemplateOrder,
 		ec.unmarshalInputTemplateWhereInput,
-		ec.unmarshalInputTFASettingWhereInput,
 		ec.unmarshalInputUpdateEntitlementInput,
 		ec.unmarshalInputUpdateGroupInput,
 		ec.unmarshalInputUpdateGroupMembershipInput,
@@ -5126,8 +5138,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateOrganizationSettingInput,
 		ec.unmarshalInputUpdatePersonalAccessTokenInput,
 		ec.unmarshalInputUpdateSubscriberInput,
-		ec.unmarshalInputUpdateTemplateInput,
 		ec.unmarshalInputUpdateTFASettingInput,
+		ec.unmarshalInputUpdateTemplateInput,
 		ec.unmarshalInputUpdateUserInput,
 		ec.unmarshalInputUpdateUserSettingInput,
 		ec.unmarshalInputUserOrder,
@@ -9899,8 +9911,8 @@ type Query {
     """
     Filtering options for TFASettings returned from the connection.
     """
-    where: TFASettingsWhereInput
-  ): TFASettingsConnection!
+    where: TFASettingWhereInput
+  ): TFASettingConnection!
   templates(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -12992,7 +13004,7 @@ type TemplateDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/tfasettings.graphql", Input: `extend type Query {
+	{Name: "../../schema/tfasetting.graphql", Input: `extend type Query {
     """
     Look up tfaSetting for the current user
     """
@@ -15076,7 +15088,22 @@ func (ec *executionContext) field_Query_templates_args(ctx context.Context, rawA
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_tfaSettingsSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_tfaSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_tfaSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entgql.Cursor[string]
@@ -24387,8 +24414,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteTemplate(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createTFASettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTFASettings(ctx, field)
+func (ec *executionContext) _Mutation_createTFASetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTFASetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -36588,8 +36615,8 @@ func (ec *executionContext) fieldContext_Query_template(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_tfaSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_tfaSettings(ctx, field)
+func (ec *executionContext) _Query_tfaSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_tfaSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -68903,7 +68930,7 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._TFASettings(ctx, sel, obj)
+		return ec._TFASetting(ctx, sel, obj)
 	case *generated.Template:
 		if obj == nil {
 			return graphql.Null
@@ -71264,7 +71291,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createTFASettings":
+		case "createTFASetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createTFASetting(ctx, field)
 			})
@@ -74619,7 +74646,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "tfaSettings":
+		case "tfaSetting":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {

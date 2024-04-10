@@ -5366,6 +5366,67 @@ func (t *GetTemplate_Template) GetOwner() *GetTemplate_Template_Owner {
 	return &t.Owner
 }
 
+type GetTFASetting_TfaSetting struct {
+	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	Verified      bool     "json:\"verified\" graphql:\"verified\""
+}
+
+func (t *GetTFASetting_TfaSetting) GetTotpAllowed() *bool {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting{}
+	}
+	return t.TotpAllowed
+}
+func (t *GetTFASetting_TfaSetting) GetRecoveryCodes() []string {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting{}
+	}
+	return t.RecoveryCodes
+}
+func (t *GetTFASetting_TfaSetting) GetVerified() bool {
+	if t == nil {
+		t = &GetTFASetting_TfaSetting{}
+	}
+	return t.Verified
+}
+
+type GetTFASettings_TfaSettings_Edges_Node struct {
+	TotpAllowed   *bool    "json:\"totpAllowed,omitempty\" graphql:\"totpAllowed\""
+	RecoveryCodes []string "json:\"recoveryCodes,omitempty\" graphql:\"recoveryCodes\""
+	Verified      bool     "json:\"verified\" graphql:\"verified\""
+}
+
+func (t *GetTFASettings_TfaSettings_Edges_Node) GetTotpAllowed() *bool {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings_Edges_Node{}
+	}
+	return t.TotpAllowed
+}
+func (t *GetTFASettings_TfaSettings_Edges_Node) GetRecoveryCodes() []string {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings_Edges_Node{}
+	}
+	return t.RecoveryCodes
+}
+func (t *GetTFASettings_TfaSettings_Edges_Node) GetVerified() bool {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings_Edges_Node{}
+	}
+	return t.Verified
+}
+
+type GetTFASettings_TfaSettings_Edges struct {
+	Node *GetTFASettings_TfaSettings_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetTFASettings_TfaSettings_Edges) GetNode() *GetTFASettings_TfaSettings_Edges_Node {
+	if t == nil {
+		t = &GetTFASettings_TfaSettings_Edges{}
+	}
+	return t.Node
+}
+
 type GetTFASettings_TfaSettings struct {
 	Edges []*GetTFASettings_TfaSettings_Edges "json:\"edges,omitempty\" graphql:\"edges\""
 }
@@ -7727,6 +7788,17 @@ func (t *GetTemplate) GetTemplate() *GetTemplate_Template {
 	return &t.Template
 }
 
+type GetTFASetting struct {
+	TfaSetting GetTFASetting_TfaSetting "json:\"tfaSetting\" graphql:\"tfaSetting\""
+}
+
+func (t *GetTFASetting) GetTfaSetting() *GetTFASetting_TfaSetting {
+	if t == nil {
+		t = &GetTFASetting{}
+	}
+	return &t.TfaSetting
+}
+
 type GetTFASettings struct {
 	TfaSettings GetTFASettings_TfaSettings "json:\"tfaSettings\" graphql:\"tfaSettings\""
 }
@@ -9613,8 +9685,8 @@ func (c *Client) GetTemplate(ctx context.Context, getTemplateID string, intercep
 	return &res, nil
 }
 
-const GetTFASettingsDocument = `query GetTFASettings {
-	tfaSettings {
+const GetTFASettingDocument = `query GetTFASetting {
+	tfaSetting {
 		totpAllowed
 		recoveryCodes
 		verified
@@ -10259,6 +10331,7 @@ var DocumentOperationNames = map[string]string{
 	UpdateTemplateDocument:              "UpdateTemplate",
 	GetAllTemplatesDocument:             "GetAllTemplates",
 	GetTemplateDocument:                 "GetTemplate",
+	GetTFASettingDocument:               "GetTFASetting",
 	GetTFASettingsDocument:              "GetTFASettings",
 	CreateTFASettingDocument:            "CreateTFASetting",
 	UpdateTFASettingDocument:            "UpdateTFASetting",

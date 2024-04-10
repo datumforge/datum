@@ -91,10 +91,10 @@ type Client struct {
 	PersonalAccessToken *PersonalAccessTokenClient
 	// Subscriber is the client for interacting with the Subscriber builders.
 	Subscriber *SubscriberClient
-	// Template is the client for interacting with the Template builders.
-	Template *TemplateClient
 	// TFASetting is the client for interacting with the TFASetting builders.
 	TFASetting *TFASettingClient
+	// Template is the client for interacting with the Template builders.
+	Template *TemplateClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserSetting is the client for interacting with the UserSetting builders.
@@ -134,8 +134,8 @@ func (c *Client) init() {
 	c.PasswordResetToken = NewPasswordResetTokenClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Subscriber = NewSubscriberClient(c.config)
-	c.Template = NewTemplateClient(c.config)
 	c.TFASetting = NewTFASettingClient(c.config)
+	c.Template = NewTemplateClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserSetting = NewUserSettingClient(c.config)
 	c.Webauthn = NewWebauthnClient(c.config)
@@ -338,8 +338,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
 		Subscriber:                 NewSubscriberClient(cfg),
-		Template:                   NewTemplateClient(cfg),
 		TFASetting:                 NewTFASettingClient(cfg),
+		Template:                   NewTemplateClient(cfg),
 		User:                       NewUserClient(cfg),
 		UserSetting:                NewUserSettingClient(cfg),
 		Webauthn:                   NewWebauthnClient(cfg),
@@ -379,8 +379,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PasswordResetToken:         NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:        NewPersonalAccessTokenClient(cfg),
 		Subscriber:                 NewSubscriberClient(cfg),
-		Template:                   NewTemplateClient(cfg),
 		TFASetting:                 NewTFASettingClient(cfg),
+		Template:                   NewTemplateClient(cfg),
 		User:                       NewUserClient(cfg),
 		UserSetting:                NewUserSettingClient(cfg),
 		Webauthn:                   NewWebauthnClient(cfg),
@@ -474,10 +474,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PersonalAccessToken.mutate(ctx, m)
 	case *SubscriberMutation:
 		return c.Subscriber.mutate(ctx, m)
-	case *TemplateMutation:
-		return c.Template.mutate(ctx, m)
 	case *TFASettingMutation:
 		return c.TFASetting.mutate(ctx, m)
+	case *TemplateMutation:
+		return c.Template.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserSettingMutation:
@@ -4359,8 +4359,7 @@ type (
 		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
 		Organization, OrganizationHistory, OrganizationSetting,
 		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
-		Subscriber, TFASetting, Template, User, UserSetting,
-		Webauthn []ent.Interceptor
+		Subscriber, TFASetting, Template, User, UserSetting, Webauthn []ent.Interceptor
 	}
 )
 

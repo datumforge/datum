@@ -4650,8 +4650,8 @@ type Query {
     """
     Filtering options for TFASettings returned from the connection.
     """
-    where: TFASettingsWhereInput
-  ): TFASettingsConnection!
+    where: TFASettingWhereInput
+  ): TFASettingConnection!
   templates(
     """
     Returns the elements in the list that come after the specified cursor.

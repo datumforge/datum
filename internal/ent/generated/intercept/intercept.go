@@ -720,10 +720,10 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
 	case *generated.SubscriberQuery:
 		return &query[*generated.SubscriberQuery, predicate.Subscriber, subscriber.OrderOption]{typ: generated.TypeSubscriber, tq: q}, nil
-	case *generated.TemplateQuery:
-		return &query[*generated.TemplateQuery, predicate.Template, template.OrderOption]{typ: generated.TypeTemplate, tq: q}, nil
 	case *generated.TFASettingQuery:
 		return &query[*generated.TFASettingQuery, predicate.TFASetting, tfasetting.OrderOption]{typ: generated.TypeTFASetting, tq: q}, nil
+	case *generated.TemplateQuery:
+		return &query[*generated.TemplateQuery, predicate.Template, template.OrderOption]{typ: generated.TypeTemplate, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
 	case *generated.UserSettingQuery:

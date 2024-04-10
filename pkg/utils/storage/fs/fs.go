@@ -19,9 +19,9 @@ type Storage struct {
 // Config is the configuration for Storage
 type Config struct {
 	// Enabled is a flag to enable or disable the storage
-	Enabled bool `json:"enabled" koanf:"enabled"`
+	Enabled bool `json:"enabled" koanf:"enabled" default:"false"`
 	// Root is the root directory for the filesystem storage
-	Root string `json:"root" koanf:"root"`
+	Root string `json:"root" koanf:"root" default:"./storage"`
 }
 
 // NewStorage returns a new filesystem storage with the provided configuration
@@ -58,9 +58,11 @@ func (fs *Storage) Save(ctx context.Context, content io.Reader, path string) err
 // Stat returns path metadata
 func (fs *Storage) Stat(ctx context.Context, path string) (*storage.Stat, error) {
 	fi, err := os.Stat(fs.abs(path))
-	if os.IsNotExist(err) {
-		return nil, storage.ErrNotExist
-	} else if err != nil {
+	if err != nil {
+		if errors.Is(err, storage.ErrNotExist) {
+			return nil, storage.ErrNotExist
+		}
+
 		return nil, errors.WithStack(err)
 	}
 
@@ -73,8 +75,12 @@ func (fs *Storage) Stat(ctx context.Context, path string) (*storage.Stat, error)
 // Open opens path for reading
 func (fs *Storage) Open(ctx context.Context, path string) (io.ReadCloser, error) {
 	f, err := os.Open(fs.abs(path))
-	if os.IsNotExist(err) {
-		return nil, storage.ErrNotExist
+	if err != nil {
+		if errors.Is(err, storage.ErrNotExist) {
+			return nil, storage.ErrNotExist
+		}
+
+		return nil, errors.WithStack(err)
 	}
 
 	return f, errors.WithStack(err)
@@ -88,8 +94,12 @@ func (fs *Storage) Delete(ctx context.Context, path string) error {
 // OpenWithStat opens path for reading with file stats
 func (fs *Storage) OpenWithStat(ctx context.Context, path string) (io.ReadCloser, *storage.Stat, error) {
 	f, err := os.Open(fs.abs(path))
-	if os.IsNotExist(err) {
-		return nil, nil, storage.ErrNotExist
+	if err != nil {
+		if errors.Is(err, storage.ErrNotExist) {
+			return nil, nil, storage.ErrNotExist
+		}
+
+		return nil, nil, errors.WithStack(err)
 	}
 
 	stat, err := f.Stat()

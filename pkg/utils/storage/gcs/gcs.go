@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/api/option"
 
-	gostorages "github.com/datumforge/datum/pkg/utils/storage"
+	gostorage "github.com/datumforge/datum/pkg/utils/storage"
 )
 
 // Storage is a Google Cloud Storage interface
@@ -21,11 +21,11 @@ type Storage struct {
 // Config is the configuration for Storage - need to blow this out but initial focus was on s3
 type Config struct {
 	// Enabled is a flag to enable or disable the storage
-	Enabled bool `json:"enabled" koanf:"enabled"`
+	Enabled bool `json:"enabled" koanf:"enabled" default:"false"`
 	// CredentialsFile is the path to the credentials file
-	CredentialsFile string `json:"credentialsFile" koanf:"credentialsFile"`
+	CredentialsFile string `json:"credentialsFile" koanf:"credentialsFile" default:"./credentials.json"`
 	// Bucket is the name of the bucket
-	Bucket string `json:"bucket" koanf:"bucket"`
+	Bucket string `json:"bucket" koanf:"bucket" default:"yourbucketname"`
 }
 
 // NewStorage returns a new GCP Storage with the provided configuration
@@ -58,16 +58,17 @@ func (g *Storage) Save(ctx context.Context, content io.Reader, path string) (rer
 }
 
 // Stat returns path metadata
-func (g *Storage) Stat(ctx context.Context, path string) (*gostorages.Stat, error) {
+func (g *Storage) Stat(ctx context.Context, path string) (*gostorage.Stat, error) {
 	attrs, err := g.bucket.Object(path).Attrs(ctx)
+	if err != nil {
+		if errors.Is(err, storage.ErrObjectNotExist) {
+			return nil, gostorage.ErrNotExist
+		}
 
-	if errors.Is(err, storage.ErrObjectNotExist) {
-		return nil, gostorages.ErrNotExist
-	} else if err != nil {
 		return nil, err
 	}
 
-	return &gostorages.Stat{
+	return &gostorage.Stat{
 		ModifiedTime: attrs.Updated,
 		Size:         attrs.Size,
 	}, nil
@@ -76,8 +77,12 @@ func (g *Storage) Stat(ctx context.Context, path string) (*gostorages.Stat, erro
 // Open opens path for reading
 func (g *Storage) Open(ctx context.Context, path string) (io.ReadCloser, error) {
 	r, err := g.bucket.Object(path).NewReader(ctx)
-	if errors.Is(err, storage.ErrObjectNotExist) {
-		return nil, gostorages.ErrNotExist
+	if err != nil {
+		if errors.Is(err, storage.ErrObjectNotExist) {
+			return nil, gostorage.ErrNotExist
+		}
+
+		return nil, errors.WithStack(err)
 	}
 
 	return r, errors.WithStack(err)
@@ -89,14 +94,15 @@ func (g *Storage) Delete(ctx context.Context, path string) error {
 }
 
 // OpenWithStat opens path for reading with file stats
-func (g *Storage) OpenWithStat(ctx context.Context, path string) (io.ReadCloser, *gostorages.Stat, error) {
+func (g *Storage) OpenWithStat(ctx context.Context, path string) (io.ReadCloser, *gostorage.Stat, error) {
 	r, err := g.bucket.Object(path).NewReader(ctx)
-
-	if errors.Is(err, storage.ErrObjectNotExist) {
-		return nil, nil, gostorages.ErrNotExist
+	if err != nil {
+		if errors.Is(err, storage.ErrObjectNotExist) {
+			return nil, nil, gostorage.ErrNotExist
+		}
 	}
 
-	return r, &gostorages.Stat{
+	return r, &gostorage.Stat{
 		ModifiedTime: r.Attrs.LastModified,
 		Size:         r.Attrs.Size,
 	}, errors.WithStack(err)

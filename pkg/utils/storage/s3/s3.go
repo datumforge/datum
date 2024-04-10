@@ -28,19 +28,19 @@ type Storage struct {
 // Config is the configuration for Storage
 type Config struct {
 	// Enabled is a flag to enable or disable the storage
-	Enabled bool `json:"enabled" koanf:"enabled"`
+	Enabled bool `json:"enabled" koanf:"enabled" default:"false"`
 	// AccessKeyID is the access key id
 	AccessKeyID string `json:"accessKeyID" koanf:"accessKeyID"`
 	// Bucket is the name of the bucket
-	Bucket string `json:"bucket" koanf:"bucket"`
+	Bucket string `json:"bucket" koanf:"bucket" default:"yourbucketname"`
 	// Endpoint is the endpoint to use for the s3 client
 	Endpoint string `json:"endpoint" koanf:"endpoint"`
 	// Region is the region to use for the s3 client
-	Region string `json:"region" koanf:"region"`
+	Region string `json:"region" koanf:"region" default:"us-region-a"`
 	// SecretAccessKey is the secret access key
 	SecretAccessKey string `json:"secretAccessKey" koanf:"secretAccessKey"`
 	// UploadConcurrency is the number of goroutines to spin up when uploading parts
-	UploadConcurrency *int64 `json:"uploadConcurrency" koanf:"uploadConcurrency"`
+	UploadConcurrency *int64 `json:"uploadConcurrency" koanf:"uploadConcurrency" default:"5"`
 	// CustomHTTPClient is a custom http client wrapper for s3 interfaces
 	CustomHTTPClient CustomAPIHTTPClient `json:"-" koanf:"-"`
 }
@@ -131,9 +131,11 @@ func (s *Storage) Stat(ctx context.Context, path string) (*storage.Stat, error) 
 
 	var notfounderr *types.NotFound
 
-	if errors.As(err, &notfounderr) {
-		return nil, storage.ErrNotExist
-	} else if err != nil {
+	if err != nil {
+		if errors.As(err, &notfounderr) {
+			return nil, storage.ErrNotExist
+		}
+
 		return nil, errors.WithStack(err)
 	}
 
@@ -154,9 +156,11 @@ func (s *Storage) Open(ctx context.Context, path string) (io.ReadCloser, error) 
 
 	var notsuckkeyerr *types.NoSuchKey
 
-	if errors.As(err, &notsuckkeyerr) {
-		return nil, storage.ErrNotExist
-	} else if err != nil {
+	if err != nil {
+		if errors.As(err, &notsuckkeyerr) {
+			return nil, storage.ErrNotExist
+		}
+
 		return nil, errors.WithStack(err)
 	}
 
@@ -171,6 +175,9 @@ func (s *Storage) Delete(ctx context.Context, path string) error {
 	}
 
 	_, err := s.s3.DeleteObject(ctx, input)
+	if err != nil {
+		return errors.WithStack(err)
+	}
 
 	return errors.WithStack(err)
 }
@@ -186,10 +193,11 @@ func (s *Storage) OpenWithStat(ctx context.Context, path string) (io.ReadCloser,
 
 	var notsuckkeyerr *types.NoSuchKey
 
-	if errors.As(err, &notsuckkeyerr) {
-		return nil, nil, errors.Wrapf(storage.ErrNotExist,
-			"%s does not exist in bucket %s, code: %s", path, s.bucket, notsuckkeyerr.Error())
-	} else if err != nil {
+	if err != nil {
+		if errors.As(err, &notsuckkeyerr) {
+			return nil, nil, storage.ErrNotExist
+		}
+
 		return nil, nil, errors.WithStack(err)
 	}
 

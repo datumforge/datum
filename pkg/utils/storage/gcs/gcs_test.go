@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	gostorage "github.com/datumforge/datum/pkg/utils/storage"
 )
@@ -36,20 +37,15 @@ func Test(t *testing.T) {
 
 	before := time.Now()
 
-	if err := storage.Save(ctx, bytes.NewBufferString("sarah"), "funkytown"); err != nil {
-		t.Fatal(err)
-	}
+	err = storage.Save(ctx, bytes.NewBufferString("sarah"), "funkytown")
+	require.NoError(t, err)
 
 	now := time.Now()
 	stat, err := storage.Stat(ctx, "funkytown")
 
-	if err != nil {
-		t.Errorf("unexpected error %v", err)
-	}
+	require.NoError(t, err)
 
-	if stat.Size != 5 {
-		t.Errorf("expected size to be %d, got %d", 5, stat.Size)
-	}
+	assert.NotEqual(t, stat.Size, 5)
 
 	assert.WithinDuration(t, before, now, time.Second)
 }

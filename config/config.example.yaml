@@ -76,17 +76,17 @@ geodetic:
 objstorage:
     fs:
         enabled: false
-        root: ""
+        root: ./storage
     gcs:
-        bucket: ""
-        credentialsFile: ""
+        bucket: yourbucketname
+        credentialsFile: ./credentials.json
         enabled: false
     s3:
         accessKeyID: ""
-        bucket: ""
+        bucket: yourbucketname
         enabled: false
         endpoint: ""
-        region: ""
+        region: us-region-a
         secretAccessKey: ""
         uploadConcurrency: null
 posthog:

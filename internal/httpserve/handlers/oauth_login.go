@@ -126,7 +126,7 @@ func (h *Handler) issueGoogleSession() http.Handler {
 		setSessionMap[sessions.UserTypeKey] = googleProvider
 		setSessionMap[sessions.UserIDKey] = user.ID
 
-		if err := h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID); err != nil {
+		if _, err := h.SessionConfig.SaveAndStoreSession(ctxWithToken, w, setSessionMap, user.ID); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -230,7 +230,7 @@ func (h *Handler) issueGitHubSession() http.Handler {
 		setSessionMap[sessions.EmailKey] = *githubUser.Email
 		setSessionMap[sessions.UserIDKey] = user.ID
 
-		if err := h.SessionConfig.SaveAndStoreSession(ctx, w, setSessionMap, user.ID); err != nil {
+		if _, err := h.SessionConfig.SaveAndStoreSession(ctx, w, setSessionMap, user.ID); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

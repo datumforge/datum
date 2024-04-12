@@ -32,7 +32,7 @@ mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
       name
       description
       jsonconfig
-      uischema     
+      uischema
       owner {
         id
       }

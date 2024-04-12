@@ -1,6 +1,6 @@
 version: '3'
 
-tasks: 
+tasks:
   create-and-lint:
     desc: runs the atlas create and lint commands
     aliases: [all]

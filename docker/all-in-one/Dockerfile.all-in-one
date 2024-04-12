@@ -28,7 +28,7 @@ COPY --from=ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.25 /ko-app/grpc-health
 # Copy entrypoint and env files
 COPY docker/all-in-one/docker_entrypoint.sh /bin/docker_entrypoint.sh
 
-# Copy config 
+# Copy config
 COPY ./config/config-aio.example.yaml ./config/.config.yaml
 
 RUN chmod +x /bin/docker_entrypoint.sh

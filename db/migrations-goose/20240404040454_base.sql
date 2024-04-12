@@ -28,4 +28,4 @@ DELETE FROM organizations
 WHERE
     id = "01101101011010010111010001100010";
 
-``` 
+```

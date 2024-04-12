@@ -1,6 +1,6 @@
 version: '3'
 
-tasks: 
+tasks:
   create:
     desc: creates a new fga store with the testdata model
     cmds:
@@ -8,5 +8,5 @@ tasks:
 
   test:
     desc: runs the fga model tests
-    cmds: 
-      - fga model test --tests tests/tests.yaml 
+    cmds:
+      - fga model test --tests tests/tests.yaml

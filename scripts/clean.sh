@@ -4,8 +4,8 @@ set -ueo pipefail
 appName=go-template
 appVariation=${appName/"-"/""}
 
-#what we want to update to 
-newAppName=${PWD##*/}  
+#what we want to update to
+newAppName=${PWD##*/}
 newAppVariation=${newAppName/"-"/""}
 
 echo +++ Update repo occurances with $newAppName

@@ -20,7 +20,7 @@ company:
     address: "123 Paper Street, Some Country, World"
     vat:     "222222222"
 
-items:  
+items:
   - description: "Potatoes"
     quantity: 33
     unitPrice: 3.05

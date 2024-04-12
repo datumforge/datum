@@ -6,6 +6,6 @@ This setup is not yet complete. There are weird quirks between all of the librar
 
 Eventually we may be able to use `ast`, `packages`, and other walking methods to reference / fetch the structs but for now the handler methods are added through basic functions which map them in the specification correctly.
 
-## TO DO 
+## TO DO
 
 - Add examples to all `Components` and associated

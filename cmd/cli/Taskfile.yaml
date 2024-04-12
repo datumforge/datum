@@ -16,7 +16,7 @@ tasks:
       VERIFY_TOKEN:
         sh: go run main.go register --email="mitb@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token
 
-  login:creds: 
+  login:creds:
     desc: a task to login the verified user
     aliases: [login]
     env:
@@ -26,17 +26,17 @@ tasks:
 
   user:all:
     desc: a task to register, verify, and login a new user
-    cmds: 
+    cmds:
       - task: verifyuser
       - task: login
 
-  login:google: 
+  login:google:
     desc: a task to login with google oauth
     aliases: [google]
     cmds:
       - go run main.go login -o google
 
-  login:github: 
+  login:github:
     desc: a task to login with google oauth
     aliases: [github]
     cmds:
@@ -46,7 +46,7 @@ tasks:
     desc: a task to create a new template
     aliases: [createtemplate]
     vars:
-      ORG_ID: 
+      ORG_ID:
         sh: go run main.go org create -n template-org -d "my new org that will have a template" -z json | jq -r .createOrganization.organization.id
-    cmds: 
+    cmds:
       - go run main.go  template create -o "{{ .ORG_ID}}" -n Invoice --jsonconfig="../../exampledata/templates/invoice.json"

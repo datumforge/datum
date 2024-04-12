@@ -221,7 +221,7 @@ paths:
                 "204":
                     description: Password reset received; no content is returned
                 "400":
-                    $ref: "#/components/responses/InvalidRequest"                
+                    $ref: "#/components/responses/InvalidRequest"
                 "500":
                     $ref: "#/components/responses/InternalError"
 
@@ -258,7 +258,7 @@ paths:
                 "204":
                     description: Password reset received; no content is returned
                 "400":
-                    $ref: "#/components/responses/InvalidRequest"                
+                    $ref: "#/components/responses/InvalidRequest"
                 "500":
                     $ref: "#/components/responses/InternalError"
     /verify:
@@ -284,7 +284,7 @@ paths:
                 "204":
                     description: Verification completed; no content returned
                 "400":
-                    $ref: "#/components/responses/InvalidRequest"                
+                    $ref: "#/components/responses/InvalidRequest"
                 "500":
                     $ref: "#/components/responses/InternalError"
     /resend:

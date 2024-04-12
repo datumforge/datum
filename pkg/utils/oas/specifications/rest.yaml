@@ -17,7 +17,7 @@ paths:
     /ready:
         get:
             operationId: ready
-            tags: 
+            tags:
                 -  HealthCheck
             security:
                 - {}
@@ -65,7 +65,7 @@ paths:
     /register:
         post:
             operationId: register
-            tags: 
+            tags:
                 -  Register
             security:
                 - {}
@@ -121,7 +121,7 @@ paths:
     /login:
         post:
             operationId: login
-            tags: 
+            tags:
                 -  Login
             security:
                 - {}
@@ -165,7 +165,7 @@ paths:
     /refresh:
         post:
             operationId: refresh
-            tags: 
+            tags:
                 -  Authentication
             security:
                 - {}
@@ -210,7 +210,7 @@ paths:
     /forgot-password:
         post:
             operationId: forgot-password
-            tags: 
+            tags:
                 -  ForgotPassword
             security:
                 - {}
@@ -231,14 +231,14 @@ paths:
                 "204":
                     description: Password reset received; no content is returned
                 "400":
-                    $ref: "#/components/responses/InvalidRequest"                
+                    $ref: "#/components/responses/InvalidRequest"
                 "500":
                     $ref: "#/components/responses/InternalError"
 
     /password-reset:
         post:
             operationId: password-reset
-            tags: 
+            tags:
                 -  PasswordReset
             security:
                 - {}
@@ -268,13 +268,13 @@ paths:
                 "204":
                     description: Password reset received; no content is returned
                 "400":
-                    $ref: "#/components/responses/InvalidRequest"                
+                    $ref: "#/components/responses/InvalidRequest"
                 "500":
                     $ref: "#/components/responses/InternalError"
     /verify:
         get:
             operationId: verify
-            tags: 
+            tags:
                 -  VerifyEmail
             security:
                 - {}
@@ -294,7 +294,7 @@ paths:
                 "204":
                     description: Verification completed; no content returned
                 "400":
-                    $ref: "#/components/responses/InvalidRequest"                
+                    $ref: "#/components/responses/InvalidRequest"
                 "500":
                     $ref: "#/components/responses/InternalError"
     /resend:

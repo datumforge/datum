@@ -17,7 +17,7 @@ company:
   seller:
     name:    "Acme Corp, Inc."
     address: "123 Paper Street, The Moon"
-items:  
+items:
   - description: "cattyping services"
     quantity: 1
     unitPrice: 1000000

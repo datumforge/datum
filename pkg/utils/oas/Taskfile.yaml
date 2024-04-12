@@ -7,5 +7,5 @@ tasks:
       - redocly join pkg/utils/oas/specifications/rest.yaml pkg/utils/oas/specifications/openapi.json -o joined.yaml --without-x-tag-groups
   lint:
     desc: lint OpenAPI specifications
-    cmds: 
+    cmds:
       - vacuum lint ./specifications/openapi.json

@@ -13,6 +13,10 @@ import (
 )
 
 type DatumClient interface {
+	GetDocumentData(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentData, error)
+	CreateDocumentData(ctx context.Context, input CreateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*CreateDocumentData, error)
+	UpdateDocumentData(ctx context.Context, updateDocumentDataID string, input UpdateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*UpdateDocumentData, error)
+	DeleteDocumentData(ctx context.Context, deleteDocumentDataID string, interceptors ...clientv2.RequestInterceptor) (*DeleteDocumentData, error)
 	GetGroupByID(ctx context.Context, groupID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupByID, error)
 	GroupsWhere(ctx context.Context, where *GroupWhereInput, interceptors ...clientv2.RequestInterceptor) (*GroupsWhere, error)
 	GetAllGroups(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllGroups, error)
@@ -77,6 +81,198 @@ type Client struct {
 
 func NewClient(cli *http.Client, baseURL string, options *clientv2.Options, interceptors ...clientv2.RequestInterceptor) DatumClient {
 	return &Client{Client: clientv2.NewClient(cli, baseURL, options, interceptors...)}
+}
+
+type GetDocumentData_DocumentData struct {
+	ID         string          "json:\"id\" graphql:\"id\""
+	TemplateID string          "json:\"templateID\" graphql:\"templateID\""
+	Data       json.RawMessage "json:\"data\" graphql:\"data\""
+	CreatedAt  *time.Time      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy  *string         "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt  *time.Time      "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy  *string         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetDocumentData_DocumentData) GetID() string {
+	if t == nil {
+		t = &GetDocumentData_DocumentData{}
+	}
+	return t.ID
+}
+func (t *GetDocumentData_DocumentData) GetTemplateID() string {
+	if t == nil {
+		t = &GetDocumentData_DocumentData{}
+	}
+	return t.TemplateID
+}
+func (t *GetDocumentData_DocumentData) GetData() *json.RawMessage {
+	if t == nil {
+		t = &GetDocumentData_DocumentData{}
+	}
+	return &t.Data
+}
+func (t *GetDocumentData_DocumentData) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetDocumentData_DocumentData{}
+	}
+	return t.CreatedAt
+}
+func (t *GetDocumentData_DocumentData) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetDocumentData_DocumentData{}
+	}
+	return t.CreatedBy
+}
+func (t *GetDocumentData_DocumentData) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetDocumentData_DocumentData{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetDocumentData_DocumentData) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetDocumentData_DocumentData{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateDocumentData_CreateDocumentData_DocumentData struct {
+	ID         string          "json:\"id\" graphql:\"id\""
+	TemplateID string          "json:\"templateID\" graphql:\"templateID\""
+	Data       json.RawMessage "json:\"data\" graphql:\"data\""
+	CreatedAt  *time.Time      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy  *string         "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt  *time.Time      "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy  *string         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateDocumentData_CreateDocumentData_DocumentData) GetID() string {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData_DocumentData{}
+	}
+	return t.ID
+}
+func (t *CreateDocumentData_CreateDocumentData_DocumentData) GetTemplateID() string {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData_DocumentData{}
+	}
+	return t.TemplateID
+}
+func (t *CreateDocumentData_CreateDocumentData_DocumentData) GetData() *json.RawMessage {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData_DocumentData{}
+	}
+	return &t.Data
+}
+func (t *CreateDocumentData_CreateDocumentData_DocumentData) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData_DocumentData{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateDocumentData_CreateDocumentData_DocumentData) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData_DocumentData{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateDocumentData_CreateDocumentData_DocumentData) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData_DocumentData{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateDocumentData_CreateDocumentData_DocumentData) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData_DocumentData{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateDocumentData_CreateDocumentData struct {
+	DocumentData CreateDocumentData_CreateDocumentData_DocumentData "json:\"documentData\" graphql:\"documentData\""
+}
+
+func (t *CreateDocumentData_CreateDocumentData) GetDocumentData() *CreateDocumentData_CreateDocumentData_DocumentData {
+	if t == nil {
+		t = &CreateDocumentData_CreateDocumentData{}
+	}
+	return &t.DocumentData
+}
+
+type UpdateDocumentData_UpdateDocumentData_DocumentData struct {
+	ID         string          "json:\"id\" graphql:\"id\""
+	TemplateID string          "json:\"templateID\" graphql:\"templateID\""
+	Data       json.RawMessage "json:\"data\" graphql:\"data\""
+	CreatedAt  *time.Time      "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	CreatedBy  *string         "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt  *time.Time      "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	UpdatedBy  *string         "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *UpdateDocumentData_UpdateDocumentData_DocumentData) GetID() string {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData_DocumentData{}
+	}
+	return t.ID
+}
+func (t *UpdateDocumentData_UpdateDocumentData_DocumentData) GetTemplateID() string {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData_DocumentData{}
+	}
+	return t.TemplateID
+}
+func (t *UpdateDocumentData_UpdateDocumentData_DocumentData) GetData() *json.RawMessage {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData_DocumentData{}
+	}
+	return &t.Data
+}
+func (t *UpdateDocumentData_UpdateDocumentData_DocumentData) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData_DocumentData{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateDocumentData_UpdateDocumentData_DocumentData) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData_DocumentData{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateDocumentData_UpdateDocumentData_DocumentData) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData_DocumentData{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateDocumentData_UpdateDocumentData_DocumentData) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData_DocumentData{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateDocumentData_UpdateDocumentData struct {
+	DocumentData UpdateDocumentData_UpdateDocumentData_DocumentData "json:\"documentData\" graphql:\"documentData\""
+}
+
+func (t *UpdateDocumentData_UpdateDocumentData) GetDocumentData() *UpdateDocumentData_UpdateDocumentData_DocumentData {
+	if t == nil {
+		t = &UpdateDocumentData_UpdateDocumentData{}
+	}
+	return &t.DocumentData
+}
+
+type DeleteDocumentData_DeleteDocumentData struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteDocumentData_DeleteDocumentData) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteDocumentData_DeleteDocumentData{}
+	}
+	return t.DeletedID
 }
 
 type GetGroupByID_Group_Owner struct {
@@ -7354,6 +7550,50 @@ func (t *UpdateUserSetting_UpdateUserSetting) GetUserSetting() *UpdateUserSettin
 	return &t.UserSetting
 }
 
+type GetDocumentData struct {
+	DocumentData GetDocumentData_DocumentData "json:\"documentData\" graphql:\"documentData\""
+}
+
+func (t *GetDocumentData) GetDocumentData() *GetDocumentData_DocumentData {
+	if t == nil {
+		t = &GetDocumentData{}
+	}
+	return &t.DocumentData
+}
+
+type CreateDocumentData struct {
+	CreateDocumentData CreateDocumentData_CreateDocumentData "json:\"createDocumentData\" graphql:\"createDocumentData\""
+}
+
+func (t *CreateDocumentData) GetCreateDocumentData() *CreateDocumentData_CreateDocumentData {
+	if t == nil {
+		t = &CreateDocumentData{}
+	}
+	return &t.CreateDocumentData
+}
+
+type UpdateDocumentData struct {
+	UpdateDocumentData UpdateDocumentData_UpdateDocumentData "json:\"updateDocumentData\" graphql:\"updateDocumentData\""
+}
+
+func (t *UpdateDocumentData) GetUpdateDocumentData() *UpdateDocumentData_UpdateDocumentData {
+	if t == nil {
+		t = &UpdateDocumentData{}
+	}
+	return &t.UpdateDocumentData
+}
+
+type DeleteDocumentData struct {
+	DeleteDocumentData DeleteDocumentData_DeleteDocumentData "json:\"deleteDocumentData\" graphql:\"deleteDocumentData\""
+}
+
+func (t *DeleteDocumentData) GetDeleteDocumentData() *DeleteDocumentData_DeleteDocumentData {
+	if t == nil {
+		t = &DeleteDocumentData{}
+	}
+	return &t.DeleteDocumentData
+}
+
 type GetGroupByID struct {
 	Group GetGroupByID_Group "json:\"group\" graphql:\"group\""
 }
@@ -7968,6 +8208,125 @@ func (t *UpdateUserSetting) GetUpdateUserSetting() *UpdateUserSetting_UpdateUser
 		t = &UpdateUserSetting{}
 	}
 	return &t.UpdateUserSetting
+}
+
+const GetDocumentDataDocument = `query GetDocumentData ($documentDataId: ID!) {
+	documentData(id: $documentDataId) {
+		id
+		templateID
+		data
+		createdAt
+		createdBy
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetDocumentData(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentData, error) {
+	vars := map[string]interface{}{
+		"documentDataId": documentDataID,
+	}
+
+	var res GetDocumentData
+	if err := c.Client.Post(ctx, "GetDocumentData", GetDocumentDataDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateDocumentDataDocument = `mutation CreateDocumentData ($input: CreateDocumentDataInput!) {
+	createDocumentData(input: $input) {
+		documentData {
+			id
+			templateID
+			data
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateDocumentData(ctx context.Context, input CreateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*CreateDocumentData, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res CreateDocumentData
+	if err := c.Client.Post(ctx, "CreateDocumentData", CreateDocumentDataDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateDocumentDataDocument = `mutation UpdateDocumentData ($updateDocumentDataId: ID!, $input: UpdateDocumentDataInput!) {
+	updateDocumentData(id: $updateDocumentDataId, input: $input) {
+		documentData {
+			id
+			templateID
+			data
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) UpdateDocumentData(ctx context.Context, updateDocumentDataID string, input UpdateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*UpdateDocumentData, error) {
+	vars := map[string]interface{}{
+		"updateDocumentDataId": updateDocumentDataID,
+		"input":                input,
+	}
+
+	var res UpdateDocumentData
+	if err := c.Client.Post(ctx, "UpdateDocumentData", UpdateDocumentDataDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteDocumentDataDocument = `mutation DeleteDocumentData ($deleteDocumentDataId: ID!) {
+	deleteDocumentData(id: $deleteDocumentDataId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteDocumentData(ctx context.Context, deleteDocumentDataID string, interceptors ...clientv2.RequestInterceptor) (*DeleteDocumentData, error) {
+	vars := map[string]interface{}{
+		"deleteDocumentDataId": deleteDocumentDataID,
+	}
+
+	var res DeleteDocumentData
+	if err := c.Client.Post(ctx, "DeleteDocumentData", DeleteDocumentDataDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
 }
 
 const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
@@ -10321,6 +10680,10 @@ func (c *Client) UpdateUserSetting(ctx context.Context, updateUserSettingID stri
 }
 
 var DocumentOperationNames = map[string]string{
+	GetDocumentDataDocument:             "GetDocumentData",
+	CreateDocumentDataDocument:          "CreateDocumentData",
+	UpdateDocumentDataDocument:          "UpdateDocumentData",
+	DeleteDocumentDataDocument:          "DeleteDocumentData",
 	GetGroupByIDDocument:                "GetGroupByID",
 	GroupsWhereDocument:                 "GroupsWhere",
 	GetAllGroupsDocument:                "GetAllGroups",

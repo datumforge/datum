@@ -53,6 +53,12 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
+	// TODO: figure out if we want to create dynamic fun names, or remove as being required entirely
+	if in.FirstName == "" && in.LastName == "" {
+		in.FirstName = "Mysterious"
+		in.LastName = "Antelope"
+	}
+
 	// create user
 	input := generated.CreateUserInput{
 		FirstName: in.FirstName,

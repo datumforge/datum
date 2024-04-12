@@ -165,7 +165,7 @@ func TestAttachJSON(t *testing.T) {
 	actual := make(map[string]string)
 	err = json.Unmarshal(decoded, &actual)
 
-	require.NoError(t, err, "expected no error when unmarshaling JSON attachment")
+	require.NoError(t, err, "expected no error when unmarshalling JSON attachment")
 	require.Equal(t, foo, actual, "expected JSON to match")
 }
 

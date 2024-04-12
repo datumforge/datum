@@ -310,7 +310,7 @@ func (s *TokenTestSuite) TestKeyRotation() {
 	_, err = newTM.Verify(tks)
 	require.NoError(err)
 
-	// A token created by the "new token mangaer" should not be verified by the old one
+	// A token created by the "new token manager" should not be verified by the old one
 	tks, err = newTM.Sign(token)
 	require.NoError(err)
 

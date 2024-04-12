@@ -21,7 +21,7 @@ import (
 var eyeball = flag.Bool("eyeball", false, "Generate MIME emails for eyeball testing")
 
 // This suite mocks the SendGrid email client to verify that email metadata is
-// populated corectly and emails can be marshaled into bytes for transmission.
+// populated correctly and emails can be marshaled into bytes for transmission.
 func TestEmailSuite(t *testing.T) {
 	suite.Run(t, &EmailTestSuite{})
 }

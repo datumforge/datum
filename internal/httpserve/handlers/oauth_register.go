@@ -39,7 +39,7 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 
 	ctxWithToken := token.NewContextWithOauthTooToken(ctx.Request().Context(), r.Email)
 
-	// create oauth2 token from rquest input
+	// create oauth2 token from request input
 	tok := &oauth2.Token{
 		AccessToken: r.ClientToken,
 	}

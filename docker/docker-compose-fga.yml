@@ -12,11 +12,10 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-
   migrate:
     depends_on:
       postgres:
@@ -29,7 +28,6 @@ services:
       - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/postgres?sslmode=disable
     networks:
       - default
-
   openfga:
     depends_on:
       migrate:
@@ -48,12 +46,7 @@ services:
       - check-query-cache
       - --check-query-cache-enabled
     healthcheck:
-      test:
-        [
-          "CMD",
-          "/usr/local/bin/grpc_health_probe",
-          "-addr=openfga:8081"
-        ]
+      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=openfga:8081"]
       interval: 5s
       timeout: 30s
       retries: 3

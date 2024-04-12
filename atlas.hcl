@@ -1,8 +1,8 @@
-variable "cloud_token" { 
+variable "cloud_token" {
   type    = string
   default = getenv("ATLAS_CLOUD_TOKEN")
 }
-  
+
 atlas {
   cloud {
     token = var.cloud_token

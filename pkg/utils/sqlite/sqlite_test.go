@@ -56,7 +56,7 @@ func TestOpenMany(t *testing.T) {
 	require.Len(t, closers, expectedConnections)
 	require.Len(t, conns, expectedConnections)
 
-	// Should have different connnections
+	// Should have different connections
 	for i := 1; i < len(conns); i++ {
 		require.NotSame(t, conns[i-1], conns[i], "expected connections to be different")
 	}

@@ -1,7 +1,5 @@
----
 name: Datum
 model_file: ../model/datum.fga
-
 tuples:
   # setup parent child org relationship
   - user: organization:datum
@@ -19,13 +17,13 @@ tuples:
   - user: user:ulid-of-member
     relation: member
     object: organization:datum
-tests: 
+tests:
   - name: organization
-    description: test organization relationships 
+    description: test organization relationships
     tuples:
     # add test local tuples here
-    check: 
-      - user: user:ulid-of-owner 
+    check:
+      - user: user:ulid-of-owner
         object: organization:datum # parent org
         assertions:
           member: true
@@ -34,7 +32,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
-      - user: user:ulid-of-member 
+      - user: user:ulid-of-member
         object: organization:datum # parent org
         assertions:
           member: true
@@ -43,7 +41,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
-      - user: user:ulid-of-admin 
+      - user: user:ulid-of-admin
         object: organization:datum # parent org
         assertions:
           member: true
@@ -52,7 +50,7 @@ tests:
           can_delete: false
           can_edit: true
           can_view: true
-      - user: user:ulid-of-owner 
+      - user: user:ulid-of-owner
         object: organization:catum #child org
         assertions:
           member: true
@@ -61,7 +59,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
-      - user: user:ulid-of-member  
+      - user: user:ulid-of-member
         object: organization:catum # child org
         assertions:
           member: true
@@ -70,7 +68,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
-      - user: user:ulid-of-admin 
+      - user: user:ulid-of-admin
         object: organization:catum # child org
         assertions:
           member: true
@@ -83,7 +81,7 @@ tests:
       - user: user:ulid-of-owner
         type: organization
         assertions:
-          owner: 
+          owner:
             - organization:catum
             - organization:datum
           admin:
@@ -94,7 +92,7 @@ tests:
         type: organization
         assertions:
           owner:
-          admin: 
+          admin:
           member:
             - organization:catum
             - organization:datum
@@ -102,7 +100,7 @@ tests:
         type: organization
         assertions:
           owner:
-          admin: 
+          admin:
             - organization:catum
             - organization:datum
           member:
@@ -112,11 +110,11 @@ tests:
     description: test group relationships to their parent (organization)
     tuples:
       # setup group with owner
-      - user: organization:datum 
+      - user: organization:datum
         relation: parent
         object: group:cat-lovers
       # add group admin
-      - user: user:ulid-of-owner 
+      - user: user:ulid-of-owner
         relation: admin
         object: group:cat-lovers
       # add group member but not a member of the org
@@ -124,15 +122,15 @@ tests:
         relation: member
         object: group:cat-lovers
       # add group admin
-      - user: user:ulid-of-member 
+      - user: user:ulid-of-member
         relation: member
         object: group:cat-lovers
-    check: 
+    check:
       - user: organization:datum
         object: group:cat-lovers
         assertions:
           parent: true
-      - user: user:ulid-of-owner 
+      - user: user:ulid-of-owner
         object: group:cat-lovers
         assertions:
           admin: true
@@ -140,7 +138,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
-      - user: user:ulid-of-cat-lover-member 
+      - user: user:ulid-of-cat-lover-member
         object: group:cat-lovers
         assertions:
           admin: false
@@ -148,7 +146,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: false
-      - user: user:ulid-of-member 
+      - user: user:ulid-of-member
         object: group:cat-lovers
         assertions:
           admin: false
@@ -166,26 +164,26 @@ tests:
       - user: user:ulid-of-member
         type: group
         assertions:
-          admin: 
+          admin:
           member:
             - group:cat-lovers
       - user: user:ulid-of-admin # user wasn't added to group
         type: group
         assertions:
-          admin: 
+          admin:
           member:
   - name: subscription tier
     description: subscription tiers are associated to organizations, and members are part of that organization
     tuples:
       # setup organization with pro tier
-      - user: organization:datum 
+      - user: organization:datum
         relation: subscriber
         object: subscription_tier:pro
       # setup organization with free tier
-      - user: organization:startup 
+      - user: organization:startup
         relation: subscriber
         object: subscription_tier:free
-    check: 
+    check:
       - user: organization:datum
         object: subscription_tier:pro
         assertions:
@@ -221,7 +219,7 @@ tests:
         type: subscription_tier
         assertions:
           subscriber_member:
-            - subscription_tier:pro 
+            - subscription_tier:pro
           subscriber:
       - user: user:ulid-of-admin
         type: subscription_tier
@@ -256,11 +254,11 @@ tests:
     description: features tiers are associated to subscription tiers, and users can access features based on their subscription tier of their organization
     tuples:
       # setup organization with pro tier
-      - user: organization:datum 
+      - user: organization:datum
         relation: subscriber
         object: subscription_tier:pro
       # setup organization with free tier
-      - user: organization:startup 
+      - user: organization:startup
         relation: subscriber
         object: subscription_tier:free
       # setup org member
@@ -273,7 +271,7 @@ tests:
       - user: subscription_tier:pro
         relation: associated_subscription_tier
         object: feature:sso
-    check: 
+    check:
       - user: user:ulid-of-startup-member
         object: feature:asset-management
         assertions:

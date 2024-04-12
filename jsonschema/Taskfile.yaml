@@ -1,7 +1,7 @@
 version: '3'
 
-tasks: 
-  install: 
+tasks:
+  install:
     desc: install dependencies
     cmds:
       - npm install jsonschema2mk --global
@@ -11,18 +11,18 @@ tasks:
     cmds:
       - task: schema
       - task: docs
-  
-  schema: 
+
+  schema:
     desc: generate a new jsonschema and corresponding config/config.example.yaml
     cmds:
       - go run jsonschema/schema_generator.go
-  
+
   docs:
     desc: generate documentation from the jsonschema
     cmds:
       - npx jsonschema2mk --schema jsonschema/datum.config.json > jsonschema/api-docs.md
 
-  ci: 
+  ci:
     desc: a task that runs during CI to confirm there are no changes after running generate
     cmds:
       - task: generate

@@ -1,25 +1,25 @@
 version: '3'
 
 includes:
-  cli: 
+  cli:
     taskfile: ./cmd/cli/Taskfile.yaml
     dir: ./cmd/cli
-  docker: 
+  docker:
     taskfile: ./docker/Taskfile.yaml
     dir: ./docker
     aliases: [compose]
-  fga: 
+  fga:
     taskfile: ./fga/Taskfile.yaml
     dir: ./fga
-  db: 
+  db:
     taskfile: ./db/Taskfile.yaml
     dir: ./db
     aliases: [atlas]
-  oas: 
+  oas:
     taskfile: ./pkg/utils/oas/Taskfile.yaml
     dir: ./pkg/utils/oas
     aliases: [oas]
-  config: 
+  config:
     taskfile: ./jsonschema/Taskfile.yaml
 
 env:
@@ -42,10 +42,10 @@ tasks:
       - "brew install openfga/tap/fga"
       - go install github.com/vektra/mockery/v2@v2.40.1
       - task: config:install
-      - defer: { task: go:tidy }
-  
+      - defer: {task: 'go:tidy'}
+
   generate:
-    desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc. 
+    desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc.
     cmds:
       - go generate ./...
       - cp ./internal/ent/generated/openapi.json ./pkg/utils/oas/specifications/openapi.json
@@ -59,7 +59,7 @@ tasks:
   go:test:
     desc: runs and outputs results of created go tests
     cmds:
-      - go test -v ./... 
+      - go test -v ./...
 
   go:test:cover:
     desc: runs and outputs results of created go tests with coverage
@@ -88,7 +88,7 @@ tasks:
     aliases: [buildcli]
     desc: Runs go build for the datum cli
     cmds:
-      - go build -mod=mod -o datum-cli ./cmd/cli 
+      - go build -mod=mod -o datum-cli ./cmd/cli
 
   go:all:
     aliases: [go]
@@ -98,18 +98,18 @@ tasks:
       - task: go:fmt
       - task: go:lint
       - task: go:test
- 
+
   # dev tasks
   run-dev:
     dotenv: ['{{.ENV}}/.env-dev']
     desc: runs the datum server in dev mode
     cmds:
-    - task: compose:redis
-    - task: compose:fga
-    - go run main.go serve --debug --pretty
+      - task: compose:redis
+      - task: compose:fga
+      - go run main.go serve --debug --pretty
 
   pr:
-    desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
+    desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR
     cmds:
       - task: generate
       - task: config:generate

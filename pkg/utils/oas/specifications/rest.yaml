@@ -1,436 +1,424 @@
 openapi: 3.1.0
 info:
-    title: Datum OpenAPI 3.1.0 Specifications
-    description: Documentation for Datum's API services
-    termsOfService: https://datum.net/terms
-    contact:
-        name: Datum Support
-        url: https://datum.net/support
-        email: support@datum.net
-    license:
-        name: Apache 2.0
-        url: https://www.apache.org/licenses/LICENSE-2.0.html
-    version: 1.0.1
+  title: Datum OpenAPI 3.1.0 Specifications
+  description: Documentation for Datum's API services
+  termsOfService: https://datum.net/terms
+  contact:
+    name: Datum Support
+    url: https://datum.net/support
+    email: support@datum.net
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
 servers:
-    - url: https://api.datum.net/v1
+  - url: https://api.datum.net/v1
 paths:
-    /ready:
-        get:
-            operationId: ready
-            tags: 
-                -  HealthCheck
-            security:
-                - {}
-            summary: Status Check
-            description: A status check for the server and it's associated dependencies
-            responses:
-                "200":
-                    description: The status of the server and sub components are returned
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    fga:
-                                        type: string
-                                    redis:
-                                        type: string
-                                    sqlite_db_primary:
-                                        type: string
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"
-                "500":
-                    $ref: "#/components/responses/InternalError"
-    /livez:
-        get:
-            operationId: livez
-            tags:
-                - HealthCheck
-            security:
-                - {}
-            summary: Server liveness check response
-            description: A heartbeat check to confirm the server is up or down
-            responses:
-                "200":
-                    description: An up / down status of the server is returned
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    status:
-                                        type: string
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"
-    /register:
-        post:
-            operationId: register
-            tags: 
-                -  Register
-            security:
-                - {}
-            summary: Register User
-            description: Register a new user and their personal organization
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            required:
-                                - first-name
-                                - last-name
-                                - email
-                                - password
-                            properties:
-                                first-name:
-                                    type: string
-                                last-name:
-                                    type: string
-                                email:
-                                    type: string
-                                password:
-                                    type: string
-            responses:
-                "201":
-                    description: User and organization created successfully. The details of the new user are returned
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                required:
-                                    - user_id
-                                properties:
-                                    user_id:
-                                        type: string
-                                    email:
-                                        type: string
-                                    message:
-                                        type: string
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"
-                "409":
-                    description: A user with the email address already exists
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ErrorReply"
-                "500":
-                    $ref: "#/components/responses/InternalError"
-
-    /login:
-        post:
-            operationId: login
-            tags: 
-                -  Login
-            security:
-                - {}
-            summary: Login User
-            description: >-
-                User login and authentication via email and password. The user can optionally supply an OrgID to log into a specific organization
-                that they belong to. An _access token_ and a _refresh token_ are returned that contain the authorization claims of the user.
-
-                The access token should be added to the Authorize header as a Bearer token for all requests that require authentication. The
-                refresh token can be used to obtain a new access token after it expires (extending the user's session) without requiring the user
-                to supply their username and password again.
-
-                The access token contains claims that help identify the user (e.g. name, email, picture) as well as the ID of the organization
-                the user is currently logged into. A user can only be logged into one organization at a time. Additionally the claims contain
-                the permissions the user has defined by the user's role. The subject of the claims is the ID of the user.
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            required:
-                                - username
-                                - password
-                            properties:
-                                username:
-                                    type: string
-                                password:
-                                    type: string
-            responses:
-                "200":
-                    description: Successful authentication
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/LoginReply"
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"
-                "500":
-                    $ref: "#/components/responses/InternalError"
-    /refresh:
-        post:
-            operationId: refresh
-            tags: 
-                -  Authentication
-            security:
-                - {}
-            summary: Refresh access token
-            description: >
-                Access tokens have an expiration of an hour, in order to maintain long running sessions, a refresh token that is tied with a
-                specific access token is issued at the same time. The refresh token may be used to obtain a new access/refresh token pair,
-                thereby extending the user or api key session without requiring credentials to be authenticated a second time.
-
-                Note that the claims that are returned during refresh may not be the same claims as the original access token (e.g. if the
-                role of a user has changed during the session). This means that an operation that was previously allowed by the original
-                access token may not be allowed after refresh.
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            required:
-                                - refresh_token
-                            properties:
-                                refresh_token:
-                                    type: string
-                                    description: a JWT token that is signed by Datum and linked to an access token. Has a "Not Before" and "Expires" timestamp that bound when the refresh token can be used
-            responses:
-                "200":
-                    description: Successful authentication
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/LoginReply"
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"
-                "403":
-                    description: Could not authenticate refresh token
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ErrorReply"
-                "500":
-                    $ref: "#/components/responses/InternalError"
-    /forgot-password:
-        post:
-            operationId: forgot-password
-            tags: 
-                -  ForgotPassword
-            security:
-                - {}
-            summary: Request a password reset
-            description: Ability for a user to trigger a password re-set flow
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            required:
-                                - email
-                            properties:
-                                email:
-                                    type: string
-            responses:
-                "204":
-                    description: Password reset received; no content is returned
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"                
-                "500":
-                    $ref: "#/components/responses/InternalError"
-
-    /password-reset:
-        post:
-            operationId: password-reset
-            tags: 
-                -  PasswordReset
-            security:
-                - {}
-            summary: Update a user's password
-            description: Endpoint which will accept a Datum generated token in addition to a new password for a user
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            required:
-                                - password
-                            properties:
-                                password:
-                                    type: string
-
-            parameters:
-              - name: token
-                in: query
-                description: datum generated token
-                required: true
-                schema:
+  /ready:
+    get:
+      operationId: ready
+      tags:
+        - HealthCheck
+      security:
+        - {}
+      summary: Status Check
+      description: A status check for the server and it's associated dependencies
+      responses:
+        "200":
+          description: The status of the server and sub components are returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fga:
                     type: string
-                    format: string
-            responses:
-                "204":
-                    description: Password reset received; no content is returned
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"                
-                "500":
-                    $ref: "#/components/responses/InternalError"
-    /verify:
-        get:
-            operationId: verify
-            tags: 
-                -  VerifyEmail
-            security:
-                - {}
-            summary: Verify email
-            description: Verify a user's email by providing the secure token sent to the requesting email
-            parameters:
-              - name: token
-                in: query
-                description: datum generated token
-                required: true
-                schema:
+                  redis:
                     type: string
-                    format: string
-            responses:
-                "201":
-                    description: Token is valid, but expired - re-sent token
-                "204":
-                    description: Verification completed; no content returned
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"                
-                "500":
-                    $ref: "#/components/responses/InternalError"
-    /resend:
-        post:
-            operationId: resend-email
-            tags:
-                - ResendVerificationEmail
-            security:
-                - {}
-            summary: Resend verification email
-            description: Triggers a re-send of the email and token which can be used to re-set a users's password; invalidates previously generated tokens
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            required:
-                                - email
-                            properties:
-                                email:
-                                    type: string
-            responses:
-                "200":
-                    description: Resend verify email request received; no content is returned
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"
-                "500":
-                    $ref: "#/components/responses/InternalError"
-    /invite:
-        post:
-            operationId: invite
-            tags:
-                - Invite
-            security:
-                - {}
-            summary: Invite a user to Datum
-            description: Creates an invitation token and sends that token to a user via email to complete the Datum registration process and join the organization the invitation was generated from
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            required:
-                                - first-name
-                                - last-name
-                                - password
-                            properties:
-                                first-name:
-                                    type: string
-                                last-name:
-                                    type: string
-                                password:
-                                    type: string
-            parameters:
-              - name: token
-                in: query
-                description: datum generated token
-                required: true
-                schema:
+                  sqlite_db_primary:
                     type: string
-                    format: string
-            responses:
-                "201":
-                    description: User and organization created successfully. The details of the new user are returned
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                required:
-                                    - email
-                                    - user_id
-                                    - joined_org_id
-                                    - role
-                                properties:
-                                    email:
-                                        type: string
-                                        description: The email of the user joined to the requesting orgnization
-                                    user_id:
-                                        type: string
-                                        description: The Datum generated user ID of the user joined to the requesting organization
-                                    joined_org_id:
-                                        type: string
-                                        description: The Datum generated organization ID of the requesting organization the user was joined to
-                                    role:
-                                        type: string
-                                        description: The users role upon joining the requesting organization
-                "400":
-                    $ref: "#/components/responses/InvalidRequest"
-                "401":
-                    $ref: "#/components/responses/Unauthorized"
-                "500":
-                    $ref: "#/components/responses/InternalError"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /livez:
+    get:
+      operationId: livez
+      tags:
+        - HealthCheck
+      security:
+        - {}
+      summary: Server liveness check response
+      description: A heartbeat check to confirm the server is up or down
+      responses:
+        "200":
+          description: An up / down status of the server is returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+  /register:
+    post:
+      operationId: register
+      tags:
+        - Register
+      security:
+        - {}
+      summary: Register User
+      description: Register a new user and their personal organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - first-name
+                - last-name
+                - email
+                - password
+              properties:
+                first-name:
+                  type: string
+                last-name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "201":
+          description: User and organization created successfully. The details of the new user are returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - user_id
+                properties:
+                  user_id:
+                    type: string
+                  email:
+                    type: string
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "409":
+          description: A user with the email address already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorReply"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /login:
+    post:
+      operationId: login
+      tags:
+        - Login
+      security:
+        - {}
+      summary: Login User
+      description: >-
+        User login and authentication via email and password. The user can optionally supply an OrgID to log into a specific organization that they belong to. An _access token_ and a _refresh token_ are returned that contain the authorization claims of the user.
 
-components:
-    schemas:
-        ErrorReply:
-            type: object
-            required:
-                - success
-            properties:
-                success:
-                    type: boolean
-                    description: False if there is an error, true otherwise
-                error:
-                    type: string
-                    description: The error message with more detail about why the request failed
-        LoginReply:
-            type: object
-            required:
-                - access_token
+        The access token should be added to the Authorize header as a Bearer token for all requests that require authentication. The refresh token can be used to obtain a new access token after it expires (extending the user's session) without requiring the user to supply their username and password again.
+
+        The access token contains claims that help identify the user (e.g. name, email, picture) as well as the ID of the organization the user is currently logged into. A user can only be logged into one organization at a time. Additionally the claims contain the permissions the user has defined by the user's role. The subject of the claims is the ID of the user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginReply"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /refresh:
+    post:
+      operationId: refresh
+      tags:
+        - Authentication
+      security:
+        - {}
+      summary: Refresh access token
+      description: >
+        Access tokens have an expiration of an hour, in order to maintain long running sessions, a refresh token that is tied with a specific access token is issued at the same time. The refresh token may be used to obtain a new access/refresh token pair, thereby extending the user or api key session without requiring credentials to be authenticated a second time.
+
+        Note that the claims that are returned during refresh may not be the same claims as the original access token (e.g. if the role of a user has changed during the session). This means that an operation that was previously allowed by the original access token may not be allowed after refresh.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
                 - refresh_token
-            properties:
-                access_token:
-                    type: string
-                    description: A JWT token signed by Datum that authenticates the user and contains claims that authorize them
+              properties:
                 refresh_token:
+                  type: string
+                  description: a JWT token that is signed by Datum and linked to an access token. Has a "Not Before" and "Expires" timestamp that bound when the refresh token can be used
+      responses:
+        "200":
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginReply"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "403":
+          description: Could not authenticate refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorReply"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /forgot-password:
+    post:
+      operationId: forgot-password
+      tags:
+        - ForgotPassword
+      security:
+        - {}
+      summary: Request a password reset
+      description: Ability for a user to trigger a password re-set flow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+      responses:
+        "204":
+          description: Password reset received; no content is returned
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /password-reset:
+    post:
+      operationId: password-reset
+      tags:
+        - PasswordReset
+      security:
+        - {}
+      summary: Update a user's password
+      description: Endpoint which will accept a Datum generated token in addition to a new password for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+      parameters:
+        - name: token
+          in: query
+          description: datum generated token
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        "204":
+          description: Password reset received; no content is returned
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /verify:
+    get:
+      operationId: verify
+      tags:
+        - VerifyEmail
+      security:
+        - {}
+      summary: Verify email
+      description: Verify a user's email by providing the secure token sent to the requesting email
+      parameters:
+        - name: token
+          in: query
+          description: datum generated token
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        "201":
+          description: Token is valid, but expired - re-sent token
+        "204":
+          description: Verification completed; no content returned
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /resend:
+    post:
+      operationId: resend-email
+      tags:
+        - ResendVerificationEmail
+      security:
+        - {}
+      summary: Resend verification email
+      description: Triggers a re-send of the email and token which can be used to re-set a users's password; invalidates previously generated tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+      responses:
+        "200":
+          description: Resend verify email request received; no content is returned
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+  /invite:
+    post:
+      operationId: invite
+      tags:
+        - Invite
+      security:
+        - {}
+      summary: Invite a user to Datum
+      description: Creates an invitation token and sends that token to a user via email to complete the Datum registration process and join the organization the invitation was generated from
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - first-name
+                - last-name
+                - password
+              properties:
+                first-name:
+                  type: string
+                last-name:
+                  type: string
+                password:
+                  type: string
+      parameters:
+        - name: token
+          in: query
+          description: datum generated token
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        "201":
+          description: User and organization created successfully. The details of the new user are returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - email
+                  - user_id
+                  - joined_org_id
+                  - role
+                properties:
+                  email:
                     type: string
-                    description: A JWT token signed by Datum that can be used to obtain a new access/refresh token pair
-    responses:
-        Unauthorized:
-            description: User does not have permissions to perform request
-            content:
-                application/json:
-                    schema:
-                        $ref: "#/components/schemas/ErrorReply"
-        InvalidRequest:
-            description: Invalid request, user should repair the request and try again
-            content:
-                application/json:
-                    schema:
-                        $ref: "#/components/schemas/ErrorReply"
-        InternalError:
-            description: Internal error, admins need to address the issue on the server
-            content:
-                application/json:
-                    schema:
-                        $ref: "#/components/schemas/ErrorReply"
+                    description: The email of the user joined to the requesting orgnization
+                  user_id:
+                    type: string
+                    description: The Datum generated user ID of the user joined to the requesting organization
+                  joined_org_id:
+                    type: string
+                    description: The Datum generated organization ID of the requesting organization the user was joined to
+                  role:
+                    type: string
+                    description: The users role upon joining the requesting organization
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+components:
+  schemas:
+    ErrorReply:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          description: False if there is an error, true otherwise
+        error:
+          type: string
+          description: The error message with more detail about why the request failed
+    LoginReply:
+      type: object
+      required:
+        - access_token
+        - refresh_token
+      properties:
+        access_token:
+          type: string
+          description: A JWT token signed by Datum that authenticates the user and contains claims that authorize them
+        refresh_token:
+          type: string
+          description: A JWT token signed by Datum that can be used to obtain a new access/refresh token pair
+  responses:
+    Unauthorized:
+      description: User does not have permissions to perform request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorReply"
+    InvalidRequest:
+      description: Invalid request, user should repair the request and try again
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorReply"
+    InternalError:
+      description: Internal error, admins need to address the issue on the server
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorReply"

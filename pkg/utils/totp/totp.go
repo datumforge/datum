@@ -243,7 +243,7 @@ func (o *OTP) encrypt(s string) (string, error) {
 		return "", ErrFailedToCreateCipherText
 	}
 
-	stream := cipher.NewCFBEncrypter(block, iv)
+	stream := cipher.NewCFBEncrypter(block, iv) // # spellcheck:off
 	stream.XORKeyStream(cipherText[aes.BlockSize:], []byte(s))
 
 	return fmt.Sprintf("%v:%s",

@@ -1,6 +1,6 @@
 version: '3'
 
-tasks: 
+tasks:
   create-and-lint:
     desc: runs the atlas create and lint commands
     aliases: [all]
@@ -36,7 +36,7 @@ tasks:
   console:
     desc: launches an interactive terminal to the local datum db with some tasty options
     cmds:
-      -  sqlite3 -column -header -box ../datum.db
+      - sqlite3 -column -header -box ../datum.db
 
   newschema:
     desc: generate a new ent schema from template

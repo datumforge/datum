@@ -11,7 +11,7 @@ type organization
     define admin: [user] or admin from parent
     define member: [user] or owner or admin or member from parent
     define user_in_context: [user]
-    define can_delete: owner 
+    define can_delete: owner
     define can_edit: admin or owner
     define can_view: member or admin or owner
 type group
@@ -25,8 +25,8 @@ type group
 type subscription_tier
   relations
     define subscriber: [organization]
-    define subscriber_member: member from subscriber 
+    define subscriber_member: member from subscriber
 type feature
   relations
-    define associated_subscription_tier: [subscription_tier] 
+    define associated_subscription_tier: [subscription_tier]
     define access: [user] or subscriber_member from associated_subscription_tier

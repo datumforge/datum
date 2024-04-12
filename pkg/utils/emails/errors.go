@@ -15,8 +15,8 @@ var (
 	// ErrMissingRecipient is returned when the email recipient is missing
 	ErrMissingRecipient = errors.New("missing email recipient")
 
-	// ErrEmailUnparseable is returned when an email address could not be parsed
-	ErrEmailUnparseable = errors.New("could not parse email address")
+	// ErrEmailUnparsable is returned when an email address could not be parsed
+	ErrEmailUnparsable = errors.New("could not parse email address")
 
 	// ErrSendgridNotEnabled is returned when no sendgrid API key is present
 	ErrSendgridNotEnabled = errors.New("sendgrid is not enabled, cannot add contact")

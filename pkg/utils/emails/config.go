@@ -116,13 +116,13 @@ func (m *EmailManager) GetDatumListID() string {
 // error
 func parseEmail(email string) (contact sendgrid.Contact, err error) {
 	if email == "" {
-		return contact, ErrEmailUnparseable
+		return contact, ErrEmailUnparsable
 	}
 
 	var addr *mail.Address
 
 	if addr, err = mail.ParseAddress(email); err != nil {
-		return contact, ErrEmailUnparseable
+		return contact, ErrEmailUnparsable
 	}
 
 	contact = sendgrid.Contact{

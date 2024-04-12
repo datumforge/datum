@@ -17,7 +17,7 @@ This repository contains a number of code generating functions / utilities which
 
 1. Use the task commands to start the server
 
-    Run the Datum server in development mode with dependencies in docker 
+    Run the Datum server in development mode with dependencies in docker
     ```bash
     task run-dev
     ```
@@ -51,4 +51,4 @@ To generate a new schema, you can run `task newschema -- [yourschemaname]` where
 
 ### Migrations
 
-We use [atlas](https://atlasgo.io/) to create and manage our DB migrations - you can trigger one via `task atlas:create` and that will generate the necessary migrations. On every PR, the Atlas integration also creates comments with any issues related to the schema changes / migrations. 
+We use [atlas](https://atlasgo.io/) to create and manage our DB migrations - you can trigger one via `task atlas:create` and that will generate the necessary migrations. On every PR, the Atlas integration also creates comments with any issues related to the schema changes / migrations.

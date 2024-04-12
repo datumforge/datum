@@ -4,7 +4,7 @@
 
 1. [ent](https://entgo.io/) - insane entity mapping tool, definitely not an ORM but kind of an ORM
 1. [atlas](https://atlasgo.io/) - Schema generation and migration
-1. [entx](https://github.com/datumforge/entx) - Wrapper to interact with the ent  
+1. [entx](https://github.com/datumforge/entx) - Wrapper to interact with the ent
 
 ## Supported Drivers
 
@@ -12,16 +12,16 @@
 1. [sqlite](https://gitlab.com/cznic/sqlite)
 1. [postgres](https://github.com/lib/pq)
 
-## Local Development 
+## Local Development
 
-### Config Examples 
+### Config Examples
 
 #### Libsql
 
 1. This will write to a local file `datum.db`, already included in `.gitignore`
 
 ```yaml
-db: 
+db:
   debug: true
   driver_name: "libsql"
   primary_db_source: "file:datum.db"
@@ -33,7 +33,7 @@ db:
 1. This will write to a local file `datum.db`, already included in `.gitignore`
 
 ```yaml
-db: 
+db:
   debug: true
   driver_name: sqlite3
   primary_db_source: "datum.db"
@@ -45,7 +45,7 @@ db:
 1. Postgres is included in `docker/docker-compose-fga.yml` and the same instance can be used for development. The following connection string should work when using `task docker:all:up`
 
 ```yaml
-db: 
+db:
   debug: true
   driver_name: postgres
   primary_db_source: "postgres://postgres:password@postgres:5432?sslmode=disable"
@@ -57,7 +57,7 @@ db:
 1. Replace the url with your turso database url and token
 
 ```yaml
-db: 
+db:
   debug: true
   driver_name: libsql
   primary_db_source: "https://datum-datum.turso.io?authToken=$TURSO_TOKEN"  # set TURSO_TOKEN to value

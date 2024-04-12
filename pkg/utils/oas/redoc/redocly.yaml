@@ -1,8 +1,8 @@
 theme:
   openapi:
     hideRequestPayloadSample: false
-    generateCodeSamples: 
-      languages: 
+    generateCodeSamples:
+      languages:
         - lang: Go
         - lang: curl
     requiredPropsFirst: true
@@ -20,18 +20,18 @@ theme:
         fontSize: 10pt
         backgroundColor: '#E1EBEA'
         textColor: '#3d005b'
-      components: 
-        httpBadges: 
-          sizes: 
-            small: 
+      components:
+        httpBadges:
+          sizes:
+            small:
               fontSize: 10pt
-            medium: 
+            medium:
               fontSize: 12pt
       colors:
         primary:
           main: '#F08C00'
       typography:
-        code: 
+        code:
           wrap: true
         fontSize: 12pt
         headings:
@@ -97,4 +97,3 @@ apis:
       no-example-value-and-externalValue: error
       no-unresolved-refs: error
       spec-components-invalid-map-name: error
-

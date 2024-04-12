@@ -23,7 +23,7 @@ Config contains the configuration for the datum server
 |[**ratelimit**](#ratelimit)|`object`|Config defines the configuration settings for the default rate limiter<br/>||
 |[**objstorage**](#objstorage)|`object`|ObjectStorage contains the configuration for the object storage provider<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="server"></a>
 ## server: object
 
@@ -49,7 +49,7 @@ Server settings for the echo server
 |[**cacheControl**](#servercachecontrol)|`object`|Config is the config values for the cache-control middleware<br/>|no|
 |[**mime**](#servermime)|`object`|Config defines the config for Mime middleware<br/>|no|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="servertls"></a>
 ### server\.tls: object
 
@@ -65,7 +65,7 @@ TLS settings for the server for secure connections
 |**certKey**|`string`|CertKey file location for the TLS server<br/>||
 |**autoCert**|`boolean`|AutoCert generates the cert with letsencrypt, this does not work on localhost<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="servercors"></a>
 ### server\.cors: object
 
@@ -81,7 +81,7 @@ Config holds the cors configuration settings
 |[**allowOrigins**](#servercorsalloworigins)|`string[]`|||
 |**cookieInsecure**|`boolean`|CookieInsecure sets the cookie to be insecure<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="servercorsprefixes"></a>
 #### server\.cors\.prefixes: object
 
@@ -95,7 +95,7 @@ Config holds the cors configuration settings
 
 **Items**
 
-**Item Type:** `string`
+**Item Type:** `string`  
 <a name="serversecure"></a>
 ### server\.secure: object
 
@@ -116,7 +116,7 @@ Config contains the types used in the mw middleware
 |**referrerpolicy**|`string`|ReferrerPolicy is the value to set the Referrer-Policy header to - default is same-origin<br/>||
 |**cspreportonly**|`boolean`|CSPReportOnly is a boolean to enable the Content-Security-Policy-Report-Only header - default is false<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="serverredirects"></a>
 ### server\.redirects: object
 
@@ -131,7 +131,7 @@ Config contains the types used in executing redirects via the redirect middlewar
 |[**redirects**](#serverredirectsredirects)|`object`|||
 |**code**|`integer`|Code is the HTTP status code to use for the redirect<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="serverredirectsredirects"></a>
 #### server\.redirects\.redirects: object
 
@@ -154,7 +154,7 @@ Config is the config values for the cache-control middleware
 |[**noCacheHeaders**](#servercachecontrolnocacheheaders)|`object`|||
 |[**etagHeaders**](#servercachecontroletagheaders)|`string[]`|||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="servercachecontrolnocacheheaders"></a>
 #### server\.cacheControl\.noCacheHeaders: object
 
@@ -168,7 +168,7 @@ Config is the config values for the cache-control middleware
 
 **Items**
 
-**Item Type:** `string`
+**Item Type:** `string`  
 <a name="servermime"></a>
 ### server\.mime: object
 
@@ -183,7 +183,7 @@ Config defines the config for Mime middleware
 |**mimeTypesFile**|`string`|MimeTypesFile is the file to load mime types from<br/>||
 |**defaultContentType**|`string`|DefaultContentType is the default content type to set if no mime type is found<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="auth"></a>
 ## auth: object
 
@@ -199,7 +199,7 @@ Auth settings including oauth2 providers and datum token configuration
 |[**supportedProviders**](#authsupportedproviders)|`string[]`||no|
 |[**providers**](#authproviders)|`object`|OauthProviderConfig represents the configuration for OAuth providers such as Github and Google<br/>|no|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="authtoken"></a>
 ### auth\.token: object
 
@@ -220,7 +220,7 @@ Config defines the configuration settings for authentication tokens used in the 
 |**jwksEndpoint**|`string`|JWKSEndpoint represents the endpoint for the JSON Web Key Set<br/>|no|
 |[**keys**](#authtokenkeys)|`object`||yes|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="authtokenkeys"></a>
 #### auth\.token\.keys: object
 
@@ -234,7 +234,7 @@ Config defines the configuration settings for authentication tokens used in the 
 
 **Items**
 
-**Item Type:** `string`
+**Item Type:** `string`  
 <a name="authproviders"></a>
 ### auth\.providers: object
 
@@ -250,7 +250,7 @@ OauthProviderConfig represents the configuration for OAuth providers such as Git
 |[**google**](#authprovidersgoogle)|`object`|ProviderConfig represents the configuration settings for a Google Oauth Provider<br/>|yes|
 |[**webauthn**](#authproviderswebauthn)|`object`|ProviderConfig represents the configuration settings for a Webauthn Provider<br/>|yes|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="authprovidersgithub"></a>
 #### auth\.providers\.github: object
 
@@ -267,13 +267,13 @@ ProviderConfig represents the configuration settings for a Github Oauth Provider
 |[**scopes**](#authprovidersgithubscopes)|`string[]`||yes|
 |**redirectUrl**|`string`|RedirectURL is the URL that the GitHub oauth2 client will redirect to after authentication with Github<br/>|yes|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="authprovidersgithubscopes"></a>
 ##### auth\.providers\.github\.scopes: array
 
 **Items**
 
-**Item Type:** `string`
+**Item Type:** `string`  
 <a name="authprovidersgoogle"></a>
 #### auth\.providers\.google: object
 
@@ -290,13 +290,13 @@ ProviderConfig represents the configuration settings for a Google Oauth Provider
 |[**scopes**](#authprovidersgooglescopes)|`string[]`||yes|
 |**redirectUrl**|`string`|RedirectURL is the URL that the Google oauth2 client will redirect to after authentication with Google<br/>|yes|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="authprovidersgooglescopes"></a>
 ##### auth\.providers\.google\.scopes: array
 
 **Items**
 
-**Item Type:** `string`
+**Item Type:** `string`  
 <a name="authproviderswebauthn"></a>
 #### auth\.providers\.webauthn: object
 
@@ -316,7 +316,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**timeout**|`integer`|Timeout is the timeout in seconds<br/>|no|
 |**debug**|`boolean`|Debug enables debug mode<br/>|no|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="authz"></a>
 ## authz: object
 
@@ -332,7 +332,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**createNewModel**|`boolean`|force create a new model<br/>|no|
 |**modelFile**|`string`|path to the fga model file<br/>|no|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="db"></a>
 ## db: object
 
@@ -350,7 +350,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**runMigrations**|`boolean`|run migrations on startup<br/>|no|
 |**migrationProvider**|`string`|migration provider to use for running migrations<br/>|no|
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="geodetic"></a>
 ## geodetic: object
 
@@ -363,7 +363,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**endpoint**|`string`|Endpoint for the graphql api<br/>||
 |**debug**|`boolean`|Enable debug mode<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="redis"></a>
 ## redis: object
 
@@ -388,7 +388,7 @@ Config for the redis client used to store key-value pairs
 |**maxIdleConns**|`integer`|Maximum number of idle connections.<br/>Default is 0. the idle connections are not closed by default.<br/>||
 |**maxActiveConns**|`integer`|Maximum number of connections allocated by the pool at a given time.<br/>When zero, there is no limit on the number of connections in the pool.<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="tracer"></a>
 ## tracer: object
 
@@ -405,7 +405,7 @@ Config defines the configuration settings for opentelemetry tracing
 |[**stdout**](#tracerstdout)|`object`|StdOut settings for the stdout provider<br/>||
 |[**otlp**](#tracerotlp)|`object`|OTLP settings for the otlp provider<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="tracerstdout"></a>
 ### tracer\.stdout: object
 
@@ -419,7 +419,7 @@ StdOut settings for the stdout provider
 |**pretty**|`boolean`|Pretty enables pretty printing of the output<br/>||
 |**disableTimestamp**|`boolean`|DisableTimestamp disables the timestamp in the output<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="tracerotlp"></a>
 ### tracer\.otlp: object
 
@@ -437,13 +437,13 @@ OTLP settings for the otlp provider
 |**compression**|`string`|Compression to use for the request<br/>||
 |**timeout**|`integer`|Timeout for the request<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="tracerotlpheaders"></a>
 #### tracer\.otlp\.headers: array
 
 **Items**
 
-**Item Type:** `string`
+**Item Type:** `string`  
 <a name="email"></a>
 ## email: object
 
@@ -463,7 +463,7 @@ Config for sending emails via SendGrid and managing marketing contacts
 |[**consoleUrl**](#emailconsoleurl)|`object`|ConsoleURLConfig for the datum registration<br/>||
 |[**marketingUrl**](#emailmarketingurl)|`object`|MarketingURLConfig for the datum marketing emails<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="emailconsoleurl"></a>
 ### email\.consoleUrl: object
 
@@ -479,7 +479,7 @@ ConsoleURLConfig for the datum registration
 |**invite**|`string`|Invite is the path to the invite endpoint used in invite emails<br/>||
 |**reset**|`string`|Reset is the path to the reset endpoint used in password reset emails<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="emailmarketingurl"></a>
 ### email\.marketingUrl: object
 
@@ -494,7 +494,7 @@ MarketingURLConfig for the datum marketing emails
 |**subscriberVerify**|`string`|SubscriberVerify is the path to the subscriber verify endpoint used in verification emails<br/>||
 |**defaultSubscriptionOrg**|`string`|DefaultSubscriptionOrg is the default organization name to subscribe to<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="sessions"></a>
 ## sessions: object
 
@@ -508,7 +508,7 @@ Config contains the configuration for the session store
 |**signingKey**|`string`|SigningKey must be a 16, 32, or 64 character string used to encode the cookie<br/>||
 |**encryptionKey**|`string`|EncryptionKey must be a 16, 32, or 64 character string used to encode the cookie<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="sentry"></a>
 ## sentry: object
 
@@ -532,7 +532,7 @@ Config settings for the Sentry client
 |**debug**|`boolean`|Debug indicates whether debug mode is enabled for the Sentry client<br/>||
 |**serverName**|`string`|ServerName is the name of the server running the Sentry client<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="posthog"></a>
 ## posthog: object
 
@@ -547,7 +547,7 @@ Config is the configuration for PostHog
 |**apiKey**|`string`|APIKey is the PostHog API Key<br/>||
 |**host**|`string`|Host is the PostHog API Host<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="totp"></a>
 ## totp: object
 
@@ -563,7 +563,7 @@ Config is the configuration for PostHog
 |**recoveryCodeCount**|`integer`|RecoveryCodeCount is the number of recovery codes to generate<br/>||
 |**recoveryCodeLength**|`integer`|RecoveryCodeLength is the length of a recovery code<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="ratelimit"></a>
 ## ratelimit: object
 
@@ -579,7 +579,7 @@ Config defines the configuration settings for the default rate limiter
 |**burst**|`integer`|||
 |**expires**|`integer`|||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="objstorage"></a>
 ## objstorage: object
 
@@ -594,7 +594,7 @@ ObjectStorage contains the configuration for the object storage provider
 |[**gcs**](#objstoragegcs)|`object`|Config is the configuration for Storage - need to blow this out but initial focus was on s3<br/>||
 |[**fs**](#objstoragefs)|`object`|Config is the configuration for Storage<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="objstorages3"></a>
 ### objstorage\.s3: object
 
@@ -613,7 +613,7 @@ Config is the configuration for Storage
 |**secretAccessKey**|`string`|SecretAccessKey is the secret access key<br/>||
 |**uploadConcurrency**|`integer`|UploadConcurrency is the number of goroutines to spin up when uploading parts<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="objstoragegcs"></a>
 ### objstorage\.gcs: object
 
@@ -628,7 +628,7 @@ Config is the configuration for Storage - need to blow this out but initial focu
 |**credentialsFile**|`string`|CredentialsFile is the path to the credentials file<br/>||
 |**bucket**|`string`|Bucket is the name of the bucket<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 <a name="objstoragefs"></a>
 ### objstorage\.fs: object
 
@@ -642,5 +642,5 @@ Config is the configuration for Storage
 |**enabled**|`boolean`|Enabled is a flag to enable or disable the storage<br/>||
 |**root**|`string`|Root is the root directory for the filesystem storage<br/>||
 
-**Additional Properties:** not allowed
+**Additional Properties:** not allowed  
 

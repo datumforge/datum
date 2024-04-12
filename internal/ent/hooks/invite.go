@@ -200,7 +200,7 @@ func HookInviteAccepted() ent.Hook {
 }
 
 // personalOrgNoInvite checks if the mutation is for a personal org and denies if true or
-// if the user does not hav access to that organization
+// if the user does not have access to that organization
 func personalOrgNoInvite(ctx context.Context, m *generated.InviteMutation) error {
 	orgID, ok := m.OwnerID()
 	if ok {

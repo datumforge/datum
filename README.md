@@ -17,7 +17,7 @@
 </div>
 
 
-This repository houses the core server and orchestration elements which are at the heart of the [Datum](https://datum.net) cloud service. We have no plans to ever gate / silo elements of the code that may fall under our "enterprise licensing" (or any other commercial license we offer) and intend to keep the code Apache 2.0 licensed and free for use, forever. Given that, if you find value in anything we're doing here, our cloud services, or use this software yourself (for any purpose) - don't be afraid to becomne a contributor! If you have any questions please reach out to `contribute@datum.net`.
+This repository houses the core server and orchestration elements which are at the heart of the [Datum](https://datum.net) cloud service. We have no plans to ever gate / silo elements of the code that may fall under our "enterprise licensing" (or any other commercial license we offer) and intend to keep the code Apache 2.0 licensed and free for use, forever. Given that, if you find value in anything we're doing here, our cloud services, or use this software yourself (for any purpose) - don't be afraid to become a contributor! If you have any questions please reach out to `contribute@datum.net`.
 
 ## What is Datum?
 
@@ -38,12 +38,12 @@ At it's core, Datum is a collection of services built on top of an entity framew
 On top of this powerful core we also have an incredible amount of pluggable, extensible services:
 - Authentication: we today support password, OAuth2 / Social login providers (Github, Google), Passkeys as well as standard OIDC Discovery flows
 - Multi-factor: built-in 2FA mechanisms, TOTP
-- Authorization: extensible and flexbile permissions constructs via openFGA based on Google Zanzibar
+- Authorization: extensible and flexible permissions constructs via openFGA based on Google Zanzibar
 - Session Management: built-in session manaagement with JWKS key validation, encrypted cookies and sessions
 - Robust Middleware: cache control, CORS, Rate Limiting, transaction rollbacks, and more
-- Queing and Scheduling: Task management and scheduling with Marionette
+- Queuing and Scheduling: Task management and scheduling with Marionette
 - External Storage Providers: store data in AWS S3, Google GCS, or locally
-- External Database Providers: Leverage Turso, or other PostgreSQL / SQLite compatabile vendors and libraries
+- External Database Providers: Leverage Turso, or other PostgreSQL / SQLite compatible vendors and libraries
 - Data Isolation and Management: Heirarchal organizations and granular permissions controls
 
 
@@ -96,7 +96,7 @@ The only "supported" method of deploying today is locally, but we have a WIP Hel
 
 ## Contributing
 
-Please read the [contributing](.gitub/CONTRIBUTING.md) guide as well as the [Developer Certificate of Orgin](https://developercertificate.org/). You will be required to sign all commits to the Datum project, so if you're unfamiliar with how to set that up, see [github's documentation](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification).
+Please read the [contributing](.gitub/CONTRIBUTING.md) guide as well as the [Developer Certificate of Origin](https://developercertificate.org/). You will be required to sign all commits to the Datum project, so if you're unfamiliar with how to set that up, see [github's documentation](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification).
 
 ## Licensing
 

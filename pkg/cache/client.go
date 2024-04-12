@@ -62,7 +62,7 @@ func New(c Config) *redis.Client {
 		MinIdleConns:     c.MinIdleConns,
 		MaxIdleConns:     c.MaxIdleConns,
 		MaxActiveConns:   c.MaxActiveConns,
-		DisableIndentity: true,
+		DisableIndentity: true, // # spellcheck: off
 	}
 
 	if c.Username != "" {

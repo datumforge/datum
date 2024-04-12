@@ -64,7 +64,7 @@ type Token struct {
 	ToBeSignedString string
 	// Signature is the third segment of the token; populated when you parse a token
 	Signature string
-	// Valid is a bool determining if the token is valid; populated when you parse or verify a toekn
+	// Valid is a bool determining if the token is valid; populated when you parse or verify a token
 	Valid bool
 }
 

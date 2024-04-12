@@ -26,7 +26,7 @@ type SendGridClient interface {
 
 // New email manager with the specified configuration
 func New(conf Config) (m *EmailManager, err error) {
-	// conf.Valdate checks presence of admin, from email, and testing flags
+	// conf.Validate checks presence of admin, from email, and testing flags
 	m = &EmailManager{conf: conf}
 
 	if err := m.Validate(); err != nil {

@@ -120,7 +120,7 @@ func TestEqual(t *testing.T) {
 		expected bool
 	}{
 		{"", "", true},
-		{"abc", "abd", false},
+		{"abc", "abd", false}, // # spellcheck: off
 		{"abc", "abc", true},
 	}
 

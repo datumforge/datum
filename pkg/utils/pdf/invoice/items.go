@@ -90,8 +90,8 @@ func calculateInvoiceSum(values [][]string) string {
 
 // countTax calculates the tax amount and total gross price for each item in the invoice
 func (i *Invoice) countTax() ([]float64, []float64) {
-	var  (
-		taxes []float64
+	var (
+		taxes  []float64
 		totals []float64
 	)
 

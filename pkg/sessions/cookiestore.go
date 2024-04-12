@@ -2,6 +2,7 @@ package sessions
 
 import (
 	"net/http"
+	"net/url"
 
 	"github.com/gorilla/securecookie"
 )
@@ -29,6 +30,8 @@ type Store[T any] interface {
 	GetSessionIDFromCookie(sess *Session[T]) string
 	// GetSessionDataFromCookie returns the value stored map
 	GetSessionDataFromCookie(sess *Session[T]) any
+	// EncodeCookie encodes the cookie
+	EncodeCookie(session *Session[T]) (string, error)
 }
 
 var _ Store[any] = &cookieStore[any]{}
@@ -64,8 +67,16 @@ func (s *cookieStore[T]) New(name string) *Session[T] {
 func (s *cookieStore[T]) Get(req *http.Request, name string) (session *Session[T], err error) {
 	cookie, err := req.Cookie(name)
 	if err == nil {
+		// decode the session cookie, UIs like to encode the cookie value
+		decodedSession, err := url.QueryUnescape(cookie.Value)
+		if err != nil {
+			return nil, err
+		}
+
 		session = s.New(name)
-		err = securecookie.DecodeMulti(name, cookie.Value, &session.values, s.codecs...)
+		if err = securecookie.DecodeMulti(name, decodedSession, &session.values, s.codecs...); err != nil {
+			return nil, err
+		}
 	}
 
 	return session, err
@@ -101,6 +112,10 @@ func (s *cookieStore[T]) Save(w http.ResponseWriter, session *Session[T]) error 
 	http.SetCookie(w, NewCookie(session.Name(), cookieValue, s.config))
 
 	return nil
+}
+
+func (s *cookieStore[T]) EncodeCookie(session *Session[T]) (string, error) {
+	return securecookie.EncodeMulti(session.Name(), &session.values, s.codecs...)
 }
 
 // Destroy deletes the Session with the given name by issuing an expired

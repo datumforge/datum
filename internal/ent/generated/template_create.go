@@ -11,6 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
+	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 )
@@ -118,6 +120,20 @@ func (tc *TemplateCreate) SetName(s string) *TemplateCreate {
 	return tc
 }
 
+// SetType sets the "type" field.
+func (tc *TemplateCreate) SetType(et enums.DocumentType) *TemplateCreate {
+	tc.mutation.SetType(et)
+	return tc
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tc *TemplateCreate) SetNillableType(et *enums.DocumentType) *TemplateCreate {
+	if et != nil {
+		tc.SetType(*et)
+	}
+	return tc
+}
+
 // SetDescription sets the "description" field.
 func (tc *TemplateCreate) SetDescription(s string) *TemplateCreate {
 	tc.mutation.SetDescription(s)
@@ -138,6 +154,12 @@ func (tc *TemplateCreate) SetJsonconfig(co customtypes.JSONObject) *TemplateCrea
 	return tc
 }
 
+// SetUischema sets the "uischema" field.
+func (tc *TemplateCreate) SetUischema(co customtypes.JSONObject) *TemplateCreate {
+	tc.mutation.SetUischema(co)
+	return tc
+}
+
 // SetID sets the "id" field.
 func (tc *TemplateCreate) SetID(s string) *TemplateCreate {
 	tc.mutation.SetID(s)
@@ -155,6 +177,21 @@ func (tc *TemplateCreate) SetNillableID(s *string) *TemplateCreate {
 // SetOwner sets the "owner" edge to the Organization entity.
 func (tc *TemplateCreate) SetOwner(o *Organization) *TemplateCreate {
 	return tc.SetOwnerID(o.ID)
+}
+
+// AddDocumentIDs adds the "documents" edge to the DocumentData entity by IDs.
+func (tc *TemplateCreate) AddDocumentIDs(ids ...string) *TemplateCreate {
+	tc.mutation.AddDocumentIDs(ids...)
+	return tc
+}
+
+// AddDocuments adds the "documents" edges to the DocumentData entity.
+func (tc *TemplateCreate) AddDocuments(d ...*DocumentData) *TemplateCreate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return tc.AddDocumentIDs(ids...)
 }
 
 // Mutation returns the TemplateMutation object of the builder.
@@ -208,6 +245,10 @@ func (tc *TemplateCreate) defaults() error {
 		v := template.DefaultUpdatedAt()
 		tc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := tc.mutation.GetType(); !ok {
+		v := template.DefaultType
+		tc.mutation.SetType(v)
+	}
 	if _, ok := tc.mutation.ID(); !ok {
 		if template.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized template.DefaultID (forgotten import generated/runtime?)")
@@ -230,6 +271,17 @@ func (tc *TemplateCreate) check() error {
 		if err := template.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
 		}
+	}
+	if _, ok := tc.mutation.GetType(); !ok {
+		return &ValidationError{Name: "type", err: errors.New(`generated: missing required field "Template.type"`)}
+	}
+	if v, ok := tc.mutation.GetType(); ok {
+		if err := template.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`generated: validator failed for field "Template.type": %w`, err)}
+		}
+	}
+	if _, ok := tc.mutation.Jsonconfig(); !ok {
+		return &ValidationError{Name: "jsonconfig", err: errors.New(`generated: missing required field "Template.jsonconfig"`)}
 	}
 	if _, ok := tc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Template.owner"`)}
@@ -298,6 +350,10 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 		_spec.SetField(template.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
+	if value, ok := tc.mutation.GetType(); ok {
+		_spec.SetField(template.FieldType, field.TypeEnum, value)
+		_node.Type = value
+	}
 	if value, ok := tc.mutation.Description(); ok {
 		_spec.SetField(template.FieldDescription, field.TypeString, value)
 		_node.Description = value
@@ -305,6 +361,10 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Jsonconfig(); ok {
 		_spec.SetField(template.FieldJsonconfig, field.TypeJSON, value)
 		_node.Jsonconfig = value
+	}
+	if value, ok := tc.mutation.Uischema(); ok {
+		_spec.SetField(template.FieldUischema, field.TypeJSON, value)
+		_node.Uischema = value
 	}
 	if nodes := tc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -322,6 +382,23 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.DocumentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   template.DocumentsTable,
+			Columns: []string{template.DocumentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = tc.schemaConfig.DocumentData
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

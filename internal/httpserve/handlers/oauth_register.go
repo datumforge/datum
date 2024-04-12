@@ -80,9 +80,12 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	setSessionMap[sessions.EmailKey] = r.Email
 	setSessionMap[sessions.UserIDKey] = user.ID
 
-	if err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID); err != nil {
+	c, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, user.ID)
+	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
+
+	ctx.SetRequest(ctx.Request().WithContext(c))
 
 	props := ph.NewProperties().
 		Set("user_id", user.ID).
@@ -93,10 +96,19 @@ func (h *Handler) OauthRegister(ctx echo.Context) error {
 	h.AnalyticsClient.Event("user_authenticated", props)
 	h.AnalyticsClient.UserProperties(user.ID, props)
 
+	// return the session value for the UI to use
+	// the UI will need to set the cookie because authentication is handled
+	// server side
+	s, err := sessions.SessionToken(ctx.Request().Context())
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
 	out := LoginReply{
 		Message:      "success",
 		AccessToken:  access,
 		RefreshToken: refresh,
+		Session:      s,
 		TokenType:    "Bearer",
 		ExpiresIn:    claims.ExpiresAt.Unix(),
 	}

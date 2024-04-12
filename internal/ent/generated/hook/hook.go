@@ -9,6 +9,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// The DocumentDataFunc type is an adapter to allow the use of ordinary
+// function as DocumentData mutator.
+type DocumentDataFunc func(context.Context, *generated.DocumentDataMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DocumentDataFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.DocumentDataMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.DocumentDataMutation", m)
+}
+
 // The EmailVerificationTokenFunc type is an adapter to allow the use of ordinary
 // function as EmailVerificationToken mutator.
 type EmailVerificationTokenFunc func(context.Context, *generated.EmailVerificationTokenMutation) (generated.Value, error)

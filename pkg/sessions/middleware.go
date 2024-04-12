@@ -85,11 +85,18 @@ func (sc *SessionConfig) CreateAndStoreSession(ctx echo.Context, userID string) 
 	setSessionMap := map[string]any{}
 	setSessionMap[UserIDKey] = userID
 
-	return sc.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, userID)
+	c, err := sc.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, userID)
+	if err != nil {
+		return err
+	}
+
+	ctx.SetRequest(ctx.Request().WithContext(c))
+
+	return nil
 }
 
 // SaveAndStoreSession saves the session to the cookie and to the persistent store (redis) with the provided map of values
-func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.ResponseWriter, sessionMap map[string]any, userID string) error {
+func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.ResponseWriter, sessionMap map[string]any, userID string) (context.Context, error) {
 	session := sc.SessionManager.New(sc.CookieConfig.Name)
 	sessionID := GenerateSessionID()
 
@@ -99,14 +106,14 @@ func (sc *SessionConfig) SaveAndStoreSession(ctx context.Context, w http.Respons
 	c := session.addSessionDataToContext(ctx)
 
 	if err := session.Save(w); err != nil {
-		return err
+		return c, err
 	}
 
 	if err := sc.RedisStore.StoreSession(c, sessionID, userID); err != nil {
-		return err
+		return c, err
 	}
 
-	return nil
+	return c, nil
 }
 
 // LoadAndSave is a middleware function that loads and saves session data using a

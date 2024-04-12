@@ -23,6 +23,11 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.No
 	return withTransactionalMutation(ctx).Noders(ctx, ids)
 }
 
+// DocumentDataSlice is the resolver for the documentDataSlice field.
+func (r *queryResolver) DocumentDataSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataWhereInput) (*generated.DocumentDataConnection, error) {
+	panic(fmt.Errorf("not implemented: DocumentDataSlice - documentDataSlice"))
+}
+
 // Entitlements is the resolver for the entitlements field.
 func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error) {
 	return withTransactionalMutation(ctx).Entitlement.Query().Paginate(ctx, after, first, before, last, generated.WithEntitlementFilter(where.Filter))

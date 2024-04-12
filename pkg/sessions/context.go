@@ -69,14 +69,14 @@ func ContextWithUserID(ctx context.Context, userID string) context.Context {
 	return context.WithValue(ctx, SessionContextKey, userID)
 }
 
-// SessionToken returns the session token from the context maybe, unclear if this works
-func SessionToken(ctx context.Context) map[string]any {
+// SessionToken returns the encoded session token
+func SessionToken(ctx context.Context) (string, error) {
 	sd := getSessionDataFromContext(ctx)
 
 	sd.mu.Lock()
 	defer sd.mu.Unlock()
 
-	return sd.values
+	return sd.store.EncodeCookie(sd)
 }
 
 // addSessionDataToContext adds the session details to the context
@@ -85,8 +85,8 @@ func (s *Session[P]) addSessionDataToContext(ctx context.Context) context.Contex
 }
 
 // getSessionDataFromContext gets the session information from the context
-func getSessionDataFromContext(ctx context.Context) *Session[any] {
-	c, ok := ctx.Value(SessionContextKey).(*Session[any])
+func getSessionDataFromContext(ctx context.Context) *Session[map[string]any] {
+	c, ok := ctx.Value(SessionContextKey).(*Session[map[string]any])
 	if !ok {
 		panic("no session data in context")
 	}

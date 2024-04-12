@@ -26,6 +26,317 @@
     }
   ],
   "paths": {
+    "/document-data": {
+      "get": {
+        "tags": [
+          "DocumentData"
+        ],
+        "summary": "List DocumentData",
+        "description": "List DocumentData.",
+        "operationId": "listDocumentData",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result DocumentData list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentData"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DocumentData"
+        ],
+        "summary": "Create a new DocumentData",
+        "description": "Creates a new DocumentData and persists it to storage.",
+        "operationId": "createDocumentData",
+        "requestBody": {
+          "description": "DocumentData to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "template_id": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "template": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "template_id",
+                  "data",
+                  "template"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "DocumentData created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/document-data/{id}": {
+      "get": {
+        "tags": [
+          "DocumentData"
+        ],
+        "summary": "Find a DocumentData by ID",
+        "description": "Finds the DocumentData with the requested ID and returns it.",
+        "operationId": "readDocumentData",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the DocumentData",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "DocumentData with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "DocumentData"
+        ],
+        "summary": "Deletes a DocumentData by ID",
+        "description": "Deletes the DocumentData with the requested ID.",
+        "operationId": "deleteDocumentData",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the DocumentData",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "DocumentData with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "DocumentData"
+        ],
+        "summary": "Updates a DocumentData",
+        "description": "Updates a DocumentData and persists changes to storage.",
+        "operationId": "updateDocumentData",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the DocumentData",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "DocumentData properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "template_id": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "template": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "DocumentData updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentData"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/document-data/{id}/template": {
+      "get": {
+        "tags": [
+          "DocumentData"
+        ],
+        "summary": "Find the attached Template",
+        "description": "Find the attached Template of the DocumentData with the given ID",
+        "operationId": "readDocumentDataTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the DocumentData",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template attached to DocumentData with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Template"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/entitlements": {
       "get": {
         "tags": [
@@ -5709,6 +6020,14 @@
                   "name": {
                     "type": "string"
                   },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "ROOTTEMPLATE",
+                      "DOCUMENT"
+                    ],
+                    "default": "DOCUMENT"
+                  },
                   "description": {
                     "type": "string"
                   },
@@ -5718,12 +6037,26 @@
                       "type": "string"
                     }
                   },
+                  "uischema": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "owner": {
                     "type": "string"
+                  },
+                  "documents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
                   "name",
+                  "type",
+                  "jsonconfig",
                   "owner"
                 ]
               }
@@ -5862,6 +6195,14 @@
                   "name": {
                     "type": "string"
                   },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "ROOTTEMPLATE",
+                      "DOCUMENT"
+                    ],
+                    "default": "DOCUMENT"
+                  },
                   "description": {
                     "type": "string"
                   },
@@ -5871,8 +6212,20 @@
                       "type": "string"
                     }
                   },
+                  "uischema": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "owner": {
                     "type": "string"
+                  },
+                  "documents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -5887,6 +6240,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Template"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/templates/{id}/documents": {
+      "get": {
+        "tags": [
+          "Template"
+        ],
+        "summary": "List attached Documents",
+        "description": "List attached Documents.",
+        "operationId": "listTemplateDocuments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Template",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Templates list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentData"
+                  }
                 }
               }
             }
@@ -6960,6 +7377,53 @@
   },
   "components": {
     "schemas": {
+      "DocumentData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "template_id": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "template": {
+            "$ref": "#/components/schemas/Template"
+          }
+        },
+        "required": [
+          "id",
+          "template_id",
+          "data",
+          "template"
+        ]
+      },
       "EmailVerificationToken": {
         "type": "object",
         "properties": {
@@ -8165,6 +8629,14 @@
           "name": {
             "type": "string"
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "ROOTTEMPLATE",
+              "DOCUMENT"
+            ],
+            "default": "DOCUMENT"
+          },
           "description": {
             "type": "string"
           },
@@ -8174,13 +8646,27 @@
               "type": "string"
             }
           },
+          "uischema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "owner": {
             "$ref": "#/components/schemas/Organization"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentData"
+            }
           }
         },
         "required": [
           "id",
           "name",
+          "type",
+          "jsonconfig",
           "owner"
         ]
       },

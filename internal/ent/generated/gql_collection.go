@@ -10,6 +10,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -30,6 +31,122 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (dd *DocumentDataQuery) CollectFields(ctx context.Context, satisfies ...string) (*DocumentDataQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return dd, nil
+	}
+	if err := dd.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return dd, nil
+}
+
+func (dd *DocumentDataQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(documentdata.Columns))
+		selectedFields = []string{documentdata.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "template":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplateClient{config: dd.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			dd.withTemplate = query
+			if _, ok := fieldSeen[documentdata.FieldTemplateID]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldTemplateID)
+				fieldSeen[documentdata.FieldTemplateID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[documentdata.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldCreatedAt)
+				fieldSeen[documentdata.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[documentdata.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldUpdatedAt)
+				fieldSeen[documentdata.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[documentdata.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldCreatedBy)
+				fieldSeen[documentdata.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[documentdata.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldUpdatedBy)
+				fieldSeen[documentdata.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[documentdata.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldDeletedAt)
+				fieldSeen[documentdata.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[documentdata.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldDeletedBy)
+				fieldSeen[documentdata.FieldDeletedBy] = struct{}{}
+			}
+		case "templateID":
+			if _, ok := fieldSeen[documentdata.FieldTemplateID]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldTemplateID)
+				fieldSeen[documentdata.FieldTemplateID] = struct{}{}
+			}
+		case "data":
+			if _, ok := fieldSeen[documentdata.FieldData]; !ok {
+				selectedFields = append(selectedFields, documentdata.FieldData)
+				fieldSeen[documentdata.FieldData] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		dd.Select(selectedFields...)
+	}
+	return nil
+}
+
+type documentdataPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []DocumentDataPaginateOption
+}
+
+func newDocumentDataPaginateArgs(rv map[string]any) *documentdataPaginateArgs {
+	args := &documentdataPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*DocumentDataWhereInput); ok {
+		args.opts = append(args.opts, WithDocumentDataFilter(v.Filter))
+	}
+	return args
+}
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (e *EntitlementQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntitlementQuery, error) {
@@ -2602,6 +2719,18 @@ func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 				selectedFields = append(selectedFields, template.FieldOwnerID)
 				fieldSeen[template.FieldOwnerID] = struct{}{}
 			}
+		case "documents":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&DocumentDataClient{config: t.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			t.WithNamedDocuments(alias, func(wq *DocumentDataQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[template.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, template.FieldCreatedAt)
@@ -2637,6 +2766,11 @@ func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 				selectedFields = append(selectedFields, template.FieldName)
 				fieldSeen[template.FieldName] = struct{}{}
 			}
+		case "type":
+			if _, ok := fieldSeen[template.FieldType]; !ok {
+				selectedFields = append(selectedFields, template.FieldType)
+				fieldSeen[template.FieldType] = struct{}{}
+			}
 		case "description":
 			if _, ok := fieldSeen[template.FieldDescription]; !ok {
 				selectedFields = append(selectedFields, template.FieldDescription)
@@ -2646,6 +2780,11 @@ func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 			if _, ok := fieldSeen[template.FieldJsonconfig]; !ok {
 				selectedFields = append(selectedFields, template.FieldJsonconfig)
 				fieldSeen[template.FieldJsonconfig] = struct{}{}
+			}
+		case "uischema":
+			if _, ok := fieldSeen[template.FieldUischema]; !ok {
+				selectedFields = append(selectedFields, template.FieldUischema)
+				fieldSeen[template.FieldUischema] = struct{}{}
 			}
 		case "id":
 		case "__typename":

@@ -164,8 +164,8 @@ github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e h1:anHN8Bsa8x80oC
 github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e/go.mod h1:ZCbNvIShUhAHKlURvgedaGUAghCNZli2I87uLJSPiZ0=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PBRCAXbE29GW+HJXm8a99x0mGtSSE8iHM=
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
-github.com/datumforge/enthistory v0.0.4 h1:y4PkHbIggqtnNXmiIMJNwRdZmmpJz0X1sQ91rsfJl5w=
-github.com/datumforge/enthistory v0.0.4/go.mod h1:VGSPYbls1yd0Fq71I4r30mGteTgXOLRcXeLQvBlSPd8=
+github.com/datumforge/enthistory v0.0.5 h1:jThavWiwjonQ8//h1IzBzJS9a1LNEm3iYK4SIi17OpM=
+github.com/datumforge/enthistory v0.0.5/go.mod h1:VGSPYbls1yd0Fq71I4r30mGteTgXOLRcXeLQvBlSPd8=
 github.com/datumforge/entx v0.0.8 h1:qTlvWRxnoZwXMX2mf1NHvSASVqWZYzs7tgBnY1u6j0s=
 github.com/datumforge/entx v0.0.8/go.mod h1:7eiomY5fsbc8HzO+pbydDaMUftV0PqMftUZ0BziuhJc=
 github.com/datumforge/fgax v0.1.5 h1:cU7MTw+/7STl6KUBACfvvuPO5gbPLW7P4RlYXGLfxgw=
@@ -670,8 +670,8 @@ github.com/tklauser/numcpus v0.6.1 h1:ng9scYS7az0Bk4OZLvrNXNSAO2Pxr1XXRAPyjhIx+F
 github.com/tklauser/numcpus v0.6.1/go.mod h1:1XfjsgE2zo8GVw7POkMbHENHzVg3GzmoZ9fESEdAacY=
 github.com/trisacrypto/directory v1.7.6 h1:SOa1uynpHgcENjZwvVtkfp6qjyvCZBs/X9C0T3nQ0LA=
 github.com/trisacrypto/directory v1.7.6/go.mod h1:JSIMzr3J79h3+Y+17ghtvsb0hUEHzo+islfpecrQfpk=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240410091947-6fedad9244f7 h1:SBwHhYurV3kAY0E8tq9eO75FnNmTaI5f4UZLMcSvqTQ=
-github.com/tursodatabase/libsql-client-go v0.0.0-20240410091947-6fedad9244f7/go.mod h1:2Fu26tjM011BLeR5+jwTfs6DX/fNMEWV/3CBZvggrA4=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240411070317-a1138d155304 h1:Y6cw8yjWCEJDy5Bll7HjTinkgTQU55AXiKSEe29SpgA=
+github.com/tursodatabase/libsql-client-go v0.0.0-20240411070317-a1138d155304/go.mod h1:2Fu26tjM011BLeR5+jwTfs6DX/fNMEWV/3CBZvggrA4=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.2.11 h1:BMaWp1Bb6fHwEtbplGBGJ498wD+LKlNSl25MjdZY4dU=

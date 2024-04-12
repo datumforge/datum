@@ -58,6 +58,42 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	DocumentData struct {
+		CreatedAt  func(childComplexity int) int
+		CreatedBy  func(childComplexity int) int
+		Data       func(childComplexity int) int
+		DeletedAt  func(childComplexity int) int
+		DeletedBy  func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Template   func(childComplexity int) int
+		TemplateID func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
+		UpdatedBy  func(childComplexity int) int
+	}
+
+	DocumentDataConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	DocumentDataCreatePayload struct {
+		DocumentData func(childComplexity int) int
+	}
+
+	DocumentDataDeletePayload struct {
+		DeletedID func(childComplexity int) int
+	}
+
+	DocumentDataEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	DocumentDataUpdatePayload struct {
+		DocumentData func(childComplexity int) int
+	}
+
 	Dummy struct {
 		Done func(childComplexity int) int
 		ID   func(childComplexity int) int
@@ -305,6 +341,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		CreateDocumentData        func(childComplexity int, input generated.CreateDocumentDataInput) int
 		CreateEntitlement         func(childComplexity int, input generated.CreateEntitlementInput) int
 		CreateGroup               func(childComplexity int, input generated.CreateGroupInput) int
 		CreateGroupMembership     func(childComplexity int, input generated.CreateGroupMembershipInput) int
@@ -319,6 +356,7 @@ type ComplexityRoot struct {
 		CreateTFASetting          func(childComplexity int, input generated.CreateTFASettingInput) int
 		CreateTemplate            func(childComplexity int, input generated.CreateTemplateInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
+		DeleteDocumentData        func(childComplexity int, id string) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
 		DeleteGroupMembership     func(childComplexity int, id string) int
@@ -333,6 +371,7 @@ type ComplexityRoot struct {
 		DeleteTemplate            func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		PostMessageTo             func(childComplexity int, subscriber string, content string) int
+		UpdateDocumentData        func(childComplexity int, id string, input generated.UpdateDocumentDataInput) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
 		UpdateGroup               func(childComplexity int, id string, input generated.UpdateGroupInput) int
 		UpdateGroupMembership     func(childComplexity int, id string, input generated.UpdateGroupMembershipInput) int
@@ -657,6 +696,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		DocumentData         func(childComplexity int, id string) int
+		DocumentDataSlice    func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataWhereInput) int
 		Entitlement          func(childComplexity int, id string) int
 		Entitlements         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) int
 		Group                func(childComplexity int, id string) int
@@ -779,10 +820,13 @@ type ComplexityRoot struct {
 		DeletedAt   func(childComplexity int) int
 		DeletedBy   func(childComplexity int) int
 		Description func(childComplexity int) int
+		Documents   func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Jsonconfig  func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Owner       func(childComplexity int) int
+		Type        func(childComplexity int) int
+		Uischema    func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UpdatedBy   func(childComplexity int) int
 	}
@@ -898,6 +942,9 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
+	CreateDocumentData(ctx context.Context, input generated.CreateDocumentDataInput) (*DocumentDataCreatePayload, error)
+	UpdateDocumentData(ctx context.Context, id string, input generated.UpdateDocumentDataInput) (*DocumentDataUpdatePayload, error)
+	DeleteDocumentData(ctx context.Context, id string) (*DocumentDataDeletePayload, error)
 	CreateEntitlement(ctx context.Context, input generated.CreateEntitlementInput) (*EntitlementCreatePayload, error)
 	UpdateEntitlement(ctx context.Context, id string, input generated.UpdateEntitlementInput) (*EntitlementUpdatePayload, error)
 	DeleteEntitlement(ctx context.Context, id string) (*EntitlementDeletePayload, error)
@@ -947,6 +994,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Node(ctx context.Context, id string) (generated.Noder, error)
 	Nodes(ctx context.Context, ids []string) ([]generated.Noder, error)
+	DocumentDataSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataWhereInput) (*generated.DocumentDataConnection, error)
 	Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error)
 	Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error)
 	GroupMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) (*generated.GroupMembershipConnection, error)
@@ -964,6 +1012,7 @@ type QueryResolver interface {
 	Templates(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) (*generated.TemplateConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
 	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
+	DocumentData(ctx context.Context, id string) (*generated.DocumentData, error)
 	Entitlement(ctx context.Context, id string) (*generated.Entitlement, error)
 	Group(ctx context.Context, id string) (*generated.Group, error)
 	GroupMembership(ctx context.Context, id string) (*generated.GroupMembership, error)
@@ -1022,6 +1071,132 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "DocumentData.createdAt":
+		if e.complexity.DocumentData.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.CreatedAt(childComplexity), true
+
+	case "DocumentData.createdBy":
+		if e.complexity.DocumentData.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.CreatedBy(childComplexity), true
+
+	case "DocumentData.data":
+		if e.complexity.DocumentData.Data == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.Data(childComplexity), true
+
+	case "DocumentData.deletedAt":
+		if e.complexity.DocumentData.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.DeletedAt(childComplexity), true
+
+	case "DocumentData.deletedBy":
+		if e.complexity.DocumentData.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.DeletedBy(childComplexity), true
+
+	case "DocumentData.id":
+		if e.complexity.DocumentData.ID == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.ID(childComplexity), true
+
+	case "DocumentData.template":
+		if e.complexity.DocumentData.Template == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.Template(childComplexity), true
+
+	case "DocumentData.templateID":
+		if e.complexity.DocumentData.TemplateID == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.TemplateID(childComplexity), true
+
+	case "DocumentData.updatedAt":
+		if e.complexity.DocumentData.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.UpdatedAt(childComplexity), true
+
+	case "DocumentData.updatedBy":
+		if e.complexity.DocumentData.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.DocumentData.UpdatedBy(childComplexity), true
+
+	case "DocumentDataConnection.edges":
+		if e.complexity.DocumentDataConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataConnection.Edges(childComplexity), true
+
+	case "DocumentDataConnection.pageInfo":
+		if e.complexity.DocumentDataConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataConnection.PageInfo(childComplexity), true
+
+	case "DocumentDataConnection.totalCount":
+		if e.complexity.DocumentDataConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataConnection.TotalCount(childComplexity), true
+
+	case "DocumentDataCreatePayload.documentData":
+		if e.complexity.DocumentDataCreatePayload.DocumentData == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataCreatePayload.DocumentData(childComplexity), true
+
+	case "DocumentDataDeletePayload.deletedID":
+		if e.complexity.DocumentDataDeletePayload.DeletedID == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataDeletePayload.DeletedID(childComplexity), true
+
+	case "DocumentDataEdge.cursor":
+		if e.complexity.DocumentDataEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataEdge.Cursor(childComplexity), true
+
+	case "DocumentDataEdge.node":
+		if e.complexity.DocumentDataEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataEdge.Node(childComplexity), true
+
+	case "DocumentDataUpdatePayload.documentData":
+		if e.complexity.DocumentDataUpdatePayload.DocumentData == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataUpdatePayload.DocumentData(childComplexity), true
 
 	case "Dummy.done":
 		if e.complexity.Dummy.Done == nil {
@@ -1968,6 +2143,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.InviteUpdatePayload.Invite(childComplexity), true
 
+	case "Mutation.createDocumentData":
+		if e.complexity.Mutation.CreateDocumentData == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createDocumentData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateDocumentData(childComplexity, args["input"].(generated.CreateDocumentDataInput)), true
+
 	case "Mutation.createEntitlement":
 		if e.complexity.Mutation.CreateEntitlement == nil {
 			break
@@ -2136,6 +2323,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(generated.CreateUserInput)), true
 
+	case "Mutation.deleteDocumentData":
+		if e.complexity.Mutation.DeleteDocumentData == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteDocumentData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteDocumentData(childComplexity, args["id"].(string)), true
+
 	case "Mutation.deleteEntitlement":
 		if e.complexity.Mutation.DeleteEntitlement == nil {
 			break
@@ -2303,6 +2502,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.PostMessageTo(childComplexity, args["subscriber"].(string), args["content"].(string)), true
+
+	case "Mutation.updateDocumentData":
+		if e.complexity.Mutation.UpdateDocumentData == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateDocumentData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateDocumentData(childComplexity, args["id"].(string), args["input"].(generated.UpdateDocumentDataInput)), true
 
 	case "Mutation.updateEntitlement":
 		if e.complexity.Mutation.UpdateEntitlement == nil {
@@ -3822,6 +4033,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PersonalAccessTokenUpdatePayload.PersonalAccessToken(childComplexity), true
 
+	case "Query.documentData":
+		if e.complexity.Query.DocumentData == nil {
+			break
+		}
+
+		args, err := ec.field_Query_documentData_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.DocumentData(childComplexity, args["id"].(string)), true
+
+	case "Query.documentDataSlice":
+		if e.complexity.Query.DocumentDataSlice == nil {
+			break
+		}
+
+		args, err := ec.field_Query_documentDataSlice_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.DocumentDataSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.DocumentDataWhereInput)), true
+
 	case "Query.entitlement":
 		if e.complexity.Query.Entitlement == nil {
 			break
@@ -4588,6 +4823,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Template.Description(childComplexity), true
 
+	case "Template.documents":
+		if e.complexity.Template.Documents == nil {
+			break
+		}
+
+		return e.complexity.Template.Documents(childComplexity), true
+
 	case "Template.id":
 		if e.complexity.Template.ID == nil {
 			break
@@ -4615,6 +4857,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Template.Owner(childComplexity), true
+
+	case "Template.type":
+		if e.complexity.Template.Type == nil {
+			break
+		}
+
+		return e.complexity.Template.Type(childComplexity), true
+
+	case "Template.uischema":
+		if e.complexity.Template.Uischema == nil {
+			break
+		}
+
+		return e.complexity.Template.Uischema(childComplexity), true
 
 	case "Template.updatedAt":
 		if e.complexity.Template.UpdatedAt == nil {
@@ -5086,6 +5342,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateDocumentDataInput,
 		ec.unmarshalInputCreateEntitlementInput,
 		ec.unmarshalInputCreateGroupInput,
 		ec.unmarshalInputCreateGroupMembershipInput,
@@ -5103,6 +5360,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateTemplateInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserSettingInput,
+		ec.unmarshalInputDocumentDataWhereInput,
 		ec.unmarshalInputEntitlementWhereInput,
 		ec.unmarshalInputGroupMembershipWhereInput,
 		ec.unmarshalInputGroupOrder,
@@ -5125,6 +5383,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputTFASettingWhereInput,
 		ec.unmarshalInputTemplateOrder,
 		ec.unmarshalInputTemplateWhereInput,
+		ec.unmarshalInputUpdateDocumentDataInput,
 		ec.unmarshalInputUpdateEntitlementInput,
 		ec.unmarshalInputUpdateGroupInput,
 		ec.unmarshalInputUpdateGroupMembershipInput,
@@ -5259,8 +5518,98 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "../../schema/documentdata.graphql", Input: `extend type Query {
+    """
+    Look up documentData by ID
+    """
+     documentData(
+        """
+        ID of the documentData
+        """
+        id: ID!
+    ):  DocumentData!
+}
+
+extend type Mutation{
+    """
+    Create a new documentData
+    """
+    createDocumentData(
+        """
+        values of the documentData
+        """
+        input: CreateDocumentDataInput!
+    ): DocumentDataCreatePayload!
+    """
+    Update an existing documentData
+    """
+    updateDocumentData(
+        """
+        ID of the documentData
+        """
+        id: ID!
+        """
+        New values for the documentData
+        """
+        input: UpdateDocumentDataInput!
+    ): DocumentDataUpdatePayload!
+    """
+    Delete an existing documentData
+    """
+    deleteDocumentData(
+        """
+        ID of the documentData
+        """
+        id: ID!
+    ): DocumentDataDeletePayload!
+}
+
+"""
+Return response for createDocumentData mutation
+"""
+type DocumentDataCreatePayload {
+    """
+    Created documentData
+    """
+    documentData: DocumentData!
+}
+
+"""
+Return response for updateDocumentData mutation
+"""
+type DocumentDataUpdatePayload {
+    """
+    Updated documentData
+    """
+    documentData: DocumentData!
+}
+
+"""
+Return response for deleteDocumentData mutation
+"""
+type DocumentDataDeletePayload {
+    """
+    Deleted documentData ID
+    """
+    deletedID: ID!
+}`, BuiltIn: false},
 	{Name: "../../schema/ent.graphql", Input: `directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 directive @goModel(model: String, models: [String!]) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+"""
+CreateDocumentDataInput is used for create DocumentData object.
+Input was generated by ent.
+"""
+input CreateDocumentDataInput {
+  createdAt: Time
+  updatedAt: Time
+  createdBy: String
+  updatedBy: String
+  """
+  the json data of the document
+  """
+  data: JSON!
+  templateID: ID!
+}
 """
 CreateEntitlementInput is used for create Entitlement object.
 Input was generated by ent.
@@ -5675,14 +6024,23 @@ input CreateTemplateInput {
   """
   name: String!
   """
+  the type of the template, either a provided template or an implementation (document)
+  """
+  type: TemplateDocumentType
+  """
   the description of the template
   """
   description: String
   """
   the jsonschema object of the template
   """
-  jsonconfig: JSON
+  jsonconfig: JSON!
+  """
+  the uischema for the template to render in the UI
+  """
+  uischema: JSON
   ownerID: ID!
+  documentIDs: [ID!]
 }
 """
 CreateUserInput is used for create User object.
@@ -5780,6 +6138,190 @@ Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
 scalar Cursor
+type DocumentData implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  createdBy: String
+  updatedBy: String
+  deletedAt: Time
+  deletedBy: String
+  """
+  the template id of the document
+  """
+  templateID: ID!
+  """
+  the json data of the document
+  """
+  data: JSON!
+  template: Template!
+}
+"""
+A connection to a list of items.
+"""
+type DocumentDataConnection {
+  """
+  A list of edges.
+  """
+  edges: [DocumentDataEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type DocumentDataEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: DocumentData
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+DocumentDataWhereInput is used for filtering DocumentData objects.
+Input was generated by ent.
+"""
+input DocumentDataWhereInput {
+  not: DocumentDataWhereInput
+  and: [DocumentDataWhereInput!]
+  or: [DocumentDataWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  created_by field predicates
+  """
+  createdBy: String
+  createdByNEQ: String
+  createdByIn: [String!]
+  createdByNotIn: [String!]
+  createdByGT: String
+  createdByGTE: String
+  createdByLT: String
+  createdByLTE: String
+  createdByContains: String
+  createdByHasPrefix: String
+  createdByHasSuffix: String
+  createdByIsNil: Boolean
+  createdByNotNil: Boolean
+  createdByEqualFold: String
+  createdByContainsFold: String
+  """
+  updated_by field predicates
+  """
+  updatedBy: String
+  updatedByNEQ: String
+  updatedByIn: [String!]
+  updatedByNotIn: [String!]
+  updatedByGT: String
+  updatedByGTE: String
+  updatedByLT: String
+  updatedByLTE: String
+  updatedByContains: String
+  updatedByHasPrefix: String
+  updatedByHasSuffix: String
+  updatedByIsNil: Boolean
+  updatedByNotNil: Boolean
+  updatedByEqualFold: String
+  updatedByContainsFold: String
+  """
+  deleted_at field predicates
+  """
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """
+  deleted_by field predicates
+  """
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
+  """
+  template_id field predicates
+  """
+  templateID: ID
+  templateIDNEQ: ID
+  templateIDIn: [ID!]
+  templateIDNotIn: [ID!]
+  templateIDGT: ID
+  templateIDGTE: ID
+  templateIDLT: ID
+  templateIDLTE: ID
+  templateIDContains: ID
+  templateIDHasPrefix: ID
+  templateIDHasSuffix: ID
+  templateIDEqualFold: ID
+  templateIDContainsFold: ID
+  """
+  template edge predicates
+  """
+  hasTemplate: Boolean
+  hasTemplateWith: [TemplateWhereInput!]
+}
 type Entitlement implements Node {
   id: ID!
   createdAt: Time
@@ -9534,6 +10076,32 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]!
+  documentDataSlice(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for DocumentDataSlice returned from the connection.
+    """
+    where: DocumentDataWhereInput
+  ): DocumentDataConnection!
   entitlements(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -10469,14 +11037,23 @@ type Template implements Node {
   """
   name: String!
   """
+  the type of the template, either a provided template or an implementation (document)
+  """
+  type: TemplateDocumentType!
+  """
   the description of the template
   """
   description: String
   """
   the jsonschema object of the template
   """
-  jsonconfig: JSON
+  jsonconfig: JSON!
+  """
+  the uischema for the template to render in the UI
+  """
+  uischema: JSON
   owner: Organization!
+  documents: [DocumentData!]
 }
 """
 A connection to a list of items.
@@ -10494,6 +11071,13 @@ type TemplateConnection {
   Identifies the total count of items in the connection.
   """
   totalCount: Int!
+}
+"""
+TemplateDocumentType is enum for the field type
+"""
+enum TemplateDocumentType @goModel(model: "github.com/datumforge/datum/internal/ent/enums.DocumentType") {
+  ROOTTEMPLATE
+  DOCUMENT
 }
 """
 An edge in a connection.
@@ -10658,6 +11242,13 @@ input TemplateWhereInput {
   nameEqualFold: String
   nameContainsFold: String
   """
+  type field predicates
+  """
+  type: TemplateDocumentType
+  typeNEQ: TemplateDocumentType
+  typeIn: [TemplateDocumentType!]
+  typeNotIn: [TemplateDocumentType!]
+  """
   description field predicates
   """
   description: String
@@ -10680,6 +11271,11 @@ input TemplateWhereInput {
   """
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
+  """
+  documents edge predicates
+  """
+  hasDocuments: Boolean
+  hasDocumentsWith: [DocumentDataWhereInput!]
 }
 """
 The builtin Time type
@@ -10689,6 +11285,21 @@ scalar Time
 The builtin Uint type
 """
 scalar Uint
+"""
+UpdateDocumentDataInput is used for update DocumentData object.
+Input was generated by ent.
+"""
+input UpdateDocumentDataInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  updatedBy: String
+  clearUpdatedBy: Boolean
+  """
+  the json data of the document
+  """
+  data: JSON
+  templateID: ID
+}
 """
 UpdateEntitlementInput is used for update Entitlement object.
 Input was generated by ent.
@@ -11146,6 +11757,10 @@ input UpdateTemplateInput {
   """
   name: String
   """
+  the type of the template, either a provided template or an implementation (document)
+  """
+  type: TemplateDocumentType
+  """
   the description of the template
   """
   description: String
@@ -11154,8 +11769,15 @@ input UpdateTemplateInput {
   the jsonschema object of the template
   """
   jsonconfig: JSON
-  clearJsonconfig: Boolean
+  """
+  the uischema for the template to render in the UI
+  """
+  uischema: JSON
+  clearUischema: Boolean
   ownerID: ID
+  addDocumentIDs: [ID!]
+  removeDocumentIDs: [ID!]
+  clearDocuments: Boolean
 }
 """
 UpdateUserInput is used for update User object.
@@ -13195,6 +13817,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_createDocumentData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateDocumentDataInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateDocumentDataInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateDocumentDataInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createEntitlement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -13402,6 +14039,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteDocumentData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -13621,6 +14273,30 @@ func (ec *executionContext) field_Mutation_postMessageTo_args(ctx context.Contex
 		}
 	}
 	args["content"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateDocumentData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateDocumentDataInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateDocumentDataInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateDocumentDataInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -14095,6 +14771,72 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_documentDataSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.DocumentDataWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalODocumentDataWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_documentData_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -15347,6 +16089,886 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _DocumentData_id(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_updatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_templateID(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_templateID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TemplateID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_templateID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_data(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Data, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(customtypes.JSONObject)
+	fc.Result = res
+	return ec.marshalNJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentData_template(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentData_template(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Template(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Template)
+	fc.Result = res
+	return ec.marshalNTemplate2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplate(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentData_template(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentData",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Template_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Template_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Template_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Template_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Template_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Template_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Template_deletedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_Template_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Template_type(ctx, field)
+			case "description":
+				return ec.fieldContext_Template_description(ctx, field)
+			case "jsonconfig":
+				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "uischema":
+				return ec.fieldContext_Template_uischema(ctx, field)
+			case "owner":
+				return ec.fieldContext_Template_owner(ctx, field)
+			case "documents":
+				return ec.fieldContext_Template_documents(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Template", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.DocumentDataEdge)
+	fc.Result = res
+	return ec.marshalODocumentDataEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_DocumentDataEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_DocumentDataEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataCreatePayload_documentData(ctx context.Context, field graphql.CollectedField, obj *DocumentDataCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataCreatePayload_documentData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.DocumentData)
+	fc.Result = res
+	return ec.marshalNDocumentData2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataCreatePayload_documentData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataCreatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DocumentData_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DocumentData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DocumentData_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_DocumentData_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_DocumentData_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_DocumentData_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_DocumentData_deletedBy(ctx, field)
+			case "templateID":
+				return ec.fieldContext_DocumentData_templateID(ctx, field)
+			case "data":
+				return ec.fieldContext_DocumentData_data(ctx, field)
+			case "template":
+				return ec.fieldContext_DocumentData_template(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *DocumentDataDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataDeletePayload_deletedID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataDeletePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.DocumentData)
+	fc.Result = res
+	return ec.marshalODocumentData2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DocumentData_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DocumentData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DocumentData_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_DocumentData_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_DocumentData_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_DocumentData_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_DocumentData_deletedBy(ctx, field)
+			case "templateID":
+				return ec.fieldContext_DocumentData_templateID(ctx, field)
+			case "data":
+				return ec.fieldContext_DocumentData_data(ctx, field)
+			case "template":
+				return ec.fieldContext_DocumentData_template(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataUpdatePayload_documentData(ctx context.Context, field graphql.CollectedField, obj *DocumentDataUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataUpdatePayload_documentData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.DocumentData)
+	fc.Result = res
+	return ec.marshalNDocumentData2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataUpdatePayload_documentData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataUpdatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DocumentData_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DocumentData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DocumentData_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_DocumentData_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_DocumentData_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_DocumentData_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_DocumentData_deletedBy(ctx, field)
+			case "templateID":
+				return ec.fieldContext_DocumentData_templateID(ctx, field)
+			case "data":
+				return ec.fieldContext_DocumentData_data(ctx, field)
+			case "template":
+				return ec.fieldContext_DocumentData_template(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentData", field.Name)
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Dummy_id(ctx context.Context, field graphql.CollectedField, obj *Dummy) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Dummy_id(ctx, field)
@@ -22172,6 +23794,183 @@ func (ec *executionContext) fieldContext_InviteUpdatePayload_invite(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createDocumentData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createDocumentData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateDocumentData(rctx, fc.Args["input"].(generated.CreateDocumentDataInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*DocumentDataCreatePayload)
+	fc.Result = res
+	return ec.marshalNDocumentDataCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createDocumentData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "documentData":
+				return ec.fieldContext_DocumentDataCreatePayload_documentData(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createDocumentData_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateDocumentData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateDocumentData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateDocumentData(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateDocumentDataInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*DocumentDataUpdatePayload)
+	fc.Result = res
+	return ec.marshalNDocumentDataUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataUpdatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateDocumentData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "documentData":
+				return ec.fieldContext_DocumentDataUpdatePayload_documentData(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataUpdatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateDocumentData_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteDocumentData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteDocumentData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteDocumentData(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*DocumentDataDeletePayload)
+	fc.Result = res
+	return ec.marshalNDocumentDataDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataDeletePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteDocumentData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedID":
+				return ec.fieldContext_DocumentDataDeletePayload_deletedID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataDeletePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteDocumentData_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createEntitlement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createEntitlement(ctx, field)
 	if err != nil {
@@ -28967,12 +30766,18 @@ func (ec *executionContext) fieldContext_Organization_templates(ctx context.Cont
 				return ec.fieldContext_Template_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Template_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Template_type(ctx, field)
 			case "description":
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "uischema":
+				return ec.fieldContext_Template_uischema(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
+			case "documents":
+				return ec.fieldContext_Template_documents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Template", field.Name)
 		},
@@ -34328,6 +36133,69 @@ func (ec *executionContext) fieldContext_Query_nodes(ctx context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_documentDataSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_documentDataSlice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().DocumentDataSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.DocumentDataWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.DocumentDataConnection)
+	fc.Result = res
+	return ec.marshalNDocumentDataConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_documentDataSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_DocumentDataConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_DocumentDataConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DocumentDataConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_documentDataSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_entitlements(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_entitlements(ctx, field)
 	if err != nil {
@@ -35393,6 +37261,83 @@ func (ec *executionContext) fieldContext_Query_userSettings(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_userSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_documentData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_documentData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().DocumentData(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.DocumentData)
+	fc.Result = res
+	return ec.marshalNDocumentData2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_documentData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DocumentData_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DocumentData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DocumentData_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_DocumentData_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_DocumentData_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_DocumentData_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_DocumentData_deletedBy(ctx, field)
+			case "templateID":
+				return ec.fieldContext_DocumentData_templateID(ctx, field)
+			case "data":
+				return ec.fieldContext_DocumentData_data(ctx, field)
+			case "template":
+				return ec.fieldContext_DocumentData_template(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentData", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_documentData_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -36591,12 +38536,18 @@ func (ec *executionContext) fieldContext_Query_template(ctx context.Context, fie
 				return ec.fieldContext_Template_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Template_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Template_type(ctx, field)
 			case "description":
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "uischema":
+				return ec.fieldContext_Template_uischema(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
+			case "documents":
+				return ec.fieldContext_Template_documents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Template", field.Name)
 		},
@@ -39465,6 +41416,50 @@ func (ec *executionContext) fieldContext_Template_name(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Template_type(ctx context.Context, field graphql.CollectedField, obj *generated.Template) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Template_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(enums.DocumentType)
+	fc.Result = res
+	return ec.marshalNTemplateDocumentType2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Template_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Template",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type TemplateDocumentType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Template_description(ctx context.Context, field graphql.CollectedField, obj *generated.Template) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Template_description(ctx, field)
 	if err != nil {
@@ -39527,6 +41522,50 @@ func (ec *executionContext) _Template_jsonconfig(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(customtypes.JSONObject)
+	fc.Result = res
+	return ec.marshalNJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Template_jsonconfig(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Template",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Template_uischema(ctx context.Context, field graphql.CollectedField, obj *generated.Template) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Template_uischema(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Uischema, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(customtypes.JSONObject)
@@ -39534,7 +41573,7 @@ func (ec *executionContext) _Template_jsonconfig(ctx context.Context, field grap
 	return ec.marshalOJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Template_jsonconfig(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Template_uischema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Template",
 		Field:      field,
@@ -39640,6 +41679,69 @@ func (ec *executionContext) fieldContext_Template_owner(ctx context.Context, fie
 				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Template_documents(ctx context.Context, field graphql.CollectedField, obj *generated.Template) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Template_documents(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Documents(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.DocumentData)
+	fc.Result = res
+	return ec.marshalODocumentData2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Template_documents(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Template",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DocumentData_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DocumentData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DocumentData_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_DocumentData_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_DocumentData_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_DocumentData_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_DocumentData_deletedBy(ctx, field)
+			case "templateID":
+				return ec.fieldContext_DocumentData_templateID(ctx, field)
+			case "data":
+				return ec.fieldContext_DocumentData_data(ctx, field)
+			case "template":
+				return ec.fieldContext_DocumentData_template(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentData", field.Name)
 		},
 	}
 	return fc, nil
@@ -39845,12 +41947,18 @@ func (ec *executionContext) fieldContext_TemplateCreatePayload_template(ctx cont
 				return ec.fieldContext_Template_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Template_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Template_type(ctx, field)
 			case "description":
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "uischema":
+				return ec.fieldContext_Template_uischema(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
+			case "documents":
+				return ec.fieldContext_Template_documents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Template", field.Name)
 		},
@@ -39954,12 +42062,18 @@ func (ec *executionContext) fieldContext_TemplateEdge_node(ctx context.Context, 
 				return ec.fieldContext_Template_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Template_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Template_type(ctx, field)
 			case "description":
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "uischema":
+				return ec.fieldContext_Template_uischema(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
+			case "documents":
+				return ec.fieldContext_Template_documents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Template", field.Name)
 		},
@@ -40066,12 +42180,18 @@ func (ec *executionContext) fieldContext_TemplateUpdatePayload_template(ctx cont
 				return ec.fieldContext_Template_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Template_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Template_type(ctx, field)
 			case "description":
 				return ec.fieldContext_Template_description(ctx, field)
 			case "jsonconfig":
 				return ec.fieldContext_Template_jsonconfig(ctx, field)
+			case "uischema":
+				return ec.fieldContext_Template_uischema(ctx, field)
 			case "owner":
 				return ec.fieldContext_Template_owner(ctx, field)
+			case "documents":
+				return ec.fieldContext_Template_documents(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Template", field.Name)
 		},
@@ -44812,6 +46932,68 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCreateDocumentDataInput(ctx context.Context, obj interface{}) (generated.CreateDocumentDataInput, error) {
+	var it generated.CreateDocumentDataInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "data", "templateID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "createdBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedBy = data
+		case "updatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "data":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("data"))
+			data, err := ec.unmarshalNJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Data = data
+		case "templateID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateEntitlementInput(ctx context.Context, obj interface{}) (generated.CreateEntitlementInput, error) {
 	var it generated.CreateEntitlementInput
 	asMap := map[string]interface{}{}
@@ -46195,7 +48377,7 @@ func (ec *executionContext) unmarshalInputCreateTemplateInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "jsonconfig", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "type", "description", "jsonconfig", "uischema", "ownerID", "documentIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46237,6 +48419,13 @@ func (ec *executionContext) unmarshalInputCreateTemplateInput(ctx context.Contex
 				return it, err
 			}
 			it.Name = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOTemplateDocumentType2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "description":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -46246,11 +48435,18 @@ func (ec *executionContext) unmarshalInputCreateTemplateInput(ctx context.Contex
 			it.Description = data
 		case "jsonconfig":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("jsonconfig"))
-			data, err := ec.unmarshalOJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, v)
+			data, err := ec.unmarshalNJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Jsonconfig = data
+		case "uischema":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uischema"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Uischema = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalNID2string(ctx, v)
@@ -46258,6 +48454,13 @@ func (ec *executionContext) unmarshalInputCreateTemplateInput(ctx context.Contex
 				return it, err
 			}
 			it.OwnerID = data
+		case "documentIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DocumentIDs = data
 		}
 	}
 
@@ -46557,6 +48760,747 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.DefaultOrgID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDocumentDataWhereInput(ctx context.Context, obj interface{}) (generated.DocumentDataWhereInput, error) {
+	var it generated.DocumentDataWhereInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "templateID", "templateIDNEQ", "templateIDIn", "templateIDNotIn", "templateIDGT", "templateIDGTE", "templateIDLT", "templateIDLTE", "templateIDContains", "templateIDHasPrefix", "templateIDHasSuffix", "templateIDEqualFold", "templateIDContainsFold", "hasTemplate", "hasTemplateWith"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalODocumentDataWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalODocumentDataWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalODocumentDataWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "idEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDEqualFold = data
+		case "idContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDContainsFold = data
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "createdAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNEQ = data
+		case "createdAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIn = data
+		case "createdAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotIn = data
+		case "createdAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGT = data
+		case "createdAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGTE = data
+		case "createdAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLT = data
+		case "createdAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "updatedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNEQ = data
+		case "updatedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIn = data
+		case "updatedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotIn = data
+		case "updatedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGT = data
+		case "updatedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGTE = data
+		case "updatedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLT = data
+		case "updatedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
+		case "createdBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedBy = data
+		case "createdByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNEQ = data
+		case "createdByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByIn = data
+		case "createdByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNotIn = data
+		case "createdByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByGT = data
+		case "createdByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByGTE = data
+		case "createdByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByLT = data
+		case "createdByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByLTE = data
+		case "createdByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByContains = data
+		case "createdByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByHasPrefix = data
+		case "createdByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByHasSuffix = data
+		case "createdByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByIsNil = data
+		case "createdByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNotNil = data
+		case "createdByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByEqualFold = data
+		case "createdByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByContainsFold = data
+		case "updatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "updatedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNEQ = data
+		case "updatedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByIn = data
+		case "updatedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNotIn = data
+		case "updatedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByGT = data
+		case "updatedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByGTE = data
+		case "updatedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByLT = data
+		case "updatedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByLTE = data
+		case "updatedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByContains = data
+		case "updatedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByHasPrefix = data
+		case "updatedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByHasSuffix = data
+		case "updatedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByIsNil = data
+		case "updatedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNotNil = data
+		case "updatedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByEqualFold = data
+		case "updatedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
+		case "templateID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateID = data
+		case "templateIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDNEQ = data
+		case "templateIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDIn = data
+		case "templateIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDNotIn = data
+		case "templateIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDGT = data
+		case "templateIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDGTE = data
+		case "templateIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDLT = data
+		case "templateIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDLTE = data
+		case "templateIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDContains = data
+		case "templateIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDHasPrefix = data
+		case "templateIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDHasSuffix = data
+		case "templateIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDEqualFold = data
+		case "templateIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateIDContainsFold = data
+		case "hasTemplate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTemplate"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTemplate = data
+		case "hasTemplateWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTemplateWith"))
+			data, err := ec.unmarshalOTemplateWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTemplateWith = data
 		}
 	}
 
@@ -63019,7 +65963,7 @@ func (ec *executionContext) unmarshalInputTemplateWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "description", "descriptionNEQ", "descriptionIn", "descriptionNotIn", "descriptionGT", "descriptionGTE", "descriptionLT", "descriptionLTE", "descriptionContains", "descriptionHasPrefix", "descriptionHasSuffix", "descriptionIsNil", "descriptionNotNil", "descriptionEqualFold", "descriptionContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "description", "descriptionNEQ", "descriptionIn", "descriptionNotIn", "descriptionGT", "descriptionGTE", "descriptionLT", "descriptionLTE", "descriptionContains", "descriptionHasPrefix", "descriptionHasSuffix", "descriptionIsNil", "descriptionNotNil", "descriptionEqualFold", "descriptionContainsFold", "hasOwner", "hasOwnerWith", "hasDocuments", "hasDocumentsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -63733,6 +66677,34 @@ func (ec *executionContext) unmarshalInputTemplateWhereInput(ctx context.Context
 				return it, err
 			}
 			it.NameContainsFold = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOTemplateDocumentType2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "typeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNEQ"))
+			data, err := ec.unmarshalOTemplateDocumentType2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TypeNEQ = data
+		case "typeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeIn"))
+			data, err := ec.unmarshalOTemplateDocumentType2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentTypeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TypeIn = data
+		case "typeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNotIn"))
+			data, err := ec.unmarshalOTemplateDocumentType2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentTypeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TypeNotIn = data
 		case "description":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -63852,6 +66824,82 @@ func (ec *executionContext) unmarshalInputTemplateWhereInput(ctx context.Context
 				return it, err
 			}
 			it.HasOwnerWith = data
+		case "hasDocuments":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasDocuments"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasDocuments = data
+		case "hasDocumentsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasDocumentsWith"))
+			data, err := ec.unmarshalODocumentDataWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasDocumentsWith = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateDocumentDataInput(ctx context.Context, obj interface{}) (generated.UpdateDocumentDataInput, error) {
+	var it generated.UpdateDocumentDataInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "data", "templateID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
+		case "updatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "clearUpdatedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedBy"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedBy = data
+		case "data":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("data"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Data = data
+		case "templateID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("templateID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TemplateID = data
 		}
 	}
 
@@ -65632,7 +68680,7 @@ func (ec *executionContext) unmarshalInputUpdateTemplateInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "jsonconfig", "clearJsonconfig", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "name", "type", "description", "clearDescription", "jsonconfig", "uischema", "clearUischema", "ownerID", "addDocumentIDs", "removeDocumentIDs", "clearDocuments"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -65674,6 +68722,13 @@ func (ec *executionContext) unmarshalInputUpdateTemplateInput(ctx context.Contex
 				return it, err
 			}
 			it.Name = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOTemplateDocumentType2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "description":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -65695,13 +68750,20 @@ func (ec *executionContext) unmarshalInputUpdateTemplateInput(ctx context.Contex
 				return it, err
 			}
 			it.Jsonconfig = data
-		case "clearJsonconfig":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearJsonconfig"))
+		case "uischema":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("uischema"))
+			data, err := ec.unmarshalOJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Uischema = data
+		case "clearUischema":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUischema"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearJsonconfig = data
+			it.ClearUischema = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -65709,6 +68771,27 @@ func (ec *executionContext) unmarshalInputUpdateTemplateInput(ctx context.Contex
 				return it, err
 			}
 			it.OwnerID = data
+		case "addDocumentIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addDocumentIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddDocumentIDs = data
+		case "removeDocumentIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeDocumentIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveDocumentIDs = data
+		case "clearDocuments":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDocuments"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearDocuments = data
 		}
 	}
 
@@ -68851,6 +71934,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
+	case *generated.DocumentData:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._DocumentData(ctx, sel, obj)
 	case *generated.Entitlement:
 		if obj == nil {
 			return graphql.Null
@@ -68954,6 +72042,307 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var documentDataImplementors = []string{"DocumentData", "Node"}
+
+func (ec *executionContext) _DocumentData(ctx context.Context, sel ast.SelectionSet, obj *generated.DocumentData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentData")
+		case "id":
+			out.Values[i] = ec._DocumentData_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createdAt":
+			out.Values[i] = ec._DocumentData_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._DocumentData_updatedAt(ctx, field, obj)
+		case "createdBy":
+			out.Values[i] = ec._DocumentData_createdBy(ctx, field, obj)
+		case "updatedBy":
+			out.Values[i] = ec._DocumentData_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._DocumentData_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._DocumentData_deletedBy(ctx, field, obj)
+		case "templateID":
+			out.Values[i] = ec._DocumentData_templateID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "data":
+			out.Values[i] = ec._DocumentData_data(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "template":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._DocumentData_template(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var documentDataConnectionImplementors = []string{"DocumentDataConnection"}
+
+func (ec *executionContext) _DocumentDataConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.DocumentDataConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentDataConnection")
+		case "edges":
+			out.Values[i] = ec._DocumentDataConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._DocumentDataConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._DocumentDataConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var documentDataCreatePayloadImplementors = []string{"DocumentDataCreatePayload"}
+
+func (ec *executionContext) _DocumentDataCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *DocumentDataCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataCreatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentDataCreatePayload")
+		case "documentData":
+			out.Values[i] = ec._DocumentDataCreatePayload_documentData(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var documentDataDeletePayloadImplementors = []string{"DocumentDataDeletePayload"}
+
+func (ec *executionContext) _DocumentDataDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *DocumentDataDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataDeletePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentDataDeletePayload")
+		case "deletedID":
+			out.Values[i] = ec._DocumentDataDeletePayload_deletedID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var documentDataEdgeImplementors = []string{"DocumentDataEdge"}
+
+func (ec *executionContext) _DocumentDataEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.DocumentDataEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentDataEdge")
+		case "node":
+			out.Values[i] = ec._DocumentDataEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._DocumentDataEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var documentDataUpdatePayloadImplementors = []string{"DocumentDataUpdatePayload"}
+
+func (ec *executionContext) _DocumentDataUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *DocumentDataUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataUpdatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentDataUpdatePayload")
+		case "documentData":
+			out.Values[i] = ec._DocumentDataUpdatePayload_documentData(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var dummyImplementors = []string{"Dummy"}
 
@@ -71025,6 +74414,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
+		case "createDocumentData":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createDocumentData(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateDocumentData":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateDocumentData(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteDocumentData":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteDocumentData(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createEntitlement":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createEntitlement(ctx, field)
@@ -73964,6 +77374,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "documentDataSlice":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_documentDataSlice(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "entitlements":
 			field := field
 
@@ -74326,6 +77758,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userSettings(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "documentData":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_documentData(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -75368,10 +78822,20 @@ func (ec *executionContext) _Template(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "type":
+			out.Values[i] = ec._Template_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "description":
 			out.Values[i] = ec._Template_description(ctx, field, obj)
 		case "jsonconfig":
 			out.Values[i] = ec._Template_jsonconfig(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "uischema":
+			out.Values[i] = ec._Template_uischema(ctx, field, obj)
 		case "owner":
 			field := field
 
@@ -75385,6 +78849,39 @@ func (ec *executionContext) _Template(ctx context.Context, sel ast.SelectionSet,
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "documents":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Template_documents(ctx, field, obj)
 				return res
 			}
 
@@ -76773,6 +80270,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCreateDocumentDataInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateDocumentDataInput(ctx context.Context, v interface{}) (generated.CreateDocumentDataInput, error) {
+	res, err := ec.unmarshalInputCreateDocumentDataInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateEntitlementInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateEntitlementInput(ctx context.Context, v interface{}) (generated.CreateEntitlementInput, error) {
 	res, err := ec.unmarshalInputCreateEntitlementInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -76861,6 +80363,81 @@ func (ec *executionContext) unmarshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCur
 
 func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v entgql.Cursor[string]) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNDocumentData2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx context.Context, sel ast.SelectionSet, v generated.DocumentData) graphql.Marshaler {
+	return ec._DocumentData(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDocumentData2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx context.Context, sel ast.SelectionSet, v *generated.DocumentData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DocumentData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDocumentDataConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataConnection(ctx context.Context, sel ast.SelectionSet, v generated.DocumentDataConnection) graphql.Marshaler {
+	return ec._DocumentDataConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDocumentDataConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataConnection(ctx context.Context, sel ast.SelectionSet, v *generated.DocumentDataConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DocumentDataConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDocumentDataCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataCreatePayload(ctx context.Context, sel ast.SelectionSet, v DocumentDataCreatePayload) graphql.Marshaler {
+	return ec._DocumentDataCreatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDocumentDataCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataCreatePayload(ctx context.Context, sel ast.SelectionSet, v *DocumentDataCreatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DocumentDataCreatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDocumentDataDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataDeletePayload(ctx context.Context, sel ast.SelectionSet, v DocumentDataDeletePayload) graphql.Marshaler {
+	return ec._DocumentDataDeletePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDocumentDataDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataDeletePayload(ctx context.Context, sel ast.SelectionSet, v *DocumentDataDeletePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DocumentDataDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNDocumentDataUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataUpdatePayload(ctx context.Context, sel ast.SelectionSet, v DocumentDataUpdatePayload) graphql.Marshaler {
+	return ec._DocumentDataUpdatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDocumentDataUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋgraphapiᚐDocumentDataUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *DocumentDataUpdatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DocumentDataUpdatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNDocumentDataWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInput(ctx context.Context, v interface{}) (*generated.DocumentDataWhereInput, error) {
+	res, err := ec.unmarshalInputDocumentDataWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNEntitlement2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlement(ctx context.Context, sel ast.SelectionSet, v generated.Entitlement) graphql.Marshaler {
@@ -77437,6 +81014,22 @@ func (ec *executionContext) marshalNInviteUpdatePayload2ᚖgithubᚗcomᚋdatumf
 func (ec *executionContext) unmarshalNInviteWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐInviteWhereInput(ctx context.Context, v interface{}) (*generated.InviteWhereInput, error) {
 	res, err := ec.unmarshalInputInviteWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx context.Context, v interface{}) (customtypes.JSONObject, error) {
+	var res customtypes.JSONObject
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNJSON2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐJSONObject(ctx context.Context, sel ast.SelectionSet, v customtypes.JSONObject) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalNNode2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐNoder(ctx context.Context, sel ast.SelectionSet, v []generated.Noder) graphql.Marshaler {
@@ -78244,6 +81837,16 @@ func (ec *executionContext) marshalNTemplateDeletePayload2ᚖgithubᚗcomᚋdatu
 	return ec._TemplateDeletePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNTemplateDocumentType2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx context.Context, v interface{}) (enums.DocumentType, error) {
+	var res enums.DocumentType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTemplateDocumentType2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx context.Context, sel ast.SelectionSet, v enums.DocumentType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNTemplateOrderField2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateOrderField(ctx context.Context, v interface{}) (*generated.TemplateOrderField, error) {
 	var res = new(generated.TemplateOrderField)
 	err := res.UnmarshalGQL(v)
@@ -78323,6 +81926,11 @@ func (ec *executionContext) unmarshalNUint2githubᚗcomᚋdatumforgeᚋdatumᚋi
 
 func (ec *executionContext) marshalNUint2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋcustomtypesᚐUint8(ctx context.Context, sel ast.SelectionSet, v customtypes.Uint8) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNUpdateDocumentDataInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateDocumentDataInput(ctx context.Context, v interface{}) (generated.UpdateDocumentDataInput, error) {
+	res, err := ec.unmarshalInputUpdateDocumentDataInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateEntitlementInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateEntitlementInput(ctx context.Context, v interface{}) (generated.UpdateEntitlementInput, error) {
@@ -78917,6 +82525,136 @@ func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCu
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalODocumentData2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.DocumentData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNDocumentData2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalODocumentData2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentData(ctx context.Context, sel ast.SelectionSet, v *generated.DocumentData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DocumentData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalODocumentDataEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.DocumentDataEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalODocumentDataEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalODocumentDataEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataEdge(ctx context.Context, sel ast.SelectionSet, v *generated.DocumentDataEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DocumentDataEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalODocumentDataWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.DocumentDataWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.DocumentDataWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNDocumentDataWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalODocumentDataWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataWhereInput(ctx context.Context, v interface{}) (*generated.DocumentDataWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputDocumentDataWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOEntitlement2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.Entitlement) graphql.Marshaler {
@@ -81868,6 +85606,89 @@ func (ec *executionContext) marshalOTemplate2ᚖgithubᚗcomᚋdatumforgeᚋdatu
 		return graphql.Null
 	}
 	return ec._Template(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTemplateDocumentType2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentTypeᚄ(ctx context.Context, v interface{}) ([]enums.DocumentType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]enums.DocumentType, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTemplateDocumentType2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOTemplateDocumentType2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []enums.DocumentType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTemplateDocumentType2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOTemplateDocumentType2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx context.Context, v interface{}) (*enums.DocumentType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(enums.DocumentType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTemplateDocumentType2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx context.Context, sel ast.SelectionSet, v *enums.DocumentType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOTemplateEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.TemplateEdge) graphql.Marshaler {

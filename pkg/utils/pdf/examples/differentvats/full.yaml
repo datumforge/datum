@@ -16,8 +16,8 @@ company:
     address: "29 Broadway, New York, NY 10006, USA"
     vat:     "111111111"
   seller:
-    name:    "VyOS, Inc."
-    address: "123 Paper Street, Lviv Ukraine"
+    name:    "Pinky and the Brain"
+    address: "123 Paper Street, Some Country, World"
     vat:     "222222222"
 
 items:  

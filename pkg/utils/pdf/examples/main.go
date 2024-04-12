@@ -14,6 +14,7 @@ func main() {
 	tests3()
 }
 
+// tests3 is an example on how to consume the invoice generator and storage interface to create a pdf invoice with some basic styling and upload to s3
 func tests3() {
 	storage, _ := s3.NewStorage(s3.Config{
 		AccessKeyID:     "",

@@ -38,10 +38,9 @@ storage.Delete(ctx, "test")
 ## TODO
 
 Aside from, like, supporting every storage interface available (super reasonable to do) the main TO-DO's related to some solid usage with our ent `template` schema and the main ecosystem of tools we have:
-- Pre-signed URL's with time duration
+
 - "Fetch" functionality (open+write to destination)
 - Additional abstraction with spf13/afero
-- Checksum comparisons
 
 ### Nice to have's
 

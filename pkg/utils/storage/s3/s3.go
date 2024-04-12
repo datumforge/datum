@@ -6,7 +6,9 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -14,15 +16,22 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/pkg/errors"
+	"github.com/spf13/afero"
 
 	"github.com/datumforge/datum/pkg/utils/storage"
 )
 
+// keyNamespace == organizationID
+// key == documentID
+
 // Storage wraps AWS S3 storage interface and s3 client pointer
 type Storage struct {
-	bucket   string
-	s3       *s3.Client
-	uploader *manager.Uploader
+	bucket       string
+	s3           *s3.Client
+	keyNamespace string
+	uploader     *manager.Uploader
+	fs           *afero.Afero
+	tempFs       *afero.Afero
 }
 
 // Config is the configuration for Storage
@@ -58,7 +67,11 @@ func withUploaderConcurrency(concurrency int64) func(uploader *manager.Uploader)
 }
 
 // NewStorage returns a new Storage with the provided configuration
-func NewStorage(cfg Config) (*Storage, error) {
+func NewStorage(cfg Config, keyNamespace string) (*Storage, error) {
+	var fs = afero.NewMemMapFs()
+
+	var tempFs = afero.NewMemMapFs()
+
 	awscfg := aws.Config{
 		Credentials: credentials.NewStaticCredentialsProvider(cfg.AccessKeyID, cfg.SecretAccessKey, ""),
 		Region:      *aws.String(cfg.Region),
@@ -81,14 +94,61 @@ func NewStorage(cfg Config) (*Storage, error) {
 	}
 
 	return &Storage{
-		bucket:   cfg.Bucket,
-		s3:       client,
-		uploader: manager.NewUploader(client, uploaderopts...),
+		bucket:       cfg.Bucket,
+		s3:           client,
+		keyNamespace: keyNamespace,
+		uploader:     manager.NewUploader(client, uploaderopts...),
+		fs:           &afero.Afero{Fs: fs},
+		tempFs:       &afero.Afero{Fs: tempFs},
 	}, nil
 }
 
 // Save saves content to path inside of a bucket (bucket is set in the config)
-func (s *Storage) Save(ctx context.Context, content io.Reader, path string) error {
+func (s *Storage) Save(ctx context.Context, content io.Reader, path, checksum, key string, tags *string) error {
+	if key == "" {
+		return errors.New("key cannot be empty")
+	}
+
+	namespacedKey := filepath.Join(s.keyNamespace, path)
+
+	input := &s3.PutObjectInput{
+		ACL:        types.ObjectCannedACLPublicRead,
+		Body:       content,
+		Bucket:     aws.String(s.bucket),
+		Key:        aws.String(namespacedKey),
+		ContentMD5: &checksum,
+	}
+
+	if tags != nil {
+		input.Tagging = tags
+	}
+
+	contenttype := mime.TypeByExtension(filepath.Ext(path)) // first, detect content type from extension
+	if contenttype == "" {
+		// second, detect content type from first 512 bytes of content
+		data := make([]byte, 512) // nolint:gomnd
+
+		n, err := content.Read(data)
+		if err != nil {
+			return err
+		}
+
+		contenttype = http.DetectContentType(data)
+
+		input.Body = io.MultiReader(bytes.NewReader(data[:n]), content)
+	}
+
+	if contenttype != "" {
+		input.ContentType = aws.String(contenttype)
+	}
+
+	_, err := s.uploader.Upload(ctx, input)
+
+	return errors.WithStack(err)
+}
+
+// Save saves content to path inside of a bucket (bucket is set in the config)
+func (s *Storage) SaveQuick(ctx context.Context, content io.Reader, path string) error {
 	input := &s3.PutObjectInput{
 		ACL:    types.ObjectCannedACLPublicRead,
 		Body:   content,
@@ -205,4 +265,65 @@ func (s *Storage) OpenWithStat(ctx context.Context, path string) (io.ReadCloser,
 		ModifiedTime: *out.LastModified,
 		Size:         *out.ContentLength,
 	}, nil
+}
+
+// PresignedURL returns a URL that provides access to a file for 15 minutes
+func (s *Storage) PresignedURL(key string, contentType string) (string, error) {
+	namespacedKey := path.Join(s.keyNamespace, key)
+	presignClient := s3.NewPresignClient(s.s3)
+
+	req, err := presignClient.PresignGetObject(context.Background(),
+		&s3.GetObjectInput{
+			Bucket:                     &s.bucket,
+			Key:                        &namespacedKey,
+			ResponseContentType:        &contentType,
+			ResponseContentDisposition: StringPointer("attachment"),
+		},
+		func(opts *s3.PresignOptions) {
+			opts.Expires = 15 * time.Minute // nolint:gomnd
+		},
+	)
+
+	if err != nil {
+		return "", errors.Wrap(err, "could not generate presigned URL")
+	}
+
+	return req.URL, nil
+}
+
+// Tags returns the tags for a specified key
+func (s *Storage) Tags(key string) (map[string]string, error) {
+	tags := make(map[string]string)
+
+	namespacedKey := path.Join(s.keyNamespace, key)
+
+	input := &s3.GetObjectTaggingInput{
+		Bucket: &s.bucket,
+		Key:    &namespacedKey,
+	}
+
+	result, err := s.s3.GetObjectTagging(context.Background(), input)
+	if err != nil {
+		return tags, errors.Wrap(err, "get object tagging on s3 failed")
+	}
+
+	for _, tag := range result.TagSet {
+		tags[*tag.Key] = *tag.Value
+	}
+
+	return tags, nil
+}
+
+func StringPointer(s string) *string {
+	return &s
+}
+
+// FileSystem returns the underlying afero filesystem
+func (s *Storage) FileSystem() *afero.Afero {
+	return s.fs
+}
+
+// TempFileSystem returns the temporary afero filesystem
+func (s *Storage) TempFileSystem() *afero.Afero {
+	return s.tempFs
 }

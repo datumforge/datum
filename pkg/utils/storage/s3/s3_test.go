@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	gostorage "github.com/datumforge/datum/pkg/utils/storage"
+	"github.com/datumforge/datum/pkg/utils/ulids"
 )
 
 // TODO: figure out a better way to do this without env vars
@@ -23,6 +24,8 @@ var (
 )
 
 func Test(t *testing.T) {
+	keyNamespace := ulids.New().String()
+
 	if accessKeyID == "" ||
 		secretAccessKey == "" ||
 		region == "" ||
@@ -30,12 +33,14 @@ func Test(t *testing.T) {
 		t.SkipNow()
 	}
 
-	storage, err := NewStorage(Config{
+	storageConfig := Config{
 		AccessKeyID:     accessKeyID,
 		SecretAccessKey: secretAccessKey,
 		Region:          region,
 		Bucket:          bucket,
-	})
+	}
+
+	storage, err := NewStorage(storageConfig, keyNamespace)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +53,9 @@ func Test(t *testing.T) {
 
 	before := time.Now()
 
-	err = storage.Save(ctx, bytes.NewBufferString("mitb"), "ugh")
+	var testString *string
+
+	err = storage.Save(ctx, bytes.NewBufferString("mitb"), "ugh", "meow", "meowmeow", testString)
 	require.NoError(t, err)
 
 	now := time.Now().Add(time.Second)

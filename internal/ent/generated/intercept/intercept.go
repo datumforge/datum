@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -87,6 +88,33 @@ func (f TraverseFunc) Traverse(ctx context.Context, q generated.Query) error {
 		return err
 	}
 	return f(ctx, query)
+}
+
+// The DocumentDataFunc type is an adapter to allow the use of ordinary function as a Querier.
+type DocumentDataFunc func(context.Context, *generated.DocumentDataQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f DocumentDataFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.DocumentDataQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.DocumentDataQuery", q)
+}
+
+// The TraverseDocumentData type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseDocumentData func(context.Context, *generated.DocumentDataQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseDocumentData) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseDocumentData) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.DocumentDataQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.DocumentDataQuery", q)
 }
 
 // The EmailVerificationTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -686,6 +714,8 @@ func (f TraverseWebauthn) Traverse(ctx context.Context, q generated.Query) error
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
+	case *generated.DocumentDataQuery:
+		return &query[*generated.DocumentDataQuery, predicate.DocumentData, documentdata.OrderOption]{typ: generated.TypeDocumentData, tq: q}, nil
 	case *generated.EmailVerificationTokenQuery:
 		return &query[*generated.EmailVerificationTokenQuery, predicate.EmailVerificationToken, emailverificationtoken.OrderOption]{typ: generated.TypeEmailVerificationToken, tq: q}, nil
 	case *generated.EntitlementQuery:

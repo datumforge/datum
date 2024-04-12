@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -114,6 +115,252 @@ func paginateLimit(first, last *int) int {
 		limit = *last + 1
 	}
 	return limit
+}
+
+// DocumentDataEdge is the edge representation of DocumentData.
+type DocumentDataEdge struct {
+	Node   *DocumentData `json:"node"`
+	Cursor Cursor        `json:"cursor"`
+}
+
+// DocumentDataConnection is the connection containing edges to DocumentData.
+type DocumentDataConnection struct {
+	Edges      []*DocumentDataEdge `json:"edges"`
+	PageInfo   PageInfo            `json:"pageInfo"`
+	TotalCount int                 `json:"totalCount"`
+}
+
+func (c *DocumentDataConnection) build(nodes []*DocumentData, pager *documentdataPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *DocumentData
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *DocumentData {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *DocumentData {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*DocumentDataEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &DocumentDataEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// DocumentDataPaginateOption enables pagination customization.
+type DocumentDataPaginateOption func(*documentdataPager) error
+
+// WithDocumentDataOrder configures pagination ordering.
+func WithDocumentDataOrder(order *DocumentDataOrder) DocumentDataPaginateOption {
+	if order == nil {
+		order = DefaultDocumentDataOrder
+	}
+	o := *order
+	return func(pager *documentdataPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultDocumentDataOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithDocumentDataFilter configures pagination filter.
+func WithDocumentDataFilter(filter func(*DocumentDataQuery) (*DocumentDataQuery, error)) DocumentDataPaginateOption {
+	return func(pager *documentdataPager) error {
+		if filter == nil {
+			return errors.New("DocumentDataQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type documentdataPager struct {
+	reverse bool
+	order   *DocumentDataOrder
+	filter  func(*DocumentDataQuery) (*DocumentDataQuery, error)
+}
+
+func newDocumentDataPager(opts []DocumentDataPaginateOption, reverse bool) (*documentdataPager, error) {
+	pager := &documentdataPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultDocumentDataOrder
+	}
+	return pager, nil
+}
+
+func (p *documentdataPager) applyFilter(query *DocumentDataQuery) (*DocumentDataQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *documentdataPager) toCursor(dd *DocumentData) Cursor {
+	return p.order.Field.toCursor(dd)
+}
+
+func (p *documentdataPager) applyCursors(query *DocumentDataQuery, after, before *Cursor) (*DocumentDataQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultDocumentDataOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *documentdataPager) applyOrder(query *DocumentDataQuery) *DocumentDataQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultDocumentDataOrder.Field {
+		query = query.Order(DefaultDocumentDataOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *documentdataPager) orderExpr(query *DocumentDataQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultDocumentDataOrder.Field {
+			b.Comma().Ident(DefaultDocumentDataOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to DocumentData.
+func (dd *DocumentDataQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...DocumentDataPaginateOption,
+) (*DocumentDataConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newDocumentDataPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if dd, err = pager.applyFilter(dd); err != nil {
+		return nil, err
+	}
+	conn := &DocumentDataConnection{Edges: []*DocumentDataEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = dd.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if dd, err = pager.applyCursors(dd, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		dd.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := dd.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	dd = pager.applyOrder(dd)
+	nodes, err := dd.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// DocumentDataOrderField defines the ordering field of DocumentData.
+type DocumentDataOrderField struct {
+	// Value extracts the ordering value from the given DocumentData.
+	Value    func(*DocumentData) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) documentdata.OrderOption
+	toCursor func(*DocumentData) Cursor
+}
+
+// DocumentDataOrder defines the ordering of DocumentData.
+type DocumentDataOrder struct {
+	Direction OrderDirection          `json:"direction"`
+	Field     *DocumentDataOrderField `json:"field"`
+}
+
+// DefaultDocumentDataOrder is the default ordering of DocumentData.
+var DefaultDocumentDataOrder = &DocumentDataOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &DocumentDataOrderField{
+		Value: func(dd *DocumentData) (ent.Value, error) {
+			return dd.ID, nil
+		},
+		column: documentdata.FieldID,
+		toTerm: documentdata.ByID,
+		toCursor: func(dd *DocumentData) Cursor {
+			return Cursor{ID: dd.ID}
+		},
+	},
+}
+
+// ToEdge converts DocumentData into DocumentDataEdge.
+func (dd *DocumentData) ToEdge(order *DocumentDataOrder) *DocumentDataEdge {
+	if order == nil {
+		order = DefaultDocumentDataOrder
+	}
+	return &DocumentDataEdge{
+		Node:   dd,
+		Cursor: order.Field.toCursor(dd),
+	}
 }
 
 // EntitlementEdge is the edge representation of Entitlement.

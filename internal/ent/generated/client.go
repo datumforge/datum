@@ -18,6 +18,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -57,6 +58,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// DocumentData is the client for interacting with the DocumentData builders.
+	DocumentData *DocumentDataClient
 	// EmailVerificationToken is the client for interacting with the EmailVerificationToken builders.
 	EmailVerificationToken *EmailVerificationTokenClient
 	// Entitlement is the client for interacting with the Entitlement builders.
@@ -117,6 +120,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.DocumentData = NewDocumentDataClient(c.config)
 	c.EmailVerificationToken = NewEmailVerificationTokenClient(c.config)
 	c.Entitlement = NewEntitlementClient(c.config)
 	c.Group = NewGroupClient(c.config)
@@ -321,6 +325,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                        ctx,
 		config:                     cfg,
+		DocumentData:               NewDocumentDataClient(cfg),
 		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
 		Entitlement:                NewEntitlementClient(cfg),
 		Group:                      NewGroupClient(cfg),
@@ -362,6 +367,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                        ctx,
 		config:                     cfg,
+		DocumentData:               NewDocumentDataClient(cfg),
 		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
 		Entitlement:                NewEntitlementClient(cfg),
 		Group:                      NewGroupClient(cfg),
@@ -390,7 +396,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		EmailVerificationToken.
+//		DocumentData.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -413,11 +419,12 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
-		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
-		c.OrgMembership, c.Organization, c.OrganizationHistory, c.OrganizationSetting,
-		c.OrganizationSettingHistory, c.PasswordResetToken, c.PersonalAccessToken,
-		c.Subscriber, c.TFASetting, c.Template, c.User, c.UserSetting, c.Webauthn,
+		c.DocumentData, c.EmailVerificationToken, c.Entitlement, c.Group,
+		c.GroupMembership, c.GroupSetting, c.Integration, c.Invite, c.OauthProvider,
+		c.OhAuthTooToken, c.OrgMembership, c.Organization, c.OrganizationHistory,
+		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
+		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template, c.User,
+		c.UserSetting, c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -427,11 +434,12 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupMembership,
-		c.GroupSetting, c.Integration, c.Invite, c.OauthProvider, c.OhAuthTooToken,
-		c.OrgMembership, c.Organization, c.OrganizationHistory, c.OrganizationSetting,
-		c.OrganizationSettingHistory, c.PasswordResetToken, c.PersonalAccessToken,
-		c.Subscriber, c.TFASetting, c.Template, c.User, c.UserSetting, c.Webauthn,
+		c.DocumentData, c.EmailVerificationToken, c.Entitlement, c.Group,
+		c.GroupMembership, c.GroupSetting, c.Integration, c.Invite, c.OauthProvider,
+		c.OhAuthTooToken, c.OrgMembership, c.Organization, c.OrganizationHistory,
+		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
+		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template, c.User,
+		c.UserSetting, c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -440,6 +448,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *DocumentDataMutation:
+		return c.DocumentData.mutate(ctx, m)
 	case *EmailVerificationTokenMutation:
 		return c.EmailVerificationToken.mutate(ctx, m)
 	case *EntitlementMutation:
@@ -486,6 +496,160 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Webauthn.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("generated: unknown mutation type %T", m)
+	}
+}
+
+// DocumentDataClient is a client for the DocumentData schema.
+type DocumentDataClient struct {
+	config
+}
+
+// NewDocumentDataClient returns a client for the DocumentData from the given config.
+func NewDocumentDataClient(c config) *DocumentDataClient {
+	return &DocumentDataClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `documentdata.Hooks(f(g(h())))`.
+func (c *DocumentDataClient) Use(hooks ...Hook) {
+	c.hooks.DocumentData = append(c.hooks.DocumentData, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `documentdata.Intercept(f(g(h())))`.
+func (c *DocumentDataClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DocumentData = append(c.inters.DocumentData, interceptors...)
+}
+
+// Create returns a builder for creating a DocumentData entity.
+func (c *DocumentDataClient) Create() *DocumentDataCreate {
+	mutation := newDocumentDataMutation(c.config, OpCreate)
+	return &DocumentDataCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DocumentData entities.
+func (c *DocumentDataClient) CreateBulk(builders ...*DocumentDataCreate) *DocumentDataCreateBulk {
+	return &DocumentDataCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DocumentDataClient) MapCreateBulk(slice any, setFunc func(*DocumentDataCreate, int)) *DocumentDataCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DocumentDataCreateBulk{err: fmt.Errorf("calling to DocumentDataClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DocumentDataCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DocumentDataCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DocumentData.
+func (c *DocumentDataClient) Update() *DocumentDataUpdate {
+	mutation := newDocumentDataMutation(c.config, OpUpdate)
+	return &DocumentDataUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DocumentDataClient) UpdateOne(dd *DocumentData) *DocumentDataUpdateOne {
+	mutation := newDocumentDataMutation(c.config, OpUpdateOne, withDocumentData(dd))
+	return &DocumentDataUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DocumentDataClient) UpdateOneID(id string) *DocumentDataUpdateOne {
+	mutation := newDocumentDataMutation(c.config, OpUpdateOne, withDocumentDataID(id))
+	return &DocumentDataUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DocumentData.
+func (c *DocumentDataClient) Delete() *DocumentDataDelete {
+	mutation := newDocumentDataMutation(c.config, OpDelete)
+	return &DocumentDataDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DocumentDataClient) DeleteOne(dd *DocumentData) *DocumentDataDeleteOne {
+	return c.DeleteOneID(dd.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DocumentDataClient) DeleteOneID(id string) *DocumentDataDeleteOne {
+	builder := c.Delete().Where(documentdata.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DocumentDataDeleteOne{builder}
+}
+
+// Query returns a query builder for DocumentData.
+func (c *DocumentDataClient) Query() *DocumentDataQuery {
+	return &DocumentDataQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDocumentData},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DocumentData entity by its id.
+func (c *DocumentDataClient) Get(ctx context.Context, id string) (*DocumentData, error) {
+	return c.Query().Where(documentdata.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DocumentDataClient) GetX(ctx context.Context, id string) *DocumentData {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTemplate queries the template edge of a DocumentData.
+func (c *DocumentDataClient) QueryTemplate(dd *DocumentData) *TemplateQuery {
+	query := (&TemplateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := dd.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(documentdata.Table, documentdata.FieldID, id),
+			sqlgraph.To(template.Table, template.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, documentdata.TemplateTable, documentdata.TemplateColumn),
+		)
+		schemaConfig := dd.schemaConfig
+		step.To.Schema = schemaConfig.Template
+		step.Edge.Schema = schemaConfig.DocumentData
+		fromV = sqlgraph.Neighbors(dd.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DocumentDataClient) Hooks() []Hook {
+	hooks := c.hooks.DocumentData
+	return append(hooks[:len(hooks):len(hooks)], documentdata.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *DocumentDataClient) Interceptors() []Interceptor {
+	inters := c.inters.DocumentData
+	return append(inters[:len(inters):len(inters)], documentdata.Interceptors[:]...)
+}
+
+func (c *DocumentDataClient) mutate(ctx context.Context, m *DocumentDataMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DocumentDataCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DocumentDataUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DocumentDataUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DocumentDataDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown DocumentData mutation op: %q", m.Op())
 	}
 }
 
@@ -3667,6 +3831,25 @@ func (c *TemplateClient) QueryOwner(t *Template) *OrganizationQuery {
 	return query
 }
 
+// QueryDocuments queries the documents edge of a Template.
+func (c *TemplateClient) QueryDocuments(t *Template) *DocumentDataQuery {
+	query := (&DocumentDataClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(template.Table, template.FieldID, id),
+			sqlgraph.To(documentdata.Table, documentdata.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, template.DocumentsTable, template.DocumentsColumn),
+		)
+		schemaConfig := t.schemaConfig
+		step.To.Schema = schemaConfig.DocumentData
+		step.Edge.Schema = schemaConfig.DocumentData
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *TemplateClient) Hooks() []Hook {
 	hooks := c.hooks.Template
@@ -4348,16 +4531,16 @@ func (c *WebauthnClient) mutate(ctx context.Context, m *WebauthnMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
-		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
-		Organization, OrganizationHistory, OrganizationSetting,
+		DocumentData, EmailVerificationToken, Entitlement, Group, GroupMembership,
+		GroupSetting, Integration, Invite, OauthProvider, OhAuthTooToken,
+		OrgMembership, Organization, OrganizationHistory, OrganizationSetting,
 		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
 		Subscriber, TFASetting, Template, User, UserSetting, Webauthn []ent.Hook
 	}
 	inters struct {
-		EmailVerificationToken, Entitlement, Group, GroupMembership, GroupSetting,
-		Integration, Invite, OauthProvider, OhAuthTooToken, OrgMembership,
-		Organization, OrganizationHistory, OrganizationSetting,
+		DocumentData, EmailVerificationToken, Entitlement, Group, GroupMembership,
+		GroupSetting, Integration, Invite, OauthProvider, OhAuthTooToken,
+		OrgMembership, Organization, OrganizationHistory, OrganizationSetting,
 		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
 		Subscriber, TFASetting, Template, User, UserSetting, Webauthn []ent.Interceptor
 	}

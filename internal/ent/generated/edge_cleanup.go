@@ -6,6 +6,7 @@ import (
 	"context"
 
 	"entgo.io/ent/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -24,6 +25,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 )
+
+func DocumentDataEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup documentdata edge"))
+
+	return nil
+}
 
 func EmailVerificationTokenEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
@@ -217,6 +225,13 @@ func TFASettingEdgeCleanup(ctx context.Context, id string) error {
 func TemplateEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup template edge"))
+
+	if exists, err := FromContext(ctx).DocumentData.Query().Where((documentdata.HasTemplateWith(template.ID(id)))).Exist(ctx); err == nil && exists {
+		if documentdataCount, err := FromContext(ctx).DocumentData.Delete().Where(documentdata.HasTemplateWith(template.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting documentdata", "count", documentdataCount, "err", err)
+			return err
+		}
+	}
 
 	return nil
 }

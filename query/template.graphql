@@ -11,6 +11,7 @@ mutation CreateTemplate($input: CreateTemplateInput!) {
       name
       description
       jsonconfig
+      uischema
       owner {
         id
       }
@@ -31,7 +32,7 @@ mutation UpdateTemplate($updateTemplateId: ID!, $input: UpdateTemplateInput!) {
       name
       description
       jsonconfig
-      
+      uischema     
       owner {
         id
       }
@@ -53,6 +54,7 @@ query GetAllTemplates {
         name
         description
         jsonconfig
+        uischema
         owner {
           id
         }
@@ -73,6 +75,7 @@ query GetTemplate($getTemplateId: ID!) {
     name
     description
     jsonconfig
+    uischema
     owner {
       id
     }

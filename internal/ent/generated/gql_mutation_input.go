@@ -9,6 +9,86 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 )
 
+// CreateDocumentDataInput represents a mutation input for creating documentdataslice.
+type CreateDocumentDataInput struct {
+	CreatedAt  *time.Time
+	UpdatedAt  *time.Time
+	CreatedBy  *string
+	UpdatedBy  *string
+	Data       customtypes.JSONObject
+	TemplateID string
+}
+
+// Mutate applies the CreateDocumentDataInput on the DocumentDataMutation builder.
+func (i *CreateDocumentDataInput) Mutate(m *DocumentDataMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Data; v != nil {
+		m.SetData(v)
+	}
+	m.SetTemplateID(i.TemplateID)
+}
+
+// SetInput applies the change-set in the CreateDocumentDataInput on the DocumentDataCreate builder.
+func (c *DocumentDataCreate) SetInput(i CreateDocumentDataInput) *DocumentDataCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateDocumentDataInput represents a mutation input for updating documentdataslice.
+type UpdateDocumentDataInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Data           customtypes.JSONObject
+	TemplateID     *string
+}
+
+// Mutate applies the UpdateDocumentDataInput on the DocumentDataMutation builder.
+func (i *UpdateDocumentDataInput) Mutate(m *DocumentDataMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Data; v != nil {
+		m.SetData(v)
+	}
+	if v := i.TemplateID; v != nil {
+		m.SetTemplateID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateDocumentDataInput on the DocumentDataUpdate builder.
+func (c *DocumentDataUpdate) SetInput(i UpdateDocumentDataInput) *DocumentDataUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateDocumentDataInput on the DocumentDataUpdateOne builder.
+func (c *DocumentDataUpdateOne) SetInput(i UpdateDocumentDataInput) *DocumentDataUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateEntitlementInput represents a mutation input for creating entitlements.
 type CreateEntitlementInput struct {
 	CreatedAt              *time.Time
@@ -1860,9 +1940,12 @@ type CreateTemplateInput struct {
 	CreatedBy   *string
 	UpdatedBy   *string
 	Name        string
+	Type        *enums.DocumentType
 	Description *string
 	Jsonconfig  customtypes.JSONObject
+	Uischema    customtypes.JSONObject
 	OwnerID     string
+	DocumentIDs []string
 }
 
 // Mutate applies the CreateTemplateInput on the TemplateMutation builder.
@@ -1880,13 +1963,22 @@ func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
 		m.SetUpdatedBy(*v)
 	}
 	m.SetName(i.Name)
+	if v := i.Type; v != nil {
+		m.SetType(*v)
+	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
 	if v := i.Jsonconfig; v != nil {
 		m.SetJsonconfig(v)
 	}
+	if v := i.Uischema; v != nil {
+		m.SetUischema(v)
+	}
 	m.SetOwnerID(i.OwnerID)
+	if v := i.DocumentIDs; len(v) > 0 {
+		m.AddDocumentIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateTemplateInput on the TemplateCreate builder.
@@ -1897,16 +1989,21 @@ func (c *TemplateCreate) SetInput(i CreateTemplateInput) *TemplateCreate {
 
 // UpdateTemplateInput represents a mutation input for updating templates.
 type UpdateTemplateInput struct {
-	ClearUpdatedAt   bool
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
-	Name             *string
-	ClearDescription bool
-	Description      *string
-	ClearJsonconfig  bool
-	Jsonconfig       customtypes.JSONObject
-	OwnerID          *string
+	ClearUpdatedAt    bool
+	UpdatedAt         *time.Time
+	ClearUpdatedBy    bool
+	UpdatedBy         *string
+	Name              *string
+	Type              *enums.DocumentType
+	ClearDescription  bool
+	Description       *string
+	Jsonconfig        customtypes.JSONObject
+	ClearUischema     bool
+	Uischema          customtypes.JSONObject
+	OwnerID           *string
+	ClearDocuments    bool
+	AddDocumentIDs    []string
+	RemoveDocumentIDs []string
 }
 
 // Mutate applies the UpdateTemplateInput on the TemplateMutation builder.
@@ -1926,20 +2023,35 @@ func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
+	if v := i.Type; v != nil {
+		m.SetType(*v)
+	}
 	if i.ClearDescription {
 		m.ClearDescription()
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
-	if i.ClearJsonconfig {
-		m.ClearJsonconfig()
-	}
 	if v := i.Jsonconfig; v != nil {
 		m.SetJsonconfig(v)
 	}
+	if i.ClearUischema {
+		m.ClearUischema()
+	}
+	if v := i.Uischema; v != nil {
+		m.SetUischema(v)
+	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
+	}
+	if i.ClearDocuments {
+		m.ClearDocuments()
+	}
+	if v := i.AddDocumentIDs; len(v) > 0 {
+		m.AddDocumentIDs(v...)
+	}
+	if v := i.RemoveDocumentIDs; len(v) > 0 {
+		m.RemoveDocumentIDs(v...)
 	}
 }
 

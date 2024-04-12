@@ -4,12 +4,14 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/template"
@@ -20,13 +22,15 @@ import (
 // TemplateQuery is the builder for querying Template entities.
 type TemplateQuery struct {
 	config
-	ctx        *QueryContext
-	order      []template.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Template
-	withOwner  *OrganizationQuery
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*Template) error
+	ctx                *QueryContext
+	order              []template.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.Template
+	withOwner          *OrganizationQuery
+	withDocuments      *DocumentDataQuery
+	modifiers          []func(*sql.Selector)
+	loadTotal          []func(context.Context, []*Template) error
+	withNamedDocuments map[string]*DocumentDataQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -82,6 +86,31 @@ func (tq *TemplateQuery) QueryOwner() *OrganizationQuery {
 		schemaConfig := tq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Template
+		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDocuments chains the current query on the "documents" edge.
+func (tq *TemplateQuery) QueryDocuments() *DocumentDataQuery {
+	query := (&DocumentDataClient{config: tq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := tq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := tq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(template.Table, template.FieldID, selector),
+			sqlgraph.To(documentdata.Table, documentdata.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, template.DocumentsTable, template.DocumentsColumn),
+		)
+		schemaConfig := tq.schemaConfig
+		step.To.Schema = schemaConfig.DocumentData
+		step.Edge.Schema = schemaConfig.DocumentData
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -275,12 +304,13 @@ func (tq *TemplateQuery) Clone() *TemplateQuery {
 		return nil
 	}
 	return &TemplateQuery{
-		config:     tq.config,
-		ctx:        tq.ctx.Clone(),
-		order:      append([]template.OrderOption{}, tq.order...),
-		inters:     append([]Interceptor{}, tq.inters...),
-		predicates: append([]predicate.Template{}, tq.predicates...),
-		withOwner:  tq.withOwner.Clone(),
+		config:        tq.config,
+		ctx:           tq.ctx.Clone(),
+		order:         append([]template.OrderOption{}, tq.order...),
+		inters:        append([]Interceptor{}, tq.inters...),
+		predicates:    append([]predicate.Template{}, tq.predicates...),
+		withOwner:     tq.withOwner.Clone(),
+		withDocuments: tq.withDocuments.Clone(),
 		// clone intermediate query.
 		sql:  tq.sql.Clone(),
 		path: tq.path,
@@ -295,6 +325,17 @@ func (tq *TemplateQuery) WithOwner(opts ...func(*OrganizationQuery)) *TemplateQu
 		opt(query)
 	}
 	tq.withOwner = query
+	return tq
+}
+
+// WithDocuments tells the query-builder to eager-load the nodes that are connected to
+// the "documents" edge. The optional arguments are used to configure the query builder of the edge.
+func (tq *TemplateQuery) WithDocuments(opts ...func(*DocumentDataQuery)) *TemplateQuery {
+	query := (&DocumentDataClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	tq.withDocuments = query
 	return tq
 }
 
@@ -376,8 +417,9 @@ func (tq *TemplateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tem
 	var (
 		nodes       = []*Template{}
 		_spec       = tq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			tq.withOwner != nil,
+			tq.withDocuments != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -406,6 +448,20 @@ func (tq *TemplateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Tem
 	if query := tq.withOwner; query != nil {
 		if err := tq.loadOwner(ctx, query, nodes, nil,
 			func(n *Template, e *Organization) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := tq.withDocuments; query != nil {
+		if err := tq.loadDocuments(ctx, query, nodes,
+			func(n *Template) { n.Edges.Documents = []*DocumentData{} },
+			func(n *Template, e *DocumentData) { n.Edges.Documents = append(n.Edges.Documents, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range tq.withNamedDocuments {
+		if err := tq.loadDocuments(ctx, query, nodes,
+			func(n *Template) { n.appendNamedDocuments(name) },
+			func(n *Template, e *DocumentData) { n.appendNamedDocuments(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -443,6 +499,36 @@ func (tq *TemplateQuery) loadOwner(ctx context.Context, query *OrganizationQuery
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (tq *TemplateQuery) loadDocuments(ctx context.Context, query *DocumentDataQuery, nodes []*Template, init func(*Template), assign func(*Template, *DocumentData)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Template)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(documentdata.FieldTemplateID)
+	}
+	query.Where(predicate.DocumentData(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(template.DocumentsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.TemplateID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "template_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -537,6 +623,20 @@ func (tq *TemplateQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedDocuments tells the query-builder to eager-load the nodes that are connected to the "documents"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (tq *TemplateQuery) WithNamedDocuments(name string, opts ...func(*DocumentDataQuery)) *TemplateQuery {
+	query := (&DocumentDataClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if tq.withNamedDocuments == nil {
+		tq.withNamedDocuments = make(map[string]*DocumentDataQuery)
+	}
+	tq.withNamedDocuments[name] = query
+	return tq
 }
 
 // TemplateGroupBy is the group-by builder for Template entities.

@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/customtypes"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -48,6 +49,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeDocumentData               = "DocumentData"
 	TypeEmailVerificationToken     = "EmailVerificationToken"
 	TypeEntitlement                = "Entitlement"
 	TypeGroup                      = "Group"
@@ -71,6 +73,887 @@ const (
 	TypeUserSetting                = "UserSetting"
 	TypeWebauthn                   = "Webauthn"
 )
+
+// DocumentDataMutation represents an operation that mutates the DocumentData nodes in the graph.
+type DocumentDataMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	created_by      *string
+	updated_by      *string
+	deleted_at      *time.Time
+	deleted_by      *string
+	data            *customtypes.JSONObject
+	clearedFields   map[string]struct{}
+	template        *string
+	clearedtemplate bool
+	done            bool
+	oldValue        func(context.Context) (*DocumentData, error)
+	predicates      []predicate.DocumentData
+}
+
+var _ ent.Mutation = (*DocumentDataMutation)(nil)
+
+// documentdataOption allows management of the mutation configuration using functional options.
+type documentdataOption func(*DocumentDataMutation)
+
+// newDocumentDataMutation creates new mutation for the DocumentData entity.
+func newDocumentDataMutation(c config, op Op, opts ...documentdataOption) *DocumentDataMutation {
+	m := &DocumentDataMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeDocumentData,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withDocumentDataID sets the ID field of the mutation.
+func withDocumentDataID(id string) documentdataOption {
+	return func(m *DocumentDataMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *DocumentData
+		)
+		m.oldValue = func(ctx context.Context) (*DocumentData, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().DocumentData.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withDocumentData sets the old DocumentData of the mutation.
+func withDocumentData(node *DocumentData) documentdataOption {
+	return func(m *DocumentDataMutation) {
+		m.oldValue = func(context.Context) (*DocumentData, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m DocumentDataMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m DocumentDataMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of DocumentData entities.
+func (m *DocumentDataMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *DocumentDataMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *DocumentDataMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().DocumentData.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *DocumentDataMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *DocumentDataMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *DocumentDataMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[documentdata.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *DocumentDataMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[documentdata.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *DocumentDataMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, documentdata.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *DocumentDataMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *DocumentDataMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *DocumentDataMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[documentdata.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *DocumentDataMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[documentdata.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *DocumentDataMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, documentdata.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *DocumentDataMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *DocumentDataMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *DocumentDataMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[documentdata.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *DocumentDataMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[documentdata.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *DocumentDataMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, documentdata.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *DocumentDataMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *DocumentDataMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *DocumentDataMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[documentdata.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *DocumentDataMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[documentdata.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *DocumentDataMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, documentdata.FieldUpdatedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *DocumentDataMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *DocumentDataMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *DocumentDataMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[documentdata.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *DocumentDataMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[documentdata.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *DocumentDataMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, documentdata.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *DocumentDataMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *DocumentDataMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *DocumentDataMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[documentdata.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *DocumentDataMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[documentdata.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *DocumentDataMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, documentdata.FieldDeletedBy)
+}
+
+// SetTemplateID sets the "template_id" field.
+func (m *DocumentDataMutation) SetTemplateID(s string) {
+	m.template = &s
+}
+
+// TemplateID returns the value of the "template_id" field in the mutation.
+func (m *DocumentDataMutation) TemplateID() (r string, exists bool) {
+	v := m.template
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTemplateID returns the old "template_id" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldTemplateID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTemplateID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTemplateID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTemplateID: %w", err)
+	}
+	return oldValue.TemplateID, nil
+}
+
+// ResetTemplateID resets all changes to the "template_id" field.
+func (m *DocumentDataMutation) ResetTemplateID() {
+	m.template = nil
+}
+
+// SetData sets the "data" field.
+func (m *DocumentDataMutation) SetData(co customtypes.JSONObject) {
+	m.data = &co
+}
+
+// Data returns the value of the "data" field in the mutation.
+func (m *DocumentDataMutation) Data() (r customtypes.JSONObject, exists bool) {
+	v := m.data
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldData returns the old "data" field's value of the DocumentData entity.
+// If the DocumentData object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *DocumentDataMutation) OldData(ctx context.Context) (v customtypes.JSONObject, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldData is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldData requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldData: %w", err)
+	}
+	return oldValue.Data, nil
+}
+
+// ResetData resets all changes to the "data" field.
+func (m *DocumentDataMutation) ResetData() {
+	m.data = nil
+}
+
+// ClearTemplate clears the "template" edge to the Template entity.
+func (m *DocumentDataMutation) ClearTemplate() {
+	m.clearedtemplate = true
+	m.clearedFields[documentdata.FieldTemplateID] = struct{}{}
+}
+
+// TemplateCleared reports if the "template" edge to the Template entity was cleared.
+func (m *DocumentDataMutation) TemplateCleared() bool {
+	return m.clearedtemplate
+}
+
+// TemplateIDs returns the "template" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TemplateID instead. It exists only for internal usage by the builders.
+func (m *DocumentDataMutation) TemplateIDs() (ids []string) {
+	if id := m.template; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTemplate resets all changes to the "template" edge.
+func (m *DocumentDataMutation) ResetTemplate() {
+	m.template = nil
+	m.clearedtemplate = false
+}
+
+// Where appends a list predicates to the DocumentDataMutation builder.
+func (m *DocumentDataMutation) Where(ps ...predicate.DocumentData) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the DocumentDataMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *DocumentDataMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.DocumentData, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *DocumentDataMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *DocumentDataMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (DocumentData).
+func (m *DocumentDataMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *DocumentDataMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, documentdata.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, documentdata.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, documentdata.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, documentdata.FieldUpdatedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, documentdata.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, documentdata.FieldDeletedBy)
+	}
+	if m.template != nil {
+		fields = append(fields, documentdata.FieldTemplateID)
+	}
+	if m.data != nil {
+		fields = append(fields, documentdata.FieldData)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *DocumentDataMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case documentdata.FieldCreatedAt:
+		return m.CreatedAt()
+	case documentdata.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case documentdata.FieldCreatedBy:
+		return m.CreatedBy()
+	case documentdata.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case documentdata.FieldDeletedAt:
+		return m.DeletedAt()
+	case documentdata.FieldDeletedBy:
+		return m.DeletedBy()
+	case documentdata.FieldTemplateID:
+		return m.TemplateID()
+	case documentdata.FieldData:
+		return m.Data()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *DocumentDataMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case documentdata.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case documentdata.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case documentdata.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case documentdata.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case documentdata.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case documentdata.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case documentdata.FieldTemplateID:
+		return m.OldTemplateID(ctx)
+	case documentdata.FieldData:
+		return m.OldData(ctx)
+	}
+	return nil, fmt.Errorf("unknown DocumentData field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DocumentDataMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case documentdata.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case documentdata.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case documentdata.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case documentdata.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case documentdata.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case documentdata.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case documentdata.FieldTemplateID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTemplateID(v)
+		return nil
+	case documentdata.FieldData:
+		v, ok := value.(customtypes.JSONObject)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetData(v)
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentData field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *DocumentDataMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *DocumentDataMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *DocumentDataMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown DocumentData numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *DocumentDataMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(documentdata.FieldCreatedAt) {
+		fields = append(fields, documentdata.FieldCreatedAt)
+	}
+	if m.FieldCleared(documentdata.FieldUpdatedAt) {
+		fields = append(fields, documentdata.FieldUpdatedAt)
+	}
+	if m.FieldCleared(documentdata.FieldCreatedBy) {
+		fields = append(fields, documentdata.FieldCreatedBy)
+	}
+	if m.FieldCleared(documentdata.FieldUpdatedBy) {
+		fields = append(fields, documentdata.FieldUpdatedBy)
+	}
+	if m.FieldCleared(documentdata.FieldDeletedAt) {
+		fields = append(fields, documentdata.FieldDeletedAt)
+	}
+	if m.FieldCleared(documentdata.FieldDeletedBy) {
+		fields = append(fields, documentdata.FieldDeletedBy)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *DocumentDataMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *DocumentDataMutation) ClearField(name string) error {
+	switch name {
+	case documentdata.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case documentdata.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case documentdata.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case documentdata.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case documentdata.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case documentdata.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentData nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *DocumentDataMutation) ResetField(name string) error {
+	switch name {
+	case documentdata.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case documentdata.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case documentdata.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case documentdata.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case documentdata.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case documentdata.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case documentdata.FieldTemplateID:
+		m.ResetTemplateID()
+		return nil
+	case documentdata.FieldData:
+		m.ResetData()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentData field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *DocumentDataMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.template != nil {
+		edges = append(edges, documentdata.EdgeTemplate)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *DocumentDataMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case documentdata.EdgeTemplate:
+		if id := m.template; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *DocumentDataMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *DocumentDataMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *DocumentDataMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedtemplate {
+		edges = append(edges, documentdata.EdgeTemplate)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *DocumentDataMutation) EdgeCleared(name string) bool {
+	switch name {
+	case documentdata.EdgeTemplate:
+		return m.clearedtemplate
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *DocumentDataMutation) ClearEdge(name string) error {
+	switch name {
+	case documentdata.EdgeTemplate:
+		m.ClearTemplate()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentData unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *DocumentDataMutation) ResetEdge(name string) error {
+	switch name {
+	case documentdata.EdgeTemplate:
+		m.ResetTemplate()
+		return nil
+	}
+	return fmt.Errorf("unknown DocumentData edge %s", name)
+}
 
 // EmailVerificationTokenMutation represents an operation that mutates the EmailVerificationToken nodes in the graph.
 type EmailVerificationTokenMutation struct {
@@ -23154,24 +24037,29 @@ func (m *TFASettingMutation) ResetEdge(name string) error {
 // TemplateMutation represents an operation that mutates the Template nodes in the graph.
 type TemplateMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	created_at    *time.Time
-	updated_at    *time.Time
-	created_by    *string
-	updated_by    *string
-	deleted_at    *time.Time
-	deleted_by    *string
-	name          *string
-	description   *string
-	jsonconfig    *customtypes.JSONObject
-	clearedFields map[string]struct{}
-	owner         *string
-	clearedowner  bool
-	done          bool
-	oldValue      func(context.Context) (*Template, error)
-	predicates    []predicate.Template
+	op               Op
+	typ              string
+	id               *string
+	created_at       *time.Time
+	updated_at       *time.Time
+	created_by       *string
+	updated_by       *string
+	deleted_at       *time.Time
+	deleted_by       *string
+	name             *string
+	_type            *enums.DocumentType
+	description      *string
+	jsonconfig       *customtypes.JSONObject
+	uischema         *customtypes.JSONObject
+	clearedFields    map[string]struct{}
+	owner            *string
+	clearedowner     bool
+	documents        map[string]struct{}
+	removeddocuments map[string]struct{}
+	cleareddocuments bool
+	done             bool
+	oldValue         func(context.Context) (*Template, error)
+	predicates       []predicate.Template
 }
 
 var _ ent.Mutation = (*TemplateMutation)(nil)
@@ -23644,6 +24532,42 @@ func (m *TemplateMutation) ResetName() {
 	m.name = nil
 }
 
+// SetType sets the "type" field.
+func (m *TemplateMutation) SetType(et enums.DocumentType) {
+	m._type = &et
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *TemplateMutation) GetType() (r enums.DocumentType, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Template entity.
+// If the Template object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateMutation) OldType(ctx context.Context) (v enums.DocumentType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *TemplateMutation) ResetType() {
+	m._type = nil
+}
+
 // SetDescription sets the "description" field.
 func (m *TemplateMutation) SetDescription(s string) {
 	m.description = &s
@@ -23724,22 +24648,58 @@ func (m *TemplateMutation) OldJsonconfig(ctx context.Context) (v customtypes.JSO
 	return oldValue.Jsonconfig, nil
 }
 
-// ClearJsonconfig clears the value of the "jsonconfig" field.
-func (m *TemplateMutation) ClearJsonconfig() {
-	m.jsonconfig = nil
-	m.clearedFields[template.FieldJsonconfig] = struct{}{}
-}
-
-// JsonconfigCleared returns if the "jsonconfig" field was cleared in this mutation.
-func (m *TemplateMutation) JsonconfigCleared() bool {
-	_, ok := m.clearedFields[template.FieldJsonconfig]
-	return ok
-}
-
 // ResetJsonconfig resets all changes to the "jsonconfig" field.
 func (m *TemplateMutation) ResetJsonconfig() {
 	m.jsonconfig = nil
-	delete(m.clearedFields, template.FieldJsonconfig)
+}
+
+// SetUischema sets the "uischema" field.
+func (m *TemplateMutation) SetUischema(co customtypes.JSONObject) {
+	m.uischema = &co
+}
+
+// Uischema returns the value of the "uischema" field in the mutation.
+func (m *TemplateMutation) Uischema() (r customtypes.JSONObject, exists bool) {
+	v := m.uischema
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUischema returns the old "uischema" field's value of the Template entity.
+// If the Template object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplateMutation) OldUischema(ctx context.Context) (v customtypes.JSONObject, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUischema is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUischema requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUischema: %w", err)
+	}
+	return oldValue.Uischema, nil
+}
+
+// ClearUischema clears the value of the "uischema" field.
+func (m *TemplateMutation) ClearUischema() {
+	m.uischema = nil
+	m.clearedFields[template.FieldUischema] = struct{}{}
+}
+
+// UischemaCleared returns if the "uischema" field was cleared in this mutation.
+func (m *TemplateMutation) UischemaCleared() bool {
+	_, ok := m.clearedFields[template.FieldUischema]
+	return ok
+}
+
+// ResetUischema resets all changes to the "uischema" field.
+func (m *TemplateMutation) ResetUischema() {
+	m.uischema = nil
+	delete(m.clearedFields, template.FieldUischema)
 }
 
 // ClearOwner clears the "owner" edge to the Organization entity.
@@ -23767,6 +24727,60 @@ func (m *TemplateMutation) OwnerIDs() (ids []string) {
 func (m *TemplateMutation) ResetOwner() {
 	m.owner = nil
 	m.clearedowner = false
+}
+
+// AddDocumentIDs adds the "documents" edge to the DocumentData entity by ids.
+func (m *TemplateMutation) AddDocumentIDs(ids ...string) {
+	if m.documents == nil {
+		m.documents = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.documents[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDocuments clears the "documents" edge to the DocumentData entity.
+func (m *TemplateMutation) ClearDocuments() {
+	m.cleareddocuments = true
+}
+
+// DocumentsCleared reports if the "documents" edge to the DocumentData entity was cleared.
+func (m *TemplateMutation) DocumentsCleared() bool {
+	return m.cleareddocuments
+}
+
+// RemoveDocumentIDs removes the "documents" edge to the DocumentData entity by IDs.
+func (m *TemplateMutation) RemoveDocumentIDs(ids ...string) {
+	if m.removeddocuments == nil {
+		m.removeddocuments = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.documents, ids[i])
+		m.removeddocuments[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDocuments returns the removed IDs of the "documents" edge to the DocumentData entity.
+func (m *TemplateMutation) RemovedDocumentsIDs() (ids []string) {
+	for id := range m.removeddocuments {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DocumentsIDs returns the "documents" edge IDs in the mutation.
+func (m *TemplateMutation) DocumentsIDs() (ids []string) {
+	for id := range m.documents {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDocuments resets all changes to the "documents" edge.
+func (m *TemplateMutation) ResetDocuments() {
+	m.documents = nil
+	m.cleareddocuments = false
+	m.removeddocuments = nil
 }
 
 // Where appends a list predicates to the TemplateMutation builder.
@@ -23803,7 +24817,7 @@ func (m *TemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TemplateMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, template.FieldCreatedAt)
 	}
@@ -23828,11 +24842,17 @@ func (m *TemplateMutation) Fields() []string {
 	if m.name != nil {
 		fields = append(fields, template.FieldName)
 	}
+	if m._type != nil {
+		fields = append(fields, template.FieldType)
+	}
 	if m.description != nil {
 		fields = append(fields, template.FieldDescription)
 	}
 	if m.jsonconfig != nil {
 		fields = append(fields, template.FieldJsonconfig)
+	}
+	if m.uischema != nil {
+		fields = append(fields, template.FieldUischema)
 	}
 	return fields
 }
@@ -23858,10 +24878,14 @@ func (m *TemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.OwnerID()
 	case template.FieldName:
 		return m.Name()
+	case template.FieldType:
+		return m.GetType()
 	case template.FieldDescription:
 		return m.Description()
 	case template.FieldJsonconfig:
 		return m.Jsonconfig()
+	case template.FieldUischema:
+		return m.Uischema()
 	}
 	return nil, false
 }
@@ -23887,10 +24911,14 @@ func (m *TemplateMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldOwnerID(ctx)
 	case template.FieldName:
 		return m.OldName(ctx)
+	case template.FieldType:
+		return m.OldType(ctx)
 	case template.FieldDescription:
 		return m.OldDescription(ctx)
 	case template.FieldJsonconfig:
 		return m.OldJsonconfig(ctx)
+	case template.FieldUischema:
+		return m.OldUischema(ctx)
 	}
 	return nil, fmt.Errorf("unknown Template field %s", name)
 }
@@ -23956,6 +24984,13 @@ func (m *TemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetName(v)
 		return nil
+	case template.FieldType:
+		v, ok := value.(enums.DocumentType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
 	case template.FieldDescription:
 		v, ok := value.(string)
 		if !ok {
@@ -23969,6 +25004,13 @@ func (m *TemplateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetJsonconfig(v)
+		return nil
+	case template.FieldUischema:
+		v, ok := value.(customtypes.JSONObject)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUischema(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Template field %s", name)
@@ -24021,8 +25063,8 @@ func (m *TemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(template.FieldDescription) {
 		fields = append(fields, template.FieldDescription)
 	}
-	if m.FieldCleared(template.FieldJsonconfig) {
-		fields = append(fields, template.FieldJsonconfig)
+	if m.FieldCleared(template.FieldUischema) {
+		fields = append(fields, template.FieldUischema)
 	}
 	return fields
 }
@@ -24059,8 +25101,8 @@ func (m *TemplateMutation) ClearField(name string) error {
 	case template.FieldDescription:
 		m.ClearDescription()
 		return nil
-	case template.FieldJsonconfig:
-		m.ClearJsonconfig()
+	case template.FieldUischema:
+		m.ClearUischema()
 		return nil
 	}
 	return fmt.Errorf("unknown Template nullable field %s", name)
@@ -24094,11 +25136,17 @@ func (m *TemplateMutation) ResetField(name string) error {
 	case template.FieldName:
 		m.ResetName()
 		return nil
+	case template.FieldType:
+		m.ResetType()
+		return nil
 	case template.FieldDescription:
 		m.ResetDescription()
 		return nil
 	case template.FieldJsonconfig:
 		m.ResetJsonconfig()
+		return nil
+	case template.FieldUischema:
+		m.ResetUischema()
 		return nil
 	}
 	return fmt.Errorf("unknown Template field %s", name)
@@ -24106,9 +25154,12 @@ func (m *TemplateMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TemplateMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.owner != nil {
 		edges = append(edges, template.EdgeOwner)
+	}
+	if m.documents != nil {
+		edges = append(edges, template.EdgeDocuments)
 	}
 	return edges
 }
@@ -24121,27 +25172,47 @@ func (m *TemplateMutation) AddedIDs(name string) []ent.Value {
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
+	case template.EdgeDocuments:
+		ids := make([]ent.Value, 0, len(m.documents))
+		for id := range m.documents {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TemplateMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removeddocuments != nil {
+		edges = append(edges, template.EdgeDocuments)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *TemplateMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case template.EdgeDocuments:
+		ids := make([]ent.Value, 0, len(m.removeddocuments))
+		for id := range m.removeddocuments {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TemplateMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedowner {
 		edges = append(edges, template.EdgeOwner)
+	}
+	if m.cleareddocuments {
+		edges = append(edges, template.EdgeDocuments)
 	}
 	return edges
 }
@@ -24152,6 +25223,8 @@ func (m *TemplateMutation) EdgeCleared(name string) bool {
 	switch name {
 	case template.EdgeOwner:
 		return m.clearedowner
+	case template.EdgeDocuments:
+		return m.cleareddocuments
 	}
 	return false
 }
@@ -24173,6 +25246,9 @@ func (m *TemplateMutation) ResetEdge(name string) error {
 	switch name {
 	case template.EdgeOwner:
 		m.ResetOwner()
+		return nil
+	case template.EdgeDocuments:
+		m.ResetDocuments()
 		return nil
 	}
 	return fmt.Errorf("unknown Template edge %s", name)

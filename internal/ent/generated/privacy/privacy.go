@@ -111,6 +111,30 @@ func DenyMutationOperationRule(op generated.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The DocumentDataQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type DocumentDataQueryRuleFunc func(context.Context, *generated.DocumentDataQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f DocumentDataQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.DocumentDataQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.DocumentDataQuery", q)
+}
+
+// The DocumentDataMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type DocumentDataMutationRuleFunc func(context.Context, *generated.DocumentDataMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f DocumentDataMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.DocumentDataMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.DocumentDataMutation", m)
+}
+
 // The EmailVerificationTokenQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EmailVerificationTokenQueryRuleFunc func(context.Context, *generated.EmailVerificationTokenQuery) error
@@ -674,6 +698,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q generated.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *generated.DocumentDataQuery:
+		return q.Filter(), nil
 	case *generated.EmailVerificationTokenQuery:
 		return q.Filter(), nil
 	case *generated.EntitlementQuery:
@@ -725,6 +751,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 
 func mutationFilter(m generated.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *generated.DocumentDataMutation:
+		return m.Filter(), nil
 	case *generated.EmailVerificationTokenMutation:
 		return m.Filter(), nil
 	case *generated.EntitlementMutation:

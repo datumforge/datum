@@ -6,6 +6,24 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// Return response for createDocumentData mutation
+type DocumentDataCreatePayload struct {
+	// Created documentData
+	DocumentData *generated.DocumentData `json:"documentData"`
+}
+
+// Return response for deleteDocumentData mutation
+type DocumentDataDeletePayload struct {
+	// Deleted documentData ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateDocumentData mutation
+type DocumentDataUpdatePayload struct {
+	// Updated documentData
+	DocumentData *generated.DocumentData `json:"documentData"`
+}
+
 type Dummy struct {
 	ID   string `json:"id"`
 	Text string `json:"text"`

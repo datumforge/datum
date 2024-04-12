@@ -3,11 +3,14 @@
 package template
 
 import (
+	"fmt"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 const (
@@ -31,12 +34,18 @@ const (
 	FieldOwnerID = "owner_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldJsonconfig holds the string denoting the jsonconfig field in the database.
 	FieldJsonconfig = "jsonconfig"
+	// FieldUischema holds the string denoting the uischema field in the database.
+	FieldUischema = "uischema"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
+	// EdgeDocuments holds the string denoting the documents edge name in mutations.
+	EdgeDocuments = "documents"
 	// Table holds the table name of the template in the database.
 	Table = "templates"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -46,6 +55,13 @@ const (
 	OwnerInverseTable = "organizations"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "owner_id"
+	// DocumentsTable is the table that holds the documents relation/edge.
+	DocumentsTable = "document_data"
+	// DocumentsInverseTable is the table name for the DocumentData entity.
+	// It exists in this package in order to avoid circular dependency with the "documentdata" package.
+	DocumentsInverseTable = "document_data"
+	// DocumentsColumn is the table column denoting the documents relation/edge.
+	DocumentsColumn = "template_id"
 )
 
 // Columns holds all SQL columns for template fields.
@@ -59,8 +75,10 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldOwnerID,
 	FieldName,
+	FieldType,
 	FieldDescription,
 	FieldJsonconfig,
+	FieldUischema,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -92,6 +110,18 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
+
+const DefaultType enums.DocumentType = "DOCUMENT"
+
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+func TypeValidator(_type enums.DocumentType) error {
+	switch _type.String() {
+	case "ROOTTEMPLATE", "DOCUMENT":
+		return nil
+	default:
+		return fmt.Errorf("template: invalid enum value for type field: %q", _type)
+	}
+}
 
 // OrderOption defines the ordering options for the Template queries.
 type OrderOption func(*sql.Selector)
@@ -141,6 +171,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
+// ByType orders the results by the type field.
+func ByType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
 // ByDescription orders the results by the description field.
 func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
@@ -152,6 +187,20 @@ func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByDocumentsCount orders the results by documents count.
+func ByDocumentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDocumentsStep(), opts...)
+	}
+}
+
+// ByDocuments orders the results by documents terms.
+func ByDocuments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDocumentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -159,3 +208,17 @@ func newOwnerStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 	)
 }
+func newDocumentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DocumentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, DocumentsTable, DocumentsColumn),
+	)
+}
+
+var (
+	// enums.DocumentType must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.DocumentType)(nil)
+	// enums.DocumentType must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.DocumentType)(nil)
+)

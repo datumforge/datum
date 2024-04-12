@@ -7,6 +7,7 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
+	DocumentData                     string // DocumentData table.
 	EmailVerificationToken           string // EmailVerificationToken table.
 	Entitlement                      string // Entitlement table.
 	Group                            string // Group table.

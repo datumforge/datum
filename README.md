@@ -1,4 +1,10 @@
-[<img src="assets/datumlogo.png" width="350" style="display: block; margin: auto;"/>](assets/datumlogo.png)
+<div align="center">
+  <picture>
+    <img alt="Datum logo" src="https://github.com/datumforge/datum/raw/main/assets/datumlogo.png" width="50%">
+  </picture>
+</div>
+
+<br>
 
 <div align="center">
 

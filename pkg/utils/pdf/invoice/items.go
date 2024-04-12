@@ -10,7 +10,7 @@ import (
 	"github.com/johnfercher/maroto/pkg/props"
 )
 
-// buildTable prepares Tablelist with items on the invoice with calculated tax amounts and total gross amounts
+// BuildInvoiceLineItems prepares Tablelist with items on the invoice with calculated tax amounts and total gross amounts
 func (i *Invoice) BuildInvoiceLineItems() {
 	backgroundColor := getWinterSky()
 	header := getHeader()

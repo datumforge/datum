@@ -115,13 +115,10 @@ func (i *Invoice) countTax() ([]float64, []float64) {
 // sequential number at the beginning of each row it returns the modified slice with the added
 // tax and total amounts for each item
 func appendItems(values [][]string, taxes []float64, totals []float64) [][]string {
-	number := 1
-
 	for i := range values {
-		values[i] = append([]string{strconv.Itoa(number)}, values[i]...)
+		values[i] = append([]string{strconv.Itoa(i)}, values[i]...)
 		values[i] = append(values[i], strconv.FormatFloat(taxes[i], 'f', 2, 64))
 		values[i] = append(values[i], strconv.FormatFloat(totals[i], 'f', 2, 64))
-		number++
 	}
 
 	return values

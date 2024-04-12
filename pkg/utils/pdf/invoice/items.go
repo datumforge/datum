@@ -90,14 +90,15 @@ func calculateInvoiceSum(values [][]string) string {
 
 // countTax calculates the tax amount and total gross price for each item in the invoice
 func (i *Invoice) countTax() ([]float64, []float64) {
-	var taxes []float64
+	var  (
+		taxes []float64
+		totals []float64
+	)
 
-	var totals []float64
-
-	for j := 0; j < len(i.Items); j++ {
-		vat := i.Items[j].VATRate
-		price := i.Items[j].UnitPrice
-		quantity := i.Items[j].Quantity
+	for _, item := range i.Items {
+		vat := item.VATRate
+		price := item.UnitPrice
+		quantity := item.Quantity
 
 		tax := quantity * (vat * price / 100)
 		total := quantity*price + tax

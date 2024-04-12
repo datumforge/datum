@@ -7,7 +7,7 @@ import (
 	"github.com/johnfercher/maroto/pkg/props"
 )
 
-// buildSignature prepares signatures of the buyer and seller
+// BuildSignatureLines prepares signatures of the buyer and seller
 func (i *Invoice) BuildSignatureLines() {
 	i.pdf.SetBackgroundColor(getMulledWine())
 	i.pdf.Line(0.5)

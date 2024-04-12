@@ -1,7 +1,5 @@
----
 name: Datum
 model_file: ../model/datum.fga
-
 tuples:
   # setup parent child org relationship
   - user: organization:datum

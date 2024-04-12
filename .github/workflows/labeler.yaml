@@ -1,7 +1,6 @@
 name: "Pull Request Labeler"
 on:
-- pull_request_target
-
+  - pull_request_target
 jobs:
   triage:
     permissions:
@@ -9,6 +8,6 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/labeler@v5
-      with:
-        sync-labels: true
+      - uses: actions/labeler@v5
+        with:
+          sync-labels: true

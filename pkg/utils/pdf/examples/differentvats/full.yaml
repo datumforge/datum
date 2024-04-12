@@ -1,25 +1,22 @@
 number: "99"
 issueDate: "01-01-2022"
-saleDate:  "31-01-2022"
-dueDate:   "14-02-2022"
-notes:     "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-currency:  "EUR"
+saleDate: "31-01-2022"
+dueDate: "14-02-2022"
+notes: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+currency: "EUR"
 signature: "Best Company"
-
 bank:
   accountNumber: "XX11 1112 1111 1111 1111"
   swift: "Bank/BANK1234"
-
 company:
   buyer:
-    name:    "Datum Technology, Inc."
+    name: "Datum Technology, Inc."
     address: "29 Broadway, New York, NY 10006, USA"
-    vat:     "111111111"
+    vat: "111111111"
   seller:
-    name:    "Pinky and the Brain"
+    name: "Pinky and the Brain"
     address: "123 Paper Street, Some Country, World"
-    vat:     "222222222"
-
+    vat: "222222222"
 items:
   - description: "Potatoes"
     quantity: 33

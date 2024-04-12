@@ -1,12 +1,10 @@
 version: "3"
-
 tasks:
   org:create:
     desc: creates an organization against a running local instance of the datum server - see the CLI help commands for other variables
     aliases: [createorg]
     cmds:
       - go run main.go org create -n your_new_org -d "my new org again"
-
   user:verify:
     desc: a task to register a user, parse out the token response, and submit it to the verify endpoint
     aliases: [verifyuser]
@@ -15,7 +13,6 @@ tasks:
     vars:
       VERIFY_TOKEN:
         sh: go run main.go register --email="mitb@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234" | jq -r .token
-
   login:creds:
     desc: a task to login the verified user
     aliases: [login]
@@ -23,25 +20,21 @@ tasks:
       DATUM_PASSWORD: mattisthebest1234
     cmds:
       - go run main.go login -u mitb@datum.net
-
   user:all:
     desc: a task to register, verify, and login a new user
     cmds:
       - task: verifyuser
       - task: login
-
   login:google:
     desc: a task to login with google oauth
     aliases: [google]
     cmds:
       - go run main.go login -o google
-
   login:github:
     desc: a task to login with google oauth
     aliases: [github]
     cmds:
       - go run main.go login -o github
-
   template:create:
     desc: a task to create a new template
     aliases: [createtemplate]

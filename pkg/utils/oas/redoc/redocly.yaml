@@ -97,4 +97,3 @@ apis:
       no-example-value-and-externalValue: error
       no-unresolved-refs: error
       spec-components-invalid-map-name: error
-

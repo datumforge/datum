@@ -2,17 +2,14 @@
 schema:
   - schema/*.graphql
   - subscriptions/*.graphql
-
 # Where should the generated server code go?
 exec:
   filename: internal/graphapi/gen_server.go
   package: graphapi
-
 # Where should any generated models go?
 model:
   filename: internal/graphapi/gen_models.go
   package: graphapi
-
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
@@ -21,7 +18,6 @@ resolver:
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
-
 # Optional: turn on use ` + "`" + `gqlgen:"fieldName"` + "`" + ` tags in your models
 # struct_tag: json
 
@@ -39,7 +35,6 @@ resolver:
 
 # Optional: turn on to exclude the gqlgen version in the generated file notice. No effect if `omit_gqlgen_file_notice` is true.
 omit_gqlgen_version_in_file_notice: true
-
 # Optional: turn off to make struct-type struct fields not use pointers
 # e.g. type Thing struct { FieldA OtherThing } instead of { FieldA *OtherThing }
 # struct_fields_always_pointers: true
@@ -62,10 +57,8 @@ omit_gqlgen_version_in_file_notice: true
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
- - "github.com/datumforge/datum/internal/graphapi"
- - "github.com/datumforge/datum/internal/ent/generated"
-
-
+  - "github.com/datumforge/datum/internal/graphapi"
+  - "github.com/datumforge/datum/internal/ent/generated"
 # This section declares type mapping between the GraphQL and go type systems
 #
 # The first line in each type will be used as defaults for resolver arguments and

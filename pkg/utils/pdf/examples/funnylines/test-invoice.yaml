@@ -1,21 +1,19 @@
 number: "INV123456"
 issueDate: "04-11-2024"
-saleDate:  "04-11-2024"
-dueDate:   "05-01-2024"
-notes:     "Bear necessities, mother nature's recipes, forget about your worries and your strife"
-currency:  "USD"
+saleDate: "04-11-2024"
+dueDate: "05-01-2024"
+notes: "Bear necessities, mother nature's recipes, forget about your worries and your strife"
+currency: "USD"
 signature: "Datum Technology, Inc."
-
 bank:
   accountNumber: "XX11 1112 1111 1111 1111"
   swift: "Mercury"
-
 company:
   buyer:
-    name:    "Datum Technology, Inc."
+    name: "Datum Technology, Inc."
     address: "29 Broadway, New York, NY 10006, USA"
   seller:
-    name:    "Acme Corp, Inc."
+    name: "Acme Corp, Inc."
     address: "123 Paper Street, The Moon"
 items:
   - description: "cattyping services"

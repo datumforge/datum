@@ -1,9 +1,11 @@
 version: '3'
+
 tasks:
   create:
     desc: creates a new fga store with the testdata model
     cmds:
       - fga store create --name "datum dev" --model model/datum.fga
+
   test:
     desc: runs the fga model tests
     cmds:

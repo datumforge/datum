@@ -1,195 +1,195 @@
 auth:
-  enabled: true
-  providers:
-    github:
-      clientEndpoint: http://localhost:17608
-      clientId: ""
-      clientSecret: ""
-      redirectUrl: /v1/github/callback
-      scopes: null
-    google:
-      clientEndpoint: http://localhost:17608
-      clientId: ""
-      clientSecret: ""
-      redirectUrl: /v1/google/callback
-      scopes: null
-    redirectUrl: http://localhost:3001/api/auth/callback/datum
-    webauthn:
-      debug: false
-      displayName: Datum
-      enabled: true
-      enforceTimeout: true
-      maxDevices: 10
-      relyingPartyId: localhost
-      requestOrigin: http://localhost:3001
-      timeout: 60000000000
-  supportedProviders: null
-  token:
-    accessDuration: 3600000000000
-    audience: https://datum.net
-    issuer: https://auth.datum.net
-    jwksEndpoint: https://api.datum.net/.well-known/jwks.json
-    keys: null
-    kid: ""
-    refreshAudience: ""
-    refreshDuration: 7200000000000
-    refreshOverlap: -900000000000
+    enabled: true
+    providers:
+        github:
+            clientEndpoint: http://localhost:17608
+            clientId: ""
+            clientSecret: ""
+            redirectUrl: /v1/github/callback
+            scopes: null
+        google:
+            clientEndpoint: http://localhost:17608
+            clientId: ""
+            clientSecret: ""
+            redirectUrl: /v1/google/callback
+            scopes: null
+        redirectUrl: http://localhost:3001/api/auth/callback/datum
+        webauthn:
+            debug: false
+            displayName: Datum
+            enabled: true
+            enforceTimeout: true
+            maxDevices: 10
+            relyingPartyId: localhost
+            requestOrigin: http://localhost:3001
+            timeout: 60000000000
+    supportedProviders: null
+    token:
+        accessDuration: 3600000000000
+        audience: https://datum.net
+        issuer: https://auth.datum.net
+        jwksEndpoint: https://api.datum.net/.well-known/jwks.json
+        keys: null
+        kid: ""
+        refreshAudience: ""
+        refreshDuration: 7200000000000
+        refreshOverlap: -900000000000
 authz:
-  createNewModel: false
-  enabled: true
-  hostUrl: https://authz.datum.net
-  modelFile: fga/model/datum.fga
-  modelId: ""
-  storeId: ""
-  storeName: datum
+    createNewModel: false
+    enabled: true
+    hostUrl: https://authz.datum.net
+    modelFile: fga/model/datum.fga
+    modelId: ""
+    storeId: ""
+    storeName: datum
 db:
-  catchTTL: 1000000000
-  databaseName: datum
-  debug: false
-  driverName: libsql
-  migrationProvider: atlas
-  multiWrite: false
-  primaryDbSource: file:datum.db
-  runMigrations: true
-  secondaryDbSource: file:backup.db
+    catchTTL: 1000000000
+    databaseName: datum
+    debug: false
+    driverName: libsql
+    migrationProvider: atlas
+    multiWrite: false
+    primaryDbSource: file:datum.db
+    runMigrations: true
+    secondaryDbSource: file:backup.db
 email:
-  adminEmail: admins@datum.net
-  archive: ""
-  consoleUrl:
-    consoleBase: https://console.datum.net
-    invite: /invite
-    reset: /password-reset
-    verify: /verify
-  datumListId: ""
-  fromEmail: no-reply@datum.net
-  marketingUrl:
-    defaultSubscriptionOrg: Datum
-    marketingBase: https://www.datum.net
-    subscriberVerify: /verify
-  sendGridApiKey: ""
-  testing: true
+    adminEmail: admins@datum.net
+    archive: ""
+    consoleUrl:
+        consoleBase: https://console.datum.net
+        invite: /invite
+        reset: /password-reset
+        verify: /verify
+    datumListId: ""
+    fromEmail: no-reply@datum.net
+    marketingUrl:
+        defaultSubscriptionOrg: Datum
+        marketingBase: https://www.datum.net
+        subscriberVerify: /verify
+    sendGridApiKey: ""
+    testing: true
 geodetic:
-  baseUrl: http://localhost:1337
-  debug: false
-  enabled: true
-  endpoint: query
+    baseUrl: http://localhost:1337
+    debug: false
+    enabled: true
+    endpoint: query
 objstorage:
-  fs:
-    enabled: false
-    root: ./storage
-  gcs:
-    bucket: yourbucketname
-    credentialsFile: ./credentials.json
-    enabled: false
-  s3:
-    accessKeyID: ""
-    bucket: yourbucketname
-    enabled: false
-    endpoint: ""
-    region: us-region-a
-    secretAccessKey: ""
-    uploadConcurrency: null
+    fs:
+        enabled: false
+        root: ./storage
+    gcs:
+        bucket: yourbucketname
+        credentialsFile: ./credentials.json
+        enabled: false
+    s3:
+        accessKeyID: ""
+        bucket: yourbucketname
+        enabled: false
+        endpoint: ""
+        region: us-region-a
+        secretAccessKey: ""
+        uploadConcurrency: null
 posthog:
-  apiKey: ""
-  enabled: false
-  host: https://app.posthog.com
+    apiKey: ""
+    enabled: false
+    host: https://app.posthog.com
 ratelimit:
-  burst: 30
-  enabled: false
-  expires: 600000000000
-  limit: 10
+    burst: 30
+    enabled: false
+    expires: 600000000000
+    limit: 10
 redis:
-  address: localhost:6379
-  db: 0
-  dialTimeout: 5000000000
-  enabled: true
-  maxActiveConns: 0
-  maxIdleConns: 0
-  maxRetries: 3
-  minIdleConns: 0
-  name: datum
-  password: ""
-  readTimeout: 0
-  username: ""
-  writeTimeout: 0
+    address: localhost:6379
+    db: 0
+    dialTimeout: 5000000000
+    enabled: true
+    maxActiveConns: 0
+    maxIdleConns: 0
+    maxRetries: 3
+    minIdleConns: 0
+    name: datum
+    password: ""
+    readTimeout: 0
+    username: ""
+    writeTimeout: 0
 refreshInterval: 600000000000
 sentry:
-  attachStacktrace: true
-  debug: false
-  dsn: ""
-  enableTracing: false
-  enabled: false
-  environment: development
-  profileSampleRate: 0.2
-  repanic: false
-  sampleRate: 0.2
-  serverName: ""
-  traceSampleRate: 0.2
-  traceSampler: 1
-server:
-  cacheControl:
-    enabled: true
-    etagHeaders: null
-    noCacheHeaders: null
-  cors:
-    allowOrigins: null
-    cookieInsecure: false
-    enabled: true
-    prefixes: null
-  debug: false
-  dev: false
-  idleTimeout: 30000000000
-  listen: :17608
-  mime:
-    defaultContentType: application/data
-    enabled: true
-    mimeTypesFile: ""
-  readHeaderTimeout: 2000000000
-  readTimeout: 15000000000
-  redirect:
-    code: 0
-    enabled: true
-    redirects: null
-  secure:
-    contentsecuritypolicy: default-src 'self'
-    contenttypenosniff: nosniff
-    cspreportonly: false
-    enabled: true
-    hstsmaxage: 31536000
-    hstspreloadenabled: false
-    referrerpolicy: same-origin
-    xframeoptions: SAMEORIGIN
-    xssprotection: 1; mode=block
-  shutdownGracePeriod: 10000000000
-  tls:
-    autoCert: false
-    certFile: server.crt
-    certKey: server.key
-    config: null
+    attachStacktrace: true
+    debug: false
+    dsn: ""
+    enableTracing: false
     enabled: false
-  writeTimeout: 15000000000
+    environment: development
+    profileSampleRate: 0.2
+    repanic: false
+    sampleRate: 0.2
+    serverName: ""
+    traceSampleRate: 0.2
+    traceSampler: 1
+server:
+    cacheControl:
+        enabled: true
+        etagHeaders: null
+        noCacheHeaders: null
+    cors:
+        allowOrigins: null
+        cookieInsecure: false
+        enabled: true
+        prefixes: null
+    debug: false
+    dev: false
+    idleTimeout: 30000000000
+    listen: :17608
+    mime:
+        defaultContentType: application/data
+        enabled: true
+        mimeTypesFile: ""
+    readHeaderTimeout: 2000000000
+    readTimeout: 15000000000
+    redirect:
+        code: 0
+        enabled: true
+        redirects: null
+    secure:
+        contentsecuritypolicy: default-src 'self'
+        contenttypenosniff: nosniff
+        cspreportonly: false
+        enabled: true
+        hstsmaxage: 31536000
+        hstspreloadenabled: false
+        referrerpolicy: same-origin
+        xframeoptions: SAMEORIGIN
+        xssprotection: 1; mode=block
+    shutdownGracePeriod: 10000000000
+    tls:
+        autoCert: false
+        certFile: server.crt
+        certKey: server.key
+        config: null
+        enabled: false
+    writeTimeout: 15000000000
 sessions:
-  encryptionKey: encryptionsecret
-  signingKey: my-signing-secret
+    encryptionKey: encryptionsecret
+    signingKey: my-signing-secret
 totp:
-  codeLength: 6
-  enabled: true
-  issuer: datum
-  recoveryCodeCount: 16
-  recoveryCodeLength: 8
-  redis: true
-  secret: ""
+    codeLength: 6
+    enabled: true
+    issuer: datum
+    recoveryCodeCount: 16
+    recoveryCodeLength: 8
+    redis: true
+    secret: ""
 tracer:
-  enabled: false
-  environment: development
-  otlp:
-    certificate: ""
-    compression: ""
-    endpoint: localhost:4317
-    headers: null
-    insecure: true
-    timeout: 10000000000
-  provider: stdout
-  stdout:
-    disableTimestamp: false
-    pretty: true
+    enabled: false
+    environment: development
+    otlp:
+        certificate: ""
+        compression: ""
+        endpoint: localhost:4317
+        headers: null
+        insecure: true
+        timeout: 10000000000
+    provider: stdout
+    stdout:
+        disableTimestamp: false
+        pretty: true

@@ -1,4 +1,5 @@
 version: '3'
+
 includes:
   cli:
     taskfile: ./cmd/cli/Taskfile.yaml
@@ -20,11 +21,13 @@ includes:
     aliases: [oas]
   config:
     taskfile: ./jsonschema/Taskfile.yaml
+
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
   TEST_DB_URL: "libsql://file::memory:?cache=shared"
   TEST_FGA_URL: "localhost:8080"
   ENV: config
+
 tasks:
   install:
     desc: installs tools and packages needed to develop against the datum repo
@@ -37,48 +40,56 @@ tasks:
       - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
       - "go get -u github.com/openfga/go-sdk"
       - "brew install openfga/tap/fga"
-      - "go install github.com/vektra/mockery/v2@v2.40.1"
-      - "brew install pre-commit"
+      - go install github.com/vektra/mockery/v2@v2.40.1
       - task: config:install
       - defer: {task: 'go:tidy'}
+
   generate:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc.
     cmds:
       - go generate ./...
       - cp ./internal/ent/generated/openapi.json ./pkg/utils/oas/specifications/openapi.json
+
   ## Go tasks
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
       - golangci-lint run --config=.golangci.yaml --verbose --fast
+
   go:test:
     desc: runs and outputs results of created go tests
     cmds:
       - go test -v ./...
+
   go:test:cover:
     desc: runs and outputs results of created go tests with coverage
     aliases: [cover]
     cmds:
       - go test -v ./... -coverprofile=coverage.out
       - go tool cover -html=coverage.out
+
   go:fmt:
     desc: format all go code
     cmds:
       - go fmt ./...
+
   go:tidy:
     desc: Runs go mod tidy on the backend
     aliases: [tidy]
     cmds:
       - go mod tidy
+
   go:build:
     desc: Runs go build for the datum server
     cmds:
       - go build -mod=mod -o datum
+
   go:build-cli:
     aliases: [buildcli]
     desc: Runs go build for the datum cli
     cmds:
       - go build -mod=mod -o datum-cli ./cmd/cli
+
   go:all:
     aliases: [go]
     desc: Runs all go test and lint related tasks
@@ -87,6 +98,7 @@ tasks:
       - task: go:fmt
       - task: go:lint
       - task: go:test
+
   # dev tasks
   run-dev:
     dotenv: ['{{.ENV}}/.env-dev']
@@ -95,6 +107,7 @@ tasks:
       - task: compose:redis
       - task: compose:fga
       - go run main.go serve --debug --pretty
+
   pr:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR
     cmds:
@@ -103,6 +116,7 @@ tasks:
       - task: atlas:all
       - task: go
       - task: fga:test
+
   ci:
     desc: a task that runs during CI
     cmds:
@@ -116,11 +130,13 @@ tasks:
         echo "$status"
         exit 1
         fi
+
   clean:local:
     desc: cleans up datum.db and datum-cli local
     cmds:
       - "rm -f datum.db"
       - "rm -f datum-cli"
+
   email:
     deps: [shell]
     desc: a task to burn local db and bring stack back up and re-test
@@ -128,6 +144,7 @@ tasks:
       - task: buildcli
       - sleep 5
       - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"
+
   shell:
     desc: open a new shell to launch server as a dep
     cmds:

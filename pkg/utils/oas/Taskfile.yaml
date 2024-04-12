@@ -1,4 +1,5 @@
 version: '3'
+
 tasks:
   join:
     desc: joins the graph generated OpenAPI specifications and the REST specifications into one file

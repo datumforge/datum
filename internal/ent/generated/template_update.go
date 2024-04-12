@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/customtypes"
+	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/template"
@@ -132,6 +134,20 @@ func (tu *TemplateUpdate) SetNillableName(s *string) *TemplateUpdate {
 	return tu
 }
 
+// SetType sets the "type" field.
+func (tu *TemplateUpdate) SetType(et enums.DocumentType) *TemplateUpdate {
+	tu.mutation.SetType(et)
+	return tu
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tu *TemplateUpdate) SetNillableType(et *enums.DocumentType) *TemplateUpdate {
+	if et != nil {
+		tu.SetType(*et)
+	}
+	return tu
+}
+
 // SetDescription sets the "description" field.
 func (tu *TemplateUpdate) SetDescription(s string) *TemplateUpdate {
 	tu.mutation.SetDescription(s)
@@ -158,15 +174,36 @@ func (tu *TemplateUpdate) SetJsonconfig(co customtypes.JSONObject) *TemplateUpda
 	return tu
 }
 
-// ClearJsonconfig clears the value of the "jsonconfig" field.
-func (tu *TemplateUpdate) ClearJsonconfig() *TemplateUpdate {
-	tu.mutation.ClearJsonconfig()
+// SetUischema sets the "uischema" field.
+func (tu *TemplateUpdate) SetUischema(co customtypes.JSONObject) *TemplateUpdate {
+	tu.mutation.SetUischema(co)
+	return tu
+}
+
+// ClearUischema clears the value of the "uischema" field.
+func (tu *TemplateUpdate) ClearUischema() *TemplateUpdate {
+	tu.mutation.ClearUischema()
 	return tu
 }
 
 // SetOwner sets the "owner" edge to the Organization entity.
 func (tu *TemplateUpdate) SetOwner(o *Organization) *TemplateUpdate {
 	return tu.SetOwnerID(o.ID)
+}
+
+// AddDocumentIDs adds the "documents" edge to the DocumentData entity by IDs.
+func (tu *TemplateUpdate) AddDocumentIDs(ids ...string) *TemplateUpdate {
+	tu.mutation.AddDocumentIDs(ids...)
+	return tu
+}
+
+// AddDocuments adds the "documents" edges to the DocumentData entity.
+func (tu *TemplateUpdate) AddDocuments(d ...*DocumentData) *TemplateUpdate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return tu.AddDocumentIDs(ids...)
 }
 
 // Mutation returns the TemplateMutation object of the builder.
@@ -178,6 +215,27 @@ func (tu *TemplateUpdate) Mutation() *TemplateMutation {
 func (tu *TemplateUpdate) ClearOwner() *TemplateUpdate {
 	tu.mutation.ClearOwner()
 	return tu
+}
+
+// ClearDocuments clears all "documents" edges to the DocumentData entity.
+func (tu *TemplateUpdate) ClearDocuments() *TemplateUpdate {
+	tu.mutation.ClearDocuments()
+	return tu
+}
+
+// RemoveDocumentIDs removes the "documents" edge to DocumentData entities by IDs.
+func (tu *TemplateUpdate) RemoveDocumentIDs(ids ...string) *TemplateUpdate {
+	tu.mutation.RemoveDocumentIDs(ids...)
+	return tu
+}
+
+// RemoveDocuments removes "documents" edges to DocumentData entities.
+func (tu *TemplateUpdate) RemoveDocuments(d ...*DocumentData) *TemplateUpdate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return tu.RemoveDocumentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -227,6 +285,11 @@ func (tu *TemplateUpdate) check() error {
 	if v, ok := tu.mutation.Name(); ok {
 		if err := template.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
+		}
+	}
+	if v, ok := tu.mutation.GetType(); ok {
+		if err := template.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`generated: validator failed for field "Template.type": %w`, err)}
 		}
 	}
 	if _, ok := tu.mutation.OwnerID(); tu.mutation.OwnerCleared() && !ok {
@@ -280,6 +343,9 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)
 	}
+	if value, ok := tu.mutation.GetType(); ok {
+		_spec.SetField(template.FieldType, field.TypeEnum, value)
+	}
 	if value, ok := tu.mutation.Description(); ok {
 		_spec.SetField(template.FieldDescription, field.TypeString, value)
 	}
@@ -289,8 +355,11 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Jsonconfig(); ok {
 		_spec.SetField(template.FieldJsonconfig, field.TypeJSON, value)
 	}
-	if tu.mutation.JsonconfigCleared() {
-		_spec.ClearField(template.FieldJsonconfig, field.TypeJSON)
+	if value, ok := tu.mutation.Uischema(); ok {
+		_spec.SetField(template.FieldUischema, field.TypeJSON, value)
+	}
+	if tu.mutation.UischemaCleared() {
+		_spec.ClearField(template.FieldUischema, field.TypeJSON)
 	}
 	if tu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -318,6 +387,54 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = tu.schemaConfig.Template
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tu.mutation.DocumentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   template.DocumentsTable,
+			Columns: []string{template.DocumentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = tu.schemaConfig.DocumentData
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.RemovedDocumentsIDs(); len(nodes) > 0 && !tu.mutation.DocumentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   template.DocumentsTable,
+			Columns: []string{template.DocumentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = tu.schemaConfig.DocumentData
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tu.mutation.DocumentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   template.DocumentsTable,
+			Columns: []string{template.DocumentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = tu.schemaConfig.DocumentData
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -445,6 +562,20 @@ func (tuo *TemplateUpdateOne) SetNillableName(s *string) *TemplateUpdateOne {
 	return tuo
 }
 
+// SetType sets the "type" field.
+func (tuo *TemplateUpdateOne) SetType(et enums.DocumentType) *TemplateUpdateOne {
+	tuo.mutation.SetType(et)
+	return tuo
+}
+
+// SetNillableType sets the "type" field if the given value is not nil.
+func (tuo *TemplateUpdateOne) SetNillableType(et *enums.DocumentType) *TemplateUpdateOne {
+	if et != nil {
+		tuo.SetType(*et)
+	}
+	return tuo
+}
+
 // SetDescription sets the "description" field.
 func (tuo *TemplateUpdateOne) SetDescription(s string) *TemplateUpdateOne {
 	tuo.mutation.SetDescription(s)
@@ -471,15 +602,36 @@ func (tuo *TemplateUpdateOne) SetJsonconfig(co customtypes.JSONObject) *Template
 	return tuo
 }
 
-// ClearJsonconfig clears the value of the "jsonconfig" field.
-func (tuo *TemplateUpdateOne) ClearJsonconfig() *TemplateUpdateOne {
-	tuo.mutation.ClearJsonconfig()
+// SetUischema sets the "uischema" field.
+func (tuo *TemplateUpdateOne) SetUischema(co customtypes.JSONObject) *TemplateUpdateOne {
+	tuo.mutation.SetUischema(co)
+	return tuo
+}
+
+// ClearUischema clears the value of the "uischema" field.
+func (tuo *TemplateUpdateOne) ClearUischema() *TemplateUpdateOne {
+	tuo.mutation.ClearUischema()
 	return tuo
 }
 
 // SetOwner sets the "owner" edge to the Organization entity.
 func (tuo *TemplateUpdateOne) SetOwner(o *Organization) *TemplateUpdateOne {
 	return tuo.SetOwnerID(o.ID)
+}
+
+// AddDocumentIDs adds the "documents" edge to the DocumentData entity by IDs.
+func (tuo *TemplateUpdateOne) AddDocumentIDs(ids ...string) *TemplateUpdateOne {
+	tuo.mutation.AddDocumentIDs(ids...)
+	return tuo
+}
+
+// AddDocuments adds the "documents" edges to the DocumentData entity.
+func (tuo *TemplateUpdateOne) AddDocuments(d ...*DocumentData) *TemplateUpdateOne {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return tuo.AddDocumentIDs(ids...)
 }
 
 // Mutation returns the TemplateMutation object of the builder.
@@ -491,6 +643,27 @@ func (tuo *TemplateUpdateOne) Mutation() *TemplateMutation {
 func (tuo *TemplateUpdateOne) ClearOwner() *TemplateUpdateOne {
 	tuo.mutation.ClearOwner()
 	return tuo
+}
+
+// ClearDocuments clears all "documents" edges to the DocumentData entity.
+func (tuo *TemplateUpdateOne) ClearDocuments() *TemplateUpdateOne {
+	tuo.mutation.ClearDocuments()
+	return tuo
+}
+
+// RemoveDocumentIDs removes the "documents" edge to DocumentData entities by IDs.
+func (tuo *TemplateUpdateOne) RemoveDocumentIDs(ids ...string) *TemplateUpdateOne {
+	tuo.mutation.RemoveDocumentIDs(ids...)
+	return tuo
+}
+
+// RemoveDocuments removes "documents" edges to DocumentData entities.
+func (tuo *TemplateUpdateOne) RemoveDocuments(d ...*DocumentData) *TemplateUpdateOne {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return tuo.RemoveDocumentIDs(ids...)
 }
 
 // Where appends a list predicates to the TemplateUpdate builder.
@@ -553,6 +726,11 @@ func (tuo *TemplateUpdateOne) check() error {
 	if v, ok := tuo.mutation.Name(); ok {
 		if err := template.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
+		}
+	}
+	if v, ok := tuo.mutation.GetType(); ok {
+		if err := template.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf(`generated: validator failed for field "Template.type": %w`, err)}
 		}
 	}
 	if _, ok := tuo.mutation.OwnerID(); tuo.mutation.OwnerCleared() && !ok {
@@ -623,6 +801,9 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)
 	}
+	if value, ok := tuo.mutation.GetType(); ok {
+		_spec.SetField(template.FieldType, field.TypeEnum, value)
+	}
 	if value, ok := tuo.mutation.Description(); ok {
 		_spec.SetField(template.FieldDescription, field.TypeString, value)
 	}
@@ -632,8 +813,11 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 	if value, ok := tuo.mutation.Jsonconfig(); ok {
 		_spec.SetField(template.FieldJsonconfig, field.TypeJSON, value)
 	}
-	if tuo.mutation.JsonconfigCleared() {
-		_spec.ClearField(template.FieldJsonconfig, field.TypeJSON)
+	if value, ok := tuo.mutation.Uischema(); ok {
+		_spec.SetField(template.FieldUischema, field.TypeJSON, value)
+	}
+	if tuo.mutation.UischemaCleared() {
+		_spec.ClearField(template.FieldUischema, field.TypeJSON)
 	}
 	if tuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -661,6 +845,54 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 			},
 		}
 		edge.Schema = tuo.schemaConfig.Template
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if tuo.mutation.DocumentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   template.DocumentsTable,
+			Columns: []string{template.DocumentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = tuo.schemaConfig.DocumentData
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.RemovedDocumentsIDs(); len(nodes) > 0 && !tuo.mutation.DocumentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   template.DocumentsTable,
+			Columns: []string{template.DocumentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = tuo.schemaConfig.DocumentData
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := tuo.mutation.DocumentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   template.DocumentsTable,
+			Columns: []string{template.DocumentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(documentdata.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = tuo.schemaConfig.DocumentData
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

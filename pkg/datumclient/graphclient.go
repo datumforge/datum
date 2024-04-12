@@ -4975,7 +4975,8 @@ type CreateTemplate_CreateTemplate_Template struct {
 	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
 	Name        string                                       "json:\"name\" graphql:\"name\""
 	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Jsonconfig  json.RawMessage                              "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage                              "json:\"uischema,omitempty\" graphql:\"uischema\""
 	Owner       CreateTemplate_CreateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
 }
 
@@ -5039,6 +5040,12 @@ func (t *CreateTemplate_CreateTemplate_Template) GetJsonconfig() *json.RawMessag
 	}
 	return &t.Jsonconfig
 }
+func (t *CreateTemplate_CreateTemplate_Template) GetUischema() *json.RawMessage {
+	if t == nil {
+		t = &CreateTemplate_CreateTemplate_Template{}
+	}
+	return &t.Uischema
+}
 func (t *CreateTemplate_CreateTemplate_Template) GetOwner() *CreateTemplate_CreateTemplate_Template_Owner {
 	if t == nil {
 		t = &CreateTemplate_CreateTemplate_Template{}
@@ -5078,7 +5085,8 @@ type UpdateTemplate_UpdateTemplate_Template struct {
 	DeletedBy   *string                                      "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
 	Name        string                                       "json:\"name\" graphql:\"name\""
 	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage                              "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Jsonconfig  json.RawMessage                              "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage                              "json:\"uischema,omitempty\" graphql:\"uischema\""
 	Owner       UpdateTemplate_UpdateTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
 }
 
@@ -5142,6 +5150,12 @@ func (t *UpdateTemplate_UpdateTemplate_Template) GetJsonconfig() *json.RawMessag
 	}
 	return &t.Jsonconfig
 }
+func (t *UpdateTemplate_UpdateTemplate_Template) GetUischema() *json.RawMessage {
+	if t == nil {
+		t = &UpdateTemplate_UpdateTemplate_Template{}
+	}
+	return &t.Uischema
+}
 func (t *UpdateTemplate_UpdateTemplate_Template) GetOwner() *UpdateTemplate_UpdateTemplate_Template_Owner {
 	if t == nil {
 		t = &UpdateTemplate_UpdateTemplate_Template{}
@@ -5181,7 +5195,8 @@ type GetAllTemplates_Templates_Edges_Node struct {
 	DeletedBy   *string                                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
 	Name        string                                     "json:\"name\" graphql:\"name\""
 	Description *string                                    "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage                            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Jsonconfig  json.RawMessage                            "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage                            "json:\"uischema,omitempty\" graphql:\"uischema\""
 	Owner       GetAllTemplates_Templates_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
 }
 
@@ -5245,6 +5260,12 @@ func (t *GetAllTemplates_Templates_Edges_Node) GetJsonconfig() *json.RawMessage 
 	}
 	return &t.Jsonconfig
 }
+func (t *GetAllTemplates_Templates_Edges_Node) GetUischema() *json.RawMessage {
+	if t == nil {
+		t = &GetAllTemplates_Templates_Edges_Node{}
+	}
+	return &t.Uischema
+}
 func (t *GetAllTemplates_Templates_Edges_Node) GetOwner() *GetAllTemplates_Templates_Edges_Node_Owner {
 	if t == nil {
 		t = &GetAllTemplates_Templates_Edges_Node{}
@@ -5295,7 +5316,8 @@ type GetTemplate_Template struct {
 	DeletedBy   *string                    "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
 	Name        string                     "json:\"name\" graphql:\"name\""
 	Description *string                    "json:\"description,omitempty\" graphql:\"description\""
-	Jsonconfig  json.RawMessage            "json:\"jsonconfig,omitempty\" graphql:\"jsonconfig\""
+	Jsonconfig  json.RawMessage            "json:\"jsonconfig\" graphql:\"jsonconfig\""
+	Uischema    json.RawMessage            "json:\"uischema,omitempty\" graphql:\"uischema\""
 	Owner       GetTemplate_Template_Owner "json:\"owner\" graphql:\"owner\""
 }
 
@@ -5358,6 +5380,12 @@ func (t *GetTemplate_Template) GetJsonconfig() *json.RawMessage {
 		t = &GetTemplate_Template{}
 	}
 	return &t.Jsonconfig
+}
+func (t *GetTemplate_Template) GetUischema() *json.RawMessage {
+	if t == nil {
+		t = &GetTemplate_Template{}
+	}
+	return &t.Uischema
 }
 func (t *GetTemplate_Template) GetOwner() *GetTemplate_Template_Owner {
 	if t == nil {
@@ -9547,6 +9575,7 @@ const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateI
 			name
 			description
 			jsonconfig
+			uischema
 			owner {
 				id
 			}
@@ -9585,6 +9614,7 @@ const UpdateTemplateDocument = `mutation UpdateTemplate ($updateTemplateId: ID!,
 			name
 			description
 			jsonconfig
+			uischema
 			owner {
 				id
 			}
@@ -9625,6 +9655,7 @@ const GetAllTemplatesDocument = `query GetAllTemplates {
 				name
 				description
 				jsonconfig
+				uischema
 				owner {
 					id
 				}
@@ -9661,6 +9692,7 @@ const GetTemplateDocument = `query GetTemplate ($getTemplateId: ID!) {
 		name
 		description
 		jsonconfig
+		uischema
 		owner {
 			id
 		}

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/customtypes"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/template"
 )
@@ -36,10 +37,14 @@ type Template struct {
 	OwnerID string `json:"owner_id,omitempty"`
 	// the name of the template
 	Name string `json:"name,omitempty"`
+	// the type of the template, either a provided template or an implementation (document)
+	Type enums.DocumentType `json:"type,omitempty"`
 	// the description of the template
 	Description string `json:"description,omitempty"`
 	// the jsonschema object of the template
 	Jsonconfig customtypes.JSONObject `json:"jsonconfig,omitempty"`
+	// the uischema for the template to render in the UI
+	Uischema customtypes.JSONObject `json:"uischema,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TemplateQuery when eager-loading is set.
 	Edges        TemplateEdges `json:"edges"`
@@ -50,11 +55,15 @@ type Template struct {
 type TemplateEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *Organization `json:"owner,omitempty"`
+	// Documents holds the value of the documents edge.
+	Documents []*DocumentData `json:"documents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
+
+	namedDocuments map[string][]*DocumentData
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -68,14 +77,23 @@ func (e TemplateEdges) OwnerOrErr() (*Organization, error) {
 	return nil, &NotLoadedError{edge: "owner"}
 }
 
+// DocumentsOrErr returns the Documents value or an error if the edge
+// was not loaded in eager-loading.
+func (e TemplateEdges) DocumentsOrErr() ([]*DocumentData, error) {
+	if e.loadedTypes[1] {
+		return e.Documents, nil
+	}
+	return nil, &NotLoadedError{edge: "documents"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Template) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case template.FieldJsonconfig:
+		case template.FieldJsonconfig, template.FieldUischema:
 			values[i] = new([]byte)
-		case template.FieldID, template.FieldCreatedBy, template.FieldUpdatedBy, template.FieldDeletedBy, template.FieldOwnerID, template.FieldName, template.FieldDescription:
+		case template.FieldID, template.FieldCreatedBy, template.FieldUpdatedBy, template.FieldDeletedBy, template.FieldOwnerID, template.FieldName, template.FieldType, template.FieldDescription:
 			values[i] = new(sql.NullString)
 		case template.FieldCreatedAt, template.FieldUpdatedAt, template.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -148,6 +166,12 @@ func (t *Template) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Name = value.String
 			}
+		case template.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				t.Type = enums.DocumentType(value.String)
+			}
 		case template.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
@@ -160,6 +184,14 @@ func (t *Template) assignValues(columns []string, values []any) error {
 			} else if value != nil && len(*value) > 0 {
 				if err := json.Unmarshal(*value, &t.Jsonconfig); err != nil {
 					return fmt.Errorf("unmarshal field jsonconfig: %w", err)
+				}
+			}
+		case template.FieldUischema:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field uischema", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &t.Uischema); err != nil {
+					return fmt.Errorf("unmarshal field uischema: %w", err)
 				}
 			}
 		default:
@@ -178,6 +210,11 @@ func (t *Template) Value(name string) (ent.Value, error) {
 // QueryOwner queries the "owner" edge of the Template entity.
 func (t *Template) QueryOwner() *OrganizationQuery {
 	return NewTemplateClient(t.config).QueryOwner(t)
+}
+
+// QueryDocuments queries the "documents" edge of the Template entity.
+func (t *Template) QueryDocuments() *DocumentDataQuery {
+	return NewTemplateClient(t.config).QueryDocuments(t)
 }
 
 // Update returns a builder for updating this Template.
@@ -227,13 +264,43 @@ func (t *Template) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(t.Name)
 	builder.WriteString(", ")
+	builder.WriteString("type=")
+	builder.WriteString(fmt.Sprintf("%v", t.Type))
+	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(t.Description)
 	builder.WriteString(", ")
 	builder.WriteString("jsonconfig=")
 	builder.WriteString(fmt.Sprintf("%v", t.Jsonconfig))
+	builder.WriteString(", ")
+	builder.WriteString("uischema=")
+	builder.WriteString(fmt.Sprintf("%v", t.Uischema))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedDocuments returns the Documents named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (t *Template) NamedDocuments(name string) ([]*DocumentData, error) {
+	if t.Edges.namedDocuments == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := t.Edges.namedDocuments[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (t *Template) appendNamedDocuments(name string, edges ...*DocumentData) {
+	if t.Edges.namedDocuments == nil {
+		t.Edges.namedDocuments = make(map[string][]*DocumentData)
+	}
+	if len(edges) == 0 {
+		t.Edges.namedDocuments[name] = []*DocumentData{}
+	} else {
+		t.Edges.namedDocuments[name] = append(t.Edges.namedDocuments[name], edges...)
+	}
 }
 
 // Templates is a parsable slice of Template.

@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -617,6 +618,36 @@ func NameContainsFold(v string) predicate.Template {
 	return predicate.Template(sql.FieldContainsFold(FieldName, v))
 }
 
+// TypeEQ applies the EQ predicate on the "type" field.
+func TypeEQ(v enums.DocumentType) predicate.Template {
+	vc := v
+	return predicate.Template(sql.FieldEQ(FieldType, vc))
+}
+
+// TypeNEQ applies the NEQ predicate on the "type" field.
+func TypeNEQ(v enums.DocumentType) predicate.Template {
+	vc := v
+	return predicate.Template(sql.FieldNEQ(FieldType, vc))
+}
+
+// TypeIn applies the In predicate on the "type" field.
+func TypeIn(vs ...enums.DocumentType) predicate.Template {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Template(sql.FieldIn(FieldType, v...))
+}
+
+// TypeNotIn applies the NotIn predicate on the "type" field.
+func TypeNotIn(vs ...enums.DocumentType) predicate.Template {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Template(sql.FieldNotIn(FieldType, v...))
+}
+
 // DescriptionEQ applies the EQ predicate on the "description" field.
 func DescriptionEQ(v string) predicate.Template {
 	return predicate.Template(sql.FieldEQ(FieldDescription, v))
@@ -692,14 +723,14 @@ func DescriptionContainsFold(v string) predicate.Template {
 	return predicate.Template(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// JsonconfigIsNil applies the IsNil predicate on the "jsonconfig" field.
-func JsonconfigIsNil() predicate.Template {
-	return predicate.Template(sql.FieldIsNull(FieldJsonconfig))
+// UischemaIsNil applies the IsNil predicate on the "uischema" field.
+func UischemaIsNil() predicate.Template {
+	return predicate.Template(sql.FieldIsNull(FieldUischema))
 }
 
-// JsonconfigNotNil applies the NotNil predicate on the "jsonconfig" field.
-func JsonconfigNotNil() predicate.Template {
-	return predicate.Template(sql.FieldNotNull(FieldJsonconfig))
+// UischemaNotNil applies the NotNil predicate on the "uischema" field.
+func UischemaNotNil() predicate.Template {
+	return predicate.Template(sql.FieldNotNull(FieldUischema))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.
@@ -723,6 +754,35 @@ func HasOwnerWith(preds ...predicate.Organization) predicate.Template {
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Template
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasDocuments applies the HasEdge predicate on the "documents" edge.
+func HasDocuments() predicate.Template {
+	return predicate.Template(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DocumentsTable, DocumentsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.DocumentData
+		step.Edge.Schema = schemaConfig.DocumentData
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDocumentsWith applies the HasEdge predicate on the "documents" edge with a given conditions (other predicates).
+func HasDocumentsWith(preds ...predicate.DocumentData) predicate.Template {
+	return predicate.Template(func(s *sql.Selector) {
+		step := newDocumentsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.DocumentData
+		step.Edge.Schema = schemaConfig.DocumentData
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

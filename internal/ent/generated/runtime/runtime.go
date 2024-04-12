@@ -6,6 +6,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
@@ -38,6 +39,33 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	documentdataMixin := schema.DocumentData{}.Mixin()
+	documentdataMixinHooks0 := documentdataMixin[0].Hooks()
+	documentdataMixinHooks2 := documentdataMixin[2].Hooks()
+	documentdata.Hooks[0] = documentdataMixinHooks0[0]
+	documentdata.Hooks[1] = documentdataMixinHooks2[0]
+	documentdataMixinInters2 := documentdataMixin[2].Interceptors()
+	documentdata.Interceptors[0] = documentdataMixinInters2[0]
+	documentdataMixinFields0 := documentdataMixin[0].Fields()
+	_ = documentdataMixinFields0
+	documentdataMixinFields1 := documentdataMixin[1].Fields()
+	_ = documentdataMixinFields1
+	documentdataFields := schema.DocumentData{}.Fields()
+	_ = documentdataFields
+	// documentdataDescCreatedAt is the schema descriptor for created_at field.
+	documentdataDescCreatedAt := documentdataMixinFields0[0].Descriptor()
+	// documentdata.DefaultCreatedAt holds the default value on creation for the created_at field.
+	documentdata.DefaultCreatedAt = documentdataDescCreatedAt.Default.(func() time.Time)
+	// documentdataDescUpdatedAt is the schema descriptor for updated_at field.
+	documentdataDescUpdatedAt := documentdataMixinFields0[1].Descriptor()
+	// documentdata.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	documentdata.DefaultUpdatedAt = documentdataDescUpdatedAt.Default.(func() time.Time)
+	// documentdata.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	documentdata.UpdateDefaultUpdatedAt = documentdataDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// documentdataDescID is the schema descriptor for id field.
+	documentdataDescID := documentdataMixinFields1[0].Descriptor()
+	// documentdata.DefaultID holds the default value on creation for the id field.
+	documentdata.DefaultID = documentdataDescID.Default.(func() string)
 	emailverificationtokenMixin := schema.EmailVerificationToken{}.Mixin()
 	emailverificationtoken.Policy = privacy.NewPolicies(schema.EmailVerificationToken{})
 	emailverificationtoken.Hooks[0] = func(next ent.Mutator) ent.Mutator {

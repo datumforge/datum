@@ -9,6 +9,32 @@ import (
 )
 
 var (
+	// DocumentDataColumns holds the columns for the "document_data" table.
+	DocumentDataColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "data", Type: field.TypeJSON},
+		{Name: "template_id", Type: field.TypeString},
+	}
+	// DocumentDataTable holds the schema information for the "document_data" table.
+	DocumentDataTable = &schema.Table{
+		Name:       "document_data",
+		Columns:    DocumentDataColumns,
+		PrimaryKey: []*schema.Column{DocumentDataColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "document_data_templates_documents",
+				Columns:    []*schema.Column{DocumentDataColumns[8]},
+				RefColumns: []*schema.Column{TemplatesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// EmailVerificationTokensColumns holds the columns for the "email_verification_tokens" table.
 	EmailVerificationTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -676,8 +702,10 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "jsonconfig", Type: field.TypeJSON, Nullable: true},
+		{Name: "jsonconfig", Type: field.TypeJSON},
+		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString},
 	}
 	// TemplatesTable holds the schema information for the "templates" table.
@@ -688,9 +716,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "templates_organizations_templates",
-				Columns:    []*schema.Column{TemplatesColumns[10]},
+				Columns:    []*schema.Column{TemplatesColumns[12]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "template_name",
+				Unique:  true,
+				Columns: []*schema.Column{TemplatesColumns[7]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
 			},
 		},
 	}
@@ -837,6 +875,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		DocumentDataTable,
 		EmailVerificationTokensTable,
 		EntitlementsTable,
 		GroupsTable,
@@ -864,6 +903,7 @@ var (
 )
 
 func init() {
+	DocumentDataTable.ForeignKeys[0].RefTable = TemplatesTable
 	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable

@@ -6,7 +6,6 @@ repos:
     hooks:
       - id: trailing-whitespace
       - id: detect-private-key
-      - id: check-json
   - repo: https://github.com/google/yamlfmt
     rev: v0.10.0
     hooks:

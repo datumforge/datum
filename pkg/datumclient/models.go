@@ -213,19 +213,23 @@ type CreateOrganizationInput struct {
 	// URL of the user's remote avatar
 	AvatarRemoteURL *string `json:"avatarRemoteURL,omitempty"`
 	// Whether the organization has a dedicated database
-	DedicatedDb            *bool                           `json:"dedicatedDb,omitempty"`
-	ParentID               *string                         `json:"parentID,omitempty"`
-	GroupIDs               []string                        `json:"groupIDs,omitempty"`
-	TemplateIDs            []string                        `json:"templateIDs,omitempty"`
-	IntegrationIDs         []string                        `json:"integrationIDs,omitempty"`
-	SettingID              *string                         `json:"settingID,omitempty"`
-	EntitlementIDs         []string                        `json:"entitlementIDs,omitempty"`
-	PersonalAccessTokenIDs []string                        `json:"personalAccessTokenIDs,omitempty"`
-	OauthproviderIDs       []string                        `json:"oauthproviderIDs,omitempty"`
-	UserIDs                []string                        `json:"userIDs,omitempty"`
-	InviteIDs              []string                        `json:"inviteIDs,omitempty"`
-	SubscriberIDs          []string                        `json:"subscriberIDs,omitempty"`
-	CreateOrgSettings      *CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
+	DedicatedDb              *bool                           `json:"dedicatedDb,omitempty"`
+	ParentID                 *string                         `json:"parentID,omitempty"`
+	GroupIDs                 []string                        `json:"groupIDs,omitempty"`
+	TemplateIDs              []string                        `json:"templateIDs,omitempty"`
+	IntegrationIDs           []string                        `json:"integrationIDs,omitempty"`
+	SettingID                *string                         `json:"settingID,omitempty"`
+	EntitlementIDs           []string                        `json:"entitlementIDs,omitempty"`
+	PersonalAccessTokenIDs   []string                        `json:"personalAccessTokenIDs,omitempty"`
+	OauthproviderIDs         []string                        `json:"oauthproviderIDs,omitempty"`
+	UserIDs                  []string                        `json:"userIDs,omitempty"`
+	InviteIDs                []string                        `json:"inviteIDs,omitempty"`
+	SubscriberIDs            []string                        `json:"subscriberIDs,omitempty"`
+	CreateOrgSettings        *CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
+	CreateChildOrganizations []*CreateOrganizationInput      `json:"createChildOrganizations,omitempty"`
+	AddOrgMembers            []*CreateOrgMembershipInput     `json:"addOrgMembers,omitempty"`
+	CreateGroup              *CreateGroupInput               `json:"createGroup,omitempty"`
+	CreateTemplate           *CreateTemplateInput            `json:"createTemplate,omitempty"`
 }
 
 // CreateOrganizationSettingInput is used for create OrganizationSetting object.

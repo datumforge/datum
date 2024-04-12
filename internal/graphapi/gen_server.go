@@ -1040,6 +1040,10 @@ type CreateGroupInputResolver interface {
 }
 type CreateOrganizationInputResolver interface {
 	CreateOrgSettings(ctx context.Context, obj *generated.CreateOrganizationInput, data *generated.CreateOrganizationSettingInput) error
+	CreateChildOrganizations(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrganizationInput) error
+	AddOrgMembers(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrgMembershipInput) error
+	CreateGroup(ctx context.Context, obj *generated.CreateOrganizationInput, data *generated.CreateGroupInput) error
+	CreateTemplate(ctx context.Context, obj *generated.CreateOrganizationInput, data *generated.CreateTemplateInput) error
 }
 type UpdateGroupInputResolver interface {
 	AddGroupMembers(ctx context.Context, obj *generated.UpdateGroupInput, data []*generated.CreateGroupMembershipInput) error
@@ -13315,6 +13319,10 @@ type OrganizationSettingDeletePayload {
 }`, BuiltIn: false},
 	{Name: "../../schema/orgextended.graphql", Input: `extend input CreateOrganizationInput {
   createOrgSettings: CreateOrganizationSettingInput
+  createChildOrganizations: [CreateOrganizationInput]
+  addOrgMembers: [CreateOrgMembershipInput]
+  createGroup: CreateGroupInput
+  createTemplate: CreateTemplateInput
 }
 
 extend input UpdateOrganizationInput {
@@ -47841,7 +47849,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "avatarRemoteURL", "dedicatedDb", "parentID", "groupIDs", "templateIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "subscriberIDs", "createOrgSettings"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "avatarRemoteURL", "dedicatedDb", "parentID", "groupIDs", "templateIDs", "integrationIDs", "settingID", "entitlementIDs", "personalAccessTokenIDs", "oauthproviderIDs", "userIDs", "inviteIDs", "subscriberIDs", "createOrgSettings", "createChildOrganizations", "addOrgMembers", "createGroup", "createTemplate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -48002,6 +48010,42 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			if err = ec.resolvers.CreateOrganizationInput().CreateOrgSettings(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "createChildOrganizations":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createChildOrganizations"))
+			data, err := ec.unmarshalOCreateOrganizationInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateOrganizationInput().CreateChildOrganizations(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "addOrgMembers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addOrgMembers"))
+			data, err := ec.unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateOrganizationInput().AddOrgMembers(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "createGroup":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createGroup"))
+			data, err := ec.unmarshalOCreateGroupInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateOrganizationInput().CreateGroup(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "createTemplate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTemplate"))
+			data, err := ec.unmarshalOCreateTemplateInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTemplateInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateOrganizationInput().CreateTemplate(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -82455,6 +82499,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) unmarshalOCreateGroupInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupInput(ctx context.Context, v interface{}) (*generated.CreateGroupInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCreateGroupInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOCreateGroupMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupMembershipInputᚄ(ctx context.Context, v interface{}) ([]*generated.CreateGroupMembershipInput, error) {
 	if v == nil {
 		return nil, nil
@@ -82483,6 +82535,26 @@ func (ec *executionContext) unmarshalOCreateGroupSettingInput2ᚖgithubᚗcomᚋ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInput(ctx context.Context, v interface{}) ([]*generated.CreateOrgMembershipInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.CreateOrgMembershipInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOCreateOrgMembershipInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInputᚄ(ctx context.Context, v interface{}) ([]*generated.CreateOrgMembershipInput, error) {
 	if v == nil {
 		return nil, nil
@@ -82503,11 +82575,55 @@ func (ec *executionContext) unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗco
 	return res, nil
 }
 
+func (ec *executionContext) unmarshalOCreateOrgMembershipInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInput(ctx context.Context, v interface{}) (*generated.CreateOrgMembershipInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCreateOrgMembershipInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOCreateOrganizationInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationInput(ctx context.Context, v interface{}) ([]*generated.CreateOrganizationInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.CreateOrganizationInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOCreateOrganizationInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOCreateOrganizationInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationInput(ctx context.Context, v interface{}) (*generated.CreateOrganizationInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCreateOrganizationInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOCreateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx context.Context, v interface{}) (*generated.CreateOrganizationSettingInput, error) {
 	if v == nil {
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputCreateOrganizationSettingInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOCreateTemplateInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateTemplateInput(ctx context.Context, v interface{}) (*generated.CreateTemplateInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCreateTemplateInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

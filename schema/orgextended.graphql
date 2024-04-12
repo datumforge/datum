@@ -1,5 +1,9 @@
 extend input CreateOrganizationInput {
   createOrgSettings: CreateOrganizationSettingInput
+  createChildOrganizations: [CreateOrganizationInput]
+  addOrgMembers: [CreateOrgMembershipInput]
+  createGroup: CreateGroupInput
+  createTemplate: CreateTemplateInput
 }
 
 extend input UpdateOrganizationInput {

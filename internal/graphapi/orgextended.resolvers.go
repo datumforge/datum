@@ -6,6 +6,7 @@ package graphapi
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -23,6 +24,39 @@ func (r *createOrganizationInputResolver) CreateOrgSettings(ctx context.Context,
 	obj.SettingID = &orgSettings.ID
 
 	return nil
+}
+
+// CreateChildOrganizations is the resolver for the createChildOrganizations field.
+func (r *createOrganizationInputResolver) CreateChildOrganizations(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrganizationInput) error {
+	c := withTransactionalMutation(ctx)
+
+	builders := make([]*generated.OrganizationCreate, len(data))
+	for i := range data {
+		input := *data[i]
+		builders[i] = c.Organization.Create().SetInput(input)
+	}
+
+	_, err := c.Organization.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AddOrgMembers is the resolver for the addOrgMembers field.
+func (r *createOrganizationInputResolver) AddOrgMembers(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrgMembershipInput) error {
+	panic(fmt.Errorf("not implemented: AddOrgMembers - addOrgMembers"))
+}
+
+// CreateGroup is the resolver for the createGroup field.
+func (r *createOrganizationInputResolver) CreateGroup(ctx context.Context, obj *generated.CreateOrganizationInput, data *generated.CreateGroupInput) error {
+	panic(fmt.Errorf("not implemented: CreateGroup - createGroup"))
+}
+
+// CreateTemplate is the resolver for the createTemplate field.
+func (r *createOrganizationInputResolver) CreateTemplate(ctx context.Context, obj *generated.CreateOrganizationInput, data *generated.CreateTemplateInput) error {
+	panic(fmt.Errorf("not implemented: CreateTemplate - createTemplate"))
 }
 
 // AddOrgMembers is the resolver for the addOrgMembers field.

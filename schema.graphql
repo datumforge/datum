@@ -301,6 +301,10 @@ input CreateOrganizationInput {
 	inviteIDs: [ID!]
 	subscriberIDs: [ID!]
 	createOrgSettings: CreateOrganizationSettingInput
+	createChildOrganizations: [CreateOrganizationInput]
+	addOrgMembers: [CreateOrgMembershipInput]
+	createGroup: CreateGroupInput
+	createTemplate: CreateTemplateInput
 }
 """
 CreateOrganizationSettingInput is used for create OrganizationSetting object.

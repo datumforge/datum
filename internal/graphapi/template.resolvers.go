@@ -14,7 +14,7 @@ import (
 
 // CreateTemplate is the resolver for the createTemplate field.
 func (r *mutationResolver) CreateTemplate(ctx context.Context, input generated.CreateTemplateInput) (*TemplateCreatePayload, error) {
-	om, err := withTransactionalMutation(ctx).Template.Create().SetInput(input).Save(ctx)
+	t, err := withTransactionalMutation(ctx).Template.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			validationError := err.(*generated.ValidationError)
@@ -36,12 +36,12 @@ func (r *mutationResolver) CreateTemplate(ctx context.Context, input generated.C
 			return nil, newPermissionDeniedError(ActionCreate, "template")
 		}
 
-		r.logger.Errorw("failed to create invitation", "error", err)
+		r.logger.Errorw("failed to create template", "error", err)
 
 		return nil, err
 	}
 
-	return &TemplateCreatePayload{Template: om}, nil
+	return &TemplateCreatePayload{Template: t}, nil
 }
 
 // UpdateTemplate is the resolver for the updateTemplate field.
@@ -69,12 +69,12 @@ func (r *mutationResolver) UpdateTemplate(ctx context.Context, id string, input 
 		}
 
 		if errors.Is(err, privacy.Deny) {
-			r.logger.Errorw("failed to update invitation", "error", err)
+			r.logger.Errorw("failed to update template", "error", err)
 
 			return nil, newPermissionDeniedError(ActionUpdate, "template")
 		}
 
-		r.logger.Errorw("failed to update invitation", "error", err)
+		r.logger.Errorw("failed to update template", "error", err)
 		return nil, ErrInternalServerError
 	}
 
@@ -96,7 +96,7 @@ func (r *mutationResolver) DeleteTemplate(ctx context.Context, id string) (*Temp
 		return nil, err
 	}
 
-	if err := generated.InviteEdgeCleanup(ctx, id); err != nil {
+	if err := generated.TemplateEdgeCleanup(ctx, id); err != nil {
 		return nil, newCascadeDeleteError(err)
 	}
 

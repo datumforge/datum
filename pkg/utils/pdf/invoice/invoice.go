@@ -51,13 +51,11 @@ func (i *Invoice) setPDFLayout() error {
 
 // SaveToPdf saves Invoice to a PDF file and closes the file
 func (i *Invoice) SaveToPdf(outputPath string) error {
-	err := i.pdf.OutputFileAndClose(outputPath)
-
-	if err != nil {
+	if err := i.pdf.OutputFileAndClose(outputPath); err != nil {
 		return ErrCouldNotSaveInvoice
 	}
 
-	return err
+	return nil
 }
 
 // Save saves Invoice to bytes and closes it

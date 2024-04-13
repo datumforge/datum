@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/datumforge/datum/jsonschema/models/email/config",
+  "$defs": {
+    "EmailTemplate": {
+      "properties": {
+        "html": {
+          "type": "string",
+          "description": "Html description: Template for HTML body"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject description: Template for email subject header"
+        },
+        "text": {
+          "type": "string",
+          "description": "Text description: Optional template for plain-text body. If not provided, a plain-text body will be automatically generated from the HTML template."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "EmailTemplates": {
+      "properties": {
+        "resetPassword": {
+          "$ref": "#/$defs/EmailTemplate",
+          "description": "ResetPassword description: Email sent on password resets. Available template variables: {{.Host}}, {{.Username}}, {{.URL}}"
+        },
+        "setPassword": {
+          "$ref": "#/$defs/EmailTemplate",
+          "description": "SetPassword description: Email sent on account creation, if a password reset URL is created. Available template variables: {{.Host}}, {{.Username}}, {{.URL}}"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "EmailTemplates description: Configurable templates for some email types sent by Sourcegraph."
+    }
+  },
+  "properties": {
+    "emailTemplate": {
+      "$ref": "#/$defs/EmailTemplate"
+    },
+    "emailTemplates": {
+      "$ref": "#/$defs/EmailTemplates"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}

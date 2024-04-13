@@ -1,0 +1,729 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/datumforge/datum/jsonschema/models/infra/config",
+  "$defs": {
+    "AssignedTo": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "region": {
+          "$ref": "#/$defs/Region"
+        },
+        "state": {
+          "type": "string"
+        },
+        "pricing": {
+          "$ref": "#/$defs/Pricing"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "AssignedTo assignment of a network floating IP to a server"
+    },
+    "AttachedTo": {
+      "properties": {
+        "href": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "AttachedTo what a resource is attached to"
+    },
+    "AvailableRegions": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "region_iso_2": {
+          "type": "string"
+        },
+        "stock_qty": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "AvailableRegions regions that are available to the user"
+    },
+    "BGPRoute": {
+      "properties": {
+        "subnet": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "router": {
+          "type": "string"
+        },
+        "age": {
+          "type": "string"
+        },
+        "updated": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "BGPRoute single server BGP route"
+    },
+    "Bandwidth": {
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Bandwidth total bandwidth available"
+    },
+    "BlockStorage": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "allow_edit_size": {
+          "type": "boolean"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "attached_to": {
+          "$ref": "#/$defs/AttachedTo"
+        },
+        "vlan_id": {
+          "type": "string"
+        },
+        "vlan_ip": {
+          "type": "string"
+        },
+        "initiator": {
+          "type": "string"
+        },
+        "discovery_ip": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "BlockStorage cloud block storage"
+    },
+    "Cpus": {
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "cores": {
+          "type": "integer"
+        },
+        "frequency": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Cpus cpu information for a server"
+    },
+    "CreateServer": {
+      "properties": {
+        "project_id": {
+          "type": "integer"
+        },
+        "plan": {
+          "type": "string"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "ssh_keys": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "ip_addresses": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "user_data": {
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "spot_market": {
+          "type": "integer"
+        },
+        "os_partition_size": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "CreateServer represents a request to create a new Cherry Servers server."
+    },
+    "IPAddressCreateRequest": {
+      "properties": {
+        "address_family": {
+          "type": "integer"
+        },
+        "public": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "IPAddressCreateRequest represents a request to create a new IP address within a CreateServer request"
+    },
+    "IPAddresses": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "address_family": {
+          "type": "integer"
+        },
+        "cidr": {
+          "type": "string"
+        },
+        "gateway": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "region": {
+          "$ref": "#/$defs/Region"
+        },
+        "routed_to": {
+          "$ref": "#/$defs/RoutedTo"
+        },
+        "assigned_to": {
+          "$ref": "#/$defs/AssignedTo"
+        },
+        "targeted_to": {
+          "$ref": "#/$defs/AssignedTo"
+        },
+        "project": {
+          "$ref": "#/$defs/Project"
+        },
+        "ptr_record": {
+          "type": "string"
+        },
+        "a_record": {
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "href": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "IPAddresses individual IP address"
+    },
+    "Memory": {
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Memory cpu information for a server"
+    },
+    "Nics": {
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Nics network interface information for a server"
+    },
+    "Plan": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "custom": {
+          "type": "boolean"
+        },
+        "specs": {
+          "$ref": "#/$defs/Specs"
+        },
+        "pricing": {
+          "items": {
+            "$ref": "#/$defs/Pricing"
+          },
+          "type": "array"
+        },
+        "available_regions": {
+          "items": {
+            "$ref": "#/$defs/AvailableRegions"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Plan a server plan"
+    },
+    "Plans": {
+      "items": {
+        "$ref": "#/$defs/Plan"
+      },
+      "type": "array",
+      "description": "Plans represents a list of Cherry Servers plans"
+    },
+    "Pricing": {
+      "properties": {
+        "price": {
+          "type": "number"
+        },
+        "taxed": {
+          "type": "boolean"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Pricing price for a specific plan"
+    },
+    "Project": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "bgp": {
+          "$ref": "#/$defs/ProjectBGP"
+        },
+        "href": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Project a CherryServers project"
+    },
+    "ProjectBGP": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "local_asn": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "ProjectBGP information about BGP on an individual project"
+    },
+    "Raid": {
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Raid raid for block storage on a server"
+    },
+    "Region": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "region_iso_2": {
+          "type": "string"
+        },
+        "bgp": {
+          "$ref": "#/$defs/RegionBGP"
+        },
+        "href": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Region a CherryServers region"
+    },
+    "RegionBGP": {
+      "properties": {
+        "hosts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "asn": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "RegionBGP information about BGP in a region"
+    },
+    "RoutedTo": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "address_family": {
+          "type": "integer"
+        },
+        "cidr": {
+          "type": "string"
+        },
+        "gateway": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "region": {
+          "$ref": "#/$defs/Region"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "RoutedTo routing of a floating IP to an underlying IP"
+    },
+    "SSHKeys": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "label": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "updated": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "SSHKeys an ssh key"
+    },
+    "Server": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "href": {
+          "type": "string"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "spot_instance": {
+          "type": "boolean"
+        },
+        "bgp": {
+          "$ref": "#/$defs/ServerBGP"
+        },
+        "project": {
+          "$ref": "#/$defs/Project"
+        },
+        "region": {
+          "$ref": "#/$defs/Region"
+        },
+        "state": {
+          "type": "string"
+        },
+        "plan": {
+          "$ref": "#/$defs/Plan"
+        },
+        "availableregions": {
+          "$ref": "#/$defs/AvailableRegions"
+        },
+        "pricing": {
+          "$ref": "#/$defs/Pricing"
+        },
+        "ip_addresses": {
+          "items": {
+            "$ref": "#/$defs/IPAddresses"
+          },
+          "type": "array"
+        },
+        "ssh_keys": {
+          "items": {
+            "$ref": "#/$defs/SSHKeys"
+          },
+          "type": "array"
+        },
+        "tags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "storage": {
+          "$ref": "#/$defs/BlockStorage"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "termination_date": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Server represents a Cherry Servers server"
+    },
+    "ServerBGP": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string"
+        },
+        "routers": {
+          "type": "integer"
+        },
+        "connected": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "active": {
+          "type": "integer"
+        },
+        "routes": {
+          "items": {
+            "$ref": "#/$defs/BGPRoute"
+          },
+          "type": "array"
+        },
+        "updated": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "ServerBGP status of BGP on a server"
+    },
+    "Specs": {
+      "properties": {
+        "cpus": {
+          "$ref": "#/$defs/Cpus"
+        },
+        "memory": {
+          "$ref": "#/$defs/Memory"
+        },
+        "storage": {
+          "items": {
+            "$ref": "#/$defs/Storage"
+          },
+          "type": "array"
+        },
+        "raid": {
+          "$ref": "#/$defs/Raid"
+        },
+        "nics": {
+          "$ref": "#/$defs/Nics"
+        },
+        "bandwidth": {
+          "$ref": "#/$defs/Bandwidth"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Specs aggregated specs for a server"
+    },
+    "Storage": {
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Storage amount of storage"
+    }
+  },
+  "properties": {
+    "bgp_route": {
+      "$ref": "#/$defs/BGPRoute"
+    },
+    "server": {
+      "$ref": "#/$defs/Server"
+    },
+    "server_bgp": {
+      "$ref": "#/$defs/ServerBGP"
+    },
+    "project": {
+      "$ref": "#/$defs/Project"
+    },
+    "region": {
+      "$ref": "#/$defs/Region"
+    },
+    "plan": {
+      "$ref": "#/$defs/Plan"
+    },
+    "plans": {
+      "$ref": "#/$defs/Plans"
+    },
+    "block_storage": {
+      "$ref": "#/$defs/BlockStorage"
+    },
+    "assigned_to": {
+      "$ref": "#/$defs/AssignedTo"
+    },
+    "routed_to": {
+      "$ref": "#/$defs/RoutedTo"
+    },
+    "ip_addresses": {
+      "$ref": "#/$defs/IPAddresses"
+    },
+    "ssh_keys": {
+      "$ref": "#/$defs/SSHKeys"
+    },
+    "cpus": {
+      "$ref": "#/$defs/Cpus"
+    },
+    "memory": {
+      "$ref": "#/$defs/Memory"
+    },
+    "nics": {
+      "$ref": "#/$defs/Nics"
+    },
+    "raid": {
+      "$ref": "#/$defs/Raid"
+    },
+    "storage": {
+      "$ref": "#/$defs/Storage"
+    },
+    "bandwidth": {
+      "$ref": "#/$defs/Bandwidth"
+    },
+    "ip_address_create_request": {
+      "$ref": "#/$defs/IPAddressCreateRequest"
+    },
+    "create_server": {
+      "$ref": "#/$defs/CreateServer"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}

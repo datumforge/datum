@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/datumforge/datum/jsonschema/models/agreements/config",
+  "$defs": {
+    "AcceptedAgreement": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier for the acceptance of the agreement within a specific compartment."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "A display name for the accepted agreement."
+        },
+        "compartmentId": {
+          "type": "string",
+          "description": "The unique identifier for the compartment where the agreement was accepted."
+        },
+        "listingId": {
+          "type": "string",
+          "description": "The unique identifier for the listing associated with the agreement."
+        },
+        "packageVersion": {
+          "type": "string",
+          "description": "The package version associated with the agreement."
+        },
+        "agreementId": {
+          "type": "string",
+          "description": "The unique identifier for the terms of use agreement itself."
+        },
+        "timeAccepted": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time the agreement was accepted."
+        },
+        "definedTags": {
+          "additionalProperties": {
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "freeformTags": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "AcceptedAgreement The model for an accepted terms of use agreement."
+    },
+    "AcceptedAgreementSummary": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier for the acceptance of the agreement within a specific compartment."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "A display name for the accepted agreement."
+        },
+        "compartmentId": {
+          "type": "string",
+          "description": "The unique identifier for the compartment where the agreement was accepted."
+        },
+        "listingId": {
+          "type": "string",
+          "description": "The unique identifier for the listing associated with the agreement."
+        },
+        "packageVersion": {
+          "type": "string",
+          "description": "The package version associated with the agreement."
+        },
+        "agreementId": {
+          "type": "string",
+          "description": "The unique identifier for the terms of use agreement itself."
+        },
+        "timeAccepted": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time the agreement was accepted."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "AcceptedAgreementSummary The model for a summary of an accepted agreement."
+    },
+    "Agreement": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier for the agreement."
+        },
+        "contentUrl": {
+          "type": "string",
+          "description": "The content URL of the agreement."
+        },
+        "signature": {
+          "type": "string",
+          "description": "A time-based signature that can be used to accept an agreement or remove a\npreviously accepted agreement from the list that Marketplace checks before a deployment."
+        },
+        "compartmentId": {
+          "type": "string",
+          "description": "The unique identifier for the compartment."
+        },
+        "author": {
+          "type": "string",
+          "description": "Who authored the agreement."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Textual prompt to read and accept the agreement."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Agreement The model for an end user license agreement."
+    },
+    "AgreementSummary": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier for the agreement."
+        },
+        "contentUrl": {
+          "type": "string",
+          "description": "The content URL of the agreement."
+        },
+        "author": {
+          "type": "string",
+          "description": "Who authored the agreement."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Textual prompt to read and accept the agreement."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "AgreementSummary The model for a summary of an end user license agreement."
+    }
+  },
+  "properties": {
+    "acceptedAgreement": {
+      "$ref": "#/$defs/AcceptedAgreement"
+    },
+    "agreement": {
+      "$ref": "#/$defs/Agreement"
+    },
+    "agreementSummary": {
+      "$ref": "#/$defs/AgreementSummary"
+    },
+    "acceptedAgreementSummary": {
+      "$ref": "#/$defs/AcceptedAgreementSummary"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
+}

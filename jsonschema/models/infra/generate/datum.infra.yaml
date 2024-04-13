@@ -1,0 +1,329 @@
+assigned_to:
+  hostname: ""
+  href: ""
+  id: 0
+  image: ""
+  name: ""
+  pricing:
+    currency: ""
+    price: 0
+    taxed: false
+    unit: ""
+  region:
+    bgp:
+      asn: 0
+      hosts: null
+    href: ""
+    id: 0
+    name: ""
+    region_iso_2: ""
+    slug: ""
+  state: ""
+bandwidth:
+  name: ""
+bgp_route:
+  active: false
+  age: ""
+  router: ""
+  subnet: ""
+  updated: ""
+block_storage:
+  allow_edit_size: false
+  attached_to:
+    href: ""
+  description: ""
+  discovery_ip: ""
+  href: ""
+  id: 0
+  initiator: ""
+  name: ""
+  size: 0
+  unit: ""
+  vlan_id: ""
+  vlan_ip: ""
+cpus:
+  cores: 0
+  count: 0
+  frequency: 0
+  name: ""
+  unit: ""
+create_server:
+  hostname: ""
+  image: ""
+  ip_addresses: null
+  os_partition_size: 0
+  plan: ""
+  project_id: 0
+  region: ""
+  spot_market: 0
+  ssh_keys: null
+  tags: null
+  user_data: ""
+ip_address_create_request:
+  address_family: 0
+  public: false
+ip_addresses:
+  a_record: ""
+  address: ""
+  address_family: 0
+  assigned_to:
+    hostname: ""
+    href: ""
+    id: 0
+    image: ""
+    name: ""
+    pricing:
+      currency: ""
+      price: 0
+      taxed: false
+      unit: ""
+    region:
+      bgp:
+        asn: 0
+        hosts: null
+      href: ""
+      id: 0
+      name: ""
+      region_iso_2: ""
+      slug: ""
+    state: ""
+  cidr: ""
+  gateway: ""
+  href: ""
+  id: ""
+  project:
+    bgp:
+      enabled: false
+      local_asn: 0
+    href: ""
+    id: 0
+    name: ""
+  ptr_record: ""
+  region:
+    bgp:
+      asn: 0
+      hosts: null
+    href: ""
+    id: 0
+    name: ""
+    region_iso_2: ""
+    slug: ""
+  routed_to:
+    address: ""
+    address_family: 0
+    cidr: ""
+    gateway: ""
+    id: ""
+    region:
+      bgp:
+        asn: 0
+        hosts: null
+      href: ""
+      id: 0
+      name: ""
+      region_iso_2: ""
+      slug: ""
+    type: ""
+  tags: null
+  targeted_to:
+    hostname: ""
+    href: ""
+    id: 0
+    image: ""
+    name: ""
+    pricing:
+      currency: ""
+      price: 0
+      taxed: false
+      unit: ""
+    region:
+      bgp:
+        asn: 0
+        hosts: null
+      href: ""
+      id: 0
+      name: ""
+      region_iso_2: ""
+      slug: ""
+    state: ""
+  type: ""
+memory:
+  count: 0
+  name: ""
+  total: 0
+  unit: ""
+nics:
+  name: ""
+plan:
+  available_regions: null
+  custom: false
+  id: 0
+  name: ""
+  pricing: null
+  slug: ""
+  specs:
+    bandwidth:
+      name: ""
+    cpus:
+      cores: 0
+      count: 0
+      frequency: 0
+      name: ""
+      unit: ""
+    memory:
+      count: 0
+      name: ""
+      total: 0
+      unit: ""
+    nics:
+      name: ""
+    raid:
+      name: ""
+    storage: null
+plans: null
+project:
+  bgp:
+    enabled: false
+    local_asn: 0
+  href: ""
+  id: 0
+  name: ""
+raid:
+  name: ""
+region:
+  bgp:
+    asn: 0
+    hosts: null
+  href: ""
+  id: 0
+  name: ""
+  region_iso_2: ""
+  slug: ""
+routed_to:
+  address: ""
+  address_family: 0
+  cidr: ""
+  gateway: ""
+  id: ""
+  region:
+    bgp:
+      asn: 0
+      hosts: null
+    href: ""
+    id: 0
+    name: ""
+    region_iso_2: ""
+    slug: ""
+  type: ""
+server:
+  availableregions:
+    id: 0
+    name: ""
+    region_iso_2: ""
+    stock_qty: 0
+  bgp:
+    active: 0
+    available: false
+    connected: 0
+    enabled: false
+    limit: 0
+    routers: 0
+    routes: null
+    status: ""
+    updated: ""
+  created_at: ""
+  hostname: ""
+  href: ""
+  id: 0
+  image: ""
+  ip_addresses: null
+  name: ""
+  plan:
+    available_regions: null
+    custom: false
+    id: 0
+    name: ""
+    pricing: null
+    slug: ""
+    specs:
+      bandwidth:
+        name: ""
+      cpus:
+        cores: 0
+        count: 0
+        frequency: 0
+        name: ""
+        unit: ""
+      memory:
+        count: 0
+        name: ""
+        total: 0
+        unit: ""
+      nics:
+        name: ""
+      raid:
+        name: ""
+      storage: null
+  pricing:
+    currency: ""
+    price: 0
+    taxed: false
+    unit: ""
+  project:
+    bgp:
+      enabled: false
+      local_asn: 0
+    href: ""
+    id: 0
+    name: ""
+  region:
+    bgp:
+      asn: 0
+      hosts: null
+    href: ""
+    id: 0
+    name: ""
+    region_iso_2: ""
+    slug: ""
+  spot_instance: false
+  ssh_keys: null
+  state: ""
+  storage:
+    allow_edit_size: false
+    attached_to:
+      href: ""
+    description: ""
+    discovery_ip: ""
+    href: ""
+    id: 0
+    initiator: ""
+    name: ""
+    size: 0
+    unit: ""
+    vlan_id: ""
+    vlan_ip: ""
+  tags: null
+  termination_date: ""
+server_bgp:
+  active: 0
+  available: false
+  connected: 0
+  enabled: false
+  limit: 0
+  routers: 0
+  routes: null
+  status: ""
+  updated: ""
+ssh_keys:
+  created: ""
+  fingerprint: ""
+  href: ""
+  id: 0
+  key: ""
+  label: ""
+  updated: ""
+storage:
+  count: 0
+  name: ""
+  size: 0
+  unit: ""

@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/pkg/datumclient"
 	"github.com/datumforge/datum/pkg/tokens"
 )
@@ -35,6 +36,9 @@ func init() {
 
 	templateCreateCmd.Flags().StringP("jsonconfig", "j", "", "json payload for the template")
 	datum.ViperBindFlag("template.create.jsonconfig", templateCreateCmd.Flags().Lookup("jsonconfig"))
+
+	templateCreateCmd.Flags().StringP("type", "t", "DOCUMENT", "type of the template")
+	datum.ViperBindFlag("template.create.type", templateCreateCmd.Flags().Lookup("type"))
 }
 
 func createTemplate(ctx context.Context) error {
@@ -56,6 +60,7 @@ func createTemplate(ctx context.Context) error {
 	description := viper.GetString("template.create.description")
 	parentOrgID := viper.GetString("template.create.org-id")
 	jsonconfig := viper.GetString("template.create.jsonconfig")
+	templateType := viper.GetString("template.create.type")
 
 	var data []byte
 
@@ -74,6 +79,10 @@ func createTemplate(ctx context.Context) error {
 
 	if parentOrgID != "" {
 		input.OwnerID = parentOrgID
+	}
+
+	if templateType != "" {
+		input.Type = enums.ToDocumentType(templateType)
 	}
 
 	if parentOrgID == "" {

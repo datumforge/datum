@@ -2,8 +2,6 @@
 server:
   debug: true
   dev: true
-  cors:
-    allowOrigins: []
 
   # tls settings
   tls:

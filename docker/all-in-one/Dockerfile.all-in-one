@@ -43,6 +43,9 @@ EXPOSE 8080
 EXPOSE 8081
 EXPOSE 2112
 
+#Expose geodetic ports
+EXPOSE 1337
+
 # Expose redis ports
 EXPOSE 6379
 

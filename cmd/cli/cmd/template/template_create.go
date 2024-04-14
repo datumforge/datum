@@ -37,6 +37,9 @@ func init() {
 	templateCreateCmd.Flags().StringP("jsonconfig", "j", "", "json payload for the template")
 	datum.ViperBindFlag("template.create.jsonconfig", templateCreateCmd.Flags().Lookup("jsonconfig"))
 
+	templateCreateCmd.Flags().StringP("uischema", "u", "", "uischema for the template")
+	datum.ViperBindFlag("template.create.uischema", templateCreateCmd.Flags().Lookup("uischema"))
+
 	templateCreateCmd.Flags().StringP("type", "t", "DOCUMENT", "type of the template")
 	datum.ViperBindFlag("template.create.type", templateCreateCmd.Flags().Lookup("type"))
 }
@@ -61,6 +64,7 @@ func createTemplate(ctx context.Context) error {
 	parentOrgID := viper.GetString("template.create.org-id")
 	jsonconfig := viper.GetString("template.create.jsonconfig")
 	templateType := viper.GetString("template.create.type")
+	uischema := viper.GetString("template.create.uischema")
 
 	var data []byte
 
@@ -75,6 +79,16 @@ func createTemplate(ctx context.Context) error {
 
 	if description != "" {
 		input.Description = &description
+	}
+
+	if uischema != "" {
+		var data []byte
+
+		if data, err = os.ReadFile(uischema); err != nil {
+			return err
+		}
+
+		input.Uischema = data
 	}
 
 	if parentOrgID != "" {

@@ -10,4 +10,9 @@ done
 
 /bin/redis-server --save 20 1 --loglevel warning --daemonize yes
 
+# run the geodetic service in the background
+/bin/geodetic serve --debug --pretty &!
+
+# run the datum service in the foreground
 /bin/datum serve --debug --pretty
+

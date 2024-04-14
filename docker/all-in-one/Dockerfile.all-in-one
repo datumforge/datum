@@ -14,6 +14,9 @@ WORKDIR /home/nonroot
 # Copy the binary that goreleaser built
 COPY --from=builder /go/bin/datum /bin/datum
 
+# Copy the geodetic binary
+COPY --from=ghcr.io/datumforge/geodetic:107-8e1446e4  /bin/geodetic /bin/geodetic
+
 # Copy reids binary
 COPY --from=redis:7.2.4 /usr/local/bin/redis-server /bin/redis-server
 
@@ -39,6 +42,9 @@ USER 65532:65532
 EXPOSE 8080
 EXPOSE 8081
 EXPOSE 2112
+
+#Expose geodetic ports
+EXPOSE 1337
 
 # Expose redis ports
 EXPOSE 6379

@@ -1,0 +1,113 @@
+{
+    "type": "Group",
+    "label": "Invoice",
+    "elements": [
+        {
+            "type": "HorizontalLayout",
+            "elements": [
+                {
+                    "type": "HorizontalLayout",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/number"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/dueDate"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/issueDate"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/saleDate"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/currency",
+                            "autocomplete": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "label": "Line Items",
+            "elements": [
+                {
+                    "type": "Control",
+                    "scope": "#/properties/items",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/description",
+                            "label": "Description"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/quantity",
+                            "label": "Quantity"
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/unitPrice",
+                            "label": "Price"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Group",
+            "elements": [
+                {
+                    "type": "Control",
+                    "scope": "#/properties/company",
+                    "elements": [
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/buyer",
+                            "label": "Buyer",
+                            "elements": [
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/name",
+                                    "label": "Name"
+                                },
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/address",
+                                    "label": "Address"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Control",
+                            "scope": "#/properties/Seller",
+                            "label": "Seller",
+                            "elements": [
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/name",
+                                    "label": "Name"
+                                },
+                                {
+                                    "type": "Control",
+                                    "scope": "#/properties/address",
+                                    "label": "Address"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Control",
+            "scope": "#/properties/notes"
+        }
+    ]
+}

@@ -181,10 +181,6 @@ func (r *RegisterRequest) Validate() error {
 	switch {
 	case r.Email == "":
 		return rout.MissingField("email")
-	case r.FirstName == "":
-		return rout.MissingField("first name")
-	case r.LastName == "":
-		return rout.MissingField("last name")
 	case r.Password == "":
 		return rout.MissingField("password")
 	case passwd.Strength(r.Password) < passwd.Moderate:

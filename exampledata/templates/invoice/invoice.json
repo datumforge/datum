@@ -1,6 +1,6 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://datum.net/invoice-template.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/datumforge/datum/jsonschema/models/invoice/config",
     "title": "Invoice Template",
     "type": "object",
     "properties": {
@@ -25,13 +25,12 @@
         },
         "notes": {
             "description": "This is a note that can be added to the invoice",
-            "type": "string",
-            "format": "string"
+            "type": "string"
         },
         "currency": {
             "description": "Ideally this is the ISO code and not something the user defines",
             "type": "string",
-            "format": "string"
+            "default": "USD"
         },
         "company": {
             "type": "object",
@@ -86,14 +85,13 @@
                     "quantity": {
                         "description": "This is the quantity of the item being invoiced",
                         "type": "number",
-                        "exclusiveMinimum": 1,
-                        "format": "integer"
+                        "exclusiveMinimum": 1
                     },
                     "unitPrice": {
                         "description": "This is the price of the item being invoiced",
                         "type": "number",
                         "exclusiveMinimum": 0,
-                        "format": "number"
+                        "default": "0.00"
                     }
                 },
                 "required": [

@@ -49,4 +49,4 @@ tasks:
       ORG_ID:
         sh: go run main.go org create -n template-org -d "my new org that will have a template" -z json | jq -r .createOrganization.organization.id
     cmds:
-      - go run main.go  template create -o "{{ .ORG_ID}}" -n Invoice -t ROOTTEMPLATE --jsonconfig="../../exampledata/templates/invoice.json"
+      - go run main.go  template create -o "{{ .ORG_ID}}" -n Invoice -t ROOTTEMPLATE --jsonconfig="../../exampledata/templates/invoice/invoice.json"  -u="../../exampledata/templates/invoice/uischema.json"

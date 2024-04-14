@@ -1,12 +1,3 @@
-# server settings
-server:
-  debug: true
-  dev: true
-
-  # tls settings
-  tls:
-    enabled: false
-
 # db settings
 db:
   debug: true

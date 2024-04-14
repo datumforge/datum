@@ -1,0 +1,63 @@
+invoicingAddress:
+  billSiteUseId: 0
+  isBillTo: false
+  isShipTo: false
+  location:
+    address1: ""
+    address2: ""
+    city: ""
+    country: ""
+    postalCode: ""
+    region: ""
+    tcaLocationId: 0
+  name: ""
+  phone: ""
+  service2SiteUseId: 0
+  tcaCustAcctSiteId: 0
+  tcaPartySiteNumber: ""
+invoicingBusinessPartner:
+  customerChainType: ""
+  isChainCustomer: false
+  isPublicSector: false
+  name: ""
+  namePhonetic: ""
+  tcaCustomerAccountId: 0
+  tcaCustomerAccountNumber: ""
+  tcaPartyId: 0
+  tcaPartyNumber: ""
+invoicingLocation:
+  address1: ""
+  address2: ""
+  city: ""
+  country: ""
+  postalCode: ""
+  region: ""
+  tcaLocationId: 0
+invoicingOrganization:
+  name: ""
+  number: 0
+invoicingPaymentTerm:
+  createdBy: ""
+  description: ""
+  isActive: false
+  name: ""
+  timeCreated: "0001-01-01T00:00:00Z"
+  timeUpdated: "0001-01-01T00:00:00Z"
+  updatedBy: ""
+  value: ""
+invoicingProduct:
+  billingCategory: ""
+  name: ""
+  partNumber: ""
+  productCategory: ""
+  ucmRateCardPartType: ""
+  unitOfMeasure: ""
+invoicingUser:
+  email: ""
+  firstName: ""
+  lastName: ""
+  name: ""
+  tcaContactId: 0
+  tcaCustAccntSiteId: 0
+  tcaPartyId: 0
+  userName: ""

@@ -43,6 +43,8 @@ issues:
     - docker/*
     - pkg/utils/totp/testing/*
     - internal/ent/generated/*
+    - jsonschema/models/*
+    - jsonschema/templates/*
   exclude-files:
     - internal/graphapi/gen_server.go
     - internal/graphapi/

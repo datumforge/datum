@@ -1,0 +1,30 @@
+acceptedAgreement:
+  agreementId: ""
+  compartmentId: ""
+  definedTags: null
+  displayName: ""
+  freeformTags: null
+  id: ""
+  listingId: ""
+  packageVersion: ""
+  timeAccepted: "0001-01-01T00:00:00Z"
+acceptedAgreementSummary:
+  agreementId: ""
+  compartmentId: ""
+  displayName: ""
+  id: ""
+  listingId: ""
+  packageVersion: ""
+  timeAccepted: "0001-01-01T00:00:00Z"
+agreement:
+  author: ""
+  compartmentId: ""
+  contentUrl: ""
+  id: ""
+  prompt: ""
+  signature: ""
+agreementSummary:
+  author: ""
+  contentUrl: ""
+  id: ""
+  prompt: ""

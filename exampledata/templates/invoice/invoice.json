@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://datum.net/invoice-template.json",
+    "$id": "https://github.com/datumforge/datum/jsonschema/models/invoice/config",
     "title": "Invoice Template",
     "type": "object",
     "properties": {

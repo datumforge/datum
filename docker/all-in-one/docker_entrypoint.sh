@@ -10,4 +10,6 @@ done
 
 /bin/redis-server --save 20 1 --loglevel warning --daemonize yes
 
+/bin/geodetic serve --debug --pretty
+
 /bin/datum serve --debug --pretty

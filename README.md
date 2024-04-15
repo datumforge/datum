@@ -58,7 +58,7 @@ Developing against this repo involves a few mandatory tools; please read up on t
 1. [gqlgenc](https://github.com/Yamashou/gqlgenc) - Client building utilities with GraphQL
 1. [openfga](https://openfga.dev/) - Flexible authorization/permission engine inspired by Google Zanzibar
 1. [echo](https://echo.labstack.com/) - High performance, extensible, minimalist Go web framework
-1. [koanf](github.com/knadh/koanf) - Configuration management library which parses Go structs + creates our main configuration files
+1. [koanf](https://github.com/knadh/koanf) - Configuration management library which parses Go structs + creates our main configuration files
 1. [viper](https://github.com/spf13/viper) - command line flags / management
 
 We also leverage many secondary technologies in use, including (but not limited to!):
@@ -76,7 +76,7 @@ Lastly we're already ourselves using (and plan to support our customers usage in
 1. [posthog](https://posthog.com/) - Product analytics
 1. [sendgrid](https://sendgrid.com/en-us) - Transactional email send provider
 
-All of these components are bundled into our respective Docker images; for additional information / instructions, see the [contributing guide](.github/CONTRIBUTING.md) in this repository. We're constantly adding and changes things, but have tried to list all the great open source tools and projects we rely on; if you see your project (or one you use) in here and wish to list it, feel free to open a PR!
+All of these components are bundled into our respective Docker images; for additional information / instructions, see the [contributing guide](.github/CONTRIBUTING.md) in this repository. We're constantly adding and changing things, but have tried to list all the great open source tools and projects we rely on; if you see your project (or one you use) in here and wish to list it, feel free to open a PR!
 
 ## Dependencies
 
@@ -96,7 +96,7 @@ The only "supported" method of deploying today is locally, but we have a WIP Hel
 
 ## Contributing
 
-Please read the [contributing](.gitub/CONTRIBUTING.md) guide as well as the [Developer Certificate of Origin](https://developercertificate.org/). You will be required to sign all commits to the Datum project, so if you're unfamiliar with how to set that up, see [github's documentation](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification).
+Please read the [contributing](.github/CONTRIBUTING.md) guide as well as the [Developer Certificate of Origin](https://developercertificate.org/). You will be required to sign all commits to the Datum project, so if you're unfamiliar with how to set that up, see [github's documentation](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification).
 
 ## Licensing
 

@@ -896,6 +896,10 @@
         "keys": {
           "$ref": "#/$defs/map[string]string",
           "description": "Keys represents the key pairs used for signing the tokens"
+        },
+        "generateKeys": {
+          "type": "boolean",
+          "description": "GenerateKeys is a boolean to determine if the keys should be generated"
         }
       },
       "additionalProperties": false,

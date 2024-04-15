@@ -27,7 +27,7 @@ auth:
     token:
         accessDuration: 3600000000000
         audience: https://datum.net
-        generateKeys: false
+        generateKeys: true
         issuer: https://auth.datum.net
         jwksEndpoint: https://api.datum.net/.well-known/jwks.json
         keys: null

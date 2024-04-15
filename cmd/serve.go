@@ -127,7 +127,7 @@ func serve(ctx context.Context) error {
 	)
 
 	// Create keys for development
-	if so.Config.Settings.Server.Dev {
+	if so.Config.Settings.Auth.Token.Keys == nil {
 		so.AddServerOptions(serveropts.WithGeneratedKeys())
 	}
 

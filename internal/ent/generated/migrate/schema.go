@@ -723,9 +723,9 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "template_name_owner_id",
+				Name:    "template_name_owner_id_type",
 				Unique:  true,
-				Columns: []*schema.Column{TemplatesColumns[7], TemplatesColumns[12]},
+				Columns: []*schema.Column{TemplatesColumns[7], TemplatesColumns[12], TemplatesColumns[8]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},

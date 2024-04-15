@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# run migrate
+/bin/openfga migrate
+
+# run the openfga service in the background
 OPENFGA_LOG_FORMAT=json OPENFGA_PLAYGROUND_ENABLED=true /bin/openfga run --experimentals check-query-cache --check-query-cache-enabled &
 
 FGACHECK=1
@@ -15,4 +19,3 @@ done
 
 # run the datum service in the foreground
 /bin/datum serve --debug --pretty
-

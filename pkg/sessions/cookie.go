@@ -11,7 +11,7 @@ const (
 )
 
 var (
-	DefaultCookieName = "__Host-datum"
+	DefaultCookieName = "__Secure-SessionId"
 	DevCookieName     = "temporary-cookie"
 )
 

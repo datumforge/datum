@@ -19,7 +19,7 @@ func TestSet(t *testing.T) {
 	}{
 		{
 			name:        "happy path",
-			sessionName: "__Host-datum",
+			sessionName: "__Secure-SessionId",
 			userID:      "01HMDBSNBGH4DTEP0SR8118Y96",
 			session:     ulids.New().String(),
 		},
@@ -61,7 +61,7 @@ func TestGetOk(t *testing.T) {
 	}{
 		{
 			name:        "happy path",
-			sessionName: "__Host-datum",
+			sessionName: "__Secure-SessionId",
 			userID:      "01HMDBSNBGH4DTEP0SR8118Y96",
 			session:     ulids.New().String(),
 		},

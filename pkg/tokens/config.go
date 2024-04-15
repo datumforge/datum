@@ -22,4 +22,6 @@ type Config struct {
 	JWKSEndpoint string `json:"jwksEndpoint" koanf:"jwksEndpoint" default:"https://api.datum.net/.well-known/jwks.json"`
 	// Keys represents the key pairs used for signing the tokens
 	Keys map[string]string `json:"keys" koanf:"keys" jsonschema:"required"`
+	// GenerateKeys is a boolean to determine if the keys should be generated
+	GenerateKeys bool `json:"generateKeys" koanf:"generateKeys" default:"true"`
 }

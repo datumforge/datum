@@ -219,6 +219,7 @@ Config defines the configuration settings for authentication tokens used in the 
 |**refreshOverlap**|`integer`|RefreshOverlap represents the overlap time for a refresh and access token<br/>|no|
 |**jwksEndpoint**|`string`|JWKSEndpoint represents the endpoint for the JSON Web Key Set<br/>|no|
 |[**keys**](#authtokenkeys)|`object`||yes|
+|**generateKeys**|`boolean`|GenerateKeys is a boolean to determine if the keys should be generated<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="authtokenkeys"></a>

@@ -55,6 +55,7 @@ data:
   DATUM_AUTH_TOKEN_REFRESHOVERLAP: {{ .Values.datum.auth.token.refreshOverlap | -15m }}
   DATUM_AUTH_TOKEN_JWKSENDPOINT: {{ .Values.datum.auth.token.jwksEndpoint | "https://api.datum.net/.well-known/jwks.json" }}
   DATUM_AUTH_TOKEN_KEYS: {{ .Values.datum.auth.token.keys }}
+  DATUM_AUTH_TOKEN_GENERATEKEYS: {{ .Values.datum.auth.token.generateKeys | false }}
   DATUM_AUTH_SUPPORTEDPROVIDERS: {{ .Values.datum.auth.supportedProviders }}
   DATUM_AUTH_PROVIDERS_REDIRECTURL: {{ .Values.datum.auth.providers.redirectUrl | "http://localhost:3001/api/auth/callback/datum" }}
   DATUM_AUTH_PROVIDERS_GITHUB_CLIENTID: {{ .Values.datum.auth.providers.github.clientId }}

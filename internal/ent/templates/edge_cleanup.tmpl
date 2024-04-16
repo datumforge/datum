@@ -19,12 +19,22 @@
                     {{/* if the edge has our custom annotation applied */}}
                     {{- if $annotation := $edge.Annotations.DATUM_CASCADE }}
                         {{/* use the client to delete records where the edge schema has a field (provided by the annotation) containing the ID provided by the func */}}
+                        {{/* special case for child fields */}}
+                        {{- if eq $annotation.Field "Child" }}
+                        if exists, err := FromContext(ctx).{{ $edge.Type.Name }}.Query().Where({{ $edge.Type.Name | lower }}.HasParentWith({{ $edge.Type.Name | lower }}.ID(id))).Exist(ctx); err == nil && exists {
+                            if organizationCount, err := FromContext(ctx).{{ $edge.Type.Name  }}.Delete().Where({{ $edge.Type.Name  | lower }}.HasParentWith({{ $edge.Type.Name  | lower }}.ID(id))).Exec(ctx); err != nil {
+                                FromContext(ctx).Logger.Debugw("deleting child {{ $edge.Type.Name | lower }}", "count", {{ $edge.Type.Name | lower }}Count, "err", err)
+                                return err
+                            }
+                        }
+                        {{- else }}
                         if exists, err := FromContext(ctx).{{ $edge.Type.Name }}.Query().Where(({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id)))).Exist(ctx); err == nil && exists {
                             if {{ $edge.Type.Name | lower }}Count, err := FromContext(ctx).{{ $edge.Type.Name }}.Delete().Where({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id))).Exec(ctx); err != nil {
                                 FromContext(ctx).Logger.Debugw("deleting {{ $edge.Type.Name | lower }}", "count", {{ $edge.Type.Name | lower }}Count, "err", err)
                                 return err
                             }
                         }
+                        {{ end }}
                     {{ end }}
                {{- end }}
                {{- if $annotation := $node.Annotations.DATUM_CASCADE_THROUGH }}

@@ -106,7 +106,10 @@ func (Organization) Edges() []ent.Edge {
 			From("parent").
 			Field("parent_organization_id").
 			Immutable().
-			Unique(),
+			Unique().
+			Annotations(
+				entx.CascadeAnnotationField("Child"),
+			),
 		edge.To("groups", Group.Type).
 			Annotations(
 				entx.CascadeAnnotationField("Owner"),

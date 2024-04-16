@@ -121,6 +121,13 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup organization edge"))
 
+	if exists, err := FromContext(ctx).Organization.Query().Where(organization.HasParentWith(organization.ID(id))).Exist(ctx); err == nil && exists {
+		if organizationCount, err := FromContext(ctx).Organization.Delete().Where(organization.HasParentWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting child organization", "count", organizationCount, "err", err)
+			return err
+		}
+	}
+
 	if exists, err := FromContext(ctx).Group.Query().Where((group.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
 		if groupCount, err := FromContext(ctx).Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting group", "count", groupCount, "err", err)

@@ -8,34 +8,61 @@ Please also read our main [contributing guide](https://github.com/datumforge/.gi
 
 This repository contains a number of code generating functions / utilities which take schema modifications and scaffold out resolvers, graphql API schemas, openAPI specifications, among other things. To ensure you've generated all the necessary dependencies run `task pr`; this will run the entirety of the commands required to safely generate a PR. If for some reason one of the commands fails / encounters an error, you will need to debug the individual steps. It should be decently easy to follow the `Taskfile` in the root of this repository.
 
+### Pre-Commit Hooks
+
+We have several `pre-commit` hooks that should be run before pushing a commit. Make sure this is installed:
+
+```bash
+brew install pre-commit
+pre-commit install
+```
+
+You can optionally run against all files:
+
+```bash
+pre-commit run --all-files
+```
+
 ## Starting the Server
 
 1. Copy the config, this is in .gitignore so you do not have to worry about accidentally committing secrets
-    ```bash
-    cp ./config/config-dev.example.yaml ./config/.config.yaml
-    ```
+
+   ```bash
+   cp ./config/config-dev.example.yaml ./config/.config.yaml
+   ```
 
 1. Use the task commands to start the server
 
-    Run the Datum server in development mode with dependencies in docker
-    ```bash
-    task run-dev
-    ```
+   Run the Datum server in development mode with dependencies in docker
 
-    Run fully in docker
-    ```bash
-    task docker:all:up
-    ```
+   ```bash
+   task run-dev
+   ```
+
+   Run fully in docker
+
+   ```bash
+   task docker:all:up
+   ```
 
 1. Create a verified test user
 
-    ```bash
-    task cli:user:all
-    ```
+   ```bash
+   task cli:user:all
+   ```
 
 ## Creating Queries in GraphQL
 
 The best method of forming / testing queries against the server is to run `task docker:rover` which will launch an interactive query UI.
+
+If you are running the queries against your local repo, you will have CORS issues using the local running apollo. Instead, its recommended to use the [apollo sandbox](https://studio.apollographql.com/sandbox/explorer) and ensure the following origin is allowed in your `config/.config.yaml`
+
+```
+server:
+  cors:
+    allowOrigins:
+      - https://studio.apollographql.com
+```
 
 ## OpenFGA Playground
 
@@ -45,10 +72,10 @@ You can load up a local openFGA environment with the compose setup in this repos
 
 To ease the effort required to add additional schemas into the system a template + task function has been created. This isn't doing anything terribly complex, but it's attempting to ensure you have the _minimum_ set of required things needed to create a schema - most notably: you need to ensure the IDMixin is present (otherwise you will get ID type conflicts) and a standard set of schema annotations.
 
-**NOTE: you still have to make intelligent decisions around things like the presence / integration of hooks, interceptors, policies, etc. This is saving you about 10 seconds of copy-paste, so don't over estimate the automation, here.
+\*\*NOTE: you still have to make intelligent decisions around things like the presence / integration of hooks, interceptors, policies, etc. This is saving you about 10 seconds of copy-paste, so don't over estimate the automation, here.
 
 To generate a new schema, you can run `task newschema -- [yourschemaname]` where you replace the name within `[]`. Please be sure to note that this isn't a command line flag so there's a space between `--` and the name.
 
 ### Migrations
 
-We use [atlas](https://atlasgo.io/) to create and manage our DB migrations - you can trigger one via `task atlas:create` and that will generate the necessary migrations. On every PR, the Atlas integration also creates comments with any issues related to the schema changes / migrations.
+We use [atlas](https://atlasgo.io/) and [goose](https://github.com/pressly/goose) to create and manage our DB migrations - you can trigger one via `task atlas:create` and that will generate the necessary migrations. There should be a new migration file created in `db/migrations` and `db/migrations-goose`. On every PR, the Atlas integration also creates comments with any issues related to the schema changes / migrations.

@@ -44,10 +44,11 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 
 	// check if query is for an exists query, which returns a slice of organization ids
 	// instead of the organization objects
-	if qc.Op == ExistOperation {
+	switch qc.Op {
+	case ExistOperation, IDsOperation:
 		orgIDs, ok := v.([]string)
 		if !ok {
-			q.Logger.Errorw("unexpected type for group exist query")
+			q.Logger.Errorw("unexpected type for organization query")
 
 			return nil, ErrInternalServerError
 		}
@@ -55,7 +56,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 		for _, o := range orgIDs {
 			orgs = append(orgs, &generated.Organization{ID: o})
 		}
-	} else {
+	default:
 		var ok bool
 
 		orgs, ok = v.([]*generated.Organization)

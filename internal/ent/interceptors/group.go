@@ -41,10 +41,11 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 
 	// check if query is for an exists query, which returns a slice of group ids
 	// instead of the group objects
-	if qc.Op == ExistOperation {
+	switch qc.Op {
+	case ExistOperation, IDsOperation:
 		groupIDs, ok := v.([]string)
 		if !ok {
-			q.Logger.Errorw("unexpected type for group exist query")
+			q.Logger.Errorw("unexpected type for group query")
 
 			return nil, ErrInternalServerError
 		}
@@ -52,7 +53,7 @@ func filterGroupsByAccess(ctx context.Context, q *generated.GroupQuery, v ent.Va
 		for _, g := range groupIDs {
 			groups = append(groups, &generated.Group{ID: g})
 		}
-	} else {
+	default:
 		var ok bool
 
 		groups, ok = v.([]*generated.Group)

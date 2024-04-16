@@ -567,7 +567,10 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	listOrgs := []string{fmt.Sprintf("organization:%s", org.ID)}
+	// add child org
+	childOrg := (&OrganizationBuilder{client: suite.client, ParentOrgID: org.ID}).MustNew(reqCtx, t)
+
+	listOrgs := []string{fmt.Sprintf("organization:%s", org.ID), fmt.Sprintf("organization:%s", childOrg.ID)}
 
 	group1 := (&GroupBuilder{client: suite.client, Owner: org.ID}).MustNew(reqCtx, t)
 
@@ -576,13 +579,13 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	// mocks checks for all calls
 	mock_fga.CheckAny(t, suite.client.fga, true)
 
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 4)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 2)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
 	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 3)
 	mock_fga.ListTimes(t, suite.client.fga, listGroups, 1)
-	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 1)
+	mock_fga.ListTimes(t, suite.client.fga, listOrgs, 4)
 
 	// mock writes to delete member of org
 	mock_fga.WriteAny(t, suite.client.fga)
@@ -600,6 +603,12 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	o, err := suite.client.datum.GetOrganizationByID(reqCtx, org.ID)
 
 	require.Nil(t, o)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "not found")
+
+	co, err := suite.client.datum.GetOrganizationByID(reqCtx, childOrg.ID)
+
+	require.Nil(t, co)
 	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
@@ -626,6 +635,14 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	require.NoError(t, err)
 
 	require.Equal(t, g.Group.ID, group1.ID)
+
+	// allow after tuples have been deleted
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	co, err = suite.client.datum.GetOrganizationByID(ctx, childOrg.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, co.Organization.ID, childOrg.ID)
 }
 
 func (suite *GraphTestSuite) TestMutationCreateOrganizationTransaction() {

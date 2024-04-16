@@ -156,6 +156,8 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Or
 	m := o.client.db.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SetDisplayName(o.DisplayName).SetPersonalOrg(o.PersonalOrg)
 
 	if o.ParentOrgID != "" {
+		mock_fga.ListAny(t, o.client.fga, []string{fmt.Sprintf("organization:%s", o.ParentOrgID)})
+
 		m.SetParentID(o.ParentOrgID)
 	}
 

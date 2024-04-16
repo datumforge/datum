@@ -74,7 +74,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+".yaml)")
 	ViperBindFlag("config", RootCmd.PersistentFlags().Lookup("config"))
 
-	RootCmd.PersistentFlags().StringVar(&DatumHost, "host", defaultRootHost, "api host url")
+	RootCmd.PersistentFlags().String("host", defaultRootHost, "api host url")
 	ViperBindFlag("datum.host", RootCmd.PersistentFlags().Lookup("host"))
 
 	// Logging flags
@@ -108,6 +108,8 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	err := viper.ReadInConfig()
+
+	DatumHost = viper.GetString("datum.host")
 
 	GraphAPIHost = fmt.Sprintf("%s%s", DatumHost, graphEndpoint)
 

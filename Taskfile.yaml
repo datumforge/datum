@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 includes:
   cli:
@@ -41,8 +41,10 @@ tasks:
       - "go get -u github.com/openfga/go-sdk"
       - "brew install openfga/tap/fga"
       - go install github.com/vektra/mockery/v2@v2.40.1
+      - brew install pre-commit
+      - pre-commit install
       - task: config:install
-      - defer: {task: 'go:tidy'}
+      - defer: {task: "go:tidy"}
 
   generate:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc.
@@ -101,7 +103,7 @@ tasks:
 
   # dev tasks
   run-dev:
-    dotenv: ['{{.ENV}}/.env-dev']
+    dotenv: ["{{.ENV}}/.env-dev"]
     desc: runs the datum server in dev mode
     cmds:
       - task: compose:redis

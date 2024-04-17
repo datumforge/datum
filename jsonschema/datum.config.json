@@ -360,6 +360,10 @@
         "migrationProvider": {
           "type": "string",
           "description": "migration provider to use for running migrations"
+        },
+        "enableHistory": {
+          "type": "boolean",
+          "description": "enable history data to be logged to the database"
         }
       },
       "additionalProperties": false,

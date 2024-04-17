@@ -48,8 +48,8 @@ github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEV
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8D7ML55dXQrVaamCz2vxCfdQBasLZfHKk=
 github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2 h1:ZBbLwSJqkHBuFDA6DUhhse0IGJ7T5bemHyNILUjvOq4=
 github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2/go.mod h1:VSw57q4QFiWDbRnjdX8Cb3Ow0SFncRw+bA/ofY6Q83w=
-github.com/XSAM/otelsql v0.29.0 h1:pEw9YXXs8ZrGRYfDc0cmArIz9lci5b42gmP5+tA1Huc=
-github.com/XSAM/otelsql v0.29.0/go.mod h1:d3/0xGIGC5RVEE+Ld7KotwaLy6zDeaF3fLJHOPpdN2w=
+github.com/XSAM/otelsql v0.30.0 h1:yd6Ds3xQkKtP5+JztH2un5Hfy9uyo1eUgv34dGpSIK4=
+github.com/XSAM/otelsql v0.30.0/go.mod h1:12ObuENPHhAcc2cU89u7Yr0uT60+FliFCTP9Sd4N68o=
 github.com/Yamashou/gqlgenc v0.19.3 h1:StpiNvNDGjDh2gdN3s+9HTirLtFKzTrybciqnTWGybQ=
 github.com/Yamashou/gqlgenc v0.19.3/go.mod h1:oMc4EQBQeDwLIODvgcvpaSp6rO+KMf47FuOhplv5D3A=
 github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
@@ -165,8 +165,8 @@ github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c h1:4ycAoM6MJ8PB
 github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c/go.mod h1:Tp6J3q+sRxvsMLHCxARnBouLUiwWnquxmDgRjqJaLHw=
 github.com/datumforge/enthistory v0.0.5 h1:jThavWiwjonQ8//h1IzBzJS9a1LNEm3iYK4SIi17OpM=
 github.com/datumforge/enthistory v0.0.5/go.mod h1:VGSPYbls1yd0Fq71I4r30mGteTgXOLRcXeLQvBlSPd8=
-github.com/datumforge/entx v0.0.8 h1:qTlvWRxnoZwXMX2mf1NHvSASVqWZYzs7tgBnY1u6j0s=
-github.com/datumforge/entx v0.0.8/go.mod h1:7eiomY5fsbc8HzO+pbydDaMUftV0PqMftUZ0BziuhJc=
+github.com/datumforge/entx v0.0.9 h1:6dQ6311Q+8TK2FBPQYRbJTnlY2ysE+9tcKmWFVDxdu4=
+github.com/datumforge/entx v0.0.9/go.mod h1:H4TIgn1b4zcP98htUNxnCJ5xw0qUtW+WGmLjcpsATvg=
 github.com/datumforge/fgax v0.1.5 h1:cU7MTw+/7STl6KUBACfvvuPO5gbPLW7P4RlYXGLfxgw=
 github.com/datumforge/fgax v0.1.5/go.mod h1:hOcVFfzYI7jI3jQu1KV+iEZzTJ5YzPbv5ptKlb9Vjf0=
 github.com/datumforge/geodetic v0.0.2 h1:b7GSq0FbjOxvEN68X/lWWUDD2yMKxq1ZyTQUh9STF4Q=
@@ -730,8 +730,8 @@ go.opentelemetry.io/otel/metric v1.25.0 h1:LUKbS7ArpFL/I2jJHdJcqMGxkRdxpPHE0VU/D
 go.opentelemetry.io/otel/metric v1.25.0/go.mod h1:rkDLUSd2lC5lq2dFNrX9LGAbINP5B7WBkC78RXCpH5s=
 go.opentelemetry.io/otel/sdk v1.25.0 h1:PDryEJPC8YJZQSyLY5eqLeafHtG+X7FWnf3aXMtxbqo=
 go.opentelemetry.io/otel/sdk v1.25.0/go.mod h1:oFgzCM2zdsxKzz6zwpTZYLLQsFwc+K0daArPdIhuxkw=
-go.opentelemetry.io/otel/sdk/metric v1.24.0 h1:yyMQrPzF+k88/DbH7o4FMAs80puqd+9osbiBrJrz/w8=
-go.opentelemetry.io/otel/sdk/metric v1.24.0/go.mod h1:I6Y5FjH6rvEnTTAYQz3Mmv2kl6Ek5IIrmwTLqMrrOE0=
+go.opentelemetry.io/otel/sdk/metric v1.25.0 h1:7CiHOy08LbrxMAp4vWpbiPcklunUshVpAvGBrdDRlGw=
+go.opentelemetry.io/otel/sdk/metric v1.25.0/go.mod h1:LzwoKptdbBBdYfvtGCzGwk6GWMA3aUzBOwtQpR6Nz7o=
 go.opentelemetry.io/otel/trace v1.25.0 h1:tqukZGLwQYRIFtSQM2u2+yfMVTgGVeqRLPUYx1Dq6RM=
 go.opentelemetry.io/otel/trace v1.25.0/go.mod h1:hCCs70XM/ljO+BeQkyFnbK28SBIJ/Emuha+ccrCRT7I=
 go.opentelemetry.io/proto/otlp v1.1.0 h1:2Di21piLrCqJ3U3eXGCTPHE9R8Nh+0uglSnOyxikMeI=

@@ -49,6 +49,10 @@ steps:
         artifact_paths: ["coverage.out"]
       - label: ":golang: go test - {{matrix}}"
         key: "go_test"
+        retry:
+          automatic:
+            - exit_status: "*"
+              limit: 2
         env:
           TEST_DB_URL: "{{matrix}}"
         matrix:
@@ -195,7 +199,7 @@ steps:
               severity: CRITICAL,HIGH
               ignore-unfixed: true
               security-checks: config,secret,vuln
-              skip-files: 'cosign.key,Dockerfile.dev'
+              skip-files: "cosign.key,Dockerfile.dev"
       - label: ":docker: docker build and publish"
         key: "docker-build"
         if: build.branch == "main"
@@ -221,7 +225,7 @@ steps:
               severity: CRITICAL,HIGH
               ignore-unfixed: true
               security-checks: config,secret,vuln
-              skip-files: 'cosign.key,Dockerfile.dev'
+              skip-files: "cosign.key,Dockerfile.dev"
       - label: ":docker: docker build and publish all in one"
         key: "docker-build-aio"
         if: build.branch == "main"
@@ -248,7 +252,7 @@ steps:
               severity: CRITICAL,HIGH
               ignore-unfixed: true
               security-checks: config,secret,vuln
-              skip-files: 'cosign.key,Dockerfile.dev'
+              skip-files: "cosign.key,Dockerfile.dev"
       - label: ":docker: docker build and publish"
         key: "docker-build-and-tag"
         if: build.tag != null
@@ -274,7 +278,7 @@ steps:
               severity: CRITICAL,HIGH
               ignore-unfixed: true
               security-checks: config,secret,vuln
-              skip-files: 'cosign.key,Dockerfile.dev'
+              skip-files: "cosign.key,Dockerfile.dev"
       - label: ":docker: docker build and publish all in one"
         key: "docker-build-aio-and-tag"
         if: build.tag != null
@@ -301,4 +305,4 @@ steps:
               severity: CRITICAL,HIGH
               ignore-unfixed: true
               security-checks: config,secret,vuln
-              skip-files: 'cosign.key,Dockerfile.dev'
+              skip-files: "cosign.key,Dockerfile.dev"

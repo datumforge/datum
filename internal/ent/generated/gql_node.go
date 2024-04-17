@@ -9,25 +9,36 @@ import (
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
+	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 	"github.com/hashicorp/go-multierror"
 )
 
@@ -40,19 +51,37 @@ type Noder interface {
 func (n *DocumentData) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *DocumentDataHistory) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *Entitlement) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *EntitlementHistory) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Group) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *GroupHistory) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *GroupMembership) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *GroupMembershipHistory) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *GroupSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *GroupSettingHistory) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *Integration) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *IntegrationHistory) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Invite) IsNode() {}
@@ -61,10 +90,16 @@ func (n *Invite) IsNode() {}
 func (n *OauthProvider) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *OauthProviderHistory) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *OhAuthTooToken) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *OrgMembership) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *OrgMembershipHistory) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Organization) IsNode() {}
@@ -91,10 +126,19 @@ func (n *TFASetting) IsNode() {}
 func (n *Template) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *TemplateHistory) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *User) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *UserHistory) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *UserSetting) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *UserSettingHistory) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -166,10 +210,34 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case documentdatahistory.Table:
+		query := c.DocumentDataHistory.Query().
+			Where(documentdatahistory.ID(id))
+		query, err := query.CollectFields(ctx, "DocumentDataHistory")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.ID(id))
 		query, err := query.CollectFields(ctx, "Entitlement")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case entitlementhistory.Table:
+		query := c.EntitlementHistory.Query().
+			Where(entitlementhistory.ID(id))
+		query, err := query.CollectFields(ctx, "EntitlementHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -190,10 +258,34 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case grouphistory.Table:
+		query := c.GroupHistory.Query().
+			Where(grouphistory.ID(id))
+		query, err := query.CollectFields(ctx, "GroupHistory")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case groupmembership.Table:
 		query := c.GroupMembership.Query().
 			Where(groupmembership.ID(id))
 		query, err := query.CollectFields(ctx, "GroupMembership")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case groupmembershiphistory.Table:
+		query := c.GroupMembershipHistory.Query().
+			Where(groupmembershiphistory.ID(id))
+		query, err := query.CollectFields(ctx, "GroupMembershipHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -214,10 +306,34 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case groupsettinghistory.Table:
+		query := c.GroupSettingHistory.Query().
+			Where(groupsettinghistory.ID(id))
+		query, err := query.CollectFields(ctx, "GroupSettingHistory")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case integration.Table:
 		query := c.Integration.Query().
 			Where(integration.ID(id))
 		query, err := query.CollectFields(ctx, "Integration")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case integrationhistory.Table:
+		query := c.IntegrationHistory.Query().
+			Where(integrationhistory.ID(id))
+		query, err := query.CollectFields(ctx, "IntegrationHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -250,6 +366,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case oauthproviderhistory.Table:
+		query := c.OauthProviderHistory.Query().
+			Where(oauthproviderhistory.ID(id))
+		query, err := query.CollectFields(ctx, "OauthProviderHistory")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case ohauthtootoken.Table:
 		query := c.OhAuthTooToken.Query().
 			Where(ohauthtootoken.ID(id))
@@ -266,6 +394,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.OrgMembership.Query().
 			Where(orgmembership.ID(id))
 		query, err := query.CollectFields(ctx, "OrgMembership")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case orgmembershiphistory.Table:
+		query := c.OrgMembershipHistory.Query().
+			Where(orgmembershiphistory.ID(id))
+		query, err := query.CollectFields(ctx, "OrgMembershipHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -370,6 +510,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case templatehistory.Table:
+		query := c.TemplateHistory.Query().
+			Where(templatehistory.ID(id))
+		query, err := query.CollectFields(ctx, "TemplateHistory")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case user.Table:
 		query := c.User.Query().
 			Where(user.ID(id))
@@ -382,10 +534,34 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case userhistory.Table:
+		query := c.UserHistory.Query().
+			Where(userhistory.ID(id))
+		query, err := query.CollectFields(ctx, "UserHistory")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case usersetting.Table:
 		query := c.UserSetting.Query().
 			Where(usersetting.ID(id))
 		query, err := query.CollectFields(ctx, "UserSetting")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case usersettinghistory.Table:
+		query := c.UserSettingHistory.Query().
+			Where(usersettinghistory.ID(id))
+		query, err := query.CollectFields(ctx, "UserSettingHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -483,10 +659,42 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case documentdatahistory.Table:
+		query := c.DocumentDataHistory.Query().
+			Where(documentdatahistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "DocumentDataHistory")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Entitlement")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case entitlementhistory.Table:
+		query := c.EntitlementHistory.Query().
+			Where(entitlementhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "EntitlementHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -515,10 +723,42 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case grouphistory.Table:
+		query := c.GroupHistory.Query().
+			Where(grouphistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "GroupHistory")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case groupmembership.Table:
 		query := c.GroupMembership.Query().
 			Where(groupmembership.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "GroupMembership")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case groupmembershiphistory.Table:
+		query := c.GroupMembershipHistory.Query().
+			Where(groupmembershiphistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "GroupMembershipHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -547,10 +787,42 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case groupsettinghistory.Table:
+		query := c.GroupSettingHistory.Query().
+			Where(groupsettinghistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "GroupSettingHistory")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case integration.Table:
 		query := c.Integration.Query().
 			Where(integration.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Integration")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case integrationhistory.Table:
+		query := c.IntegrationHistory.Query().
+			Where(integrationhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "IntegrationHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -595,6 +867,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case oauthproviderhistory.Table:
+		query := c.OauthProviderHistory.Query().
+			Where(oauthproviderhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "OauthProviderHistory")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case ohauthtootoken.Table:
 		query := c.OhAuthTooToken.Query().
 			Where(ohauthtootoken.IDIn(ids...))
@@ -615,6 +903,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.OrgMembership.Query().
 			Where(orgmembership.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "OrgMembership")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case orgmembershiphistory.Table:
+		query := c.OrgMembershipHistory.Query().
+			Where(orgmembershiphistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "OrgMembershipHistory")
 		if err != nil {
 			return nil, err
 		}
@@ -755,6 +1059,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case templatehistory.Table:
+		query := c.TemplateHistory.Query().
+			Where(templatehistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "TemplateHistory")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case user.Table:
 		query := c.User.Query().
 			Where(user.IDIn(ids...))
@@ -771,10 +1091,42 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case userhistory.Table:
+		query := c.UserHistory.Query().
+			Where(userhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserHistory")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case usersetting.Table:
 		query := c.UserSetting.Query().
 			Where(usersetting.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "UserSetting")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case usersettinghistory.Table:
+		query := c.UserSettingHistory.Query().
+			Where(usersettinghistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserSettingHistory")
 		if err != nil {
 			return nil, err
 		}

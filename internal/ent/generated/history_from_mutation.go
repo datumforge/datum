@@ -40,6 +40,1849 @@ func rollback(tx *Tx, err error) error {
 	return err
 }
 
+func (m *DocumentDataMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.DocumentDataHistory.Create()
+	if tx != nil {
+		create = tx.DocumentDataHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if templateID, exists := m.TemplateID(); exists {
+		create = create.SetTemplateID(templateID)
+	}
+
+	if data, exists := m.Data(); exists {
+		create = create.SetData(data)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *DocumentDataMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		documentdata, err := client.DocumentData.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.DocumentDataHistory.Create()
+		if tx != nil {
+			create = tx.DocumentDataHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(documentdata.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(documentdata.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(documentdata.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(documentdata.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(documentdata.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(documentdata.DeletedBy)
+		}
+
+		if templateID, exists := m.TemplateID(); exists {
+			create = create.SetTemplateID(templateID)
+		} else {
+			create = create.SetTemplateID(documentdata.TemplateID)
+		}
+
+		if data, exists := m.Data(); exists {
+			create = create.SetData(data)
+		} else {
+			create = create.SetData(documentdata.Data)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *DocumentDataMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		documentdata, err := client.DocumentData.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.DocumentDataHistory.Create()
+		if tx != nil {
+			create = tx.DocumentDataHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(documentdata.CreatedAt).
+			SetUpdatedAt(documentdata.UpdatedAt).
+			SetCreatedBy(documentdata.CreatedBy).
+			SetUpdatedBy(documentdata.UpdatedBy).
+			SetDeletedAt(documentdata.DeletedAt).
+			SetDeletedBy(documentdata.DeletedBy).
+			SetTemplateID(documentdata.TemplateID).
+			SetData(documentdata.Data).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.EntitlementHistory.Create()
+	if tx != nil {
+		create = tx.EntitlementHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if tier, exists := m.Tier(); exists {
+		create = create.SetTier(tier)
+	}
+
+	if externalCustomerID, exists := m.ExternalCustomerID(); exists {
+		create = create.SetExternalCustomerID(externalCustomerID)
+	}
+
+	if externalSubscriptionID, exists := m.ExternalSubscriptionID(); exists {
+		create = create.SetExternalSubscriptionID(externalSubscriptionID)
+	}
+
+	if expires, exists := m.Expires(); exists {
+		create = create.SetExpires(expires)
+	}
+
+	if expiresAt, exists := m.ExpiresAt(); exists {
+		create = create.SetNillableExpiresAt(&expiresAt)
+	}
+
+	if cancelled, exists := m.Cancelled(); exists {
+		create = create.SetCancelled(cancelled)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		entitlement, err := client.Entitlement.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.EntitlementHistory.Create()
+		if tx != nil {
+			create = tx.EntitlementHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(entitlement.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(entitlement.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(entitlement.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(entitlement.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(entitlement.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(entitlement.DeletedBy)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(entitlement.OwnerID)
+		}
+
+		if tier, exists := m.Tier(); exists {
+			create = create.SetTier(tier)
+		} else {
+			create = create.SetTier(entitlement.Tier)
+		}
+
+		if externalCustomerID, exists := m.ExternalCustomerID(); exists {
+			create = create.SetExternalCustomerID(externalCustomerID)
+		} else {
+			create = create.SetExternalCustomerID(entitlement.ExternalCustomerID)
+		}
+
+		if externalSubscriptionID, exists := m.ExternalSubscriptionID(); exists {
+			create = create.SetExternalSubscriptionID(externalSubscriptionID)
+		} else {
+			create = create.SetExternalSubscriptionID(entitlement.ExternalSubscriptionID)
+		}
+
+		if expires, exists := m.Expires(); exists {
+			create = create.SetExpires(expires)
+		} else {
+			create = create.SetExpires(entitlement.Expires)
+		}
+
+		if expiresAt, exists := m.ExpiresAt(); exists {
+			create = create.SetNillableExpiresAt(&expiresAt)
+		} else {
+			create = create.SetNillableExpiresAt(entitlement.ExpiresAt)
+		}
+
+		if cancelled, exists := m.Cancelled(); exists {
+			create = create.SetCancelled(cancelled)
+		} else {
+			create = create.SetCancelled(entitlement.Cancelled)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		entitlement, err := client.Entitlement.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.EntitlementHistory.Create()
+		if tx != nil {
+			create = tx.EntitlementHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(entitlement.CreatedAt).
+			SetUpdatedAt(entitlement.UpdatedAt).
+			SetCreatedBy(entitlement.CreatedBy).
+			SetUpdatedBy(entitlement.UpdatedBy).
+			SetDeletedAt(entitlement.DeletedAt).
+			SetDeletedBy(entitlement.DeletedBy).
+			SetOwnerID(entitlement.OwnerID).
+			SetTier(entitlement.Tier).
+			SetExternalCustomerID(entitlement.ExternalCustomerID).
+			SetExternalSubscriptionID(entitlement.ExternalSubscriptionID).
+			SetExpires(entitlement.Expires).
+			SetNillableExpiresAt(entitlement.ExpiresAt).
+			SetCancelled(entitlement.Cancelled).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.GroupHistory.Create()
+	if tx != nil {
+		create = tx.GroupHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if gravatarLogoURL, exists := m.GravatarLogoURL(); exists {
+		create = create.SetGravatarLogoURL(gravatarLogoURL)
+	}
+
+	if logoURL, exists := m.LogoURL(); exists {
+		create = create.SetLogoURL(logoURL)
+	}
+
+	if displayName, exists := m.DisplayName(); exists {
+		create = create.SetDisplayName(displayName)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		group, err := client.Group.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.GroupHistory.Create()
+		if tx != nil {
+			create = tx.GroupHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(group.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(group.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(group.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(group.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(group.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(group.DeletedBy)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(group.OwnerID)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(group.Name)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(group.Description)
+		}
+
+		if gravatarLogoURL, exists := m.GravatarLogoURL(); exists {
+			create = create.SetGravatarLogoURL(gravatarLogoURL)
+		} else {
+			create = create.SetGravatarLogoURL(group.GravatarLogoURL)
+		}
+
+		if logoURL, exists := m.LogoURL(); exists {
+			create = create.SetLogoURL(logoURL)
+		} else {
+			create = create.SetLogoURL(group.LogoURL)
+		}
+
+		if displayName, exists := m.DisplayName(); exists {
+			create = create.SetDisplayName(displayName)
+		} else {
+			create = create.SetDisplayName(group.DisplayName)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		group, err := client.Group.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.GroupHistory.Create()
+		if tx != nil {
+			create = tx.GroupHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(group.CreatedAt).
+			SetUpdatedAt(group.UpdatedAt).
+			SetCreatedBy(group.CreatedBy).
+			SetUpdatedBy(group.UpdatedBy).
+			SetDeletedAt(group.DeletedAt).
+			SetDeletedBy(group.DeletedBy).
+			SetOwnerID(group.OwnerID).
+			SetName(group.Name).
+			SetDescription(group.Description).
+			SetGravatarLogoURL(group.GravatarLogoURL).
+			SetLogoURL(group.LogoURL).
+			SetDisplayName(group.DisplayName).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.GroupMembershipHistory.Create()
+	if tx != nil {
+		create = tx.GroupMembershipHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if role, exists := m.Role(); exists {
+		create = create.SetRole(role)
+	}
+
+	if groupID, exists := m.GroupID(); exists {
+		create = create.SetGroupID(groupID)
+	}
+
+	if userID, exists := m.UserID(); exists {
+		create = create.SetUserID(userID)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		groupmembership, err := client.GroupMembership.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.GroupMembershipHistory.Create()
+		if tx != nil {
+			create = tx.GroupMembershipHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(groupmembership.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(groupmembership.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(groupmembership.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(groupmembership.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(groupmembership.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(groupmembership.DeletedBy)
+		}
+
+		if role, exists := m.Role(); exists {
+			create = create.SetRole(role)
+		} else {
+			create = create.SetRole(groupmembership.Role)
+		}
+
+		if groupID, exists := m.GroupID(); exists {
+			create = create.SetGroupID(groupID)
+		} else {
+			create = create.SetGroupID(groupmembership.GroupID)
+		}
+
+		if userID, exists := m.UserID(); exists {
+			create = create.SetUserID(userID)
+		} else {
+			create = create.SetUserID(groupmembership.UserID)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupMembershipMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		groupmembership, err := client.GroupMembership.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.GroupMembershipHistory.Create()
+		if tx != nil {
+			create = tx.GroupMembershipHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(groupmembership.CreatedAt).
+			SetUpdatedAt(groupmembership.UpdatedAt).
+			SetCreatedBy(groupmembership.CreatedBy).
+			SetUpdatedBy(groupmembership.UpdatedBy).
+			SetDeletedAt(groupmembership.DeletedAt).
+			SetDeletedBy(groupmembership.DeletedBy).
+			SetRole(groupmembership.Role).
+			SetGroupID(groupmembership.GroupID).
+			SetUserID(groupmembership.UserID).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupSettingMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.GroupSettingHistory.Create()
+	if tx != nil {
+		create = tx.GroupSettingHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if visibility, exists := m.Visibility(); exists {
+		create = create.SetVisibility(visibility)
+	}
+
+	if joinPolicy, exists := m.JoinPolicy(); exists {
+		create = create.SetJoinPolicy(joinPolicy)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if syncToSlack, exists := m.SyncToSlack(); exists {
+		create = create.SetSyncToSlack(syncToSlack)
+	}
+
+	if syncToGithub, exists := m.SyncToGithub(); exists {
+		create = create.SetSyncToGithub(syncToGithub)
+	}
+
+	if groupID, exists := m.GroupID(); exists {
+		create = create.SetGroupID(groupID)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *GroupSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		groupsetting, err := client.GroupSetting.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.GroupSettingHistory.Create()
+		if tx != nil {
+			create = tx.GroupSettingHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(groupsetting.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(groupsetting.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(groupsetting.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(groupsetting.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(groupsetting.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(groupsetting.DeletedBy)
+		}
+
+		if visibility, exists := m.Visibility(); exists {
+			create = create.SetVisibility(visibility)
+		} else {
+			create = create.SetVisibility(groupsetting.Visibility)
+		}
+
+		if joinPolicy, exists := m.JoinPolicy(); exists {
+			create = create.SetJoinPolicy(joinPolicy)
+		} else {
+			create = create.SetJoinPolicy(groupsetting.JoinPolicy)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(groupsetting.Tags)
+		}
+
+		if syncToSlack, exists := m.SyncToSlack(); exists {
+			create = create.SetSyncToSlack(syncToSlack)
+		} else {
+			create = create.SetSyncToSlack(groupsetting.SyncToSlack)
+		}
+
+		if syncToGithub, exists := m.SyncToGithub(); exists {
+			create = create.SetSyncToGithub(syncToGithub)
+		} else {
+			create = create.SetSyncToGithub(groupsetting.SyncToGithub)
+		}
+
+		if groupID, exists := m.GroupID(); exists {
+			create = create.SetGroupID(groupID)
+		} else {
+			create = create.SetGroupID(groupsetting.GroupID)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *GroupSettingMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		groupsetting, err := client.GroupSetting.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.GroupSettingHistory.Create()
+		if tx != nil {
+			create = tx.GroupSettingHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(groupsetting.CreatedAt).
+			SetUpdatedAt(groupsetting.UpdatedAt).
+			SetCreatedBy(groupsetting.CreatedBy).
+			SetUpdatedBy(groupsetting.UpdatedBy).
+			SetDeletedAt(groupsetting.DeletedAt).
+			SetDeletedBy(groupsetting.DeletedBy).
+			SetVisibility(groupsetting.Visibility).
+			SetJoinPolicy(groupsetting.JoinPolicy).
+			SetTags(groupsetting.Tags).
+			SetSyncToSlack(groupsetting.SyncToSlack).
+			SetSyncToGithub(groupsetting.SyncToGithub).
+			SetGroupID(groupsetting.GroupID).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.IntegrationHistory.Create()
+	if tx != nil {
+		create = tx.IntegrationHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if kind, exists := m.Kind(); exists {
+		create = create.SetKind(kind)
+	}
+
+	if secretName, exists := m.SecretName(); exists {
+		create = create.SetSecretName(secretName)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		integration, err := client.Integration.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.IntegrationHistory.Create()
+		if tx != nil {
+			create = tx.IntegrationHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(integration.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(integration.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(integration.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(integration.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(integration.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(integration.DeletedBy)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(integration.OwnerID)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(integration.Name)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(integration.Description)
+		}
+
+		if kind, exists := m.Kind(); exists {
+			create = create.SetKind(kind)
+		} else {
+			create = create.SetKind(integration.Kind)
+		}
+
+		if secretName, exists := m.SecretName(); exists {
+			create = create.SetSecretName(secretName)
+		} else {
+			create = create.SetSecretName(integration.SecretName)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		integration, err := client.Integration.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.IntegrationHistory.Create()
+		if tx != nil {
+			create = tx.IntegrationHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(integration.CreatedAt).
+			SetUpdatedAt(integration.UpdatedAt).
+			SetCreatedBy(integration.CreatedBy).
+			SetUpdatedBy(integration.UpdatedBy).
+			SetDeletedAt(integration.DeletedAt).
+			SetDeletedBy(integration.DeletedBy).
+			SetOwnerID(integration.OwnerID).
+			SetName(integration.Name).
+			SetDescription(integration.Description).
+			SetKind(integration.Kind).
+			SetSecretName(integration.SecretName).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *OauthProviderMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.OauthProviderHistory.Create()
+	if tx != nil {
+		create = tx.OauthProviderHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if clientID, exists := m.ClientID(); exists {
+		create = create.SetClientID(clientID)
+	}
+
+	if clientSecret, exists := m.ClientSecret(); exists {
+		create = create.SetClientSecret(clientSecret)
+	}
+
+	if redirectURL, exists := m.RedirectURL(); exists {
+		create = create.SetRedirectURL(redirectURL)
+	}
+
+	if scopes, exists := m.Scopes(); exists {
+		create = create.SetScopes(scopes)
+	}
+
+	if authURL, exists := m.AuthURL(); exists {
+		create = create.SetAuthURL(authURL)
+	}
+
+	if tokenURL, exists := m.TokenURL(); exists {
+		create = create.SetTokenURL(tokenURL)
+	}
+
+	if authStyle, exists := m.AuthStyle(); exists {
+		create = create.SetAuthStyle(authStyle)
+	}
+
+	if infoURL, exists := m.InfoURL(); exists {
+		create = create.SetInfoURL(infoURL)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *OauthProviderMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		oauthprovider, err := client.OauthProvider.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.OauthProviderHistory.Create()
+		if tx != nil {
+			create = tx.OauthProviderHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(oauthprovider.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(oauthprovider.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(oauthprovider.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(oauthprovider.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(oauthprovider.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(oauthprovider.DeletedBy)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(oauthprovider.Name)
+		}
+
+		if clientID, exists := m.ClientID(); exists {
+			create = create.SetClientID(clientID)
+		} else {
+			create = create.SetClientID(oauthprovider.ClientID)
+		}
+
+		if clientSecret, exists := m.ClientSecret(); exists {
+			create = create.SetClientSecret(clientSecret)
+		} else {
+			create = create.SetClientSecret(oauthprovider.ClientSecret)
+		}
+
+		if redirectURL, exists := m.RedirectURL(); exists {
+			create = create.SetRedirectURL(redirectURL)
+		} else {
+			create = create.SetRedirectURL(oauthprovider.RedirectURL)
+		}
+
+		if scopes, exists := m.Scopes(); exists {
+			create = create.SetScopes(scopes)
+		} else {
+			create = create.SetScopes(oauthprovider.Scopes)
+		}
+
+		if authURL, exists := m.AuthURL(); exists {
+			create = create.SetAuthURL(authURL)
+		} else {
+			create = create.SetAuthURL(oauthprovider.AuthURL)
+		}
+
+		if tokenURL, exists := m.TokenURL(); exists {
+			create = create.SetTokenURL(tokenURL)
+		} else {
+			create = create.SetTokenURL(oauthprovider.TokenURL)
+		}
+
+		if authStyle, exists := m.AuthStyle(); exists {
+			create = create.SetAuthStyle(authStyle)
+		} else {
+			create = create.SetAuthStyle(oauthprovider.AuthStyle)
+		}
+
+		if infoURL, exists := m.InfoURL(); exists {
+			create = create.SetInfoURL(infoURL)
+		} else {
+			create = create.SetInfoURL(oauthprovider.InfoURL)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *OauthProviderMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		oauthprovider, err := client.OauthProvider.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.OauthProviderHistory.Create()
+		if tx != nil {
+			create = tx.OauthProviderHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(oauthprovider.CreatedAt).
+			SetUpdatedAt(oauthprovider.UpdatedAt).
+			SetCreatedBy(oauthprovider.CreatedBy).
+			SetUpdatedBy(oauthprovider.UpdatedBy).
+			SetDeletedAt(oauthprovider.DeletedAt).
+			SetDeletedBy(oauthprovider.DeletedBy).
+			SetName(oauthprovider.Name).
+			SetClientID(oauthprovider.ClientID).
+			SetClientSecret(oauthprovider.ClientSecret).
+			SetRedirectURL(oauthprovider.RedirectURL).
+			SetScopes(oauthprovider.Scopes).
+			SetAuthURL(oauthprovider.AuthURL).
+			SetTokenURL(oauthprovider.TokenURL).
+			SetAuthStyle(oauthprovider.AuthStyle).
+			SetInfoURL(oauthprovider.InfoURL).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *OrgMembershipMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.OrgMembershipHistory.Create()
+	if tx != nil {
+		create = tx.OrgMembershipHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if role, exists := m.Role(); exists {
+		create = create.SetRole(role)
+	}
+
+	if organizationID, exists := m.OrganizationID(); exists {
+		create = create.SetOrganizationID(organizationID)
+	}
+
+	if userID, exists := m.UserID(); exists {
+		create = create.SetUserID(userID)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *OrgMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		orgmembership, err := client.OrgMembership.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.OrgMembershipHistory.Create()
+		if tx != nil {
+			create = tx.OrgMembershipHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(orgmembership.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(orgmembership.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(orgmembership.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(orgmembership.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(orgmembership.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(orgmembership.DeletedBy)
+		}
+
+		if role, exists := m.Role(); exists {
+			create = create.SetRole(role)
+		} else {
+			create = create.SetRole(orgmembership.Role)
+		}
+
+		if organizationID, exists := m.OrganizationID(); exists {
+			create = create.SetOrganizationID(organizationID)
+		} else {
+			create = create.SetOrganizationID(orgmembership.OrganizationID)
+		}
+
+		if userID, exists := m.UserID(); exists {
+			create = create.SetUserID(userID)
+		} else {
+			create = create.SetUserID(orgmembership.UserID)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *OrgMembershipMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		orgmembership, err := client.OrgMembership.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.OrgMembershipHistory.Create()
+		if tx != nil {
+			create = tx.OrgMembershipHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(orgmembership.CreatedAt).
+			SetUpdatedAt(orgmembership.UpdatedAt).
+			SetCreatedBy(orgmembership.CreatedBy).
+			SetUpdatedBy(orgmembership.UpdatedBy).
+			SetDeletedAt(orgmembership.DeletedAt).
+			SetDeletedBy(orgmembership.DeletedBy).
+			SetRole(orgmembership.Role).
+			SetOrganizationID(orgmembership.OrganizationID).
+			SetUserID(orgmembership.UserID).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
 func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
 	tx, err := m.Tx()
@@ -555,6 +2398,825 @@ func (m *OrganizationSettingMutation) CreateHistoryFromDelete(ctx context.Contex
 			SetTags(organizationsetting.Tags).
 			SetGeoLocation(organizationsetting.GeoLocation).
 			SetOrganizationID(organizationsetting.OrganizationID).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.TemplateHistory.Create()
+	if tx != nil {
+		create = tx.TemplateHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if ownerID, exists := m.OwnerID(); exists {
+		create = create.SetOwnerID(ownerID)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if templateType, exists := m.TemplateType(); exists {
+		create = create.SetTemplateType(templateType)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if jsonconfig, exists := m.Jsonconfig(); exists {
+		create = create.SetJsonconfig(jsonconfig)
+	}
+
+	if uischema, exists := m.Uischema(); exists {
+		create = create.SetUischema(uischema)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *TemplateMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		template, err := client.Template.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.TemplateHistory.Create()
+		if tx != nil {
+			create = tx.TemplateHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(template.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(template.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(template.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(template.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(template.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(template.DeletedBy)
+		}
+
+		if ownerID, exists := m.OwnerID(); exists {
+			create = create.SetOwnerID(ownerID)
+		} else {
+			create = create.SetOwnerID(template.OwnerID)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(template.Name)
+		}
+
+		if templateType, exists := m.TemplateType(); exists {
+			create = create.SetTemplateType(templateType)
+		} else {
+			create = create.SetTemplateType(template.TemplateType)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(template.Description)
+		}
+
+		if jsonconfig, exists := m.Jsonconfig(); exists {
+			create = create.SetJsonconfig(jsonconfig)
+		} else {
+			create = create.SetJsonconfig(template.Jsonconfig)
+		}
+
+		if uischema, exists := m.Uischema(); exists {
+			create = create.SetUischema(uischema)
+		} else {
+			create = create.SetUischema(template.Uischema)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		template, err := client.Template.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.TemplateHistory.Create()
+		if tx != nil {
+			create = tx.TemplateHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(template.CreatedAt).
+			SetUpdatedAt(template.UpdatedAt).
+			SetCreatedBy(template.CreatedBy).
+			SetUpdatedBy(template.UpdatedBy).
+			SetDeletedAt(template.DeletedAt).
+			SetDeletedBy(template.DeletedBy).
+			SetOwnerID(template.OwnerID).
+			SetName(template.Name).
+			SetTemplateType(template.TemplateType).
+			SetDescription(template.Description).
+			SetJsonconfig(template.Jsonconfig).
+			SetUischema(template.Uischema).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *UserMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.UserHistory.Create()
+	if tx != nil {
+		create = tx.UserHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if email, exists := m.Email(); exists {
+		create = create.SetEmail(email)
+	}
+
+	if firstName, exists := m.FirstName(); exists {
+		create = create.SetFirstName(firstName)
+	}
+
+	if lastName, exists := m.LastName(); exists {
+		create = create.SetLastName(lastName)
+	}
+
+	if displayName, exists := m.DisplayName(); exists {
+		create = create.SetDisplayName(displayName)
+	}
+
+	if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
+		create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
+	}
+
+	if avatarLocalFile, exists := m.AvatarLocalFile(); exists {
+		create = create.SetNillableAvatarLocalFile(&avatarLocalFile)
+	}
+
+	if avatarUpdatedAt, exists := m.AvatarUpdatedAt(); exists {
+		create = create.SetNillableAvatarUpdatedAt(&avatarUpdatedAt)
+	}
+
+	if lastSeen, exists := m.LastSeen(); exists {
+		create = create.SetNillableLastSeen(&lastSeen)
+	}
+
+	if password, exists := m.Password(); exists {
+		create = create.SetNillablePassword(&password)
+	}
+
+	if sub, exists := m.Sub(); exists {
+		create = create.SetSub(sub)
+	}
+
+	if authProvider, exists := m.AuthProvider(); exists {
+		create = create.SetAuthProvider(authProvider)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *UserMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		user, err := client.User.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.UserHistory.Create()
+		if tx != nil {
+			create = tx.UserHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(user.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(user.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(user.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(user.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(user.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(user.DeletedBy)
+		}
+
+		if email, exists := m.Email(); exists {
+			create = create.SetEmail(email)
+		} else {
+			create = create.SetEmail(user.Email)
+		}
+
+		if firstName, exists := m.FirstName(); exists {
+			create = create.SetFirstName(firstName)
+		} else {
+			create = create.SetFirstName(user.FirstName)
+		}
+
+		if lastName, exists := m.LastName(); exists {
+			create = create.SetLastName(lastName)
+		} else {
+			create = create.SetLastName(user.LastName)
+		}
+
+		if displayName, exists := m.DisplayName(); exists {
+			create = create.SetDisplayName(displayName)
+		} else {
+			create = create.SetDisplayName(user.DisplayName)
+		}
+
+		if avatarRemoteURL, exists := m.AvatarRemoteURL(); exists {
+			create = create.SetNillableAvatarRemoteURL(&avatarRemoteURL)
+		} else {
+			create = create.SetNillableAvatarRemoteURL(user.AvatarRemoteURL)
+		}
+
+		if avatarLocalFile, exists := m.AvatarLocalFile(); exists {
+			create = create.SetNillableAvatarLocalFile(&avatarLocalFile)
+		} else {
+			create = create.SetNillableAvatarLocalFile(user.AvatarLocalFile)
+		}
+
+		if avatarUpdatedAt, exists := m.AvatarUpdatedAt(); exists {
+			create = create.SetNillableAvatarUpdatedAt(&avatarUpdatedAt)
+		} else {
+			create = create.SetNillableAvatarUpdatedAt(user.AvatarUpdatedAt)
+		}
+
+		if lastSeen, exists := m.LastSeen(); exists {
+			create = create.SetNillableLastSeen(&lastSeen)
+		} else {
+			create = create.SetNillableLastSeen(user.LastSeen)
+		}
+
+		if password, exists := m.Password(); exists {
+			create = create.SetNillablePassword(&password)
+		} else {
+			create = create.SetNillablePassword(user.Password)
+		}
+
+		if sub, exists := m.Sub(); exists {
+			create = create.SetSub(sub)
+		} else {
+			create = create.SetSub(user.Sub)
+		}
+
+		if authProvider, exists := m.AuthProvider(); exists {
+			create = create.SetAuthProvider(authProvider)
+		} else {
+			create = create.SetAuthProvider(user.AuthProvider)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *UserMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		user, err := client.User.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.UserHistory.Create()
+		if tx != nil {
+			create = tx.UserHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(user.CreatedAt).
+			SetUpdatedAt(user.UpdatedAt).
+			SetCreatedBy(user.CreatedBy).
+			SetUpdatedBy(user.UpdatedBy).
+			SetDeletedAt(user.DeletedAt).
+			SetDeletedBy(user.DeletedBy).
+			SetEmail(user.Email).
+			SetFirstName(user.FirstName).
+			SetLastName(user.LastName).
+			SetDisplayName(user.DisplayName).
+			SetNillableAvatarRemoteURL(user.AvatarRemoteURL).
+			SetNillableAvatarLocalFile(user.AvatarLocalFile).
+			SetNillableAvatarUpdatedAt(user.AvatarUpdatedAt).
+			SetNillableLastSeen(user.LastSeen).
+			SetNillablePassword(user.Password).
+			SetSub(user.Sub).
+			SetAuthProvider(user.AuthProvider).
+			Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *UserSettingMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	id, ok := m.ID()
+	if !ok {
+		return rollback(tx, idNotFoundError)
+	}
+
+	create := client.UserSettingHistory.Create()
+	if tx != nil {
+		create = tx.UserSettingHistory.Create()
+	}
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if userID, exists := m.UserID(); exists {
+		create = create.SetUserID(userID)
+	}
+
+	if locked, exists := m.Locked(); exists {
+		create = create.SetLocked(locked)
+	}
+
+	if silencedAt, exists := m.SilencedAt(); exists {
+		create = create.SetNillableSilencedAt(&silencedAt)
+	}
+
+	if suspendedAt, exists := m.SuspendedAt(); exists {
+		create = create.SetNillableSuspendedAt(&suspendedAt)
+	}
+
+	if status, exists := m.Status(); exists {
+		create = create.SetStatus(status)
+	}
+
+	if emailConfirmed, exists := m.EmailConfirmed(); exists {
+		create = create.SetEmailConfirmed(emailConfirmed)
+	}
+
+	if tags, exists := m.Tags(); exists {
+		create = create.SetTags(tags)
+	}
+
+	if isWebauthnAllowed, exists := m.IsWebauthnAllowed(); exists {
+		create = create.SetIsWebauthnAllowed(isWebauthnAllowed)
+	}
+
+	if isTfaEnabled, exists := m.IsTfaEnabled(); exists {
+		create = create.SetIsTfaEnabled(isTfaEnabled)
+	}
+
+	if phoneNumber, exists := m.PhoneNumber(); exists {
+		create = create.SetNillablePhoneNumber(&phoneNumber)
+	}
+
+	_, err = create.Save(ctx)
+	if err != nil {
+		rollback(tx, err)
+	}
+	return nil
+}
+
+func (m *UserSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		usersetting, err := client.UserSetting.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.UserSettingHistory.Create()
+		if tx != nil {
+			create = tx.UserSettingHistory.Create()
+		}
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(usersetting.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(usersetting.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(usersetting.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(usersetting.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(usersetting.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(usersetting.DeletedBy)
+		}
+
+		if userID, exists := m.UserID(); exists {
+			create = create.SetUserID(userID)
+		} else {
+			create = create.SetUserID(usersetting.UserID)
+		}
+
+		if locked, exists := m.Locked(); exists {
+			create = create.SetLocked(locked)
+		} else {
+			create = create.SetLocked(usersetting.Locked)
+		}
+
+		if silencedAt, exists := m.SilencedAt(); exists {
+			create = create.SetNillableSilencedAt(&silencedAt)
+		} else {
+			create = create.SetNillableSilencedAt(usersetting.SilencedAt)
+		}
+
+		if suspendedAt, exists := m.SuspendedAt(); exists {
+			create = create.SetNillableSuspendedAt(&suspendedAt)
+		} else {
+			create = create.SetNillableSuspendedAt(usersetting.SuspendedAt)
+		}
+
+		if status, exists := m.Status(); exists {
+			create = create.SetStatus(status)
+		} else {
+			create = create.SetStatus(usersetting.Status)
+		}
+
+		if emailConfirmed, exists := m.EmailConfirmed(); exists {
+			create = create.SetEmailConfirmed(emailConfirmed)
+		} else {
+			create = create.SetEmailConfirmed(usersetting.EmailConfirmed)
+		}
+
+		if tags, exists := m.Tags(); exists {
+			create = create.SetTags(tags)
+		} else {
+			create = create.SetTags(usersetting.Tags)
+		}
+
+		if isWebauthnAllowed, exists := m.IsWebauthnAllowed(); exists {
+			create = create.SetIsWebauthnAllowed(isWebauthnAllowed)
+		} else {
+			create = create.SetIsWebauthnAllowed(usersetting.IsWebauthnAllowed)
+		}
+
+		if isTfaEnabled, exists := m.IsTfaEnabled(); exists {
+			create = create.SetIsTfaEnabled(isTfaEnabled)
+		} else {
+			create = create.SetIsTfaEnabled(usersetting.IsTfaEnabled)
+		}
+
+		if phoneNumber, exists := m.PhoneNumber(); exists {
+			create = create.SetNillablePhoneNumber(&phoneNumber)
+		} else {
+			create = create.SetNillablePhoneNumber(usersetting.PhoneNumber)
+		}
+
+		_, err = create.Save(ctx)
+		if err != nil {
+			rollback(tx, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *UserSettingMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+	tx, err := m.Tx()
+	if err != nil {
+		tx = nil
+	}
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+	}
+
+	for _, id := range ids {
+		usersetting, err := client.UserSetting.Get(ctx, id)
+		if err != nil {
+			return rollback(tx, err)
+		}
+
+		create := client.UserSettingHistory.Create()
+		if tx != nil {
+			create = tx.UserSettingHistory.Create()
+		}
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(usersetting.CreatedAt).
+			SetUpdatedAt(usersetting.UpdatedAt).
+			SetCreatedBy(usersetting.CreatedBy).
+			SetUpdatedBy(usersetting.UpdatedBy).
+			SetDeletedAt(usersetting.DeletedAt).
+			SetDeletedBy(usersetting.DeletedBy).
+			SetUserID(usersetting.UserID).
+			SetLocked(usersetting.Locked).
+			SetNillableSilencedAt(usersetting.SilencedAt).
+			SetNillableSuspendedAt(usersetting.SuspendedAt).
+			SetStatus(usersetting.Status).
+			SetEmailConfirmed(usersetting.EmailConfirmed).
+			SetTags(usersetting.Tags).
+			SetIsWebauthnAllowed(usersetting.IsWebauthnAllowed).
+			SetIsTfaEnabled(usersetting.IsTfaEnabled).
+			SetNillablePhoneNumber(usersetting.PhoneNumber).
 			Save(ctx)
 		if err != nil {
 			rollback(tx, err)

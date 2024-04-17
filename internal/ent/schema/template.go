@@ -9,7 +9,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"github.com/datumforge/enthistory"
 	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/ogen-go/ogen"
@@ -45,7 +44,7 @@ func (Template) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("name"),
 			),
-		field.Enum("type").
+		field.Enum("template_type").
 			Comment("the type of the template, either a provided template or an implementation (document)").
 			GoType(enums.DocumentType("")).
 			Default(string(enums.Document)),
@@ -82,7 +81,7 @@ func (Template) Edges() []ent.Edge {
 func (Template) Indexes() []ent.Index {
 	return []ent.Index{
 		// names should be unique, but ignore deleted names
-		index.Fields("name", "owner_id", "type").
+		index.Fields("name", "owner_id", "template_type").
 			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
 	}
 }
@@ -90,9 +89,6 @@ func (Template) Indexes() []ent.Index {
 // Annotations of the Template
 func (Template) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		enthistory.Annotations{
-			Exclude: true,
-		},
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),

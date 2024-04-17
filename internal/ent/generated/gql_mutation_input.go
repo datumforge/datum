@@ -1935,17 +1935,17 @@ func (c *TFASettingUpdateOne) SetInput(i UpdateTFASettingInput) *TFASettingUpdat
 
 // CreateTemplateInput represents a mutation input for creating templates.
 type CreateTemplateInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
-	Name        string
-	Type        *enums.DocumentType
-	Description *string
-	Jsonconfig  customtypes.JSONObject
-	Uischema    customtypes.JSONObject
-	OwnerID     string
-	DocumentIDs []string
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Name         string
+	TemplateType *enums.DocumentType
+	Description  *string
+	Jsonconfig   customtypes.JSONObject
+	Uischema     customtypes.JSONObject
+	OwnerID      string
+	DocumentIDs  []string
 }
 
 // Mutate applies the CreateTemplateInput on the TemplateMutation builder.
@@ -1963,8 +1963,8 @@ func (i *CreateTemplateInput) Mutate(m *TemplateMutation) {
 		m.SetUpdatedBy(*v)
 	}
 	m.SetName(i.Name)
-	if v := i.Type; v != nil {
-		m.SetType(*v)
+	if v := i.TemplateType; v != nil {
+		m.SetTemplateType(*v)
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
@@ -1994,7 +1994,7 @@ type UpdateTemplateInput struct {
 	ClearUpdatedBy    bool
 	UpdatedBy         *string
 	Name              *string
-	Type              *enums.DocumentType
+	TemplateType      *enums.DocumentType
 	ClearDescription  bool
 	Description       *string
 	Jsonconfig        customtypes.JSONObject
@@ -2023,8 +2023,8 @@ func (i *UpdateTemplateInput) Mutate(m *TemplateMutation) {
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
-	if v := i.Type; v != nil {
-		m.SetType(*v)
+	if v := i.TemplateType; v != nil {
+		m.SetTemplateType(*v)
 	}
 	if i.ClearDescription {
 		m.ClearDescription()

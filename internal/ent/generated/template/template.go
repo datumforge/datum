@@ -34,8 +34,8 @@ const (
 	FieldOwnerID = "owner_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
+	// FieldTemplateType holds the string denoting the template_type field in the database.
+	FieldTemplateType = "template_type"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldJsonconfig holds the string denoting the jsonconfig field in the database.
@@ -75,7 +75,7 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldOwnerID,
 	FieldName,
-	FieldType,
+	FieldTemplateType,
 	FieldDescription,
 	FieldJsonconfig,
 	FieldUischema,
@@ -111,15 +111,15 @@ var (
 	DefaultID func() string
 )
 
-const DefaultType enums.DocumentType = "DOCUMENT"
+const DefaultTemplateType enums.DocumentType = "DOCUMENT"
 
-// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type enums.DocumentType) error {
-	switch _type.String() {
+// TemplateTypeValidator is a validator for the "template_type" field enum values. It is called by the builders before save.
+func TemplateTypeValidator(tt enums.DocumentType) error {
+	switch tt.String() {
 	case "ROOTTEMPLATE", "DOCUMENT":
 		return nil
 	default:
-		return fmt.Errorf("template: invalid enum value for type field: %q", _type)
+		return fmt.Errorf("template: invalid enum value for template_type field: %q", tt)
 	}
 }
 
@@ -171,9 +171,9 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByType orders the results by the type field.
-func ByType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldType, opts...).ToFunc()
+// ByTemplateType orders the results by the template_type field.
+func ByTemplateType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTemplateType, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.

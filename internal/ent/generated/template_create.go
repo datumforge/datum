@@ -120,16 +120,16 @@ func (tc *TemplateCreate) SetName(s string) *TemplateCreate {
 	return tc
 }
 
-// SetType sets the "type" field.
-func (tc *TemplateCreate) SetType(et enums.DocumentType) *TemplateCreate {
-	tc.mutation.SetType(et)
+// SetTemplateType sets the "template_type" field.
+func (tc *TemplateCreate) SetTemplateType(et enums.DocumentType) *TemplateCreate {
+	tc.mutation.SetTemplateType(et)
 	return tc
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (tc *TemplateCreate) SetNillableType(et *enums.DocumentType) *TemplateCreate {
+// SetNillableTemplateType sets the "template_type" field if the given value is not nil.
+func (tc *TemplateCreate) SetNillableTemplateType(et *enums.DocumentType) *TemplateCreate {
 	if et != nil {
-		tc.SetType(*et)
+		tc.SetTemplateType(*et)
 	}
 	return tc
 }
@@ -245,9 +245,9 @@ func (tc *TemplateCreate) defaults() error {
 		v := template.DefaultUpdatedAt()
 		tc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := tc.mutation.GetType(); !ok {
-		v := template.DefaultType
-		tc.mutation.SetType(v)
+	if _, ok := tc.mutation.TemplateType(); !ok {
+		v := template.DefaultTemplateType
+		tc.mutation.SetTemplateType(v)
 	}
 	if _, ok := tc.mutation.ID(); !ok {
 		if template.DefaultID == nil {
@@ -272,12 +272,12 @@ func (tc *TemplateCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
 		}
 	}
-	if _, ok := tc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`generated: missing required field "Template.type"`)}
+	if _, ok := tc.mutation.TemplateType(); !ok {
+		return &ValidationError{Name: "template_type", err: errors.New(`generated: missing required field "Template.template_type"`)}
 	}
-	if v, ok := tc.mutation.GetType(); ok {
-		if err := template.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`generated: validator failed for field "Template.type": %w`, err)}
+	if v, ok := tc.mutation.TemplateType(); ok {
+		if err := template.TemplateTypeValidator(v); err != nil {
+			return &ValidationError{Name: "template_type", err: fmt.Errorf(`generated: validator failed for field "Template.template_type": %w`, err)}
 		}
 	}
 	if _, ok := tc.mutation.Jsonconfig(); !ok {
@@ -350,9 +350,9 @@ func (tc *TemplateCreate) createSpec() (*Template, *sqlgraph.CreateSpec) {
 		_spec.SetField(template.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := tc.mutation.GetType(); ok {
-		_spec.SetField(template.FieldType, field.TypeEnum, value)
-		_node.Type = value
+	if value, ok := tc.mutation.TemplateType(); ok {
+		_spec.SetField(template.FieldTemplateType, field.TypeEnum, value)
+		_node.TemplateType = value
 	}
 	if value, ok := tc.mutation.Description(); ok {
 		_spec.SetField(template.FieldDescription, field.TypeString, value)

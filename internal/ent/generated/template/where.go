@@ -618,34 +618,34 @@ func NameContainsFold(v string) predicate.Template {
 	return predicate.Template(sql.FieldContainsFold(FieldName, v))
 }
 
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v enums.DocumentType) predicate.Template {
+// TemplateTypeEQ applies the EQ predicate on the "template_type" field.
+func TemplateTypeEQ(v enums.DocumentType) predicate.Template {
 	vc := v
-	return predicate.Template(sql.FieldEQ(FieldType, vc))
+	return predicate.Template(sql.FieldEQ(FieldTemplateType, vc))
 }
 
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v enums.DocumentType) predicate.Template {
+// TemplateTypeNEQ applies the NEQ predicate on the "template_type" field.
+func TemplateTypeNEQ(v enums.DocumentType) predicate.Template {
 	vc := v
-	return predicate.Template(sql.FieldNEQ(FieldType, vc))
+	return predicate.Template(sql.FieldNEQ(FieldTemplateType, vc))
 }
 
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...enums.DocumentType) predicate.Template {
+// TemplateTypeIn applies the In predicate on the "template_type" field.
+func TemplateTypeIn(vs ...enums.DocumentType) predicate.Template {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.Template(sql.FieldIn(FieldType, v...))
+	return predicate.Template(sql.FieldIn(FieldTemplateType, v...))
 }
 
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...enums.DocumentType) predicate.Template {
+// TemplateTypeNotIn applies the NotIn predicate on the "template_type" field.
+func TemplateTypeNotIn(vs ...enums.DocumentType) predicate.Template {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
-	return predicate.Template(sql.FieldNotIn(FieldType, v...))
+	return predicate.Template(sql.FieldNotIn(FieldTemplateType, v...))
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.

@@ -165,6 +165,7 @@ func (Organization) Annotations() []schema.Annotation {
 			ObjectType:   "organization",
 			IncludeHooks: false,
 		},
+		entsql.Schema("datum"),
 	}
 }
 

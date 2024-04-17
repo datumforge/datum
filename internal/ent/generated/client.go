@@ -193,6 +193,7 @@ type (
 // newConfig creates a new config for the client.
 func newConfig(opts ...Option) config {
 	cfg := config{log: log.Println, hooks: &hooks{}, inters: &inters{}}
+	cfg.schemaConfig = DefaultSchemaConfig
 	cfg.options(opts...)
 	return cfg
 }
@@ -4544,6 +4545,37 @@ type (
 		OrganizationSettingHistory, PasswordResetToken, PersonalAccessToken,
 		Subscriber, TFASetting, Template, User, UserSetting, Webauthn []ent.Interceptor
 	}
+)
+
+var (
+	// DefaultSchemaConfig represents the default schema names for all tables as defined in ent/schema.
+	DefaultSchemaConfig = SchemaConfig{
+		DocumentData:                     tableSchemas[0],
+		EmailVerificationToken:           tableSchemas[0],
+		Entitlement:                      tableSchemas[0],
+		Group:                            tableSchemas[0],
+		GroupMembership:                  tableSchemas[0],
+		GroupSetting:                     tableSchemas[0],
+		Integration:                      tableSchemas[0],
+		Invite:                           tableSchemas[0],
+		OauthProvider:                    tableSchemas[0],
+		OhAuthTooToken:                   tableSchemas[0],
+		OrgMembership:                    tableSchemas[0],
+		Organization:                     tableSchemas[0],
+		OrganizationPersonalAccessTokens: tableSchemas[0],
+		OrganizationHistory:              tableSchemas[1],
+		OrganizationSetting:              tableSchemas[0],
+		OrganizationSettingHistory:       tableSchemas[1],
+		PasswordResetToken:               tableSchemas[0],
+		PersonalAccessToken:              tableSchemas[0],
+		Subscriber:                       tableSchemas[0],
+		TFASetting:                       tableSchemas[0],
+		Template:                         tableSchemas[0],
+		User:                             tableSchemas[0],
+		UserSetting:                      tableSchemas[0],
+		Webauthn:                         tableSchemas[0],
+	}
+	tableSchemas = [...]string{"datum", "history"}
 )
 
 // SchemaConfig represents alternative schema names for all tables

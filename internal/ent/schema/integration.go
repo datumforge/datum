@@ -5,6 +5,7 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
@@ -68,6 +69,7 @@ func (Integration) Annotations() []schema.Annotation {
 		enthistory.Annotations{
 			Exclude: true,
 		},
+		entsql.Schema("datum"),
 	}
 }
 

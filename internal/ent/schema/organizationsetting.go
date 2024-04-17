@@ -10,6 +10,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -108,6 +109,7 @@ func (OrganizationSetting) Annotations() []schema.Annotation {
 			IDField:         "OrganizationID",
 			NillableIDField: true,
 		},
+		entsql.Schema("datum"),
 	}
 }
 

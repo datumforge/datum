@@ -4,6 +4,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
@@ -84,5 +85,6 @@ func (Webauthn) Annotations() []schema.Annotation {
 		enthistory.Annotations{
 			Exclude: true,
 		},
+		entsql.Schema("datum"),
 	}
 }

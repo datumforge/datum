@@ -904,33 +904,54 @@ var (
 
 func init() {
 	DocumentDataTable.ForeignKeys[0].RefTable = TemplatesTable
+	DocumentDataTable.Annotation = &entsql.Annotation{}
 	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
+	EmailVerificationTokensTable.Annotation = &entsql.Annotation{}
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	EntitlementsTable.Annotation = &entsql.Annotation{}
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	GroupsTable.Annotation = &entsql.Annotation{}
 	GroupMembershipsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupMembershipsTable.ForeignKeys[1].RefTable = UsersTable
+	GroupMembershipsTable.Annotation = &entsql.Annotation{}
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupSettingsTable.Annotation = &entsql.Annotation{}
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	IntegrationsTable.Annotation = &entsql.Annotation{}
 	InvitesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	InvitesTable.Annotation = &entsql.Annotation{}
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OauthProvidersTable.Annotation = &entsql.Annotation{}
+	OhAuthTooTokensTable.Annotation = &entsql.Annotation{}
 	OrgMembershipsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrgMembershipsTable.ForeignKeys[1].RefTable = UsersTable
+	OrgMembershipsTable.Annotation = &entsql.Annotation{}
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationsTable.Annotation = &entsql.Annotation{}
 	OrganizationHistoryTable.Annotation = &entsql.Annotation{
 		Table: "organization_history",
 	}
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationSettingsTable.Annotation = &entsql.Annotation{}
 	OrganizationSettingHistoryTable.Annotation = &entsql.Annotation{
 		Table: "organization_setting_history",
 	}
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
+	PasswordResetTokensTable.Annotation = &entsql.Annotation{}
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
+	PersonalAccessTokensTable.Annotation = &entsql.Annotation{}
 	SubscribersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	SubscribersTable.Annotation = &entsql.Annotation{}
 	TfaSettingsTable.ForeignKeys[0].RefTable = UsersTable
+	TfaSettingsTable.Annotation = &entsql.Annotation{}
 	TemplatesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	TemplatesTable.Annotation = &entsql.Annotation{}
+	UsersTable.Annotation = &entsql.Annotation{}
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[1].RefTable = OrganizationsTable
+	UserSettingsTable.Annotation = &entsql.Annotation{}
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable
+	WebauthnsTable.Annotation = &entsql.Annotation{}
 	OrganizationPersonalAccessTokensTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationPersonalAccessTokensTable.ForeignKeys[1].RefTable = PersonalAccessTokensTable
 }

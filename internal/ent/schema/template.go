@@ -96,5 +96,6 @@ func (Template) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entsql.Schema("datum"),
 	}
 }

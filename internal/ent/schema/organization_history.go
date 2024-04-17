@@ -31,6 +31,7 @@ func (OrganizationHistory) Annotations() []schema.Annotation {
 			IsHistory: true,
 			Exclude:   true,
 		},
+		entsql.Schema("history"),
 	}
 }
 

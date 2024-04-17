@@ -127,6 +127,7 @@ func (Subscriber) Annotations() []schema.Annotation {
 		enthistory.Annotations{
 			Exclude: true,
 		},
+		entsql.Schema("datum"),
 	}
 }
 

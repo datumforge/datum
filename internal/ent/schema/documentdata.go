@@ -8,7 +8,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
-	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/ogen-go/ogen"
 
@@ -58,9 +57,6 @@ func (DocumentData) Edges() []ent.Edge {
 // Annotations of the DocumentData
 func (DocumentData) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		enthistory.Annotations{
-			Exclude: true,
-		},
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),

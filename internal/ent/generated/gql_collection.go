@@ -11,25 +11,36 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
+	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
 	"github.com/datumforge/datum/internal/ent/generated/template"
+	"github.com/datumforge/datum/internal/ent/generated/templatehistory"
 	"github.com/datumforge/datum/internal/ent/generated/tfasetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -144,6 +155,123 @@ func newDocumentDataPaginateArgs(rv map[string]any) *documentdataPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*DocumentDataWhereInput); ok {
 		args.opts = append(args.opts, WithDocumentDataFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ddh *DocumentDataHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*DocumentDataHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ddh, nil
+	}
+	if err := ddh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ddh, nil
+}
+
+func (ddh *DocumentDataHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(documentdatahistory.Columns))
+		selectedFields = []string{documentdatahistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[documentdatahistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldHistoryTime)
+				fieldSeen[documentdatahistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[documentdatahistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldOperation)
+				fieldSeen[documentdatahistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[documentdatahistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldRef)
+				fieldSeen[documentdatahistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[documentdatahistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldCreatedAt)
+				fieldSeen[documentdatahistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[documentdatahistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldUpdatedAt)
+				fieldSeen[documentdatahistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[documentdatahistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldCreatedBy)
+				fieldSeen[documentdatahistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[documentdatahistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldUpdatedBy)
+				fieldSeen[documentdatahistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[documentdatahistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldDeletedAt)
+				fieldSeen[documentdatahistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[documentdatahistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldDeletedBy)
+				fieldSeen[documentdatahistory.FieldDeletedBy] = struct{}{}
+			}
+		case "templateID":
+			if _, ok := fieldSeen[documentdatahistory.FieldTemplateID]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldTemplateID)
+				fieldSeen[documentdatahistory.FieldTemplateID] = struct{}{}
+			}
+		case "data":
+			if _, ok := fieldSeen[documentdatahistory.FieldData]; !ok {
+				selectedFields = append(selectedFields, documentdatahistory.FieldData)
+				fieldSeen[documentdatahistory.FieldData] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		ddh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type documentdatahistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []DocumentDataHistoryPaginateOption
+}
+
+func newDocumentDataHistoryPaginateArgs(rv map[string]any) *documentdatahistoryPaginateArgs {
+	args := &documentdatahistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*DocumentDataHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithDocumentDataHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -280,6 +408,143 @@ func newEntitlementPaginateArgs(rv map[string]any) *entitlementPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*EntitlementWhereInput); ok {
 		args.opts = append(args.opts, WithEntitlementFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (eh *EntitlementHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntitlementHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return eh, nil
+	}
+	if err := eh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return eh, nil
+}
+
+func (eh *EntitlementHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(entitlementhistory.Columns))
+		selectedFields = []string{entitlementhistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[entitlementhistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldHistoryTime)
+				fieldSeen[entitlementhistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[entitlementhistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldOperation)
+				fieldSeen[entitlementhistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[entitlementhistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldRef)
+				fieldSeen[entitlementhistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[entitlementhistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldCreatedAt)
+				fieldSeen[entitlementhistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[entitlementhistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldUpdatedAt)
+				fieldSeen[entitlementhistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[entitlementhistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldCreatedBy)
+				fieldSeen[entitlementhistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[entitlementhistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldUpdatedBy)
+				fieldSeen[entitlementhistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitlementhistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldDeletedAt)
+				fieldSeen[entitlementhistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitlementhistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldDeletedBy)
+				fieldSeen[entitlementhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "tier":
+			if _, ok := fieldSeen[entitlementhistory.FieldTier]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldTier)
+				fieldSeen[entitlementhistory.FieldTier] = struct{}{}
+			}
+		case "externalCustomerID":
+			if _, ok := fieldSeen[entitlementhistory.FieldExternalCustomerID]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldExternalCustomerID)
+				fieldSeen[entitlementhistory.FieldExternalCustomerID] = struct{}{}
+			}
+		case "externalSubscriptionID":
+			if _, ok := fieldSeen[entitlementhistory.FieldExternalSubscriptionID]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldExternalSubscriptionID)
+				fieldSeen[entitlementhistory.FieldExternalSubscriptionID] = struct{}{}
+			}
+		case "expires":
+			if _, ok := fieldSeen[entitlementhistory.FieldExpires]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldExpires)
+				fieldSeen[entitlementhistory.FieldExpires] = struct{}{}
+			}
+		case "expiresAt":
+			if _, ok := fieldSeen[entitlementhistory.FieldExpiresAt]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldExpiresAt)
+				fieldSeen[entitlementhistory.FieldExpiresAt] = struct{}{}
+			}
+		case "cancelled":
+			if _, ok := fieldSeen[entitlementhistory.FieldCancelled]; !ok {
+				selectedFields = append(selectedFields, entitlementhistory.FieldCancelled)
+				fieldSeen[entitlementhistory.FieldCancelled] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		eh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type entitlementhistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []EntitlementHistoryPaginateOption
+}
+
+func newEntitlementHistoryPaginateArgs(rv map[string]any) *entitlementhistoryPaginateArgs {
+	args := &entitlementhistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*EntitlementHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithEntitlementHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -472,6 +737,160 @@ func newGroupPaginateArgs(rv map[string]any) *groupPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (gh *GroupHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*GroupHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return gh, nil
+	}
+	if err := gh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return gh, nil
+}
+
+func (gh *GroupHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(grouphistory.Columns))
+		selectedFields = []string{grouphistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[grouphistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldHistoryTime)
+				fieldSeen[grouphistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[grouphistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldOperation)
+				fieldSeen[grouphistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[grouphistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldRef)
+				fieldSeen[grouphistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[grouphistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldCreatedAt)
+				fieldSeen[grouphistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[grouphistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldUpdatedAt)
+				fieldSeen[grouphistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[grouphistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldCreatedBy)
+				fieldSeen[grouphistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[grouphistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldUpdatedBy)
+				fieldSeen[grouphistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[grouphistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldDeletedAt)
+				fieldSeen[grouphistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[grouphistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldDeletedBy)
+				fieldSeen[grouphistory.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[grouphistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldName)
+				fieldSeen[grouphistory.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[grouphistory.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldDescription)
+				fieldSeen[grouphistory.FieldDescription] = struct{}{}
+			}
+		case "gravatarLogoURL":
+			if _, ok := fieldSeen[grouphistory.FieldGravatarLogoURL]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldGravatarLogoURL)
+				fieldSeen[grouphistory.FieldGravatarLogoURL] = struct{}{}
+			}
+		case "logoURL":
+			if _, ok := fieldSeen[grouphistory.FieldLogoURL]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldLogoURL)
+				fieldSeen[grouphistory.FieldLogoURL] = struct{}{}
+			}
+		case "displayName":
+			if _, ok := fieldSeen[grouphistory.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, grouphistory.FieldDisplayName)
+				fieldSeen[grouphistory.FieldDisplayName] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		gh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type grouphistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []GroupHistoryPaginateOption
+}
+
+func newGroupHistoryPaginateArgs(rv map[string]any) *grouphistoryPaginateArgs {
+	args := &grouphistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &GroupHistoryOrder{Field: &GroupHistoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithGroupHistoryOrder(order))
+			}
+		case *GroupHistoryOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithGroupHistoryOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*GroupHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithGroupHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (gm *GroupMembershipQuery) CollectFields(ctx context.Context, satisfies ...string) (*GroupMembershipQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -602,6 +1021,128 @@ func newGroupMembershipPaginateArgs(rv map[string]any) *groupmembershipPaginateA
 	}
 	if v, ok := rv[whereField].(*GroupMembershipWhereInput); ok {
 		args.opts = append(args.opts, WithGroupMembershipFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (gmh *GroupMembershipHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*GroupMembershipHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return gmh, nil
+	}
+	if err := gmh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return gmh, nil
+}
+
+func (gmh *GroupMembershipHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(groupmembershiphistory.Columns))
+		selectedFields = []string{groupmembershiphistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldHistoryTime)
+				fieldSeen[groupmembershiphistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldOperation)
+				fieldSeen[groupmembershiphistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldRef)
+				fieldSeen[groupmembershiphistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldCreatedAt)
+				fieldSeen[groupmembershiphistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldUpdatedAt)
+				fieldSeen[groupmembershiphistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldCreatedBy)
+				fieldSeen[groupmembershiphistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldUpdatedBy)
+				fieldSeen[groupmembershiphistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldDeletedAt)
+				fieldSeen[groupmembershiphistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldDeletedBy)
+				fieldSeen[groupmembershiphistory.FieldDeletedBy] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldRole]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldRole)
+				fieldSeen[groupmembershiphistory.FieldRole] = struct{}{}
+			}
+		case "groupID":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldGroupID)
+				fieldSeen[groupmembershiphistory.FieldGroupID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[groupmembershiphistory.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, groupmembershiphistory.FieldUserID)
+				fieldSeen[groupmembershiphistory.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		gmh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type groupmembershiphistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []GroupMembershipHistoryPaginateOption
+}
+
+func newGroupMembershipHistoryPaginateArgs(rv map[string]any) *groupmembershiphistoryPaginateArgs {
+	args := &groupmembershiphistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*GroupMembershipHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithGroupMembershipHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -738,6 +1279,143 @@ func newGroupSettingPaginateArgs(rv map[string]any) *groupsettingPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*GroupSettingWhereInput); ok {
 		args.opts = append(args.opts, WithGroupSettingFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (gsh *GroupSettingHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*GroupSettingHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return gsh, nil
+	}
+	if err := gsh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return gsh, nil
+}
+
+func (gsh *GroupSettingHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(groupsettinghistory.Columns))
+		selectedFields = []string{groupsettinghistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[groupsettinghistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldHistoryTime)
+				fieldSeen[groupsettinghistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[groupsettinghistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldOperation)
+				fieldSeen[groupsettinghistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[groupsettinghistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldRef)
+				fieldSeen[groupsettinghistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[groupsettinghistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldCreatedAt)
+				fieldSeen[groupsettinghistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[groupsettinghistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldUpdatedAt)
+				fieldSeen[groupsettinghistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[groupsettinghistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldCreatedBy)
+				fieldSeen[groupsettinghistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[groupsettinghistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldUpdatedBy)
+				fieldSeen[groupsettinghistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[groupsettinghistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldDeletedAt)
+				fieldSeen[groupsettinghistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[groupsettinghistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldDeletedBy)
+				fieldSeen[groupsettinghistory.FieldDeletedBy] = struct{}{}
+			}
+		case "visibility":
+			if _, ok := fieldSeen[groupsettinghistory.FieldVisibility]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldVisibility)
+				fieldSeen[groupsettinghistory.FieldVisibility] = struct{}{}
+			}
+		case "joinPolicy":
+			if _, ok := fieldSeen[groupsettinghistory.FieldJoinPolicy]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldJoinPolicy)
+				fieldSeen[groupsettinghistory.FieldJoinPolicy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[groupsettinghistory.FieldTags]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldTags)
+				fieldSeen[groupsettinghistory.FieldTags] = struct{}{}
+			}
+		case "syncToSlack":
+			if _, ok := fieldSeen[groupsettinghistory.FieldSyncToSlack]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldSyncToSlack)
+				fieldSeen[groupsettinghistory.FieldSyncToSlack] = struct{}{}
+			}
+		case "syncToGithub":
+			if _, ok := fieldSeen[groupsettinghistory.FieldSyncToGithub]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldSyncToGithub)
+				fieldSeen[groupsettinghistory.FieldSyncToGithub] = struct{}{}
+			}
+		case "groupID":
+			if _, ok := fieldSeen[groupsettinghistory.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupsettinghistory.FieldGroupID)
+				fieldSeen[groupsettinghistory.FieldGroupID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		gsh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type groupsettinghistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []GroupSettingHistoryPaginateOption
+}
+
+func newGroupSettingHistoryPaginateArgs(rv map[string]any) *groupsettinghistoryPaginateArgs {
+	args := &groupsettinghistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*GroupSettingHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithGroupSettingHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -891,6 +1569,160 @@ func newIntegrationPaginateArgs(rv map[string]any) *integrationPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*IntegrationWhereInput); ok {
 		args.opts = append(args.opts, WithIntegrationFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ih *IntegrationHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*IntegrationHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ih, nil
+	}
+	if err := ih.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ih, nil
+}
+
+func (ih *IntegrationHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(integrationhistory.Columns))
+		selectedFields = []string{integrationhistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[integrationhistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldHistoryTime)
+				fieldSeen[integrationhistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[integrationhistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldOperation)
+				fieldSeen[integrationhistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[integrationhistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldRef)
+				fieldSeen[integrationhistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[integrationhistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldCreatedAt)
+				fieldSeen[integrationhistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[integrationhistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldUpdatedAt)
+				fieldSeen[integrationhistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[integrationhistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldCreatedBy)
+				fieldSeen[integrationhistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[integrationhistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldUpdatedBy)
+				fieldSeen[integrationhistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[integrationhistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldDeletedAt)
+				fieldSeen[integrationhistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[integrationhistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldDeletedBy)
+				fieldSeen[integrationhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[integrationhistory.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldOwnerID)
+				fieldSeen[integrationhistory.FieldOwnerID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[integrationhistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldName)
+				fieldSeen[integrationhistory.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[integrationhistory.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldDescription)
+				fieldSeen[integrationhistory.FieldDescription] = struct{}{}
+			}
+		case "kind":
+			if _, ok := fieldSeen[integrationhistory.FieldKind]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldKind)
+				fieldSeen[integrationhistory.FieldKind] = struct{}{}
+			}
+		case "secretName":
+			if _, ok := fieldSeen[integrationhistory.FieldSecretName]; !ok {
+				selectedFields = append(selectedFields, integrationhistory.FieldSecretName)
+				fieldSeen[integrationhistory.FieldSecretName] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		ih.Select(selectedFields...)
+	}
+	return nil
+}
+
+type integrationhistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []IntegrationHistoryPaginateOption
+}
+
+func newIntegrationHistoryPaginateArgs(rv map[string]any) *integrationhistoryPaginateArgs {
+	args := &integrationhistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &IntegrationHistoryOrder{Field: &IntegrationHistoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithIntegrationHistoryOrder(order))
+			}
+		case *IntegrationHistoryOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithIntegrationHistoryOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*IntegrationHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithIntegrationHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -1184,6 +2016,158 @@ func newOauthProviderPaginateArgs(rv map[string]any) *oauthproviderPaginateArgs 
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (oph *OauthProviderHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*OauthProviderHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return oph, nil
+	}
+	if err := oph.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return oph, nil
+}
+
+func (oph *OauthProviderHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(oauthproviderhistory.Columns))
+		selectedFields = []string{oauthproviderhistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldHistoryTime)
+				fieldSeen[oauthproviderhistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldOperation)
+				fieldSeen[oauthproviderhistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldRef)
+				fieldSeen[oauthproviderhistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldCreatedAt)
+				fieldSeen[oauthproviderhistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldUpdatedAt)
+				fieldSeen[oauthproviderhistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldCreatedBy)
+				fieldSeen[oauthproviderhistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldUpdatedBy)
+				fieldSeen[oauthproviderhistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldDeletedAt)
+				fieldSeen[oauthproviderhistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldDeletedBy)
+				fieldSeen[oauthproviderhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldName)
+				fieldSeen[oauthproviderhistory.FieldName] = struct{}{}
+			}
+		case "clientID":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldClientID]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldClientID)
+				fieldSeen[oauthproviderhistory.FieldClientID] = struct{}{}
+			}
+		case "clientSecret":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldClientSecret]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldClientSecret)
+				fieldSeen[oauthproviderhistory.FieldClientSecret] = struct{}{}
+			}
+		case "redirectURL":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldRedirectURL]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldRedirectURL)
+				fieldSeen[oauthproviderhistory.FieldRedirectURL] = struct{}{}
+			}
+		case "scopes":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldScopes]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldScopes)
+				fieldSeen[oauthproviderhistory.FieldScopes] = struct{}{}
+			}
+		case "authURL":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldAuthURL]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldAuthURL)
+				fieldSeen[oauthproviderhistory.FieldAuthURL] = struct{}{}
+			}
+		case "tokenURL":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldTokenURL]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldTokenURL)
+				fieldSeen[oauthproviderhistory.FieldTokenURL] = struct{}{}
+			}
+		case "authStyle":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldAuthStyle]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldAuthStyle)
+				fieldSeen[oauthproviderhistory.FieldAuthStyle] = struct{}{}
+			}
+		case "infoURL":
+			if _, ok := fieldSeen[oauthproviderhistory.FieldInfoURL]; !ok {
+				selectedFields = append(selectedFields, oauthproviderhistory.FieldInfoURL)
+				fieldSeen[oauthproviderhistory.FieldInfoURL] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		oph.Select(selectedFields...)
+	}
+	return nil
+}
+
+type oauthproviderhistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OauthProviderHistoryPaginateOption
+}
+
+func newOauthProviderHistoryPaginateArgs(rv map[string]any) *oauthproviderhistoryPaginateArgs {
+	args := &oauthproviderhistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OauthProviderHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithOauthProviderHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (oatt *OhAuthTooTokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*OhAuthTooTokenQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1436,6 +2420,128 @@ func newOrgMembershipPaginateArgs(rv map[string]any) *orgmembershipPaginateArgs 
 	}
 	if v, ok := rv[whereField].(*OrgMembershipWhereInput); ok {
 		args.opts = append(args.opts, WithOrgMembershipFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (omh *OrgMembershipHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*OrgMembershipHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return omh, nil
+	}
+	if err := omh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return omh, nil
+}
+
+func (omh *OrgMembershipHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(orgmembershiphistory.Columns))
+		selectedFields = []string{orgmembershiphistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldHistoryTime)
+				fieldSeen[orgmembershiphistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldOperation)
+				fieldSeen[orgmembershiphistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldRef)
+				fieldSeen[orgmembershiphistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldCreatedAt)
+				fieldSeen[orgmembershiphistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldUpdatedAt)
+				fieldSeen[orgmembershiphistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldCreatedBy)
+				fieldSeen[orgmembershiphistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldUpdatedBy)
+				fieldSeen[orgmembershiphistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldDeletedAt)
+				fieldSeen[orgmembershiphistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldDeletedBy)
+				fieldSeen[orgmembershiphistory.FieldDeletedBy] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldRole]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldRole)
+				fieldSeen[orgmembershiphistory.FieldRole] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldOrganizationID)
+				fieldSeen[orgmembershiphistory.FieldOrganizationID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[orgmembershiphistory.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, orgmembershiphistory.FieldUserID)
+				fieldSeen[orgmembershiphistory.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		omh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type orgmembershiphistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OrgMembershipHistoryPaginateOption
+}
+
+func newOrgMembershipHistoryPaginateArgs(rv map[string]any) *orgmembershiphistoryPaginateArgs {
+	args := &orgmembershiphistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OrgMembershipHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithOrgMembershipHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -2766,10 +3872,10 @@ func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 				selectedFields = append(selectedFields, template.FieldName)
 				fieldSeen[template.FieldName] = struct{}{}
 			}
-		case "type":
-			if _, ok := fieldSeen[template.FieldType]; !ok {
-				selectedFields = append(selectedFields, template.FieldType)
-				fieldSeen[template.FieldType] = struct{}{}
+		case "templateType":
+			if _, ok := fieldSeen[template.FieldTemplateType]; !ok {
+				selectedFields = append(selectedFields, template.FieldTemplateType)
+				fieldSeen[template.FieldTemplateType] = struct{}{}
 			}
 		case "description":
 			if _, ok := fieldSeen[template.FieldDescription]; !ok {
@@ -2845,6 +3951,160 @@ func newTemplatePaginateArgs(rv map[string]any) *templatePaginateArgs {
 	}
 	if v, ok := rv[whereField].(*TemplateWhereInput); ok {
 		args.opts = append(args.opts, WithTemplateFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (th *TemplateHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*TemplateHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return th, nil
+	}
+	if err := th.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return th, nil
+}
+
+func (th *TemplateHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(templatehistory.Columns))
+		selectedFields = []string{templatehistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[templatehistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldHistoryTime)
+				fieldSeen[templatehistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[templatehistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldOperation)
+				fieldSeen[templatehistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[templatehistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldRef)
+				fieldSeen[templatehistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[templatehistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldCreatedAt)
+				fieldSeen[templatehistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[templatehistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldUpdatedAt)
+				fieldSeen[templatehistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[templatehistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldCreatedBy)
+				fieldSeen[templatehistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[templatehistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldUpdatedBy)
+				fieldSeen[templatehistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[templatehistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldDeletedAt)
+				fieldSeen[templatehistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[templatehistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldDeletedBy)
+				fieldSeen[templatehistory.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[templatehistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldName)
+				fieldSeen[templatehistory.FieldName] = struct{}{}
+			}
+		case "templateType":
+			if _, ok := fieldSeen[templatehistory.FieldTemplateType]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldTemplateType)
+				fieldSeen[templatehistory.FieldTemplateType] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[templatehistory.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldDescription)
+				fieldSeen[templatehistory.FieldDescription] = struct{}{}
+			}
+		case "jsonconfig":
+			if _, ok := fieldSeen[templatehistory.FieldJsonconfig]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldJsonconfig)
+				fieldSeen[templatehistory.FieldJsonconfig] = struct{}{}
+			}
+		case "uischema":
+			if _, ok := fieldSeen[templatehistory.FieldUischema]; !ok {
+				selectedFields = append(selectedFields, templatehistory.FieldUischema)
+				fieldSeen[templatehistory.FieldUischema] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		th.Select(selectedFields...)
+	}
+	return nil
+}
+
+type templatehistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TemplateHistoryPaginateOption
+}
+
+func newTemplateHistoryPaginateArgs(rv map[string]any) *templatehistoryPaginateArgs {
+	args := &templatehistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &TemplateHistoryOrder{Field: &TemplateHistoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithTemplateHistoryOrder(order))
+			}
+		case *TemplateHistoryOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithTemplateHistoryOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*TemplateHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithTemplateHistoryFilter(v.Filter))
 	}
 	return args
 }
@@ -3096,6 +4356,185 @@ func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (uh *UserHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return uh, nil
+	}
+	if err := uh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return uh, nil
+}
+
+func (uh *UserHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userhistory.Columns))
+		selectedFields = []string{userhistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[userhistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldHistoryTime)
+				fieldSeen[userhistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[userhistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldOperation)
+				fieldSeen[userhistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[userhistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldRef)
+				fieldSeen[userhistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[userhistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldCreatedAt)
+				fieldSeen[userhistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[userhistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldUpdatedAt)
+				fieldSeen[userhistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[userhistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldCreatedBy)
+				fieldSeen[userhistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[userhistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldUpdatedBy)
+				fieldSeen[userhistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[userhistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldDeletedAt)
+				fieldSeen[userhistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[userhistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldDeletedBy)
+				fieldSeen[userhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "email":
+			if _, ok := fieldSeen[userhistory.FieldEmail]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldEmail)
+				fieldSeen[userhistory.FieldEmail] = struct{}{}
+			}
+		case "firstName":
+			if _, ok := fieldSeen[userhistory.FieldFirstName]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldFirstName)
+				fieldSeen[userhistory.FieldFirstName] = struct{}{}
+			}
+		case "lastName":
+			if _, ok := fieldSeen[userhistory.FieldLastName]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldLastName)
+				fieldSeen[userhistory.FieldLastName] = struct{}{}
+			}
+		case "displayName":
+			if _, ok := fieldSeen[userhistory.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldDisplayName)
+				fieldSeen[userhistory.FieldDisplayName] = struct{}{}
+			}
+		case "avatarRemoteURL":
+			if _, ok := fieldSeen[userhistory.FieldAvatarRemoteURL]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldAvatarRemoteURL)
+				fieldSeen[userhistory.FieldAvatarRemoteURL] = struct{}{}
+			}
+		case "avatarLocalFile":
+			if _, ok := fieldSeen[userhistory.FieldAvatarLocalFile]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldAvatarLocalFile)
+				fieldSeen[userhistory.FieldAvatarLocalFile] = struct{}{}
+			}
+		case "avatarUpdatedAt":
+			if _, ok := fieldSeen[userhistory.FieldAvatarUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldAvatarUpdatedAt)
+				fieldSeen[userhistory.FieldAvatarUpdatedAt] = struct{}{}
+			}
+		case "lastSeen":
+			if _, ok := fieldSeen[userhistory.FieldLastSeen]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldLastSeen)
+				fieldSeen[userhistory.FieldLastSeen] = struct{}{}
+			}
+		case "sub":
+			if _, ok := fieldSeen[userhistory.FieldSub]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldSub)
+				fieldSeen[userhistory.FieldSub] = struct{}{}
+			}
+		case "authProvider":
+			if _, ok := fieldSeen[userhistory.FieldAuthProvider]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldAuthProvider)
+				fieldSeen[userhistory.FieldAuthProvider] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		uh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type userhistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserHistoryPaginateOption
+}
+
+func newUserHistoryPaginateArgs(rv map[string]any) *userhistoryPaginateArgs {
+	args := &userhistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &UserHistoryOrder{Field: &UserHistoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithUserHistoryOrder(order))
+			}
+		case *UserHistoryOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithUserHistoryOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*UserHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithUserHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (us *UserSettingQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserSettingQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -3252,6 +4691,158 @@ func newUserSettingPaginateArgs(rv map[string]any) *usersettingPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*UserSettingWhereInput); ok {
 		args.opts = append(args.opts, WithUserSettingFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ush *UserSettingHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserSettingHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ush, nil
+	}
+	if err := ush.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ush, nil
+}
+
+func (ush *UserSettingHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(usersettinghistory.Columns))
+		selectedFields = []string{usersettinghistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[usersettinghistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldHistoryTime)
+				fieldSeen[usersettinghistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[usersettinghistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldOperation)
+				fieldSeen[usersettinghistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[usersettinghistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldRef)
+				fieldSeen[usersettinghistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[usersettinghistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldCreatedAt)
+				fieldSeen[usersettinghistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[usersettinghistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldUpdatedAt)
+				fieldSeen[usersettinghistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[usersettinghistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldCreatedBy)
+				fieldSeen[usersettinghistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[usersettinghistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldUpdatedBy)
+				fieldSeen[usersettinghistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[usersettinghistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldDeletedAt)
+				fieldSeen[usersettinghistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[usersettinghistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldDeletedBy)
+				fieldSeen[usersettinghistory.FieldDeletedBy] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[usersettinghistory.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldUserID)
+				fieldSeen[usersettinghistory.FieldUserID] = struct{}{}
+			}
+		case "locked":
+			if _, ok := fieldSeen[usersettinghistory.FieldLocked]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldLocked)
+				fieldSeen[usersettinghistory.FieldLocked] = struct{}{}
+			}
+		case "silencedAt":
+			if _, ok := fieldSeen[usersettinghistory.FieldSilencedAt]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldSilencedAt)
+				fieldSeen[usersettinghistory.FieldSilencedAt] = struct{}{}
+			}
+		case "suspendedAt":
+			if _, ok := fieldSeen[usersettinghistory.FieldSuspendedAt]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldSuspendedAt)
+				fieldSeen[usersettinghistory.FieldSuspendedAt] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[usersettinghistory.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldStatus)
+				fieldSeen[usersettinghistory.FieldStatus] = struct{}{}
+			}
+		case "emailConfirmed":
+			if _, ok := fieldSeen[usersettinghistory.FieldEmailConfirmed]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldEmailConfirmed)
+				fieldSeen[usersettinghistory.FieldEmailConfirmed] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[usersettinghistory.FieldTags]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldTags)
+				fieldSeen[usersettinghistory.FieldTags] = struct{}{}
+			}
+		case "isWebauthnAllowed":
+			if _, ok := fieldSeen[usersettinghistory.FieldIsWebauthnAllowed]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldIsWebauthnAllowed)
+				fieldSeen[usersettinghistory.FieldIsWebauthnAllowed] = struct{}{}
+			}
+		case "isTfaEnabled":
+			if _, ok := fieldSeen[usersettinghistory.FieldIsTfaEnabled]; !ok {
+				selectedFields = append(selectedFields, usersettinghistory.FieldIsTfaEnabled)
+				fieldSeen[usersettinghistory.FieldIsTfaEnabled] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		ush.Select(selectedFields...)
+	}
+	return nil
+}
+
+type usersettinghistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserSettingHistoryPaginateOption
+}
+
+func newUserSettingHistoryPaginateArgs(rv map[string]any) *usersettinghistoryPaginateArgs {
+	args := &usersettinghistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*UserSettingHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithUserSettingHistoryFilter(v.Filter))
 	}
 	return args
 }

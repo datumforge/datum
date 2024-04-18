@@ -38,7 +38,7 @@ type Template struct {
 	// the name of the template
 	Name string `json:"name,omitempty"`
 	// the type of the template, either a provided template or an implementation (document)
-	Type enums.DocumentType `json:"type,omitempty"`
+	TemplateType enums.DocumentType `json:"template_type,omitempty"`
 	// the description of the template
 	Description string `json:"description,omitempty"`
 	// the jsonschema object of the template
@@ -93,7 +93,7 @@ func (*Template) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case template.FieldJsonconfig, template.FieldUischema:
 			values[i] = new([]byte)
-		case template.FieldID, template.FieldCreatedBy, template.FieldUpdatedBy, template.FieldDeletedBy, template.FieldOwnerID, template.FieldName, template.FieldType, template.FieldDescription:
+		case template.FieldID, template.FieldCreatedBy, template.FieldUpdatedBy, template.FieldDeletedBy, template.FieldOwnerID, template.FieldName, template.FieldTemplateType, template.FieldDescription:
 			values[i] = new(sql.NullString)
 		case template.FieldCreatedAt, template.FieldUpdatedAt, template.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -166,11 +166,11 @@ func (t *Template) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Name = value.String
 			}
-		case template.FieldType:
+		case template.FieldTemplateType:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
+				return fmt.Errorf("unexpected type %T for field template_type", values[i])
 			} else if value.Valid {
-				t.Type = enums.DocumentType(value.String)
+				t.TemplateType = enums.DocumentType(value.String)
 			}
 		case template.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -264,8 +264,8 @@ func (t *Template) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(t.Name)
 	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", t.Type))
+	builder.WriteString("template_type=")
+	builder.WriteString(fmt.Sprintf("%v", t.TemplateType))
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(t.Description)

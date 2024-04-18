@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
-	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
 	"github.com/datumforge/fgax/entfga"
 
@@ -79,9 +78,6 @@ func (GroupSetting) Annotations() []schema.Annotation {
 			IncludeHooks:    false,
 			IDField:         "GroupID",
 			NillableIDField: true,
-		},
-		enthistory.Annotations{
-			Exclude: true,
 		},
 	}
 }

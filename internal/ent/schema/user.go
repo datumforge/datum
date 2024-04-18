@@ -16,7 +16,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"github.com/datumforge/enthistory"
 	"github.com/datumforge/entx"
 	emixin "github.com/datumforge/entx/mixin"
 
@@ -202,9 +201,6 @@ func (User) Annotations() []schema.Annotation {
 				},
 			},
 		),
-		enthistory.Annotations{
-			Exclude: true,
-		},
 	}
 }
 

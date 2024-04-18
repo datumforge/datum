@@ -96,7 +96,7 @@ func createTemplate(ctx context.Context) error {
 	}
 
 	if templateType != "" {
-		input.Type = enums.ToDocumentType(templateType)
+		input.TemplateType = enums.ToDocumentType(templateType)
 	}
 
 	if parentOrgID == "" {

@@ -17,7 +17,7 @@ require (
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/datumforge/enthistory v0.0.5
 	github.com/datumforge/fgax v0.1.5
-	github.com/datumforge/geodetic v0.0.2
+	github.com/datumforge/geodetic v0.0.3
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
 	github.com/gabriel-vasile/mimetype v1.4.3

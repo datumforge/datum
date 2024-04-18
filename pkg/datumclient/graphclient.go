@@ -8224,7 +8224,7 @@ const GetDocumentDataDocument = `query GetDocumentData ($documentDataId: ID!) {
 `
 
 func (c *Client) GetDocumentData(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentData, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"documentDataId": documentDataID,
 	}
 
@@ -8256,7 +8256,7 @@ const CreateDocumentDataDocument = `mutation CreateDocumentData ($input: CreateD
 `
 
 func (c *Client) CreateDocumentData(ctx context.Context, input CreateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*CreateDocumentData, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -8288,7 +8288,7 @@ const UpdateDocumentDataDocument = `mutation UpdateDocumentData ($updateDocument
 `
 
 func (c *Client) UpdateDocumentData(ctx context.Context, updateDocumentDataID string, input UpdateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*UpdateDocumentData, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateDocumentDataId": updateDocumentDataID,
 		"input":                input,
 	}
@@ -8313,7 +8313,7 @@ const DeleteDocumentDataDocument = `mutation DeleteDocumentData ($deleteDocument
 `
 
 func (c *Client) DeleteDocumentData(ctx context.Context, deleteDocumentDataID string, interceptors ...clientv2.RequestInterceptor) (*DeleteDocumentData, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deleteDocumentDataId": deleteDocumentDataID,
 	}
 
@@ -8369,7 +8369,7 @@ const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
 `
 
 func (c *Client) GetGroupByID(ctx context.Context, groupID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupByID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"groupId": groupID,
 	}
 
@@ -8429,7 +8429,7 @@ const GroupsWhereDocument = `query GroupsWhere ($where: GroupWhereInput) {
 `
 
 func (c *Client) GroupsWhere(ctx context.Context, where *GroupWhereInput, interceptors ...clientv2.RequestInterceptor) (*GroupsWhere, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -8489,7 +8489,7 @@ const GetAllGroupsDocument = `query GetAllGroups {
 `
 
 func (c *Client) GetAllGroups(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllGroups, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetAllGroups
 	if err := c.Client.Post(ctx, "GetAllGroups", GetAllGroupsDocument, &res, vars, interceptors...); err != nil {
@@ -8545,7 +8545,7 @@ const CreateGroupDocument = `mutation CreateGroup ($input: CreateGroupInput!) {
 `
 
 func (c *Client) CreateGroup(ctx context.Context, input CreateGroupInput, interceptors ...clientv2.RequestInterceptor) (*CreateGroup, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -8597,7 +8597,7 @@ const UpdateGroupDocument = `mutation UpdateGroup ($updateGroupId: ID!, $input: 
 `
 
 func (c *Client) UpdateGroup(ctx context.Context, updateGroupID string, input UpdateGroupInput, interceptors ...clientv2.RequestInterceptor) (*UpdateGroup, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateGroupId": updateGroupID,
 		"input":         input,
 	}
@@ -8622,7 +8622,7 @@ const DeleteGroupDocument = `mutation DeleteGroup ($deleteGroupId: ID!) {
 `
 
 func (c *Client) DeleteGroup(ctx context.Context, deleteGroupID string, interceptors ...clientv2.RequestInterceptor) (*DeleteGroup, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deleteGroupId": deleteGroupID,
 	}
 
@@ -8660,7 +8660,7 @@ const GetGroupMembersByGroupIDDocument = `query GetGroupMembersByGroupID ($where
 `
 
 func (c *Client) GetGroupMembersByGroupID(ctx context.Context, where *GroupMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetGroupMembersByGroupID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -8689,7 +8689,7 @@ const AddUserToGroupWithRoleDocument = `mutation AddUserToGroupWithRole ($input:
 `
 
 func (c *Client) AddUserToGroupWithRole(ctx context.Context, input CreateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToGroupWithRole, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -8718,7 +8718,7 @@ const UpdateUserRoleInGroupDocument = `mutation UpdateUserRoleInGroup ($updateGr
 `
 
 func (c *Client) UpdateUserRoleInGroup(ctx context.Context, updateGroupMemberID string, input UpdateGroupMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInGroup, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateGroupMemberId": updateGroupMemberID,
 		"input":               input,
 	}
@@ -8743,7 +8743,7 @@ const RemoveUserFromGroupDocument = `mutation RemoveUserFromGroup ($deleteGroupM
 `
 
 func (c *Client) RemoveUserFromGroup(ctx context.Context, deleteGroupMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromGroup, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deleteGroupMembershipId": deleteGroupMembershipID,
 	}
 
@@ -8779,7 +8779,7 @@ const GetGroupSettingByIDDocument = `query GetGroupSettingByID ($groupSettingId:
 `
 
 func (c *Client) GetGroupSettingByID(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettingByID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"groupSettingId": groupSettingID,
 	}
 
@@ -8819,7 +8819,7 @@ const GetGroupSettingsDocument = `query GetGroupSettings {
 `
 
 func (c *Client) GetGroupSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettings, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetGroupSettings
 	if err := c.Client.Post(ctx, "GetGroupSettings", GetGroupSettingsDocument, &res, vars, interceptors...); err != nil {
@@ -8857,7 +8857,7 @@ const GetGroupSettingWhereDocument = `query GetGroupSettingWhere ($where: GroupS
 `
 
 func (c *Client) GetGroupSettingWhere(ctx context.Context, where GroupSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetGroupSettingWhere, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -8895,7 +8895,7 @@ const UpdateGroupSettingDocument = `mutation UpdateGroupSetting ($updateGroupSet
 `
 
 func (c *Client) UpdateGroupSetting(ctx context.Context, updateGroupSettingID string, input UpdateGroupSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateGroupSetting, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateGroupSettingId": updateGroupSettingID,
 		"input":                input,
 	}
@@ -8931,7 +8931,7 @@ const CreateInviteDocument = `mutation CreateInvite ($input: CreateInviteInput!)
 `
 
 func (c *Client) CreateInvite(ctx context.Context, input CreateInviteInput, interceptors ...clientv2.RequestInterceptor) (*CreateInvite, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -8955,7 +8955,7 @@ const DeleteInviteDocument = `mutation DeleteInvite ($deleteInviteId: ID!) {
 `
 
 func (c *Client) DeleteInvite(ctx context.Context, deleteInviteID string, interceptors ...clientv2.RequestInterceptor) (*DeleteInvite, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deleteInviteId": deleteInviteID,
 	}
 
@@ -8996,7 +8996,7 @@ const GetInviteDocument = `query GetInvite ($inviteId: ID!) {
 `
 
 func (c *Client) GetInvite(ctx context.Context, inviteID string, interceptors ...clientv2.RequestInterceptor) (*GetInvite, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"inviteId": inviteID,
 	}
 
@@ -9033,7 +9033,7 @@ const InvitesByOrgIDDocument = `query InvitesByOrgID ($where: InviteWhereInput) 
 `
 
 func (c *Client) InvitesByOrgID(ctx context.Context, where *InviteWhereInput, interceptors ...clientv2.RequestInterceptor) (*InvitesByOrgID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -9103,7 +9103,7 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 `
 
 func (c *Client) GetOrganizationByID(ctx context.Context, organizationID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationByID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"organizationId": organizationID,
 	}
 
@@ -9175,7 +9175,7 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 `
 
 func (c *Client) GetAllOrganizations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllOrganizations, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetAllOrganizations
 	if err := c.Client.Post(ctx, "GetAllOrganizations", GetAllOrganizationsDocument, &res, vars, interceptors...); err != nil {
@@ -9245,7 +9245,7 @@ const OrganizationsWhereDocument = `query OrganizationsWhere ($where: Organizati
 `
 
 func (c *Client) OrganizationsWhere(ctx context.Context, where *OrganizationWhereInput, interceptors ...clientv2.RequestInterceptor) (*OrganizationsWhere, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -9306,7 +9306,7 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 `
 
 func (c *Client) CreateOrganization(ctx context.Context, input CreateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*CreateOrganization, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -9355,7 +9355,7 @@ const UpdateOrganizationDocument = `mutation UpdateOrganization ($updateOrganiza
 `
 
 func (c *Client) UpdateOrganization(ctx context.Context, updateOrganizationID string, input UpdateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganization, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateOrganizationId": updateOrganizationID,
 		"input":                input,
 	}
@@ -9380,7 +9380,7 @@ const DeleteOrganizationDocument = `mutation DeleteOrganization ($deleteOrganiza
 `
 
 func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteOrganization, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deleteOrganizationId": deleteOrganizationID,
 	}
 
@@ -9421,7 +9421,7 @@ const GetOrganizationSettingByIDDocument = `query GetOrganizationSettingByID ($o
 `
 
 func (c *Client) GetOrganizationSettingByID(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettingByID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"organizationSettingId": organizationSettingID,
 	}
 
@@ -9466,7 +9466,7 @@ const GetOrganizationSettingsDocument = `query GetOrganizationSettings {
 `
 
 func (c *Client) GetOrganizationSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettings, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetOrganizationSettings
 	if err := c.Client.Post(ctx, "GetOrganizationSettings", GetOrganizationSettingsDocument, &res, vars, interceptors...); err != nil {
@@ -9509,7 +9509,7 @@ const GetOrganizationSettingWhereDocument = `query GetOrganizationSettingWhere (
 `
 
 func (c *Client) GetOrganizationSettingWhere(ctx context.Context, where OrganizationSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSettingWhere, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -9552,7 +9552,7 @@ const UpdateOrganizationSettingDocument = `mutation UpdateOrganizationSetting ($
 `
 
 func (c *Client) UpdateOrganizationSetting(ctx context.Context, updateOrganizationSettingID string, input UpdateOrganizationSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganizationSetting, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateOrganizationSettingId": updateOrganizationSettingID,
 		"input":                       input,
 	}
@@ -9591,7 +9591,7 @@ const GetOrgMembersByOrgIDDocument = `query GetOrgMembersByOrgID ($where: OrgMem
 `
 
 func (c *Client) GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -9620,7 +9620,7 @@ const AddUserToOrgWithRoleDocument = `mutation AddUserToOrgWithRole ($input: Cre
 `
 
 func (c *Client) AddUserToOrgWithRole(ctx context.Context, input CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToOrgWithRole, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -9649,7 +9649,7 @@ const UpdateUserRoleInOrgDocument = `mutation UpdateUserRoleInOrg ($updateOrgMem
 `
 
 func (c *Client) UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateOrgMemberId": updateOrgMemberID,
 		"input":             input,
 	}
@@ -9674,7 +9674,7 @@ const RemoveUserFromOrgDocument = `mutation RemoveUserFromOrg ($deleteOrgMembers
 `
 
 func (c *Client) RemoveUserFromOrg(ctx context.Context, deleteOrgMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromOrg, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deleteOrgMembershipId": deleteOrgMembershipID,
 	}
 
@@ -9718,7 +9718,7 @@ const CreatePersonalAccessTokenDocument = `mutation CreatePersonalAccessToken ($
 `
 
 func (c *Client) CreatePersonalAccessToken(ctx context.Context, input CreatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreatePersonalAccessToken, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -9762,7 +9762,7 @@ const UpdatePersonalAccessTokenDocument = `mutation UpdatePersonalAccessToken ($
 `
 
 func (c *Client) UpdatePersonalAccessToken(ctx context.Context, updatePersonalAccessTokenID string, input UpdatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*UpdatePersonalAccessToken, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updatePersonalAccessTokenId": updatePersonalAccessTokenID,
 		"input":                       input,
 	}
@@ -9809,7 +9809,7 @@ const GetAllPersonalAccessTokensDocument = `query GetAllPersonalAccessTokens {
 `
 
 func (c *Client) GetAllPersonalAccessTokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllPersonalAccessTokens, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetAllPersonalAccessTokens
 	if err := c.Client.Post(ctx, "GetAllPersonalAccessTokens", GetAllPersonalAccessTokensDocument, &res, vars, interceptors...); err != nil {
@@ -9849,7 +9849,7 @@ const GetPersonalAccessTokenByIDDocument = `query GetPersonalAccessTokenByID ($p
 `
 
 func (c *Client) GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"personalAccessTokenId": personalAccessTokenID,
 	}
 
@@ -9873,7 +9873,7 @@ const DeletePersonalAccessTokenDocument = `mutation DeletePersonalAccessToken ($
 `
 
 func (c *Client) DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deletePersonalAccessTokenId": deletePersonalAccessTokenID,
 	}
 
@@ -9905,7 +9905,7 @@ const SubscribersDocument = `query Subscribers ($where: SubscriberWhereInput) {
 `
 
 func (c *Client) Subscribers(ctx context.Context, where *SubscriberWhereInput, interceptors ...clientv2.RequestInterceptor) (*Subscribers, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -9944,7 +9944,7 @@ const CreateTemplateDocument = `mutation CreateTemplate ($input: CreateTemplateI
 `
 
 func (c *Client) CreateTemplate(ctx context.Context, input CreateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*CreateTemplate, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -9983,7 +9983,7 @@ const UpdateTemplateDocument = `mutation UpdateTemplate ($updateTemplateId: ID!,
 `
 
 func (c *Client) UpdateTemplate(ctx context.Context, updateTemplateID string, input UpdateTemplateInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTemplate, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateTemplateId": updateTemplateID,
 		"input":            input,
 	}
@@ -10025,7 +10025,7 @@ const GetAllTemplatesDocument = `query GetAllTemplates {
 `
 
 func (c *Client) GetAllTemplates(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllTemplates, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetAllTemplates
 	if err := c.Client.Post(ctx, "GetAllTemplates", GetAllTemplatesDocument, &res, vars, interceptors...); err != nil {
@@ -10060,7 +10060,7 @@ const GetTemplateDocument = `query GetTemplate ($getTemplateId: ID!) {
 `
 
 func (c *Client) GetTemplate(ctx context.Context, getTemplateID string, interceptors ...clientv2.RequestInterceptor) (*GetTemplate, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"getTemplateId": getTemplateID,
 	}
 
@@ -10086,7 +10086,7 @@ const GetTFASettingDocument = `query GetTFASetting {
 `
 
 func (c *Client) GetTFASetting(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASetting, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetTFASetting
 	if err := c.Client.Post(ctx, "GetTFASetting", GetTFASettingDocument, &res, vars, interceptors...); err != nil {
@@ -10114,7 +10114,7 @@ const GetTFASettingsDocument = `query GetTFASettings {
 `
 
 func (c *Client) GetTFASettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetTFASettings, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetTFASettings
 	if err := c.Client.Post(ctx, "GetTFASettings", GetTFASettingsDocument, &res, vars, interceptors...); err != nil {
@@ -10140,7 +10140,7 @@ const CreateTFASettingDocument = `mutation CreateTFASetting ($input: CreateTFASe
 `
 
 func (c *Client) CreateTFASetting(ctx context.Context, input CreateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*CreateTFASetting, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -10168,7 +10168,7 @@ const UpdateTFASettingDocument = `mutation UpdateTFASetting ($input: UpdateTFASe
 `
 
 func (c *Client) UpdateTFASetting(ctx context.Context, input UpdateTFASettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateTFASetting, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -10231,7 +10231,7 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 `
 
 func (c *Client) GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"userId": userID,
 	}
 
@@ -10293,7 +10293,7 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 `
 
 func (c *Client) GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"userId": userID,
 	}
 
@@ -10351,7 +10351,7 @@ const GetAllUsersDocument = `query GetAllUsers {
 `
 
 func (c *Client) GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetAllUsers
 	if err := c.Client.Post(ctx, "GetAllUsers", GetAllUsersDocument, &res, vars, interceptors...); err != nil {
@@ -10408,7 +10408,7 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 `
 
 func (c *Client) CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"input": input,
 	}
 
@@ -10465,7 +10465,7 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 `
 
 func (c *Client) UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateUserId": updateUserID,
 		"input":        input,
 	}
@@ -10490,7 +10490,7 @@ const DeleteUserDocument = `mutation DeleteUser ($deleteUserId: ID!) {
 `
 
 func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"deleteUserId": deleteUserID,
 	}
 
@@ -10531,7 +10531,7 @@ const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID
 `
 
 func (c *Client) GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"userSettingId": userSettingID,
 	}
 
@@ -10576,7 +10576,7 @@ const GetUserSettingsDocument = `query GetUserSettings {
 `
 
 func (c *Client) GetUserSettings(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetUserSettings, error) {
-	vars := map[string]interface{}{}
+	vars := map[string]any{}
 
 	var res GetUserSettings
 	if err := c.Client.Post(ctx, "GetUserSettings", GetUserSettingsDocument, &res, vars, interceptors...); err != nil {
@@ -10619,7 +10619,7 @@ const GetUserSettingWhereDocument = `query GetUserSettingWhere ($where: UserSett
 `
 
 func (c *Client) GetUserSettingWhere(ctx context.Context, where UserSettingWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingWhere, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"where": where,
 	}
 
@@ -10662,7 +10662,7 @@ const UpdateUserSettingDocument = `mutation UpdateUserSetting ($updateUserSettin
 `
 
 func (c *Client) UpdateUserSetting(ctx context.Context, updateUserSettingID string, input UpdateUserSettingInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserSetting, error) {
-	vars := map[string]interface{}{
+	vars := map[string]any{
 		"updateUserSettingId": updateUserSettingID,
 		"input":               input,
 	}

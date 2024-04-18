@@ -9,15 +9,15 @@ require (
 	github.com/99designs/gqlgen v0.17.45
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
-	github.com/Yamashou/gqlgenc v0.19.3
+	github.com/Yamashou/gqlgenc v0.21.1
 	github.com/alicebob/miniredis/v2 v2.32.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.11
 	github.com/brianvoe/gofakeit/v7 v7.0.2
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/datumforge/enthistory v0.0.5
-	github.com/datumforge/fgax v0.1.5
-	github.com/datumforge/geodetic v0.0.2
+	github.com/datumforge/fgax v0.1.6
+	github.com/datumforge/geodetic v0.0.3
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
 	github.com/gabriel-vasile/mimetype v1.4.3
@@ -34,7 +34,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v1.0.0
+	github.com/ogen-go/ogen v1.1.0
 	github.com/panta/machineid v1.0.2
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.19.2
@@ -55,14 +55,15 @@ require (
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.19.0
 	golang.org/x/term v0.19.0
-	google.golang.org/api v0.173.0
+	google.golang.org/api v0.174.0
 	modernc.org/sqlite v1.29.7
 )
 
 require (
 	cloud.google.com/go v0.112.1 // indirect
-	cloud.google.com/go/compute v1.25.1 // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/auth v0.2.0 // indirect
+	cloud.google.com/go/auth/oauth2adapt v0.2.0 // indirect
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	cloud.google.com/go/iam v1.1.7 // indirect
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
@@ -167,9 +168,9 @@ require (
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
-	github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee // indirect
+	github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c // indirect
 	github.com/openfga/go-sdk v0.3.5 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240328133052-aabba86a664b // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240415101832-dc43b60dcca8 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
@@ -206,8 +207,8 @@ require (
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/genproto v0.0.0-20240325203815-454cdb8f5daa // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240415180920-8c6c420018be // indirect
 	google.golang.org/grpc v1.63.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -278,7 +279,7 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/testcontainers/testcontainers-go v0.30.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.30.0
-	github.com/trisacrypto/directory v1.7.6
+	github.com/trisacrypto/directory v1.7.7
 	github.com/urfave/cli/v2 v2.27.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect

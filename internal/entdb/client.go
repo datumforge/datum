@@ -104,8 +104,10 @@ func NewMultiDriverDBClient(ctx context.Context, c entx.Config, l *zap.SugaredLo
 	// add authz hooks
 	ec.WithAuthz()
 
-	// add history hooks
-	ec.WithHistory()
+	if c.EnableHistory {
+		// add history hooks
+		ec.WithHistory()
+	}
 
 	ec.Intercept(interceptors.QueryLogger(client.logger))
 
@@ -205,6 +207,7 @@ func NewTestClient(ctx context.Context, ctr *testutils.TC, entOpts []ent.Option)
 		Debug:           true,
 		DriverName:      ctr.Dialect,
 		PrimaryDBSource: ctr.URI,
+		EnableHistory:   true,             // enable history so the code path is checked during unit tests
 		CacheTTL:        -1 * time.Second, // do not cache results in tests
 	}
 

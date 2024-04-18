@@ -350,6 +350,7 @@ ProviderConfig represents the configuration settings for a Webauthn Provider
 |**cacheTTL**|`integer`|cache results for subsequent requests<br/>|no|
 |**runMigrations**|`boolean`|run migrations on startup<br/>|no|
 |**migrationProvider**|`string`|migration provider to use for running migrations<br/>|no|
+|**enableHistory**|`boolean`|enable history data to be logged to the database<br/>|no|
 
 **Additional Properties:** not allowed  
 <a name="geodetic"></a>

@@ -48,6 +48,7 @@ db:
     databaseName: datum
     debug: false
     driverName: libsql
+    enableHistory: false
     migrationProvider: atlas
     multiWrite: false
     primaryDbSource: file:datum.db

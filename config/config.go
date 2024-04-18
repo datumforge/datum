@@ -180,9 +180,14 @@ func Load(cfgFile *string) (*Config, error) {
 	}
 
 	// load env vars
-	if err := k.Load(env.Provider("DATUM_", ".", func(s string) string {
-		return strings.ReplaceAll(strings.ToLower(
-			strings.TrimPrefix(s, "DATUM_")), "_", ".")
+	if err := k.Load(env.ProviderWithValue("DATUM_", ".", func(s string, v string) (string, interface{}) {
+		key := strings.ReplaceAll(strings.ToLower(strings.TrimPrefix(s, "DATUM_")), "_", ".")
+
+		if strings.Contains(v, ",") {
+			return key, strings.Split(v, ",")
+		}
+
+		return key, v
 	}), nil); err != nil {
 		panic(err)
 	}

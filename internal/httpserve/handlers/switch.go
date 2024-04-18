@@ -37,33 +37,42 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	// get the current user claims
-	claims, err := auth.GetClaims(ctx)
+	context := ctx.Request().Context()
+	userCtx := viewer.NewContext(context, viewer.NewUserViewerFromSubject(context))
+
+	userID, err := auth.GetUserIDFromContext(context)
 	if err != nil {
+		h.Logger.Errorw("unable to get user id from context", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
+
+	// get user from database by subject
+	user, err := h.getUserBySub(userCtx, userID)
+	if err != nil {
+		h.Logger.Errorw("unable to get user by subject", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
+	}
+
+	orgID, err := auth.GetOrganizationIDFromContext(context)
+	if err != nil {
+		h.Logger.Errorw("unable to get organization id from context", "error", err)
+
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
 	// ensure the user is not already in the target organization
-	if claims.OrgID == req.TargetOrganizationID {
+	if orgID == req.TargetOrganizationID {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse("already switched to organization"))
 	}
 
-	newUserCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(claims.UserID, true))
-
-	// get the user from the database by subject
-	user, err := h.getUserBySub(newUserCtx, claims.Subject)
-	if err != nil {
-		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
-		}
-
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(ErrProcessingRequest))
-	}
-
 	// ensure user is already a member of the destination organization
-	if err := h.confirmOrgMembership(newUserCtx, claims.UserID, req.TargetOrganizationID); err != nil {
+	if err := h.confirmOrgMembership(userCtx, userID, req.TargetOrganizationID); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
+
+	newUserCtx := viewer.NewContext(userCtx, viewer.NewUserViewerFromID(userID, true))
 
 	// create new claims for the user
 	newClaims := switchClaims(user, req.TargetOrganizationID)
@@ -102,7 +111,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 		Set("email", user.Email).
 		Set("target_organization_id", newClaims.OrgID).
 		Set("auth_provider", user.AuthProvider).
-		Set("previous_organization_id", claims.OrgID)
+		Set("previous_organization_id", orgID)
 
 	h.AnalyticsClient.Event("organization_switched", props)
 

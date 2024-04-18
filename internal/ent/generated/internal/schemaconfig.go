@@ -8,16 +8,24 @@ import "context"
 // that can be passed at runtime.
 type SchemaConfig struct {
 	DocumentData                     string // DocumentData table.
+	DocumentDataHistory              string // DocumentDataHistory table.
 	EmailVerificationToken           string // EmailVerificationToken table.
 	Entitlement                      string // Entitlement table.
+	EntitlementHistory               string // EntitlementHistory table.
 	Group                            string // Group table.
+	GroupHistory                     string // GroupHistory table.
 	GroupMembership                  string // GroupMembership table.
+	GroupMembershipHistory           string // GroupMembershipHistory table.
 	GroupSetting                     string // GroupSetting table.
+	GroupSettingHistory              string // GroupSettingHistory table.
 	Integration                      string // Integration table.
+	IntegrationHistory               string // IntegrationHistory table.
 	Invite                           string // Invite table.
 	OauthProvider                    string // OauthProvider table.
+	OauthProviderHistory             string // OauthProviderHistory table.
 	OhAuthTooToken                   string // OhAuthTooToken table.
 	OrgMembership                    string // OrgMembership table.
+	OrgMembershipHistory             string // OrgMembershipHistory table.
 	Organization                     string // Organization table.
 	OrganizationPersonalAccessTokens string // Organization-personal_access_tokens->PersonalAccessToken table.
 	OrganizationHistory              string // OrganizationHistory table.
@@ -28,8 +36,11 @@ type SchemaConfig struct {
 	Subscriber                       string // Subscriber table.
 	TFASetting                       string // TFASetting table.
 	Template                         string // Template table.
+	TemplateHistory                  string // TemplateHistory table.
 	User                             string // User table.
+	UserHistory                      string // UserHistory table.
 	UserSetting                      string // UserSetting table.
+	UserSettingHistory               string // UserSettingHistory table.
 	Webauthn                         string // Webauthn table.
 }
 

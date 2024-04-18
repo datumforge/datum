@@ -134,16 +134,16 @@ func (tu *TemplateUpdate) SetNillableName(s *string) *TemplateUpdate {
 	return tu
 }
 
-// SetType sets the "type" field.
-func (tu *TemplateUpdate) SetType(et enums.DocumentType) *TemplateUpdate {
-	tu.mutation.SetType(et)
+// SetTemplateType sets the "template_type" field.
+func (tu *TemplateUpdate) SetTemplateType(et enums.DocumentType) *TemplateUpdate {
+	tu.mutation.SetTemplateType(et)
 	return tu
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (tu *TemplateUpdate) SetNillableType(et *enums.DocumentType) *TemplateUpdate {
+// SetNillableTemplateType sets the "template_type" field if the given value is not nil.
+func (tu *TemplateUpdate) SetNillableTemplateType(et *enums.DocumentType) *TemplateUpdate {
 	if et != nil {
-		tu.SetType(*et)
+		tu.SetTemplateType(*et)
 	}
 	return tu
 }
@@ -287,9 +287,9 @@ func (tu *TemplateUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
 		}
 	}
-	if v, ok := tu.mutation.GetType(); ok {
-		if err := template.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`generated: validator failed for field "Template.type": %w`, err)}
+	if v, ok := tu.mutation.TemplateType(); ok {
+		if err := template.TemplateTypeValidator(v); err != nil {
+			return &ValidationError{Name: "template_type", err: fmt.Errorf(`generated: validator failed for field "Template.template_type": %w`, err)}
 		}
 	}
 	if _, ok := tu.mutation.OwnerID(); tu.mutation.OwnerCleared() && !ok {
@@ -343,8 +343,8 @@ func (tu *TemplateUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.GetType(); ok {
-		_spec.SetField(template.FieldType, field.TypeEnum, value)
+	if value, ok := tu.mutation.TemplateType(); ok {
+		_spec.SetField(template.FieldTemplateType, field.TypeEnum, value)
 	}
 	if value, ok := tu.mutation.Description(); ok {
 		_spec.SetField(template.FieldDescription, field.TypeString, value)
@@ -562,16 +562,16 @@ func (tuo *TemplateUpdateOne) SetNillableName(s *string) *TemplateUpdateOne {
 	return tuo
 }
 
-// SetType sets the "type" field.
-func (tuo *TemplateUpdateOne) SetType(et enums.DocumentType) *TemplateUpdateOne {
-	tuo.mutation.SetType(et)
+// SetTemplateType sets the "template_type" field.
+func (tuo *TemplateUpdateOne) SetTemplateType(et enums.DocumentType) *TemplateUpdateOne {
+	tuo.mutation.SetTemplateType(et)
 	return tuo
 }
 
-// SetNillableType sets the "type" field if the given value is not nil.
-func (tuo *TemplateUpdateOne) SetNillableType(et *enums.DocumentType) *TemplateUpdateOne {
+// SetNillableTemplateType sets the "template_type" field if the given value is not nil.
+func (tuo *TemplateUpdateOne) SetNillableTemplateType(et *enums.DocumentType) *TemplateUpdateOne {
 	if et != nil {
-		tuo.SetType(*et)
+		tuo.SetTemplateType(*et)
 	}
 	return tuo
 }
@@ -728,9 +728,9 @@ func (tuo *TemplateUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Template.name": %w`, err)}
 		}
 	}
-	if v, ok := tuo.mutation.GetType(); ok {
-		if err := template.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`generated: validator failed for field "Template.type": %w`, err)}
+	if v, ok := tuo.mutation.TemplateType(); ok {
+		if err := template.TemplateTypeValidator(v); err != nil {
+			return &ValidationError{Name: "template_type", err: fmt.Errorf(`generated: validator failed for field "Template.template_type": %w`, err)}
 		}
 	}
 	if _, ok := tuo.mutation.OwnerID(); tuo.mutation.OwnerCleared() && !ok {
@@ -801,8 +801,8 @@ func (tuo *TemplateUpdateOne) sqlSave(ctx context.Context) (_node *Template, err
 	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(template.FieldName, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.GetType(); ok {
-		_spec.SetField(template.FieldType, field.TypeEnum, value)
+	if value, ok := tuo.mutation.TemplateType(); ok {
+		_spec.SetField(template.FieldTemplateType, field.TypeEnum, value)
 	}
 	if value, ok := tuo.mutation.Description(); ok {
 		_spec.SetField(template.FieldDescription, field.TypeString, value)

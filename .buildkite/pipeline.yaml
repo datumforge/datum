@@ -11,7 +11,7 @@ steps:
       - label: ":golang: go generate"
         key: "generate"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "ghcr.io/datumforge/base-ci-image:v1.1.4"
               command: ["task", "ci"]
               environment:
@@ -19,7 +19,7 @@ steps:
       - label: ":yaml: generate config"
         key: "generate_config"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "ghcr.io/datumforge/base-ci-image:v1.1.4"
               command: ["task", "config:ci"]
               environment:
@@ -31,7 +31,7 @@ steps:
       - label: ":golangci-lint: lint :lint-roller:"
         key: "lint"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "registry.hub.docker.com/golangci/golangci-lint:v1.57.1"
               command: ["golangci-lint", "run", "-v", "--timeout", "10m", "--config", ".golangci.yaml"]
               environment:
@@ -41,7 +41,7 @@ steps:
         env:
           TEST_DB_URL: "libsql://file::memory:?cache=shared"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: golang:1.22.2
               command: ["go", "test", "-coverprofile=coverage.out", "./..."]
               environment:
@@ -60,7 +60,7 @@ steps:
           - "docker://postgres:15-alpine"
           - "sqlite://file:ent?mode=memory&cache=shared"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: golang:1.22.2
               command: ["go", "test", "-coverprofile=coverage.out", "./..."]
               environment:
@@ -71,7 +71,7 @@ steps:
       - label: ":auth0: fga model test"
         key: "fga_test"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: openfga/cli
               command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
   - group: ":closed_lock_with_key: Security Checks"
@@ -81,7 +81,7 @@ steps:
       - label: ":closed_lock_with_key: gosec"
         key: "gosec"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "registry.hub.docker.com/securego/gosec:2.18.2"
               command: ["-no-fail", "-exclude-generated", "-fmt sonarqube", "-out", "results.txt", "./..."]
               environment:
@@ -97,7 +97,7 @@ steps:
           - artifacts#v1.9.3:
               download: "coverage.out"
               step: "go_test_libsql"
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "sonarsource/sonar-scanner-cli:5"
               environment:
                 - "SONAR_TOKEN"
@@ -113,7 +113,7 @@ steps:
           - artifacts#v1.9.3:
               download: coverage.out
               step: "go_test_libsql"
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "sonarsource/sonar-scanner-cli:5"
               environment:
                 - "SONAR_TOKEN"
@@ -126,7 +126,7 @@ steps:
         key: "gobuild-server"
         artifact_paths: "bin/${APP_NAME}"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "golang:1.22.2"
               environment:
                 - CGO_ENABLED=0
@@ -136,7 +136,7 @@ steps:
         key: "gobuild-cli"
         artifact_paths: "bin/${APP_NAME}-cli"
         plugins:
-          - docker#v5.10.0:
+          - docker#v5.11.0:
               image: "golang:1.22.2"
               environment:
                 - GOOS=darwin

@@ -70,7 +70,7 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/Microsoft/hcsshim v0.11.4 // indirect
-	github.com/XSAM/otelsql v0.29.0 // indirect
+	github.com/XSAM/otelsql v0.30.0 // indirect
 	github.com/alicebob/gopher-json v0.0.0-20200520072559-a9ecdc9d1d3a // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.2 // indirect
@@ -234,7 +234,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.10.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e
-	github.com/datumforge/entx v0.0.8
+	github.com/datumforge/entx v0.0.9
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/flopp/go-findfont v0.1.0

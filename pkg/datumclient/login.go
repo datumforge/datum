@@ -90,7 +90,7 @@ func getTokensFromCookiesFromResponse(resp *http.Response) (token *oauth2.Token)
 	return getTokensFromCookies(cookies)
 }
 
-// getTokensFromCookies parses the HTTP Request for cookies and returns the session and access and refresh tokens
+// getTokensFromCookieRequest parses the HTTP Request for cookies and returns the session and access and refresh tokens
 func getTokensFromCookieRequest(r *http.Request, isDev bool) (token *oauth2.Token, session string) {
 	// parse cookies
 	cookies := r.Cookies()

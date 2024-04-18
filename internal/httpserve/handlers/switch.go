@@ -71,9 +71,6 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err := h.confirmOrgMembership(userCtx, userID, req.TargetOrganizationID); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
-
-	newUserCtx := viewer.NewContext(userCtx, viewer.NewUserViewerFromID(userID, true))
-
 	// create new claims for the user
 	newClaims := switchClaims(user, req.TargetOrganizationID)
 
@@ -95,7 +92,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	}
 
 	// return the session value for the UI to use
-	session, err := sessions.SessionToken(newUserCtx)
+	session, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}

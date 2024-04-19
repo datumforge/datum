@@ -56,7 +56,7 @@ func Switch(c *Client, ctx context.Context, r handlers.SwitchOrganizationRequest
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, newAuthenticationError(resp.StatusCode, out.NewOrganizationContext)
+		return nil, newAuthenticationError(resp.StatusCode, fmt.Sprintf("%v", out.Reply))
 	}
 
 	return getTokensFromCookiesFromResponse(resp), err

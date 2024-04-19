@@ -23,10 +23,9 @@ type SwitchOrganizationRequest struct {
 // SwitchOrganizationReply holds the new authentication and session information for the user for the new organization
 type SwitchOrganizationReply struct {
 	rout.Reply
-	AccessToken            string `json:"access_token"`
-	RefreshToken           string `json:"refresh_token"`
-	Session                string `json:"session"`
-	NewOrganizationContext string `json:"new_organization_context"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	Session      string `json:"session"`
 }
 
 // SwitchHandler is responsible for handling requests to the `/switch` endpoint, and changing the user's logged in organization context
@@ -71,6 +70,7 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	if err := h.confirmOrgMembership(userCtx, userID, req.TargetOrganizationID); err != nil {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
+
 	// create new claims for the user
 	newClaims := switchClaims(user, req.TargetOrganizationID)
 
@@ -114,11 +114,10 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 
 	// set the out attributes we send back to the client only on success
 	out := &SwitchOrganizationReply{
-		Reply:                  rout.Reply{Success: true},
-		AccessToken:            access,
-		RefreshToken:           refresh,
-		Session:                session,
-		NewOrganizationContext: newClaims.OrgID,
+		Reply:        rout.Reply{Success: true},
+		AccessToken:  access,
+		RefreshToken: refresh,
+		Session:      session,
 	}
 
 	return ctx.JSON(http.StatusOK, out)

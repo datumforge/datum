@@ -74,7 +74,6 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	// create new claims for the user
 	newClaims := switchClaims(user, req.TargetOrganizationID)
 
-	newClaims.UserID = user.ID
 	// create a new token pair for the user
 	access, refresh, err := h.TM.CreateTokenPair(newClaims)
 	if err != nil {
@@ -95,11 +94,6 @@ func (h *Handler) SwitchHandler(ctx echo.Context) error {
 	session, err := sessions.SessionToken(ctx.Request().Context())
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
-	}
-
-	// last sanity check ensuring that newly issued claims match the requested organization ID, which does not match what the user starts with, and the target organization ID which the user is already a member
-	if newClaims.OrgID != req.TargetOrganizationID {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse("currently issued claims do not match target organization id"))
 	}
 
 	// track the organization switch event

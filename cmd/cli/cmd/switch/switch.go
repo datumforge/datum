@@ -16,11 +16,7 @@ var loginCmd = &cobra.Command{
 	Use:   "switch",
 	Short: "switch organization contexts",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := switchorg(cmd.Context()); err != nil {
-			return err
-
-		}
-		return nil
+		return switchorg(cmd.Context())
 	},
 }
 

@@ -47,12 +47,12 @@ func switchorg(ctx context.Context) error {
 		TargetOrganizationID: targetorg,
 	}
 
-	SwitchOrganizationReply, err := datumclient.Switch(dc, ctx, input, cli.AccessToken)
+	switchOrganizationReply, err := datumclient.Switch(dc, ctx, input, cli.AccessToken)
 	if err != nil {
 		return err
 	}
 
-	s, err = json.Marshal(SwitchOrganizationReply)
+	s, err = json.Marshal(switchOrganizationReply)
 	if err != nil {
 		return err
 	}

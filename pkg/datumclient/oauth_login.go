@@ -24,6 +24,7 @@ type getTokenResult struct {
 	err     error
 }
 
+// OauthLogin opens a browser window to authenticate with the provided oauth2 URL
 func OauthLogin(u string, isDev bool) (*oauth2.Token, string, error) {
 	serverAddr := "localhost:18000"
 	callback := "/oauth/callback"

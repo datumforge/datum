@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	ariga.io/entcache v0.1.0
-	entgo.io/contrib v0.4.5
+	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.45
 	github.com/99designs/keyring v1.2.2

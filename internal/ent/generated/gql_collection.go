@@ -49,13 +49,13 @@ func (dd *DocumentDataQuery) CollectFields(ctx context.Context, satisfies ...str
 	if fc == nil {
 		return dd, nil
 	}
-	if err := dd.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := dd.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return dd, nil
 }
 
-func (dd *DocumentDataQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (dd *DocumentDataQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -64,13 +64,14 @@ func (dd *DocumentDataQuery) collectField(ctx context.Context, opCtx *graphql.Op
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "template":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&TemplateClient{config: dd.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, templateImplementors)...); err != nil {
 				return err
 			}
 			dd.withTemplate = query
@@ -165,13 +166,13 @@ func (ddh *DocumentDataHistoryQuery) CollectFields(ctx context.Context, satisfie
 	if fc == nil {
 		return ddh, nil
 	}
-	if err := ddh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := ddh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return ddh, nil
 }
 
-func (ddh *DocumentDataHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (ddh *DocumentDataHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -282,13 +283,13 @@ func (e *EntitlementQuery) CollectFields(ctx context.Context, satisfies ...strin
 	if fc == nil {
 		return e, nil
 	}
-	if err := e.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := e.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return e, nil
 }
 
-func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (e *EntitlementQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -297,13 +298,14 @@ func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: e.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			e.withOwner = query
@@ -418,13 +420,13 @@ func (eh *EntitlementHistoryQuery) CollectFields(ctx context.Context, satisfies 
 	if fc == nil {
 		return eh, nil
 	}
-	if err := eh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := eh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return eh, nil
 }
 
-func (eh *EntitlementHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (eh *EntitlementHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -555,13 +557,13 @@ func (gr *GroupQuery) CollectFields(ctx context.Context, satisfies ...string) (*
 	if fc == nil {
 		return gr, nil
 	}
-	if err := gr.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := gr.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return gr, nil
 }
 
-func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (gr *GroupQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -570,13 +572,14 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: gr.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			gr.withOwner = query
@@ -584,35 +587,38 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, group.FieldOwnerID)
 				fieldSeen[group.FieldOwnerID] = struct{}{}
 			}
+
 		case "setting":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&GroupSettingClient{config: gr.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, groupsettingImplementors)...); err != nil {
 				return err
 			}
 			gr.withSetting = query
+
 		case "users":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: gr.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
 			gr.WithNamedUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
+
 		case "members":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&GroupMembershipClient{config: gr.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, groupmembershipImplementors)...); err != nil {
 				return err
 			}
 			gr.WithNamedMembers(alias, func(wq *GroupMembershipQuery) {
@@ -742,13 +748,13 @@ func (gh *GroupHistoryQuery) CollectFields(ctx context.Context, satisfies ...str
 	if fc == nil {
 		return gh, nil
 	}
-	if err := gh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := gh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return gh, nil
 }
 
-func (gh *GroupHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (gh *GroupHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -896,13 +902,13 @@ func (gm *GroupMembershipQuery) CollectFields(ctx context.Context, satisfies ...
 	if fc == nil {
 		return gm, nil
 	}
-	if err := gm.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := gm.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return gm, nil
 }
 
-func (gm *GroupMembershipQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (gm *GroupMembershipQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -911,13 +917,14 @@ func (gm *GroupMembershipQuery) collectField(ctx context.Context, opCtx *graphql
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "group":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&GroupClient{config: gm.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, groupImplementors)...); err != nil {
 				return err
 			}
 			gm.withGroup = query
@@ -925,13 +932,14 @@ func (gm *GroupMembershipQuery) collectField(ctx context.Context, opCtx *graphql
 				selectedFields = append(selectedFields, groupmembership.FieldGroupID)
 				fieldSeen[groupmembership.FieldGroupID] = struct{}{}
 			}
+
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: gm.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
 			gm.withUser = query
@@ -1031,13 +1039,13 @@ func (gmh *GroupMembershipHistoryQuery) CollectFields(ctx context.Context, satis
 	if fc == nil {
 		return gmh, nil
 	}
-	if err := gmh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := gmh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return gmh, nil
 }
 
-func (gmh *GroupMembershipHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (gmh *GroupMembershipHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -1153,13 +1161,13 @@ func (gs *GroupSettingQuery) CollectFields(ctx context.Context, satisfies ...str
 	if fc == nil {
 		return gs, nil
 	}
-	if err := gs.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := gs.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return gs, nil
 }
 
-func (gs *GroupSettingQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (gs *GroupSettingQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -1168,13 +1176,14 @@ func (gs *GroupSettingQuery) collectField(ctx context.Context, opCtx *graphql.Op
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "group":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&GroupClient{config: gs.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, groupImplementors)...); err != nil {
 				return err
 			}
 			gs.withGroup = query
@@ -1289,13 +1298,13 @@ func (gsh *GroupSettingHistoryQuery) CollectFields(ctx context.Context, satisfie
 	if fc == nil {
 		return gsh, nil
 	}
-	if err := gsh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := gsh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return gsh, nil
 }
 
-func (gsh *GroupSettingHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (gsh *GroupSettingHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -1426,13 +1435,13 @@ func (i *IntegrationQuery) CollectFields(ctx context.Context, satisfies ...strin
 	if fc == nil {
 		return i, nil
 	}
-	if err := i.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := i.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return i, nil
 }
 
-func (i *IntegrationQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (i *IntegrationQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -1441,13 +1450,14 @@ func (i *IntegrationQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: i.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			i.withOwner = query
@@ -1579,13 +1589,13 @@ func (ih *IntegrationHistoryQuery) CollectFields(ctx context.Context, satisfies 
 	if fc == nil {
 		return ih, nil
 	}
-	if err := ih.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := ih.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return ih, nil
 }
 
-func (ih *IntegrationHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (ih *IntegrationHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -1733,13 +1743,13 @@ func (i *InviteQuery) CollectFields(ctx context.Context, satisfies ...string) (*
 	if fc == nil {
 		return i, nil
 	}
-	if err := i.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := i.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return i, nil
 }
 
-func (i *InviteQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (i *InviteQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -1748,13 +1758,14 @@ func (i *InviteQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: i.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			i.withOwner = query
@@ -1874,13 +1885,13 @@ func (op *OauthProviderQuery) CollectFields(ctx context.Context, satisfies ...st
 	if fc == nil {
 		return op, nil
 	}
-	if err := op.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := op.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return op, nil
 }
 
-func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (op *OauthProviderQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -1889,13 +1900,14 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.O
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: op.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			op.withOwner = query
@@ -2021,13 +2033,13 @@ func (oph *OauthProviderHistoryQuery) CollectFields(ctx context.Context, satisfi
 	if fc == nil {
 		return oph, nil
 	}
-	if err := oph.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := oph.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return oph, nil
 }
 
-func (oph *OauthProviderHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (oph *OauthProviderHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -2173,13 +2185,13 @@ func (oatt *OhAuthTooTokenQuery) CollectFields(ctx context.Context, satisfies ..
 	if fc == nil {
 		return oatt, nil
 	}
-	if err := oatt.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := oatt.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return oatt, nil
 }
 
-func (oatt *OhAuthTooTokenQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (oatt *OhAuthTooTokenQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -2295,13 +2307,13 @@ func (om *OrgMembershipQuery) CollectFields(ctx context.Context, satisfies ...st
 	if fc == nil {
 		return om, nil
 	}
-	if err := om.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := om.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return om, nil
 }
 
-func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (om *OrgMembershipQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -2310,13 +2322,14 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "organization":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: om.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			om.withOrganization = query
@@ -2324,13 +2337,14 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 				selectedFields = append(selectedFields, orgmembership.FieldOrganizationID)
 				fieldSeen[orgmembership.FieldOrganizationID] = struct{}{}
 			}
+
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: om.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
 			om.withUser = query
@@ -2430,13 +2444,13 @@ func (omh *OrgMembershipHistoryQuery) CollectFields(ctx context.Context, satisfi
 	if fc == nil {
 		return omh, nil
 	}
-	if err := omh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := omh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return omh, nil
 }
 
-func (omh *OrgMembershipHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (omh *OrgMembershipHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -2552,13 +2566,13 @@ func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...stri
 	if fc == nil {
 		return o, nil
 	}
-	if err := o.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := o.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return o, nil
 }
 
-func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -2567,13 +2581,14 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "parent":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			o.withParent = query
@@ -2581,6 +2596,7 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, organization.FieldParentOrganizationID)
 				fieldSeen[organization.FieldParentOrganizationID] = struct{}{}
 			}
+
 		case "children":
 			var (
 				alias = field.Alias
@@ -2652,144 +2668,159 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			}
 			path = append(path, edgesField, nodeField)
 			if field := collectedField(ctx, path...); field != nil {
-				if err := query.collectField(ctx, opCtx, *field, path, mayAddCondition(satisfies, "Organization")...); err != nil {
+				if err := query.collectField(ctx, false, opCtx, *field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 					return err
 				}
 			}
 			if limit := paginateLimit(args.first, args.last); limit > 0 {
-				modify := limitRows(organization.ChildrenColumn, limit, pager.orderExpr(query))
-				query.modifiers = append(query.modifiers, modify)
+				if oneNode {
+					pager.applyOrder(query.Limit(limit))
+				} else {
+					modify := entgql.LimitPerRow(organization.ChildrenColumn, limit, pager.orderExpr(query))
+					query.modifiers = append(query.modifiers, modify)
+				}
 			} else {
 				query = pager.applyOrder(query)
 			}
 			o.WithNamedChildren(alias, func(wq *OrganizationQuery) {
 				*wq = *query
 			})
+
 		case "groups":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&GroupClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, groupImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedGroups(alias, func(wq *GroupQuery) {
 				*wq = *query
 			})
+
 		case "templates":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&TemplateClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, templateImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedTemplates(alias, func(wq *TemplateQuery) {
 				*wq = *query
 			})
+
 		case "integrations":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&IntegrationClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, integrationImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedIntegrations(alias, func(wq *IntegrationQuery) {
 				*wq = *query
 			})
+
 		case "setting":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationSettingClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationsettingImplementors)...); err != nil {
 				return err
 			}
 			o.withSetting = query
+
 		case "entitlements":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&EntitlementClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, entitlementImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedEntitlements(alias, func(wq *EntitlementQuery) {
 				*wq = *query
 			})
+
 		case "personalAccessTokens":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&PersonalAccessTokenClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, personalaccesstokenImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedPersonalAccessTokens(alias, func(wq *PersonalAccessTokenQuery) {
 				*wq = *query
 			})
+
 		case "oauthprovider":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OauthProviderClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, oauthproviderImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedOauthprovider(alias, func(wq *OauthProviderQuery) {
 				*wq = *query
 			})
+
 		case "users":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
+
 		case "invites":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&InviteClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, inviteImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedInvites(alias, func(wq *InviteQuery) {
 				*wq = *query
 			})
+
 		case "subscribers":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&SubscriberClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, subscriberImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedSubscribers(alias, func(wq *SubscriberQuery) {
 				*wq = *query
 			})
+
 		case "members":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrgMembershipClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, orgmembershipImplementors)...); err != nil {
 				return err
 			}
 			o.WithNamedMembers(alias, func(wq *OrgMembershipQuery) {
@@ -2924,13 +2955,13 @@ func (oh *OrganizationHistoryQuery) CollectFields(ctx context.Context, satisfies
 	if fc == nil {
 		return oh, nil
 	}
-	if err := oh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := oh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return oh, nil
 }
 
-func (oh *OrganizationHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (oh *OrganizationHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -3083,13 +3114,13 @@ func (os *OrganizationSettingQuery) CollectFields(ctx context.Context, satisfies
 	if fc == nil {
 		return os, nil
 	}
-	if err := os.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := os.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return os, nil
 }
 
-func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (os *OrganizationSettingQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -3098,13 +3129,14 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "organization":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: os.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			os.withOrganization = query
@@ -3234,13 +3266,13 @@ func (osh *OrganizationSettingHistoryQuery) CollectFields(ctx context.Context, s
 	if fc == nil {
 		return osh, nil
 	}
-	if err := osh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := osh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return osh, nil
 }
 
-func (osh *OrganizationSettingHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (osh *OrganizationSettingHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -3386,13 +3418,13 @@ func (pat *PersonalAccessTokenQuery) CollectFields(ctx context.Context, satisfie
 	if fc == nil {
 		return pat, nil
 	}
-	if err := pat.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := pat.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return pat, nil
 }
 
-func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -3401,13 +3433,14 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: pat.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
 			pat.withOwner = query
@@ -3415,13 +3448,14 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 				selectedFields = append(selectedFields, personalaccesstoken.FieldOwnerID)
 				fieldSeen[personalaccesstoken.FieldOwnerID] = struct{}{}
 			}
+
 		case "organizations":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: pat.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			pat.WithNamedOrganizations(alias, func(wq *OrganizationQuery) {
@@ -3534,13 +3568,13 @@ func (s *SubscriberQuery) CollectFields(ctx context.Context, satisfies ...string
 	if fc == nil {
 		return s, nil
 	}
-	if err := s.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := s.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return s, nil
 }
 
-func (s *SubscriberQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (s *SubscriberQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -3549,13 +3583,14 @@ func (s *SubscriberQuery) collectField(ctx context.Context, opCtx *graphql.Opera
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: s.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			s.withOwner = query
@@ -3670,13 +3705,13 @@ func (ts *TFASettingQuery) CollectFields(ctx context.Context, satisfies ...strin
 	if fc == nil {
 		return ts, nil
 	}
-	if err := ts.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := ts.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return ts, nil
 }
 
-func (ts *TFASettingQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (ts *TFASettingQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -3685,13 +3720,14 @@ func (ts *TFASettingQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: ts.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
 			ts.withOwner = query
@@ -3796,13 +3832,13 @@ func (t *TemplateQuery) CollectFields(ctx context.Context, satisfies ...string) 
 	if fc == nil {
 		return t, nil
 	}
-	if err := t.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := t.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return t, nil
 }
 
-func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (t *TemplateQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -3811,13 +3847,14 @@ func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: t.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			t.withOwner = query
@@ -3825,13 +3862,14 @@ func (t *TemplateQuery) collectField(ctx context.Context, opCtx *graphql.Operati
 				selectedFields = append(selectedFields, template.FieldOwnerID)
 				fieldSeen[template.FieldOwnerID] = struct{}{}
 			}
+
 		case "documents":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&DocumentDataClient{config: t.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, documentdataImplementors)...); err != nil {
 				return err
 			}
 			t.WithNamedDocuments(alias, func(wq *DocumentDataQuery) {
@@ -3961,13 +3999,13 @@ func (th *TemplateHistoryQuery) CollectFields(ctx context.Context, satisfies ...
 	if fc == nil {
 		return th, nil
 	}
-	if err := th.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := th.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return th, nil
 }
 
-func (th *TemplateHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (th *TemplateHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -4115,13 +4153,13 @@ func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*Us
 	if fc == nil {
 		return u, nil
 	}
-	if err := u.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := u.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return u, nil
 }
 
-func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (u *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -4130,83 +4168,90 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "personalAccessTokens":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&PersonalAccessTokenClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, personalaccesstokenImplementors)...); err != nil {
 				return err
 			}
 			u.WithNamedPersonalAccessTokens(alias, func(wq *PersonalAccessTokenQuery) {
 				*wq = *query
 			})
+
 		case "tfaSettings":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&TFASettingClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, tfasettingImplementors)...); err != nil {
 				return err
 			}
 			u.WithNamedTfaSettings(alias, func(wq *TFASettingQuery) {
 				*wq = *query
 			})
+
 		case "setting":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserSettingClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, usersettingImplementors)...); err != nil {
 				return err
 			}
 			u.withSetting = query
+
 		case "groups":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&GroupClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, groupImplementors)...); err != nil {
 				return err
 			}
 			u.WithNamedGroups(alias, func(wq *GroupQuery) {
 				*wq = *query
 			})
+
 		case "organizations":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			u.WithNamedOrganizations(alias, func(wq *OrganizationQuery) {
 				*wq = *query
 			})
+
 		case "groupMemberships":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&GroupMembershipClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, groupmembershipImplementors)...); err != nil {
 				return err
 			}
 			u.WithNamedGroupMemberships(alias, func(wq *GroupMembershipQuery) {
 				*wq = *query
 			})
+
 		case "orgMemberships":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrgMembershipClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, orgmembershipImplementors)...); err != nil {
 				return err
 			}
 			u.WithNamedOrgMemberships(alias, func(wq *OrgMembershipQuery) {
@@ -4361,13 +4406,13 @@ func (uh *UserHistoryQuery) CollectFields(ctx context.Context, satisfies ...stri
 	if fc == nil {
 		return uh, nil
 	}
-	if err := uh.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := uh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return uh, nil
 }
 
-func (uh *UserHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (uh *UserHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -4540,13 +4585,13 @@ func (us *UserSettingQuery) CollectFields(ctx context.Context, satisfies ...stri
 	if fc == nil {
 		return us, nil
 	}
-	if err := us.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := us.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return us, nil
 }
 
-func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (us *UserSettingQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -4555,13 +4600,14 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
 		case "user":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: us.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
 			us.withUser = query
@@ -4569,13 +4615,14 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, usersetting.FieldUserID)
 				fieldSeen[usersetting.FieldUserID] = struct{}{}
 			}
+
 		case "defaultOrg":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: us.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
 				return err
 			}
 			us.withDefaultOrg = query
@@ -4701,13 +4748,13 @@ func (ush *UserSettingHistoryQuery) CollectFields(ctx context.Context, satisfies
 	if fc == nil {
 		return ush, nil
 	}
-	if err := ush.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := ush.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
 	return ush, nil
 }
 
-func (ush *UserSettingHistoryQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (ush *UserSettingHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -4899,39 +4946,17 @@ func unmarshalArgs(ctx context.Context, whereInput any, args map[string]any) map
 	return args
 }
 
-func limitRows(partitionBy string, limit int, orderBy ...sql.Querier) func(s *sql.Selector) {
-	return func(s *sql.Selector) {
-		d := sql.Dialect(s.Dialect())
-		s.SetDistinct(false)
-		with := d.With("src_query").
-			As(s.Clone()).
-			With("limited_query").
-			As(
-				d.Select("*").
-					AppendSelectExprAs(
-						sql.RowNumber().PartitionBy(partitionBy).OrderExpr(orderBy...),
-						"row_number",
-					).
-					From(d.Table("src_query")),
-			)
-		t := d.Table("limited_query").As(s.TableName())
-		*s = *d.Select(s.UnqualifiedColumns()...).
-			From(t).
-			Where(sql.LTE(t.C("row_number"), limit)).
-			Prefix(with)
-	}
-}
-
 // mayAddCondition appends another type condition to the satisfies list
-// if condition is enabled (Node/Nodes) and it does not exist in the list.
-func mayAddCondition(satisfies []string, typeCond string) []string {
-	if len(satisfies) == 0 {
-		return satisfies
-	}
-	for _, s := range satisfies {
-		if typeCond == s {
-			return satisfies
+// if it does not exist in the list.
+func mayAddCondition(satisfies []string, typeCond []string) []string {
+Cond:
+	for _, c := range typeCond {
+		for _, s := range satisfies {
+			if c == s {
+				continue Cond
+			}
 		}
+		satisfies = append(satisfies, c)
 	}
-	return append(satisfies, typeCond)
+	return satisfies
 }

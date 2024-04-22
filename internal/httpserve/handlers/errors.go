@@ -64,6 +64,9 @@ var (
 
 	// ErrExpiredToken is returned when the token has expired
 	ErrExpiredToken = errors.New("token has expired")
+
+	// ErrUnauthorized is returned when the user is not authorized to make the request
+	ErrUnauthorized = errors.New("not authorized")
 )
 
 // IsConstraintError returns true if the error resulted from a database constraint violation.

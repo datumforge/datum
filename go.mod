@@ -19,7 +19,7 @@ require (
 	github.com/datumforge/fgax v0.1.6
 	github.com/datumforge/geodetic v0.0.3
 	github.com/docker/go-connections v0.5.0
-	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
+	github.com/dustinkirkland/golang-petname v0.0.0-20240422154211-76c06c4bde6b
 	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/go-github/v61 v61.0.0

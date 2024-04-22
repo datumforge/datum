@@ -30,32 +30,16 @@ func EntOpToHistoryOp(op ent.Op) enthistory.OpType {
 	}
 }
 
-func rollback(tx *Tx, err error) error {
-	if tx != nil {
-		if rerr := tx.Rollback(); rerr != nil {
-			err = fmt.Errorf("%w: %v", err, rerr)
-		}
-		return err
-	}
-	return err
-}
-
 func (m *DocumentDataMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.DocumentDataHistory.Create()
-	if tx != nil {
-		create = tx.DocumentDataHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -93,11 +77,9 @@ func (m *DocumentDataMutation) CreateHistoryFromCreate(ctx context.Context) erro
 		create = create.SetData(data)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *DocumentDataMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -106,26 +88,20 @@ func (m *DocumentDataMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		documentdata, err := client.DocumentData.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.DocumentDataHistory.Create()
-		if tx != nil {
-			create = tx.DocumentDataHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -179,9 +155,8 @@ func (m *DocumentDataMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 			create = create.SetData(documentdata.Data)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -194,26 +169,19 @@ func (m *DocumentDataMutation) CreateHistoryFromDelete(ctx context.Context) erro
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		documentdata, err := client.DocumentData.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.DocumentDataHistory.Create()
-		if tx != nil {
-			create = tx.DocumentDataHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -229,7 +197,7 @@ func (m *DocumentDataMutation) CreateHistoryFromDelete(ctx context.Context) erro
 			SetData(documentdata.Data).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -238,20 +206,14 @@ func (m *DocumentDataMutation) CreateHistoryFromDelete(ctx context.Context) erro
 
 func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.EntitlementHistory.Create()
-	if tx != nil {
-		create = tx.EntitlementHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -309,11 +271,9 @@ func (m *EntitlementMutation) CreateHistoryFromCreate(ctx context.Context) error
 		create = create.SetCancelled(cancelled)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -322,26 +282,20 @@ func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		entitlement, err := client.Entitlement.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.EntitlementHistory.Create()
-		if tx != nil {
-			create = tx.EntitlementHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -425,9 +379,8 @@ func (m *EntitlementMutation) CreateHistoryFromUpdate(ctx context.Context) error
 			create = create.SetCancelled(entitlement.Cancelled)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -440,26 +393,19 @@ func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		entitlement, err := client.Entitlement.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.EntitlementHistory.Create()
-		if tx != nil {
-			create = tx.EntitlementHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -480,7 +426,7 @@ func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error
 			SetCancelled(entitlement.Cancelled).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -489,20 +435,14 @@ func (m *EntitlementMutation) CreateHistoryFromDelete(ctx context.Context) error
 
 func (m *GroupMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.GroupHistory.Create()
-	if tx != nil {
-		create = tx.GroupHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -556,11 +496,9 @@ func (m *GroupMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetDisplayName(displayName)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -569,26 +507,20 @@ func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		group, err := client.Group.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.GroupHistory.Create()
-		if tx != nil {
-			create = tx.GroupHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -666,9 +598,8 @@ func (m *GroupMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetDisplayName(group.DisplayName)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -681,26 +612,19 @@ func (m *GroupMutation) CreateHistoryFromDelete(ctx context.Context) error {
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		group, err := client.Group.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.GroupHistory.Create()
-		if tx != nil {
-			create = tx.GroupHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -720,7 +644,7 @@ func (m *GroupMutation) CreateHistoryFromDelete(ctx context.Context) error {
 			SetDisplayName(group.DisplayName).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -729,20 +653,14 @@ func (m *GroupMutation) CreateHistoryFromDelete(ctx context.Context) error {
 
 func (m *GroupMembershipMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.GroupMembershipHistory.Create()
-	if tx != nil {
-		create = tx.GroupMembershipHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -784,11 +702,9 @@ func (m *GroupMembershipMutation) CreateHistoryFromCreate(ctx context.Context) e
 		create = create.SetUserID(userID)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *GroupMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -797,26 +713,20 @@ func (m *GroupMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) e
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		groupmembership, err := client.GroupMembership.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.GroupMembershipHistory.Create()
-		if tx != nil {
-			create = tx.GroupMembershipHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -876,9 +786,8 @@ func (m *GroupMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) e
 			create = create.SetUserID(groupmembership.UserID)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -891,26 +800,19 @@ func (m *GroupMembershipMutation) CreateHistoryFromDelete(ctx context.Context) e
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		groupmembership, err := client.GroupMembership.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.GroupMembershipHistory.Create()
-		if tx != nil {
-			create = tx.GroupMembershipHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -927,7 +829,7 @@ func (m *GroupMembershipMutation) CreateHistoryFromDelete(ctx context.Context) e
 			SetUserID(groupmembership.UserID).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -936,20 +838,14 @@ func (m *GroupMembershipMutation) CreateHistoryFromDelete(ctx context.Context) e
 
 func (m *GroupSettingMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.GroupSettingHistory.Create()
-	if tx != nil {
-		create = tx.GroupSettingHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -1003,11 +899,9 @@ func (m *GroupSettingMutation) CreateHistoryFromCreate(ctx context.Context) erro
 		create = create.SetGroupID(groupID)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *GroupSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -1016,26 +910,20 @@ func (m *GroupSettingMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		groupsetting, err := client.GroupSetting.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.GroupSettingHistory.Create()
-		if tx != nil {
-			create = tx.GroupSettingHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -1113,9 +1001,8 @@ func (m *GroupSettingMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 			create = create.SetGroupID(groupsetting.GroupID)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -1128,26 +1015,19 @@ func (m *GroupSettingMutation) CreateHistoryFromDelete(ctx context.Context) erro
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		groupsetting, err := client.GroupSetting.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.GroupSettingHistory.Create()
-		if tx != nil {
-			create = tx.GroupSettingHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -1167,7 +1047,7 @@ func (m *GroupSettingMutation) CreateHistoryFromDelete(ctx context.Context) erro
 			SetGroupID(groupsetting.GroupID).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -1176,20 +1056,14 @@ func (m *GroupSettingMutation) CreateHistoryFromDelete(ctx context.Context) erro
 
 func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.IntegrationHistory.Create()
-	if tx != nil {
-		create = tx.IntegrationHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -1239,11 +1113,9 @@ func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error
 		create = create.SetSecretName(secretName)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -1252,26 +1124,20 @@ func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		integration, err := client.Integration.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.IntegrationHistory.Create()
-		if tx != nil {
-			create = tx.IntegrationHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -1343,9 +1209,8 @@ func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error
 			create = create.SetSecretName(integration.SecretName)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -1358,26 +1223,19 @@ func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		integration, err := client.Integration.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.IntegrationHistory.Create()
-		if tx != nil {
-			create = tx.IntegrationHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -1396,7 +1254,7 @@ func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error
 			SetSecretName(integration.SecretName).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -1405,20 +1263,14 @@ func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error
 
 func (m *OauthProviderMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.OauthProviderHistory.Create()
-	if tx != nil {
-		create = tx.OauthProviderHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -1484,11 +1336,9 @@ func (m *OauthProviderMutation) CreateHistoryFromCreate(ctx context.Context) err
 		create = create.SetInfoURL(infoURL)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *OauthProviderMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -1497,26 +1347,20 @@ func (m *OauthProviderMutation) CreateHistoryFromUpdate(ctx context.Context) err
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		oauthprovider, err := client.OauthProvider.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OauthProviderHistory.Create()
-		if tx != nil {
-			create = tx.OauthProviderHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -1612,9 +1456,8 @@ func (m *OauthProviderMutation) CreateHistoryFromUpdate(ctx context.Context) err
 			create = create.SetInfoURL(oauthprovider.InfoURL)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -1627,26 +1470,19 @@ func (m *OauthProviderMutation) CreateHistoryFromDelete(ctx context.Context) err
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		oauthprovider, err := client.OauthProvider.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OauthProviderHistory.Create()
-		if tx != nil {
-			create = tx.OauthProviderHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -1669,7 +1505,7 @@ func (m *OauthProviderMutation) CreateHistoryFromDelete(ctx context.Context) err
 			SetInfoURL(oauthprovider.InfoURL).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -1678,20 +1514,14 @@ func (m *OauthProviderMutation) CreateHistoryFromDelete(ctx context.Context) err
 
 func (m *OrgMembershipMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.OrgMembershipHistory.Create()
-	if tx != nil {
-		create = tx.OrgMembershipHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -1733,11 +1563,9 @@ func (m *OrgMembershipMutation) CreateHistoryFromCreate(ctx context.Context) err
 		create = create.SetUserID(userID)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *OrgMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -1746,26 +1574,20 @@ func (m *OrgMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) err
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		orgmembership, err := client.OrgMembership.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OrgMembershipHistory.Create()
-		if tx != nil {
-			create = tx.OrgMembershipHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -1825,9 +1647,8 @@ func (m *OrgMembershipMutation) CreateHistoryFromUpdate(ctx context.Context) err
 			create = create.SetUserID(orgmembership.UserID)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -1840,26 +1661,19 @@ func (m *OrgMembershipMutation) CreateHistoryFromDelete(ctx context.Context) err
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		orgmembership, err := client.OrgMembership.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OrgMembershipHistory.Create()
-		if tx != nil {
-			create = tx.OrgMembershipHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -1876,7 +1690,7 @@ func (m *OrgMembershipMutation) CreateHistoryFromDelete(ctx context.Context) err
 			SetUserID(orgmembership.UserID).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -1885,20 +1699,14 @@ func (m *OrgMembershipMutation) CreateHistoryFromDelete(ctx context.Context) err
 
 func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.OrganizationHistory.Create()
-	if tx != nil {
-		create = tx.OrganizationHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -1956,11 +1764,9 @@ func (m *OrganizationMutation) CreateHistoryFromCreate(ctx context.Context) erro
 		create = create.SetDedicatedDb(dedicatedDb)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -1969,26 +1775,20 @@ func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		organization, err := client.Organization.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OrganizationHistory.Create()
-		if tx != nil {
-			create = tx.OrganizationHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -2072,9 +1872,8 @@ func (m *OrganizationMutation) CreateHistoryFromUpdate(ctx context.Context) erro
 			create = create.SetDedicatedDb(organization.DedicatedDb)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -2087,26 +1886,19 @@ func (m *OrganizationMutation) CreateHistoryFromDelete(ctx context.Context) erro
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		organization, err := client.Organization.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OrganizationHistory.Create()
-		if tx != nil {
-			create = tx.OrganizationHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -2127,7 +1919,7 @@ func (m *OrganizationMutation) CreateHistoryFromDelete(ctx context.Context) erro
 			SetDedicatedDb(organization.DedicatedDb).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -2136,20 +1928,14 @@ func (m *OrganizationMutation) CreateHistoryFromDelete(ctx context.Context) erro
 
 func (m *OrganizationSettingMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.OrganizationSettingHistory.Create()
-	if tx != nil {
-		create = tx.OrganizationSettingHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -2215,11 +2001,9 @@ func (m *OrganizationSettingMutation) CreateHistoryFromCreate(ctx context.Contex
 		create = create.SetOrganizationID(organizationID)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *OrganizationSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -2228,26 +2012,20 @@ func (m *OrganizationSettingMutation) CreateHistoryFromUpdate(ctx context.Contex
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		organizationsetting, err := client.OrganizationSetting.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OrganizationSettingHistory.Create()
-		if tx != nil {
-			create = tx.OrganizationSettingHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -2343,9 +2121,8 @@ func (m *OrganizationSettingMutation) CreateHistoryFromUpdate(ctx context.Contex
 			create = create.SetOrganizationID(organizationsetting.OrganizationID)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -2358,26 +2135,19 @@ func (m *OrganizationSettingMutation) CreateHistoryFromDelete(ctx context.Contex
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		organizationsetting, err := client.OrganizationSetting.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.OrganizationSettingHistory.Create()
-		if tx != nil {
-			create = tx.OrganizationSettingHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -2400,7 +2170,7 @@ func (m *OrganizationSettingMutation) CreateHistoryFromDelete(ctx context.Contex
 			SetOrganizationID(organizationsetting.OrganizationID).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -2409,20 +2179,14 @@ func (m *OrganizationSettingMutation) CreateHistoryFromDelete(ctx context.Contex
 
 func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.TemplateHistory.Create()
-	if tx != nil {
-		create = tx.TemplateHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -2476,11 +2240,9 @@ func (m *TemplateMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetUischema(uischema)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *TemplateMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -2489,26 +2251,20 @@ func (m *TemplateMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		template, err := client.Template.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.TemplateHistory.Create()
-		if tx != nil {
-			create = tx.TemplateHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -2586,9 +2342,8 @@ func (m *TemplateMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetUischema(template.Uischema)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -2601,26 +2356,19 @@ func (m *TemplateMutation) CreateHistoryFromDelete(ctx context.Context) error {
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		template, err := client.Template.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.TemplateHistory.Create()
-		if tx != nil {
-			create = tx.TemplateHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -2640,7 +2388,7 @@ func (m *TemplateMutation) CreateHistoryFromDelete(ctx context.Context) error {
 			SetUischema(template.Uischema).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -2649,20 +2397,14 @@ func (m *TemplateMutation) CreateHistoryFromDelete(ctx context.Context) error {
 
 func (m *UserMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.UserHistory.Create()
-	if tx != nil {
-		create = tx.UserHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -2736,11 +2478,9 @@ func (m *UserMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetAuthProvider(authProvider)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *UserMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -2749,26 +2489,20 @@ func (m *UserMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		user, err := client.User.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.UserHistory.Create()
-		if tx != nil {
-			create = tx.UserHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -2876,9 +2610,8 @@ func (m *UserMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetAuthProvider(user.AuthProvider)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -2891,26 +2624,19 @@ func (m *UserMutation) CreateHistoryFromDelete(ctx context.Context) error {
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		user, err := client.User.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.UserHistory.Create()
-		if tx != nil {
-			create = tx.UserHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -2935,7 +2661,7 @@ func (m *UserMutation) CreateHistoryFromDelete(ctx context.Context) error {
 			SetAuthProvider(user.AuthProvider).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 
@@ -2944,20 +2670,14 @@ func (m *UserMutation) CreateHistoryFromDelete(ctx context.Context) error {
 
 func (m *UserSettingMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	id, ok := m.ID()
 	if !ok {
-		return rollback(tx, idNotFoundError)
+		return idNotFoundError
 	}
 
 	create := client.UserSettingHistory.Create()
-	if tx != nil {
-		create = tx.UserSettingHistory.Create()
-	}
+
 	create = create.
 		SetOperation(EntOpToHistoryOp(m.Op())).
 		SetHistoryTime(time.Now()).
@@ -3027,11 +2747,9 @@ func (m *UserSettingMutation) CreateHistoryFromCreate(ctx context.Context) error
 		create = create.SetNillablePhoneNumber(&phoneNumber)
 	}
 
-	_, err = create.Save(ctx)
-	if err != nil {
-		rollback(tx, err)
-	}
-	return nil
+	_, err := create.Save(ctx)
+
+	return err
 }
 
 func (m *UserSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error {
@@ -3040,26 +2758,20 @@ func (m *UserSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error
 		return m.CreateHistoryFromDelete(ctx)
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		usersetting, err := client.UserSetting.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.UserSettingHistory.Create()
-		if tx != nil {
-			create = tx.UserSettingHistory.Create()
-		}
+
 		create = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
 			SetHistoryTime(time.Now()).
@@ -3161,9 +2873,8 @@ func (m *UserSettingMutation) CreateHistoryFromUpdate(ctx context.Context) error
 			create = create.SetNillablePhoneNumber(usersetting.PhoneNumber)
 		}
 
-		_, err = create.Save(ctx)
-		if err != nil {
-			rollback(tx, err)
+		if _, err := create.Save(ctx); err != nil {
+			return err
 		}
 	}
 
@@ -3176,26 +2887,19 @@ func (m *UserSettingMutation) CreateHistoryFromDelete(ctx context.Context) error
 		return nil
 	}
 	client := m.Client()
-	tx, err := m.Tx()
-	if err != nil {
-		tx = nil
-	}
 
 	ids, err := m.IDs(ctx)
 	if err != nil {
-		return rollback(tx, fmt.Errorf("getting ids: %w", err))
+		return fmt.Errorf("getting ids: %w", err)
 	}
 
 	for _, id := range ids {
 		usersetting, err := client.UserSetting.Get(ctx, id)
 		if err != nil {
-			return rollback(tx, err)
+			return err
 		}
 
 		create := client.UserSettingHistory.Create()
-		if tx != nil {
-			create = tx.UserSettingHistory.Create()
-		}
 
 		_, err = create.
 			SetOperation(EntOpToHistoryOp(m.Op())).
@@ -3219,7 +2923,7 @@ func (m *UserSettingMutation) CreateHistoryFromDelete(ctx context.Context) error
 			SetNillablePhoneNumber(usersetting.PhoneNumber).
 			Save(ctx)
 		if err != nil {
-			rollback(tx, err)
+			return err
 		}
 	}
 

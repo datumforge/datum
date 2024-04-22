@@ -105,6 +105,17 @@ type ComplexityRoot struct {
 		UpdatedBy   func(childComplexity int) int
 	}
 
+	DocumentDataHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	DocumentDataHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	DocumentDataUpdatePayload struct {
 		DocumentData func(childComplexity int) int
 	}
@@ -170,6 +181,17 @@ type ComplexityRoot struct {
 		UpdatedBy              func(childComplexity int) int
 	}
 
+	EntitlementHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	EntitlementHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	EntitlementUpdatePayload struct {
 		Entitlement func(childComplexity int) int
 	}
@@ -230,6 +252,17 @@ type ComplexityRoot struct {
 		UpdatedBy       func(childComplexity int) int
 	}
 
+	GroupHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	GroupHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	GroupMembership struct {
 		CreatedAt func(childComplexity int) int
 		CreatedBy func(childComplexity int) int
@@ -278,6 +311,17 @@ type ComplexityRoot struct {
 		UpdatedAt   func(childComplexity int) int
 		UpdatedBy   func(childComplexity int) int
 		UserID      func(childComplexity int) int
+	}
+
+	GroupMembershipHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	GroupMembershipHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	GroupMembershipUpdatePayload struct {
@@ -339,6 +383,17 @@ type ComplexityRoot struct {
 		Visibility   func(childComplexity int) int
 	}
 
+	GroupSettingHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	GroupSettingHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	GroupSettingUpdatePayload struct {
 		GroupSetting func(childComplexity int) int
 	}
@@ -398,6 +453,17 @@ type ComplexityRoot struct {
 		SecretName  func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UpdatedBy   func(childComplexity int) int
+	}
+
+	IntegrationHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	IntegrationHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	IntegrationUpdatePayload struct {
@@ -557,6 +623,17 @@ type ComplexityRoot struct {
 		UpdatedBy    func(childComplexity int) int
 	}
 
+	OauthProviderHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	OauthProviderHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	OauthProviderUpdatePayload struct {
 		OauthProvider func(childComplexity int) int
 	}
@@ -650,6 +727,17 @@ type ComplexityRoot struct {
 		UserID         func(childComplexity int) int
 	}
 
+	OrgMembershipHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	OrgMembershipHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	OrgMembershipUpdatePayload struct {
 		OrgMembership func(childComplexity int) int
 	}
@@ -721,6 +809,17 @@ type ComplexityRoot struct {
 		UpdatedBy       func(childComplexity int) int
 	}
 
+	OrganizationHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	OrganizationHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	OrganizationSetting struct {
 		BillingAddress func(childComplexity int) int
 		BillingContact func(childComplexity int) int
@@ -782,6 +881,17 @@ type ComplexityRoot struct {
 		UpdatedBy      func(childComplexity int) int
 	}
 
+	OrganizationSettingHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	OrganizationSettingHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	OrganizationSettingUpdatePayload struct {
 		OrganizationSetting func(childComplexity int) int
 	}
@@ -839,44 +949,57 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		DocumentData         func(childComplexity int, id string) int
-		DocumentDataSlice    func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataWhereInput) int
-		Entitlement          func(childComplexity int, id string) int
-		Entitlements         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) int
-		Group                func(childComplexity int, id string) int
-		GroupMembership      func(childComplexity int, id string) int
-		GroupMemberships     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) int
-		GroupSetting         func(childComplexity int, id string) int
-		GroupSettings        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) int
-		Groups               func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) int
-		Integration          func(childComplexity int, id string) int
-		Integrations         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) int
-		Invite               func(childComplexity int, id string) int
-		Invites              func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.InviteWhereInput) int
-		Node                 func(childComplexity int, id string) int
-		Nodes                func(childComplexity int, ids []string) int
-		OauthProvider        func(childComplexity int, id string) int
-		OauthProviders       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) int
-		OhAuthTooToken       func(childComplexity int, id string) int
-		OhAuthTooTokens      func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OhAuthTooTokenWhereInput) int
-		OrgMembership        func(childComplexity int, id string) int
-		OrgMemberships       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipWhereInput) int
-		Organization         func(childComplexity int, id string) int
-		OrganizationSetting  func(childComplexity int, id string) int
-		OrganizationSettings func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) int
-		Organizations        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
-		PersonalAccessToken  func(childComplexity int, id string) int
-		PersonalAccessTokens func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
-		Subscriber           func(childComplexity int, id string) int
-		Subscribers          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) int
-		Template             func(childComplexity int, id string) int
-		Templates            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) int
-		TfaSetting           func(childComplexity int, id *string) int
-		TfaSettings          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) int
-		User                 func(childComplexity int, id string) int
-		UserSetting          func(childComplexity int, id string) int
-		UserSettings         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) int
-		Users                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
+		DocumentData                 func(childComplexity int, id string) int
+		DocumentDataHistories        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataHistoryWhereInput) int
+		DocumentDataSlice            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataWhereInput) int
+		Entitlement                  func(childComplexity int, id string) int
+		EntitlementHistories         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementHistoryWhereInput) int
+		Entitlements                 func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) int
+		Group                        func(childComplexity int, id string) int
+		GroupHistories               func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupHistoryOrder, where *generated.GroupHistoryWhereInput) int
+		GroupMembership              func(childComplexity int, id string) int
+		GroupMembershipHistories     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipHistoryWhereInput) int
+		GroupMemberships             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) int
+		GroupSetting                 func(childComplexity int, id string) int
+		GroupSettingHistories        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingHistoryWhereInput) int
+		GroupSettings                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) int
+		Groups                       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) int
+		Integration                  func(childComplexity int, id string) int
+		IntegrationHistories         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationHistoryOrder, where *generated.IntegrationHistoryWhereInput) int
+		Integrations                 func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) int
+		Invite                       func(childComplexity int, id string) int
+		Invites                      func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.InviteWhereInput) int
+		Node                         func(childComplexity int, id string) int
+		Nodes                        func(childComplexity int, ids []string) int
+		OauthProvider                func(childComplexity int, id string) int
+		OauthProviderHistories       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderHistoryWhereInput) int
+		OauthProviders               func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) int
+		OhAuthTooToken               func(childComplexity int, id string) int
+		OhAuthTooTokens              func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OhAuthTooTokenWhereInput) int
+		OrgMembership                func(childComplexity int, id string) int
+		OrgMembershipHistories       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipHistoryWhereInput) int
+		OrgMemberships               func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipWhereInput) int
+		Organization                 func(childComplexity int, id string) int
+		OrganizationHistories        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationHistoryOrder, where *generated.OrganizationHistoryWhereInput) int
+		OrganizationSetting          func(childComplexity int, id string) int
+		OrganizationSettingHistories func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingHistoryWhereInput) int
+		OrganizationSettings         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) int
+		Organizations                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
+		PersonalAccessToken          func(childComplexity int, id string) int
+		PersonalAccessTokens         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
+		Subscriber                   func(childComplexity int, id string) int
+		Subscribers                  func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) int
+		Template                     func(childComplexity int, id string) int
+		TemplateHistories            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateHistoryOrder, where *generated.TemplateHistoryWhereInput) int
+		Templates                    func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) int
+		TfaSetting                   func(childComplexity int, id *string) int
+		TfaSettings                  func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) int
+		User                         func(childComplexity int, id string) int
+		UserHistories                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserHistoryOrder, where *generated.UserHistoryWhereInput) int
+		UserSetting                  func(childComplexity int, id string) int
+		UserSettingHistories         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingHistoryWhereInput) int
+		UserSettings                 func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) int
+		Users                        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
 	}
 
 	Subscriber struct {
@@ -1011,6 +1134,17 @@ type ComplexityRoot struct {
 		UpdatedBy    func(childComplexity int) int
 	}
 
+	TemplateHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	TemplateHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	TemplateUpdatePayload struct {
 		Template func(childComplexity int) int
 	}
@@ -1084,6 +1218,17 @@ type ComplexityRoot struct {
 		UpdatedBy       func(childComplexity int) int
 	}
 
+	UserHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	UserHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	UserSetting struct {
 		CreatedAt         func(childComplexity int) int
 		CreatedBy         func(childComplexity int) int
@@ -1136,6 +1281,17 @@ type ComplexityRoot struct {
 		UpdatedAt         func(childComplexity int) int
 		UpdatedBy         func(childComplexity int) int
 		UserID            func(childComplexity int) int
+	}
+
+	UserSettingHistoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	UserSettingHistoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	UserSettingUpdatePayload struct {
@@ -1201,23 +1357,36 @@ type QueryResolver interface {
 	Node(ctx context.Context, id string) (generated.Noder, error)
 	Nodes(ctx context.Context, ids []string) ([]generated.Noder, error)
 	DocumentDataSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataWhereInput) (*generated.DocumentDataConnection, error)
+	DocumentDataHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.DocumentDataHistoryWhereInput) (*generated.DocumentDataHistoryConnection, error)
 	Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error)
+	EntitlementHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementHistoryWhereInput) (*generated.EntitlementHistoryConnection, error)
 	Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error)
+	GroupHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupHistoryOrder, where *generated.GroupHistoryWhereInput) (*generated.GroupHistoryConnection, error)
 	GroupMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) (*generated.GroupMembershipConnection, error)
+	GroupMembershipHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipHistoryWhereInput) (*generated.GroupMembershipHistoryConnection, error)
 	GroupSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error)
+	GroupSettingHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingHistoryWhereInput) (*generated.GroupSettingHistoryConnection, error)
 	Integrations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) (*generated.IntegrationConnection, error)
+	IntegrationHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationHistoryOrder, where *generated.IntegrationHistoryWhereInput) (*generated.IntegrationHistoryConnection, error)
 	Invites(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.InviteWhereInput) (*generated.InviteConnection, error)
 	OauthProviders(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) (*generated.OauthProviderConnection, error)
+	OauthProviderHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderHistoryWhereInput) (*generated.OauthProviderHistoryConnection, error)
 	OhAuthTooTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OhAuthTooTokenWhereInput) (*generated.OhAuthTooTokenConnection, error)
 	OrgMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipWhereInput) (*generated.OrgMembershipConnection, error)
+	OrgMembershipHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipHistoryWhereInput) (*generated.OrgMembershipHistoryConnection, error)
 	Organizations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error)
+	OrganizationHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationHistoryOrder, where *generated.OrganizationHistoryWhereInput) (*generated.OrganizationHistoryConnection, error)
 	OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error)
+	OrganizationSettingHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingHistoryWhereInput) (*generated.OrganizationSettingHistoryConnection, error)
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
 	Subscribers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriberWhereInput) (*generated.SubscriberConnection, error)
 	TfaSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.TFASettingWhereInput) (*generated.TFASettingConnection, error)
 	Templates(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateOrder, where *generated.TemplateWhereInput) (*generated.TemplateConnection, error)
+	TemplateHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.TemplateHistoryOrder, where *generated.TemplateHistoryWhereInput) (*generated.TemplateHistoryConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
+	UserHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserHistoryOrder, where *generated.UserHistoryWhereInput) (*generated.UserHistoryConnection, error)
 	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
+	UserSettingHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingHistoryWhereInput) (*generated.UserSettingHistoryConnection, error)
 	DocumentData(ctx context.Context, id string) (*generated.DocumentData, error)
 	Entitlement(ctx context.Context, id string) (*generated.Entitlement, error)
 	Group(ctx context.Context, id string) (*generated.Group, error)
@@ -1480,6 +1649,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DocumentDataHistory.UpdatedBy(childComplexity), true
+
+	case "DocumentDataHistoryConnection.edges":
+		if e.complexity.DocumentDataHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataHistoryConnection.Edges(childComplexity), true
+
+	case "DocumentDataHistoryConnection.pageInfo":
+		if e.complexity.DocumentDataHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataHistoryConnection.PageInfo(childComplexity), true
+
+	case "DocumentDataHistoryConnection.totalCount":
+		if e.complexity.DocumentDataHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataHistoryConnection.TotalCount(childComplexity), true
+
+	case "DocumentDataHistoryEdge.cursor":
+		if e.complexity.DocumentDataHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataHistoryEdge.Cursor(childComplexity), true
+
+	case "DocumentDataHistoryEdge.node":
+		if e.complexity.DocumentDataHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.DocumentDataHistoryEdge.Node(childComplexity), true
 
 	case "DocumentDataUpdatePayload.documentData":
 		if e.complexity.DocumentDataUpdatePayload.DocumentData == nil {
@@ -1768,6 +1972,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.EntitlementHistory.UpdatedBy(childComplexity), true
 
+	case "EntitlementHistoryConnection.edges":
+		if e.complexity.EntitlementHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.EntitlementHistoryConnection.Edges(childComplexity), true
+
+	case "EntitlementHistoryConnection.pageInfo":
+		if e.complexity.EntitlementHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.EntitlementHistoryConnection.PageInfo(childComplexity), true
+
+	case "EntitlementHistoryConnection.totalCount":
+		if e.complexity.EntitlementHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.EntitlementHistoryConnection.TotalCount(childComplexity), true
+
+	case "EntitlementHistoryEdge.cursor":
+		if e.complexity.EntitlementHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.EntitlementHistoryEdge.Cursor(childComplexity), true
+
+	case "EntitlementHistoryEdge.node":
+		if e.complexity.EntitlementHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.EntitlementHistoryEdge.Node(childComplexity), true
+
 	case "EntitlementUpdatePayload.entitlement":
 		if e.complexity.EntitlementUpdatePayload.Entitlement == nil {
 			break
@@ -2041,6 +2280,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GroupHistory.UpdatedBy(childComplexity), true
 
+	case "GroupHistoryConnection.edges":
+		if e.complexity.GroupHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.GroupHistoryConnection.Edges(childComplexity), true
+
+	case "GroupHistoryConnection.pageInfo":
+		if e.complexity.GroupHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.GroupHistoryConnection.PageInfo(childComplexity), true
+
+	case "GroupHistoryConnection.totalCount":
+		if e.complexity.GroupHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.GroupHistoryConnection.TotalCount(childComplexity), true
+
+	case "GroupHistoryEdge.cursor":
+		if e.complexity.GroupHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.GroupHistoryEdge.Cursor(childComplexity), true
+
+	case "GroupHistoryEdge.node":
+		if e.complexity.GroupHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.GroupHistoryEdge.Node(childComplexity), true
+
 	case "GroupMembership.createdAt":
 		if e.complexity.GroupMembership.CreatedAt == nil {
 			break
@@ -2264,6 +2538,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GroupMembershipHistory.UserID(childComplexity), true
+
+	case "GroupMembershipHistoryConnection.edges":
+		if e.complexity.GroupMembershipHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.GroupMembershipHistoryConnection.Edges(childComplexity), true
+
+	case "GroupMembershipHistoryConnection.pageInfo":
+		if e.complexity.GroupMembershipHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.GroupMembershipHistoryConnection.PageInfo(childComplexity), true
+
+	case "GroupMembershipHistoryConnection.totalCount":
+		if e.complexity.GroupMembershipHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.GroupMembershipHistoryConnection.TotalCount(childComplexity), true
+
+	case "GroupMembershipHistoryEdge.cursor":
+		if e.complexity.GroupMembershipHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.GroupMembershipHistoryEdge.Cursor(childComplexity), true
+
+	case "GroupMembershipHistoryEdge.node":
+		if e.complexity.GroupMembershipHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.GroupMembershipHistoryEdge.Node(childComplexity), true
 
 	case "GroupMembershipUpdatePayload.groupMembership":
 		if e.complexity.GroupMembershipUpdatePayload.GroupMembership == nil {
@@ -2531,6 +2840,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GroupSettingHistory.Visibility(childComplexity), true
 
+	case "GroupSettingHistoryConnection.edges":
+		if e.complexity.GroupSettingHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingHistoryConnection.Edges(childComplexity), true
+
+	case "GroupSettingHistoryConnection.pageInfo":
+		if e.complexity.GroupSettingHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingHistoryConnection.PageInfo(childComplexity), true
+
+	case "GroupSettingHistoryConnection.totalCount":
+		if e.complexity.GroupSettingHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingHistoryConnection.TotalCount(childComplexity), true
+
+	case "GroupSettingHistoryEdge.cursor":
+		if e.complexity.GroupSettingHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingHistoryEdge.Cursor(childComplexity), true
+
+	case "GroupSettingHistoryEdge.node":
+		if e.complexity.GroupSettingHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingHistoryEdge.Node(childComplexity), true
+
 	case "GroupSettingUpdatePayload.groupSetting":
 		if e.complexity.GroupSettingUpdatePayload.GroupSetting == nil {
 			break
@@ -2789,6 +3133,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IntegrationHistory.UpdatedBy(childComplexity), true
+
+	case "IntegrationHistoryConnection.edges":
+		if e.complexity.IntegrationHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.IntegrationHistoryConnection.Edges(childComplexity), true
+
+	case "IntegrationHistoryConnection.pageInfo":
+		if e.complexity.IntegrationHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.IntegrationHistoryConnection.PageInfo(childComplexity), true
+
+	case "IntegrationHistoryConnection.totalCount":
+		if e.complexity.IntegrationHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.IntegrationHistoryConnection.TotalCount(childComplexity), true
+
+	case "IntegrationHistoryEdge.cursor":
+		if e.complexity.IntegrationHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.IntegrationHistoryEdge.Cursor(childComplexity), true
+
+	case "IntegrationHistoryEdge.node":
+		if e.complexity.IntegrationHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.IntegrationHistoryEdge.Node(childComplexity), true
 
 	case "IntegrationUpdatePayload.integration":
 		if e.complexity.IntegrationUpdatePayload.Integration == nil {
@@ -3835,6 +4214,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OauthProviderHistory.UpdatedBy(childComplexity), true
 
+	case "OauthProviderHistoryConnection.edges":
+		if e.complexity.OauthProviderHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.OauthProviderHistoryConnection.Edges(childComplexity), true
+
+	case "OauthProviderHistoryConnection.pageInfo":
+		if e.complexity.OauthProviderHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.OauthProviderHistoryConnection.PageInfo(childComplexity), true
+
+	case "OauthProviderHistoryConnection.totalCount":
+		if e.complexity.OauthProviderHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.OauthProviderHistoryConnection.TotalCount(childComplexity), true
+
+	case "OauthProviderHistoryEdge.cursor":
+		if e.complexity.OauthProviderHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.OauthProviderHistoryEdge.Cursor(childComplexity), true
+
+	case "OauthProviderHistoryEdge.node":
+		if e.complexity.OauthProviderHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.OauthProviderHistoryEdge.Node(childComplexity), true
+
 	case "OauthProviderUpdatePayload.oauthProvider":
 		if e.complexity.OauthProviderUpdatePayload.OauthProvider == nil {
 			break
@@ -4213,6 +4627,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrgMembershipHistory.UserID(childComplexity), true
 
+	case "OrgMembershipHistoryConnection.edges":
+		if e.complexity.OrgMembershipHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.OrgMembershipHistoryConnection.Edges(childComplexity), true
+
+	case "OrgMembershipHistoryConnection.pageInfo":
+		if e.complexity.OrgMembershipHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.OrgMembershipHistoryConnection.PageInfo(childComplexity), true
+
+	case "OrgMembershipHistoryConnection.totalCount":
+		if e.complexity.OrgMembershipHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.OrgMembershipHistoryConnection.TotalCount(childComplexity), true
+
+	case "OrgMembershipHistoryEdge.cursor":
+		if e.complexity.OrgMembershipHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.OrgMembershipHistoryEdge.Cursor(childComplexity), true
+
+	case "OrgMembershipHistoryEdge.node":
+		if e.complexity.OrgMembershipHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.OrgMembershipHistoryEdge.Node(childComplexity), true
+
 	case "OrgMembershipUpdatePayload.orgMembership":
 		if e.complexity.OrgMembershipUpdatePayload.OrgMembership == nil {
 			break
@@ -4568,6 +5017,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrganizationHistory.UpdatedBy(childComplexity), true
 
+	case "OrganizationHistoryConnection.edges":
+		if e.complexity.OrganizationHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.OrganizationHistoryConnection.Edges(childComplexity), true
+
+	case "OrganizationHistoryConnection.pageInfo":
+		if e.complexity.OrganizationHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.OrganizationHistoryConnection.PageInfo(childComplexity), true
+
+	case "OrganizationHistoryConnection.totalCount":
+		if e.complexity.OrganizationHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.OrganizationHistoryConnection.TotalCount(childComplexity), true
+
+	case "OrganizationHistoryEdge.cursor":
+		if e.complexity.OrganizationHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.OrganizationHistoryEdge.Cursor(childComplexity), true
+
+	case "OrganizationHistoryEdge.node":
+		if e.complexity.OrganizationHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.OrganizationHistoryEdge.Node(childComplexity), true
+
 	case "OrganizationSetting.billingAddress":
 		if e.complexity.OrganizationSetting.BillingAddress == nil {
 			break
@@ -4869,6 +5353,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrganizationSettingHistory.UpdatedBy(childComplexity), true
 
+	case "OrganizationSettingHistoryConnection.edges":
+		if e.complexity.OrganizationSettingHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingHistoryConnection.Edges(childComplexity), true
+
+	case "OrganizationSettingHistoryConnection.pageInfo":
+		if e.complexity.OrganizationSettingHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingHistoryConnection.PageInfo(childComplexity), true
+
+	case "OrganizationSettingHistoryConnection.totalCount":
+		if e.complexity.OrganizationSettingHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingHistoryConnection.TotalCount(childComplexity), true
+
+	case "OrganizationSettingHistoryEdge.cursor":
+		if e.complexity.OrganizationSettingHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingHistoryEdge.Cursor(childComplexity), true
+
+	case "OrganizationSettingHistoryEdge.node":
+		if e.complexity.OrganizationSettingHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingHistoryEdge.Node(childComplexity), true
+
 	case "OrganizationSettingUpdatePayload.organizationSetting":
 		if e.complexity.OrganizationSettingUpdatePayload.OrganizationSetting == nil {
 			break
@@ -5084,6 +5603,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.DocumentData(childComplexity, args["id"].(string)), true
 
+	case "Query.documentDataHistories":
+		if e.complexity.Query.DocumentDataHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_documentDataHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.DocumentDataHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.DocumentDataHistoryWhereInput)), true
+
 	case "Query.documentDataSlice":
 		if e.complexity.Query.DocumentDataSlice == nil {
 			break
@@ -5107,6 +5638,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Entitlement(childComplexity, args["id"].(string)), true
+
+	case "Query.entitlementHistories":
+		if e.complexity.Query.EntitlementHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_entitlementHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.EntitlementHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.EntitlementHistoryWhereInput)), true
 
 	case "Query.entitlements":
 		if e.complexity.Query.Entitlements == nil {
@@ -5132,6 +5675,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Group(childComplexity, args["id"].(string)), true
 
+	case "Query.groupHistories":
+		if e.complexity.Query.GroupHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_groupHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GroupHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.GroupHistoryOrder), args["where"].(*generated.GroupHistoryWhereInput)), true
+
 	case "Query.groupMembership":
 		if e.complexity.Query.GroupMembership == nil {
 			break
@@ -5143,6 +5698,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GroupMembership(childComplexity, args["id"].(string)), true
+
+	case "Query.groupMembershipHistories":
+		if e.complexity.Query.GroupMembershipHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_groupMembershipHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GroupMembershipHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.GroupMembershipHistoryWhereInput)), true
 
 	case "Query.groupMemberships":
 		if e.complexity.Query.GroupMemberships == nil {
@@ -5167,6 +5734,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GroupSetting(childComplexity, args["id"].(string)), true
+
+	case "Query.groupSettingHistories":
+		if e.complexity.Query.GroupSettingHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_groupSettingHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GroupSettingHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.GroupSettingHistoryWhereInput)), true
 
 	case "Query.groupSettings":
 		if e.complexity.Query.GroupSettings == nil {
@@ -5203,6 +5782,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Integration(childComplexity, args["id"].(string)), true
+
+	case "Query.integrationHistories":
+		if e.complexity.Query.IntegrationHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_integrationHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.IntegrationHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.IntegrationHistoryOrder), args["where"].(*generated.IntegrationHistoryWhereInput)), true
 
 	case "Query.integrations":
 		if e.complexity.Query.Integrations == nil {
@@ -5276,6 +5867,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.OauthProvider(childComplexity, args["id"].(string)), true
 
+	case "Query.oauthProviderHistories":
+		if e.complexity.Query.OauthProviderHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_oauthProviderHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OauthProviderHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.OauthProviderHistoryWhereInput)), true
+
 	case "Query.oauthProviders":
 		if e.complexity.Query.OauthProviders == nil {
 			break
@@ -5324,6 +5927,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.OrgMembership(childComplexity, args["id"].(string)), true
 
+	case "Query.orgMembershipHistories":
+		if e.complexity.Query.OrgMembershipHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_orgMembershipHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OrgMembershipHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.OrgMembershipHistoryWhereInput)), true
+
 	case "Query.orgMemberships":
 		if e.complexity.Query.OrgMemberships == nil {
 			break
@@ -5348,6 +5963,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Organization(childComplexity, args["id"].(string)), true
 
+	case "Query.organizationHistories":
+		if e.complexity.Query.OrganizationHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_organizationHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OrganizationHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.OrganizationHistoryOrder), args["where"].(*generated.OrganizationHistoryWhereInput)), true
+
 	case "Query.organizationSetting":
 		if e.complexity.Query.OrganizationSetting == nil {
 			break
@@ -5359,6 +5986,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.OrganizationSetting(childComplexity, args["id"].(string)), true
+
+	case "Query.organizationSettingHistories":
+		if e.complexity.Query.OrganizationSettingHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_organizationSettingHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OrganizationSettingHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.OrganizationSettingHistoryWhereInput)), true
 
 	case "Query.organizationSettings":
 		if e.complexity.Query.OrganizationSettings == nil {
@@ -5444,6 +6083,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Template(childComplexity, args["id"].(string)), true
 
+	case "Query.templateHistories":
+		if e.complexity.Query.TemplateHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_templateHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TemplateHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.TemplateHistoryOrder), args["where"].(*generated.TemplateHistoryWhereInput)), true
+
 	case "Query.templates":
 		if e.complexity.Query.Templates == nil {
 			break
@@ -5492,6 +6143,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
+	case "Query.userHistories":
+		if e.complexity.Query.UserHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.UserHistoryOrder), args["where"].(*generated.UserHistoryWhereInput)), true
+
 	case "Query.userSetting":
 		if e.complexity.Query.UserSetting == nil {
 			break
@@ -5503,6 +6166,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.UserSetting(childComplexity, args["id"].(string)), true
+
+	case "Query.userSettingHistories":
+		if e.complexity.Query.UserSettingHistories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userSettingHistories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserSettingHistories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.UserSettingHistoryWhereInput)), true
 
 	case "Query.userSettings":
 		if e.complexity.Query.UserSettings == nil {
@@ -6079,6 +6754,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TemplateHistory.UpdatedBy(childComplexity), true
 
+	case "TemplateHistoryConnection.edges":
+		if e.complexity.TemplateHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.TemplateHistoryConnection.Edges(childComplexity), true
+
+	case "TemplateHistoryConnection.pageInfo":
+		if e.complexity.TemplateHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.TemplateHistoryConnection.PageInfo(childComplexity), true
+
+	case "TemplateHistoryConnection.totalCount":
+		if e.complexity.TemplateHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.TemplateHistoryConnection.TotalCount(childComplexity), true
+
+	case "TemplateHistoryEdge.cursor":
+		if e.complexity.TemplateHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.TemplateHistoryEdge.Cursor(childComplexity), true
+
+	case "TemplateHistoryEdge.node":
+		if e.complexity.TemplateHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.TemplateHistoryEdge.Node(childComplexity), true
+
 	case "TemplateUpdatePayload.template":
 		if e.complexity.TemplateUpdatePayload.Template == nil {
 			break
@@ -6443,6 +7153,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserHistory.UpdatedBy(childComplexity), true
 
+	case "UserHistoryConnection.edges":
+		if e.complexity.UserHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.UserHistoryConnection.Edges(childComplexity), true
+
+	case "UserHistoryConnection.pageInfo":
+		if e.complexity.UserHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.UserHistoryConnection.PageInfo(childComplexity), true
+
+	case "UserHistoryConnection.totalCount":
+		if e.complexity.UserHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.UserHistoryConnection.TotalCount(childComplexity), true
+
+	case "UserHistoryEdge.cursor":
+		if e.complexity.UserHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.UserHistoryEdge.Cursor(childComplexity), true
+
+	case "UserHistoryEdge.node":
+		if e.complexity.UserHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.UserHistoryEdge.Node(childComplexity), true
+
 	case "UserSetting.createdAt":
 		if e.complexity.UserSetting.CreatedAt == nil {
 			break
@@ -6736,6 +7481,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UserSettingHistory.UserID(childComplexity), true
+
+	case "UserSettingHistoryConnection.edges":
+		if e.complexity.UserSettingHistoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.UserSettingHistoryConnection.Edges(childComplexity), true
+
+	case "UserSettingHistoryConnection.pageInfo":
+		if e.complexity.UserSettingHistoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.UserSettingHistoryConnection.PageInfo(childComplexity), true
+
+	case "UserSettingHistoryConnection.totalCount":
+		if e.complexity.UserSettingHistoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.UserSettingHistoryConnection.TotalCount(childComplexity), true
+
+	case "UserSettingHistoryEdge.cursor":
+		if e.complexity.UserSettingHistoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.UserSettingHistoryEdge.Cursor(childComplexity), true
+
+	case "UserSettingHistoryEdge.node":
+		if e.complexity.UserSettingHistoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.UserSettingHistoryEdge.Node(childComplexity), true
 
 	case "UserSettingUpdatePayload.userSetting":
 		if e.complexity.UserSettingUpdatePayload.UserSetting == nil {
@@ -7639,6 +8419,36 @@ type DocumentDataHistory implements Node {
   data: JSON!
 }
 """
+A connection to a list of items.
+"""
+type DocumentDataHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [DocumentDataHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type DocumentDataHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: DocumentDataHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 DocumentDataHistoryOpType is enum for the field operation
 """
 enum DocumentDataHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -8042,6 +8852,36 @@ type EntitlementHistory implements Node {
   whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
   """
   cancelled: Boolean!
+}
+"""
+A connection to a list of items.
+"""
+type EntitlementHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [EntitlementHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type EntitlementHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: EntitlementHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 EntitlementHistoryOpType is enum for the field operation
@@ -8566,6 +9406,36 @@ type GroupHistory implements Node {
   displayName: String!
 }
 """
+A connection to a list of items.
+"""
+type GroupHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [GroupHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type GroupHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: GroupHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 GroupHistoryOpType is enum for the field operation
 """
 enum GroupHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -8834,6 +9704,36 @@ type GroupMembershipHistory implements Node {
   role: GroupMembershipHistoryRole!
   groupID: String!
   userID: String!
+}
+"""
+A connection to a list of items.
+"""
+type GroupMembershipHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [GroupMembershipHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type GroupMembershipHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: GroupMembershipHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 GroupMembershipHistoryOpType is enum for the field operation
@@ -9288,6 +10188,36 @@ type GroupSettingHistory implements Node {
   the group id associated with the settings
   """
   groupID: String
+}
+"""
+A connection to a list of items.
+"""
+type GroupSettingHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [GroupSettingHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type GroupSettingHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: GroupSettingHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 GroupSettingHistoryJoinPolicy is enum for the field join_policy
@@ -9932,6 +10862,36 @@ type IntegrationHistory implements Node {
   description: String
   kind: String
   secretName: String
+}
+"""
+A connection to a list of items.
+"""
+type IntegrationHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [IntegrationHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type IntegrationHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: IntegrationHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 IntegrationHistoryOpType is enum for the field operation
@@ -10810,6 +11770,36 @@ type OauthProviderHistory implements Node {
   infoURL: String!
 }
 """
+A connection to a list of items.
+"""
+type OauthProviderHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [OauthProviderHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OauthProviderHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: OauthProviderHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 OauthProviderHistoryOpType is enum for the field operation
 """
 enum OauthProviderHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -11634,6 +12624,36 @@ type OrgMembershipHistory implements Node {
   userID: String!
 }
 """
+A connection to a list of items.
+"""
+type OrgMembershipHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [OrgMembershipHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OrgMembershipHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: OrgMembershipHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 OrgMembershipHistoryOpType is enum for the field operation
 """
 enum OrgMembershipHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -12112,6 +13132,36 @@ type OrganizationHistory implements Node {
   dedicatedDb: Boolean!
 }
 """
+A connection to a list of items.
+"""
+type OrganizationHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [OrganizationHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OrganizationHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: OrganizationHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 OrganizationHistoryOpType is enum for the field operation
 """
 enum OrganizationHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -12492,6 +13542,36 @@ type OrganizationSettingHistory implements Node {
   the ID of the organization the settings belong to
   """
   organizationID: String
+}
+"""
+A connection to a list of items.
+"""
+type OrganizationSettingHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [OrganizationSettingHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OrganizationSettingHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: OrganizationSettingHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 OrganizationSettingHistoryOpType is enum for the field operation
@@ -13552,6 +14632,32 @@ type Query {
     """
     where: DocumentDataWhereInput
   ): DocumentDataConnection!
+  documentDataHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for DocumentDataHistories returned from the connection.
+    """
+    where: DocumentDataHistoryWhereInput
+  ): DocumentDataHistoryConnection!
   entitlements(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13578,6 +14684,32 @@ type Query {
     """
     where: EntitlementWhereInput
   ): EntitlementConnection!
+  entitlementHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for EntitlementHistories returned from the connection.
+    """
+    where: EntitlementHistoryWhereInput
+  ): EntitlementHistoryConnection!
   groups(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13609,6 +14741,37 @@ type Query {
     """
     where: GroupWhereInput
   ): GroupConnection!
+  groupHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for GroupHistories returned from the connection.
+    """
+    orderBy: GroupHistoryOrder
+
+    """
+    Filtering options for GroupHistories returned from the connection.
+    """
+    where: GroupHistoryWhereInput
+  ): GroupHistoryConnection!
   groupMemberships(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13635,6 +14798,32 @@ type Query {
     """
     where: GroupMembershipWhereInput
   ): GroupMembershipConnection!
+  groupMembershipHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for GroupMembershipHistories returned from the connection.
+    """
+    where: GroupMembershipHistoryWhereInput
+  ): GroupMembershipHistoryConnection!
   groupSettings(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13661,6 +14850,32 @@ type Query {
     """
     where: GroupSettingWhereInput
   ): GroupSettingConnection!
+  groupSettingHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for GroupSettingHistories returned from the connection.
+    """
+    where: GroupSettingHistoryWhereInput
+  ): GroupSettingHistoryConnection!
   integrations(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13692,6 +14907,37 @@ type Query {
     """
     where: IntegrationWhereInput
   ): IntegrationConnection!
+  integrationHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for IntegrationHistories returned from the connection.
+    """
+    orderBy: IntegrationHistoryOrder
+
+    """
+    Filtering options for IntegrationHistories returned from the connection.
+    """
+    where: IntegrationHistoryWhereInput
+  ): IntegrationHistoryConnection!
   invites(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13744,6 +14990,32 @@ type Query {
     """
     where: OauthProviderWhereInput
   ): OauthProviderConnection!
+  oauthProviderHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for OauthProviderHistories returned from the connection.
+    """
+    where: OauthProviderHistoryWhereInput
+  ): OauthProviderHistoryConnection!
   ohAuthTooTokens(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13796,6 +15068,32 @@ type Query {
     """
     where: OrgMembershipWhereInput
   ): OrgMembershipConnection!
+  orgMembershipHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for OrgMembershipHistories returned from the connection.
+    """
+    where: OrgMembershipHistoryWhereInput
+  ): OrgMembershipHistoryConnection!
   organizations(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13827,6 +15125,37 @@ type Query {
     """
     where: OrganizationWhereInput
   ): OrganizationConnection!
+  organizationHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for OrganizationHistories returned from the connection.
+    """
+    orderBy: OrganizationHistoryOrder
+
+    """
+    Filtering options for OrganizationHistories returned from the connection.
+    """
+    where: OrganizationHistoryWhereInput
+  ): OrganizationHistoryConnection!
   organizationSettings(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13853,6 +15182,32 @@ type Query {
     """
     where: OrganizationSettingWhereInput
   ): OrganizationSettingConnection!
+  organizationSettingHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for OrganizationSettingHistories returned from the connection.
+    """
+    where: OrganizationSettingHistoryWhereInput
+  ): OrganizationSettingHistoryConnection!
   personalAccessTokens(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13962,6 +15317,37 @@ type Query {
     """
     where: TemplateWhereInput
   ): TemplateConnection!
+  templateHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for TemplateHistories returned from the connection.
+    """
+    orderBy: TemplateHistoryOrder
+
+    """
+    Filtering options for TemplateHistories returned from the connection.
+    """
+    where: TemplateHistoryWhereInput
+  ): TemplateHistoryConnection!
   users(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -13993,6 +15379,37 @@ type Query {
     """
     where: UserWhereInput
   ): UserConnection!
+  userHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for UserHistories returned from the connection.
+    """
+    orderBy: UserHistoryOrder
+
+    """
+    Filtering options for UserHistories returned from the connection.
+    """
+    where: UserHistoryWhereInput
+  ): UserHistoryConnection!
   userSettings(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -14019,6 +15436,32 @@ type Query {
     """
     where: UserSettingWhereInput
   ): UserSettingConnection!
+  userSettingHistories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for UserSettingHistories returned from the connection.
+    """
+    where: UserSettingHistoryWhereInput
+  ): UserSettingHistoryConnection!
 }
 type Subscriber implements Node {
   id: ID!
@@ -14575,11 +16018,41 @@ type TemplateHistory implements Node {
   uischema: JSON
 }
 """
+A connection to a list of items.
+"""
+type TemplateHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [TemplateHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
 TemplateHistoryDocumentType is enum for the field template_type
 """
 enum TemplateHistoryDocumentType @goModel(model: "github.com/datumforge/datum/internal/ent/enums.DocumentType") {
   ROOTTEMPLATE
   DOCUMENT
+}
+"""
+An edge in a connection.
+"""
+type TemplateHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: TemplateHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 TemplateHistoryOpType is enum for the field operation
@@ -15744,6 +17217,36 @@ enum UserHistoryAuthProvider @goModel(model: "github.com/datumforge/datum/intern
   WEBAUTHN
 }
 """
+A connection to a list of items.
+"""
+type UserHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [UserHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type UserHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: UserHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 UserHistoryOpType is enum for the field operation
 """
 enum UserHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -16204,6 +17707,36 @@ type UserSettingHistory implements Node {
   whether the user has two factor authentication enabled
   """
   isTfaEnabled: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type UserSettingHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [UserSettingHistoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type UserSettingHistoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: UserSettingHistory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 UserSettingHistoryOpType is enum for the field operation
@@ -19147,6 +20680,57 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_documentDataHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.DocumentDataHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalODocumentDataHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_documentDataSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -19210,6 +20794,57 @@ func (ec *executionContext) field_Query_documentData_args(ctx context.Context, r
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_entitlementHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.EntitlementHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOEntitlementHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
 	return args, nil
 }
 
@@ -19279,6 +20914,117 @@ func (ec *executionContext) field_Query_entitlements_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_groupHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.GroupHistoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOGroupHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *generated.GroupHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOGroupHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_groupMembershipHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.GroupMembershipHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOGroupMembershipHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_groupMembership_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -19337,6 +21083,57 @@ func (ec *executionContext) field_Query_groupMemberships_args(ctx context.Contex
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
 		arg4, err = ec.unmarshalOGroupMembershipWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_groupSettingHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.GroupSettingHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOGroupSettingHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -19478,6 +21275,66 @@ func (ec *executionContext) field_Query_groups_args(ctx context.Context, rawArgs
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
 		arg5, err = ec.unmarshalOGroupWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_integrationHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.IntegrationHistoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOIntegrationHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *generated.IntegrationHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOIntegrationHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -19657,6 +21514,57 @@ func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_oauthProviderHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.OauthProviderHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOOauthProviderHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_oauthProvider_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -19789,6 +21697,57 @@ func (ec *executionContext) field_Query_ohAuthTooTokens_args(ctx context.Context
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_orgMembershipHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.OrgMembershipHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOOrgMembershipHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_orgMembership_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -19847,6 +21806,117 @@ func (ec *executionContext) field_Query_orgMemberships_args(ctx context.Context,
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
 		arg4, err = ec.unmarshalOOrgMembershipWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_organizationHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.OrganizationHistoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOOrganizationHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *generated.OrganizationHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOOrganizationHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_organizationSettingHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.OrganizationSettingHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOOrganizationSettingHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -20128,6 +22198,66 @@ func (ec *executionContext) field_Query_subscribers_args(ctx context.Context, ra
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_templateHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.TemplateHistoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOTemplateHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *generated.TemplateHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOTemplateHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_template_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -20261,6 +22391,117 @@ func (ec *executionContext) field_Query_tfaSettings_args(ctx context.Context, ra
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
 		arg4, err = ec.unmarshalOTFASettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTFASettingWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.UserHistoryOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOUserHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryOrder(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *generated.UserHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOUserHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userSettingHistories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.UserSettingHistoryWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOUserSettingHistoryWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -21779,6 +24020,262 @@ func (ec *executionContext) fieldContext_DocumentDataHistory_data(ctx context.Co
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type JSON does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.DocumentDataHistoryEdge)
+	fc.Result = res
+	return ec.marshalODocumentDataHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_DocumentDataHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_DocumentDataHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.DocumentDataHistory)
+	fc.Result = res
+	return ec.marshalODocumentDataHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DocumentDataHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_DocumentDataHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_DocumentDataHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_DocumentDataHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DocumentDataHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DocumentDataHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_DocumentDataHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_DocumentDataHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_DocumentDataHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_DocumentDataHistory_deletedBy(ctx, field)
+			case "templateID":
+				return ec.fieldContext_DocumentDataHistory_templateID(ctx, field)
+			case "data":
+				return ec.fieldContext_DocumentDataHistory_data(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DocumentDataHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.DocumentDataHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DocumentDataHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DocumentDataHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DocumentDataHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -23672,6 +26169,270 @@ func (ec *executionContext) fieldContext_EntitlementHistory_cancelled(ctx contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EntitlementHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.EntitlementHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EntitlementHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.EntitlementHistoryEdge)
+	fc.Result = res
+	return ec.marshalOEntitlementHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EntitlementHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EntitlementHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_EntitlementHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_EntitlementHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type EntitlementHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EntitlementHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.EntitlementHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EntitlementHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EntitlementHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EntitlementHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EntitlementHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.EntitlementHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EntitlementHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EntitlementHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EntitlementHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EntitlementHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.EntitlementHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EntitlementHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.EntitlementHistory)
+	fc.Result = res
+	return ec.marshalOEntitlementHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EntitlementHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EntitlementHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_EntitlementHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_EntitlementHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_EntitlementHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_EntitlementHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_EntitlementHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_EntitlementHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_EntitlementHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_EntitlementHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_EntitlementHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_EntitlementHistory_deletedBy(ctx, field)
+			case "tier":
+				return ec.fieldContext_EntitlementHistory_tier(ctx, field)
+			case "externalCustomerID":
+				return ec.fieldContext_EntitlementHistory_externalCustomerID(ctx, field)
+			case "externalSubscriptionID":
+				return ec.fieldContext_EntitlementHistory_externalSubscriptionID(ctx, field)
+			case "expires":
+				return ec.fieldContext_EntitlementHistory_expires(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_EntitlementHistory_expiresAt(ctx, field)
+			case "cancelled":
+				return ec.fieldContext_EntitlementHistory_cancelled(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type EntitlementHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EntitlementHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.EntitlementHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EntitlementHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EntitlementHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EntitlementHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -25598,6 +28359,268 @@ func (ec *executionContext) fieldContext_GroupHistory_displayName(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _GroupHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.GroupHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.GroupHistoryEdge)
+	fc.Result = res
+	return ec.marshalOGroupHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_GroupHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_GroupHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.GroupHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.GroupHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.GroupHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupHistory)
+	fc.Result = res
+	return ec.marshalOGroupHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_GroupHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_GroupHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_GroupHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GroupHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GroupHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_GroupHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_GroupHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupHistory_deletedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_GroupHistory_name(ctx, field)
+			case "description":
+				return ec.fieldContext_GroupHistory_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_GroupHistory_gravatarLogoURL(ctx, field)
+			case "logoURL":
+				return ec.fieldContext_GroupHistory_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_GroupHistory_displayName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.GroupHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _GroupMembership_id(ctx context.Context, field graphql.CollectedField, obj *generated.GroupMembership) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_GroupMembership_id(ctx, field)
 	if err != nil {
@@ -27108,6 +30131,264 @@ func (ec *executionContext) fieldContext_GroupMembershipHistory_userID(ctx conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupMembershipHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.GroupMembershipHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupMembershipHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.GroupMembershipHistoryEdge)
+	fc.Result = res
+	return ec.marshalOGroupMembershipHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupMembershipHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupMembershipHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_GroupMembershipHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_GroupMembershipHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupMembershipHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupMembershipHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.GroupMembershipHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupMembershipHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupMembershipHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupMembershipHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupMembershipHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.GroupMembershipHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupMembershipHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupMembershipHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupMembershipHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupMembershipHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.GroupMembershipHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupMembershipHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupMembershipHistory)
+	fc.Result = res
+	return ec.marshalOGroupMembershipHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupMembershipHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupMembershipHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupMembershipHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_GroupMembershipHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_GroupMembershipHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_GroupMembershipHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GroupMembershipHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GroupMembershipHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_GroupMembershipHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_GroupMembershipHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupMembershipHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupMembershipHistory_deletedBy(ctx, field)
+			case "role":
+				return ec.fieldContext_GroupMembershipHistory_role(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupMembershipHistory_groupID(ctx, field)
+			case "userID":
+				return ec.fieldContext_GroupMembershipHistory_userID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupMembershipHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupMembershipHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.GroupMembershipHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupMembershipHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupMembershipHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupMembershipHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -28844,6 +32125,270 @@ func (ec *executionContext) fieldContext_GroupSettingHistory_groupID(ctx context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.GroupSettingHistoryEdge)
+	fc.Result = res
+	return ec.marshalOGroupSettingHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_GroupSettingHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_GroupSettingHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupSettingHistory)
+	fc.Result = res
+	return ec.marshalOGroupSettingHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupSettingHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_GroupSettingHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_GroupSettingHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_GroupSettingHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GroupSettingHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GroupSettingHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_GroupSettingHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_GroupSettingHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupSettingHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupSettingHistory_deletedBy(ctx, field)
+			case "visibility":
+				return ec.fieldContext_GroupSettingHistory_visibility(ctx, field)
+			case "joinPolicy":
+				return ec.fieldContext_GroupSettingHistory_joinPolicy(ctx, field)
+			case "tags":
+				return ec.fieldContext_GroupSettingHistory_tags(ctx, field)
+			case "syncToSlack":
+				return ec.fieldContext_GroupSettingHistory_syncToSlack(ctx, field)
+			case "syncToGithub":
+				return ec.fieldContext_GroupSettingHistory_syncToGithub(ctx, field)
+			case "groupID":
+				return ec.fieldContext_GroupSettingHistory_groupID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -30599,6 +34144,268 @@ func (ec *executionContext) fieldContext_IntegrationHistory_secretName(ctx conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IntegrationHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.IntegrationHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IntegrationHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.IntegrationHistoryEdge)
+	fc.Result = res
+	return ec.marshalOIntegrationHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IntegrationHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IntegrationHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_IntegrationHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_IntegrationHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type IntegrationHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IntegrationHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.IntegrationHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IntegrationHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IntegrationHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IntegrationHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IntegrationHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.IntegrationHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IntegrationHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IntegrationHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IntegrationHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IntegrationHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.IntegrationHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IntegrationHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.IntegrationHistory)
+	fc.Result = res
+	return ec.marshalOIntegrationHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IntegrationHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IntegrationHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_IntegrationHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_IntegrationHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_IntegrationHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_IntegrationHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_IntegrationHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_IntegrationHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_IntegrationHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_IntegrationHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_IntegrationHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_IntegrationHistory_deletedBy(ctx, field)
+			case "ownerID":
+				return ec.fieldContext_IntegrationHistory_ownerID(ctx, field)
+			case "name":
+				return ec.fieldContext_IntegrationHistory_name(ctx, field)
+			case "description":
+				return ec.fieldContext_IntegrationHistory_description(ctx, field)
+			case "kind":
+				return ec.fieldContext_IntegrationHistory_kind(ctx, field)
+			case "secretName":
+				return ec.fieldContext_IntegrationHistory_secretName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type IntegrationHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IntegrationHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.IntegrationHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IntegrationHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IntegrationHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IntegrationHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -36644,6 +40451,276 @@ func (ec *executionContext) fieldContext_OauthProviderHistory_infoURL(ctx contex
 	return fc, nil
 }
 
+func (ec *executionContext) _OauthProviderHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProviderHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProviderHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.OauthProviderHistoryEdge)
+	fc.Result = res
+	return ec.marshalOOauthProviderHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProviderHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProviderHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_OauthProviderHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_OauthProviderHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OauthProviderHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthProviderHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProviderHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProviderHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProviderHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProviderHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthProviderHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProviderHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProviderHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProviderHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProviderHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthProviderHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProviderHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProviderHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OauthProviderHistory)
+	fc.Result = res
+	return ec.marshalOOauthProviderHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProviderHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProviderHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OauthProviderHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_OauthProviderHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_OauthProviderHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_OauthProviderHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OauthProviderHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OauthProviderHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OauthProviderHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OauthProviderHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OauthProviderHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OauthProviderHistory_deletedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_OauthProviderHistory_name(ctx, field)
+			case "clientID":
+				return ec.fieldContext_OauthProviderHistory_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthProviderHistory_clientSecret(ctx, field)
+			case "redirectURL":
+				return ec.fieldContext_OauthProviderHistory_redirectURL(ctx, field)
+			case "scopes":
+				return ec.fieldContext_OauthProviderHistory_scopes(ctx, field)
+			case "authURL":
+				return ec.fieldContext_OauthProviderHistory_authURL(ctx, field)
+			case "tokenURL":
+				return ec.fieldContext_OauthProviderHistory_tokenURL(ctx, field)
+			case "authStyle":
+				return ec.fieldContext_OauthProviderHistory_authStyle(ctx, field)
+			case "infoURL":
+				return ec.fieldContext_OauthProviderHistory_infoURL(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OauthProviderHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthProviderHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProviderHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProviderHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProviderHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProviderHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OauthProviderUpdatePayload_oauthProvider(ctx context.Context, field graphql.CollectedField, obj *OauthProviderUpdatePayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OauthProviderUpdatePayload_oauthProvider(ctx, field)
 	if err != nil {
@@ -39263,6 +43340,264 @@ func (ec *executionContext) fieldContext_OrgMembershipHistory_userID(ctx context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrgMembershipHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OrgMembershipHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrgMembershipHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.OrgMembershipHistoryEdge)
+	fc.Result = res
+	return ec.marshalOOrgMembershipHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrgMembershipHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrgMembershipHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_OrgMembershipHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_OrgMembershipHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrgMembershipHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrgMembershipHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.OrgMembershipHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrgMembershipHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrgMembershipHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrgMembershipHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrgMembershipHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.OrgMembershipHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrgMembershipHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrgMembershipHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrgMembershipHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrgMembershipHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.OrgMembershipHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrgMembershipHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrgMembershipHistory)
+	fc.Result = res
+	return ec.marshalOOrgMembershipHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrgMembershipHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrgMembershipHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrgMembershipHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_OrgMembershipHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_OrgMembershipHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_OrgMembershipHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrgMembershipHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OrgMembershipHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OrgMembershipHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OrgMembershipHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrgMembershipHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrgMembershipHistory_deletedBy(ctx, field)
+			case "role":
+				return ec.fieldContext_OrgMembershipHistory_role(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrgMembershipHistory_organizationID(ctx, field)
+			case "userID":
+				return ec.fieldContext_OrgMembershipHistory_userID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrgMembershipHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrgMembershipHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.OrgMembershipHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrgMembershipHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrgMembershipHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrgMembershipHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -41956,6 +46291,270 @@ func (ec *executionContext) fieldContext_OrganizationHistory_dedicatedDb(ctx con
 	return fc, nil
 }
 
+func (ec *executionContext) _OrganizationHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.OrganizationHistoryEdge)
+	fc.Result = res
+	return ec.marshalOOrganizationHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_OrganizationHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_OrganizationHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationHistory)
+	fc.Result = res
+	return ec.marshalOOrganizationHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrganizationHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_OrganizationHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_OrganizationHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_OrganizationHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrganizationHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OrganizationHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OrganizationHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OrganizationHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrganizationHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrganizationHistory_deletedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_OrganizationHistory_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_OrganizationHistory_displayName(ctx, field)
+			case "description":
+				return ec.fieldContext_OrganizationHistory_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_OrganizationHistory_personalOrg(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_OrganizationHistory_avatarRemoteURL(ctx, field)
+			case "dedicatedDb":
+				return ec.fieldContext_OrganizationHistory_dedicatedDb(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrganizationSetting_id(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationSetting_id(ctx, field)
 	if err != nil {
@@ -43888,6 +48487,276 @@ func (ec *executionContext) fieldContext_OrganizationSettingHistory_organization
 	return fc, nil
 }
 
+func (ec *executionContext) _OrganizationSettingHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.OrganizationSettingHistoryEdge)
+	fc.Result = res
+	return ec.marshalOOrganizationSettingHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_OrganizationSettingHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_OrganizationSettingHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationSettingHistory)
+	fc.Result = res
+	return ec.marshalOOrganizationSettingHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrganizationSettingHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_OrganizationSettingHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_OrganizationSettingHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_OrganizationSettingHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrganizationSettingHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OrganizationSettingHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OrganizationSettingHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OrganizationSettingHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrganizationSettingHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrganizationSettingHistory_deletedBy(ctx, field)
+			case "domains":
+				return ec.fieldContext_OrganizationSettingHistory_domains(ctx, field)
+			case "billingContact":
+				return ec.fieldContext_OrganizationSettingHistory_billingContact(ctx, field)
+			case "billingEmail":
+				return ec.fieldContext_OrganizationSettingHistory_billingEmail(ctx, field)
+			case "billingPhone":
+				return ec.fieldContext_OrganizationSettingHistory_billingPhone(ctx, field)
+			case "billingAddress":
+				return ec.fieldContext_OrganizationSettingHistory_billingAddress(ctx, field)
+			case "taxIdentifier":
+				return ec.fieldContext_OrganizationSettingHistory_taxIdentifier(ctx, field)
+			case "tags":
+				return ec.fieldContext_OrganizationSettingHistory_tags(ctx, field)
+			case "geoLocation":
+				return ec.fieldContext_OrganizationSettingHistory_geoLocation(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_OrganizationSettingHistory_organizationID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrganizationSettingUpdatePayload_organizationSetting(ctx context.Context, field graphql.CollectedField, obj *OrganizationSettingUpdatePayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationSettingUpdatePayload_organizationSetting(ctx, field)
 	if err != nil {
@@ -45598,6 +50467,69 @@ func (ec *executionContext) fieldContext_Query_documentDataSlice(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_documentDataHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_documentDataHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().DocumentDataHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.DocumentDataHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.DocumentDataHistoryConnection)
+	fc.Result = res
+	return ec.marshalNDocumentDataHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_documentDataHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_DocumentDataHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_DocumentDataHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DocumentDataHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DocumentDataHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_documentDataHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_entitlements(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_entitlements(ctx, field)
 	if err != nil {
@@ -45655,6 +50587,69 @@ func (ec *executionContext) fieldContext_Query_entitlements(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_entitlements_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_entitlementHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_entitlementHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().EntitlementHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.EntitlementHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.EntitlementHistoryConnection)
+	fc.Result = res
+	return ec.marshalNEntitlementHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_entitlementHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_EntitlementHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_EntitlementHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_EntitlementHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type EntitlementHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_entitlementHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -45724,6 +50719,69 @@ func (ec *executionContext) fieldContext_Query_groups(ctx context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_groupHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_groupHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GroupHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].(*generated.GroupHistoryOrder), fc.Args["where"].(*generated.GroupHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupHistoryConnection)
+	fc.Result = res
+	return ec.marshalNGroupHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_groupHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_GroupHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_GroupHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_GroupHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_groupHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_groupMemberships(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_groupMemberships(ctx, field)
 	if err != nil {
@@ -45781,6 +50839,69 @@ func (ec *executionContext) fieldContext_Query_groupMemberships(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_groupMemberships_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_groupMembershipHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_groupMembershipHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GroupMembershipHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.GroupMembershipHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupMembershipHistoryConnection)
+	fc.Result = res
+	return ec.marshalNGroupMembershipHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_groupMembershipHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_GroupMembershipHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_GroupMembershipHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_GroupMembershipHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupMembershipHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_groupMembershipHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -45850,6 +50971,69 @@ func (ec *executionContext) fieldContext_Query_groupSettings(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_groupSettingHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_groupSettingHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GroupSettingHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.GroupSettingHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupSettingHistoryConnection)
+	fc.Result = res
+	return ec.marshalNGroupSettingHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_groupSettingHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_GroupSettingHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_GroupSettingHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_GroupSettingHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_groupSettingHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_integrations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_integrations(ctx, field)
 	if err != nil {
@@ -45907,6 +51091,69 @@ func (ec *executionContext) fieldContext_Query_integrations(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_integrations_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_integrationHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_integrationHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().IntegrationHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].(*generated.IntegrationHistoryOrder), fc.Args["where"].(*generated.IntegrationHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.IntegrationHistoryConnection)
+	fc.Result = res
+	return ec.marshalNIntegrationHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_integrationHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_IntegrationHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_IntegrationHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_IntegrationHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type IntegrationHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_integrationHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -46039,6 +51286,69 @@ func (ec *executionContext) fieldContext_Query_oauthProviders(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_oauthProviderHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_oauthProviderHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OauthProviderHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.OauthProviderHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OauthProviderHistoryConnection)
+	fc.Result = res
+	return ec.marshalNOauthProviderHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_oauthProviderHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_OauthProviderHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_OauthProviderHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_OauthProviderHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OauthProviderHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_oauthProviderHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_ohAuthTooTokens(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_ohAuthTooTokens(ctx, field)
 	if err != nil {
@@ -46165,6 +51475,69 @@ func (ec *executionContext) fieldContext_Query_orgMemberships(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_orgMembershipHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_orgMembershipHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OrgMembershipHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.OrgMembershipHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrgMembershipHistoryConnection)
+	fc.Result = res
+	return ec.marshalNOrgMembershipHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_orgMembershipHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_OrgMembershipHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_OrgMembershipHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_OrgMembershipHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrgMembershipHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_orgMembershipHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_organizations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_organizations(ctx, field)
 	if err != nil {
@@ -46228,6 +51601,69 @@ func (ec *executionContext) fieldContext_Query_organizations(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_organizationHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_organizationHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OrganizationHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].(*generated.OrganizationHistoryOrder), fc.Args["where"].(*generated.OrganizationHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationHistoryConnection)
+	fc.Result = res
+	return ec.marshalNOrganizationHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_organizationHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_OrganizationHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_OrganizationHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_OrganizationHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_organizationHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_organizationSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_organizationSettings(ctx, field)
 	if err != nil {
@@ -46285,6 +51721,69 @@ func (ec *executionContext) fieldContext_Query_organizationSettings(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_organizationSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_organizationSettingHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_organizationSettingHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OrganizationSettingHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.OrganizationSettingHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationSettingHistoryConnection)
+	fc.Result = res
+	return ec.marshalNOrganizationSettingHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_organizationSettingHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_OrganizationSettingHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_OrganizationSettingHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_OrganizationSettingHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_organizationSettingHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -46543,6 +52042,69 @@ func (ec *executionContext) fieldContext_Query_templates(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_templateHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_templateHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().TemplateHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].(*generated.TemplateHistoryOrder), fc.Args["where"].(*generated.TemplateHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.TemplateHistoryConnection)
+	fc.Result = res
+	return ec.marshalNTemplateHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_templateHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_TemplateHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_TemplateHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_TemplateHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TemplateHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_templateHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_users(ctx, field)
 	if err != nil {
@@ -46606,6 +52168,69 @@ func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_userHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].(*generated.UserHistoryOrder), fc.Args["where"].(*generated.UserHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserHistoryConnection)
+	fc.Result = res
+	return ec.marshalNUserHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_UserHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_UserHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_UserHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_userSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_userSettings(ctx, field)
 	if err != nil {
@@ -46663,6 +52288,69 @@ func (ec *executionContext) fieldContext_Query_userSettings(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_userSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_userSettingHistories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userSettingHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserSettingHistories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.UserSettingHistoryWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettingHistoryConnection)
+	fc.Result = res
+	return ec.marshalNUserSettingHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userSettingHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_UserSettingHistoryConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_UserSettingHistoryConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_UserSettingHistoryConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingHistoryConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userSettingHistories_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -52160,6 +57848,268 @@ func (ec *executionContext) fieldContext_TemplateHistory_uischema(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _TemplateHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.TemplateHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TemplateHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.TemplateHistoryEdge)
+	fc.Result = res
+	return ec.marshalOTemplateHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TemplateHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TemplateHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_TemplateHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_TemplateHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TemplateHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TemplateHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.TemplateHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TemplateHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TemplateHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TemplateHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TemplateHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.TemplateHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TemplateHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TemplateHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TemplateHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TemplateHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.TemplateHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TemplateHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.TemplateHistory)
+	fc.Result = res
+	return ec.marshalOTemplateHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TemplateHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TemplateHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TemplateHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_TemplateHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_TemplateHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_TemplateHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_TemplateHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_TemplateHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_TemplateHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_TemplateHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_TemplateHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_TemplateHistory_deletedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_TemplateHistory_name(ctx, field)
+			case "templateType":
+				return ec.fieldContext_TemplateHistory_templateType(ctx, field)
+			case "description":
+				return ec.fieldContext_TemplateHistory_description(ctx, field)
+			case "jsonconfig":
+				return ec.fieldContext_TemplateHistory_jsonconfig(ctx, field)
+			case "uischema":
+				return ec.fieldContext_TemplateHistory_uischema(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TemplateHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TemplateHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.TemplateHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TemplateHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TemplateHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TemplateHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TemplateUpdatePayload_template(ctx context.Context, field graphql.CollectedField, obj *TemplateUpdatePayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_TemplateUpdatePayload_template(ctx, field)
 	if err != nil {
@@ -54737,6 +60687,278 @@ func (ec *executionContext) fieldContext_UserHistory_authProvider(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _UserHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.UserHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.UserHistoryEdge)
+	fc.Result = res
+	return ec.marshalOUserHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_UserHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_UserHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.UserHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.UserHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.UserHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserHistory)
+	fc.Result = res
+	return ec.marshalOUserHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_UserHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_UserHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_UserHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UserHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UserHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_UserHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_UserHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_UserHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_UserHistory_deletedBy(ctx, field)
+			case "email":
+				return ec.fieldContext_UserHistory_email(ctx, field)
+			case "firstName":
+				return ec.fieldContext_UserHistory_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_UserHistory_lastName(ctx, field)
+			case "displayName":
+				return ec.fieldContext_UserHistory_displayName(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_UserHistory_avatarRemoteURL(ctx, field)
+			case "avatarLocalFile":
+				return ec.fieldContext_UserHistory_avatarLocalFile(ctx, field)
+			case "avatarUpdatedAt":
+				return ec.fieldContext_UserHistory_avatarUpdatedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_UserHistory_lastSeen(ctx, field)
+			case "sub":
+				return ec.fieldContext_UserHistory_sub(ctx, field)
+			case "authProvider":
+				return ec.fieldContext_UserHistory_authProvider(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.UserHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserSetting_id(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSetting_id(ctx, field)
 	if err != nil {
@@ -56657,6 +62879,276 @@ func (ec *executionContext) fieldContext_UserSettingHistory_isTfaEnabled(ctx con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingHistoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingHistoryConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.UserSettingHistoryEdge)
+	fc.Result = res
+	return ec.marshalOUserSettingHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingHistoryConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_UserSettingHistoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_UserSettingHistoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingHistoryEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingHistoryConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingHistoryConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingHistoryConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingHistoryConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingHistoryConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingHistoryConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingHistoryEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingHistoryEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettingHistory)
+	fc.Result = res
+	return ec.marshalOUserSettingHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingHistoryEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserSettingHistory_id(ctx, field)
+			case "historyTime":
+				return ec.fieldContext_UserSettingHistory_historyTime(ctx, field)
+			case "ref":
+				return ec.fieldContext_UserSettingHistory_ref(ctx, field)
+			case "operation":
+				return ec.fieldContext_UserSettingHistory_operation(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UserSettingHistory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UserSettingHistory_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_UserSettingHistory_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_UserSettingHistory_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_UserSettingHistory_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_UserSettingHistory_deletedBy(ctx, field)
+			case "userID":
+				return ec.fieldContext_UserSettingHistory_userID(ctx, field)
+			case "locked":
+				return ec.fieldContext_UserSettingHistory_locked(ctx, field)
+			case "silencedAt":
+				return ec.fieldContext_UserSettingHistory_silencedAt(ctx, field)
+			case "suspendedAt":
+				return ec.fieldContext_UserSettingHistory_suspendedAt(ctx, field)
+			case "status":
+				return ec.fieldContext_UserSettingHistory_status(ctx, field)
+			case "emailConfirmed":
+				return ec.fieldContext_UserSettingHistory_emailConfirmed(ctx, field)
+			case "tags":
+				return ec.fieldContext_UserSettingHistory_tags(ctx, field)
+			case "isWebauthnAllowed":
+				return ec.fieldContext_UserSettingHistory_isWebauthnAllowed(ctx, field)
+			case "isTfaEnabled":
+				return ec.fieldContext_UserSettingHistory_isTfaEnabled(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingHistoryEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingHistoryEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingHistoryEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingHistoryEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -97189,6 +103681,93 @@ func (ec *executionContext) _DocumentDataHistory(ctx context.Context, sel ast.Se
 	return out
 }
 
+var documentDataHistoryConnectionImplementors = []string{"DocumentDataHistoryConnection"}
+
+func (ec *executionContext) _DocumentDataHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.DocumentDataHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentDataHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._DocumentDataHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._DocumentDataHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._DocumentDataHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var documentDataHistoryEdgeImplementors = []string{"DocumentDataHistoryEdge"}
+
+func (ec *executionContext) _DocumentDataHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.DocumentDataHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, documentDataHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DocumentDataHistoryEdge")
+		case "node":
+			out.Values[i] = ec._DocumentDataHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._DocumentDataHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var documentDataUpdatePayloadImplementors = []string{"DocumentDataUpdatePayload"}
 
 func (ec *executionContext) _DocumentDataUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *DocumentDataUpdatePayload) graphql.Marshaler {
@@ -97608,6 +104187,93 @@ func (ec *executionContext) _EntitlementHistory(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._EntitlementHistory_expiresAt(ctx, field, obj)
 		case "cancelled":
 			out.Values[i] = ec._EntitlementHistory_cancelled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var entitlementHistoryConnectionImplementors = []string{"EntitlementHistoryConnection"}
+
+func (ec *executionContext) _EntitlementHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.EntitlementHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, entitlementHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EntitlementHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._EntitlementHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._EntitlementHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._EntitlementHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var entitlementHistoryEdgeImplementors = []string{"EntitlementHistoryEdge"}
+
+func (ec *executionContext) _EntitlementHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.EntitlementHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, entitlementHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EntitlementHistoryEdge")
+		case "node":
+			out.Values[i] = ec._EntitlementHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._EntitlementHistoryEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -98122,6 +104788,93 @@ func (ec *executionContext) _GroupHistory(ctx context.Context, sel ast.Selection
 	return out
 }
 
+var groupHistoryConnectionImplementors = []string{"GroupHistoryConnection"}
+
+func (ec *executionContext) _GroupHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._GroupHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._GroupHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._GroupHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupHistoryEdgeImplementors = []string{"GroupHistoryEdge"}
+
+func (ec *executionContext) _GroupHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupHistoryEdge")
+		case "node":
+			out.Values[i] = ec._GroupHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._GroupHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var groupMembershipImplementors = []string{"GroupMembership", "Node"}
 
 func (ec *executionContext) _GroupMembership(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupMembership) graphql.Marshaler {
@@ -98477,6 +105230,93 @@ func (ec *executionContext) _GroupMembershipHistory(ctx context.Context, sel ast
 			}
 		case "userID":
 			out.Values[i] = ec._GroupMembershipHistory_userID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupMembershipHistoryConnectionImplementors = []string{"GroupMembershipHistoryConnection"}
+
+func (ec *executionContext) _GroupMembershipHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupMembershipHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupMembershipHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupMembershipHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._GroupMembershipHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._GroupMembershipHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._GroupMembershipHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupMembershipHistoryEdgeImplementors = []string{"GroupMembershipHistoryEdge"}
+
+func (ec *executionContext) _GroupMembershipHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupMembershipHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupMembershipHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupMembershipHistoryEdge")
+		case "node":
+			out.Values[i] = ec._GroupMembershipHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._GroupMembershipHistoryEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -98867,6 +105707,93 @@ func (ec *executionContext) _GroupSettingHistory(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._GroupSettingHistory_syncToGithub(ctx, field, obj)
 		case "groupID":
 			out.Values[i] = ec._GroupSettingHistory_groupID(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupSettingHistoryConnectionImplementors = []string{"GroupSettingHistoryConnection"}
+
+func (ec *executionContext) _GroupSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSettingHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupSettingHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._GroupSettingHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._GroupSettingHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._GroupSettingHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupSettingHistoryEdgeImplementors = []string{"GroupSettingHistoryEdge"}
+
+func (ec *executionContext) _GroupSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSettingHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupSettingHistoryEdge")
+		case "node":
+			out.Values[i] = ec._GroupSettingHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._GroupSettingHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -99292,6 +106219,93 @@ func (ec *executionContext) _IntegrationHistory(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._IntegrationHistory_kind(ctx, field, obj)
 		case "secretName":
 			out.Values[i] = ec._IntegrationHistory_secretName(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var integrationHistoryConnectionImplementors = []string{"IntegrationHistoryConnection"}
+
+func (ec *executionContext) _IntegrationHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.IntegrationHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, integrationHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("IntegrationHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._IntegrationHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._IntegrationHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._IntegrationHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var integrationHistoryEdgeImplementors = []string{"IntegrationHistoryEdge"}
+
+func (ec *executionContext) _IntegrationHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.IntegrationHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, integrationHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("IntegrationHistoryEdge")
+		case "node":
+			out.Values[i] = ec._IntegrationHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._IntegrationHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -100460,6 +107474,93 @@ func (ec *executionContext) _OauthProviderHistory(ctx context.Context, sel ast.S
 	return out
 }
 
+var oauthProviderHistoryConnectionImplementors = []string{"OauthProviderHistoryConnection"}
+
+func (ec *executionContext) _OauthProviderHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.OauthProviderHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, oauthProviderHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OauthProviderHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._OauthProviderHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._OauthProviderHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._OauthProviderHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var oauthProviderHistoryEdgeImplementors = []string{"OauthProviderHistoryEdge"}
+
+func (ec *executionContext) _OauthProviderHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.OauthProviderHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, oauthProviderHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OauthProviderHistoryEdge")
+		case "node":
+			out.Values[i] = ec._OauthProviderHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._OauthProviderHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var oauthProviderUpdatePayloadImplementors = []string{"OauthProviderUpdatePayload"}
 
 func (ec *executionContext) _OauthProviderUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *OauthProviderUpdatePayload) graphql.Marshaler {
@@ -101148,6 +108249,93 @@ func (ec *executionContext) _OrgMembershipHistory(ctx context.Context, sel ast.S
 			}
 		case "userID":
 			out.Values[i] = ec._OrgMembershipHistory_userID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var orgMembershipHistoryConnectionImplementors = []string{"OrgMembershipHistoryConnection"}
+
+func (ec *executionContext) _OrgMembershipHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.OrgMembershipHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, orgMembershipHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrgMembershipHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._OrgMembershipHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._OrgMembershipHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._OrgMembershipHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var orgMembershipHistoryEdgeImplementors = []string{"OrgMembershipHistoryEdge"}
+
+func (ec *executionContext) _OrgMembershipHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.OrgMembershipHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, orgMembershipHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrgMembershipHistoryEdge")
+		case "node":
+			out.Values[i] = ec._OrgMembershipHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._OrgMembershipHistoryEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -101966,6 +109154,93 @@ func (ec *executionContext) _OrganizationHistory(ctx context.Context, sel ast.Se
 	return out
 }
 
+var organizationHistoryConnectionImplementors = []string{"OrganizationHistoryConnection"}
+
+func (ec *executionContext) _OrganizationHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._OrganizationHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._OrganizationHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._OrganizationHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var organizationHistoryEdgeImplementors = []string{"OrganizationHistoryEdge"}
+
+func (ec *executionContext) _OrganizationHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationHistoryEdge")
+		case "node":
+			out.Values[i] = ec._OrganizationHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._OrganizationHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var organizationSettingImplementors = []string{"OrganizationSetting", "Node"}
 
 func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSetting) graphql.Marshaler {
@@ -102291,6 +109566,93 @@ func (ec *executionContext) _OrganizationSettingHistory(ctx context.Context, sel
 			out.Values[i] = ec._OrganizationSettingHistory_geoLocation(ctx, field, obj)
 		case "organizationID":
 			out.Values[i] = ec._OrganizationSettingHistory_organizationID(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var organizationSettingHistoryConnectionImplementors = []string{"OrganizationSettingHistoryConnection"}
+
+func (ec *executionContext) _OrganizationSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSettingHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationSettingHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._OrganizationSettingHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._OrganizationSettingHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._OrganizationSettingHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var organizationSettingHistoryEdgeImplementors = []string{"OrganizationSettingHistoryEdge"}
+
+func (ec *executionContext) _OrganizationSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSettingHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationSettingHistoryEdge")
+		case "node":
+			out.Values[i] = ec._OrganizationSettingHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._OrganizationSettingHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -102867,6 +110229,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "documentDataHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_documentDataHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "entitlements":
 			field := field
 
@@ -102877,6 +110261,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_entitlements(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "entitlementHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_entitlementHistories(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -102911,6 +110317,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "groupHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_groupHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "groupMemberships":
 			field := field
 
@@ -102921,6 +110349,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_groupMemberships(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "groupMembershipHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_groupMembershipHistories(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -102955,6 +110405,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "groupSettingHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_groupSettingHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "integrations":
 			field := field
 
@@ -102965,6 +110437,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_integrations(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "integrationHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_integrationHistories(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -103021,6 +110515,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "oauthProviderHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_oauthProviderHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "ohAuthTooTokens":
 			field := field
 
@@ -103065,6 +110581,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "orgMembershipHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_orgMembershipHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "organizations":
 			field := field
 
@@ -103087,6 +110625,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "organizationHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_organizationHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "organizationSettings":
 			field := field
 
@@ -103097,6 +110657,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_organizationSettings(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "organizationSettingHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_organizationSettingHistories(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -103197,6 +110779,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "templateHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_templateHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "users":
 			field := field
 
@@ -103219,6 +110823,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "userHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userHistories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "userSettings":
 			field := field
 
@@ -103229,6 +110855,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userSettings(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "userSettingHistories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userSettingHistories(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -104646,6 +112294,93 @@ func (ec *executionContext) _TemplateHistory(ctx context.Context, sel ast.Select
 	return out
 }
 
+var templateHistoryConnectionImplementors = []string{"TemplateHistoryConnection"}
+
+func (ec *executionContext) _TemplateHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.TemplateHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, templateHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TemplateHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._TemplateHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._TemplateHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._TemplateHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var templateHistoryEdgeImplementors = []string{"TemplateHistoryEdge"}
+
+func (ec *executionContext) _TemplateHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.TemplateHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, templateHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TemplateHistoryEdge")
+		case "node":
+			out.Values[i] = ec._TemplateHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._TemplateHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var templateUpdatePayloadImplementors = []string{"TemplateUpdatePayload"}
 
 func (ec *executionContext) _TemplateUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *TemplateUpdatePayload) graphql.Marshaler {
@@ -105268,6 +113003,93 @@ func (ec *executionContext) _UserHistory(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var userHistoryConnectionImplementors = []string{"UserHistoryConnection"}
+
+func (ec *executionContext) _UserHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.UserHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._UserHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._UserHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._UserHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userHistoryEdgeImplementors = []string{"UserHistoryEdge"}
+
+func (ec *executionContext) _UserHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.UserHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserHistoryEdge")
+		case "node":
+			out.Values[i] = ec._UserHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._UserHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var userSettingImplementors = []string{"UserSetting", "Node"}
 
 func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSetting) graphql.Marshaler {
@@ -105572,6 +113394,93 @@ func (ec *executionContext) _UserSettingHistory(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._UserSettingHistory_isWebauthnAllowed(ctx, field, obj)
 		case "isTfaEnabled":
 			out.Values[i] = ec._UserSettingHistory_isTfaEnabled(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingHistoryConnectionImplementors = []string{"UserSettingHistoryConnection"}
+
+func (ec *executionContext) _UserSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingHistoryConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingHistoryConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettingHistoryConnection")
+		case "edges":
+			out.Values[i] = ec._UserSettingHistoryConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._UserSettingHistoryConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._UserSettingHistoryConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingHistoryEdgeImplementors = []string{"UserSettingHistoryEdge"}
+
+func (ec *executionContext) _UserSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingHistoryEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingHistoryEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettingHistoryEdge")
+		case "node":
+			out.Values[i] = ec._UserSettingHistoryEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._UserSettingHistoryEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -106165,6 +114074,20 @@ func (ec *executionContext) marshalNDocumentDataDeletePayload2ᚖgithubᚗcomᚋ
 	return ec._DocumentDataDeletePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNDocumentDataHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.DocumentDataHistoryConnection) graphql.Marshaler {
+	return ec._DocumentDataHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNDocumentDataHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.DocumentDataHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._DocumentDataHistoryConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNDocumentDataHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
 	var res enthistory.OpType
 	err := res.UnmarshalGQL(v)
@@ -106253,6 +114176,20 @@ func (ec *executionContext) marshalNEntitlementDeletePayload2ᚖgithubᚗcomᚋd
 		return graphql.Null
 	}
 	return ec._EntitlementDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNEntitlementHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.EntitlementHistoryConnection) graphql.Marshaler {
+	return ec._EntitlementHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNEntitlementHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.EntitlementHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._EntitlementHistoryConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNEntitlementHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
@@ -106365,6 +114302,20 @@ func (ec *executionContext) marshalNGroupDeletePayload2ᚖgithubᚗcomᚋdatumfo
 	return ec._GroupDeletePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNGroupHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.GroupHistoryConnection) graphql.Marshaler {
+	return ec._GroupHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.GroupHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GroupHistoryConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNGroupHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
 	var res enthistory.OpType
 	err := res.UnmarshalGQL(v)
@@ -106450,6 +114401,20 @@ func (ec *executionContext) marshalNGroupMembershipDeletePayload2ᚖgithubᚗcom
 		return graphql.Null
 	}
 	return ec._GroupMembershipDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGroupMembershipHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.GroupMembershipHistoryConnection) graphql.Marshaler {
+	return ec._GroupMembershipHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupMembershipHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.GroupMembershipHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GroupMembershipHistoryConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNGroupMembershipHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
@@ -106548,6 +114513,20 @@ func (ec *executionContext) marshalNGroupSettingConnection2ᚖgithubᚗcomᚋdat
 		return graphql.Null
 	}
 	return ec._GroupSettingConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGroupSettingHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.GroupSettingHistoryConnection) graphql.Marshaler {
+	return ec._GroupSettingHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupSettingHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettingHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GroupSettingHistoryConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNGroupSettingHistoryJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicy(ctx context.Context, v interface{}) (enums.JoinPolicy, error) {
@@ -106759,6 +114738,20 @@ func (ec *executionContext) marshalNIntegrationDeletePayload2ᚖgithubᚗcomᚋd
 		return graphql.Null
 	}
 	return ec._IntegrationDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNIntegrationHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.IntegrationHistoryConnection) graphql.Marshaler {
+	return ec._IntegrationHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNIntegrationHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.IntegrationHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._IntegrationHistoryConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNIntegrationHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
@@ -107032,6 +115025,20 @@ func (ec *executionContext) marshalNOauthProviderDeletePayload2ᚖgithubᚗcom�
 	return ec._OauthProviderDeletePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNOauthProviderHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.OauthProviderHistoryConnection) graphql.Marshaler {
+	return ec._OauthProviderHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOauthProviderHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.OauthProviderHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OauthProviderHistoryConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNOauthProviderHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
 	var res enthistory.OpType
 	err := res.UnmarshalGQL(v)
@@ -107207,6 +115214,20 @@ func (ec *executionContext) marshalNOrgMembershipDeletePayload2ᚖgithubᚗcom�
 	return ec._OrgMembershipDeletePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNOrgMembershipHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.OrgMembershipHistoryConnection) graphql.Marshaler {
+	return ec._OrgMembershipHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrgMembershipHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.OrgMembershipHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrgMembershipHistoryConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNOrgMembershipHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
 	var res enthistory.OpType
 	err := res.UnmarshalGQL(v)
@@ -107317,6 +115338,20 @@ func (ec *executionContext) marshalNOrganizationDeletePayload2ᚖgithubᚗcomᚋ
 	return ec._OrganizationDeletePayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNOrganizationHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.OrganizationHistoryConnection) graphql.Marshaler {
+	return ec._OrganizationHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganizationHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationHistoryConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNOrganizationHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
 	var res enthistory.OpType
 	err := res.UnmarshalGQL(v)
@@ -107390,6 +115425,20 @@ func (ec *executionContext) marshalNOrganizationSettingConnection2ᚖgithubᚗco
 		return graphql.Null
 	}
 	return ec._OrganizationSettingConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.OrganizationSettingHistoryConnection) graphql.Marshaler {
+	return ec._OrganizationSettingHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettingHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationSettingHistoryConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNOrganizationSettingHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
@@ -107793,6 +115842,20 @@ func (ec *executionContext) marshalNTemplateDocumentType2githubᚗcomᚋdatumfor
 	return v
 }
 
+func (ec *executionContext) marshalNTemplateHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.TemplateHistoryConnection) graphql.Marshaler {
+	return ec._TemplateHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTemplateHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.TemplateHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TemplateHistoryConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNTemplateHistoryDocumentType2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentType(ctx context.Context, v interface{}) (enums.DocumentType, error) {
 	var res enums.DocumentType
 	err := res.UnmarshalGQL(v)
@@ -108081,6 +116144,20 @@ func (ec *executionContext) marshalNUserHistoryAuthProvider2githubᚗcomᚋdatum
 	return v
 }
 
+func (ec *executionContext) marshalNUserHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.UserHistoryConnection) graphql.Marshaler {
+	return ec._UserHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.UserHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserHistoryConnection(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNUserHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
 	var res enthistory.OpType
 	err := res.UnmarshalGQL(v)
@@ -108154,6 +116231,20 @@ func (ec *executionContext) marshalNUserSettingConnection2ᚖgithubᚗcomᚋdatu
 		return graphql.Null
 	}
 	return ec._UserSettingConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserSettingHistoryConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, v generated.UserSettingHistoryConnection) graphql.Marshaler {
+	return ec._UserSettingHistoryConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserSettingHistoryConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryConnection(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingHistoryConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserSettingHistoryConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNUserSettingHistoryOpType2githubᚗcomᚋdatumforgeᚋenthistoryᚐOpType(ctx context.Context, v interface{}) (enthistory.OpType, error) {
@@ -108682,6 +116773,61 @@ func (ec *executionContext) marshalODocumentDataEdge2ᚖgithubᚗcomᚋdatumforg
 	return ec._DocumentDataEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalODocumentDataHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistory(ctx context.Context, sel ast.SelectionSet, v *generated.DocumentDataHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DocumentDataHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalODocumentDataHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.DocumentDataHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalODocumentDataHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalODocumentDataHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐDocumentDataHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.DocumentDataHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DocumentDataHistoryEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalODocumentDataHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
 	if v == nil {
 		return nil, nil
@@ -108921,6 +117067,61 @@ func (ec *executionContext) marshalOEntitlementEdge2ᚖgithubᚗcomᚋdatumforge
 		return graphql.Null
 	}
 	return ec._EntitlementEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOEntitlementHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistory(ctx context.Context, sel ast.SelectionSet, v *generated.EntitlementHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._EntitlementHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOEntitlementHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.EntitlementHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOEntitlementHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOEntitlementHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐEntitlementHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.EntitlementHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._EntitlementHistoryEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOEntitlementHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
@@ -109330,6 +117531,61 @@ func (ec *executionContext) marshalOGroupEdge2ᚖgithubᚗcomᚋdatumforgeᚋdat
 	return ec._GroupEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOGroupHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistory(ctx context.Context, sel ast.SelectionSet, v *generated.GroupHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GroupHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGroupHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.GroupHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOGroupHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOGroupHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.GroupHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GroupHistoryEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOGroupHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
 	if v == nil {
 		return nil, nil
@@ -109411,6 +117667,14 @@ func (ec *executionContext) marshalOGroupHistoryOpType2ᚖgithubᚗcomᚋdatumfo
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) unmarshalOGroupHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryOrder(ctx context.Context, v interface{}) (*generated.GroupHistoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGroupHistoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOGroupHistoryWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupHistoryWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.GroupHistoryWhereInput, error) {
@@ -109541,6 +117805,61 @@ func (ec *executionContext) marshalOGroupMembershipEdge2ᚖgithubᚗcomᚋdatumf
 		return graphql.Null
 	}
 	return ec._GroupMembershipEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGroupMembershipHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistory(ctx context.Context, sel ast.SelectionSet, v *generated.GroupMembershipHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GroupMembershipHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGroupMembershipHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.GroupMembershipHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOGroupMembershipHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOGroupMembershipHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.GroupMembershipHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GroupMembershipHistoryEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOGroupMembershipHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
@@ -109909,6 +118228,61 @@ func (ec *executionContext) marshalOGroupSettingEdge2ᚖgithubᚗcomᚋdatumforg
 		return graphql.Null
 	}
 	return ec._GroupSettingEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGroupSettingHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistory(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettingHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GroupSettingHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGroupSettingHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.GroupSettingHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOGroupSettingHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOGroupSettingHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettingHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GroupSettingHistoryEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOGroupSettingHistoryJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐJoinPolicyᚄ(ctx context.Context, v interface{}) ([]enums.JoinPolicy, error) {
@@ -110630,6 +119004,61 @@ func (ec *executionContext) marshalOIntegrationEdge2ᚖgithubᚗcomᚋdatumforge
 	return ec._IntegrationEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOIntegrationHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistory(ctx context.Context, sel ast.SelectionSet, v *generated.IntegrationHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._IntegrationHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOIntegrationHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.IntegrationHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOIntegrationHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOIntegrationHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.IntegrationHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._IntegrationHistoryEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOIntegrationHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
 	if v == nil {
 		return nil, nil
@@ -110711,6 +119140,14 @@ func (ec *executionContext) marshalOIntegrationHistoryOpType2ᚖgithubᚗcomᚋd
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) unmarshalOIntegrationHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryOrder(ctx context.Context, v interface{}) (*generated.IntegrationHistoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputIntegrationHistoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOIntegrationHistoryWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐIntegrationHistoryWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.IntegrationHistoryWhereInput, error) {
@@ -111198,6 +119635,61 @@ func (ec *executionContext) marshalOOauthProviderEdge2ᚖgithubᚗcomᚋdatumfor
 	return ec._OauthProviderEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOOauthProviderHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistory(ctx context.Context, sel ast.SelectionSet, v *generated.OauthProviderHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OauthProviderHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOauthProviderHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.OauthProviderHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOOauthProviderHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOOauthProviderHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.OauthProviderHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OauthProviderHistoryEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOOauthProviderHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
 	if v == nil {
 		return nil, nil
@@ -111520,6 +120012,61 @@ func (ec *executionContext) marshalOOrgMembershipEdge2ᚖgithubᚗcomᚋdatumfor
 		return graphql.Null
 	}
 	return ec._OrgMembershipEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOrgMembershipHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistory(ctx context.Context, sel ast.SelectionSet, v *generated.OrgMembershipHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OrgMembershipHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOrgMembershipHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.OrgMembershipHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOOrgMembershipHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOOrgMembershipHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.OrgMembershipHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OrgMembershipHistoryEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOOrgMembershipHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
@@ -111929,6 +120476,61 @@ func (ec *executionContext) marshalOOrganizationEdge2ᚖgithubᚗcomᚋdatumforg
 	return ec._OrganizationEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOOrganizationHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistory(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OrganizationHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOrganizationHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.OrganizationHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOOrganizationHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOOrganizationHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OrganizationHistoryEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOOrganizationHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
 	if v == nil {
 		return nil, nil
@@ -112010,6 +120612,14 @@ func (ec *executionContext) marshalOOrganizationHistoryOpType2ᚖgithubᚗcomᚋ
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) unmarshalOOrganizationHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryOrder(ctx context.Context, v interface{}) (*generated.OrganizationHistoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputOrganizationHistoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOOrganizationHistoryWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationHistoryWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.OrganizationHistoryWhereInput, error) {
@@ -112101,6 +120711,61 @@ func (ec *executionContext) marshalOOrganizationSettingEdge2ᚖgithubᚗcomᚋda
 		return graphql.Null
 	}
 	return ec._OrganizationSettingEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOrganizationSettingHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistory(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettingHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OrganizationSettingHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOOrganizationSettingHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.OrganizationSettingHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOOrganizationSettingHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOOrganizationSettingHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettingHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._OrganizationSettingHistoryEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOOrganizationSettingHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
@@ -113095,6 +121760,13 @@ func (ec *executionContext) marshalOTemplateEdge2ᚖgithubᚗcomᚋdatumforgeᚋ
 	return ec._TemplateEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOTemplateHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistory(ctx context.Context, sel ast.SelectionSet, v *generated.TemplateHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TemplateHistory(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOTemplateHistoryDocumentType2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐDocumentTypeᚄ(ctx context.Context, v interface{}) ([]enums.DocumentType, error) {
 	if v == nil {
 		return nil, nil
@@ -113178,6 +121850,54 @@ func (ec *executionContext) marshalOTemplateHistoryDocumentType2ᚖgithubᚗcom�
 	return v
 }
 
+func (ec *executionContext) marshalOTemplateHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.TemplateHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOTemplateHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOTemplateHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.TemplateHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._TemplateHistoryEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOTemplateHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
 	if v == nil {
 		return nil, nil
@@ -113259,6 +121979,14 @@ func (ec *executionContext) marshalOTemplateHistoryOpType2ᚖgithubᚗcomᚋdatu
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) unmarshalOTemplateHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryOrder(ctx context.Context, v interface{}) (*generated.TemplateHistoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTemplateHistoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOTemplateHistoryWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐTemplateHistoryWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.TemplateHistoryWhereInput, error) {
@@ -113644,6 +122372,13 @@ func (ec *executionContext) marshalOUserEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatu
 	return ec._UserEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOUserHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistory(ctx context.Context, sel ast.SelectionSet, v *generated.UserHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserHistory(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOUserHistoryAuthProvider2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋenumsᚐAuthProviderᚄ(ctx context.Context, v interface{}) ([]enums.AuthProvider, error) {
 	if v == nil {
 		return nil, nil
@@ -113727,6 +122462,54 @@ func (ec *executionContext) marshalOUserHistoryAuthProvider2ᚖgithubᚗcomᚋda
 	return v
 }
 
+func (ec *executionContext) marshalOUserHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.UserHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOUserHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOUserHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.UserHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserHistoryEdge(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOUserHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {
 	if v == nil {
 		return nil, nil
@@ -113808,6 +122591,14 @@ func (ec *executionContext) marshalOUserHistoryOpType2ᚖgithubᚗcomᚋdatumfor
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) unmarshalOUserHistoryOrder2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryOrder(ctx context.Context, v interface{}) (*generated.UserHistoryOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUserHistoryOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOUserHistoryWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserHistoryWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.UserHistoryWhereInput, error) {
@@ -113899,6 +122690,61 @@ func (ec *executionContext) marshalOUserSettingEdge2ᚖgithubᚗcomᚋdatumforge
 		return graphql.Null
 	}
 	return ec._UserSettingEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOUserSettingHistory2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistory(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingHistory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserSettingHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOUserSettingHistoryEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.UserSettingHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOUserSettingHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOUserSettingHistoryEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingHistoryEdge(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingHistoryEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserSettingHistoryEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOUserSettingHistoryOpType2ᚕgithubᚗcomᚋdatumforgeᚋenthistoryᚐOpTypeᚄ(ctx context.Context, v interface{}) ([]enthistory.OpType, error) {

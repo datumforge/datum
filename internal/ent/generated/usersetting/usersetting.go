@@ -133,8 +133,6 @@ var (
 	DefaultLocked bool
 	// DefaultEmailConfirmed holds the default value on creation for the "email_confirmed" field.
 	DefaultEmailConfirmed bool
-	// DefaultTags holds the default value on creation for the "tags" field.
-	DefaultTags []string
 	// DefaultIsWebauthnAllowed holds the default value on creation for the "is_webauthn_allowed" field.
 	DefaultIsWebauthnAllowed bool
 	// DefaultIsTfaEnabled holds the default value on creation for the "is_tfa_enabled" field.

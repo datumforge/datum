@@ -10374,6 +10374,7 @@ input UpdateUserSettingInput {
 	"""
 	tags: [String!]
 	appendTags: [String!]
+	clearTags: Boolean
 	"""
 	specifies a user may complete authentication by verifying a WebAuthn capable device
 	"""
@@ -10953,7 +10954,7 @@ type UserSetting implements Node {
 	"""
 	tags associated with the user
 	"""
-	tags: [String!]!
+	tags: [String!]
 	"""
 	specifies a user may complete authentication by verifying a WebAuthn capable device
 	"""
@@ -11027,7 +11028,7 @@ type UserSettingHistory implements Node {
 	"""
 	tags associated with the user
 	"""
-	tags: [String!]!
+	tags: [String!]
 	"""
 	specifies a user may complete authentication by verifying a WebAuthn capable device
 	"""

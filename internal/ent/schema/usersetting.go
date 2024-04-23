@@ -61,7 +61,7 @@ func (UserSetting) Fields() []ent.Field {
 			Annotations(entoas.Annotation{ReadOnly: true}),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the user").
-			Default([]string{}),
+			Optional(),
 		field.Bool("is_webauthn_allowed").
 			Comment("specifies a user may complete authentication by verifying a WebAuthn capable device").
 			Optional().

@@ -881,6 +881,16 @@ func EmailConfirmedNEQ(v bool) predicate.UserSettingHistory {
 	return predicate.UserSettingHistory(sql.FieldNEQ(FieldEmailConfirmed, v))
 }
 
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.UserSettingHistory {
+	return predicate.UserSettingHistory(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.UserSettingHistory {
+	return predicate.UserSettingHistory(sql.FieldNotNull(FieldTags))
+}
+
 // IsWebauthnAllowedEQ applies the EQ predicate on the "is_webauthn_allowed" field.
 func IsWebauthnAllowedEQ(v bool) predicate.UserSettingHistory {
 	return predicate.UserSettingHistory(sql.FieldEQ(FieldIsWebauthnAllowed, v))

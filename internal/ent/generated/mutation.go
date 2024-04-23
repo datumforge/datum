@@ -40833,10 +40833,24 @@ func (m *UserSettingMutation) AppendedTags() ([]string, bool) {
 	return m.appendtags, true
 }
 
+// ClearTags clears the value of the "tags" field.
+func (m *UserSettingMutation) ClearTags() {
+	m.tags = nil
+	m.appendtags = nil
+	m.clearedFields[usersetting.FieldTags] = struct{}{}
+}
+
+// TagsCleared returns if the "tags" field was cleared in this mutation.
+func (m *UserSettingMutation) TagsCleared() bool {
+	_, ok := m.clearedFields[usersetting.FieldTags]
+	return ok
+}
+
 // ResetTags resets all changes to the "tags" field.
 func (m *UserSettingMutation) ResetTags() {
 	m.tags = nil
 	m.appendtags = nil
+	delete(m.clearedFields, usersetting.FieldTags)
 }
 
 // SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
@@ -41394,6 +41408,9 @@ func (m *UserSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(usersetting.FieldSuspendedAt) {
 		fields = append(fields, usersetting.FieldSuspendedAt)
 	}
+	if m.FieldCleared(usersetting.FieldTags) {
+		fields = append(fields, usersetting.FieldTags)
+	}
 	if m.FieldCleared(usersetting.FieldIsWebauthnAllowed) {
 		fields = append(fields, usersetting.FieldIsWebauthnAllowed)
 	}
@@ -41443,6 +41460,9 @@ func (m *UserSettingMutation) ClearField(name string) error {
 		return nil
 	case usersetting.FieldSuspendedAt:
 		m.ClearSuspendedAt()
+		return nil
+	case usersetting.FieldTags:
+		m.ClearTags()
 		return nil
 	case usersetting.FieldIsWebauthnAllowed:
 		m.ClearIsWebauthnAllowed()
@@ -42456,10 +42476,24 @@ func (m *UserSettingHistoryMutation) AppendedTags() ([]string, bool) {
 	return m.appendtags, true
 }
 
+// ClearTags clears the value of the "tags" field.
+func (m *UserSettingHistoryMutation) ClearTags() {
+	m.tags = nil
+	m.appendtags = nil
+	m.clearedFields[usersettinghistory.FieldTags] = struct{}{}
+}
+
+// TagsCleared returns if the "tags" field was cleared in this mutation.
+func (m *UserSettingHistoryMutation) TagsCleared() bool {
+	_, ok := m.clearedFields[usersettinghistory.FieldTags]
+	return ok
+}
+
 // ResetTags resets all changes to the "tags" field.
 func (m *UserSettingHistoryMutation) ResetTags() {
 	m.tags = nil
 	m.appendtags = nil
+	delete(m.clearedFields, usersettinghistory.FieldTags)
 }
 
 // SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
@@ -42996,6 +43030,9 @@ func (m *UserSettingHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(usersettinghistory.FieldSuspendedAt) {
 		fields = append(fields, usersettinghistory.FieldSuspendedAt)
 	}
+	if m.FieldCleared(usersettinghistory.FieldTags) {
+		fields = append(fields, usersettinghistory.FieldTags)
+	}
 	if m.FieldCleared(usersettinghistory.FieldIsWebauthnAllowed) {
 		fields = append(fields, usersettinghistory.FieldIsWebauthnAllowed)
 	}
@@ -43048,6 +43085,9 @@ func (m *UserSettingHistoryMutation) ClearField(name string) error {
 		return nil
 	case usersettinghistory.FieldSuspendedAt:
 		m.ClearSuspendedAt()
+		return nil
+	case usersettinghistory.FieldTags:
+		m.ClearTags()
 		return nil
 	case usersettinghistory.FieldIsWebauthnAllowed:
 		m.ClearIsWebauthnAllowed()

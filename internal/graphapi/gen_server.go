@@ -17063,6 +17063,7 @@ input UpdateUserSettingInput {
   """
   tags: [String!]
   appendTags: [String!]
+  clearTags: Boolean
   """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
@@ -17624,7 +17625,7 @@ type UserSetting implements Node {
   """
   tags associated with the user
   """
-  tags: [String!]!
+  tags: [String!]
   """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
@@ -17698,7 +17699,7 @@ type UserSettingHistory implements Node {
   """
   tags associated with the user
   """
-  tags: [String!]!
+  tags: [String!]
   """
   specifies a user may complete authentication by verifying a WebAuthn capable device
   """
@@ -61525,14 +61526,11 @@ func (ec *executionContext) _UserSetting_tags(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserSetting_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -62779,14 +62777,11 @@ func (ec *executionContext) _UserSettingHistory_tags(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserSettingHistory_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -97482,7 +97477,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "status", "emailConfirmed", "tags", "appendTags", "clearTags", "isWebauthnAllowed", "clearIsWebauthnAllowed", "isTfaEnabled", "clearIsTfaEnabled", "userID", "clearUser", "defaultOrgID", "clearDefaultOrg"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -97580,6 +97575,13 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.AppendTags = data
+		case "clearTags":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTags"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearTags = data
 		case "isWebauthnAllowed":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isWebauthnAllowed"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -113141,9 +113143,6 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			}
 		case "tags":
 			out.Values[i] = ec._UserSetting_tags(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "isWebauthnAllowed":
 			out.Values[i] = ec._UserSetting_isWebauthnAllowed(ctx, field, obj)
 		case "isTfaEnabled":
@@ -113387,9 +113386,6 @@ func (ec *executionContext) _UserSettingHistory(ctx context.Context, sel ast.Sel
 			}
 		case "tags":
 			out.Values[i] = ec._UserSettingHistory_tags(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "isWebauthnAllowed":
 			out.Values[i] = ec._UserSettingHistory_isWebauthnAllowed(ctx, field, obj)
 		case "isTfaEnabled":
@@ -115606,38 +115602,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNSubscriber2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSubscriber(ctx context.Context, sel ast.SelectionSet, v generated.Subscriber) graphql.Marshaler {

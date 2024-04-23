@@ -2438,6 +2438,7 @@ type UpdateUserSettingInput struct {
 	SuspendedAt            *time.Time
 	Status                 *enums.UserStatus
 	EmailConfirmed         *bool
+	ClearTags              bool
 	Tags                   []string
 	AppendTags             []string
 	ClearIsWebauthnAllowed bool
@@ -2484,6 +2485,9 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.EmailConfirmed; v != nil {
 		m.SetEmailConfirmed(*v)
+	}
+	if i.ClearTags {
+		m.ClearTags()
 	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)

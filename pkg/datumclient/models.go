@@ -6763,6 +6763,7 @@ type UpdateUserSettingInput struct {
 	// tags associated with the user
 	Tags       []string `json:"tags,omitempty"`
 	AppendTags []string `json:"appendTags,omitempty"`
+	ClearTags  *bool    `json:"clearTags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed      *bool `json:"isWebauthnAllowed,omitempty"`
 	ClearIsWebauthnAllowed *bool `json:"clearIsWebauthnAllowed,omitempty"`
@@ -7186,7 +7187,7 @@ type UserSetting struct {
 	Status         enums.UserStatus `json:"status"`
 	EmailConfirmed bool             `json:"emailConfirmed"`
 	// tags associated with the user
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
 	// whether the user has two factor authentication enabled
@@ -7237,7 +7238,7 @@ type UserSettingHistory struct {
 	Status         enums.UserStatus `json:"status"`
 	EmailConfirmed bool             `json:"emailConfirmed"`
 	// tags associated with the user
-	Tags []string `json:"tags"`
+	Tags []string `json:"tags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
 	IsWebauthnAllowed *bool `json:"isWebauthnAllowed,omitempty"`
 	// whether the user has two factor authentication enabled

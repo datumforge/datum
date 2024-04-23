@@ -402,8 +402,13 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 
 // confirmOrgMembership confirms the user is a member of the requested switch-to organization
 func (h *Handler) confirmOrgMembership(ctx context.Context, userID, orgID string) error {
-	if _, err := transaction.FromContext(ctx).OrgMembership.Query().Where(orgmembership.UserID(userID)).Where(orgmembership.OrganizationID(orgID)).Exist(ctx); err != nil {
+	// bypass authz check to check for membership, exists queries currently fail the generated check
+	qctx := privacy.DecisionContext(ctx, privacy.Allow)
+
+	if exists, err := transaction.FromContext(ctx).OrgMembership.Query().Where(orgmembership.UserID(userID)).Where(orgmembership.OrganizationID(orgID)).Exist(qctx); !exists || err != nil {
 		h.Logger.Errorw("error checking org membership", "error", err)
+
+		return ErrUnauthorized
 	}
 
 	return nil

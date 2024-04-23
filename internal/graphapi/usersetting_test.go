@@ -202,7 +202,6 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			checkOrg: false,
 			expectedRes: datumclient.UpdateUserSetting_UpdateUserSetting_UserSetting{
 				Status: enums.Suspended,
-				Tags:   []string{"mitb", "datum"},
 			},
 		},
 	}

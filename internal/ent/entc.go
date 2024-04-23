@@ -136,6 +136,7 @@ func main() {
 		enthistory.WithImmutableFields(),
 		enthistory.WithHistoryTimeIndex(),
 		enthistory.WithNillableFields(),
+		enthistory.WithGQLQuery(),
 		enthistory.WithSchemaPath("./internal/ent/schema"),
 	)
 	if err != nil {

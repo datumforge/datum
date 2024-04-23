@@ -632,6 +632,36 @@ type DocumentDataHistory implements Node {
 	data: JSON!
 }
 """
+A connection to a list of items.
+"""
+type DocumentDataHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [DocumentDataHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type DocumentDataHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: DocumentDataHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
+}
+"""
 DocumentDataHistoryOpType is enum for the field operation
 """
 enum DocumentDataHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -1067,6 +1097,36 @@ type EntitlementHistory implements Node {
 	whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	"""
 	cancelled: Boolean!
+}
+"""
+A connection to a list of items.
+"""
+type EntitlementHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [EntitlementHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type EntitlementHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: EntitlementHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
 }
 """
 EntitlementHistoryOpType is enum for the field operation
@@ -1618,6 +1678,36 @@ type GroupHistory implements Node {
 	displayName: String!
 }
 """
+A connection to a list of items.
+"""
+type GroupHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [GroupHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type GroupHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: GroupHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
+}
+"""
 GroupHistoryOpType is enum for the field operation
 """
 enum GroupHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -1904,6 +1994,36 @@ type GroupMembershipHistory implements Node {
 	role: GroupMembershipHistoryRole!
 	groupID: String!
 	userID: String!
+}
+"""
+A connection to a list of items.
+"""
+type GroupMembershipHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [GroupMembershipHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type GroupMembershipHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: GroupMembershipHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
 }
 """
 GroupMembershipHistoryOpType is enum for the field operation
@@ -2387,6 +2507,36 @@ type GroupSettingHistory implements Node {
 	the group id associated with the settings
 	"""
 	groupID: String
+}
+"""
+A connection to a list of items.
+"""
+type GroupSettingHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [GroupSettingHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type GroupSettingHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: GroupSettingHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
 }
 """
 GroupSettingHistoryJoinPolicy is enum for the field join_policy
@@ -3067,6 +3217,36 @@ type IntegrationHistory implements Node {
 	description: String
 	kind: String
 	secretName: String
+}
+"""
+A connection to a list of items.
+"""
+type IntegrationHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [IntegrationHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type IntegrationHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: IntegrationHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
 }
 """
 IntegrationHistoryOpType is enum for the field operation
@@ -4510,6 +4690,36 @@ type OauthProviderHistory implements Node {
 	infoURL: String!
 }
 """
+A connection to a list of items.
+"""
+type OauthProviderHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [OauthProviderHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OauthProviderHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: OauthProviderHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
+}
+"""
 OauthProviderHistoryOpType is enum for the field operation
 """
 enum OauthProviderHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -5388,6 +5598,36 @@ type OrgMembershipHistory implements Node {
 	userID: String!
 }
 """
+A connection to a list of items.
+"""
+type OrgMembershipHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [OrgMembershipHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OrgMembershipHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: OrgMembershipHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
+}
+"""
 OrgMembershipHistoryOpType is enum for the field operation
 """
 enum OrgMembershipHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -5895,6 +6135,36 @@ type OrganizationHistory implements Node {
 	dedicatedDb: Boolean!
 }
 """
+A connection to a list of items.
+"""
+type OrganizationHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [OrganizationHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OrganizationHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: OrganizationHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
+}
+"""
 OrganizationHistoryOpType is enum for the field operation
 """
 enum OrganizationHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -6293,6 +6563,36 @@ type OrganizationSettingHistory implements Node {
 	the ID of the organization the settings belong to
 	"""
 	organizationID: String
+}
+"""
+A connection to a list of items.
+"""
+type OrganizationSettingHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [OrganizationSettingHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OrganizationSettingHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: OrganizationSettingHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
 }
 """
 OrganizationSettingHistoryOpType is enum for the field operation
@@ -7398,6 +7698,32 @@ type Query {
 		"""
 		where: DocumentDataWhereInput
 	): DocumentDataConnection!
+	documentDataHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for DocumentDataHistories returned from the connection.
+		"""
+		where: DocumentDataHistoryWhereInput
+	): DocumentDataHistoryConnection!
 	entitlements(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7424,6 +7750,32 @@ type Query {
 		"""
 		where: EntitlementWhereInput
 	): EntitlementConnection!
+	entitlementHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for EntitlementHistories returned from the connection.
+		"""
+		where: EntitlementHistoryWhereInput
+	): EntitlementHistoryConnection!
 	groups(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7455,6 +7807,37 @@ type Query {
 		"""
 		where: GroupWhereInput
 	): GroupConnection!
+	groupHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Ordering options for GroupHistories returned from the connection.
+		"""
+		orderBy: GroupHistoryOrder
+
+		"""
+		Filtering options for GroupHistories returned from the connection.
+		"""
+		where: GroupHistoryWhereInput
+	): GroupHistoryConnection!
 	groupMemberships(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7481,6 +7864,32 @@ type Query {
 		"""
 		where: GroupMembershipWhereInput
 	): GroupMembershipConnection!
+	groupMembershipHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for GroupMembershipHistories returned from the connection.
+		"""
+		where: GroupMembershipHistoryWhereInput
+	): GroupMembershipHistoryConnection!
 	groupSettings(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7507,6 +7916,32 @@ type Query {
 		"""
 		where: GroupSettingWhereInput
 	): GroupSettingConnection!
+	groupSettingHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for GroupSettingHistories returned from the connection.
+		"""
+		where: GroupSettingHistoryWhereInput
+	): GroupSettingHistoryConnection!
 	integrations(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7538,6 +7973,37 @@ type Query {
 		"""
 		where: IntegrationWhereInput
 	): IntegrationConnection!
+	integrationHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Ordering options for IntegrationHistories returned from the connection.
+		"""
+		orderBy: IntegrationHistoryOrder
+
+		"""
+		Filtering options for IntegrationHistories returned from the connection.
+		"""
+		where: IntegrationHistoryWhereInput
+	): IntegrationHistoryConnection!
 	invites(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7590,6 +8056,32 @@ type Query {
 		"""
 		where: OauthProviderWhereInput
 	): OauthProviderConnection!
+	oauthProviderHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for OauthProviderHistories returned from the connection.
+		"""
+		where: OauthProviderHistoryWhereInput
+	): OauthProviderHistoryConnection!
 	ohAuthTooTokens(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7642,6 +8134,32 @@ type Query {
 		"""
 		where: OrgMembershipWhereInput
 	): OrgMembershipConnection!
+	orgMembershipHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for OrgMembershipHistories returned from the connection.
+		"""
+		where: OrgMembershipHistoryWhereInput
+	): OrgMembershipHistoryConnection!
 	organizations(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7673,6 +8191,37 @@ type Query {
 		"""
 		where: OrganizationWhereInput
 	): OrganizationConnection!
+	organizationHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Ordering options for OrganizationHistories returned from the connection.
+		"""
+		orderBy: OrganizationHistoryOrder
+
+		"""
+		Filtering options for OrganizationHistories returned from the connection.
+		"""
+		where: OrganizationHistoryWhereInput
+	): OrganizationHistoryConnection!
 	organizationSettings(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7699,6 +8248,32 @@ type Query {
 		"""
 		where: OrganizationSettingWhereInput
 	): OrganizationSettingConnection!
+	organizationSettingHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for OrganizationSettingHistories returned from the connection.
+		"""
+		where: OrganizationSettingHistoryWhereInput
+	): OrganizationSettingHistoryConnection!
 	personalAccessTokens(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7808,6 +8383,37 @@ type Query {
 		"""
 		where: TemplateWhereInput
 	): TemplateConnection!
+	templateHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Ordering options for TemplateHistories returned from the connection.
+		"""
+		orderBy: TemplateHistoryOrder
+
+		"""
+		Filtering options for TemplateHistories returned from the connection.
+		"""
+		where: TemplateHistoryWhereInput
+	): TemplateHistoryConnection!
 	users(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7839,6 +8445,37 @@ type Query {
 		"""
 		where: UserWhereInput
 	): UserConnection!
+	userHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Ordering options for UserHistories returned from the connection.
+		"""
+		orderBy: UserHistoryOrder
+
+		"""
+		Filtering options for UserHistories returned from the connection.
+		"""
+		where: UserHistoryWhereInput
+	): UserHistoryConnection!
 	userSettings(
 		"""
 		Returns the elements in the list that come after the specified cursor.
@@ -7865,6 +8502,32 @@ type Query {
 		"""
 		where: UserSettingWhereInput
 	): UserSettingConnection!
+	userSettingHistories(
+		"""
+		Returns the elements in the list that come after the specified cursor.
+		"""
+		after: Cursor
+
+		"""
+		Returns the first _n_ elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns the elements in the list that come before the specified cursor.
+		"""
+		before: Cursor
+
+		"""
+		Returns the last _n_ elements from the list.
+		"""
+		last: Int
+
+		"""
+		Filtering options for UserSettingHistories returned from the connection.
+		"""
+		where: UserSettingHistoryWhereInput
+	): UserSettingHistoryConnection!
 	"""
 	Look up documentData by ID
 	"""
@@ -8649,11 +9312,41 @@ type TemplateHistory implements Node {
 	uischema: JSON
 }
 """
+A connection to a list of items.
+"""
+type TemplateHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [TemplateHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
 TemplateHistoryDocumentType is enum for the field template_type
 """
 enum TemplateHistoryDocumentType @goModel(model: "github.com/datumforge/datum/internal/ent/enums.DocumentType") {
 	ROOTTEMPLATE
 	DOCUMENT
+}
+"""
+An edge in a connection.
+"""
+type TemplateHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: TemplateHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
 }
 """
 TemplateHistoryOpType is enum for the field operation
@@ -9853,6 +10546,36 @@ enum UserHistoryAuthProvider @goModel(model: "github.com/datumforge/datum/intern
 	WEBAUTHN
 }
 """
+A connection to a list of items.
+"""
+type UserHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [UserHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type UserHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: UserHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
+}
+"""
 UserHistoryOpType is enum for the field operation
 """
 enum UserHistoryOpType @goModel(model: "github.com/datumforge/enthistory.OpType") {
@@ -10313,6 +11036,36 @@ type UserSettingHistory implements Node {
 	whether the user has two factor authentication enabled
 	"""
 	isTfaEnabled: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type UserSettingHistoryConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [UserSettingHistoryEdge]
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	Identifies the total count of items in the connection.
+	"""
+	totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type UserSettingHistoryEdge {
+	"""
+	The item at the end of the edge.
+	"""
+	node: UserSettingHistory
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: Cursor!
 }
 """
 UserSettingHistoryOpType is enum for the field operation

@@ -2,6 +2,8 @@ module github.com/datumforge/datum
 
 go 1.22.2
 
+replace github.com/Yamashou/gqlgenc v0.21.3 => github.com/golanglemonade/gqlgenc v0.0.0-20240423231434-c970a942e0e9
+
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.5.0

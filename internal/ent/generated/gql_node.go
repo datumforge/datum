@@ -47,98 +47,160 @@ type Noder interface {
 	IsNode()
 }
 
-// IsNode implements the Node interface check for GQLGen.
-func (n *DocumentData) IsNode() {}
+var documentdataImplementors = []string{"DocumentData", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *DocumentDataHistory) IsNode() {}
+func (*DocumentData) IsNode() {}
+
+var documentdatahistoryImplementors = []string{"DocumentDataHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Entitlement) IsNode() {}
+func (*DocumentDataHistory) IsNode() {}
+
+var entitlementImplementors = []string{"Entitlement", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *EntitlementHistory) IsNode() {}
+func (*Entitlement) IsNode() {}
+
+var entitlementhistoryImplementors = []string{"EntitlementHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Group) IsNode() {}
+func (*EntitlementHistory) IsNode() {}
+
+var groupImplementors = []string{"Group", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *GroupHistory) IsNode() {}
+func (*Group) IsNode() {}
+
+var grouphistoryImplementors = []string{"GroupHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *GroupMembership) IsNode() {}
+func (*GroupHistory) IsNode() {}
+
+var groupmembershipImplementors = []string{"GroupMembership", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *GroupMembershipHistory) IsNode() {}
+func (*GroupMembership) IsNode() {}
+
+var groupmembershiphistoryImplementors = []string{"GroupMembershipHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *GroupSetting) IsNode() {}
+func (*GroupMembershipHistory) IsNode() {}
+
+var groupsettingImplementors = []string{"GroupSetting", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *GroupSettingHistory) IsNode() {}
+func (*GroupSetting) IsNode() {}
+
+var groupsettinghistoryImplementors = []string{"GroupSettingHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Integration) IsNode() {}
+func (*GroupSettingHistory) IsNode() {}
+
+var integrationImplementors = []string{"Integration", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *IntegrationHistory) IsNode() {}
+func (*Integration) IsNode() {}
+
+var integrationhistoryImplementors = []string{"IntegrationHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Invite) IsNode() {}
+func (*IntegrationHistory) IsNode() {}
+
+var inviteImplementors = []string{"Invite", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OauthProvider) IsNode() {}
+func (*Invite) IsNode() {}
+
+var oauthproviderImplementors = []string{"OauthProvider", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OauthProviderHistory) IsNode() {}
+func (*OauthProvider) IsNode() {}
+
+var oauthproviderhistoryImplementors = []string{"OauthProviderHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OhAuthTooToken) IsNode() {}
+func (*OauthProviderHistory) IsNode() {}
+
+var ohauthtootokenImplementors = []string{"OhAuthTooToken", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OrgMembership) IsNode() {}
+func (*OhAuthTooToken) IsNode() {}
+
+var orgmembershipImplementors = []string{"OrgMembership", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OrgMembershipHistory) IsNode() {}
+func (*OrgMembership) IsNode() {}
+
+var orgmembershiphistoryImplementors = []string{"OrgMembershipHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Organization) IsNode() {}
+func (*OrgMembershipHistory) IsNode() {}
+
+var organizationImplementors = []string{"Organization", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OrganizationHistory) IsNode() {}
+func (*Organization) IsNode() {}
+
+var organizationhistoryImplementors = []string{"OrganizationHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OrganizationSetting) IsNode() {}
+func (*OrganizationHistory) IsNode() {}
+
+var organizationsettingImplementors = []string{"OrganizationSetting", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OrganizationSettingHistory) IsNode() {}
+func (*OrganizationSetting) IsNode() {}
+
+var organizationsettinghistoryImplementors = []string{"OrganizationSettingHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *PersonalAccessToken) IsNode() {}
+func (*OrganizationSettingHistory) IsNode() {}
+
+var personalaccesstokenImplementors = []string{"PersonalAccessToken", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Subscriber) IsNode() {}
+func (*PersonalAccessToken) IsNode() {}
+
+var subscriberImplementors = []string{"Subscriber", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *TFASetting) IsNode() {}
+func (*Subscriber) IsNode() {}
+
+var tfasettingImplementors = []string{"TFASetting", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Template) IsNode() {}
+func (*TFASetting) IsNode() {}
+
+var templateImplementors = []string{"Template", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *TemplateHistory) IsNode() {}
+func (*Template) IsNode() {}
+
+var templatehistoryImplementors = []string{"TemplateHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *User) IsNode() {}
+func (*TemplateHistory) IsNode() {}
+
+var userImplementors = []string{"User", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *UserHistory) IsNode() {}
+func (*User) IsNode() {}
+
+var userhistoryImplementors = []string{"UserHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *UserSetting) IsNode() {}
+func (*UserHistory) IsNode() {}
+
+var usersettingImplementors = []string{"UserSetting", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *UserSettingHistory) IsNode() {}
+func (*UserSetting) IsNode() {}
+
+var usersettinghistoryImplementors = []string{"UserSettingHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*UserSettingHistory) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -201,375 +263,282 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 	case documentdata.Table:
 		query := c.DocumentData.Query().
 			Where(documentdata.ID(id))
-		query, err := query.CollectFields(ctx, "DocumentData")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, documentdataImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case documentdatahistory.Table:
 		query := c.DocumentDataHistory.Query().
 			Where(documentdatahistory.ID(id))
-		query, err := query.CollectFields(ctx, "DocumentDataHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, documentdatahistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.ID(id))
-		query, err := query.CollectFields(ctx, "Entitlement")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitlementImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case entitlementhistory.Table:
 		query := c.EntitlementHistory.Query().
 			Where(entitlementhistory.ID(id))
-		query, err := query.CollectFields(ctx, "EntitlementHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitlementhistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case group.Table:
 		query := c.Group.Query().
 			Where(group.ID(id))
-		query, err := query.CollectFields(ctx, "Group")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, groupImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case grouphistory.Table:
 		query := c.GroupHistory.Query().
 			Where(grouphistory.ID(id))
-		query, err := query.CollectFields(ctx, "GroupHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, grouphistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case groupmembership.Table:
 		query := c.GroupMembership.Query().
 			Where(groupmembership.ID(id))
-		query, err := query.CollectFields(ctx, "GroupMembership")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, groupmembershipImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case groupmembershiphistory.Table:
 		query := c.GroupMembershipHistory.Query().
 			Where(groupmembershiphistory.ID(id))
-		query, err := query.CollectFields(ctx, "GroupMembershipHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, groupmembershiphistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case groupsetting.Table:
 		query := c.GroupSetting.Query().
 			Where(groupsetting.ID(id))
-		query, err := query.CollectFields(ctx, "GroupSetting")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, groupsettingImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case groupsettinghistory.Table:
 		query := c.GroupSettingHistory.Query().
 			Where(groupsettinghistory.ID(id))
-		query, err := query.CollectFields(ctx, "GroupSettingHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, groupsettinghistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case integration.Table:
 		query := c.Integration.Query().
 			Where(integration.ID(id))
-		query, err := query.CollectFields(ctx, "Integration")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, integrationImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case integrationhistory.Table:
 		query := c.IntegrationHistory.Query().
 			Where(integrationhistory.ID(id))
-		query, err := query.CollectFields(ctx, "IntegrationHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, integrationhistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case invite.Table:
 		query := c.Invite.Query().
 			Where(invite.ID(id))
-		query, err := query.CollectFields(ctx, "Invite")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, inviteImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case oauthprovider.Table:
 		query := c.OauthProvider.Query().
 			Where(oauthprovider.ID(id))
-		query, err := query.CollectFields(ctx, "OauthProvider")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, oauthproviderImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case oauthproviderhistory.Table:
 		query := c.OauthProviderHistory.Query().
 			Where(oauthproviderhistory.ID(id))
-		query, err := query.CollectFields(ctx, "OauthProviderHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, oauthproviderhistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case ohauthtootoken.Table:
 		query := c.OhAuthTooToken.Query().
 			Where(ohauthtootoken.ID(id))
-		query, err := query.CollectFields(ctx, "OhAuthTooToken")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, ohauthtootokenImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case orgmembership.Table:
 		query := c.OrgMembership.Query().
 			Where(orgmembership.ID(id))
-		query, err := query.CollectFields(ctx, "OrgMembership")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, orgmembershipImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case orgmembershiphistory.Table:
 		query := c.OrgMembershipHistory.Query().
 			Where(orgmembershiphistory.ID(id))
-		query, err := query.CollectFields(ctx, "OrgMembershipHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, orgmembershiphistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case organization.Table:
 		query := c.Organization.Query().
 			Where(organization.ID(id))
-		query, err := query.CollectFields(ctx, "Organization")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, organizationImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case organizationhistory.Table:
 		query := c.OrganizationHistory.Query().
 			Where(organizationhistory.ID(id))
-		query, err := query.CollectFields(ctx, "OrganizationHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, organizationhistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case organizationsetting.Table:
 		query := c.OrganizationSetting.Query().
 			Where(organizationsetting.ID(id))
-		query, err := query.CollectFields(ctx, "OrganizationSetting")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, organizationsettingImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case organizationsettinghistory.Table:
 		query := c.OrganizationSettingHistory.Query().
 			Where(organizationsettinghistory.ID(id))
-		query, err := query.CollectFields(ctx, "OrganizationSettingHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, organizationsettinghistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case personalaccesstoken.Table:
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.ID(id))
-		query, err := query.CollectFields(ctx, "PersonalAccessToken")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, personalaccesstokenImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case subscriber.Table:
 		query := c.Subscriber.Query().
 			Where(subscriber.ID(id))
-		query, err := query.CollectFields(ctx, "Subscriber")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, subscriberImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case tfasetting.Table:
 		query := c.TFASetting.Query().
 			Where(tfasetting.ID(id))
-		query, err := query.CollectFields(ctx, "TFASetting")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, tfasettingImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case template.Table:
 		query := c.Template.Query().
 			Where(template.ID(id))
-		query, err := query.CollectFields(ctx, "Template")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, templateImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case templatehistory.Table:
 		query := c.TemplateHistory.Query().
 			Where(templatehistory.ID(id))
-		query, err := query.CollectFields(ctx, "TemplateHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, templatehistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case user.Table:
 		query := c.User.Query().
 			Where(user.ID(id))
-		query, err := query.CollectFields(ctx, "User")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, userImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case userhistory.Table:
 		query := c.UserHistory.Query().
 			Where(userhistory.ID(id))
-		query, err := query.CollectFields(ctx, "UserHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, userhistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case usersetting.Table:
 		query := c.UserSetting.Query().
 			Where(usersetting.ID(id))
-		query, err := query.CollectFields(ctx, "UserSetting")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, usersettingImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case usersettinghistory.Table:
 		query := c.UserSettingHistory.Query().
 			Where(usersettinghistory.ID(id))
-		query, err := query.CollectFields(ctx, "UserSettingHistory")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, usersettinghistoryImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	default:
 		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", table, errNodeInvalidID)
 	}
@@ -646,7 +615,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case documentdata.Table:
 		query := c.DocumentData.Query().
 			Where(documentdata.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "DocumentData")
+		query, err := query.CollectFields(ctx, documentdataImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -662,7 +631,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case documentdatahistory.Table:
 		query := c.DocumentDataHistory.Query().
 			Where(documentdatahistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "DocumentDataHistory")
+		query, err := query.CollectFields(ctx, documentdatahistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -678,7 +647,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Entitlement")
+		query, err := query.CollectFields(ctx, entitlementImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -694,7 +663,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case entitlementhistory.Table:
 		query := c.EntitlementHistory.Query().
 			Where(entitlementhistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "EntitlementHistory")
+		query, err := query.CollectFields(ctx, entitlementhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -710,7 +679,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case group.Table:
 		query := c.Group.Query().
 			Where(group.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Group")
+		query, err := query.CollectFields(ctx, groupImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -726,7 +695,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case grouphistory.Table:
 		query := c.GroupHistory.Query().
 			Where(grouphistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "GroupHistory")
+		query, err := query.CollectFields(ctx, grouphistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -742,7 +711,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case groupmembership.Table:
 		query := c.GroupMembership.Query().
 			Where(groupmembership.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "GroupMembership")
+		query, err := query.CollectFields(ctx, groupmembershipImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -758,7 +727,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case groupmembershiphistory.Table:
 		query := c.GroupMembershipHistory.Query().
 			Where(groupmembershiphistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "GroupMembershipHistory")
+		query, err := query.CollectFields(ctx, groupmembershiphistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -774,7 +743,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case groupsetting.Table:
 		query := c.GroupSetting.Query().
 			Where(groupsetting.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "GroupSetting")
+		query, err := query.CollectFields(ctx, groupsettingImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -790,7 +759,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case groupsettinghistory.Table:
 		query := c.GroupSettingHistory.Query().
 			Where(groupsettinghistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "GroupSettingHistory")
+		query, err := query.CollectFields(ctx, groupsettinghistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -806,7 +775,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case integration.Table:
 		query := c.Integration.Query().
 			Where(integration.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Integration")
+		query, err := query.CollectFields(ctx, integrationImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -822,7 +791,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case integrationhistory.Table:
 		query := c.IntegrationHistory.Query().
 			Where(integrationhistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "IntegrationHistory")
+		query, err := query.CollectFields(ctx, integrationhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -838,7 +807,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case invite.Table:
 		query := c.Invite.Query().
 			Where(invite.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Invite")
+		query, err := query.CollectFields(ctx, inviteImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -854,7 +823,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case oauthprovider.Table:
 		query := c.OauthProvider.Query().
 			Where(oauthprovider.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OauthProvider")
+		query, err := query.CollectFields(ctx, oauthproviderImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -870,7 +839,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case oauthproviderhistory.Table:
 		query := c.OauthProviderHistory.Query().
 			Where(oauthproviderhistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OauthProviderHistory")
+		query, err := query.CollectFields(ctx, oauthproviderhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -886,7 +855,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case ohauthtootoken.Table:
 		query := c.OhAuthTooToken.Query().
 			Where(ohauthtootoken.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OhAuthTooToken")
+		query, err := query.CollectFields(ctx, ohauthtootokenImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -902,7 +871,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case orgmembership.Table:
 		query := c.OrgMembership.Query().
 			Where(orgmembership.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OrgMembership")
+		query, err := query.CollectFields(ctx, orgmembershipImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -918,7 +887,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case orgmembershiphistory.Table:
 		query := c.OrgMembershipHistory.Query().
 			Where(orgmembershiphistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OrgMembershipHistory")
+		query, err := query.CollectFields(ctx, orgmembershiphistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -934,7 +903,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case organization.Table:
 		query := c.Organization.Query().
 			Where(organization.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Organization")
+		query, err := query.CollectFields(ctx, organizationImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -950,7 +919,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case organizationhistory.Table:
 		query := c.OrganizationHistory.Query().
 			Where(organizationhistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OrganizationHistory")
+		query, err := query.CollectFields(ctx, organizationhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -966,7 +935,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case organizationsetting.Table:
 		query := c.OrganizationSetting.Query().
 			Where(organizationsetting.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OrganizationSetting")
+		query, err := query.CollectFields(ctx, organizationsettingImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -982,7 +951,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case organizationsettinghistory.Table:
 		query := c.OrganizationSettingHistory.Query().
 			Where(organizationsettinghistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OrganizationSettingHistory")
+		query, err := query.CollectFields(ctx, organizationsettinghistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -998,7 +967,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case personalaccesstoken.Table:
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "PersonalAccessToken")
+		query, err := query.CollectFields(ctx, personalaccesstokenImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1014,7 +983,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case subscriber.Table:
 		query := c.Subscriber.Query().
 			Where(subscriber.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Subscriber")
+		query, err := query.CollectFields(ctx, subscriberImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1030,7 +999,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case tfasetting.Table:
 		query := c.TFASetting.Query().
 			Where(tfasetting.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "TFASetting")
+		query, err := query.CollectFields(ctx, tfasettingImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1046,7 +1015,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case template.Table:
 		query := c.Template.Query().
 			Where(template.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Template")
+		query, err := query.CollectFields(ctx, templateImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1062,7 +1031,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case templatehistory.Table:
 		query := c.TemplateHistory.Query().
 			Where(templatehistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "TemplateHistory")
+		query, err := query.CollectFields(ctx, templatehistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1078,7 +1047,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case user.Table:
 		query := c.User.Query().
 			Where(user.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "User")
+		query, err := query.CollectFields(ctx, userImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1094,7 +1063,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case userhistory.Table:
 		query := c.UserHistory.Query().
 			Where(userhistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "UserHistory")
+		query, err := query.CollectFields(ctx, userhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1110,7 +1079,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case usersetting.Table:
 		query := c.UserSetting.Query().
 			Where(usersetting.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "UserSetting")
+		query, err := query.CollectFields(ctx, usersettingImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1126,7 +1095,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case usersettinghistory.Table:
 		query := c.UserSettingHistory.Query().
 			Where(usersettinghistory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "UserSettingHistory")
+		query, err := query.CollectFields(ctx, usersettinghistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}

@@ -345,10 +345,6 @@ func (ushc *UserSettingHistoryCreate) defaults() {
 		v := usersettinghistory.DefaultEmailConfirmed
 		ushc.mutation.SetEmailConfirmed(v)
 	}
-	if _, ok := ushc.mutation.Tags(); !ok {
-		v := usersettinghistory.DefaultTags
-		ushc.mutation.SetTags(v)
-	}
 	if _, ok := ushc.mutation.IsWebauthnAllowed(); !ok {
 		v := usersettinghistory.DefaultIsWebauthnAllowed
 		ushc.mutation.SetIsWebauthnAllowed(v)
@@ -389,9 +385,6 @@ func (ushc *UserSettingHistoryCreate) check() error {
 	}
 	if _, ok := ushc.mutation.EmailConfirmed(); !ok {
 		return &ValidationError{Name: "email_confirmed", err: errors.New(`generated: missing required field "UserSettingHistory.email_confirmed"`)}
-	}
-	if _, ok := ushc.mutation.Tags(); !ok {
-		return &ValidationError{Name: "tags", err: errors.New(`generated: missing required field "UserSettingHistory.tags"`)}
 	}
 	return nil
 }

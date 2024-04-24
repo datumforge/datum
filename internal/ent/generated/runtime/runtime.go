@@ -1400,10 +1400,6 @@ func init() {
 	usersettingDescEmailConfirmed := usersettingFields[5].Descriptor()
 	// usersetting.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
 	usersetting.DefaultEmailConfirmed = usersettingDescEmailConfirmed.Default.(bool)
-	// usersettingDescTags is the schema descriptor for tags field.
-	usersettingDescTags := usersettingFields[6].Descriptor()
-	// usersetting.DefaultTags holds the default value on creation for the tags field.
-	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
 	// usersettingDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
 	usersettingDescIsWebauthnAllowed := usersettingFields[7].Descriptor()
 	// usersetting.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.
@@ -1438,10 +1434,6 @@ func init() {
 	usersettinghistoryDescEmailConfirmed := usersettinghistoryFields[15].Descriptor()
 	// usersettinghistory.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
 	usersettinghistory.DefaultEmailConfirmed = usersettinghistoryDescEmailConfirmed.Default.(bool)
-	// usersettinghistoryDescTags is the schema descriptor for tags field.
-	usersettinghistoryDescTags := usersettinghistoryFields[16].Descriptor()
-	// usersettinghistory.DefaultTags holds the default value on creation for the tags field.
-	usersettinghistory.DefaultTags = usersettinghistoryDescTags.Default.([]string)
 	// usersettinghistoryDescIsWebauthnAllowed is the schema descriptor for is_webauthn_allowed field.
 	usersettinghistoryDescIsWebauthnAllowed := usersettinghistoryFields[17].Descriptor()
 	// usersettinghistory.DefaultIsWebauthnAllowed holds the default value on creation for the is_webauthn_allowed field.

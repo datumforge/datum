@@ -9530,8 +9530,7 @@
                   "history_time",
                   "operation",
                   "locked",
-                  "status",
-                  "tags"
+                  "status"
                 ]
               }
             }
@@ -12930,8 +12929,7 @@
           "id",
           "locked",
           "status",
-          "email_confirmed",
-          "tags"
+          "email_confirmed"
         ]
       },
       "UserSettingHistory": {
@@ -13022,8 +13020,7 @@
           "operation",
           "locked",
           "status",
-          "email_confirmed",
-          "tags"
+          "email_confirmed"
         ]
       },
       "Webauthn": {

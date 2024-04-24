@@ -220,6 +220,12 @@ func (usu *UserSettingUpdate) AppendTags(s []string) *UserSettingUpdate {
 	return usu
 }
 
+// ClearTags clears the value of the "tags" field.
+func (usu *UserSettingUpdate) ClearTags() *UserSettingUpdate {
+	usu.mutation.ClearTags()
+	return usu
+}
+
 // SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
 func (usu *UserSettingUpdate) SetIsWebauthnAllowed(b bool) *UserSettingUpdate {
 	usu.mutation.SetIsWebauthnAllowed(b)
@@ -443,6 +449,9 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, usersetting.FieldTags, value)
 		})
+	}
+	if usu.mutation.TagsCleared() {
+		_spec.ClearField(usersetting.FieldTags, field.TypeJSON)
 	}
 	if value, ok := usu.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)
@@ -732,6 +741,12 @@ func (usuo *UserSettingUpdateOne) AppendTags(s []string) *UserSettingUpdateOne {
 	return usuo
 }
 
+// ClearTags clears the value of the "tags" field.
+func (usuo *UserSettingUpdateOne) ClearTags() *UserSettingUpdateOne {
+	usuo.mutation.ClearTags()
+	return usuo
+}
+
 // SetIsWebauthnAllowed sets the "is_webauthn_allowed" field.
 func (usuo *UserSettingUpdateOne) SetIsWebauthnAllowed(b bool) *UserSettingUpdateOne {
 	usuo.mutation.SetIsWebauthnAllowed(b)
@@ -985,6 +1000,9 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, usersetting.FieldTags, value)
 		})
+	}
+	if usuo.mutation.TagsCleared() {
+		_spec.ClearField(usersetting.FieldTags, field.TypeJSON)
 	}
 	if value, ok := usuo.mutation.IsWebauthnAllowed(); ok {
 		_spec.SetField(usersetting.FieldIsWebauthnAllowed, field.TypeBool, value)

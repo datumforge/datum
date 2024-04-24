@@ -340,10 +340,6 @@ func (usc *UserSettingCreate) defaults() error {
 		v := usersetting.DefaultEmailConfirmed
 		usc.mutation.SetEmailConfirmed(v)
 	}
-	if _, ok := usc.mutation.Tags(); !ok {
-		v := usersetting.DefaultTags
-		usc.mutation.SetTags(v)
-	}
 	if _, ok := usc.mutation.IsWebauthnAllowed(); !ok {
 		v := usersetting.DefaultIsWebauthnAllowed
 		usc.mutation.SetIsWebauthnAllowed(v)
@@ -377,9 +373,6 @@ func (usc *UserSettingCreate) check() error {
 	}
 	if _, ok := usc.mutation.EmailConfirmed(); !ok {
 		return &ValidationError{Name: "email_confirmed", err: errors.New(`generated: missing required field "UserSetting.email_confirmed"`)}
-	}
-	if _, ok := usc.mutation.Tags(); !ok {
-		return &ValidationError{Name: "tags", err: errors.New(`generated: missing required field "UserSetting.tags"`)}
 	}
 	return nil
 }

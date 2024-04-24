@@ -2,8 +2,6 @@ module github.com/datumforge/datum
 
 go 1.22.2
 
-replace github.com/Yamashou/gqlgenc v0.21.3 => github.com/golanglemonade/gqlgenc v0.0.0-20240423231434-c970a942e0e9
-
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.5.0
@@ -11,7 +9,7 @@ require (
 	github.com/99designs/gqlgen v0.17.45
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
-	github.com/Yamashou/gqlgenc v0.21.3
+	github.com/Yamashou/gqlgenc v0.21.4
 	github.com/alicebob/miniredis/v2 v2.32.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.11
 	github.com/brianvoe/gofakeit/v7 v7.0.2

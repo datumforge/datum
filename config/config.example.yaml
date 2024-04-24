@@ -70,6 +70,18 @@ email:
         subscriberVerify: /verify
     sendGridApiKey: ""
     testing: true
+eventPublisher:
+    Consumer:
+        enabled: false
+        groupId: test-group
+        output:
+            file: consumer.log
+            stdout: false
+        topics: null
+    address: localhost:9092
+    debug: false
+    kafkaAddresses:
+        addresses: null
 geodetic:
     baseUrl: http://localhost:1337
     debug: false

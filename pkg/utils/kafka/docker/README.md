@@ -14,9 +14,6 @@ Statistics collected by Envoy for the Kafka broker extension and related cluster
 kafka/docker
 
 ```
-
-pwd
-  envoy/examples/kafka
 docker compose pull
 docker compose up --build -d
 docker compose ps

@@ -41,7 +41,7 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/utils/emails"
 	"github.com/datumforge/datum/pkg/utils/kafka/consumer"
-	kafkaConfig "github.com/datumforge/datum/pkg/utils/kafka/eventpublisher"
+	eventpublisher "github.com/datumforge/datum/pkg/utils/kafka/eventpublisher"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
 	"github.com/datumforge/datum/pkg/utils/ulids"
@@ -231,10 +231,10 @@ func WithMiddleware() ServerOption {
 
 func WithEventPublisher() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		conf := &kafkaConfig.Config{}
+		conf := s.Config.Settings.EventPublisher
 
 		// logger
-		logger, err := kafkaConfig.BuildLogger(conf)
+		logger, err := eventpublisher.BuildLogger(conf)
 		if err != nil {
 			panic(fmt.Errorf("fail init logger: %q", err))
 		}
@@ -248,18 +248,18 @@ func WithEventPublisher() ServerOption {
 		s.Config.Logger.Info("kafka zap+watermill logger initialized")
 
 		// publisher
-		publisher, err := kafkaConfig.BuildPublisher(conf, wmLogger)
+
+		publisher, err := eventpublisher.BuildPublisher(conf, wmLogger)
 		if err != nil {
 			panic(fmt.Errorf("fail init publisher: %q", err))
 		}
 
 		s.Config.Logger.Info("kafka publisher initialized and connected to kafka broker!")
-
 		// subscriber
 		var subscriber *kafka.Subscriber
 
 		if conf.Consumer.Enabled {
-			subscriber, err = kafkaConfig.BuildSubscriber(conf, wmLogger)
+			subscriber, err = eventpublisher.BuildSubscriber(conf, wmLogger)
 			if err != nil {
 				panic(fmt.Errorf("fail init subscriber: %q", err))
 			}

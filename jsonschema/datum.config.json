@@ -1055,6 +1055,10 @@
     "objstorage": {
       "$ref": "#/$defs/config.ObjectStorage",
       "description": "Storage contains the configuration for the storage provider"
+    },
+    "eventPublisher": {
+      "$ref": "#/$defs/config.Config",
+      "description": "EventPublisher contains the configuration for the event publisher"
     }
   },
   "additionalProperties": false,

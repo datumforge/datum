@@ -40,9 +40,12 @@ func (h *Handler) PublishEvent(ctx echo.Context) error {
 	id := watermill.NewUUID()
 	msg := message.NewMessage(id, payload)
 
-	// Publish the event
 	if err := h.EventPublisher.Publish(req.Topic, msg); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, "meowmeow")
+	}
+
+	if err := h.Publisher.Publish(req.Topic, msg); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "oops")
 	}
 
 	return ctx.JSON(http.StatusOK, map[string]string{"id": id})

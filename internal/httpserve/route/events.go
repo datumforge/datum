@@ -21,3 +21,16 @@ func registerEventPublisher(router *echo.Echo, h *handlers.Handler) (err error) 
 
 	return
 }
+
+func registerNewEventPublisher(router *echo.Echo, h *handlers.Handler) (err error) {
+	_, err = router.AddRoute(echo.Route{
+		Name:   "EventPublisher",
+		Method: http.MethodPost,
+		Path:   "/publish",
+		Handler: func(c echo.Context) error {
+			return h.PublishEvent(c)
+		},
+	}.ForGroup(V1Version, restrictedEndpointsMW))
+
+	return
+}

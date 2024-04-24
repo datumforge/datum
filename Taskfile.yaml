@@ -25,7 +25,7 @@ includes:
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
   TEST_DB_URL: "libsql://file::memory:?cache=shared"
-  TEST_FGA_URL: "localhost:8080"
+  TEST_FGA_URL: "localhost:8083"
   ENV: config
 
 tasks:
@@ -108,7 +108,7 @@ tasks:
     cmds:
       - task: compose:redis
       - task: compose:fga
-      - task: compose:kafka
+      - docker compose -f ./pkg/utils/kafka/docker/docker-compose-kafka.yaml -p kafka up --build -d
       - go run main.go serve --debug --pretty
 
   pr:

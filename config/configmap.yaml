@@ -174,3 +174,6 @@ data:
   DATUM_OBJSTORAGE_GCS_BUCKET: {{ .Values.datum.objstorage.gcs.bucket | "yourbucketname" }}
   DATUM_OBJSTORAGE_FS_ENABLED: {{ .Values.datum.objstorage.fs.enabled | false }}
   DATUM_OBJSTORAGE_FS_ROOT: {{ .Values.datum.objstorage.fs.root | "./storage" }}
+  DATUM_EVENTPUBLISHER_ADDRESS: {{ .Values.datum.eventpublisher.address | "localhost:9092" }}
+  DATUM_EVENTPUBLISHER_DEBUG: {{ .Values.datum.eventpublisher.debug | false }}
+  DATUM_EVENTPUBLISHER_KAFKAADDRESSES_ADDRESSES: {{ .Values.datum.eventpublisher.kafkaaddresses.addresses }}

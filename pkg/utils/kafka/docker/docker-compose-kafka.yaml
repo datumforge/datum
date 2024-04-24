@@ -57,11 +57,11 @@ services:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
-      - 8083:8083
+      - 8090:8080
     depends_on:
       - kafka-server
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-server:9092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-server:10000
       KAFKA_CLUSTERS_0_METRICS_PORT: 11001
       KAFKA_CLUSTERS_0_METRICS_TYPE: PROMETHEUS

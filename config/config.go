@@ -27,6 +27,7 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
+	kafkaConfig "github.com/datumforge/datum/pkg/utils/kafka/config"
 	"github.com/datumforge/datum/pkg/utils/sentry"
 	"github.com/datumforge/datum/pkg/utils/storage/fs"
 	"github.com/datumforge/datum/pkg/utils/storage/gcs"
@@ -84,6 +85,9 @@ type Config struct {
 
 	// Storage contains the configuration for the storage provider
 	ObjStorage ObjectStorage `json:"objstorage" koanf:"objstorage"`
+
+	// EventPublisher contains the configuration for the event publisher
+	EventPublisher kafkaConfig.Config `json:"eventPublisher" koanf:"eventPublisher"`
 }
 
 // ObjectStorage contains the configuration for the object storage provider

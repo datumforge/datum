@@ -93,6 +93,8 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		s.logger.Infow("registered route", "route", r.Path(), "method", r.Method())
 	}
 
+	s.logger.Infow(datumBlock)
+
 	// if TLS is enabled, start new echo server with TLS
 	if s.config.Settings.Server.TLS.Enabled {
 		s.logger.Infow("starting in https mode")
@@ -104,9 +106,21 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	return sc.Start(srv)
 }
 
-func (s *Server) GetFuncs(routes echo.Routes) {
-	for _, r := range routes {
-		r.Name()
-		s.logger.Infow("registered route", "route", r.Path, "method", r.Method)
-	}
-}
+var datumBlock = `
+┌───────────────────────────────────────────────────────────────────────────┐
+│                                                                           │
+│                                                                           │
+│                                                                           │
+│               *******               **                                    │
+│              /**////**             /**                                    │
+│              /**    /**  ******   ****** **   ** **********               │
+│              /**    /** //////** ///**/ /**  /**//**//**//**              │
+│              /**    /**  *******   /**  /**  /** /** /** /**              │
+│              /**    **  **////**   /**  /**  /** /** /** /**              │
+│              /*******  //********  //** //****** *** /** /**              │
+│              ///////    ////////    //   ////// ///  //  //               │
+│                                                                           │
+│                                                                           │
+│                                                                           │
+│                                                                           │
+└───────────────────────────────────────────────────────────────────────────┘`

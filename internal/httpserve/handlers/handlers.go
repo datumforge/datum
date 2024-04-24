@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ThreeDotsLabs/watermill/message"
 	echo "github.com/datumforge/echox"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/lestrrat-go/jwx/v2/jwk"
@@ -12,6 +13,7 @@ import (
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/tokens"
 	"github.com/datumforge/datum/pkg/utils/emails"
+	"github.com/datumforge/datum/pkg/utils/kafka/eventpublisher"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
 )
@@ -48,4 +50,8 @@ type Handler struct {
 	WebAuthn *webauthn.WebAuthn
 	// OTPManager contains the configuration settings for the OTP provider
 	OTPManager *totp.Manager
+	// EventPublisher is the publisher used to publish events
+	EventPublisher eventpublisher.EventPublisher
+
+	Publisher message.Publisher
 }

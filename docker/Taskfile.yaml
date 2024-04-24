@@ -83,3 +83,9 @@ tasks:
     cmds:
       - 'open "http://localhost:4000"'
       - rover dev --skip-update-check --skip-update -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+
+  kafka:
+    dir: ..
+    desc: brings up the compose environment for kafka development
+    cmds:
+      - "docker compose -f ./docker/docker-compose-kafka.yaml -p kafka up --build -d"

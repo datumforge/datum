@@ -108,6 +108,7 @@ tasks:
     cmds:
       - task: compose:redis
       - task: compose:fga
+      - task: compose:kafka
       - go run main.go serve --debug --pretty
 
   pr:

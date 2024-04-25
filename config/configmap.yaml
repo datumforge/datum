@@ -174,6 +174,21 @@ data:
   DATUM_OBJSTORAGE_GCS_BUCKET: {{ .Values.datum.objstorage.gcs.bucket | "yourbucketname" }}
   DATUM_OBJSTORAGE_FS_ENABLED: {{ .Values.datum.objstorage.fs.enabled | false }}
   DATUM_OBJSTORAGE_FS_ROOT: {{ .Values.datum.objstorage.fs.root | "./storage" }}
-  DATUM_EVENTPUBLISHER_ADDRESS: {{ .Values.datum.eventpublisher.address | "localhost:9092" }}
-  DATUM_EVENTPUBLISHER_DEBUG: {{ .Values.datum.eventpublisher.debug | false }}
-  DATUM_EVENTPUBLISHER_KAFKAADDRESSES_ADDRESSES: {{ .Values.datum.eventpublisher.kafkaaddresses.addresses }}
+  DATUM_EVENTPUBLISHER_PUBLISHERCONFIG_ADDRESS: {{ .Values.datum.eventpublisher.publisherconfig.address | "localhost:9092" }}
+  DATUM_EVENTPUBLISHER_PUBLISHERCONFIG_DEBUG: {{ .Values.datum.eventpublisher.publisherconfig.debug | false }}
+  DATUM_EVENTPUBLISHER_PUBLISHERCONFIG_KAFKAADDRESSES_ADDRESSES: {{ .Values.datum.eventpublisher.publisherconfig.kafkaaddresses.addresses }}
+  DATUM_EVENTPUBLISHER_CONSUMERCONFIG_ENABLED: {{ .Values.datum.eventpublisher.consumerconfig.enabled | false }}
+  DATUM_EVENTPUBLISHER_CONSUMERCONFIG_GROUPID: {{ .Values.datum.eventpublisher.consumerconfig.groupId }}
+  DATUM_EVENTPUBLISHER_CONSUMERCONFIG_TOPICS: {{ .Values.datum.eventpublisher.consumerconfig.topics }}
+  DATUM_EVENTPUBLISHER_CONSUMERCONFIG_OFFSETFROMNEWEST: {{ .Values.datum.eventpublisher.consumerconfig.offsetFromNewest | false }}
+  DATUM_EVENTPUBLISHER_CONSUMERCONFIG_OUTPUT_STDOUT: {{ .Values.datum.eventpublisher.consumerconfig.output.stdout | false }}
+  DATUM_EVENTPUBLISHER_CONSUMERCONFIG_OUTPUT_FILELOCATION: {{ .Values.datum.eventpublisher.consumerconfig.output.fileLocation | "consumer.log" }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_APP: {{ .Values.datum.eventpublisher.loggerconfig.app | "tdr" }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_APPVER: {{ .Values.datum.eventpublisher.loggerconfig.appVer | "v0.0.1" }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_ENV: {{ .Values.datum.eventpublisher.loggerconfig.env | "development" }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_FILELOCATION: {{ .Values.datum.eventpublisher.loggerconfig.fileLocation | "system.log" }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_FILETDRLOCATION: {{ .Values.datum.eventpublisher.loggerconfig.fileTDRLocation | "tdr.log" }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_FILEMAXSIZE: {{ .Values.datum.eventpublisher.loggerconfig.fileMaxSize | 100 }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_FILEMAXBACKUP: {{ .Values.datum.eventpublisher.loggerconfig.fileMaxBackup | 10 }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_FILEMAXAGE: {{ .Values.datum.eventpublisher.loggerconfig.fileMaxAge | 30 }}
+  DATUM_EVENTPUBLISHER_LOGGERCONFIG_STDOUT: {{ .Values.datum.eventpublisher.loggerconfig.stdout | false }}

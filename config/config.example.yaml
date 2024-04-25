@@ -71,17 +71,36 @@ email:
     sendGridApiKey: ""
     testing: true
 eventPublisher:
-    Consumer:
+    consumerConfig:
         enabled: false
-        groupId: test-group
+        groupId: ""
+        offsetFromNewest: false
         output:
-            file: consumer.log
+            fileLocation: consumer.log
             stdout: false
         topics: null
-    address: localhost:9092
-    debug: false
-    kafkaAddresses:
-        addresses: null
+    loggerConfig:
+        app: tdr
+        appVer: v0.0.1
+        env: development
+        fileLocation: system.log
+        fileMaxAge: 30
+        fileMaxBackup: 10
+        fileMaxSize: 100
+        fileTDRLocation: tdr.log
+        stdout: false
+    publisherConfig:
+        Consumer:
+            enabled: false
+            groupId: test-group
+            output:
+                file: consumer.log
+                stdout: false
+            topics: null
+        address: localhost:9092
+        debug: false
+        kafkaAddresses:
+            addresses: null
 geodetic:
     baseUrl: http://localhost:1337
     debug: false

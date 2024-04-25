@@ -111,6 +111,58 @@
       ],
       "description": "Auth settings including oauth2 providers and datum token configuration"
     },
+    "config.ConsumerConfig": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "groupId": {
+          "type": "string"
+        },
+        "topics": {
+          "$ref": "#/$defs/[]string"
+        },
+        "offsetFromNewest": {
+          "type": "boolean"
+        },
+        "output": {
+          "$ref": "#/$defs/config.ConsumerOutput"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "config.ConsumerOutput": {
+      "properties": {
+        "stdout": {
+          "type": "boolean"
+        },
+        "fileLocation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "config.KafkaConfig": {
+      "properties": {
+        "publisherConfig": {
+          "$ref": "#/$defs/config.Config",
+          "description": "PublisherConfig contains the kafka publisher configuration"
+        },
+        "consumerConfig": {
+          "$ref": "#/$defs/config.ConsumerConfig",
+          "description": "ConsumerConfig contains the kafka consumer configuration"
+        },
+        "loggerConfig": {
+          "$ref": "#/$defs/logger.Config",
+          "description": "LoggerConfig contains the kafka logger configuration"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "KafkaConfig contains the configuration for the kafka integration"
+    },
     "config.ObjectStorage": {
       "properties": {
         "s3": {
@@ -553,6 +605,48 @@
       "additionalProperties": false,
       "type": "object",
       "description": "OauthProviderConfig represents the configuration for OAuth providers such as Github and Google"
+    },
+    "logger.Config": {
+      "properties": {
+        "app": {
+          "type": "string",
+          "description": "App name"
+        },
+        "appVer": {
+          "type": "string",
+          "description": "App Version"
+        },
+        "env": {
+          "type": "string",
+          "description": "Log environment (development or production)"
+        },
+        "fileLocation": {
+          "type": "string",
+          "description": "Location where the system log will be saved"
+        },
+        "fileTDRLocation": {
+          "type": "string",
+          "description": "Location where the tdr log will be saved"
+        },
+        "fileMaxSize": {
+          "type": "integer",
+          "description": "Maximum size of a single log file - when log capacity is reached the file will be rotated"
+        },
+        "fileMaxBackup": {
+          "type": "integer",
+          "description": "Maximum number of backup files that will not be deleted - this is useful when you want to rotate but let the older logs fall off"
+        },
+        "fileMaxAge": {
+          "type": "integer",
+          "description": "Number of days where the backup log will not be deleted - controls age of files vs. size"
+        },
+        "stdout": {
+          "type": "boolean",
+          "description": "Log will be printed in console if the value is true"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
     },
     "map[string][]string": {
       "additionalProperties": {
@@ -1057,7 +1151,7 @@
       "description": "Storage contains the configuration for the storage provider"
     },
     "eventPublisher": {
-      "$ref": "#/$defs/config.Config",
+      "$ref": "#/$defs/config.KafkaConfig",
       "description": "EventPublisher contains the configuration for the event publisher"
     }
   },

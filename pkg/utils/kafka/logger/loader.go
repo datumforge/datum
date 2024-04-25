@@ -11,28 +11,24 @@ var (
 
 func Load(conf Config) Log {
 	once.Do(func() {
-		singleton = NewLogger(conf)
+		singleton = NewZapLogger(conf)
 	})
 
 	return singleton
 }
 
 func Info(message string) {
-	singleton.Info(message)
+	singleton.Info(message, nil)
 }
 
 func Warning(message string) {
-	singleton.Warning(message)
+	singleton.Debug(message, nil)
 }
 
 func Error(message string, err error) {
-	singleton.Error(message, err)
+	singleton.Error(message, err, nil)
 }
 
 func Fatal(message string, err error) {
-	singleton.Fatal(message, err)
-}
-
-func Panic(message string, err error) {
-	singleton.Panic(message, err)
+	singleton.Trace(message, nil)
 }

@@ -229,7 +229,7 @@ func WithMiddleware() ServerOption {
 func WithEventPublisher() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		ep := eventpublisher.EventPublisher{
-			Config: s.Config.Settings.EventPublisher,
+			Config: s.Config.Settings.Events.PublisherConfig,
 		}
 
 		if err := ep.Startup(); err != nil {

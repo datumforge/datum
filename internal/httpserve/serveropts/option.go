@@ -1,7 +1,6 @@
 package serveropts
 
 import (
-	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -9,8 +8,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ThreeDotsLabs/watermill"
-	"github.com/ThreeDotsLabs/watermill-kafka/v2/pkg/kafka"
 	echoprometheus "github.com/datumforge/echo-prometheus/v5"
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
@@ -40,7 +37,6 @@ import (
 	"github.com/datumforge/datum/pkg/providers/webauthn"
 	"github.com/datumforge/datum/pkg/sessions"
 	"github.com/datumforge/datum/pkg/utils/emails"
-	"github.com/datumforge/datum/pkg/utils/kafka/consumer"
 	eventpublisher "github.com/datumforge/datum/pkg/utils/kafka/eventpublisher"
 	"github.com/datumforge/datum/pkg/utils/marionette"
 	"github.com/datumforge/datum/pkg/utils/totp"
@@ -229,57 +225,18 @@ func WithMiddleware() ServerOption {
 	})
 }
 
+// WithEventPublisher sets up the default Kafka event publisher to be used to publish events to Kafka
 func WithEventPublisher() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		conf := s.Config.Settings.EventPublisher
-
-		// logger
-		logger, err := eventpublisher.BuildLogger(conf)
-		if err != nil {
-			panic(fmt.Errorf("fail init logger: %q", err))
+		ep := eventpublisher.EventPublisher{
+			Config: s.Config.Settings.EventPublisher,
 		}
 
-		// watermill
-		var wmLogger watermill.LoggerAdapter
-		if conf.Debug {
-			wmLogger = watermill.NewStdLogger(conf.Debug, conf.Debug)
+		if err := ep.Startup(); err != nil {
+			panic(err)
 		}
 
-		s.Config.Logger.Info("kafka zap+watermill logger initialized")
-
-		// publisher
-
-		publisher, err := eventpublisher.BuildPublisher(conf, wmLogger)
-		if err != nil {
-			panic(fmt.Errorf("fail init publisher: %q", err))
-		}
-
-		s.Config.Logger.Info("kafka publisher initialized and connected to kafka broker!")
-		// subscriber
-		var subscriber *kafka.Subscriber
-
-		if conf.Consumer.Enabled {
-			subscriber, err = eventpublisher.BuildSubscriber(conf, wmLogger)
-			if err != nil {
-				panic(fmt.Errorf("fail init subscriber: %q", err))
-			}
-
-			consumerHandler := consumer.NewHandler(logger)
-
-			for _, topic := range conf.Consumer.Topics {
-				messages, err := subscriber.Subscribe(context.Background(), topic)
-				if err != nil {
-					panic(err)
-				}
-
-				go consumerHandler(topic, messages)
-			}
-		}
-
-		s.Config.Logger.Info("kafka consumer initialized and listening on connected kafka broker!")
-
-		s.Config.Handler.EventPublisher.Publisher = publisher
-		s.Config.Handler.Publisher = publisher
+		s.Config.Handler.EventPublisher = &ep
 	})
 }
 

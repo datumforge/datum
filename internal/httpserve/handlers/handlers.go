@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"github.com/ThreeDotsLabs/watermill/message"
 	echo "github.com/datumforge/echox"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/lestrrat-go/jwx/v2/jwk"
@@ -51,7 +50,5 @@ type Handler struct {
 	// OTPManager contains the configuration settings for the OTP provider
 	OTPManager *totp.Manager
 	// EventPublisher is the publisher used to publish events
-	EventPublisher eventpublisher.EventPublisher
-
-	Publisher message.Publisher
+	EventPublisher *eventpublisher.EventPublisher
 }

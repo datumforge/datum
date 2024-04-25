@@ -44,9 +44,9 @@ func (h *Handler) PublishEvent(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "meowmeow")
 	}
 
-	if err := h.Publisher.Publish(req.Topic, msg); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, "oops")
-	}
+	//	if err := h.Publisher.Publish(req.Topic, msg); err != nil {
+	//		return ctx.JSON(http.StatusInternalServerError, "oops")
+	//	}
 
 	return ctx.JSON(http.StatusOK, map[string]string{"id": id})
 }

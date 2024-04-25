@@ -4,24 +4,36 @@ import (
 	"os"
 	"time"
 
+	"github.com/ThreeDotsLabs/watermill"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
+// Logger is a wrapper around the zap logger
 type Logger struct {
-	log *zap.Logger
+	log    *zap.Logger
+	fields watermill.LogFields
 }
 
+// Log is the interface for the logger
 type Log interface {
-	Info(message string)
-	Warning(message string)
-	Error(message string, err error)
-	Fatal(message string, err error)
-	Panic(message string, err error)
+	Info(message string, fields watermill.LogFields)
+	Error(message string, err error, fields watermill.LogFields)
+	Debug(message string, fields watermill.LogFields)
+	Trace(message string, fields watermill.LogFields)
+	With(fields watermill.LogFields) watermill.LoggerAdapter
 }
 
-func NewLogger(conf Config) *Logger {
+func NewLogger(z *Logger) watermill.LoggerAdapter {
+	return &Logger{log: z.log}
+}
+
+// NewLogger is a function that creates and configures a new logger instance using the zap
+// logging library. It takes a `Config` struct as a parameter, which contains configuration settings
+// for the logger such as file location, maximum file size, maximum backups, maximum age, environment,
+// and whether to log to stdout
+func NewZapLogger(conf Config) *Logger {
 	rotator := &lumberjack.Logger{
 		Filename:   conf.FileLocation,
 		MaxSize:    conf.FileMaxSize, // megabytes
@@ -67,25 +79,54 @@ func NewLogger(conf Config) *Logger {
 		zap.String("env", conf.Env),
 	)
 
-	return &Logger{log}
+	return &Logger{log: log}
 }
 
-func (l *Logger) Info(message string) {
-	l.log.Info(message)
+// Info writes info log with message and some fields.
+func (l *Logger) Info(msg string, fields watermill.LogFields) {
+	fields = l.fields.Add(fields)
+	fs := make([]zap.Field, 0, len(fields)+1)
+	for k, v := range fields {
+		fs = append(fs, zap.Any(k, v))
+	}
+	l.log.Info(msg, fs...)
 }
 
-func (l *Logger) Warning(message string) {
-	l.log.Warn(message)
+// Error writes error log with message, error and some fields.
+func (l *Logger) Error(msg string, err error, fields watermill.LogFields) {
+	fields = l.fields.Add(fields)
+	fs := make([]zap.Field, 0, len(fields)+1)
+	fs = append(fs, zap.Error(err))
+	for k, v := range fields {
+		fs = append(fs, zap.Any(k, v))
+	}
+	l.log.Error(msg, fs...)
 }
 
-func (l *Logger) Error(message string, err error) {
-	l.log.Error(message, zap.Error(err))
+// Debug writes debug log with message and some fields
+func (l *Logger) Debug(msg string, fields watermill.LogFields) {
+	fields = l.fields.Add(fields)
+	fs := make([]zap.Field, 0, len(fields)+1)
+	for k, v := range fields {
+		fs = append(fs, zap.Any(k, v))
+	}
+	l.log.Debug(msg, fs...)
 }
 
-func (l *Logger) Fatal(message string, err error) {
-	l.log.Fatal(message, zap.Error(err))
+// Trace writes debug log instead of trace log because zap does not support trace level logging
+func (l *Logger) Trace(msg string, fields watermill.LogFields) {
+	fields = l.fields.Add(fields)
+	fs := make([]zap.Field, 0, len(fields)+1)
+	for k, v := range fields {
+		fs = append(fs, zap.Any(k, v))
+	}
+	l.log.Debug(msg, fs...)
 }
 
-func (l *Logger) Panic(message string, err error) {
-	l.log.Panic(message, zap.Error(err))
+// With returns new LoggerAdapter with passed fields.
+func (l *Logger) With(fields watermill.LogFields) watermill.LoggerAdapter {
+	return &Logger{
+		log:    l.log,
+		fields: l.fields.Add(fields),
+	}
 }

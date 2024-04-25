@@ -18,7 +18,7 @@ type EventSubscriber struct {
 }
 
 func (s *EventSubscriber) Startup() error {
-	logger.Info("Starting up subscriber")
+	logger.Info("Starting up subscriber", nil)
 
 	saramaSubscriberConfig := kafka.DefaultSaramaSubscriberConfig()
 
@@ -39,7 +39,7 @@ func (s *EventSubscriber) Startup() error {
 		nil,
 	)
 	if err != nil {
-		logger.Error("Failed to create subscriber", err)
+		logger.Error("Failed to create subscriber", err, nil)
 		return err
 	}
 
@@ -61,7 +61,7 @@ func (s *EventSubscriber) Consume(topic string, messages <-chan *message.Message
 		var offset int64
 
 		if err := json.Unmarshal(msg.Payload, &messageContent); err != nil {
-			logger.Info("Message is not in json format")
+			logger.Info("Message is not in json format", nil)
 
 			messageContent = string(msg.Payload)
 		}
@@ -74,7 +74,7 @@ func (s *EventSubscriber) Consume(topic string, messages <-chan *message.Message
 			offset = off
 		}
 
-		logger.Info(fmt.Sprintf("===== Message Received =====\nTopic: %s\nPartition: %d\nOffset: %d\nRaw: %s\nUnmarshal: %v\n============================", topic, partition, offset, msg.Payload, messageContent))
+		logger.Info(fmt.Sprintf("===== Message Received =====\nTopic: %s\nPartition: %d\nOffset: %d\nRaw: %s\nUnmarshal: %v\n============================", topic, partition, offset, msg.Payload, messageContent), nil)
 
 		msg.Ack()
 	}

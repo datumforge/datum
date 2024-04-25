@@ -236,6 +236,8 @@ func WithEventPublisher() ServerOption {
 			panic(err)
 		}
 
+		s.Config.Logger.Infow("event publisher started", "config", s.Config.Settings.Events.PublisherConfig)
+
 		s.Config.Handler.EventPublisher = &ep
 	})
 }

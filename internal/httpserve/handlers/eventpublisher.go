@@ -41,7 +41,7 @@ func (h *Handler) PublishEvent(ctx echo.Context) error {
 	msg := message.NewMessage(id, payload)
 
 	if err := h.EventPublisher.Publish(req.Topic, msg); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, "meowmeow")
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
 	//	if err := h.Publisher.Publish(req.Topic, msg); err != nil {

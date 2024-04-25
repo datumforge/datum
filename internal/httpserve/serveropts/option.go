@@ -278,6 +278,7 @@ func WithEventPublisher() ServerOption {
 
 		s.Config.Logger.Info("kafka consumer initialized and listening on connected kafka broker!")
 
+		s.Config.Handler.EventPublisher.Publisher = publisher
 		s.Config.Handler.Publisher = publisher
 	})
 }

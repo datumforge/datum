@@ -19,7 +19,7 @@ var (
 // Values returns a slice of strings that represents all the possible values of the UserStatus enum.
 // Possible default values are "ACTIVE", "INACTIVE", "DEACTIVATED", and "SUSPENDED".
 func (UserStatus) Values() (kinds []string) {
-	for _, s := range []UserStatus{UserStatusActive, UserStatusInactive, UserStatusDeactivated, UserStatusSuspended, UserStatusInvalid} {
+	for _, s := range []UserStatus{UserStatusActive, UserStatusInactive, UserStatusDeactivated, UserStatusSuspended} {
 		kinds = append(kinds, string(s))
 	}
 

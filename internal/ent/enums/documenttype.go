@@ -20,7 +20,7 @@ var (
 // Values returns a slice of strings that represents all the possible values of the DocumentType enum.
 // Possible default values are "ROOTTEMPLATE", "DOCUMENT"
 func (DocumentType) Values() (kinds []string) {
-	for _, s := range []DocumentType{RootTemplate, Document, DocumentTypeInvalid} {
+	for _, s := range []DocumentType{RootTemplate, Document} {
 		kinds = append(kinds, string(s))
 	}
 

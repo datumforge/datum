@@ -112,7 +112,7 @@ func (h *Handler) issueGoogleSession() http.Handler {
 		ctxWithToken := token.NewContextWithOauthTooToken(ctx, googleUser.Email)
 
 		// check if users exists and create if not
-		user, err := h.CheckAndCreateUser(ctxWithToken, googleUser.Name, googleUser.Email, enums.Google)
+		user, err := h.CheckAndCreateUser(ctxWithToken, googleUser.Name, googleUser.Email, enums.AuthProviderGoogle)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -197,7 +197,7 @@ func (h *Handler) issueGitHubSession() http.Handler {
 		ctxWithToken := token.NewContextWithOauthTooToken(ctx, *githubUser.Email)
 
 		// check if users exists and create if not, updates last seen of existing user
-		user, err := h.CheckAndCreateUser(ctxWithToken, *githubUser.Name, *githubUser.Email, enums.GitHub)
+		user, err := h.CheckAndCreateUser(ctxWithToken, *githubUser.Name, *githubUser.Email, enums.AuthProviderGitHub)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

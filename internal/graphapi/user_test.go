@@ -203,7 +203,7 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 				LastName:     gofakeit.LastName(),
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
-				AuthProvider: &enums.GitHub,
+				AuthProvider: &enums.AuthProviderGitHub,
 			},
 			errorMsg: "",
 		},

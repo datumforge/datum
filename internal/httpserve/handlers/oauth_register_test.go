@@ -45,7 +45,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			args: args{
 				name:     "Ant Man",
 				email:    "antman@datum.net",
-				provider: enums.GitHub,
+				provider: enums.AuthProviderGitHub,
 				username: "scarletwitch",
 				userID:   "123456",
 				token:    "gh_thistokenisvalid",
@@ -58,7 +58,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			args: args{
 				name:     "Ant Man",
 				email:    "antman@datum.net",
-				provider: enums.GitHub,
+				provider: enums.AuthProviderGitHub,
 				username: "scarletwitch",
 				userID:   "123456",
 				token:    "gh_thistokenisvalid",
@@ -71,7 +71,7 @@ func (suite *HandlerTestSuite) TestOauthRegister() {
 			args: args{
 				name:     "Ant Man",
 				email:    "antman@marvel.com",
-				provider: enums.GitHub,
+				provider: enums.AuthProviderGitHub,
 				username: "scarletwitch",
 				userID:   "123456",
 				token:    "gh_thistokenisvalid",

@@ -9,16 +9,22 @@ import (
 type JoinPolicy string
 
 var (
-	Open                JoinPolicy = "OPEN"
-	InviteOnly          JoinPolicy = "INVITE_ONLY"
-	ApplicationOnly     JoinPolicy = "APPLICATION_ONLY"
-	InviteOrApplication JoinPolicy = "INVITE_OR_APPLICATION"
+	// JoinPolicyOpen is when the group is open for anyone to join
+	JoinPolicyOpen JoinPolicy = "OPEN"
+	// JoinPolicyInviteOnly is when the group is only joinable by invite
+	JoinPolicyInviteOnly JoinPolicy = "INVITE_ONLY"
+	// JoinPolicyApplicationOnly is when the group is only joinable by application
+	JoinPolicyApplicationOnly JoinPolicy = "APPLICATION_ONLY"
+	// JoinPolicyInviteOrApplication is when the group is joinable by invite or application
+	JoinPolicyInviteOrApplication JoinPolicy = "INVITE_OR_APPLICATION"
+	// JoinPolicyInvalid is the default value for the JoinPolicy enum
+	JoinPolicyInvalid JoinPolicy = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the JoinPolicy enum.
 // Possible default values are "OPEN", "INVITE_ONLY", "APPLICATION_ONLY", and "INVITE_OR_APPLICATION".
 func (JoinPolicy) Values() (kinds []string) {
-	for _, s := range []JoinPolicy{Open, InviteOnly, ApplicationOnly, InviteOrApplication} {
+	for _, s := range []JoinPolicy{JoinPolicyOpen, JoinPolicyInviteOnly, JoinPolicyApplicationOnly, JoinPolicyInviteOrApplication, JoinPolicyInvalid} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -33,16 +39,16 @@ func (r JoinPolicy) String() string {
 // ToGroupJoinPolicy returns the user status enum based on string input
 func ToGroupJoinPolicy(r string) *JoinPolicy {
 	switch r := strings.ToUpper(r); r {
-	case Open.String():
-		return &Open
-	case InviteOnly.String():
-		return &InviteOnly
-	case ApplicationOnly.String():
-		return &ApplicationOnly
-	case InviteOrApplication.String():
-		return &InviteOrApplication
+	case JoinPolicyOpen.String():
+		return &JoinPolicyOpen
+	case JoinPolicyInviteOnly.String():
+		return &JoinPolicyInviteOnly
+	case JoinPolicyApplicationOnly.String():
+		return &JoinPolicyApplicationOnly
+	case JoinPolicyInviteOrApplication.String():
+		return &JoinPolicyInviteOrApplication
 	default:
-		return &InviteOnly
+		return &JoinPolicyInvalid
 	}
 }
 

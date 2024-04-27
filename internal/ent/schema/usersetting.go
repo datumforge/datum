@@ -56,7 +56,7 @@ func (UserSetting) Fields() []ent.Field {
 			Annotations(entoas.Annotation{ReadOnly: true}),
 		field.Enum("status").
 			GoType(enums.UserStatus("")).
-			Default(string(enums.Active)),
+			Default(string(enums.UserStatusActive)),
 		field.Bool("email_confirmed").Default(false).
 			Annotations(entoas.Annotation{ReadOnly: true}),
 		field.JSON("tags", []string{}).

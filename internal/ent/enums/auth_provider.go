@@ -3,25 +3,28 @@ package enums
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 type AuthProvider string
 
 var (
 	// Credentials provider is when the user authenticates with a username and password
-	Credentials AuthProvider = "CREDENTIALS"
+	AuthProviderCredentials AuthProvider = "CREDENTIALS"
 	// Google oauth2 provider for authentication
-	Google AuthProvider = "GOOGLE"
+	AuthProviderGoogle AuthProvider = "GOOGLE"
 	// Github oauth2 provider for authentication
-	GitHub AuthProvider = "GITHUB"
+	AuthProviderGitHub AuthProvider = "GITHUB"
 	// Webauthn passkey provider for authentication
-	Webauthn AuthProvider = "WEBAUTHN"
+	AuthProviderWebauthn AuthProvider = "WEBAUTHN"
+	// AuthProviderInvalid is the default value for the AuthProvider enum
+	AuthProviderInvalid AuthProvider = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the AuthProvider enum.
 // Possible default values are "CREDENTIALS", "GOOGLE", "GITHUB", and "WEBAUTHN"
 func (AuthProvider) Values() (kinds []string) {
-	for _, s := range []AuthProvider{Credentials, Google, GitHub, Webauthn} {
+	for _, s := range []AuthProvider{AuthProviderCredentials, AuthProviderGoogle, AuthProviderGitHub, AuthProviderWebauthn, AuthProviderInvalid} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -31,6 +34,22 @@ func (AuthProvider) Values() (kinds []string) {
 // String returns the AuthProvider as a string
 func (r AuthProvider) String() string {
 	return string(r)
+}
+
+// ToAuthProvider returns the AuthProvider based on string input
+func ToAuthProvider(r string) *AuthProvider {
+	switch r := strings.ToUpper(r); r {
+	case AuthProviderCredentials.String():
+		return &AuthProviderCredentials
+	case AuthProviderGoogle.String():
+		return &AuthProviderGoogle
+	case AuthProviderGitHub.String():
+		return &AuthProviderGitHub
+	case AuthProviderWebauthn.String():
+		return &AuthProviderWebauthn
+	default:
+		return &AuthProviderInvalid
+	}
 }
 
 // MarshalGQL implement the Marshaler interface for gqlgen

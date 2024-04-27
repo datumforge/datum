@@ -9,11 +9,11 @@ import (
 type Role string
 
 var (
-	RoleOwner  Role = "OWNER"
-	RoleAdmin  Role = "ADMIN"
-	RoleMember Role = "MEMBER"
-	RoleUser   Role = "USER"
-	Invalid    Role = "INVALID"
+	RoleOwner   Role = "OWNER"
+	RoleAdmin   Role = "ADMIN"
+	RoleMember  Role = "MEMBER"
+	RoleUser    Role = "USER"
+	RoleInvalid Role = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the Role enum.
@@ -32,18 +32,18 @@ func (r Role) String() string {
 }
 
 // ToRole returns the Role based on string input
-func ToRole(r string) Role {
+func ToRole(r string) *Role {
 	switch r := strings.ToUpper(r); r {
 	case RoleOwner.String():
-		return RoleOwner
+		return &RoleOwner
 	case RoleAdmin.String():
-		return RoleAdmin
+		return &RoleAdmin
 	case RoleMember.String():
-		return RoleMember
+		return &RoleMember
 	case RoleUser.String():
-		return RoleUser
+		return &RoleUser
 	default:
-		return Invalid
+		return &RoleInvalid
 	}
 }
 

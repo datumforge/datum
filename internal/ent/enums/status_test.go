@@ -16,23 +16,23 @@ func TestToUserStatus(t *testing.T) {
 	}{
 		{
 			input:    "active",
-			expected: enums.Active,
+			expected: enums.UserStatusActive,
 		},
 		{
 			input:    "inactive",
-			expected: enums.Inactive,
+			expected: enums.UserStatusInactive,
 		},
 		{
 			input:    "DEACTIVATED",
-			expected: enums.Deactivated,
+			expected: enums.UserStatusDeactivated,
 		},
 		{
 			input:    "suspended",
-			expected: enums.Suspended,
+			expected: enums.UserStatusSuspended,
 		},
 		{
 			input:    "UNKNOWN",
-			expected: enums.StatusInvalid,
+			expected: enums.UserStatusInvalid,
 		},
 	}
 

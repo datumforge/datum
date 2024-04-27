@@ -31,11 +31,11 @@ func (GroupSetting) Fields() []ent.Field {
 		field.Enum("visibility").
 			Comment("whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization").
 			GoType(enums.Visibility("")).
-			Default(string(enums.Public)),
+			Default(string(enums.VisibilityPublic)),
 		field.Enum("join_policy").
 			Comment("the policy governing ability to freely join a group, whether it requires an invitation, application, or either").
 			GoType(enums.JoinPolicy("")).
-			Default(string(enums.InviteOrApplication)),
+			Default(string(enums.JoinPolicyInviteOrApplication)),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the object").
 			Optional().

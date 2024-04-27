@@ -392,20 +392,20 @@ func StoreSession(session string) error {
 func GetRoleEnum(role string) (enums.Role, error) {
 	r := enums.ToRole(role)
 
-	if r == enums.Invalid {
-		return r, ErrInvalidRole
+	if r.String() == enums.RoleInvalid.String() {
+		return *r, ErrInvalidRole
 	}
 
-	return r, nil
+	return *r, nil
 }
 
 // GetInviteStatusEnum returns the invitation status if valid, otherwise returns an error
 func GetInviteStatusEnum(status string) (enums.InviteStatus, error) {
 	r := enums.ToInviteStatus(status)
 
-	if r == enums.InviteInvalid {
-		return r, ErrInvalidInviteStatus
+	if r.String() == enums.InviteInvalid.String() {
+		return *r, ErrInvalidInviteStatus
 	}
 
-	return r, nil
+	return *r, nil
 }

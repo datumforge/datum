@@ -9,17 +9,17 @@ import (
 type UserStatus string
 
 var (
-	Active        UserStatus = "ACTIVE"
-	Inactive      UserStatus = "INACTIVE"
-	Deactivated   UserStatus = "DEACTIVATED"
-	Suspended     UserStatus = "SUSPENDED"
-	StatusInvalid UserStatus = "INVALID"
+	UserStatusActive      UserStatus = "ACTIVE"
+	UserStatusInactive    UserStatus = "INACTIVE"
+	UserStatusDeactivated UserStatus = "DEACTIVATED"
+	UserStatusSuspended   UserStatus = "SUSPENDED"
+	UserStatusInvalid     UserStatus = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the UserStatus enum.
 // Possible default values are "ACTIVE", "INACTIVE", "DEACTIVATED", and "SUSPENDED".
 func (UserStatus) Values() (kinds []string) {
-	for _, s := range []UserStatus{Active, Inactive, Deactivated, Suspended} {
+	for _, s := range []UserStatus{UserStatusActive, UserStatusInactive, UserStatusDeactivated, UserStatusSuspended, UserStatusInvalid} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -34,16 +34,16 @@ func (r UserStatus) String() string {
 // ToUserStatus returns the user status enum based on string input
 func ToUserStatus(r string) *UserStatus {
 	switch r := strings.ToUpper(r); r {
-	case Active.String():
-		return &Active
-	case Inactive.String():
-		return &Inactive
-	case Deactivated.String():
-		return &Deactivated
-	case Suspended.String():
-		return &Suspended
+	case UserStatusActive.String():
+		return &UserStatusActive
+	case UserStatusInactive.String():
+		return &UserStatusInactive
+	case UserStatusDeactivated.String():
+		return &UserStatusDeactivated
+	case UserStatusSuspended.String():
+		return &UserStatusSuspended
 	default:
-		return &StatusInvalid
+		return &UserStatusInvalid
 	}
 }
 

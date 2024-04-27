@@ -58,7 +58,7 @@ func createInvite(ctx context.Context) error {
 	input := datumclient.CreateInviteInput{
 		OwnerID:   oID,
 		Recipient: email,
-		Role:      &role,
+		Role:      role,
 	}
 
 	var s []byte

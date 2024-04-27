@@ -45,13 +45,13 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 			args: args{
 				name:     "Wanda Maximoff",
 				email:    "wmaximoff@marvel.com",
-				provider: enums.GitHub,
+				provider: enums.AuthProviderGitHub,
 			},
 			want: &ent.User{
 				FirstName:    "Wanda",
 				LastName:     "Maximoff",
 				Email:        "wmaximoff@marvel.com",
-				AuthProvider: enums.GitHub,
+				AuthProvider: enums.AuthProviderGitHub,
 			},
 			writes: true,
 		},
@@ -60,13 +60,13 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 			args: args{
 				name:     "Wanda Maximoff",
 				email:    "wmaximoff@marvel.com",
-				provider: enums.Google,
+				provider: enums.AuthProviderGoogle,
 			},
 			want: &ent.User{
 				FirstName:    "Wanda",
 				LastName:     "Maximoff",
 				Email:        "wmaximoff@marvel.com",
-				AuthProvider: enums.Google,
+				AuthProvider: enums.AuthProviderGoogle,
 			},
 			writes: true,
 		},
@@ -75,13 +75,13 @@ func (suite *HandlerTestSuite) TestHandlerCheckAndCreateUser() {
 			args: args{
 				name:     "Wanda Maximoff",
 				email:    "wmaximoff@marvel.com",
-				provider: enums.Google,
+				provider: enums.AuthProviderGoogle,
 			},
 			want: &ent.User{
 				FirstName:    "Wanda",
 				LastName:     "Maximoff",
 				Email:        "wmaximoff@marvel.com",
-				AuthProvider: enums.Google,
+				AuthProvider: enums.AuthProviderGoogle,
 			},
 			writes: false,
 		},

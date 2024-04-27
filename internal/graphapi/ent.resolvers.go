@@ -73,6 +73,16 @@ func (r *queryResolver) GroupSettingHistories(ctx context.Context, after *entgql
 	return withTransactionalMutation(ctx).GroupSettingHistory.Query().Paginate(ctx, after, first, before, last, generated.WithGroupSettingHistoryFilter(where.Filter))
 }
 
+// Hushes is the resolver for the hushes field.
+func (r *queryResolver) Hushes(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.HushOrder, where *generated.HushWhereInput) (*generated.HushConnection, error) {
+	panic(fmt.Errorf("not implemented: Hushes - hushes"))
+}
+
+// HushHistories is the resolver for the hushHistories field.
+func (r *queryResolver) HushHistories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.HushHistoryOrder, where *generated.HushHistoryWhereInput) (*generated.HushHistoryConnection, error) {
+	panic(fmt.Errorf("not implemented: HushHistories - hushHistories"))
+}
+
 // Integrations is the resolver for the integrations field.
 func (r *queryResolver) Integrations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) (*generated.IntegrationConnection, error) {
 	return withTransactionalMutation(ctx).Integration.Query().Paginate(ctx, after, first, before, last, generated.WithIntegrationOrder(orderBy), generated.WithIntegrationFilter(where.Filter))

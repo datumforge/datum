@@ -270,9 +270,6 @@ func (ihu *IntegrationHistoryUpdate) sqlSave(ctx context.Context) (n int, err er
 	if ihu.mutation.KindCleared() {
 		_spec.ClearField(integrationhistory.FieldKind, field.TypeString)
 	}
-	if ihu.mutation.SecretNameCleared() {
-		_spec.ClearField(integrationhistory.FieldSecretName, field.TypeString)
-	}
 	_spec.Node.Schema = ihu.schemaConfig.IntegrationHistory
 	ctx = internal.NewSchemaConfigContext(ctx, ihu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, ihu.driver, _spec); err != nil {
@@ -564,9 +561,6 @@ func (ihuo *IntegrationHistoryUpdateOne) sqlSave(ctx context.Context) (_node *In
 	}
 	if ihuo.mutation.KindCleared() {
 		_spec.ClearField(integrationhistory.FieldKind, field.TypeString)
-	}
-	if ihuo.mutation.SecretNameCleared() {
-		_spec.ClearField(integrationhistory.FieldSecretName, field.TypeString)
 	}
 	_spec.Node.Schema = ihuo.schemaConfig.IntegrationHistory
 	ctx = internal.NewSchemaConfigContext(ctx, ihuo.schemaConfig)

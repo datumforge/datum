@@ -19,6 +19,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -396,6 +398,60 @@ func (f TraverseGroupSettingHistory) Traverse(ctx context.Context, q generated.Q
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.GroupSettingHistoryQuery", q)
+}
+
+// The HushFunc type is an adapter to allow the use of ordinary function as a Querier.
+type HushFunc func(context.Context, *generated.HushQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f HushFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.HushQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.HushQuery", q)
+}
+
+// The TraverseHush type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseHush func(context.Context, *generated.HushQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseHush) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseHush) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.HushQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.HushQuery", q)
+}
+
+// The HushHistoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type HushHistoryFunc func(context.Context, *generated.HushHistoryQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f HushHistoryFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.HushHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.HushHistoryQuery", q)
+}
+
+// The TraverseHushHistory type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseHushHistory func(context.Context, *generated.HushHistoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseHushHistory) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseHushHistory) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.HushHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.HushHistoryQuery", q)
 }
 
 // The IntegrationFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -1044,6 +1100,10 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.GroupSettingQuery, predicate.GroupSetting, groupsetting.OrderOption]{typ: generated.TypeGroupSetting, tq: q}, nil
 	case *generated.GroupSettingHistoryQuery:
 		return &query[*generated.GroupSettingHistoryQuery, predicate.GroupSettingHistory, groupsettinghistory.OrderOption]{typ: generated.TypeGroupSettingHistory, tq: q}, nil
+	case *generated.HushQuery:
+		return &query[*generated.HushQuery, predicate.Hush, hush.OrderOption]{typ: generated.TypeHush, tq: q}, nil
+	case *generated.HushHistoryQuery:
+		return &query[*generated.HushHistoryQuery, predicate.HushHistory, hushhistory.OrderOption]{typ: generated.TypeHushHistory, tq: q}, nil
 	case *generated.IntegrationQuery:
 		return &query[*generated.IntegrationQuery, predicate.Integration, integration.OrderOption]{typ: generated.TypeIntegration, tq: q}, nil
 	case *generated.IntegrationHistoryQuery:

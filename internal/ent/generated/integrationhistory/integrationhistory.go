@@ -42,8 +42,6 @@ const (
 	FieldDescription = "description"
 	// FieldKind holds the string denoting the kind field in the database.
 	FieldKind = "kind"
-	// FieldSecretName holds the string denoting the secret_name field in the database.
-	FieldSecretName = "secret_name"
 	// Table holds the table name of the integrationhistory in the database.
 	Table = "integration_history"
 )
@@ -64,7 +62,6 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldKind,
-	FieldSecretName,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -169,11 +166,6 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByKind orders the results by the kind field.
 func ByKind(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldKind, opts...).ToFunc()
-}
-
-// BySecretName orders the results by the secret_name field.
-func BySecretName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSecretName, opts...).ToFunc()
 }
 
 var (

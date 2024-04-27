@@ -24,6 +24,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -2745,6 +2747,634 @@ func (gsh *GroupSettingHistory) ToEdge(order *GroupSettingHistoryOrder) *GroupSe
 	return &GroupSettingHistoryEdge{
 		Node:   gsh,
 		Cursor: order.Field.toCursor(gsh),
+	}
+}
+
+// HushEdge is the edge representation of Hush.
+type HushEdge struct {
+	Node   *Hush  `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// HushConnection is the connection containing edges to Hush.
+type HushConnection struct {
+	Edges      []*HushEdge `json:"edges"`
+	PageInfo   PageInfo    `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
+}
+
+func (c *HushConnection) build(nodes []*Hush, pager *hushPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Hush
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Hush {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Hush {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*HushEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &HushEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// HushPaginateOption enables pagination customization.
+type HushPaginateOption func(*hushPager) error
+
+// WithHushOrder configures pagination ordering.
+func WithHushOrder(order *HushOrder) HushPaginateOption {
+	if order == nil {
+		order = DefaultHushOrder
+	}
+	o := *order
+	return func(pager *hushPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultHushOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithHushFilter configures pagination filter.
+func WithHushFilter(filter func(*HushQuery) (*HushQuery, error)) HushPaginateOption {
+	return func(pager *hushPager) error {
+		if filter == nil {
+			return errors.New("HushQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type hushPager struct {
+	reverse bool
+	order   *HushOrder
+	filter  func(*HushQuery) (*HushQuery, error)
+}
+
+func newHushPager(opts []HushPaginateOption, reverse bool) (*hushPager, error) {
+	pager := &hushPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultHushOrder
+	}
+	return pager, nil
+}
+
+func (p *hushPager) applyFilter(query *HushQuery) (*HushQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *hushPager) toCursor(h *Hush) Cursor {
+	return p.order.Field.toCursor(h)
+}
+
+func (p *hushPager) applyCursors(query *HushQuery, after, before *Cursor) (*HushQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultHushOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *hushPager) applyOrder(query *HushQuery) *HushQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultHushOrder.Field {
+		query = query.Order(DefaultHushOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *hushPager) orderExpr(query *HushQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultHushOrder.Field {
+			b.Comma().Ident(DefaultHushOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Hush.
+func (h *HushQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...HushPaginateOption,
+) (*HushConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newHushPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if h, err = pager.applyFilter(h); err != nil {
+		return nil, err
+	}
+	conn := &HushConnection{Edges: []*HushEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := h.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if h, err = pager.applyCursors(h, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		h.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := h.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	h = pager.applyOrder(h)
+	nodes, err := h.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// HushOrderFieldName orders Hush by name.
+	HushOrderFieldName = &HushOrderField{
+		Value: func(h *Hush) (ent.Value, error) {
+			return h.Name, nil
+		},
+		column: hush.FieldName,
+		toTerm: hush.ByName,
+		toCursor: func(h *Hush) Cursor {
+			return Cursor{
+				ID:    h.ID,
+				Value: h.Name,
+			}
+		},
+	}
+	// HushOrderFieldKind orders Hush by kind.
+	HushOrderFieldKind = &HushOrderField{
+		Value: func(h *Hush) (ent.Value, error) {
+			return h.Kind, nil
+		},
+		column: hush.FieldKind,
+		toTerm: hush.ByKind,
+		toCursor: func(h *Hush) Cursor {
+			return Cursor{
+				ID:    h.ID,
+				Value: h.Kind,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f HushOrderField) String() string {
+	var str string
+	switch f.column {
+	case HushOrderFieldName.column:
+		str = "name"
+	case HushOrderFieldKind.column:
+		str = "kind"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f HushOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *HushOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("HushOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *HushOrderFieldName
+	case "kind":
+		*f = *HushOrderFieldKind
+	default:
+		return fmt.Errorf("%s is not a valid HushOrderField", str)
+	}
+	return nil
+}
+
+// HushOrderField defines the ordering field of Hush.
+type HushOrderField struct {
+	// Value extracts the ordering value from the given Hush.
+	Value    func(*Hush) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) hush.OrderOption
+	toCursor func(*Hush) Cursor
+}
+
+// HushOrder defines the ordering of Hush.
+type HushOrder struct {
+	Direction OrderDirection  `json:"direction"`
+	Field     *HushOrderField `json:"field"`
+}
+
+// DefaultHushOrder is the default ordering of Hush.
+var DefaultHushOrder = &HushOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &HushOrderField{
+		Value: func(h *Hush) (ent.Value, error) {
+			return h.ID, nil
+		},
+		column: hush.FieldID,
+		toTerm: hush.ByID,
+		toCursor: func(h *Hush) Cursor {
+			return Cursor{ID: h.ID}
+		},
+	},
+}
+
+// ToEdge converts Hush into HushEdge.
+func (h *Hush) ToEdge(order *HushOrder) *HushEdge {
+	if order == nil {
+		order = DefaultHushOrder
+	}
+	return &HushEdge{
+		Node:   h,
+		Cursor: order.Field.toCursor(h),
+	}
+}
+
+// HushHistoryEdge is the edge representation of HushHistory.
+type HushHistoryEdge struct {
+	Node   *HushHistory `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// HushHistoryConnection is the connection containing edges to HushHistory.
+type HushHistoryConnection struct {
+	Edges      []*HushHistoryEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+func (c *HushHistoryConnection) build(nodes []*HushHistory, pager *hushhistoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *HushHistory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *HushHistory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *HushHistory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*HushHistoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &HushHistoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// HushHistoryPaginateOption enables pagination customization.
+type HushHistoryPaginateOption func(*hushhistoryPager) error
+
+// WithHushHistoryOrder configures pagination ordering.
+func WithHushHistoryOrder(order *HushHistoryOrder) HushHistoryPaginateOption {
+	if order == nil {
+		order = DefaultHushHistoryOrder
+	}
+	o := *order
+	return func(pager *hushhistoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultHushHistoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithHushHistoryFilter configures pagination filter.
+func WithHushHistoryFilter(filter func(*HushHistoryQuery) (*HushHistoryQuery, error)) HushHistoryPaginateOption {
+	return func(pager *hushhistoryPager) error {
+		if filter == nil {
+			return errors.New("HushHistoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type hushhistoryPager struct {
+	reverse bool
+	order   *HushHistoryOrder
+	filter  func(*HushHistoryQuery) (*HushHistoryQuery, error)
+}
+
+func newHushHistoryPager(opts []HushHistoryPaginateOption, reverse bool) (*hushhistoryPager, error) {
+	pager := &hushhistoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultHushHistoryOrder
+	}
+	return pager, nil
+}
+
+func (p *hushhistoryPager) applyFilter(query *HushHistoryQuery) (*HushHistoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *hushhistoryPager) toCursor(hh *HushHistory) Cursor {
+	return p.order.Field.toCursor(hh)
+}
+
+func (p *hushhistoryPager) applyCursors(query *HushHistoryQuery, after, before *Cursor) (*HushHistoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultHushHistoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *hushhistoryPager) applyOrder(query *HushHistoryQuery) *HushHistoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultHushHistoryOrder.Field {
+		query = query.Order(DefaultHushHistoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *hushhistoryPager) orderExpr(query *HushHistoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultHushHistoryOrder.Field {
+			b.Comma().Ident(DefaultHushHistoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to HushHistory.
+func (hh *HushHistoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...HushHistoryPaginateOption,
+) (*HushHistoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newHushHistoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if hh, err = pager.applyFilter(hh); err != nil {
+		return nil, err
+	}
+	conn := &HushHistoryConnection{Edges: []*HushHistoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := hh.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if hh, err = pager.applyCursors(hh, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		hh.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := hh.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	hh = pager.applyOrder(hh)
+	nodes, err := hh.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// HushHistoryOrderFieldName orders HushHistory by name.
+	HushHistoryOrderFieldName = &HushHistoryOrderField{
+		Value: func(hh *HushHistory) (ent.Value, error) {
+			return hh.Name, nil
+		},
+		column: hushhistory.FieldName,
+		toTerm: hushhistory.ByName,
+		toCursor: func(hh *HushHistory) Cursor {
+			return Cursor{
+				ID:    hh.ID,
+				Value: hh.Name,
+			}
+		},
+	}
+	// HushHistoryOrderFieldKind orders HushHistory by kind.
+	HushHistoryOrderFieldKind = &HushHistoryOrderField{
+		Value: func(hh *HushHistory) (ent.Value, error) {
+			return hh.Kind, nil
+		},
+		column: hushhistory.FieldKind,
+		toTerm: hushhistory.ByKind,
+		toCursor: func(hh *HushHistory) Cursor {
+			return Cursor{
+				ID:    hh.ID,
+				Value: hh.Kind,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f HushHistoryOrderField) String() string {
+	var str string
+	switch f.column {
+	case HushHistoryOrderFieldName.column:
+		str = "name"
+	case HushHistoryOrderFieldKind.column:
+		str = "kind"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f HushHistoryOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *HushHistoryOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("HushHistoryOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *HushHistoryOrderFieldName
+	case "kind":
+		*f = *HushHistoryOrderFieldKind
+	default:
+		return fmt.Errorf("%s is not a valid HushHistoryOrderField", str)
+	}
+	return nil
+}
+
+// HushHistoryOrderField defines the ordering field of HushHistory.
+type HushHistoryOrderField struct {
+	// Value extracts the ordering value from the given HushHistory.
+	Value    func(*HushHistory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) hushhistory.OrderOption
+	toCursor func(*HushHistory) Cursor
+}
+
+// HushHistoryOrder defines the ordering of HushHistory.
+type HushHistoryOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *HushHistoryOrderField `json:"field"`
+}
+
+// DefaultHushHistoryOrder is the default ordering of HushHistory.
+var DefaultHushHistoryOrder = &HushHistoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &HushHistoryOrderField{
+		Value: func(hh *HushHistory) (ent.Value, error) {
+			return hh.ID, nil
+		},
+		column: hushhistory.FieldID,
+		toTerm: hushhistory.ByID,
+		toCursor: func(hh *HushHistory) Cursor {
+			return Cursor{ID: hh.ID}
+		},
+	},
+}
+
+// ToEdge converts HushHistory into HushHistoryEdge.
+func (hh *HushHistory) ToEdge(order *HushHistoryOrder) *HushHistoryEdge {
+	if order == nil {
+		order = DefaultHushHistoryOrder
+	}
+	return &HushHistoryEdge{
+		Node:   hh,
+		Cursor: order.Field.toCursor(hh),
 	}
 }
 

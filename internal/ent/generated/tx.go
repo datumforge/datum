@@ -34,6 +34,10 @@ type Tx struct {
 	GroupSetting *GroupSettingClient
 	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
 	GroupSettingHistory *GroupSettingHistoryClient
+	// Hush is the client for interacting with the Hush builders.
+	Hush *HushClient
+	// HushHistory is the client for interacting with the HushHistory builders.
+	HushHistory *HushHistoryClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
 	// IntegrationHistory is the client for interacting with the IntegrationHistory builders.
@@ -222,6 +226,8 @@ func (tx *Tx) init() {
 	tx.GroupMembershipHistory = NewGroupMembershipHistoryClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
 	tx.GroupSettingHistory = NewGroupSettingHistoryClient(tx.config)
+	tx.Hush = NewHushClient(tx.config)
+	tx.HushHistory = NewHushHistoryClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.IntegrationHistory = NewIntegrationHistoryClient(tx.config)
 	tx.Invite = NewInviteClient(tx.config)

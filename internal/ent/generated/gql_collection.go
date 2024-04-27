@@ -20,6 +20,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -1430,6 +1432,302 @@ func newGroupSettingHistoryPaginateArgs(rv map[string]any) *groupsettinghistoryP
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (h *HushQuery) CollectFields(ctx context.Context, satisfies ...string) (*HushQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return h, nil
+	}
+	if err := h.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return h, nil
+}
+
+func (h *HushQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(hush.Columns))
+		selectedFields = []string{hush.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "integrations":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&IntegrationClient{config: h.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, integrationImplementors)...); err != nil {
+				return err
+			}
+			h.WithNamedIntegrations(alias, func(wq *IntegrationQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[hush.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, hush.FieldCreatedAt)
+				fieldSeen[hush.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[hush.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, hush.FieldUpdatedAt)
+				fieldSeen[hush.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[hush.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, hush.FieldCreatedBy)
+				fieldSeen[hush.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[hush.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, hush.FieldUpdatedBy)
+				fieldSeen[hush.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[hush.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, hush.FieldDeletedAt)
+				fieldSeen[hush.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[hush.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, hush.FieldDeletedBy)
+				fieldSeen[hush.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[hush.FieldName]; !ok {
+				selectedFields = append(selectedFields, hush.FieldName)
+				fieldSeen[hush.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[hush.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, hush.FieldDescription)
+				fieldSeen[hush.FieldDescription] = struct{}{}
+			}
+		case "kind":
+			if _, ok := fieldSeen[hush.FieldKind]; !ok {
+				selectedFields = append(selectedFields, hush.FieldKind)
+				fieldSeen[hush.FieldKind] = struct{}{}
+			}
+		case "secretName":
+			if _, ok := fieldSeen[hush.FieldSecretName]; !ok {
+				selectedFields = append(selectedFields, hush.FieldSecretName)
+				fieldSeen[hush.FieldSecretName] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		h.Select(selectedFields...)
+	}
+	return nil
+}
+
+type hushPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []HushPaginateOption
+}
+
+func newHushPaginateArgs(rv map[string]any) *hushPaginateArgs {
+	args := &hushPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &HushOrder{Field: &HushOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithHushOrder(order))
+			}
+		case *HushOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithHushOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*HushWhereInput); ok {
+		args.opts = append(args.opts, WithHushFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (hh *HushHistoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*HushHistoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return hh, nil
+	}
+	if err := hh.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return hh, nil
+}
+
+func (hh *HushHistoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(hushhistory.Columns))
+		selectedFields = []string{hushhistory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "historyTime":
+			if _, ok := fieldSeen[hushhistory.FieldHistoryTime]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldHistoryTime)
+				fieldSeen[hushhistory.FieldHistoryTime] = struct{}{}
+			}
+		case "operation":
+			if _, ok := fieldSeen[hushhistory.FieldOperation]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldOperation)
+				fieldSeen[hushhistory.FieldOperation] = struct{}{}
+			}
+		case "ref":
+			if _, ok := fieldSeen[hushhistory.FieldRef]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldRef)
+				fieldSeen[hushhistory.FieldRef] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[hushhistory.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldCreatedAt)
+				fieldSeen[hushhistory.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[hushhistory.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldUpdatedAt)
+				fieldSeen[hushhistory.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[hushhistory.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldCreatedBy)
+				fieldSeen[hushhistory.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[hushhistory.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldUpdatedBy)
+				fieldSeen[hushhistory.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[hushhistory.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldDeletedAt)
+				fieldSeen[hushhistory.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[hushhistory.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldDeletedBy)
+				fieldSeen[hushhistory.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[hushhistory.FieldName]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldName)
+				fieldSeen[hushhistory.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[hushhistory.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldDescription)
+				fieldSeen[hushhistory.FieldDescription] = struct{}{}
+			}
+		case "kind":
+			if _, ok := fieldSeen[hushhistory.FieldKind]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldKind)
+				fieldSeen[hushhistory.FieldKind] = struct{}{}
+			}
+		case "secretName":
+			if _, ok := fieldSeen[hushhistory.FieldSecretName]; !ok {
+				selectedFields = append(selectedFields, hushhistory.FieldSecretName)
+				fieldSeen[hushhistory.FieldSecretName] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		hh.Select(selectedFields...)
+	}
+	return nil
+}
+
+type hushhistoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []HushHistoryPaginateOption
+}
+
+func newHushHistoryPaginateArgs(rv map[string]any) *hushhistoryPaginateArgs {
+	args := &hushhistoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &HushHistoryOrder{Field: &HushHistoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithHushHistoryOrder(order))
+			}
+		case *HushHistoryOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithHushHistoryOrder(v))
+			}
+		}
+	}
+	if v, ok := rv[whereField].(*HushHistoryWhereInput); ok {
+		args.opts = append(args.opts, WithHushHistoryFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (i *IntegrationQuery) CollectFields(ctx context.Context, satisfies ...string) (*IntegrationQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1465,6 +1763,19 @@ func (i *IntegrationQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				selectedFields = append(selectedFields, integration.FieldOwnerID)
 				fieldSeen[integration.FieldOwnerID] = struct{}{}
 			}
+
+		case "secrets":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&HushClient{config: i.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, hushImplementors)...); err != nil {
+				return err
+			}
+			i.WithNamedSecrets(alias, func(wq *HushQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[integration.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, integration.FieldCreatedAt)
@@ -1514,11 +1825,6 @@ func (i *IntegrationQuery) collectField(ctx context.Context, oneNode bool, opCtx
 			if _, ok := fieldSeen[integration.FieldKind]; !ok {
 				selectedFields = append(selectedFields, integration.FieldKind)
 				fieldSeen[integration.FieldKind] = struct{}{}
-			}
-		case "secretName":
-			if _, ok := fieldSeen[integration.FieldSecretName]; !ok {
-				selectedFields = append(selectedFields, integration.FieldSecretName)
-				fieldSeen[integration.FieldSecretName] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1668,11 +1974,6 @@ func (ih *IntegrationHistoryQuery) collectField(ctx context.Context, oneNode boo
 			if _, ok := fieldSeen[integrationhistory.FieldKind]; !ok {
 				selectedFields = append(selectedFields, integrationhistory.FieldKind)
 				fieldSeen[integrationhistory.FieldKind] = struct{}{}
-			}
-		case "secretName":
-			if _, ok := fieldSeen[integrationhistory.FieldSecretName]; !ok {
-				selectedFields = append(selectedFields, integrationhistory.FieldSecretName)
-				fieldSeen[integrationhistory.FieldSecretName] = struct{}{}
 			}
 		case "id":
 		case "__typename":

@@ -18,6 +18,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -96,6 +98,16 @@ var groupsettinghistoryImplementors = []string{"GroupSettingHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*GroupSettingHistory) IsNode() {}
+
+var hushImplementors = []string{"Hush", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Hush) IsNode() {}
+
+var hushhistoryImplementors = []string{"HushHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*HushHistory) IsNode() {}
 
 var integrationImplementors = []string{"Integration", "Node"}
 
@@ -346,6 +358,24 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(groupsettinghistory.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, groupsettinghistoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case hush.Table:
+		query := c.Hush.Query().
+			Where(hush.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, hushImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case hushhistory.Table:
+		query := c.HushHistory.Query().
+			Where(hushhistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, hushhistoryImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -760,6 +790,38 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.GroupSettingHistory.Query().
 			Where(groupsettinghistory.IDIn(ids...))
 		query, err := query.CollectFields(ctx, groupsettinghistoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case hush.Table:
+		query := c.Hush.Query().
+			Where(hush.IDIn(ids...))
+		query, err := query.CollectFields(ctx, hushImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case hushhistory.Table:
+		query := c.HushHistory.Query().
+			Where(hushhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, hushhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}

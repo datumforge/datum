@@ -125,11 +125,6 @@ func Kind(v string) predicate.IntegrationHistory {
 	return predicate.IntegrationHistory(sql.FieldEQ(FieldKind, v))
 }
 
-// SecretName applies equality check predicate on the "secret_name" field. It's identical to SecretNameEQ.
-func SecretName(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldEQ(FieldSecretName, v))
-}
-
 // HistoryTimeEQ applies the EQ predicate on the "history_time" field.
 func HistoryTimeEQ(v time.Time) predicate.IntegrationHistory {
 	return predicate.IntegrationHistory(sql.FieldEQ(FieldHistoryTime, v))
@@ -918,81 +913,6 @@ func KindEqualFold(v string) predicate.IntegrationHistory {
 // KindContainsFold applies the ContainsFold predicate on the "kind" field.
 func KindContainsFold(v string) predicate.IntegrationHistory {
 	return predicate.IntegrationHistory(sql.FieldContainsFold(FieldKind, v))
-}
-
-// SecretNameEQ applies the EQ predicate on the "secret_name" field.
-func SecretNameEQ(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldEQ(FieldSecretName, v))
-}
-
-// SecretNameNEQ applies the NEQ predicate on the "secret_name" field.
-func SecretNameNEQ(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldNEQ(FieldSecretName, v))
-}
-
-// SecretNameIn applies the In predicate on the "secret_name" field.
-func SecretNameIn(vs ...string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldIn(FieldSecretName, vs...))
-}
-
-// SecretNameNotIn applies the NotIn predicate on the "secret_name" field.
-func SecretNameNotIn(vs ...string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldNotIn(FieldSecretName, vs...))
-}
-
-// SecretNameGT applies the GT predicate on the "secret_name" field.
-func SecretNameGT(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldGT(FieldSecretName, v))
-}
-
-// SecretNameGTE applies the GTE predicate on the "secret_name" field.
-func SecretNameGTE(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldGTE(FieldSecretName, v))
-}
-
-// SecretNameLT applies the LT predicate on the "secret_name" field.
-func SecretNameLT(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldLT(FieldSecretName, v))
-}
-
-// SecretNameLTE applies the LTE predicate on the "secret_name" field.
-func SecretNameLTE(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldLTE(FieldSecretName, v))
-}
-
-// SecretNameContains applies the Contains predicate on the "secret_name" field.
-func SecretNameContains(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldContains(FieldSecretName, v))
-}
-
-// SecretNameHasPrefix applies the HasPrefix predicate on the "secret_name" field.
-func SecretNameHasPrefix(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldHasPrefix(FieldSecretName, v))
-}
-
-// SecretNameHasSuffix applies the HasSuffix predicate on the "secret_name" field.
-func SecretNameHasSuffix(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldHasSuffix(FieldSecretName, v))
-}
-
-// SecretNameIsNil applies the IsNil predicate on the "secret_name" field.
-func SecretNameIsNil() predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldIsNull(FieldSecretName))
-}
-
-// SecretNameNotNil applies the NotNil predicate on the "secret_name" field.
-func SecretNameNotNil() predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldNotNull(FieldSecretName))
-}
-
-// SecretNameEqualFold applies the EqualFold predicate on the "secret_name" field.
-func SecretNameEqualFold(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldEqualFold(FieldSecretName, v))
-}
-
-// SecretNameContainsFold applies the ContainsFold predicate on the "secret_name" field.
-func SecretNameContainsFold(v string) predicate.IntegrationHistory {
-	return predicate.IntegrationHistory(sql.FieldContainsFold(FieldSecretName, v))
 }
 
 // And groups predicates with the AND operator between them.

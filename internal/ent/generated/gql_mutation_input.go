@@ -577,6 +577,126 @@ func (c *GroupSettingUpdateOne) SetInput(i UpdateGroupSettingInput) *GroupSettin
 	return c
 }
 
+// CreateHushInput represents a mutation input for creating hushes.
+type CreateHushInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Name           string
+	Description    *string
+	Kind           *string
+	SecretName     *string
+	SecretValue    *string
+	IntegrationIDs []string
+}
+
+// Mutate applies the CreateHushInput on the HushMutation builder.
+func (i *CreateHushInput) Mutate(m *HushMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
+	}
+	if v := i.SecretName; v != nil {
+		m.SetSecretName(*v)
+	}
+	if v := i.SecretValue; v != nil {
+		m.SetSecretValue(*v)
+	}
+	if v := i.IntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateHushInput on the HushCreate builder.
+func (c *HushCreate) SetInput(i CreateHushInput) *HushCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateHushInput represents a mutation input for updating hushes.
+type UpdateHushInput struct {
+	ClearUpdatedAt       bool
+	UpdatedAt            *time.Time
+	ClearUpdatedBy       bool
+	UpdatedBy            *string
+	Name                 *string
+	ClearDescription     bool
+	Description          *string
+	ClearKind            bool
+	Kind                 *string
+	ClearIntegrations    bool
+	AddIntegrationIDs    []string
+	RemoveIntegrationIDs []string
+}
+
+// Mutate applies the UpdateHushInput on the HushMutation builder.
+func (i *UpdateHushInput) Mutate(m *HushMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if i.ClearKind {
+		m.ClearKind()
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
+	}
+	if i.ClearIntegrations {
+		m.ClearIntegrations()
+	}
+	if v := i.AddIntegrationIDs; len(v) > 0 {
+		m.AddIntegrationIDs(v...)
+	}
+	if v := i.RemoveIntegrationIDs; len(v) > 0 {
+		m.RemoveIntegrationIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateHushInput on the HushUpdate builder.
+func (c *HushUpdate) SetInput(i UpdateHushInput) *HushUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateHushInput on the HushUpdateOne builder.
+func (c *HushUpdateOne) SetInput(i UpdateHushInput) *HushUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateIntegrationInput represents a mutation input for creating integrations.
 type CreateIntegrationInput struct {
 	CreatedAt   *time.Time
@@ -586,8 +706,8 @@ type CreateIntegrationInput struct {
 	Name        string
 	Description *string
 	Kind        *string
-	SecretName  *string
 	OwnerID     string
+	SecretIDs   []string
 }
 
 // Mutate applies the CreateIntegrationInput on the IntegrationMutation builder.
@@ -611,10 +731,10 @@ func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
 	if v := i.Kind; v != nil {
 		m.SetKind(*v)
 	}
-	if v := i.SecretName; v != nil {
-		m.SetSecretName(*v)
-	}
 	m.SetOwnerID(i.OwnerID)
+	if v := i.SecretIDs; len(v) > 0 {
+		m.AddSecretIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateIntegrationInput on the IntegrationCreate builder.
@@ -635,6 +755,9 @@ type UpdateIntegrationInput struct {
 	ClearKind        bool
 	Kind             *string
 	OwnerID          *string
+	ClearSecrets     bool
+	AddSecretIDs     []string
+	RemoveSecretIDs  []string
 }
 
 // Mutate applies the UpdateIntegrationInput on the IntegrationMutation builder.
@@ -668,6 +791,15 @@ func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
+	}
+	if i.ClearSecrets {
+		m.ClearSecrets()
+	}
+	if v := i.AddSecretIDs; len(v) > 0 {
+		m.AddSecretIDs(v...)
+	}
+	if v := i.RemoveSecretIDs; len(v) > 0 {
+		m.RemoveSecretIDs(v...)
 	}
 }
 

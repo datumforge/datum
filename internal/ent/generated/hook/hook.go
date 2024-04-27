@@ -141,6 +141,30 @@ func (f GroupSettingHistoryFunc) Mutate(ctx context.Context, m generated.Mutatio
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupSettingHistoryMutation", m)
 }
 
+// The HushFunc type is an adapter to allow the use of ordinary
+// function as Hush mutator.
+type HushFunc func(context.Context, *generated.HushMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f HushFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.HushMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.HushMutation", m)
+}
+
+// The HushHistoryFunc type is an adapter to allow the use of ordinary
+// function as HushHistory mutator.
+type HushHistoryFunc func(context.Context, *generated.HushHistoryMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f HushHistoryFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.HushHistoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.HushHistoryMutation", m)
+}
+
 // The IntegrationFunc type is an adapter to allow the use of ordinary
 // function as Integration mutator.
 type IntegrationFunc func(context.Context, *generated.IntegrationMutation) (generated.Value, error)

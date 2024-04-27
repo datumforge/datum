@@ -24,6 +24,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -71,6 +73,8 @@ const (
 	TypeGroupMembershipHistory     = "GroupMembershipHistory"
 	TypeGroupSetting               = "GroupSetting"
 	TypeGroupSettingHistory        = "GroupSettingHistory"
+	TypeHush                       = "Hush"
+	TypeHushHistory                = "HushHistory"
 	TypeIntegration                = "Integration"
 	TypeIntegrationHistory         = "IntegrationHistory"
 	TypeInvite                     = "Invite"
@@ -12783,12 +12787,1173 @@ func (m *GroupSettingHistoryMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown GroupSettingHistory edge %s", name)
 }
 
-// IntegrationMutation represents an operation that mutates the Integration nodes in the graph.
-type IntegrationMutation struct {
+// HushMutation represents an operation that mutates the Hush nodes in the graph.
+type HushMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *string
+	created_at          *time.Time
+	updated_at          *time.Time
+	created_by          *string
+	updated_by          *string
+	deleted_at          *time.Time
+	deleted_by          *string
+	name                *string
+	description         *string
+	kind                *string
+	secret_name         *string
+	secret_value        *string
+	clearedFields       map[string]struct{}
+	integrations        map[string]struct{}
+	removedintegrations map[string]struct{}
+	clearedintegrations bool
+	done                bool
+	oldValue            func(context.Context) (*Hush, error)
+	predicates          []predicate.Hush
+}
+
+var _ ent.Mutation = (*HushMutation)(nil)
+
+// hushOption allows management of the mutation configuration using functional options.
+type hushOption func(*HushMutation)
+
+// newHushMutation creates new mutation for the Hush entity.
+func newHushMutation(c config, op Op, opts ...hushOption) *HushMutation {
+	m := &HushMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeHush,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withHushID sets the ID field of the mutation.
+func withHushID(id string) hushOption {
+	return func(m *HushMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Hush
+		)
+		m.oldValue = func(ctx context.Context) (*Hush, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Hush.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withHush sets the old Hush of the mutation.
+func withHush(node *Hush) hushOption {
+	return func(m *HushMutation) {
+		m.oldValue = func(context.Context) (*Hush, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m HushMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m HushMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Hush entities.
+func (m *HushMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *HushMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *HushMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Hush.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *HushMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *HushMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *HushMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[hush.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *HushMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[hush.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *HushMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, hush.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *HushMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *HushMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *HushMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[hush.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *HushMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[hush.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *HushMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, hush.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *HushMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *HushMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *HushMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[hush.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *HushMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[hush.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *HushMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, hush.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *HushMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *HushMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *HushMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[hush.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *HushMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[hush.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *HushMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, hush.FieldUpdatedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *HushMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *HushMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *HushMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[hush.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *HushMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[hush.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *HushMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, hush.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *HushMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *HushMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *HushMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[hush.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *HushMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[hush.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *HushMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, hush.FieldDeletedBy)
+}
+
+// SetName sets the "name" field.
+func (m *HushMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *HushMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *HushMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *HushMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *HushMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *HushMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[hush.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *HushMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[hush.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *HushMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, hush.FieldDescription)
+}
+
+// SetKind sets the "kind" field.
+func (m *HushMutation) SetKind(s string) {
+	m.kind = &s
+}
+
+// Kind returns the value of the "kind" field in the mutation.
+func (m *HushMutation) Kind() (r string, exists bool) {
+	v := m.kind
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKind returns the old "kind" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldKind(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKind is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKind requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKind: %w", err)
+	}
+	return oldValue.Kind, nil
+}
+
+// ClearKind clears the value of the "kind" field.
+func (m *HushMutation) ClearKind() {
+	m.kind = nil
+	m.clearedFields[hush.FieldKind] = struct{}{}
+}
+
+// KindCleared returns if the "kind" field was cleared in this mutation.
+func (m *HushMutation) KindCleared() bool {
+	_, ok := m.clearedFields[hush.FieldKind]
+	return ok
+}
+
+// ResetKind resets all changes to the "kind" field.
+func (m *HushMutation) ResetKind() {
+	m.kind = nil
+	delete(m.clearedFields, hush.FieldKind)
+}
+
+// SetSecretName sets the "secret_name" field.
+func (m *HushMutation) SetSecretName(s string) {
+	m.secret_name = &s
+}
+
+// SecretName returns the value of the "secret_name" field in the mutation.
+func (m *HushMutation) SecretName() (r string, exists bool) {
+	v := m.secret_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecretName returns the old "secret_name" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldSecretName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSecretName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSecretName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecretName: %w", err)
+	}
+	return oldValue.SecretName, nil
+}
+
+// ClearSecretName clears the value of the "secret_name" field.
+func (m *HushMutation) ClearSecretName() {
+	m.secret_name = nil
+	m.clearedFields[hush.FieldSecretName] = struct{}{}
+}
+
+// SecretNameCleared returns if the "secret_name" field was cleared in this mutation.
+func (m *HushMutation) SecretNameCleared() bool {
+	_, ok := m.clearedFields[hush.FieldSecretName]
+	return ok
+}
+
+// ResetSecretName resets all changes to the "secret_name" field.
+func (m *HushMutation) ResetSecretName() {
+	m.secret_name = nil
+	delete(m.clearedFields, hush.FieldSecretName)
+}
+
+// SetSecretValue sets the "secret_value" field.
+func (m *HushMutation) SetSecretValue(s string) {
+	m.secret_value = &s
+}
+
+// SecretValue returns the value of the "secret_value" field in the mutation.
+func (m *HushMutation) SecretValue() (r string, exists bool) {
+	v := m.secret_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecretValue returns the old "secret_value" field's value of the Hush entity.
+// If the Hush object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushMutation) OldSecretValue(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSecretValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSecretValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecretValue: %w", err)
+	}
+	return oldValue.SecretValue, nil
+}
+
+// ClearSecretValue clears the value of the "secret_value" field.
+func (m *HushMutation) ClearSecretValue() {
+	m.secret_value = nil
+	m.clearedFields[hush.FieldSecretValue] = struct{}{}
+}
+
+// SecretValueCleared returns if the "secret_value" field was cleared in this mutation.
+func (m *HushMutation) SecretValueCleared() bool {
+	_, ok := m.clearedFields[hush.FieldSecretValue]
+	return ok
+}
+
+// ResetSecretValue resets all changes to the "secret_value" field.
+func (m *HushMutation) ResetSecretValue() {
+	m.secret_value = nil
+	delete(m.clearedFields, hush.FieldSecretValue)
+}
+
+// AddIntegrationIDs adds the "integrations" edge to the Integration entity by ids.
+func (m *HushMutation) AddIntegrationIDs(ids ...string) {
+	if m.integrations == nil {
+		m.integrations = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.integrations[ids[i]] = struct{}{}
+	}
+}
+
+// ClearIntegrations clears the "integrations" edge to the Integration entity.
+func (m *HushMutation) ClearIntegrations() {
+	m.clearedintegrations = true
+}
+
+// IntegrationsCleared reports if the "integrations" edge to the Integration entity was cleared.
+func (m *HushMutation) IntegrationsCleared() bool {
+	return m.clearedintegrations
+}
+
+// RemoveIntegrationIDs removes the "integrations" edge to the Integration entity by IDs.
+func (m *HushMutation) RemoveIntegrationIDs(ids ...string) {
+	if m.removedintegrations == nil {
+		m.removedintegrations = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.integrations, ids[i])
+		m.removedintegrations[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedIntegrations returns the removed IDs of the "integrations" edge to the Integration entity.
+func (m *HushMutation) RemovedIntegrationsIDs() (ids []string) {
+	for id := range m.removedintegrations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// IntegrationsIDs returns the "integrations" edge IDs in the mutation.
+func (m *HushMutation) IntegrationsIDs() (ids []string) {
+	for id := range m.integrations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetIntegrations resets all changes to the "integrations" edge.
+func (m *HushMutation) ResetIntegrations() {
+	m.integrations = nil
+	m.clearedintegrations = false
+	m.removedintegrations = nil
+}
+
+// Where appends a list predicates to the HushMutation builder.
+func (m *HushMutation) Where(ps ...predicate.Hush) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the HushMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *HushMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Hush, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *HushMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *HushMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Hush).
+func (m *HushMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *HushMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, hush.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, hush.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, hush.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, hush.FieldUpdatedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, hush.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, hush.FieldDeletedBy)
+	}
+	if m.name != nil {
+		fields = append(fields, hush.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, hush.FieldDescription)
+	}
+	if m.kind != nil {
+		fields = append(fields, hush.FieldKind)
+	}
+	if m.secret_name != nil {
+		fields = append(fields, hush.FieldSecretName)
+	}
+	if m.secret_value != nil {
+		fields = append(fields, hush.FieldSecretValue)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *HushMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case hush.FieldCreatedAt:
+		return m.CreatedAt()
+	case hush.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case hush.FieldCreatedBy:
+		return m.CreatedBy()
+	case hush.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case hush.FieldDeletedAt:
+		return m.DeletedAt()
+	case hush.FieldDeletedBy:
+		return m.DeletedBy()
+	case hush.FieldName:
+		return m.Name()
+	case hush.FieldDescription:
+		return m.Description()
+	case hush.FieldKind:
+		return m.Kind()
+	case hush.FieldSecretName:
+		return m.SecretName()
+	case hush.FieldSecretValue:
+		return m.SecretValue()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *HushMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case hush.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case hush.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case hush.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case hush.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case hush.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case hush.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case hush.FieldName:
+		return m.OldName(ctx)
+	case hush.FieldDescription:
+		return m.OldDescription(ctx)
+	case hush.FieldKind:
+		return m.OldKind(ctx)
+	case hush.FieldSecretName:
+		return m.OldSecretName(ctx)
+	case hush.FieldSecretValue:
+		return m.OldSecretValue(ctx)
+	}
+	return nil, fmt.Errorf("unknown Hush field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *HushMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case hush.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case hush.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case hush.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case hush.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case hush.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case hush.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case hush.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case hush.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case hush.FieldKind:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKind(v)
+		return nil
+	case hush.FieldSecretName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecretName(v)
+		return nil
+	case hush.FieldSecretValue:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecretValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Hush field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *HushMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *HushMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *HushMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Hush numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *HushMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(hush.FieldCreatedAt) {
+		fields = append(fields, hush.FieldCreatedAt)
+	}
+	if m.FieldCleared(hush.FieldUpdatedAt) {
+		fields = append(fields, hush.FieldUpdatedAt)
+	}
+	if m.FieldCleared(hush.FieldCreatedBy) {
+		fields = append(fields, hush.FieldCreatedBy)
+	}
+	if m.FieldCleared(hush.FieldUpdatedBy) {
+		fields = append(fields, hush.FieldUpdatedBy)
+	}
+	if m.FieldCleared(hush.FieldDeletedAt) {
+		fields = append(fields, hush.FieldDeletedAt)
+	}
+	if m.FieldCleared(hush.FieldDeletedBy) {
+		fields = append(fields, hush.FieldDeletedBy)
+	}
+	if m.FieldCleared(hush.FieldDescription) {
+		fields = append(fields, hush.FieldDescription)
+	}
+	if m.FieldCleared(hush.FieldKind) {
+		fields = append(fields, hush.FieldKind)
+	}
+	if m.FieldCleared(hush.FieldSecretName) {
+		fields = append(fields, hush.FieldSecretName)
+	}
+	if m.FieldCleared(hush.FieldSecretValue) {
+		fields = append(fields, hush.FieldSecretValue)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *HushMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *HushMutation) ClearField(name string) error {
+	switch name {
+	case hush.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case hush.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case hush.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case hush.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case hush.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case hush.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case hush.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case hush.FieldKind:
+		m.ClearKind()
+		return nil
+	case hush.FieldSecretName:
+		m.ClearSecretName()
+		return nil
+	case hush.FieldSecretValue:
+		m.ClearSecretValue()
+		return nil
+	}
+	return fmt.Errorf("unknown Hush nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *HushMutation) ResetField(name string) error {
+	switch name {
+	case hush.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case hush.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case hush.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case hush.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case hush.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case hush.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case hush.FieldName:
+		m.ResetName()
+		return nil
+	case hush.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case hush.FieldKind:
+		m.ResetKind()
+		return nil
+	case hush.FieldSecretName:
+		m.ResetSecretName()
+		return nil
+	case hush.FieldSecretValue:
+		m.ResetSecretValue()
+		return nil
+	}
+	return fmt.Errorf("unknown Hush field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *HushMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.integrations != nil {
+		edges = append(edges, hush.EdgeIntegrations)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *HushMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case hush.EdgeIntegrations:
+		ids := make([]ent.Value, 0, len(m.integrations))
+		for id := range m.integrations {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *HushMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedintegrations != nil {
+		edges = append(edges, hush.EdgeIntegrations)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *HushMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case hush.EdgeIntegrations:
+		ids := make([]ent.Value, 0, len(m.removedintegrations))
+		for id := range m.removedintegrations {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *HushMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedintegrations {
+		edges = append(edges, hush.EdgeIntegrations)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *HushMutation) EdgeCleared(name string) bool {
+	switch name {
+	case hush.EdgeIntegrations:
+		return m.clearedintegrations
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *HushMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Hush unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *HushMutation) ResetEdge(name string) error {
+	switch name {
+	case hush.EdgeIntegrations:
+		m.ResetIntegrations()
+		return nil
+	}
+	return fmt.Errorf("unknown Hush edge %s", name)
+}
+
+// HushHistoryMutation represents an operation that mutates the HushHistory nodes in the graph.
+type HushHistoryMutation struct {
 	config
 	op            Op
 	typ           string
 	id            *string
+	history_time  *time.Time
+	operation     *enthistory.OpType
+	ref           *string
 	created_at    *time.Time
 	updated_at    *time.Time
 	created_by    *string
@@ -12799,12 +13964,1257 @@ type IntegrationMutation struct {
 	description   *string
 	kind          *string
 	secret_name   *string
+	secret_value  *string
 	clearedFields map[string]struct{}
-	owner         *string
-	clearedowner  bool
 	done          bool
-	oldValue      func(context.Context) (*Integration, error)
-	predicates    []predicate.Integration
+	oldValue      func(context.Context) (*HushHistory, error)
+	predicates    []predicate.HushHistory
+}
+
+var _ ent.Mutation = (*HushHistoryMutation)(nil)
+
+// hushhistoryOption allows management of the mutation configuration using functional options.
+type hushhistoryOption func(*HushHistoryMutation)
+
+// newHushHistoryMutation creates new mutation for the HushHistory entity.
+func newHushHistoryMutation(c config, op Op, opts ...hushhistoryOption) *HushHistoryMutation {
+	m := &HushHistoryMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeHushHistory,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withHushHistoryID sets the ID field of the mutation.
+func withHushHistoryID(id string) hushhistoryOption {
+	return func(m *HushHistoryMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *HushHistory
+		)
+		m.oldValue = func(ctx context.Context) (*HushHistory, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().HushHistory.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withHushHistory sets the old HushHistory of the mutation.
+func withHushHistory(node *HushHistory) hushhistoryOption {
+	return func(m *HushHistoryMutation) {
+		m.oldValue = func(context.Context) (*HushHistory, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m HushHistoryMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m HushHistoryMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of HushHistory entities.
+func (m *HushHistoryMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *HushHistoryMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *HushHistoryMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().HushHistory.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetHistoryTime sets the "history_time" field.
+func (m *HushHistoryMutation) SetHistoryTime(t time.Time) {
+	m.history_time = &t
+}
+
+// HistoryTime returns the value of the "history_time" field in the mutation.
+func (m *HushHistoryMutation) HistoryTime() (r time.Time, exists bool) {
+	v := m.history_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHistoryTime returns the old "history_time" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldHistoryTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHistoryTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHistoryTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHistoryTime: %w", err)
+	}
+	return oldValue.HistoryTime, nil
+}
+
+// ResetHistoryTime resets all changes to the "history_time" field.
+func (m *HushHistoryMutation) ResetHistoryTime() {
+	m.history_time = nil
+}
+
+// SetOperation sets the "operation" field.
+func (m *HushHistoryMutation) SetOperation(et enthistory.OpType) {
+	m.operation = &et
+}
+
+// Operation returns the value of the "operation" field in the mutation.
+func (m *HushHistoryMutation) Operation() (r enthistory.OpType, exists bool) {
+	v := m.operation
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperation returns the old "operation" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldOperation(ctx context.Context) (v enthistory.OpType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperation: %w", err)
+	}
+	return oldValue.Operation, nil
+}
+
+// ResetOperation resets all changes to the "operation" field.
+func (m *HushHistoryMutation) ResetOperation() {
+	m.operation = nil
+}
+
+// SetRef sets the "ref" field.
+func (m *HushHistoryMutation) SetRef(s string) {
+	m.ref = &s
+}
+
+// Ref returns the value of the "ref" field in the mutation.
+func (m *HushHistoryMutation) Ref() (r string, exists bool) {
+	v := m.ref
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRef returns the old "ref" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldRef(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRef is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRef requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRef: %w", err)
+	}
+	return oldValue.Ref, nil
+}
+
+// ClearRef clears the value of the "ref" field.
+func (m *HushHistoryMutation) ClearRef() {
+	m.ref = nil
+	m.clearedFields[hushhistory.FieldRef] = struct{}{}
+}
+
+// RefCleared returns if the "ref" field was cleared in this mutation.
+func (m *HushHistoryMutation) RefCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldRef]
+	return ok
+}
+
+// ResetRef resets all changes to the "ref" field.
+func (m *HushHistoryMutation) ResetRef() {
+	m.ref = nil
+	delete(m.clearedFields, hushhistory.FieldRef)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *HushHistoryMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *HushHistoryMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *HushHistoryMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[hushhistory.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *HushHistoryMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *HushHistoryMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, hushhistory.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *HushHistoryMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *HushHistoryMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *HushHistoryMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[hushhistory.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *HushHistoryMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *HushHistoryMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, hushhistory.FieldUpdatedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *HushHistoryMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *HushHistoryMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *HushHistoryMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[hushhistory.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *HushHistoryMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *HushHistoryMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, hushhistory.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *HushHistoryMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *HushHistoryMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *HushHistoryMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[hushhistory.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *HushHistoryMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *HushHistoryMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, hushhistory.FieldUpdatedBy)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *HushHistoryMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *HushHistoryMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *HushHistoryMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[hushhistory.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *HushHistoryMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *HushHistoryMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, hushhistory.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *HushHistoryMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *HushHistoryMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *HushHistoryMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[hushhistory.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *HushHistoryMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *HushHistoryMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, hushhistory.FieldDeletedBy)
+}
+
+// SetName sets the "name" field.
+func (m *HushHistoryMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *HushHistoryMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *HushHistoryMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *HushHistoryMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *HushHistoryMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *HushHistoryMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[hushhistory.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *HushHistoryMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *HushHistoryMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, hushhistory.FieldDescription)
+}
+
+// SetKind sets the "kind" field.
+func (m *HushHistoryMutation) SetKind(s string) {
+	m.kind = &s
+}
+
+// Kind returns the value of the "kind" field in the mutation.
+func (m *HushHistoryMutation) Kind() (r string, exists bool) {
+	v := m.kind
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKind returns the old "kind" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldKind(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKind is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKind requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKind: %w", err)
+	}
+	return oldValue.Kind, nil
+}
+
+// ClearKind clears the value of the "kind" field.
+func (m *HushHistoryMutation) ClearKind() {
+	m.kind = nil
+	m.clearedFields[hushhistory.FieldKind] = struct{}{}
+}
+
+// KindCleared returns if the "kind" field was cleared in this mutation.
+func (m *HushHistoryMutation) KindCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldKind]
+	return ok
+}
+
+// ResetKind resets all changes to the "kind" field.
+func (m *HushHistoryMutation) ResetKind() {
+	m.kind = nil
+	delete(m.clearedFields, hushhistory.FieldKind)
+}
+
+// SetSecretName sets the "secret_name" field.
+func (m *HushHistoryMutation) SetSecretName(s string) {
+	m.secret_name = &s
+}
+
+// SecretName returns the value of the "secret_name" field in the mutation.
+func (m *HushHistoryMutation) SecretName() (r string, exists bool) {
+	v := m.secret_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecretName returns the old "secret_name" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldSecretName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSecretName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSecretName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecretName: %w", err)
+	}
+	return oldValue.SecretName, nil
+}
+
+// ClearSecretName clears the value of the "secret_name" field.
+func (m *HushHistoryMutation) ClearSecretName() {
+	m.secret_name = nil
+	m.clearedFields[hushhistory.FieldSecretName] = struct{}{}
+}
+
+// SecretNameCleared returns if the "secret_name" field was cleared in this mutation.
+func (m *HushHistoryMutation) SecretNameCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldSecretName]
+	return ok
+}
+
+// ResetSecretName resets all changes to the "secret_name" field.
+func (m *HushHistoryMutation) ResetSecretName() {
+	m.secret_name = nil
+	delete(m.clearedFields, hushhistory.FieldSecretName)
+}
+
+// SetSecretValue sets the "secret_value" field.
+func (m *HushHistoryMutation) SetSecretValue(s string) {
+	m.secret_value = &s
+}
+
+// SecretValue returns the value of the "secret_value" field in the mutation.
+func (m *HushHistoryMutation) SecretValue() (r string, exists bool) {
+	v := m.secret_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecretValue returns the old "secret_value" field's value of the HushHistory entity.
+// If the HushHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HushHistoryMutation) OldSecretValue(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSecretValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSecretValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecretValue: %w", err)
+	}
+	return oldValue.SecretValue, nil
+}
+
+// ClearSecretValue clears the value of the "secret_value" field.
+func (m *HushHistoryMutation) ClearSecretValue() {
+	m.secret_value = nil
+	m.clearedFields[hushhistory.FieldSecretValue] = struct{}{}
+}
+
+// SecretValueCleared returns if the "secret_value" field was cleared in this mutation.
+func (m *HushHistoryMutation) SecretValueCleared() bool {
+	_, ok := m.clearedFields[hushhistory.FieldSecretValue]
+	return ok
+}
+
+// ResetSecretValue resets all changes to the "secret_value" field.
+func (m *HushHistoryMutation) ResetSecretValue() {
+	m.secret_value = nil
+	delete(m.clearedFields, hushhistory.FieldSecretValue)
+}
+
+// Where appends a list predicates to the HushHistoryMutation builder.
+func (m *HushHistoryMutation) Where(ps ...predicate.HushHistory) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the HushHistoryMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *HushHistoryMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.HushHistory, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *HushHistoryMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *HushHistoryMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (HushHistory).
+func (m *HushHistoryMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *HushHistoryMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.history_time != nil {
+		fields = append(fields, hushhistory.FieldHistoryTime)
+	}
+	if m.operation != nil {
+		fields = append(fields, hushhistory.FieldOperation)
+	}
+	if m.ref != nil {
+		fields = append(fields, hushhistory.FieldRef)
+	}
+	if m.created_at != nil {
+		fields = append(fields, hushhistory.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, hushhistory.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, hushhistory.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, hushhistory.FieldUpdatedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, hushhistory.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, hushhistory.FieldDeletedBy)
+	}
+	if m.name != nil {
+		fields = append(fields, hushhistory.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, hushhistory.FieldDescription)
+	}
+	if m.kind != nil {
+		fields = append(fields, hushhistory.FieldKind)
+	}
+	if m.secret_name != nil {
+		fields = append(fields, hushhistory.FieldSecretName)
+	}
+	if m.secret_value != nil {
+		fields = append(fields, hushhistory.FieldSecretValue)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *HushHistoryMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case hushhistory.FieldHistoryTime:
+		return m.HistoryTime()
+	case hushhistory.FieldOperation:
+		return m.Operation()
+	case hushhistory.FieldRef:
+		return m.Ref()
+	case hushhistory.FieldCreatedAt:
+		return m.CreatedAt()
+	case hushhistory.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case hushhistory.FieldCreatedBy:
+		return m.CreatedBy()
+	case hushhistory.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case hushhistory.FieldDeletedAt:
+		return m.DeletedAt()
+	case hushhistory.FieldDeletedBy:
+		return m.DeletedBy()
+	case hushhistory.FieldName:
+		return m.Name()
+	case hushhistory.FieldDescription:
+		return m.Description()
+	case hushhistory.FieldKind:
+		return m.Kind()
+	case hushhistory.FieldSecretName:
+		return m.SecretName()
+	case hushhistory.FieldSecretValue:
+		return m.SecretValue()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *HushHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case hushhistory.FieldHistoryTime:
+		return m.OldHistoryTime(ctx)
+	case hushhistory.FieldOperation:
+		return m.OldOperation(ctx)
+	case hushhistory.FieldRef:
+		return m.OldRef(ctx)
+	case hushhistory.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case hushhistory.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case hushhistory.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case hushhistory.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case hushhistory.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case hushhistory.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case hushhistory.FieldName:
+		return m.OldName(ctx)
+	case hushhistory.FieldDescription:
+		return m.OldDescription(ctx)
+	case hushhistory.FieldKind:
+		return m.OldKind(ctx)
+	case hushhistory.FieldSecretName:
+		return m.OldSecretName(ctx)
+	case hushhistory.FieldSecretValue:
+		return m.OldSecretValue(ctx)
+	}
+	return nil, fmt.Errorf("unknown HushHistory field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *HushHistoryMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case hushhistory.FieldHistoryTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHistoryTime(v)
+		return nil
+	case hushhistory.FieldOperation:
+		v, ok := value.(enthistory.OpType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperation(v)
+		return nil
+	case hushhistory.FieldRef:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRef(v)
+		return nil
+	case hushhistory.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case hushhistory.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case hushhistory.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case hushhistory.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case hushhistory.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case hushhistory.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case hushhistory.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case hushhistory.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case hushhistory.FieldKind:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKind(v)
+		return nil
+	case hushhistory.FieldSecretName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecretName(v)
+		return nil
+	case hushhistory.FieldSecretValue:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecretValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown HushHistory field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *HushHistoryMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *HushHistoryMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *HushHistoryMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown HushHistory numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *HushHistoryMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(hushhistory.FieldRef) {
+		fields = append(fields, hushhistory.FieldRef)
+	}
+	if m.FieldCleared(hushhistory.FieldCreatedAt) {
+		fields = append(fields, hushhistory.FieldCreatedAt)
+	}
+	if m.FieldCleared(hushhistory.FieldUpdatedAt) {
+		fields = append(fields, hushhistory.FieldUpdatedAt)
+	}
+	if m.FieldCleared(hushhistory.FieldCreatedBy) {
+		fields = append(fields, hushhistory.FieldCreatedBy)
+	}
+	if m.FieldCleared(hushhistory.FieldUpdatedBy) {
+		fields = append(fields, hushhistory.FieldUpdatedBy)
+	}
+	if m.FieldCleared(hushhistory.FieldDeletedAt) {
+		fields = append(fields, hushhistory.FieldDeletedAt)
+	}
+	if m.FieldCleared(hushhistory.FieldDeletedBy) {
+		fields = append(fields, hushhistory.FieldDeletedBy)
+	}
+	if m.FieldCleared(hushhistory.FieldDescription) {
+		fields = append(fields, hushhistory.FieldDescription)
+	}
+	if m.FieldCleared(hushhistory.FieldKind) {
+		fields = append(fields, hushhistory.FieldKind)
+	}
+	if m.FieldCleared(hushhistory.FieldSecretName) {
+		fields = append(fields, hushhistory.FieldSecretName)
+	}
+	if m.FieldCleared(hushhistory.FieldSecretValue) {
+		fields = append(fields, hushhistory.FieldSecretValue)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *HushHistoryMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *HushHistoryMutation) ClearField(name string) error {
+	switch name {
+	case hushhistory.FieldRef:
+		m.ClearRef()
+		return nil
+	case hushhistory.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case hushhistory.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case hushhistory.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case hushhistory.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case hushhistory.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case hushhistory.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case hushhistory.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case hushhistory.FieldKind:
+		m.ClearKind()
+		return nil
+	case hushhistory.FieldSecretName:
+		m.ClearSecretName()
+		return nil
+	case hushhistory.FieldSecretValue:
+		m.ClearSecretValue()
+		return nil
+	}
+	return fmt.Errorf("unknown HushHistory nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *HushHistoryMutation) ResetField(name string) error {
+	switch name {
+	case hushhistory.FieldHistoryTime:
+		m.ResetHistoryTime()
+		return nil
+	case hushhistory.FieldOperation:
+		m.ResetOperation()
+		return nil
+	case hushhistory.FieldRef:
+		m.ResetRef()
+		return nil
+	case hushhistory.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case hushhistory.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case hushhistory.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case hushhistory.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case hushhistory.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case hushhistory.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case hushhistory.FieldName:
+		m.ResetName()
+		return nil
+	case hushhistory.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case hushhistory.FieldKind:
+		m.ResetKind()
+		return nil
+	case hushhistory.FieldSecretName:
+		m.ResetSecretName()
+		return nil
+	case hushhistory.FieldSecretValue:
+		m.ResetSecretValue()
+		return nil
+	}
+	return fmt.Errorf("unknown HushHistory field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *HushHistoryMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *HushHistoryMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *HushHistoryMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *HushHistoryMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *HushHistoryMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *HushHistoryMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *HushHistoryMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown HushHistory unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *HushHistoryMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown HushHistory edge %s", name)
+}
+
+// IntegrationMutation represents an operation that mutates the Integration nodes in the graph.
+type IntegrationMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *string
+	created_at     *time.Time
+	updated_at     *time.Time
+	created_by     *string
+	updated_by     *string
+	deleted_at     *time.Time
+	deleted_by     *string
+	name           *string
+	description    *string
+	kind           *string
+	clearedFields  map[string]struct{}
+	owner          *string
+	clearedowner   bool
+	secrets        map[string]struct{}
+	removedsecrets map[string]struct{}
+	clearedsecrets bool
+	done           bool
+	oldValue       func(context.Context) (*Integration, error)
+	predicates     []predicate.Integration
 }
 
 var _ ent.Mutation = (*IntegrationMutation)(nil)
@@ -13375,55 +15785,6 @@ func (m *IntegrationMutation) ResetKind() {
 	delete(m.clearedFields, integration.FieldKind)
 }
 
-// SetSecretName sets the "secret_name" field.
-func (m *IntegrationMutation) SetSecretName(s string) {
-	m.secret_name = &s
-}
-
-// SecretName returns the value of the "secret_name" field in the mutation.
-func (m *IntegrationMutation) SecretName() (r string, exists bool) {
-	v := m.secret_name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSecretName returns the old "secret_name" field's value of the Integration entity.
-// If the Integration object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *IntegrationMutation) OldSecretName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSecretName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSecretName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSecretName: %w", err)
-	}
-	return oldValue.SecretName, nil
-}
-
-// ClearSecretName clears the value of the "secret_name" field.
-func (m *IntegrationMutation) ClearSecretName() {
-	m.secret_name = nil
-	m.clearedFields[integration.FieldSecretName] = struct{}{}
-}
-
-// SecretNameCleared returns if the "secret_name" field was cleared in this mutation.
-func (m *IntegrationMutation) SecretNameCleared() bool {
-	_, ok := m.clearedFields[integration.FieldSecretName]
-	return ok
-}
-
-// ResetSecretName resets all changes to the "secret_name" field.
-func (m *IntegrationMutation) ResetSecretName() {
-	m.secret_name = nil
-	delete(m.clearedFields, integration.FieldSecretName)
-}
-
 // ClearOwner clears the "owner" edge to the Organization entity.
 func (m *IntegrationMutation) ClearOwner() {
 	m.clearedowner = true
@@ -13449,6 +15810,60 @@ func (m *IntegrationMutation) OwnerIDs() (ids []string) {
 func (m *IntegrationMutation) ResetOwner() {
 	m.owner = nil
 	m.clearedowner = false
+}
+
+// AddSecretIDs adds the "secrets" edge to the Hush entity by ids.
+func (m *IntegrationMutation) AddSecretIDs(ids ...string) {
+	if m.secrets == nil {
+		m.secrets = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.secrets[ids[i]] = struct{}{}
+	}
+}
+
+// ClearSecrets clears the "secrets" edge to the Hush entity.
+func (m *IntegrationMutation) ClearSecrets() {
+	m.clearedsecrets = true
+}
+
+// SecretsCleared reports if the "secrets" edge to the Hush entity was cleared.
+func (m *IntegrationMutation) SecretsCleared() bool {
+	return m.clearedsecrets
+}
+
+// RemoveSecretIDs removes the "secrets" edge to the Hush entity by IDs.
+func (m *IntegrationMutation) RemoveSecretIDs(ids ...string) {
+	if m.removedsecrets == nil {
+		m.removedsecrets = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.secrets, ids[i])
+		m.removedsecrets[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedSecrets returns the removed IDs of the "secrets" edge to the Hush entity.
+func (m *IntegrationMutation) RemovedSecretsIDs() (ids []string) {
+	for id := range m.removedsecrets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// SecretsIDs returns the "secrets" edge IDs in the mutation.
+func (m *IntegrationMutation) SecretsIDs() (ids []string) {
+	for id := range m.secrets {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetSecrets resets all changes to the "secrets" edge.
+func (m *IntegrationMutation) ResetSecrets() {
+	m.secrets = nil
+	m.clearedsecrets = false
+	m.removedsecrets = nil
 }
 
 // Where appends a list predicates to the IntegrationMutation builder.
@@ -13485,7 +15900,7 @@ func (m *IntegrationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IntegrationMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, integration.FieldCreatedAt)
 	}
@@ -13516,9 +15931,6 @@ func (m *IntegrationMutation) Fields() []string {
 	if m.kind != nil {
 		fields = append(fields, integration.FieldKind)
 	}
-	if m.secret_name != nil {
-		fields = append(fields, integration.FieldSecretName)
-	}
 	return fields
 }
 
@@ -13547,8 +15959,6 @@ func (m *IntegrationMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case integration.FieldKind:
 		return m.Kind()
-	case integration.FieldSecretName:
-		return m.SecretName()
 	}
 	return nil, false
 }
@@ -13578,8 +15988,6 @@ func (m *IntegrationMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldDescription(ctx)
 	case integration.FieldKind:
 		return m.OldKind(ctx)
-	case integration.FieldSecretName:
-		return m.OldSecretName(ctx)
 	}
 	return nil, fmt.Errorf("unknown Integration field %s", name)
 }
@@ -13659,13 +16067,6 @@ func (m *IntegrationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetKind(v)
 		return nil
-	case integration.FieldSecretName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSecretName(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Integration field %s", name)
 }
@@ -13720,9 +16121,6 @@ func (m *IntegrationMutation) ClearedFields() []string {
 	if m.FieldCleared(integration.FieldKind) {
 		fields = append(fields, integration.FieldKind)
 	}
-	if m.FieldCleared(integration.FieldSecretName) {
-		fields = append(fields, integration.FieldSecretName)
-	}
 	return fields
 }
 
@@ -13760,9 +16158,6 @@ func (m *IntegrationMutation) ClearField(name string) error {
 		return nil
 	case integration.FieldKind:
 		m.ClearKind()
-		return nil
-	case integration.FieldSecretName:
-		m.ClearSecretName()
 		return nil
 	}
 	return fmt.Errorf("unknown Integration nullable field %s", name)
@@ -13802,18 +16197,18 @@ func (m *IntegrationMutation) ResetField(name string) error {
 	case integration.FieldKind:
 		m.ResetKind()
 		return nil
-	case integration.FieldSecretName:
-		m.ResetSecretName()
-		return nil
 	}
 	return fmt.Errorf("unknown Integration field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *IntegrationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.owner != nil {
 		edges = append(edges, integration.EdgeOwner)
+	}
+	if m.secrets != nil {
+		edges = append(edges, integration.EdgeSecrets)
 	}
 	return edges
 }
@@ -13826,27 +16221,47 @@ func (m *IntegrationMutation) AddedIDs(name string) []ent.Value {
 		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
+	case integration.EdgeSecrets:
+		ids := make([]ent.Value, 0, len(m.secrets))
+		for id := range m.secrets {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *IntegrationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
+	if m.removedsecrets != nil {
+		edges = append(edges, integration.EdgeSecrets)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *IntegrationMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case integration.EdgeSecrets:
+		ids := make([]ent.Value, 0, len(m.removedsecrets))
+		for id := range m.removedsecrets {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *IntegrationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedowner {
 		edges = append(edges, integration.EdgeOwner)
+	}
+	if m.clearedsecrets {
+		edges = append(edges, integration.EdgeSecrets)
 	}
 	return edges
 }
@@ -13857,6 +16272,8 @@ func (m *IntegrationMutation) EdgeCleared(name string) bool {
 	switch name {
 	case integration.EdgeOwner:
 		return m.clearedowner
+	case integration.EdgeSecrets:
+		return m.clearedsecrets
 	}
 	return false
 }
@@ -13878,6 +16295,9 @@ func (m *IntegrationMutation) ResetEdge(name string) error {
 	switch name {
 	case integration.EdgeOwner:
 		m.ResetOwner()
+		return nil
+	case integration.EdgeSecrets:
+		m.ResetSecrets()
 		return nil
 	}
 	return fmt.Errorf("unknown Integration edge %s", name)
@@ -13902,7 +16322,6 @@ type IntegrationHistoryMutation struct {
 	name          *string
 	description   *string
 	kind          *string
-	secret_name   *string
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*IntegrationHistory, error)
@@ -14598,55 +17017,6 @@ func (m *IntegrationHistoryMutation) ResetKind() {
 	delete(m.clearedFields, integrationhistory.FieldKind)
 }
 
-// SetSecretName sets the "secret_name" field.
-func (m *IntegrationHistoryMutation) SetSecretName(s string) {
-	m.secret_name = &s
-}
-
-// SecretName returns the value of the "secret_name" field in the mutation.
-func (m *IntegrationHistoryMutation) SecretName() (r string, exists bool) {
-	v := m.secret_name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldSecretName returns the old "secret_name" field's value of the IntegrationHistory entity.
-// If the IntegrationHistory object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *IntegrationHistoryMutation) OldSecretName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSecretName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSecretName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSecretName: %w", err)
-	}
-	return oldValue.SecretName, nil
-}
-
-// ClearSecretName clears the value of the "secret_name" field.
-func (m *IntegrationHistoryMutation) ClearSecretName() {
-	m.secret_name = nil
-	m.clearedFields[integrationhistory.FieldSecretName] = struct{}{}
-}
-
-// SecretNameCleared returns if the "secret_name" field was cleared in this mutation.
-func (m *IntegrationHistoryMutation) SecretNameCleared() bool {
-	_, ok := m.clearedFields[integrationhistory.FieldSecretName]
-	return ok
-}
-
-// ResetSecretName resets all changes to the "secret_name" field.
-func (m *IntegrationHistoryMutation) ResetSecretName() {
-	m.secret_name = nil
-	delete(m.clearedFields, integrationhistory.FieldSecretName)
-}
-
 // Where appends a list predicates to the IntegrationHistoryMutation builder.
 func (m *IntegrationHistoryMutation) Where(ps ...predicate.IntegrationHistory) {
 	m.predicates = append(m.predicates, ps...)
@@ -14681,7 +17051,7 @@ func (m *IntegrationHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *IntegrationHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.history_time != nil {
 		fields = append(fields, integrationhistory.FieldHistoryTime)
 	}
@@ -14721,9 +17091,6 @@ func (m *IntegrationHistoryMutation) Fields() []string {
 	if m.kind != nil {
 		fields = append(fields, integrationhistory.FieldKind)
 	}
-	if m.secret_name != nil {
-		fields = append(fields, integrationhistory.FieldSecretName)
-	}
 	return fields
 }
 
@@ -14758,8 +17125,6 @@ func (m *IntegrationHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case integrationhistory.FieldKind:
 		return m.Kind()
-	case integrationhistory.FieldSecretName:
-		return m.SecretName()
 	}
 	return nil, false
 }
@@ -14795,8 +17160,6 @@ func (m *IntegrationHistoryMutation) OldField(ctx context.Context, name string) 
 		return m.OldDescription(ctx)
 	case integrationhistory.FieldKind:
 		return m.OldKind(ctx)
-	case integrationhistory.FieldSecretName:
-		return m.OldSecretName(ctx)
 	}
 	return nil, fmt.Errorf("unknown IntegrationHistory field %s", name)
 }
@@ -14897,13 +17260,6 @@ func (m *IntegrationHistoryMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetKind(v)
 		return nil
-	case integrationhistory.FieldSecretName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetSecretName(v)
-		return nil
 	}
 	return fmt.Errorf("unknown IntegrationHistory field %s", name)
 }
@@ -14961,9 +17317,6 @@ func (m *IntegrationHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(integrationhistory.FieldKind) {
 		fields = append(fields, integrationhistory.FieldKind)
 	}
-	if m.FieldCleared(integrationhistory.FieldSecretName) {
-		fields = append(fields, integrationhistory.FieldSecretName)
-	}
 	return fields
 }
 
@@ -15004,9 +17357,6 @@ func (m *IntegrationHistoryMutation) ClearField(name string) error {
 		return nil
 	case integrationhistory.FieldKind:
 		m.ClearKind()
-		return nil
-	case integrationhistory.FieldSecretName:
-		m.ClearSecretName()
 		return nil
 	}
 	return fmt.Errorf("unknown IntegrationHistory nullable field %s", name)
@@ -15054,9 +17404,6 @@ func (m *IntegrationHistoryMutation) ResetField(name string) error {
 		return nil
 	case integrationhistory.FieldKind:
 		m.ResetKind()
-		return nil
-	case integrationhistory.FieldSecretName:
-		m.ResetSecretName()
 		return nil
 	}
 	return fmt.Errorf("unknown IntegrationHistory field %s", name)

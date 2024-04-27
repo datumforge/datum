@@ -43,9 +43,7 @@ type IntegrationHistory struct {
 	// a description of the integration
 	Description string `json:"description,omitempty"`
 	// Kind holds the value of the "kind" field.
-	Kind string `json:"kind,omitempty"`
-	// SecretName holds the value of the "secret_name" field.
-	SecretName   string `json:"secret_name,omitempty"`
+	Kind         string `json:"kind,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -56,7 +54,7 @@ func (*IntegrationHistory) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case integrationhistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case integrationhistory.FieldID, integrationhistory.FieldRef, integrationhistory.FieldCreatedBy, integrationhistory.FieldUpdatedBy, integrationhistory.FieldDeletedBy, integrationhistory.FieldOwnerID, integrationhistory.FieldName, integrationhistory.FieldDescription, integrationhistory.FieldKind, integrationhistory.FieldSecretName:
+		case integrationhistory.FieldID, integrationhistory.FieldRef, integrationhistory.FieldCreatedBy, integrationhistory.FieldUpdatedBy, integrationhistory.FieldDeletedBy, integrationhistory.FieldOwnerID, integrationhistory.FieldName, integrationhistory.FieldDescription, integrationhistory.FieldKind:
 			values[i] = new(sql.NullString)
 		case integrationhistory.FieldHistoryTime, integrationhistory.FieldCreatedAt, integrationhistory.FieldUpdatedAt, integrationhistory.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -159,12 +157,6 @@ func (ih *IntegrationHistory) assignValues(columns []string, values []any) error
 			} else if value.Valid {
 				ih.Kind = value.String
 			}
-		case integrationhistory.FieldSecretName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field secret_name", values[i])
-			} else if value.Valid {
-				ih.SecretName = value.String
-			}
 		default:
 			ih.selectValues.Set(columns[i], values[i])
 		}
@@ -239,9 +231,6 @@ func (ih *IntegrationHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("kind=")
 	builder.WriteString(ih.Kind)
-	builder.WriteString(", ")
-	builder.WriteString("secret_name=")
-	builder.WriteString(ih.SecretName)
 	builder.WriteByte(')')
 	return builder.String()
 }

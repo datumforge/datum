@@ -179,20 +179,6 @@ func (ihc *IntegrationHistoryCreate) SetNillableKind(s *string) *IntegrationHist
 	return ihc
 }
 
-// SetSecretName sets the "secret_name" field.
-func (ihc *IntegrationHistoryCreate) SetSecretName(s string) *IntegrationHistoryCreate {
-	ihc.mutation.SetSecretName(s)
-	return ihc
-}
-
-// SetNillableSecretName sets the "secret_name" field if the given value is not nil.
-func (ihc *IntegrationHistoryCreate) SetNillableSecretName(s *string) *IntegrationHistoryCreate {
-	if s != nil {
-		ihc.SetSecretName(*s)
-	}
-	return ihc
-}
-
 // SetID sets the "id" field.
 func (ihc *IntegrationHistoryCreate) SetID(s string) *IntegrationHistoryCreate {
 	ihc.mutation.SetID(s)
@@ -366,10 +352,6 @@ func (ihc *IntegrationHistoryCreate) createSpec() (*IntegrationHistory, *sqlgrap
 	if value, ok := ihc.mutation.Kind(); ok {
 		_spec.SetField(integrationhistory.FieldKind, field.TypeString, value)
 		_node.Kind = value
-	}
-	if value, ok := ihc.mutation.SecretName(); ok {
-		_spec.SetField(integrationhistory.FieldSecretName, field.TypeString, value)
-		_node.SecretName = value
 	}
 	return _node, _spec
 }

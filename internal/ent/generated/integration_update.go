@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -176,6 +177,21 @@ func (iu *IntegrationUpdate) SetOwner(o *Organization) *IntegrationUpdate {
 	return iu.SetOwnerID(o.ID)
 }
 
+// AddSecretIDs adds the "secrets" edge to the Hush entity by IDs.
+func (iu *IntegrationUpdate) AddSecretIDs(ids ...string) *IntegrationUpdate {
+	iu.mutation.AddSecretIDs(ids...)
+	return iu
+}
+
+// AddSecrets adds the "secrets" edges to the Hush entity.
+func (iu *IntegrationUpdate) AddSecrets(h ...*Hush) *IntegrationUpdate {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return iu.AddSecretIDs(ids...)
+}
+
 // Mutation returns the IntegrationMutation object of the builder.
 func (iu *IntegrationUpdate) Mutation() *IntegrationMutation {
 	return iu.mutation
@@ -185,6 +201,27 @@ func (iu *IntegrationUpdate) Mutation() *IntegrationMutation {
 func (iu *IntegrationUpdate) ClearOwner() *IntegrationUpdate {
 	iu.mutation.ClearOwner()
 	return iu
+}
+
+// ClearSecrets clears all "secrets" edges to the Hush entity.
+func (iu *IntegrationUpdate) ClearSecrets() *IntegrationUpdate {
+	iu.mutation.ClearSecrets()
+	return iu
+}
+
+// RemoveSecretIDs removes the "secrets" edge to Hush entities by IDs.
+func (iu *IntegrationUpdate) RemoveSecretIDs(ids ...string) *IntegrationUpdate {
+	iu.mutation.RemoveSecretIDs(ids...)
+	return iu
+}
+
+// RemoveSecrets removes "secrets" edges to Hush entities.
+func (iu *IntegrationUpdate) RemoveSecrets(h ...*Hush) *IntegrationUpdate {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return iu.RemoveSecretIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -299,9 +336,6 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if iu.mutation.KindCleared() {
 		_spec.ClearField(integration.FieldKind, field.TypeString)
 	}
-	if iu.mutation.SecretNameCleared() {
-		_spec.ClearField(integration.FieldSecretName, field.TypeString)
-	}
 	if iu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -328,6 +362,54 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = iu.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iu.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.SecretsTable,
+			Columns: integration.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.IntegrationSecrets
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.RemovedSecretsIDs(); len(nodes) > 0 && !iu.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.SecretsTable,
+			Columns: integration.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.IntegrationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iu.mutation.SecretsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.SecretsTable,
+			Columns: integration.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iu.schemaConfig.IntegrationSecrets
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -500,6 +582,21 @@ func (iuo *IntegrationUpdateOne) SetOwner(o *Organization) *IntegrationUpdateOne
 	return iuo.SetOwnerID(o.ID)
 }
 
+// AddSecretIDs adds the "secrets" edge to the Hush entity by IDs.
+func (iuo *IntegrationUpdateOne) AddSecretIDs(ids ...string) *IntegrationUpdateOne {
+	iuo.mutation.AddSecretIDs(ids...)
+	return iuo
+}
+
+// AddSecrets adds the "secrets" edges to the Hush entity.
+func (iuo *IntegrationUpdateOne) AddSecrets(h ...*Hush) *IntegrationUpdateOne {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return iuo.AddSecretIDs(ids...)
+}
+
 // Mutation returns the IntegrationMutation object of the builder.
 func (iuo *IntegrationUpdateOne) Mutation() *IntegrationMutation {
 	return iuo.mutation
@@ -509,6 +606,27 @@ func (iuo *IntegrationUpdateOne) Mutation() *IntegrationMutation {
 func (iuo *IntegrationUpdateOne) ClearOwner() *IntegrationUpdateOne {
 	iuo.mutation.ClearOwner()
 	return iuo
+}
+
+// ClearSecrets clears all "secrets" edges to the Hush entity.
+func (iuo *IntegrationUpdateOne) ClearSecrets() *IntegrationUpdateOne {
+	iuo.mutation.ClearSecrets()
+	return iuo
+}
+
+// RemoveSecretIDs removes the "secrets" edge to Hush entities by IDs.
+func (iuo *IntegrationUpdateOne) RemoveSecretIDs(ids ...string) *IntegrationUpdateOne {
+	iuo.mutation.RemoveSecretIDs(ids...)
+	return iuo
+}
+
+// RemoveSecrets removes "secrets" edges to Hush entities.
+func (iuo *IntegrationUpdateOne) RemoveSecrets(h ...*Hush) *IntegrationUpdateOne {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return iuo.RemoveSecretIDs(ids...)
 }
 
 // Where appends a list predicates to the IntegrationUpdate builder.
@@ -653,9 +771,6 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 	if iuo.mutation.KindCleared() {
 		_spec.ClearField(integration.FieldKind, field.TypeString)
 	}
-	if iuo.mutation.SecretNameCleared() {
-		_spec.ClearField(integration.FieldSecretName, field.TypeString)
-	}
 	if iuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -682,6 +797,54 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 			},
 		}
 		edge.Schema = iuo.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if iuo.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.SecretsTable,
+			Columns: integration.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.IntegrationSecrets
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.RemovedSecretsIDs(); len(nodes) > 0 && !iuo.mutation.SecretsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.SecretsTable,
+			Columns: integration.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.IntegrationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := iuo.mutation.SecretsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.SecretsTable,
+			Columns: integration.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = iuo.schemaConfig.IntegrationSecrets
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

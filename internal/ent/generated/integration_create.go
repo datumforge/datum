@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
@@ -145,20 +146,6 @@ func (ic *IntegrationCreate) SetNillableKind(s *string) *IntegrationCreate {
 	return ic
 }
 
-// SetSecretName sets the "secret_name" field.
-func (ic *IntegrationCreate) SetSecretName(s string) *IntegrationCreate {
-	ic.mutation.SetSecretName(s)
-	return ic
-}
-
-// SetNillableSecretName sets the "secret_name" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableSecretName(s *string) *IntegrationCreate {
-	if s != nil {
-		ic.SetSecretName(*s)
-	}
-	return ic
-}
-
 // SetID sets the "id" field.
 func (ic *IntegrationCreate) SetID(s string) *IntegrationCreate {
 	ic.mutation.SetID(s)
@@ -176,6 +163,21 @@ func (ic *IntegrationCreate) SetNillableID(s *string) *IntegrationCreate {
 // SetOwner sets the "owner" edge to the Organization entity.
 func (ic *IntegrationCreate) SetOwner(o *Organization) *IntegrationCreate {
 	return ic.SetOwnerID(o.ID)
+}
+
+// AddSecretIDs adds the "secrets" edge to the Hush entity by IDs.
+func (ic *IntegrationCreate) AddSecretIDs(ids ...string) *IntegrationCreate {
+	ic.mutation.AddSecretIDs(ids...)
+	return ic
+}
+
+// AddSecrets adds the "secrets" edges to the Hush entity.
+func (ic *IntegrationCreate) AddSecrets(h ...*Hush) *IntegrationCreate {
+	ids := make([]string, len(h))
+	for i := range h {
+		ids[i] = h[i].ID
+	}
+	return ic.AddSecretIDs(ids...)
 }
 
 // Mutation returns the IntegrationMutation object of the builder.
@@ -327,10 +329,6 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		_spec.SetField(integration.FieldKind, field.TypeString, value)
 		_node.Kind = value
 	}
-	if value, ok := ic.mutation.SecretName(); ok {
-		_spec.SetField(integration.FieldSecretName, field.TypeString, value)
-		_node.SecretName = value
-	}
 	if nodes := ic.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -347,6 +345,23 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ic.mutation.SecretsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   integration.SecretsTable,
+			Columns: integration.SecretsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(hush.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ic.schemaConfig.IntegrationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

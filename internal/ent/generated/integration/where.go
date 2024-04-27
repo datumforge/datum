@@ -117,11 +117,6 @@ func Kind(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldEQ(FieldKind, v))
 }
 
-// SecretName applies equality check predicate on the "secret_name" field. It's identical to SecretNameEQ.
-func SecretName(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldEQ(FieldSecretName, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Integration {
 	return predicate.Integration(sql.FieldEQ(FieldCreatedAt, v))
@@ -777,81 +772,6 @@ func KindContainsFold(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldContainsFold(FieldKind, v))
 }
 
-// SecretNameEQ applies the EQ predicate on the "secret_name" field.
-func SecretNameEQ(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldEQ(FieldSecretName, v))
-}
-
-// SecretNameNEQ applies the NEQ predicate on the "secret_name" field.
-func SecretNameNEQ(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldNEQ(FieldSecretName, v))
-}
-
-// SecretNameIn applies the In predicate on the "secret_name" field.
-func SecretNameIn(vs ...string) predicate.Integration {
-	return predicate.Integration(sql.FieldIn(FieldSecretName, vs...))
-}
-
-// SecretNameNotIn applies the NotIn predicate on the "secret_name" field.
-func SecretNameNotIn(vs ...string) predicate.Integration {
-	return predicate.Integration(sql.FieldNotIn(FieldSecretName, vs...))
-}
-
-// SecretNameGT applies the GT predicate on the "secret_name" field.
-func SecretNameGT(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldGT(FieldSecretName, v))
-}
-
-// SecretNameGTE applies the GTE predicate on the "secret_name" field.
-func SecretNameGTE(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldGTE(FieldSecretName, v))
-}
-
-// SecretNameLT applies the LT predicate on the "secret_name" field.
-func SecretNameLT(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldLT(FieldSecretName, v))
-}
-
-// SecretNameLTE applies the LTE predicate on the "secret_name" field.
-func SecretNameLTE(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldLTE(FieldSecretName, v))
-}
-
-// SecretNameContains applies the Contains predicate on the "secret_name" field.
-func SecretNameContains(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldContains(FieldSecretName, v))
-}
-
-// SecretNameHasPrefix applies the HasPrefix predicate on the "secret_name" field.
-func SecretNameHasPrefix(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldHasPrefix(FieldSecretName, v))
-}
-
-// SecretNameHasSuffix applies the HasSuffix predicate on the "secret_name" field.
-func SecretNameHasSuffix(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldHasSuffix(FieldSecretName, v))
-}
-
-// SecretNameIsNil applies the IsNil predicate on the "secret_name" field.
-func SecretNameIsNil() predicate.Integration {
-	return predicate.Integration(sql.FieldIsNull(FieldSecretName))
-}
-
-// SecretNameNotNil applies the NotNil predicate on the "secret_name" field.
-func SecretNameNotNil() predicate.Integration {
-	return predicate.Integration(sql.FieldNotNull(FieldSecretName))
-}
-
-// SecretNameEqualFold applies the EqualFold predicate on the "secret_name" field.
-func SecretNameEqualFold(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldEqualFold(FieldSecretName, v))
-}
-
-// SecretNameContainsFold applies the ContainsFold predicate on the "secret_name" field.
-func SecretNameContainsFold(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldContainsFold(FieldSecretName, v))
-}
-
 // HasOwner applies the HasEdge predicate on the "owner" edge.
 func HasOwner() predicate.Integration {
 	return predicate.Integration(func(s *sql.Selector) {
@@ -873,6 +793,35 @@ func HasOwnerWith(preds ...predicate.Organization) predicate.Integration {
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Integration
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSecrets applies the HasEdge predicate on the "secrets" edge.
+func HasSecrets() predicate.Integration {
+	return predicate.Integration(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, SecretsTable, SecretsPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Hush
+		step.Edge.Schema = schemaConfig.IntegrationSecrets
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSecretsWith applies the HasEdge predicate on the "secrets" edge with a given conditions (other predicates).
+func HasSecretsWith(preds ...predicate.Hush) predicate.Integration {
+	return predicate.Integration(func(s *sql.Selector) {
+		step := newSecretsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Hush
+		step.Edge.Schema = schemaConfig.IntegrationSecrets
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
@@ -349,6 +350,66 @@ func (gsh *GroupSettingHistory) Diff(history *GroupSettingHistory) (*HistoryDiff
 	return nil, IdenticalHistoryError
 }
 
+func (hh *HushHistory) changes(new *HushHistory) []Change {
+	var changes []Change
+	if !reflect.DeepEqual(hh.CreatedAt, new.CreatedAt) {
+		changes = append(changes, NewChange(hushhistory.FieldCreatedAt, hh.CreatedAt, new.CreatedAt))
+	}
+	if !reflect.DeepEqual(hh.UpdatedAt, new.UpdatedAt) {
+		changes = append(changes, NewChange(hushhistory.FieldUpdatedAt, hh.UpdatedAt, new.UpdatedAt))
+	}
+	if !reflect.DeepEqual(hh.CreatedBy, new.CreatedBy) {
+		changes = append(changes, NewChange(hushhistory.FieldCreatedBy, hh.CreatedBy, new.CreatedBy))
+	}
+	if !reflect.DeepEqual(hh.DeletedAt, new.DeletedAt) {
+		changes = append(changes, NewChange(hushhistory.FieldDeletedAt, hh.DeletedAt, new.DeletedAt))
+	}
+	if !reflect.DeepEqual(hh.DeletedBy, new.DeletedBy) {
+		changes = append(changes, NewChange(hushhistory.FieldDeletedBy, hh.DeletedBy, new.DeletedBy))
+	}
+	if !reflect.DeepEqual(hh.Name, new.Name) {
+		changes = append(changes, NewChange(hushhistory.FieldName, hh.Name, new.Name))
+	}
+	if !reflect.DeepEqual(hh.Description, new.Description) {
+		changes = append(changes, NewChange(hushhistory.FieldDescription, hh.Description, new.Description))
+	}
+	if !reflect.DeepEqual(hh.Kind, new.Kind) {
+		changes = append(changes, NewChange(hushhistory.FieldKind, hh.Kind, new.Kind))
+	}
+	if !reflect.DeepEqual(hh.SecretName, new.SecretName) {
+		changes = append(changes, NewChange(hushhistory.FieldSecretName, hh.SecretName, new.SecretName))
+	}
+	if !reflect.DeepEqual(hh.SecretValue, new.SecretValue) {
+		changes = append(changes, NewChange(hushhistory.FieldSecretValue, hh.SecretValue, new.SecretValue))
+	}
+	return changes
+}
+
+func (hh *HushHistory) Diff(history *HushHistory) (*HistoryDiff[HushHistory], error) {
+	if hh.Ref != history.Ref {
+		return nil, MismatchedRefError
+	}
+
+	hhUnix, historyUnix := hh.HistoryTime.Unix(), history.HistoryTime.Unix()
+	hhOlder := hhUnix < historyUnix || (hhUnix == historyUnix && hh.ID < history.ID)
+	historyOlder := hhUnix > historyUnix || (hhUnix == historyUnix && hh.ID > history.ID)
+
+	if hhOlder {
+		return &HistoryDiff[HushHistory]{
+			Old:     hh,
+			New:     history,
+			Changes: hh.changes(history),
+		}, nil
+	} else if historyOlder {
+		return &HistoryDiff[HushHistory]{
+			Old:     history,
+			New:     hh,
+			Changes: history.changes(hh),
+		}, nil
+	}
+	return nil, IdenticalHistoryError
+}
+
 func (ih *IntegrationHistory) changes(new *IntegrationHistory) []Change {
 	var changes []Change
 	if !reflect.DeepEqual(ih.CreatedAt, new.CreatedAt) {
@@ -377,9 +438,6 @@ func (ih *IntegrationHistory) changes(new *IntegrationHistory) []Change {
 	}
 	if !reflect.DeepEqual(ih.Kind, new.Kind) {
 		changes = append(changes, NewChange(integrationhistory.FieldKind, ih.Kind, new.Kind))
-	}
-	if !reflect.DeepEqual(ih.SecretName, new.SecretName) {
-		changes = append(changes, NewChange(integrationhistory.FieldSecretName, ih.SecretName, new.SecretName))
 	}
 	return changes
 }
@@ -953,6 +1011,12 @@ func (c *Client) Audit(ctx context.Context) ([][]string, error) {
 	}
 	records = append(records, record...)
 
+	record, err = auditHushHistory(ctx, c.config)
+	if err != nil {
+		return nil, err
+	}
+	records = append(records, record...)
+
 	record, err = auditIntegrationHistory(ctx, c.config)
 	if err != nil {
 		return nil, err
@@ -1279,6 +1343,58 @@ func auditGroupSettingHistory(ctx context.Context, config config) ([][]string, e
 			default:
 				if i == 0 {
 					record.Changes = (&GroupSettingHistory{}).changes(curr)
+				} else {
+					record.Changes = histories[i-1].changes(curr)
+				}
+			}
+			records = append(records, record.toRow())
+		}
+	}
+	return records, nil
+}
+
+type hushhistoryref struct {
+	Ref string
+}
+
+func auditHushHistory(ctx context.Context, config config) ([][]string, error) {
+	var records = [][]string{}
+	var refs []hushhistoryref
+	client := NewHushHistoryClient(config)
+	err := client.Query().
+		Unique(true).
+		Order(hushhistory.ByRef()).
+		Select(hushhistory.FieldRef).
+		Scan(ctx, &refs)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, currRef := range refs {
+		histories, err := client.Query().
+			Where(hushhistory.Ref(currRef.Ref)).
+			Order(hushhistory.ByHistoryTime()).
+			All(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(histories); i++ {
+			curr := histories[i]
+			record := record{
+				Table:       "HushHistory",
+				RefId:       curr.Ref,
+				HistoryTime: curr.HistoryTime,
+				Operation:   curr.Operation,
+			}
+			switch curr.Operation {
+			case enthistory.OpTypeInsert:
+				record.Changes = (&HushHistory{}).changes(curr)
+			case enthistory.OpTypeDelete:
+				record.Changes = curr.changes(&HushHistory{})
+			default:
+				if i == 0 {
+					record.Changes = (&HushHistory{}).changes(curr)
 				} else {
 					record.Changes = histories[i-1].changes(curr)
 				}

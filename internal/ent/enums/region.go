@@ -18,7 +18,7 @@ var (
 // Values returns a slice of strings that represents all the possible values of the Region enum.
 // Possible default values are "AMER", "EMEA", and "APAC"
 func (Region) Values() (kinds []string) {
-	for _, s := range []Region{Amer, Emea, Apac, InvalidRegion} {
+	for _, s := range []Region{Amer, Emea, Apac} {
 		kinds = append(kinds, string(s))
 	}
 

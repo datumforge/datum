@@ -24,7 +24,7 @@ var (
 // Values returns a slice of strings that represents all the possible values of the JoinPolicy enum.
 // Possible default values are "OPEN", "INVITE_ONLY", "APPLICATION_ONLY", and "INVITE_OR_APPLICATION".
 func (JoinPolicy) Values() (kinds []string) {
-	for _, s := range []JoinPolicy{JoinPolicyOpen, JoinPolicyInviteOnly, JoinPolicyApplicationOnly, JoinPolicyInviteOrApplication, JoinPolicyInvalid} {
+	for _, s := range []JoinPolicy{JoinPolicyOpen, JoinPolicyInviteOnly, JoinPolicyApplicationOnly, JoinPolicyInviteOrApplication} {
 		kinds = append(kinds, string(s))
 	}
 

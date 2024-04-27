@@ -146,7 +146,7 @@ const DefaultStatus enums.UserStatus = "ACTIVE"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.UserStatus) error {
 	switch s.String() {
-	case "ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED", "INVALID":
+	case "ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED":
 		return nil
 	default:
 		return fmt.Errorf("usersetting: invalid enum value for status field: %q", s)

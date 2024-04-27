@@ -2080,7 +2080,6 @@ GroupMembershipHistoryRole is enum for the field role
 enum GroupMembershipHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
 	USER
 }
 """
@@ -2279,7 +2278,6 @@ GroupMembershipRole is enum for the field role
 enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
 	USER
 }
 """
@@ -2591,7 +2589,6 @@ enum GroupSettingHistoryJoinPolicy @goModel(model: "github.com/datumforge/datum/
 	INVITE_ONLY
 	APPLICATION_ONLY
 	INVITE_OR_APPLICATION
-	INVALID
 }
 """
 GroupSettingHistoryOpType is enum for the field operation
@@ -2813,7 +2810,6 @@ enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/interna
 	INVITE_ONLY
 	APPLICATION_ONLY
 	INVITE_OR_APPLICATION
-	INVALID
 }
 """
 Return response for updateGroupSetting mutation
@@ -4385,7 +4381,6 @@ enum InviteInviteStatus @goModel(model: "github.com/datumforge/datum/internal/en
 	APPROVAL_REQUIRED
 	INVITATION_ACCEPTED
 	INVITATION_EXPIRED
-	INVITE_INVALID
 }
 """
 InviteRole is enum for the field role
@@ -4393,7 +4388,6 @@ InviteRole is enum for the field role
 enum InviteRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
 	USER
 }
 """
@@ -6260,7 +6254,6 @@ OrgMembershipHistoryRole is enum for the field role
 enum OrgMembershipHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
 	USER
 }
 """
@@ -6459,7 +6452,6 @@ OrgMembershipRole is enum for the field role
 enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
 	USER
 }
 """
@@ -7230,7 +7222,6 @@ enum OrganizationSettingHistoryRegion @goModel(model: "github.com/datumforge/dat
 	AMER
 	EMEA
 	APAC
-	INVALID
 }
 """
 OrganizationSettingHistoryWhereInput is used for filtering OrganizationSettingHistory objects.
@@ -7507,7 +7498,6 @@ enum OrganizationSettingRegion @goModel(model: "github.com/datumforge/datum/inte
 	AMER
 	EMEA
 	APAC
-	INVALID
 }
 """
 Return response for updateOrganizationSetting mutation
@@ -9959,7 +9949,6 @@ TemplateDocumentType is enum for the field template_type
 enum TemplateDocumentType @goModel(model: "github.com/datumforge/datum/internal/ent/enums.DocumentType") {
 	ROOTTEMPLATE
 	DOCUMENT
-	INVALID
 }
 """
 An edge in a connection.
@@ -10029,7 +10018,6 @@ TemplateHistoryDocumentType is enum for the field template_type
 enum TemplateHistoryDocumentType @goModel(model: "github.com/datumforge/datum/internal/ent/enums.DocumentType") {
 	ROOTTEMPLATE
 	DOCUMENT
-	INVALID
 }
 """
 An edge in a connection.
@@ -11186,7 +11174,6 @@ enum UserAuthProvider @goModel(model: "github.com/datumforge/datum/internal/ent/
 	GOOGLE
 	GITHUB
 	WEBAUTHN
-	INVALID
 }
 """
 A connection to a list of items.
@@ -11291,7 +11278,6 @@ enum UserHistoryAuthProvider @goModel(model: "github.com/datumforge/datum/intern
 	GOOGLE
 	GITHUB
 	WEBAUTHN
-	INVALID
 }
 """
 A connection to a list of items.
@@ -11358,7 +11344,6 @@ UserHistoryRole is enum for the field role
 enum UserHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
 	USER
 }
 """
@@ -11699,7 +11684,6 @@ UserRole is enum for the field role
 enum UserRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
 	USER
 }
 type UserSetting implements Node {
@@ -11870,7 +11854,6 @@ enum UserSettingHistoryUserStatus @goModel(model: "github.com/datumforge/datum/i
 	INACTIVE
 	DEACTIVATED
 	SUSPENDED
-	INVALID
 }
 """
 UserSettingHistoryWhereInput is used for filtering UserSettingHistory objects.
@@ -12115,7 +12098,6 @@ enum UserSettingUserStatus @goModel(model: "github.com/datumforge/datum/internal
 	INACTIVE
 	DEACTIVATED
 	SUSPENDED
-	INVALID
 }
 """
 UserSettingWhereInput is used for filtering UserSetting objects.

@@ -116,7 +116,7 @@ const DefaultTemplateType enums.DocumentType = "DOCUMENT"
 // TemplateTypeValidator is a validator for the "template_type" field enum values. It is called by the builders before save.
 func TemplateTypeValidator(tt enums.DocumentType) error {
 	switch tt.String() {
-	case "ROOTTEMPLATE", "DOCUMENT", "INVALID":
+	case "ROOTTEMPLATE", "DOCUMENT":
 		return nil
 	default:
 		return fmt.Errorf("template: invalid enum value for template_type field: %q", tt)

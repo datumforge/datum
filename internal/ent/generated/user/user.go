@@ -226,7 +226,7 @@ const DefaultAuthProvider enums.AuthProvider = "CREDENTIALS"
 // AuthProviderValidator is a validator for the "auth_provider" field enum values. It is called by the builders before save.
 func AuthProviderValidator(ap enums.AuthProvider) error {
 	switch ap.String() {
-	case "CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN", "INVALID":
+	case "CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN":
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for auth_provider field: %q", ap)
@@ -238,7 +238,7 @@ const DefaultRole enums.Role = "USER"
 // RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
 func RoleValidator(r enums.Role) error {
 	switch r.String() {
-	case "ADMIN", "MEMBER", "OWNER", "USER":
+	case "ADMIN", "MEMBER", "USER":
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for role field: %q", r)

@@ -1645,7 +1645,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -1802,7 +1801,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -1915,7 +1913,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -2078,7 +2075,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -2311,8 +2307,7 @@
                       "OPEN",
                       "INVITE_ONLY",
                       "APPLICATION_ONLY",
-                      "INVITE_OR_APPLICATION",
-                      "INVALID"
+                      "INVITE_OR_APPLICATION"
                     ],
                     "default": "INVITE_OR_APPLICATION"
                   },
@@ -2485,8 +2480,7 @@
                       "OPEN",
                       "INVITE_ONLY",
                       "APPLICATION_ONLY",
-                      "INVITE_OR_APPLICATION",
-                      "INVALID"
+                      "INVITE_OR_APPLICATION"
                     ],
                     "default": "INVITE_OR_APPLICATION"
                   },
@@ -4470,7 +4464,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -4625,7 +4618,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -5813,7 +5805,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -5970,7 +5961,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -6083,7 +6073,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -6246,7 +6235,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "MEMBER"
@@ -6792,8 +6780,7 @@
                     "enum": [
                       "AMER",
                       "EMEA",
-                      "APAC",
-                      "INVALID"
+                      "APAC"
                     ],
                     "default": "AMER"
                   },
@@ -6970,8 +6957,7 @@
                     "enum": [
                       "AMER",
                       "EMEA",
-                      "APAC",
-                      "INVALID"
+                      "APAC"
                     ],
                     "default": "AMER"
                   },
@@ -9106,8 +9092,7 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT",
-                      "INVALID"
+                      "DOCUMENT"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9274,8 +9259,7 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT",
-                      "INVALID"
+                      "DOCUMENT"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9404,8 +9388,7 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT",
-                      "INVALID"
+                      "DOCUMENT"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9580,8 +9563,7 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT",
-                      "INVALID"
+                      "DOCUMENT"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9909,8 +9891,7 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN",
-                      "INVALID"
+                      "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
                   },
@@ -9919,7 +9900,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "USER"
@@ -10095,8 +10075,7 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN",
-                      "INVALID"
+                      "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
                   },
@@ -10105,7 +10084,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "USER"
@@ -10244,8 +10222,7 @@
                       "ACTIVE",
                       "INACTIVE",
                       "DEACTIVATED",
-                      "SUSPENDED",
-                      "INVALID"
+                      "SUSPENDED"
                     ],
                     "default": "ACTIVE"
                   },
@@ -10417,8 +10394,7 @@
                       "ACTIVE",
                       "INACTIVE",
                       "DEACTIVATED",
-                      "SUSPENDED",
-                      "INVALID"
+                      "SUSPENDED"
                     ],
                     "default": "ACTIVE"
                   },
@@ -10610,8 +10586,7 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN",
-                      "INVALID"
+                      "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
                   },
@@ -10620,7 +10595,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "USER"
@@ -10852,8 +10826,7 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN",
-                      "INVALID"
+                      "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
                   },
@@ -10862,7 +10835,6 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER",
                       "USER"
                     ],
                     "default": "USER"
@@ -11903,7 +11875,6 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER",
               "USER"
             ],
             "default": "MEMBER"
@@ -11977,7 +11948,6 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER",
               "USER"
             ],
             "default": "MEMBER"
@@ -12039,8 +12009,7 @@
               "OPEN",
               "INVITE_ONLY",
               "APPLICATION_ONLY",
-              "INVITE_OR_APPLICATION",
-              "INVALID"
+              "INVITE_OR_APPLICATION"
             ],
             "default": "INVITE_OR_APPLICATION"
           },
@@ -12125,8 +12094,7 @@
               "OPEN",
               "INVITE_ONLY",
               "APPLICATION_ONLY",
-              "INVITE_OR_APPLICATION",
-              "INVALID"
+              "INVITE_OR_APPLICATION"
             ],
             "default": "INVITE_OR_APPLICATION"
           },
@@ -12424,8 +12392,7 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED",
-              "INVITE_INVALID"
+              "INVITATION_EXPIRED"
             ],
             "default": "INVITATION_SENT"
           },
@@ -12434,7 +12401,6 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER",
               "USER"
             ],
             "default": "MEMBER"
@@ -12713,7 +12679,6 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER",
               "USER"
             ],
             "default": "MEMBER"
@@ -12787,7 +12752,6 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER",
               "USER"
             ],
             "default": "MEMBER"
@@ -13068,8 +13032,7 @@
             "enum": [
               "AMER",
               "EMEA",
-              "APAC",
-              "INVALID"
+              "APAC"
             ],
             "default": "AMER"
           },
@@ -13158,8 +13121,7 @@
             "enum": [
               "AMER",
               "EMEA",
-              "APAC",
-              "INVALID"
+              "APAC"
             ],
             "default": "AMER"
           },
@@ -13406,8 +13368,7 @@
             "type": "string",
             "enum": [
               "ROOTTEMPLATE",
-              "DOCUMENT",
-              "INVALID"
+              "DOCUMENT"
             ],
             "default": "DOCUMENT"
           },
@@ -13493,8 +13454,7 @@
             "type": "string",
             "enum": [
               "ROOTTEMPLATE",
-              "DOCUMENT",
-              "INVALID"
+              "DOCUMENT"
             ],
             "default": "DOCUMENT"
           },
@@ -13582,8 +13542,7 @@
               "CREDENTIALS",
               "GOOGLE",
               "GITHUB",
-              "WEBAUTHN",
-              "INVALID"
+              "WEBAUTHN"
             ],
             "default": "CREDENTIALS"
           },
@@ -13592,7 +13551,6 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER",
               "USER"
             ],
             "default": "USER"
@@ -13739,8 +13697,7 @@
               "CREDENTIALS",
               "GOOGLE",
               "GITHUB",
-              "WEBAUTHN",
-              "INVALID"
+              "WEBAUTHN"
             ],
             "default": "CREDENTIALS"
           },
@@ -13749,7 +13706,6 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER",
               "USER"
             ],
             "default": "USER"
@@ -13813,8 +13769,7 @@
               "ACTIVE",
               "INACTIVE",
               "DEACTIVATED",
-              "SUSPENDED",
-              "INVALID"
+              "SUSPENDED"
             ],
             "default": "ACTIVE"
           },
@@ -13909,8 +13864,7 @@
               "ACTIVE",
               "INACTIVE",
               "DEACTIVATED",
-              "SUSPENDED",
-              "INVALID"
+              "SUSPENDED"
             ],
             "default": "ACTIVE"
           },

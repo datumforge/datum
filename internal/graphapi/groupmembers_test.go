@@ -198,7 +198,7 @@ func (suite *GraphTestSuite) TestQueryCreateGroupMembers() {
 			name:    "invalid role",
 			groupID: group1.ID,
 			userID:  testUser1.ID,
-			role:    enums.Invalid,
+			role:    enums.RoleInvalid,
 			allowed: true,
 			check:   false,
 			list:    false,
@@ -283,7 +283,7 @@ func (suite *GraphTestSuite) TestQueryUpdateGroupMembers() {
 		},
 		{
 			name:    "invalid role",
-			role:    enums.Invalid,
+			role:    enums.RoleInvalid,
 			errMsg:  "not a valid GroupMembershipRole",
 			allowed: true,
 			check:   false,

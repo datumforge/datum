@@ -123,13 +123,13 @@ func (User) Fields() []ent.Field {
 			Annotations(entoas.Skip(true)).
 			Optional(),
 		field.Enum("auth_provider").
-			GoType(enums.AuthProvider("")).
 			Comment("auth provider used to register the account").
+			GoType(enums.AuthProvider("")).
 			Default(string(enums.AuthProviderCredentials)),
 		field.Enum("role").
 			Comment("the user's role").
 			GoType(enums.Role("")).
-			Default(string(enums.RoleMember)).
+			Default(string(enums.RoleUser)).
 			Optional(),
 	}
 }

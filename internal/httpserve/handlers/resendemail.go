@@ -47,7 +47,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), in.Email)
 
 	// email verifications only come to users that were created with username/password logins
-	entUser, err := h.getUserByEmail(ctxWithToken, in.Email, enums.Credentials)
+	entUser, err := h.getUserByEmail(ctxWithToken, in.Email, enums.AuthProviderCredentials)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid

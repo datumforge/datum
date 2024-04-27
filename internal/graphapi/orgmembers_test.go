@@ -183,7 +183,7 @@ func (suite *GraphTestSuite) TestQueryCreateOrgMembers() {
 			name:      "invalid role",
 			orgID:     org1.ID,
 			userID:    testUser1.ID,
-			role:      enums.Invalid,
+			role:      enums.RoleInvalid,
 			checkOrg:  false,
 			checkRole: false,
 			errMsg:    "not a valid OrgMembershipRole",
@@ -271,7 +271,7 @@ func (suite *GraphTestSuite) TestQueryUpdateOrgMembers() {
 		},
 		{
 			name:       "invalid role",
-			role:       enums.Invalid,
+			role:       enums.RoleInvalid,
 			tupleWrite: false,
 			errMsg:     "not a valid OrgMembershipRole",
 		},

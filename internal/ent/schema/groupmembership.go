@@ -31,7 +31,7 @@ type GroupMembership struct {
 func (GroupMembership) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("role").
-			GoType(enums.RoleMember).
+			GoType(enums.Role("")).
 			Default(string(enums.RoleMember)),
 		field.String("group_id").Immutable(),
 		field.String("user_id").Immutable(),

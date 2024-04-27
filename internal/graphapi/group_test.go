@@ -283,7 +283,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			description: gofakeit.HipsterSentence(10),
 			owner:       owner1.ID,
 			settings: &datumclient.CreateGroupSettingInput{
-				JoinPolicy: &enums.InviteOnly,
+				JoinPolicy: &enums.JoinPolicyInviteOnly,
 			},
 			allowed: true,
 			check:   true,
@@ -379,7 +379,7 @@ func (suite *GraphTestSuite) TestMutationCreateGroup() {
 			}
 
 			if tc.settings != nil {
-				assert.Equal(t, resp.CreateGroup.Group.Setting.JoinPolicy, enums.InviteOnly)
+				assert.Equal(t, resp.CreateGroup.Group.Setting.JoinPolicy, enums.JoinPolicyInviteOnly)
 			}
 
 			// cleanup group
@@ -466,7 +466,7 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 			allowed: true,
 			updateInput: datumclient.UpdateGroupInput{
 				UpdateGroupSettings: &datumclient.UpdateGroupSettingInput{
-					JoinPolicy: &enums.Open,
+					JoinPolicy: &enums.JoinPolicyOpen,
 				},
 			},
 			list: true,
@@ -476,7 +476,7 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 				DisplayName: displayNameUpdate,
 				Description: &descriptionUpdate,
 				Setting: datumclient.UpdateGroup_UpdateGroup_Group_Setting{
-					JoinPolicy: enums.Open,
+					JoinPolicy: enums.JoinPolicyOpen,
 				},
 			},
 		},
@@ -537,7 +537,7 @@ func (suite *GraphTestSuite) TestMutationUpdateGroup() {
 			}
 
 			if tc.updateInput.UpdateGroupSettings != nil {
-				assert.Equal(t, updatedGroup.GetSetting().JoinPolicy, enums.Open)
+				assert.Equal(t, updatedGroup.GetSetting().JoinPolicy, enums.JoinPolicyOpen)
 			}
 		})
 	}

@@ -60,7 +60,7 @@ func (Invite) Fields() []ent.Field {
 		field.Enum("status").
 			Comment("the status of the invitation").
 			Annotations(entoas.Annotation{ReadOnly: true}).
-			GoType(enums.InvitationSent).
+			GoType(enums.InviteStatus("")).
 			Default(string(enums.InvitationSent)),
 		field.Enum("role").
 			GoType(enums.Role("")).
@@ -68,8 +68,7 @@ func (Invite) Fields() []ent.Field {
 			Annotations(
 				entoas.UpdateOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
 				entoas.DeleteOperation(entoas.OperationPolicy(entoas.PolicyExclude)),
-			).
-			Values(string(enums.RoleOwner)),
+			),
 		field.Int("send_attempts").
 			Comment("the number of attempts made to perform email send of the invitation, maximum of 5").
 			Annotations(entoas.Annotation{ReadOnly: true}).

@@ -124,7 +124,7 @@ const DefaultJoinPolicy enums.JoinPolicy = "INVITE_OR_APPLICATION"
 // JoinPolicyValidator is a validator for the "join_policy" field enum values. It is called by the builders before save.
 func JoinPolicyValidator(jp enums.JoinPolicy) error {
 	switch jp.String() {
-	case "OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION":
+	case "OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION", "INVALID":
 		return nil
 	default:
 		return fmt.Errorf("groupsetting: invalid enum value for join_policy field: %q", jp)

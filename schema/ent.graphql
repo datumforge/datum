@@ -522,6 +522,10 @@ input CreateUserInput {
   auth provider used to register the account
   """
   authProvider: UserAuthProvider
+  """
+  the user's role
+  """
+  role: UserRole
   personalAccessTokenIDs: [ID!]
   tfaSettingIDs: [ID!]
   settingID: ID!
@@ -552,7 +556,13 @@ input CreateUserSettingInput {
   The time the user was suspended
   """
   suspendedAt: Time
+  """
+  status of the user account
+  """
   status: UserSettingUserStatus
+  """
+  whether the user has confirmed their email address
+  """
   emailConfirmed: Boolean
   """
   tags associated with the user
@@ -1973,6 +1983,8 @@ GroupMembershipHistoryRole is enum for the field role
 enum GroupMembershipHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
   ADMIN
   MEMBER
+  OWNER
+  USER
 }
 """
 GroupMembershipHistoryWhereInput is used for filtering GroupMembershipHistory objects.
@@ -2170,6 +2182,8 @@ GroupMembershipRole is enum for the field role
 enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
   ADMIN
   MEMBER
+  OWNER
+  USER
 }
 """
 GroupMembershipWhereInput is used for filtering GroupMembership objects.
@@ -2451,6 +2465,7 @@ enum GroupSettingHistoryJoinPolicy @goModel(model: "github.com/datumforge/datum/
   INVITE_ONLY
   APPLICATION_ONLY
   INVITE_OR_APPLICATION
+  INVALID
 }
 """
 GroupSettingHistoryOpType is enum for the field operation
@@ -2672,6 +2687,7 @@ enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/interna
   INVITE_ONLY
   APPLICATION_ONLY
   INVITE_OR_APPLICATION
+  INVALID
 }
 """
 GroupSettingVisibility is enum for the field visibility
@@ -4153,6 +4169,7 @@ enum InviteInviteStatus @goModel(model: "github.com/datumforge/datum/internal/en
   APPROVAL_REQUIRED
   INVITATION_ACCEPTED
   INVITATION_EXPIRED
+  INVITE_INVALID
 }
 """
 InviteRole is enum for the field role
@@ -4161,6 +4178,7 @@ enum InviteRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.
   ADMIN
   MEMBER
   OWNER
+  USER
 }
 """
 InviteWhereInput is used for filtering Invite objects.
@@ -5403,6 +5421,7 @@ enum OrgMembershipHistoryRole @goModel(model: "github.com/datumforge/datum/inter
   ADMIN
   MEMBER
   OWNER
+  USER
 }
 """
 OrgMembershipHistoryWhereInput is used for filtering OrgMembershipHistory objects.
@@ -5601,6 +5620,7 @@ enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent
   ADMIN
   MEMBER
   OWNER
+  USER
 }
 """
 OrgMembershipWhereInput is used for filtering OrgMembership objects.
@@ -6323,6 +6343,7 @@ enum OrganizationSettingHistoryRegion @goModel(model: "github.com/datumforge/dat
   AMER
   EMEA
   APAC
+  INVALID
 }
 """
 OrganizationSettingHistoryWhereInput is used for filtering OrganizationSettingHistory objects.
@@ -6599,6 +6620,7 @@ enum OrganizationSettingRegion @goModel(model: "github.com/datumforge/datum/inte
   AMER
   EMEA
   APAC
+  INVALID
 }
 """
 OrganizationSettingWhereInput is used for filtering OrganizationSetting objects.
@@ -8768,6 +8790,7 @@ TemplateDocumentType is enum for the field template_type
 enum TemplateDocumentType @goModel(model: "github.com/datumforge/datum/internal/ent/enums.DocumentType") {
   ROOTTEMPLATE
   DOCUMENT
+  INVALID
 }
 """
 An edge in a connection.
@@ -8837,6 +8860,7 @@ TemplateHistoryDocumentType is enum for the field template_type
 enum TemplateHistoryDocumentType @goModel(model: "github.com/datumforge/datum/internal/ent/enums.DocumentType") {
   ROOTTEMPLATE
   DOCUMENT
+  INVALID
 }
 """
 An edge in a connection.
@@ -9837,6 +9861,11 @@ input UpdateUserInput {
   auth provider used to register the account
   """
   authProvider: UserAuthProvider
+  """
+  the user's role
+  """
+  role: UserRole
+  clearRole: Boolean
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
@@ -9883,7 +9912,13 @@ input UpdateUserSettingInput {
   """
   suspendedAt: Time
   clearSuspendedAt: Boolean
+  """
+  status of the user account
+  """
   status: UserSettingUserStatus
+  """
+  whether the user has confirmed their email address
+  """
   emailConfirmed: Boolean
   """
   tags associated with the user
@@ -9945,6 +9980,10 @@ type User implements Node {
   auth provider used to register the account
   """
   authProvider: UserAuthProvider!
+  """
+  the user's role
+  """
+  role: UserRole
   personalAccessTokens: [PersonalAccessToken!]
   tfaSettings: [TFASetting!]
   setting: UserSetting!
@@ -9961,6 +10000,7 @@ enum UserAuthProvider @goModel(model: "github.com/datumforge/datum/internal/ent/
   GOOGLE
   GITHUB
   WEBAUTHN
+  INVALID
 }
 """
 A connection to a list of items.
@@ -10034,6 +10074,10 @@ type UserHistory implements Node {
   auth provider used to register the account
   """
   authProvider: UserHistoryAuthProvider!
+  """
+  the user's role
+  """
+  role: UserHistoryRole
 }
 """
 UserHistoryAuthProvider is enum for the field auth_provider
@@ -10043,6 +10087,7 @@ enum UserHistoryAuthProvider @goModel(model: "github.com/datumforge/datum/intern
   GOOGLE
   GITHUB
   WEBAUTHN
+  INVALID
 }
 """
 A connection to a list of items.
@@ -10102,6 +10147,15 @@ enum UserHistoryOrderField {
   first_name
   last_name
   display_name
+}
+"""
+UserHistoryRole is enum for the field role
+"""
+enum UserHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
+  ADMIN
+  MEMBER
+  OWNER
+  USER
 }
 """
 UserHistoryWhereInput is used for filtering UserHistory objects.
@@ -10404,6 +10458,15 @@ input UserHistoryWhereInput {
   authProviderNEQ: UserHistoryAuthProvider
   authProviderIn: [UserHistoryAuthProvider!]
   authProviderNotIn: [UserHistoryAuthProvider!]
+  """
+  role field predicates
+  """
+  role: UserHistoryRole
+  roleNEQ: UserHistoryRole
+  roleIn: [UserHistoryRole!]
+  roleNotIn: [UserHistoryRole!]
+  roleIsNil: Boolean
+  roleNotNil: Boolean
 }
 """
 Ordering options for User connections
@@ -10426,6 +10489,15 @@ enum UserOrderField {
   last_name
   display_name
 }
+"""
+UserRole is enum for the field role
+"""
+enum UserRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
+  ADMIN
+  MEMBER
+  OWNER
+  USER
+}
 type UserSetting implements Node {
   id: ID!
   createdAt: Time
@@ -10447,7 +10519,13 @@ type UserSetting implements Node {
   The time the user was suspended
   """
   suspendedAt: Time
+  """
+  status of the user account
+  """
   status: UserSettingUserStatus!
+  """
+  whether the user has confirmed their email address
+  """
   emailConfirmed: Boolean!
   """
   tags associated with the user
@@ -10521,7 +10599,13 @@ type UserSettingHistory implements Node {
   The time the user was suspended
   """
   suspendedAt: Time
+  """
+  status of the user account
+  """
   status: UserSettingHistoryUserStatus!
+  """
+  whether the user has confirmed their email address
+  """
   emailConfirmed: Boolean!
   """
   tags associated with the user
@@ -10582,6 +10666,7 @@ enum UserSettingHistoryUserStatus @goModel(model: "github.com/datumforge/datum/i
   INACTIVE
   DEACTIVATED
   SUSPENDED
+  INVALID
 }
 """
 UserSettingHistoryWhereInput is used for filtering UserSettingHistory objects.
@@ -10817,6 +10902,7 @@ enum UserSettingUserStatus @goModel(model: "github.com/datumforge/datum/internal
   INACTIVE
   DEACTIVATED
   SUSPENDED
+  INVALID
 }
 """
 UserSettingWhereInput is used for filtering UserSetting objects.
@@ -11283,6 +11369,15 @@ input UserWhereInput {
   authProviderNEQ: UserAuthProvider
   authProviderIn: [UserAuthProvider!]
   authProviderNotIn: [UserAuthProvider!]
+  """
+  role field predicates
+  """
+  role: UserRole
+  roleNEQ: UserRole
+  roleIn: [UserRole!]
+  roleNotIn: [UserRole!]
+  roleIsNil: Boolean
+  roleNotNil: Boolean
   """
   personal_access_tokens edge predicates
   """

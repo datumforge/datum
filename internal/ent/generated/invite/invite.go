@@ -125,7 +125,7 @@ const DefaultStatus enums.InviteStatus = "INVITATION_SENT"
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s enums.InviteStatus) error {
 	switch s.String() {
-	case "INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED":
+	case "INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED", "INVITE_INVALID":
 		return nil
 	default:
 		return fmt.Errorf("invite: invalid enum value for status field: %q", s)
@@ -137,7 +137,7 @@ const DefaultRole enums.Role = "MEMBER"
 // RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
 func RoleValidator(r enums.Role) error {
 	switch r.String() {
-	case "ADMIN", "MEMBER", "OWNER":
+	case "ADMIN", "MEMBER", "OWNER", "USER":
 		return nil
 	default:
 		return fmt.Errorf("invite: invalid enum value for role field: %q", r)

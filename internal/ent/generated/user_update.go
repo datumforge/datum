@@ -287,6 +287,26 @@ func (uu *UserUpdate) SetNillableAuthProvider(ep *enums.AuthProvider) *UserUpdat
 	return uu
 }
 
+// SetRole sets the "role" field.
+func (uu *UserUpdate) SetRole(e enums.Role) *UserUpdate {
+	uu.mutation.SetRole(e)
+	return uu
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableRole(e *enums.Role) *UserUpdate {
+	if e != nil {
+		uu.SetRole(*e)
+	}
+	return uu
+}
+
+// ClearRole clears the value of the "role" field.
+func (uu *UserUpdate) ClearRole() *UserUpdate {
+	uu.mutation.ClearRole()
+	return uu
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
 func (uu *UserUpdate) AddPersonalAccessTokenIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddPersonalAccessTokenIDs(ids...)
@@ -726,6 +746,11 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "User.auth_provider": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "User.role": %w`, err)}
+		}
+	}
 	if _, ok := uu.mutation.SettingID(); uu.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
@@ -824,6 +849,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
+	}
+	if value, ok := uu.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
+	}
+	if uu.mutation.RoleCleared() {
+		_spec.ClearField(user.FieldRole, field.TypeEnum)
 	}
 	if uu.mutation.PersonalAccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1598,6 +1629,26 @@ func (uuo *UserUpdateOne) SetNillableAuthProvider(ep *enums.AuthProvider) *UserU
 	return uuo
 }
 
+// SetRole sets the "role" field.
+func (uuo *UserUpdateOne) SetRole(e enums.Role) *UserUpdateOne {
+	uuo.mutation.SetRole(e)
+	return uuo
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableRole(e *enums.Role) *UserUpdateOne {
+	if e != nil {
+		uuo.SetRole(*e)
+	}
+	return uuo
+}
+
+// ClearRole clears the value of the "role" field.
+func (uuo *UserUpdateOne) ClearRole() *UserUpdateOne {
+	uuo.mutation.ClearRole()
+	return uuo
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
 func (uuo *UserUpdateOne) AddPersonalAccessTokenIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddPersonalAccessTokenIDs(ids...)
@@ -2050,6 +2101,11 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "User.auth_provider": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "User.role": %w`, err)}
+		}
+	}
 	if _, ok := uuo.mutation.SettingID(); uuo.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
@@ -2165,6 +2221,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
+	}
+	if value, ok := uuo.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
+	}
+	if uuo.mutation.RoleCleared() {
+		_spec.ClearField(user.FieldRole, field.TypeEnum)
 	}
 	if uuo.mutation.PersonalAccessTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -1356,6 +1356,46 @@ func AuthProviderNotIn(vs ...enums.AuthProvider) predicate.UserHistory {
 	return predicate.UserHistory(sql.FieldNotIn(FieldAuthProvider, v...))
 }
 
+// RoleEQ applies the EQ predicate on the "role" field.
+func RoleEQ(v enums.Role) predicate.UserHistory {
+	vc := v
+	return predicate.UserHistory(sql.FieldEQ(FieldRole, vc))
+}
+
+// RoleNEQ applies the NEQ predicate on the "role" field.
+func RoleNEQ(v enums.Role) predicate.UserHistory {
+	vc := v
+	return predicate.UserHistory(sql.FieldNEQ(FieldRole, vc))
+}
+
+// RoleIn applies the In predicate on the "role" field.
+func RoleIn(vs ...enums.Role) predicate.UserHistory {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserHistory(sql.FieldIn(FieldRole, v...))
+}
+
+// RoleNotIn applies the NotIn predicate on the "role" field.
+func RoleNotIn(vs ...enums.Role) predicate.UserHistory {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.UserHistory(sql.FieldNotIn(FieldRole, v...))
+}
+
+// RoleIsNil applies the IsNil predicate on the "role" field.
+func RoleIsNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldIsNull(FieldRole))
+}
+
+// RoleNotNil applies the NotNil predicate on the "role" field.
+func RoleNotNil() predicate.UserHistory {
+	return predicate.UserHistory(sql.FieldNotNull(FieldRole))
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.UserHistory) predicate.UserHistory {
 	return predicate.UserHistory(sql.AndPredicates(predicates...))

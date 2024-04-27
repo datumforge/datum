@@ -844,6 +844,9 @@ func (uh *UserHistory) changes(new *UserHistory) []Change {
 	if !reflect.DeepEqual(uh.AuthProvider, new.AuthProvider) {
 		changes = append(changes, NewChange(userhistory.FieldAuthProvider, uh.AuthProvider, new.AuthProvider))
 	}
+	if !reflect.DeepEqual(uh.Role, new.Role) {
+		changes = append(changes, NewChange(userhistory.FieldRole, uh.Role, new.Role))
+	}
 	return changes
 }
 

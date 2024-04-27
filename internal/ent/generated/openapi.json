@@ -1644,7 +1644,9 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -1799,7 +1801,9 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   }
@@ -1910,7 +1914,9 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -2071,7 +2077,9 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -2303,7 +2311,8 @@
                       "OPEN",
                       "INVITE_ONLY",
                       "APPLICATION_ONLY",
-                      "INVITE_OR_APPLICATION"
+                      "INVITE_OR_APPLICATION",
+                      "INVALID"
                     ],
                     "default": "INVITE_OR_APPLICATION"
                   },
@@ -2476,7 +2485,8 @@
                       "OPEN",
                       "INVITE_ONLY",
                       "APPLICATION_ONLY",
-                      "INVITE_OR_APPLICATION"
+                      "INVITE_OR_APPLICATION",
+                      "INVALID"
                     ],
                     "default": "INVITE_OR_APPLICATION"
                   },
@@ -4460,7 +4470,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -4614,7 +4625,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -5801,7 +5813,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -5957,7 +5970,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   }
@@ -6069,7 +6083,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -6231,7 +6246,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "OWNER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -6776,7 +6792,8 @@
                     "enum": [
                       "AMER",
                       "EMEA",
-                      "APAC"
+                      "APAC",
+                      "INVALID"
                     ],
                     "default": "AMER"
                   },
@@ -6953,7 +6970,8 @@
                     "enum": [
                       "AMER",
                       "EMEA",
-                      "APAC"
+                      "APAC",
+                      "INVALID"
                     ],
                     "default": "AMER"
                   },
@@ -9088,7 +9106,8 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT"
+                      "DOCUMENT",
+                      "INVALID"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9255,7 +9274,8 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT"
+                      "DOCUMENT",
+                      "INVALID"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9384,7 +9404,8 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT"
+                      "DOCUMENT",
+                      "INVALID"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9559,7 +9580,8 @@
                     "type": "string",
                     "enum": [
                       "ROOTTEMPLATE",
-                      "DOCUMENT"
+                      "DOCUMENT",
+                      "INVALID"
                     ],
                     "default": "DOCUMENT"
                   },
@@ -9887,9 +9909,20 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN"
+                      "WEBAUTHN",
+                      "INVALID"
                     ],
                     "default": "CREDENTIALS"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
+                    ],
+                    "default": "USER"
                   }
                 },
                 "required": [
@@ -10062,9 +10095,20 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN"
+                      "WEBAUTHN",
+                      "INVALID"
                     ],
                     "default": "CREDENTIALS"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
+                    ],
+                    "default": "USER"
                   }
                 }
               }
@@ -10200,7 +10244,8 @@
                       "ACTIVE",
                       "INACTIVE",
                       "DEACTIVATED",
-                      "SUSPENDED"
+                      "SUSPENDED",
+                      "INVALID"
                     ],
                     "default": "ACTIVE"
                   },
@@ -10372,7 +10417,8 @@
                       "ACTIVE",
                       "INACTIVE",
                       "DEACTIVATED",
-                      "SUSPENDED"
+                      "SUSPENDED",
+                      "INVALID"
                     ],
                     "default": "ACTIVE"
                   },
@@ -10564,9 +10610,20 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN"
+                      "WEBAUTHN",
+                      "INVALID"
                     ],
                     "default": "CREDENTIALS"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
+                    ],
+                    "default": "USER"
                   },
                   "personal_access_tokens": {
                     "type": "array",
@@ -10795,9 +10852,20 @@
                       "CREDENTIALS",
                       "GOOGLE",
                       "GITHUB",
-                      "WEBAUTHN"
+                      "WEBAUTHN",
+                      "INVALID"
                     ],
                     "default": "CREDENTIALS"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "OWNER",
+                      "USER"
+                    ],
+                    "default": "USER"
                   },
                   "personal_access_tokens": {
                     "type": "array",
@@ -11834,7 +11902,9 @@
             "type": "string",
             "enum": [
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER",
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -11906,7 +11976,9 @@
             "type": "string",
             "enum": [
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "OWNER",
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -11967,7 +12039,8 @@
               "OPEN",
               "INVITE_ONLY",
               "APPLICATION_ONLY",
-              "INVITE_OR_APPLICATION"
+              "INVITE_OR_APPLICATION",
+              "INVALID"
             ],
             "default": "INVITE_OR_APPLICATION"
           },
@@ -12052,7 +12125,8 @@
               "OPEN",
               "INVITE_ONLY",
               "APPLICATION_ONLY",
-              "INVITE_OR_APPLICATION"
+              "INVITE_OR_APPLICATION",
+              "INVALID"
             ],
             "default": "INVITE_OR_APPLICATION"
           },
@@ -12350,7 +12424,8 @@
               "INVITATION_SENT",
               "APPROVAL_REQUIRED",
               "INVITATION_ACCEPTED",
-              "INVITATION_EXPIRED"
+              "INVITATION_EXPIRED",
+              "INVITE_INVALID"
             ],
             "default": "INVITATION_SENT"
           },
@@ -12359,7 +12434,8 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER"
+              "OWNER",
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -12637,7 +12713,8 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER"
+              "OWNER",
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -12710,7 +12787,8 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER"
+              "OWNER",
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -12990,7 +13068,8 @@
             "enum": [
               "AMER",
               "EMEA",
-              "APAC"
+              "APAC",
+              "INVALID"
             ],
             "default": "AMER"
           },
@@ -13079,7 +13158,8 @@
             "enum": [
               "AMER",
               "EMEA",
-              "APAC"
+              "APAC",
+              "INVALID"
             ],
             "default": "AMER"
           },
@@ -13326,7 +13406,8 @@
             "type": "string",
             "enum": [
               "ROOTTEMPLATE",
-              "DOCUMENT"
+              "DOCUMENT",
+              "INVALID"
             ],
             "default": "DOCUMENT"
           },
@@ -13412,7 +13493,8 @@
             "type": "string",
             "enum": [
               "ROOTTEMPLATE",
-              "DOCUMENT"
+              "DOCUMENT",
+              "INVALID"
             ],
             "default": "DOCUMENT"
           },
@@ -13500,9 +13582,20 @@
               "CREDENTIALS",
               "GOOGLE",
               "GITHUB",
-              "WEBAUTHN"
+              "WEBAUTHN",
+              "INVALID"
             ],
             "default": "CREDENTIALS"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER",
+              "USER"
+            ],
+            "default": "USER"
           },
           "personal_access_tokens": {
             "type": "array",
@@ -13646,9 +13739,20 @@
               "CREDENTIALS",
               "GOOGLE",
               "GITHUB",
-              "WEBAUTHN"
+              "WEBAUTHN",
+              "INVALID"
             ],
             "default": "CREDENTIALS"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "OWNER",
+              "USER"
+            ],
+            "default": "USER"
           }
         },
         "required": [
@@ -13709,7 +13813,8 @@
               "ACTIVE",
               "INACTIVE",
               "DEACTIVATED",
-              "SUSPENDED"
+              "SUSPENDED",
+              "INVALID"
             ],
             "default": "ACTIVE"
           },
@@ -13804,7 +13909,8 @@
               "ACTIVE",
               "INACTIVE",
               "DEACTIVATED",
-              "SUSPENDED"
+              "SUSPENDED",
+              "INVALID"
             ],
             "default": "ACTIVE"
           },

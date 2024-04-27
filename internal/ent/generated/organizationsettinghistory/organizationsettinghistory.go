@@ -118,7 +118,7 @@ const DefaultGeoLocation enums.Region = "AMER"
 // GeoLocationValidator is a validator for the "geo_location" field enum values. It is called by the builders before save.
 func GeoLocationValidator(gl enums.Region) error {
 	switch gl.String() {
-	case "AMER", "EMEA", "APAC":
+	case "AMER", "EMEA", "APAC", "INVALID":
 		return nil
 	default:
 		return fmt.Errorf("organizationsettinghistory: invalid enum value for geo_location field: %q", gl)

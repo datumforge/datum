@@ -247,7 +247,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER"}, Default: "MEMBER"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER", "USER"}, Default: "MEMBER"},
 		{Name: "group_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
@@ -293,7 +293,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER"}, Default: "MEMBER"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER", "USER"}, Default: "MEMBER"},
 		{Name: "group_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
@@ -320,7 +320,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
-		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
+		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION", "INVALID"}, Default: "INVITE_OR_APPLICATION"},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
@@ -353,7 +353,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
-		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
+		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION", "INVALID"}, Default: "INVITE_OR_APPLICATION"},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "sync_to_slack", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "sync_to_github", Type: field.TypeBool, Nullable: true, Default: false},
@@ -494,8 +494,8 @@ var (
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "expires", Type: field.TypeTime},
 		{Name: "recipient", Type: field.TypeString},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED"}, Default: "INVITATION_SENT"},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER"}, Default: "MEMBER"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"INVITATION_SENT", "APPROVAL_REQUIRED", "INVITATION_ACCEPTED", "INVITATION_EXPIRED", "INVITE_INVALID"}, Default: "INVITATION_SENT"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER", "USER"}, Default: "MEMBER"},
 		{Name: "send_attempts", Type: field.TypeInt, Default: 0},
 		{Name: "requestor_id", Type: field.TypeString},
 		{Name: "secret", Type: field.TypeBytes},
@@ -625,7 +625,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER"}, Default: "MEMBER"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER", "USER"}, Default: "MEMBER"},
 		{Name: "organization_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
@@ -671,7 +671,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER"}, Default: "MEMBER"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"ADMIN", "MEMBER", "OWNER", "USER"}, Default: "MEMBER"},
 		{Name: "organization_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
@@ -778,7 +778,7 @@ var (
 		{Name: "billing_address", Type: field.TypeString, Nullable: true},
 		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC"}, Default: "AMER"},
+		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC", "INVALID"}, Default: "AMER"},
 		{Name: "organization_id", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
@@ -814,7 +814,7 @@ var (
 		{Name: "billing_address", Type: field.TypeString, Nullable: true},
 		{Name: "tax_identifier", Type: field.TypeString, Nullable: true},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
-		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC"}, Default: "AMER"},
+		{Name: "geo_location", Type: field.TypeEnum, Nullable: true, Enums: []string{"AMER", "EMEA", "APAC", "INVALID"}, Default: "AMER"},
 		{Name: "organization_id", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationSettingHistoryTable holds the schema information for the "organization_setting_history" table.
@@ -1001,7 +1001,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
+		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT", "INVALID"}, Default: "DOCUMENT"},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "jsonconfig", Type: field.TypeJSON},
 		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
@@ -1045,7 +1045,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
-		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT"}, Default: "DOCUMENT"},
+		{Name: "template_type", Type: field.TypeEnum, Enums: []string{"ROOTTEMPLATE", "DOCUMENT", "INVALID"}, Default: "DOCUMENT"},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "jsonconfig", Type: field.TypeJSON},
 		{Name: "uischema", Type: field.TypeJSON, Nullable: true},
@@ -1082,7 +1082,8 @@ var (
 		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN"}, Default: "CREDENTIALS"},
+		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN", "INVALID"}, Default: "CREDENTIALS"},
+		{Name: "role", Type: field.TypeEnum, Nullable: true, Enums: []string{"ADMIN", "MEMBER", "OWNER", "USER"}, Default: "USER"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -1127,7 +1128,8 @@ var (
 		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Nullable: true},
-		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN"}, Default: "CREDENTIALS"},
+		{Name: "auth_provider", Type: field.TypeEnum, Enums: []string{"CREDENTIALS", "GOOGLE", "GITHUB", "WEBAUTHN", "INVALID"}, Default: "CREDENTIALS"},
+		{Name: "role", Type: field.TypeEnum, Nullable: true, Enums: []string{"ADMIN", "MEMBER", "OWNER", "USER"}, Default: "USER"},
 	}
 	// UserHistoryTable holds the schema information for the "user_history" table.
 	UserHistoryTable = &schema.Table{
@@ -1154,7 +1156,7 @@ var (
 		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
 		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED", "INVALID"}, Default: "ACTIVE"},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: false},
@@ -1199,7 +1201,7 @@ var (
 		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
 		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED", "INVALID"}, Default: "ACTIVE"},
 		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
 		{Name: "tags", Type: field.TypeJSON, Nullable: true},
 		{Name: "is_webauthn_allowed", Type: field.TypeBool, Nullable: true, Default: false},

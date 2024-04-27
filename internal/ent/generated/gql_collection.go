@@ -4638,6 +4638,11 @@ func (u *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 				selectedFields = append(selectedFields, user.FieldAuthProvider)
 				fieldSeen[user.FieldAuthProvider] = struct{}{}
 			}
+		case "role":
+			if _, ok := fieldSeen[user.FieldRole]; !ok {
+				selectedFields = append(selectedFields, user.FieldRole)
+				fieldSeen[user.FieldRole] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -4816,6 +4821,11 @@ func (uh *UserHistoryQuery) collectField(ctx context.Context, oneNode bool, opCt
 			if _, ok := fieldSeen[userhistory.FieldAuthProvider]; !ok {
 				selectedFields = append(selectedFields, userhistory.FieldAuthProvider)
 				fieldSeen[userhistory.FieldAuthProvider] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[userhistory.FieldRole]; !ok {
+				selectedFields = append(selectedFields, userhistory.FieldRole)
+				fieldSeen[userhistory.FieldRole] = struct{}{}
 			}
 		case "id":
 		case "__typename":

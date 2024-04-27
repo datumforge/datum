@@ -12,13 +12,14 @@ var (
 	RoleOwner  Role = "OWNER"
 	RoleAdmin  Role = "ADMIN"
 	RoleMember Role = "MEMBER"
+	RoleUser   Role = "USER"
 	Invalid    Role = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the Role enum.
-// Possible default values are "ADMIN", and "MEMBER".
+// Possible default values are "ADMIN", "MEMBER", "OWNER"
 func (Role) Values() (kinds []string) {
-	for _, s := range []Role{RoleAdmin, RoleMember} {
+	for _, s := range []Role{RoleAdmin, RoleMember, RoleOwner, RoleUser} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -39,6 +40,8 @@ func ToRole(r string) Role {
 		return RoleAdmin
 	case RoleMember.String():
 		return RoleMember
+	case RoleUser.String():
+		return RoleUser
 	default:
 		return Invalid
 	}

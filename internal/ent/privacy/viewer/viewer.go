@@ -3,6 +3,8 @@ package viewer
 import (
 	"context"
 
+	"go.uber.org/zap/zapcore"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
 )
@@ -17,6 +19,7 @@ type ContextKey struct {
 
 // Viewer describes the query/mutation viewer-context
 type Viewer interface {
+	zapcore.ObjectMarshaler
 	GetOrganizationID() string
 	GetGroupID() string
 	IsAdmin() bool
@@ -25,7 +28,6 @@ type Viewer interface {
 
 // UserViewer describes a user-viewer
 type UserViewer struct {
-	Viewer
 	GroupID string
 	OrgID   string
 	id      string

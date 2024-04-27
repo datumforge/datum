@@ -30,6 +30,11 @@ func TestEnum(t *testing.T) {
 			expected: enums.RoleOwner,
 		},
 		{
+			name:     "user",
+			role:     "user",
+			expected: enums.RoleUser,
+		},
+		{
 			name:     "invalid role",
 			role:     "cattypist",
 			expected: enums.Invalid,

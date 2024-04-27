@@ -4091,6 +4091,7 @@ type Mutation {
 		"""
 		id: ID!
 	): EntitlementDeletePayload!
+	postEvent(message: String!): String!
 	"""
 	Create a new group
 	"""

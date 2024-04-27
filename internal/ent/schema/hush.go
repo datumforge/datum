@@ -1,23 +1,17 @@
 package schema
 
 import (
-	"context"
-	"encoding/hex"
-	"fmt"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"gocloud.dev/secrets"
 
 	emixin "github.com/datumforge/entx/mixin"
 
-	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/hook"
-	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -72,7 +66,7 @@ func (Hush) Edges() []ent.Edge {
 	}
 }
 
-// Annotations of the Hush
+// Annotations of the Hushhh
 func (Hush) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
@@ -81,7 +75,7 @@ func (Hush) Annotations() []schema.Annotation {
 	}
 }
 
-// Mixin of the Hush
+// Mixin of the Hush shhhh
 func (Hush) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
@@ -93,73 +87,13 @@ func (Hush) Mixin() []ent.Mixin {
 // Hooks of the Hush
 func (Hush) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hook.If(
-			func(next ent.Mutator) ent.Mutator {
-				return hook.HushFunc(func(ctx context.Context, m *generated.HushMutation) (generated.Value, error) {
-					v, ok := m.SecretValue()
-					if !ok || v == "" {
-						return nil, fmt.Errorf("unexpected 'secret_name' value") // nolint: goerr113
-					}
-
-					c, err := m.Secrets.Encrypt(ctx, []byte(v))
-					if err != nil {
-						return nil, err
-					}
-
-					m.SetName(hex.EncodeToString(c))
-					u, err := next.Mutate(ctx, m)
-					if err != nil {
-						return nil, err
-					}
-
-					if u, ok := u.(*generated.Hush); ok {
-						err = decrypt(ctx, m.Secrets, u)
-					}
-					return u, err
-				})
-			},
-			hook.HasFields("secret_value"),
-		),
+		hooks.HookHush(),
 	}
 }
 
-// Interceptors of the User.
+// Interceptors of the Hush
 func (Hush) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
-		ent.InterceptFunc(func(next ent.Querier) ent.Querier {
-			return intercept.HushFunc(func(ctx context.Context, query *generated.HushQuery) (generated.Value, error) {
-				v, err := next.Query(ctx, query)
-				if err != nil {
-					return nil, err
-				}
-				hush, ok := v.([]*generated.Hush)
-				// Skip all query types besides node queries (e.g., Count, Scan, GroupBy).
-				if !ok {
-					return v, nil
-				}
-				for _, u := range hush {
-					if err := decrypt(ctx, query.Secrets, u); err != nil {
-						return nil, err
-					}
-				}
-				return hush, nil
-			})
-		}),
+		interceptors.InterceptorHush(),
 	}
-}
-
-func decrypt(ctx context.Context, k *secrets.Keeper, u *generated.Hush) error {
-	b, err := hex.DecodeString(u.SecretValue)
-	if err != nil {
-		return err
-	}
-
-	plain, err := k.Decrypt(ctx, b)
-	if err != nil {
-		return err
-	}
-
-	u.Name = string(plain)
-
-	return nil
 }

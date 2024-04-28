@@ -44,7 +44,7 @@ func TestToInviteStatus(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			res := enums.ToInviteStatus(tc.status)
-			assert.Equal(t, tc.expected, res)
+			assert.Equal(t, tc.expected, *res)
 		})
 	}
 }

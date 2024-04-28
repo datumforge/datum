@@ -371,15 +371,17 @@ type CreateUserInput struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// auth provider used to register the account
-	AuthProvider              *enums.AuthProvider `json:"authProvider,omitempty"`
-	PersonalAccessTokenIDs    []string            `json:"personalAccessTokenIDs,omitempty"`
-	TfaSettingIDs             []string            `json:"tfaSettingIDs,omitempty"`
-	SettingID                 string              `json:"settingID"`
-	EmailVerificationTokenIDs []string            `json:"emailVerificationTokenIDs,omitempty"`
-	PasswordResetTokenIDs     []string            `json:"passwordResetTokenIDs,omitempty"`
-	GroupIDs                  []string            `json:"groupIDs,omitempty"`
-	OrganizationIDs           []string            `json:"organizationIDs,omitempty"`
-	WebauthnIDs               []string            `json:"webauthnIDs,omitempty"`
+	AuthProvider *enums.AuthProvider `json:"authProvider,omitempty"`
+	// the user's role
+	Role                      *enums.Role `json:"role,omitempty"`
+	PersonalAccessTokenIDs    []string    `json:"personalAccessTokenIDs,omitempty"`
+	TfaSettingIDs             []string    `json:"tfaSettingIDs,omitempty"`
+	SettingID                 string      `json:"settingID"`
+	EmailVerificationTokenIDs []string    `json:"emailVerificationTokenIDs,omitempty"`
+	PasswordResetTokenIDs     []string    `json:"passwordResetTokenIDs,omitempty"`
+	GroupIDs                  []string    `json:"groupIDs,omitempty"`
+	OrganizationIDs           []string    `json:"organizationIDs,omitempty"`
+	WebauthnIDs               []string    `json:"webauthnIDs,omitempty"`
 }
 
 // CreateUserSettingInput is used for create UserSetting object.
@@ -394,9 +396,11 @@ type CreateUserSettingInput struct {
 	// The time notifications regarding the user were silenced
 	SilencedAt *time.Time `json:"silencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt    *time.Time        `json:"suspendedAt,omitempty"`
-	Status         *enums.UserStatus `json:"status,omitempty"`
-	EmailConfirmed *bool             `json:"emailConfirmed,omitempty"`
+	SuspendedAt *time.Time `json:"suspendedAt,omitempty"`
+	// status of the user account
+	Status *enums.UserStatus `json:"status,omitempty"`
+	// whether the user has confirmed their email address
+	EmailConfirmed *bool `json:"emailConfirmed,omitempty"`
 	// tags associated with the user
 	Tags []string `json:"tags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
@@ -7172,29 +7176,32 @@ type UpdateUserInput struct {
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
 	// auth provider used to register the account
-	AuthProvider                    *enums.AuthProvider `json:"authProvider,omitempty"`
-	AddPersonalAccessTokenIDs       []string            `json:"addPersonalAccessTokenIDs,omitempty"`
-	RemovePersonalAccessTokenIDs    []string            `json:"removePersonalAccessTokenIDs,omitempty"`
-	ClearPersonalAccessTokens       *bool               `json:"clearPersonalAccessTokens,omitempty"`
-	AddTfaSettingIDs                []string            `json:"addTfaSettingIDs,omitempty"`
-	RemoveTfaSettingIDs             []string            `json:"removeTfaSettingIDs,omitempty"`
-	ClearTfaSettings                *bool               `json:"clearTfaSettings,omitempty"`
-	SettingID                       *string             `json:"settingID,omitempty"`
-	AddEmailVerificationTokenIDs    []string            `json:"addEmailVerificationTokenIDs,omitempty"`
-	RemoveEmailVerificationTokenIDs []string            `json:"removeEmailVerificationTokenIDs,omitempty"`
-	ClearEmailVerificationTokens    *bool               `json:"clearEmailVerificationTokens,omitempty"`
-	AddPasswordResetTokenIDs        []string            `json:"addPasswordResetTokenIDs,omitempty"`
-	RemovePasswordResetTokenIDs     []string            `json:"removePasswordResetTokenIDs,omitempty"`
-	ClearPasswordResetTokens        *bool               `json:"clearPasswordResetTokens,omitempty"`
-	AddGroupIDs                     []string            `json:"addGroupIDs,omitempty"`
-	RemoveGroupIDs                  []string            `json:"removeGroupIDs,omitempty"`
-	ClearGroups                     *bool               `json:"clearGroups,omitempty"`
-	AddOrganizationIDs              []string            `json:"addOrganizationIDs,omitempty"`
-	RemoveOrganizationIDs           []string            `json:"removeOrganizationIDs,omitempty"`
-	ClearOrganizations              *bool               `json:"clearOrganizations,omitempty"`
-	AddWebauthnIDs                  []string            `json:"addWebauthnIDs,omitempty"`
-	RemoveWebauthnIDs               []string            `json:"removeWebauthnIDs,omitempty"`
-	ClearWebauthn                   *bool               `json:"clearWebauthn,omitempty"`
+	AuthProvider *enums.AuthProvider `json:"authProvider,omitempty"`
+	// the user's role
+	Role                            *enums.Role `json:"role,omitempty"`
+	ClearRole                       *bool       `json:"clearRole,omitempty"`
+	AddPersonalAccessTokenIDs       []string    `json:"addPersonalAccessTokenIDs,omitempty"`
+	RemovePersonalAccessTokenIDs    []string    `json:"removePersonalAccessTokenIDs,omitempty"`
+	ClearPersonalAccessTokens       *bool       `json:"clearPersonalAccessTokens,omitempty"`
+	AddTfaSettingIDs                []string    `json:"addTfaSettingIDs,omitempty"`
+	RemoveTfaSettingIDs             []string    `json:"removeTfaSettingIDs,omitempty"`
+	ClearTfaSettings                *bool       `json:"clearTfaSettings,omitempty"`
+	SettingID                       *string     `json:"settingID,omitempty"`
+	AddEmailVerificationTokenIDs    []string    `json:"addEmailVerificationTokenIDs,omitempty"`
+	RemoveEmailVerificationTokenIDs []string    `json:"removeEmailVerificationTokenIDs,omitempty"`
+	ClearEmailVerificationTokens    *bool       `json:"clearEmailVerificationTokens,omitempty"`
+	AddPasswordResetTokenIDs        []string    `json:"addPasswordResetTokenIDs,omitempty"`
+	RemovePasswordResetTokenIDs     []string    `json:"removePasswordResetTokenIDs,omitempty"`
+	ClearPasswordResetTokens        *bool       `json:"clearPasswordResetTokens,omitempty"`
+	AddGroupIDs                     []string    `json:"addGroupIDs,omitempty"`
+	RemoveGroupIDs                  []string    `json:"removeGroupIDs,omitempty"`
+	ClearGroups                     *bool       `json:"clearGroups,omitempty"`
+	AddOrganizationIDs              []string    `json:"addOrganizationIDs,omitempty"`
+	RemoveOrganizationIDs           []string    `json:"removeOrganizationIDs,omitempty"`
+	ClearOrganizations              *bool       `json:"clearOrganizations,omitempty"`
+	AddWebauthnIDs                  []string    `json:"addWebauthnIDs,omitempty"`
+	RemoveWebauthnIDs               []string    `json:"removeWebauthnIDs,omitempty"`
+	ClearWebauthn                   *bool       `json:"clearWebauthn,omitempty"`
 }
 
 // UpdateUserSettingInput is used for update UserSetting object.
@@ -7210,10 +7217,12 @@ type UpdateUserSettingInput struct {
 	SilencedAt      *time.Time `json:"silencedAt,omitempty"`
 	ClearSilencedAt *bool      `json:"clearSilencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt      *time.Time        `json:"suspendedAt,omitempty"`
-	ClearSuspendedAt *bool             `json:"clearSuspendedAt,omitempty"`
-	Status           *enums.UserStatus `json:"status,omitempty"`
-	EmailConfirmed   *bool             `json:"emailConfirmed,omitempty"`
+	SuspendedAt      *time.Time `json:"suspendedAt,omitempty"`
+	ClearSuspendedAt *bool      `json:"clearSuspendedAt,omitempty"`
+	// status of the user account
+	Status *enums.UserStatus `json:"status,omitempty"`
+	// whether the user has confirmed their email address
+	EmailConfirmed *bool `json:"emailConfirmed,omitempty"`
 	// tags associated with the user
 	Tags       []string `json:"tags,omitempty"`
 	AppendTags []string `json:"appendTags,omitempty"`
@@ -7254,7 +7263,9 @@ type User struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// auth provider used to register the account
-	AuthProvider         enums.AuthProvider     `json:"authProvider"`
+	AuthProvider enums.AuthProvider `json:"authProvider"`
+	// the user's role
+	Role                 *enums.Role            `json:"role,omitempty"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
 	TfaSettings          []*TFASetting          `json:"tfaSettings,omitempty"`
 	Setting              *UserSetting           `json:"setting"`
@@ -7324,6 +7335,8 @@ type UserHistory struct {
 	Sub *string `json:"sub,omitempty"`
 	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"authProvider"`
+	// the user's role
+	Role *enums.Role `json:"role,omitempty"`
 }
 
 func (UserHistory) IsNode() {}
@@ -7613,6 +7626,13 @@ type UserHistoryWhereInput struct {
 	AuthProviderNeq   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`
 	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
 	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
+	// role field predicates
+	Role       *enums.Role  `json:"role,omitempty"`
+	RoleNeq    *enums.Role  `json:"roleNEQ,omitempty"`
+	RoleIn     []enums.Role `json:"roleIn,omitempty"`
+	RoleNotIn  []enums.Role `json:"roleNotIn,omitempty"`
+	RoleIsNil  *bool        `json:"roleIsNil,omitempty"`
+	RoleNotNil *bool        `json:"roleNotNil,omitempty"`
 }
 
 // Ordering options for User connections
@@ -7637,9 +7657,11 @@ type UserSetting struct {
 	// The time notifications regarding the user were silenced
 	SilencedAt *time.Time `json:"silencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt    *time.Time       `json:"suspendedAt,omitempty"`
-	Status         enums.UserStatus `json:"status"`
-	EmailConfirmed bool             `json:"emailConfirmed"`
+	SuspendedAt *time.Time `json:"suspendedAt,omitempty"`
+	// status of the user account
+	Status enums.UserStatus `json:"status"`
+	// whether the user has confirmed their email address
+	EmailConfirmed bool `json:"emailConfirmed"`
 	// tags associated with the user
 	Tags []string `json:"tags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
@@ -7688,9 +7710,11 @@ type UserSettingHistory struct {
 	// The time notifications regarding the user were silenced
 	SilencedAt *time.Time `json:"silencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt    *time.Time       `json:"suspendedAt,omitempty"`
-	Status         enums.UserStatus `json:"status"`
-	EmailConfirmed bool             `json:"emailConfirmed"`
+	SuspendedAt *time.Time `json:"suspendedAt,omitempty"`
+	// status of the user account
+	Status enums.UserStatus `json:"status"`
+	// whether the user has confirmed their email address
+	EmailConfirmed bool `json:"emailConfirmed"`
 	// tags associated with the user
 	Tags []string `json:"tags,omitempty"`
 	// specifies a user may complete authentication by verifying a WebAuthn capable device
@@ -8314,6 +8338,13 @@ type UserWhereInput struct {
 	AuthProviderNeq   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`
 	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
 	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
+	// role field predicates
+	Role       *enums.Role  `json:"role,omitempty"`
+	RoleNeq    *enums.Role  `json:"roleNEQ,omitempty"`
+	RoleIn     []enums.Role `json:"roleIn,omitempty"`
+	RoleNotIn  []enums.Role `json:"roleNotIn,omitempty"`
+	RoleIsNil  *bool        `json:"roleIsNil,omitempty"`
+	RoleNotNil *bool        `json:"roleNotNil,omitempty"`
 	// personal_access_tokens edge predicates
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`

@@ -258,8 +258,8 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 	}
 
 	role := enums.ToRole(om.Role)
-	if role == enums.Invalid {
-		role = enums.RoleMember
+	if role == &enums.RoleInvalid {
+		role = &enums.RoleMember
 	}
 
 	// mock writes
@@ -269,7 +269,7 @@ func (om *OrgMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.OrgM
 	orgMembers := om.client.db.OrgMembership.Create().
 		SetUserID(om.UserID).
 		SetOrganizationID(om.OrgID).
-		SetRole(role).
+		SetRole(*role).
 		SaveX(ctx)
 
 	// clear mocks before going to tests
@@ -362,7 +362,7 @@ func (i *InviteBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Invite {
 		SetRecipient(rec)
 
 	if i.Role != "" {
-		inviteQuery.SetRole(enums.ToRole(i.Role))
+		inviteQuery.SetRole(*enums.ToRole(i.Role))
 	}
 
 	invite := inviteQuery.SaveX(ctx)
@@ -436,11 +436,6 @@ func (gm *GroupMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Gr
 		gm.UserID = user.ID
 	}
 
-	role := enums.ToRole(gm.Role)
-	if role == enums.Invalid {
-		role = enums.RoleMember
-	}
-
 	// mock writes
 	mock_fga.WriteOnce(t, gm.client.fga)
 	// dummy check to org
@@ -449,7 +444,6 @@ func (gm *GroupMemberBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Gr
 	groupMember := gm.client.db.GroupMembership.Create().
 		SetUserID(gm.UserID).
 		SetGroupID(gm.GroupID).
-		SetRole(role).
 		SaveX(ctx)
 
 	// clear mocks before going to tests

@@ -25,7 +25,6 @@ type Viewer interface {
 
 // UserViewer describes a user-viewer
 type UserViewer struct {
-	Viewer
 	GroupID string
 	OrgID   string
 	id      string

@@ -524,6 +524,10 @@ input CreateUserInput {
 	auth provider used to register the account
 	"""
 	authProvider: UserAuthProvider
+	"""
+	the user's role
+	"""
+	role: UserRole
 	personalAccessTokenIDs: [ID!]
 	tfaSettingIDs: [ID!]
 	settingID: ID!
@@ -554,7 +558,13 @@ input CreateUserSettingInput {
 	The time the user was suspended
 	"""
 	suspendedAt: Time
+	"""
+	status of the user account
+	"""
 	status: UserSettingUserStatus
+	"""
+	whether the user has confirmed their email address
+	"""
 	emailConfirmed: Boolean
 	"""
 	tags associated with the user
@@ -2070,6 +2080,7 @@ GroupMembershipHistoryRole is enum for the field role
 enum GroupMembershipHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
+	USER
 }
 """
 GroupMembershipHistoryWhereInput is used for filtering GroupMembershipHistory objects.
@@ -2267,6 +2278,7 @@ GroupMembershipRole is enum for the field role
 enum GroupMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
+	USER
 }
 """
 Return response for updateGroupMembership mutation
@@ -4376,7 +4388,7 @@ InviteRole is enum for the field role
 enum InviteRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
-	OWNER
+	USER
 }
 """
 Return response for updateInvite mutation
@@ -6242,6 +6254,7 @@ OrgMembershipHistoryRole is enum for the field role
 enum OrgMembershipHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
+	USER
 	OWNER
 }
 """
@@ -6440,6 +6453,7 @@ OrgMembershipRole is enum for the field role
 enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
 	ADMIN
 	MEMBER
+	USER
 	OWNER
 }
 """
@@ -11023,6 +11037,11 @@ input UpdateUserInput {
 	auth provider used to register the account
 	"""
 	authProvider: UserAuthProvider
+	"""
+	the user's role
+	"""
+	role: UserRole
+	clearRole: Boolean
 	addPersonalAccessTokenIDs: [ID!]
 	removePersonalAccessTokenIDs: [ID!]
 	clearPersonalAccessTokens: Boolean
@@ -11069,7 +11088,13 @@ input UpdateUserSettingInput {
 	"""
 	suspendedAt: Time
 	clearSuspendedAt: Boolean
+	"""
+	status of the user account
+	"""
 	status: UserSettingUserStatus
+	"""
+	whether the user has confirmed their email address
+	"""
 	emailConfirmed: Boolean
 	"""
 	tags associated with the user
@@ -11131,6 +11156,10 @@ type User implements Node {
 	auth provider used to register the account
 	"""
 	authProvider: UserAuthProvider!
+	"""
+	the user's role
+	"""
+	role: UserRole
 	personalAccessTokens: [PersonalAccessToken!]
 	tfaSettings: [TFASetting!]
 	setting: UserSetting!
@@ -11238,6 +11267,10 @@ type UserHistory implements Node {
 	auth provider used to register the account
 	"""
 	authProvider: UserHistoryAuthProvider!
+	"""
+	the user's role
+	"""
+	role: UserHistoryRole
 }
 """
 UserHistoryAuthProvider is enum for the field auth_provider
@@ -11306,6 +11339,14 @@ enum UserHistoryOrderField {
 	first_name
 	last_name
 	display_name
+}
+"""
+UserHistoryRole is enum for the field role
+"""
+enum UserHistoryRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
+	ADMIN
+	MEMBER
+	USER
 }
 """
 UserHistoryWhereInput is used for filtering UserHistory objects.
@@ -11608,6 +11649,15 @@ input UserHistoryWhereInput {
 	authProviderNEQ: UserHistoryAuthProvider
 	authProviderIn: [UserHistoryAuthProvider!]
 	authProviderNotIn: [UserHistoryAuthProvider!]
+	"""
+	role field predicates
+	"""
+	role: UserHistoryRole
+	roleNEQ: UserHistoryRole
+	roleIn: [UserHistoryRole!]
+	roleNotIn: [UserHistoryRole!]
+	roleIsNil: Boolean
+	roleNotNil: Boolean
 }
 """
 Ordering options for User connections
@@ -11630,6 +11680,14 @@ enum UserOrderField {
 	last_name
 	display_name
 }
+"""
+UserRole is enum for the field role
+"""
+enum UserRole @goModel(model: "github.com/datumforge/datum/internal/ent/enums.Role") {
+	ADMIN
+	MEMBER
+	USER
+}
 type UserSetting implements Node {
 	id: ID!
 	createdAt: Time
@@ -11651,7 +11709,13 @@ type UserSetting implements Node {
 	The time the user was suspended
 	"""
 	suspendedAt: Time
+	"""
+	status of the user account
+	"""
 	status: UserSettingUserStatus!
+	"""
+	whether the user has confirmed their email address
+	"""
 	emailConfirmed: Boolean!
 	"""
 	tags associated with the user
@@ -11725,7 +11789,13 @@ type UserSettingHistory implements Node {
 	The time the user was suspended
 	"""
 	suspendedAt: Time
+	"""
+	status of the user account
+	"""
 	status: UserSettingHistoryUserStatus!
+	"""
+	whether the user has confirmed their email address
+	"""
 	emailConfirmed: Boolean!
 	"""
 	tags associated with the user
@@ -12505,6 +12575,15 @@ input UserWhereInput {
 	authProviderNEQ: UserAuthProvider
 	authProviderIn: [UserAuthProvider!]
 	authProviderNotIn: [UserAuthProvider!]
+	"""
+	role field predicates
+	"""
+	role: UserRole
+	roleNEQ: UserRole
+	roleIn: [UserRole!]
+	roleNotIn: [UserRole!]
+	roleIsNil: Boolean
+	roleNotNil: Boolean
 	"""
 	personal_access_tokens edge predicates
 	"""

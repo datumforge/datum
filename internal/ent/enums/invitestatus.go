@@ -32,18 +32,18 @@ func (r InviteStatus) String() string {
 }
 
 // ToInviteStatus returns the invite status enum based on string input
-func ToInviteStatus(r string) InviteStatus {
+func ToInviteStatus(r string) *InviteStatus {
 	switch r := strings.ToUpper(r); r {
 	case InvitationSent.String():
-		return InvitationSent
+		return &InvitationSent
 	case ApprovalRequired.String():
-		return ApprovalRequired
+		return &ApprovalRequired
 	case InvitationAccepted.String():
-		return InvitationAccepted
+		return &InvitationAccepted
 	case InvitationExpired.String():
-		return InvitationExpired
+		return &InvitationExpired
 	default:
-		return InviteInvalid
+		return &InviteInvalid
 	}
 }
 

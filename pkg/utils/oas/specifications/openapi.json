@@ -1644,7 +1644,8 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -1799,7 +1800,8 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   }
@@ -1910,7 +1912,8 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -2071,7 +2074,8 @@
                     "type": "string",
                     "enum": [
                       "ADMIN",
-                      "MEMBER"
+                      "MEMBER",
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -4460,7 +4464,7 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -4614,7 +4618,7 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "OWNER"
+                      "USER"
                     ],
                     "default": "MEMBER"
                   },
@@ -5801,6 +5805,7 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
+                      "USER",
                       "OWNER"
                     ],
                     "default": "MEMBER"
@@ -5957,6 +5962,7 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
+                      "USER",
                       "OWNER"
                     ],
                     "default": "MEMBER"
@@ -6069,6 +6075,7 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
+                      "USER",
                       "OWNER"
                     ],
                     "default": "MEMBER"
@@ -6231,6 +6238,7 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
+                      "USER",
                       "OWNER"
                     ],
                     "default": "MEMBER"
@@ -9890,6 +9898,15 @@
                       "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "USER"
+                    ],
+                    "default": "USER"
                   }
                 },
                 "required": [
@@ -10065,6 +10082,15 @@
                       "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "USER"
+                    ],
+                    "default": "USER"
                   }
                 }
               }
@@ -10568,6 +10594,15 @@
                     ],
                     "default": "CREDENTIALS"
                   },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "USER"
+                    ],
+                    "default": "USER"
+                  },
                   "personal_access_tokens": {
                     "type": "array",
                     "items": {
@@ -10798,6 +10833,15 @@
                       "WEBAUTHN"
                     ],
                     "default": "CREDENTIALS"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "MEMBER",
+                      "USER"
+                    ],
+                    "default": "USER"
                   },
                   "personal_access_tokens": {
                     "type": "array",
@@ -11834,7 +11878,8 @@
             "type": "string",
             "enum": [
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -11906,7 +11951,8 @@
             "type": "string",
             "enum": [
               "ADMIN",
-              "MEMBER"
+              "MEMBER",
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -12359,7 +12405,7 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "OWNER"
+              "USER"
             ],
             "default": "MEMBER"
           },
@@ -12637,6 +12683,7 @@
             "enum": [
               "ADMIN",
               "MEMBER",
+              "USER",
               "OWNER"
             ],
             "default": "MEMBER"
@@ -12710,6 +12757,7 @@
             "enum": [
               "ADMIN",
               "MEMBER",
+              "USER",
               "OWNER"
             ],
             "default": "MEMBER"
@@ -13504,6 +13552,15 @@
             ],
             "default": "CREDENTIALS"
           },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "USER"
+            ],
+            "default": "USER"
+          },
           "personal_access_tokens": {
             "type": "array",
             "items": {
@@ -13649,6 +13706,15 @@
               "WEBAUTHN"
             ],
             "default": "CREDENTIALS"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "MEMBER",
+              "USER"
+            ],
+            "default": "USER"
           }
         },
         "required": [

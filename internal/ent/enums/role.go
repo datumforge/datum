@@ -9,16 +9,17 @@ import (
 type Role string
 
 var (
-	RoleOwner  Role = "OWNER"
-	RoleAdmin  Role = "ADMIN"
-	RoleMember Role = "MEMBER"
-	Invalid    Role = "INVALID"
+	RoleOwner   Role = "OWNER"
+	RoleAdmin   Role = "ADMIN"
+	RoleMember  Role = "MEMBER"
+	RoleUser    Role = "USER"
+	RoleInvalid Role = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the Role enum.
-// Possible default values are "ADMIN", and "MEMBER".
+// Possible default values are "ADMIN", "MEMBER", "OWNER"
 func (Role) Values() (kinds []string) {
-	for _, s := range []Role{RoleAdmin, RoleMember} {
+	for _, s := range []Role{RoleAdmin, RoleMember, RoleUser} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -31,16 +32,18 @@ func (r Role) String() string {
 }
 
 // ToRole returns the Role based on string input
-func ToRole(r string) Role {
+func ToRole(r string) *Role {
 	switch r := strings.ToUpper(r); r {
 	case RoleOwner.String():
-		return RoleOwner
+		return &RoleOwner
 	case RoleAdmin.String():
-		return RoleAdmin
+		return &RoleAdmin
 	case RoleMember.String():
-		return RoleMember
+		return &RoleMember
+	case RoleUser.String():
+		return &RoleUser
 	default:
-		return Invalid
+		return &RoleInvalid
 	}
 }
 

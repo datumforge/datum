@@ -20738,6 +20738,14 @@ type UserWhereInput struct {
 	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
 	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
 
+	// "role" field predicates.
+	Role       *enums.Role  `json:"role,omitempty"`
+	RoleNEQ    *enums.Role  `json:"roleNEQ,omitempty"`
+	RoleIn     []enums.Role `json:"roleIn,omitempty"`
+	RoleNotIn  []enums.Role `json:"roleNotIn,omitempty"`
+	RoleIsNil  bool         `json:"roleIsNil,omitempty"`
+	RoleNotNil bool         `json:"roleNotNil,omitempty"`
+
 	// "personal_access_tokens" edge predicates.
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
@@ -21501,6 +21509,24 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if len(i.AuthProviderNotIn) > 0 {
 		predicates = append(predicates, user.AuthProviderNotIn(i.AuthProviderNotIn...))
 	}
+	if i.Role != nil {
+		predicates = append(predicates, user.RoleEQ(*i.Role))
+	}
+	if i.RoleNEQ != nil {
+		predicates = append(predicates, user.RoleNEQ(*i.RoleNEQ))
+	}
+	if len(i.RoleIn) > 0 {
+		predicates = append(predicates, user.RoleIn(i.RoleIn...))
+	}
+	if len(i.RoleNotIn) > 0 {
+		predicates = append(predicates, user.RoleNotIn(i.RoleNotIn...))
+	}
+	if i.RoleIsNil {
+		predicates = append(predicates, user.RoleIsNil())
+	}
+	if i.RoleNotNil {
+		predicates = append(predicates, user.RoleNotNil())
+	}
 
 	if i.HasPersonalAccessTokens != nil {
 		p := user.HasPersonalAccessTokens()
@@ -21934,6 +21960,14 @@ type UserHistoryWhereInput struct {
 	AuthProviderNEQ   *enums.AuthProvider  `json:"authProviderNEQ,omitempty"`
 	AuthProviderIn    []enums.AuthProvider `json:"authProviderIn,omitempty"`
 	AuthProviderNotIn []enums.AuthProvider `json:"authProviderNotIn,omitempty"`
+
+	// "role" field predicates.
+	Role       *enums.Role  `json:"role,omitempty"`
+	RoleNEQ    *enums.Role  `json:"roleNEQ,omitempty"`
+	RoleIn     []enums.Role `json:"roleIn,omitempty"`
+	RoleNotIn  []enums.Role `json:"roleNotIn,omitempty"`
+	RoleIsNil  bool         `json:"roleIsNil,omitempty"`
+	RoleNotNil bool         `json:"roleNotNil,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -22750,6 +22784,24 @@ func (i *UserHistoryWhereInput) P() (predicate.UserHistory, error) {
 	}
 	if len(i.AuthProviderNotIn) > 0 {
 		predicates = append(predicates, userhistory.AuthProviderNotIn(i.AuthProviderNotIn...))
+	}
+	if i.Role != nil {
+		predicates = append(predicates, userhistory.RoleEQ(*i.Role))
+	}
+	if i.RoleNEQ != nil {
+		predicates = append(predicates, userhistory.RoleNEQ(*i.RoleNEQ))
+	}
+	if len(i.RoleIn) > 0 {
+		predicates = append(predicates, userhistory.RoleIn(i.RoleIn...))
+	}
+	if len(i.RoleNotIn) > 0 {
+		predicates = append(predicates, userhistory.RoleNotIn(i.RoleNotIn...))
+	}
+	if i.RoleIsNil {
+		predicates = append(predicates, userhistory.RoleIsNil())
+	}
+	if i.RoleNotNil {
+		predicates = append(predicates, userhistory.RoleNotNil())
 	}
 
 	switch len(predicates) {

@@ -64,7 +64,7 @@ func (suite *HandlerTestSuite) TestOrgInviteAcceptHandler() {
 		SetEmail(groot).
 		SetFirstName("Groot").
 		SetLastName("JustGroot").
-		SetAuthProvider(enums.Google).
+		SetAuthProvider(enums.AuthProviderGoogle).
 		SaveX(ctx)
 
 	rc, err := auth.NewTestContextWithValidUser(recipient.ID)

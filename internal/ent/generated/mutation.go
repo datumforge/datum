@@ -38622,6 +38622,7 @@ type UserMutation struct {
 	password                         *string
 	sub                              *string
 	auth_provider                    *enums.AuthProvider
+	role                             *enums.Role
 	clearedFields                    map[string]struct{}
 	personal_access_tokens           map[string]struct{}
 	removedpersonal_access_tokens    map[string]struct{}
@@ -39529,6 +39530,55 @@ func (m *UserMutation) ResetAuthProvider() {
 	m.auth_provider = nil
 }
 
+// SetRole sets the "role" field.
+func (m *UserMutation) SetRole(e enums.Role) {
+	m.role = &e
+}
+
+// Role returns the value of the "role" field in the mutation.
+func (m *UserMutation) Role() (r enums.Role, exists bool) {
+	v := m.role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRole returns the old "role" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldRole(ctx context.Context) (v enums.Role, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRole is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRole requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRole: %w", err)
+	}
+	return oldValue.Role, nil
+}
+
+// ClearRole clears the value of the "role" field.
+func (m *UserMutation) ClearRole() {
+	m.role = nil
+	m.clearedFields[user.FieldRole] = struct{}{}
+}
+
+// RoleCleared returns if the "role" field was cleared in this mutation.
+func (m *UserMutation) RoleCleared() bool {
+	_, ok := m.clearedFields[user.FieldRole]
+	return ok
+}
+
+// ResetRole resets all changes to the "role" field.
+func (m *UserMutation) ResetRole() {
+	m.role = nil
+	delete(m.clearedFields, user.FieldRole)
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by ids.
 func (m *UserMutation) AddPersonalAccessTokenIDs(ids ...string) {
 	if m.personal_access_tokens == nil {
@@ -40088,7 +40138,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -40140,6 +40190,9 @@ func (m *UserMutation) Fields() []string {
 	if m.auth_provider != nil {
 		fields = append(fields, user.FieldAuthProvider)
 	}
+	if m.role != nil {
+		fields = append(fields, user.FieldRole)
+	}
 	return fields
 }
 
@@ -40182,6 +40235,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Sub()
 	case user.FieldAuthProvider:
 		return m.AuthProvider()
+	case user.FieldRole:
+		return m.Role()
 	}
 	return nil, false
 }
@@ -40225,6 +40280,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldSub(ctx)
 	case user.FieldAuthProvider:
 		return m.OldAuthProvider(ctx)
+	case user.FieldRole:
+		return m.OldRole(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -40353,6 +40410,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAuthProvider(v)
 		return nil
+	case user.FieldRole:
+		v, ok := value.(enums.Role)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRole(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -40419,6 +40483,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldSub) {
 		fields = append(fields, user.FieldSub)
 	}
+	if m.FieldCleared(user.FieldRole) {
+		fields = append(fields, user.FieldRole)
+	}
 	return fields
 }
 
@@ -40468,6 +40535,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldSub:
 		m.ClearSub()
+		return nil
+	case user.FieldRole:
+		m.ClearRole()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -40527,6 +40597,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldAuthProvider:
 		m.ResetAuthProvider()
+		return nil
+	case user.FieldRole:
+		m.ResetRole()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -40868,6 +40941,7 @@ type UserHistoryMutation struct {
 	password          *string
 	sub               *string
 	auth_provider     *enums.AuthProvider
+	role              *enums.Role
 	clearedFields     map[string]struct{}
 	done              bool
 	oldValue          func(context.Context) (*UserHistory, error)
@@ -41867,6 +41941,55 @@ func (m *UserHistoryMutation) ResetAuthProvider() {
 	m.auth_provider = nil
 }
 
+// SetRole sets the "role" field.
+func (m *UserHistoryMutation) SetRole(e enums.Role) {
+	m.role = &e
+}
+
+// Role returns the value of the "role" field in the mutation.
+func (m *UserHistoryMutation) Role() (r enums.Role, exists bool) {
+	v := m.role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRole returns the old "role" field's value of the UserHistory entity.
+// If the UserHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserHistoryMutation) OldRole(ctx context.Context) (v enums.Role, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRole is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRole requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRole: %w", err)
+	}
+	return oldValue.Role, nil
+}
+
+// ClearRole clears the value of the "role" field.
+func (m *UserHistoryMutation) ClearRole() {
+	m.role = nil
+	m.clearedFields[userhistory.FieldRole] = struct{}{}
+}
+
+// RoleCleared returns if the "role" field was cleared in this mutation.
+func (m *UserHistoryMutation) RoleCleared() bool {
+	_, ok := m.clearedFields[userhistory.FieldRole]
+	return ok
+}
+
+// ResetRole resets all changes to the "role" field.
+func (m *UserHistoryMutation) ResetRole() {
+	m.role = nil
+	delete(m.clearedFields, userhistory.FieldRole)
+}
+
 // Where appends a list predicates to the UserHistoryMutation builder.
 func (m *UserHistoryMutation) Where(ps ...predicate.UserHistory) {
 	m.predicates = append(m.predicates, ps...)
@@ -41901,7 +42024,7 @@ func (m *UserHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 21)
 	if m.history_time != nil {
 		fields = append(fields, userhistory.FieldHistoryTime)
 	}
@@ -41962,6 +42085,9 @@ func (m *UserHistoryMutation) Fields() []string {
 	if m.auth_provider != nil {
 		fields = append(fields, userhistory.FieldAuthProvider)
 	}
+	if m.role != nil {
+		fields = append(fields, userhistory.FieldRole)
+	}
 	return fields
 }
 
@@ -42010,6 +42136,8 @@ func (m *UserHistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.Sub()
 	case userhistory.FieldAuthProvider:
 		return m.AuthProvider()
+	case userhistory.FieldRole:
+		return m.Role()
 	}
 	return nil, false
 }
@@ -42059,6 +42187,8 @@ func (m *UserHistoryMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldSub(ctx)
 	case userhistory.FieldAuthProvider:
 		return m.OldAuthProvider(ctx)
+	case userhistory.FieldRole:
+		return m.OldRole(ctx)
 	}
 	return nil, fmt.Errorf("unknown UserHistory field %s", name)
 }
@@ -42208,6 +42338,13 @@ func (m *UserHistoryMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAuthProvider(v)
 		return nil
+	case userhistory.FieldRole:
+		v, ok := value.(enums.Role)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRole(v)
+		return nil
 	}
 	return fmt.Errorf("unknown UserHistory field %s", name)
 }
@@ -42277,6 +42414,9 @@ func (m *UserHistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(userhistory.FieldSub) {
 		fields = append(fields, userhistory.FieldSub)
 	}
+	if m.FieldCleared(userhistory.FieldRole) {
+		fields = append(fields, userhistory.FieldRole)
+	}
 	return fields
 }
 
@@ -42329,6 +42469,9 @@ func (m *UserHistoryMutation) ClearField(name string) error {
 		return nil
 	case userhistory.FieldSub:
 		m.ClearSub()
+		return nil
+	case userhistory.FieldRole:
+		m.ClearRole()
 		return nil
 	}
 	return fmt.Errorf("unknown UserHistory nullable field %s", name)
@@ -42397,6 +42540,9 @@ func (m *UserHistoryMutation) ResetField(name string) error {
 		return nil
 	case userhistory.FieldAuthProvider:
 		m.ResetAuthProvider()
+		return nil
+	case userhistory.FieldRole:
+		m.ResetRole()
 		return nil
 	}
 	return fmt.Errorf("unknown UserHistory field %s", name)

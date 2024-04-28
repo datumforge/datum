@@ -237,6 +237,20 @@ func (uc *UserCreate) SetNillableAuthProvider(ep *enums.AuthProvider) *UserCreat
 	return uc
 }
 
+// SetRole sets the "role" field.
+func (uc *UserCreate) SetRole(e enums.Role) *UserCreate {
+	uc.mutation.SetRole(e)
+	return uc
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uc *UserCreate) SetNillableRole(e *enums.Role) *UserCreate {
+	if e != nil {
+		uc.SetRole(*e)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -452,6 +466,10 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultAuthProvider
 		uc.mutation.SetAuthProvider(v)
 	}
+	if _, ok := uc.mutation.Role(); !ok {
+		v := user.DefaultRole
+		uc.mutation.SetRole(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		if user.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized user.DefaultID (forgotten import generated/runtime?)")
@@ -512,6 +530,11 @@ func (uc *UserCreate) check() error {
 	if v, ok := uc.mutation.AuthProvider(); ok {
 		if err := user.AuthProviderValidator(v); err != nil {
 			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "User.auth_provider": %w`, err)}
+		}
+	}
+	if v, ok := uc.mutation.Role(); ok {
+		if err := user.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "User.role": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.SettingID(); !ok {
@@ -620,6 +643,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.AuthProvider(); ok {
 		_spec.SetField(user.FieldAuthProvider, field.TypeEnum, value)
 		_node.AuthProvider = value
+	}
+	if value, ok := uc.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeEnum, value)
+		_node.Role = value
 	}
 	if nodes := uc.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

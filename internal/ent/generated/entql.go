@@ -885,6 +885,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldPassword:        {Type: field.TypeString, Column: user.FieldPassword},
 			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
 			user.FieldAuthProvider:    {Type: field.TypeEnum, Column: user.FieldAuthProvider},
+			user.FieldRole:            {Type: field.TypeEnum, Column: user.FieldRole},
 		},
 	}
 	graph.Nodes[32] = &sqlgraph.Node{
@@ -918,6 +919,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userhistory.FieldPassword:        {Type: field.TypeString, Column: userhistory.FieldPassword},
 			userhistory.FieldSub:             {Type: field.TypeString, Column: userhistory.FieldSub},
 			userhistory.FieldAuthProvider:    {Type: field.TypeEnum, Column: userhistory.FieldAuthProvider},
+			userhistory.FieldRole:            {Type: field.TypeEnum, Column: userhistory.FieldRole},
 		},
 	}
 	graph.Nodes[33] = &sqlgraph.Node{
@@ -5547,6 +5549,11 @@ func (f *UserFilter) WhereAuthProvider(p entql.StringP) {
 	f.Where(p.Field(user.FieldAuthProvider))
 }
 
+// WhereRole applies the entql string predicate on the role field.
+func (f *UserFilter) WhereRole(p entql.StringP) {
+	f.Where(p.Field(user.FieldRole))
+}
+
 // WhereHasPersonalAccessTokens applies a predicate to check if query has an edge personal_access_tokens.
 func (f *UserFilter) WhereHasPersonalAccessTokens() {
 	f.Where(entql.HasEdge("personal_access_tokens"))
@@ -5825,6 +5832,11 @@ func (f *UserHistoryFilter) WhereSub(p entql.StringP) {
 // WhereAuthProvider applies the entql string predicate on the auth_provider field.
 func (f *UserHistoryFilter) WhereAuthProvider(p entql.StringP) {
 	f.Where(p.Field(userhistory.FieldAuthProvider))
+}
+
+// WhereRole applies the entql string predicate on the role field.
+func (f *UserHistoryFilter) WhereRole(p entql.StringP) {
+	f.Where(p.Field(userhistory.FieldRole))
 }
 
 // addPredicate implements the predicateAdder interface.

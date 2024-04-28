@@ -57,6 +57,8 @@ const (
 	FieldSub = "sub"
 	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
 	FieldAuthProvider = "auth_provider"
+	// FieldRole holds the string denoting the role field in the database.
+	FieldRole = "role"
 	// Table holds the table name of the userhistory in the database.
 	Table = "user_history"
 )
@@ -84,6 +86,7 @@ var Columns = []string{
 	FieldPassword,
 	FieldSub,
 	FieldAuthProvider,
+	FieldRole,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -126,6 +129,18 @@ func AuthProviderValidator(ap enums.AuthProvider) error {
 		return nil
 	default:
 		return fmt.Errorf("userhistory: invalid enum value for auth_provider field: %q", ap)
+	}
+}
+
+const DefaultRole enums.Role = "USER"
+
+// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
+func RoleValidator(r enums.Role) error {
+	switch r.String() {
+	case "ADMIN", "MEMBER", "USER":
+		return nil
+	default:
+		return fmt.Errorf("userhistory: invalid enum value for role field: %q", r)
 	}
 }
 
@@ -237,6 +252,11 @@ func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
 }
 
+// ByRole orders the results by the role field.
+func ByRole(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRole, opts...).ToFunc()
+}
+
 var (
 	// enthistory.OpType must implement graphql.Marshaler.
 	_ graphql.Marshaler = (*enthistory.OpType)(nil)
@@ -249,4 +269,11 @@ var (
 	_ graphql.Marshaler = (*enums.AuthProvider)(nil)
 	// enums.AuthProvider must implement graphql.Unmarshaler.
 	_ graphql.Unmarshaler = (*enums.AuthProvider)(nil)
+)
+
+var (
+	// enums.Role must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.Role)(nil)
+	// enums.Role must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.Role)(nil)
 )

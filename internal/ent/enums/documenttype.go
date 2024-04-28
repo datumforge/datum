@@ -13,6 +13,8 @@ var (
 	RootTemplate DocumentType = "ROOTTEMPLATE"
 	// Document are templates from root templates, or scratch, owned by the organization
 	Document DocumentType = "DOCUMENT"
+	// DocumentTypeInvalid is the default value for the DocumentType enum
+	DocumentTypeInvalid DocumentType = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the DocumentType enum.
@@ -38,8 +40,7 @@ func ToDocumentType(r string) *DocumentType {
 	case Document.String():
 		return &Document
 	default:
-		d := DocumentType("")
-		return &d
+		return &DocumentTypeInvalid
 	}
 }
 

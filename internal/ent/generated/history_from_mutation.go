@@ -2674,6 +2674,10 @@ func (m *UserMutation) CreateHistoryFromCreate(ctx context.Context) error {
 		create = create.SetAuthProvider(authProvider)
 	}
 
+	if role, exists := m.Role(); exists {
+		create = create.SetRole(role)
+	}
+
 	_, err := create.Save(ctx)
 
 	return err
@@ -2806,6 +2810,12 @@ func (m *UserMutation) CreateHistoryFromUpdate(ctx context.Context) error {
 			create = create.SetAuthProvider(user.AuthProvider)
 		}
 
+		if role, exists := m.Role(); exists {
+			create = create.SetRole(role)
+		} else {
+			create = create.SetRole(user.Role)
+		}
+
 		if _, err := create.Save(ctx); err != nil {
 			return err
 		}
@@ -2855,6 +2865,7 @@ func (m *UserMutation) CreateHistoryFromDelete(ctx context.Context) error {
 			SetNillablePassword(user.Password).
 			SetSub(user.Sub).
 			SetAuthProvider(user.AuthProvider).
+			SetRole(user.Role).
 			Save(ctx)
 		if err != nil {
 			return err

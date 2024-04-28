@@ -22,7 +22,7 @@ func (Entitlement) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("tier").
 			GoType(enums.Tier("")).
-			Default(string(enums.Free)),
+			Default(string(enums.TierFree)),
 		field.String("external_customer_id").
 			Comment("used to store references to external systems, e.g. Stripe").
 			Optional(),

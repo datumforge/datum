@@ -9,14 +9,15 @@ import (
 type Visibility string
 
 var (
-	Public  Visibility = "PUBLIC"
-	Private Visibility = "PRIVATE"
+	VisibilityPublic  Visibility = "PUBLIC"
+	VisibilityPrivate Visibility = "PRIVATE"
+	VisibilityInvalid Visibility = "INVALID"
 )
 
 // Values returns a slice of strings that represents all the possible values of the Visibility enum.
 // Possible default values are "PUBLIC", and "PRIVATE".
 func (Visibility) Values() (kinds []string) {
-	for _, s := range []Visibility{Public, Private} {
+	for _, s := range []Visibility{VisibilityPublic, VisibilityPrivate} {
 		kinds = append(kinds, string(s))
 	}
 
@@ -31,12 +32,12 @@ func (r Visibility) String() string {
 // ToGroupVisibility returns the user status enum based on string input
 func ToGroupVisibility(r string) *Visibility {
 	switch r := strings.ToUpper(r); r {
-	case Public.String():
-		return &Public
-	case Private.String():
-		return &Private
+	case VisibilityPublic.String():
+		return &VisibilityPublic
+	case VisibilityPrivate.String():
+		return &VisibilityPrivate
 	default:
-		return &Private
+		return &VisibilityInvalid
 	}
 }
 

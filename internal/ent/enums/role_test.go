@@ -30,16 +30,21 @@ func TestEnum(t *testing.T) {
 			expected: enums.RoleOwner,
 		},
 		{
+			name:     "user",
+			role:     "user",
+			expected: enums.RoleUser,
+		},
+		{
 			name:     "invalid role",
 			role:     "cattypist",
-			expected: enums.Invalid,
+			expected: enums.RoleInvalid,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			res := enums.ToRole(tc.role)
-			assert.Equal(t, tc.expected, res)
+			assert.Equal(t, tc.expected, *res)
 		})
 	}
 }

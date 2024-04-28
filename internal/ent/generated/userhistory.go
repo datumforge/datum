@@ -59,6 +59,8 @@ type UserHistory struct {
 	Sub string `json:"sub,omitempty"`
 	// auth provider used to register the account
 	AuthProvider enums.AuthProvider `json:"auth_provider,omitempty"`
+	// the user's role
+	Role         enums.Role `json:"role,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -69,7 +71,7 @@ func (*UserHistory) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case userhistory.FieldOperation:
 			values[i] = new(enthistory.OpType)
-		case userhistory.FieldID, userhistory.FieldRef, userhistory.FieldCreatedBy, userhistory.FieldUpdatedBy, userhistory.FieldDeletedBy, userhistory.FieldEmail, userhistory.FieldFirstName, userhistory.FieldLastName, userhistory.FieldDisplayName, userhistory.FieldAvatarRemoteURL, userhistory.FieldAvatarLocalFile, userhistory.FieldPassword, userhistory.FieldSub, userhistory.FieldAuthProvider:
+		case userhistory.FieldID, userhistory.FieldRef, userhistory.FieldCreatedBy, userhistory.FieldUpdatedBy, userhistory.FieldDeletedBy, userhistory.FieldEmail, userhistory.FieldFirstName, userhistory.FieldLastName, userhistory.FieldDisplayName, userhistory.FieldAvatarRemoteURL, userhistory.FieldAvatarLocalFile, userhistory.FieldPassword, userhistory.FieldSub, userhistory.FieldAuthProvider, userhistory.FieldRole:
 			values[i] = new(sql.NullString)
 		case userhistory.FieldHistoryTime, userhistory.FieldCreatedAt, userhistory.FieldUpdatedAt, userhistory.FieldDeletedAt, userhistory.FieldAvatarUpdatedAt, userhistory.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -219,6 +221,12 @@ func (uh *UserHistory) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				uh.AuthProvider = enums.AuthProvider(value.String)
 			}
+		case userhistory.FieldRole:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field role", values[i])
+			} else if value.Valid {
+				uh.Role = enums.Role(value.String)
+			}
 		default:
 			uh.selectValues.Set(columns[i], values[i])
 		}
@@ -321,6 +329,9 @@ func (uh *UserHistory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("auth_provider=")
 	builder.WriteString(fmt.Sprintf("%v", uh.AuthProvider))
+	builder.WriteString(", ")
+	builder.WriteString("role=")
+	builder.WriteString(fmt.Sprintf("%v", uh.Role))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -52,6 +52,8 @@ const (
 	FieldSub = "sub"
 	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
 	FieldAuthProvider = "auth_provider"
+	// FieldRole holds the string denoting the role field in the database.
+	FieldRole = "role"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeTfaSettings holds the string denoting the tfa_settings edge name in mutations.
@@ -162,6 +164,7 @@ var Columns = []string{
 	FieldPassword,
 	FieldSub,
 	FieldAuthProvider,
+	FieldRole,
 }
 
 var (
@@ -227,6 +230,18 @@ func AuthProviderValidator(ap enums.AuthProvider) error {
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for auth_provider field: %q", ap)
+	}
+}
+
+const DefaultRole enums.Role = "USER"
+
+// RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
+func RoleValidator(r enums.Role) error {
+	switch r.String() {
+	case "ADMIN", "MEMBER", "USER":
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for role field: %q", r)
 	}
 }
 
@@ -321,6 +336,11 @@ func BySub(opts ...sql.OrderTermOption) OrderOption {
 // ByAuthProvider orders the results by the auth_provider field.
 func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
+}
+
+// ByRole orders the results by the role field.
+func ByRole(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRole, opts...).ToFunc()
 }
 
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
@@ -531,4 +551,11 @@ var (
 	_ graphql.Marshaler = (*enums.AuthProvider)(nil)
 	// enums.AuthProvider must implement graphql.Unmarshaler.
 	_ graphql.Unmarshaler = (*enums.AuthProvider)(nil)
+)
+
+var (
+	// enums.Role must implement graphql.Marshaler.
+	_ graphql.Marshaler = (*enums.Role)(nil)
+	// enums.Role must implement graphql.Unmarshaler.
+	_ graphql.Unmarshaler = (*enums.Role)(nil)
 )

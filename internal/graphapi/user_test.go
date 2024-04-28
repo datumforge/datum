@@ -179,7 +179,7 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 				LastName:     gofakeit.LastName(),
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
-				AuthProvider: &enums.Credentials,
+				AuthProvider: &enums.AuthProviderCredentials,
 				Password:     &strongPassword,
 			},
 			errorMsg: "",
@@ -191,7 +191,7 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 				LastName:     gofakeit.LastName(),
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
-				AuthProvider: &enums.Credentials,
+				AuthProvider: &enums.AuthProviderCredentials,
 				Password:     &strongPassword,
 			},
 			errorMsg: "constraint failed",
@@ -203,7 +203,7 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 				LastName:     gofakeit.LastName(),
 				DisplayName:  gofakeit.LetterN(50),
 				Email:        email,
-				AuthProvider: &enums.GitHub,
+				AuthProvider: &enums.AuthProviderGitHub,
 			},
 			errorMsg: "",
 		},
@@ -290,7 +290,7 @@ func (suite *GraphTestSuite) TestMutationCreateUserNoAuth() {
 				assert.Equal(t, tc.userInput.AuthProvider, &resp.CreateUser.User.AuthProvider)
 			} else {
 				// default is credentials if not provided
-				assert.Equal(t, enums.Credentials, resp.CreateUser.User.AuthProvider)
+				assert.Equal(t, enums.AuthProviderCredentials, resp.CreateUser.User.AuthProvider)
 			}
 			// display name defaults to email if not provided
 			if tc.userInput.DisplayName == "" {

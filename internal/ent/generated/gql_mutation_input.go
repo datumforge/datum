@@ -2216,6 +2216,7 @@ type CreateUserInput struct {
 	Password                  *string
 	Sub                       *string
 	AuthProvider              *enums.AuthProvider
+	Role                      *enums.Role
 	PersonalAccessTokenIDs    []string
 	TfaSettingIDs             []string
 	SettingID                 string
@@ -2264,6 +2265,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
 	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
@@ -2318,6 +2322,8 @@ type UpdateUserInput struct {
 	ClearSub                        bool
 	Sub                             *string
 	AuthProvider                    *enums.AuthProvider
+	ClearRole                       bool
+	Role                            *enums.Role
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
@@ -2406,6 +2412,12 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.AuthProvider; v != nil {
 		m.SetAuthProvider(*v)
+	}
+	if i.ClearRole {
+		m.ClearRole()
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
 	}
 	if i.ClearPersonalAccessTokens {
 		m.ClearPersonalAccessTokens()

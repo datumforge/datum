@@ -262,6 +262,20 @@ func (uhc *UserHistoryCreate) SetNillableAuthProvider(ep *enums.AuthProvider) *U
 	return uhc
 }
 
+// SetRole sets the "role" field.
+func (uhc *UserHistoryCreate) SetRole(e enums.Role) *UserHistoryCreate {
+	uhc.mutation.SetRole(e)
+	return uhc
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uhc *UserHistoryCreate) SetNillableRole(e *enums.Role) *UserHistoryCreate {
+	if e != nil {
+		uhc.SetRole(*e)
+	}
+	return uhc
+}
+
 // SetID sets the "id" field.
 func (uhc *UserHistoryCreate) SetID(s string) *UserHistoryCreate {
 	uhc.mutation.SetID(s)
@@ -327,6 +341,10 @@ func (uhc *UserHistoryCreate) defaults() {
 		v := userhistory.DefaultAuthProvider
 		uhc.mutation.SetAuthProvider(v)
 	}
+	if _, ok := uhc.mutation.Role(); !ok {
+		v := userhistory.DefaultRole
+		uhc.mutation.SetRole(v)
+	}
 	if _, ok := uhc.mutation.ID(); !ok {
 		v := userhistory.DefaultID()
 		uhc.mutation.SetID(v)
@@ -364,6 +382,11 @@ func (uhc *UserHistoryCreate) check() error {
 	if v, ok := uhc.mutation.AuthProvider(); ok {
 		if err := userhistory.AuthProviderValidator(v); err != nil {
 			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "UserHistory.auth_provider": %w`, err)}
+		}
+	}
+	if v, ok := uhc.mutation.Role(); ok {
+		if err := userhistory.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "UserHistory.role": %w`, err)}
 		}
 	}
 	return nil
@@ -481,6 +504,10 @@ func (uhc *UserHistoryCreate) createSpec() (*UserHistory, *sqlgraph.CreateSpec) 
 	if value, ok := uhc.mutation.AuthProvider(); ok {
 		_spec.SetField(userhistory.FieldAuthProvider, field.TypeEnum, value)
 		_node.AuthProvider = value
+	}
+	if value, ok := uhc.mutation.Role(); ok {
+		_spec.SetField(userhistory.FieldRole, field.TypeEnum, value)
+		_node.Role = value
 	}
 	return _node, _spec
 }

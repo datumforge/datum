@@ -301,6 +301,26 @@ func (uhu *UserHistoryUpdate) SetNillableAuthProvider(ep *enums.AuthProvider) *U
 	return uhu
 }
 
+// SetRole sets the "role" field.
+func (uhu *UserHistoryUpdate) SetRole(e enums.Role) *UserHistoryUpdate {
+	uhu.mutation.SetRole(e)
+	return uhu
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uhu *UserHistoryUpdate) SetNillableRole(e *enums.Role) *UserHistoryUpdate {
+	if e != nil {
+		uhu.SetRole(*e)
+	}
+	return uhu
+}
+
+// ClearRole clears the value of the "role" field.
+func (uhu *UserHistoryUpdate) ClearRole() *UserHistoryUpdate {
+	uhu.mutation.ClearRole()
+	return uhu
+}
+
 // Mutation returns the UserHistoryMutation object of the builder.
 func (uhu *UserHistoryUpdate) Mutation() *UserHistoryMutation {
 	return uhu.mutation
@@ -338,6 +358,11 @@ func (uhu *UserHistoryUpdate) check() error {
 	if v, ok := uhu.mutation.AuthProvider(); ok {
 		if err := userhistory.AuthProviderValidator(v); err != nil {
 			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "UserHistory.auth_provider": %w`, err)}
+		}
+	}
+	if v, ok := uhu.mutation.Role(); ok {
+		if err := userhistory.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "UserHistory.role": %w`, err)}
 		}
 	}
 	return nil
@@ -438,6 +463,12 @@ func (uhu *UserHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uhu.mutation.AuthProvider(); ok {
 		_spec.SetField(userhistory.FieldAuthProvider, field.TypeEnum, value)
+	}
+	if value, ok := uhu.mutation.Role(); ok {
+		_spec.SetField(userhistory.FieldRole, field.TypeEnum, value)
+	}
+	if uhu.mutation.RoleCleared() {
+		_spec.ClearField(userhistory.FieldRole, field.TypeEnum)
 	}
 	_spec.Node.Schema = uhu.schemaConfig.UserHistory
 	ctx = internal.NewSchemaConfigContext(ctx, uhu.schemaConfig)
@@ -731,6 +762,26 @@ func (uhuo *UserHistoryUpdateOne) SetNillableAuthProvider(ep *enums.AuthProvider
 	return uhuo
 }
 
+// SetRole sets the "role" field.
+func (uhuo *UserHistoryUpdateOne) SetRole(e enums.Role) *UserHistoryUpdateOne {
+	uhuo.mutation.SetRole(e)
+	return uhuo
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uhuo *UserHistoryUpdateOne) SetNillableRole(e *enums.Role) *UserHistoryUpdateOne {
+	if e != nil {
+		uhuo.SetRole(*e)
+	}
+	return uhuo
+}
+
+// ClearRole clears the value of the "role" field.
+func (uhuo *UserHistoryUpdateOne) ClearRole() *UserHistoryUpdateOne {
+	uhuo.mutation.ClearRole()
+	return uhuo
+}
+
 // Mutation returns the UserHistoryMutation object of the builder.
 func (uhuo *UserHistoryUpdateOne) Mutation() *UserHistoryMutation {
 	return uhuo.mutation
@@ -781,6 +832,11 @@ func (uhuo *UserHistoryUpdateOne) check() error {
 	if v, ok := uhuo.mutation.AuthProvider(); ok {
 		if err := userhistory.AuthProviderValidator(v); err != nil {
 			return &ValidationError{Name: "auth_provider", err: fmt.Errorf(`generated: validator failed for field "UserHistory.auth_provider": %w`, err)}
+		}
+	}
+	if v, ok := uhuo.mutation.Role(); ok {
+		if err := userhistory.RoleValidator(v); err != nil {
+			return &ValidationError{Name: "role", err: fmt.Errorf(`generated: validator failed for field "UserHistory.role": %w`, err)}
 		}
 	}
 	return nil
@@ -898,6 +954,12 @@ func (uhuo *UserHistoryUpdateOne) sqlSave(ctx context.Context) (_node *UserHisto
 	}
 	if value, ok := uhuo.mutation.AuthProvider(); ok {
 		_spec.SetField(userhistory.FieldAuthProvider, field.TypeEnum, value)
+	}
+	if value, ok := uhuo.mutation.Role(); ok {
+		_spec.SetField(userhistory.FieldRole, field.TypeEnum, value)
+	}
+	if uhuo.mutation.RoleCleared() {
+		_spec.ClearField(userhistory.FieldRole, field.TypeEnum)
 	}
 	_spec.Node.Schema = uhuo.schemaConfig.UserHistory
 	ctx = internal.NewSchemaConfigContext(ctx, uhuo.schemaConfig)

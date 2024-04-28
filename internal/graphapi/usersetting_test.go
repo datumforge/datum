@@ -170,7 +170,7 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 			allowed:  true,
 			checkOrg: true,
 			expectedRes: datumclient.UpdateUserSetting_UpdateUserSetting_UserSetting{
-				Status: enums.Active,
+				Status: enums.UserStatusActive,
 				Tags:   []string{"mitb", "datum"},
 				DefaultOrg: &datumclient.UpdateUserSetting_UpdateUserSetting_UserSetting_DefaultOrg{
 					ID: org.ID,
@@ -189,7 +189,7 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 		{
 			name: "update status to invalid",
 			updateInput: datumclient.UpdateUserSettingInput{
-				Status: &enums.StatusInvalid,
+				Status: &enums.UserStatusInvalid,
 			},
 			checkOrg: false,
 			errorMsg: "INVALID is not a valid UserSettingUserStatus",
@@ -197,11 +197,11 @@ func (suite *GraphTestSuite) TestMutationUpdateUserSetting() {
 		{
 			name: "update status to suspended",
 			updateInput: datumclient.UpdateUserSettingInput{
-				Status: &enums.Suspended,
+				Status: &enums.UserStatusSuspended,
 			},
 			checkOrg: false,
 			expectedRes: datumclient.UpdateUserSetting_UpdateUserSetting_UserSetting{
-				Status: enums.Suspended,
+				Status: enums.UserStatusSuspended,
 				Tags:   []string{"mitb", "datum"},
 			},
 		},

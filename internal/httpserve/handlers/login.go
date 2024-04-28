@@ -133,7 +133,7 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 	}
 
 	// check user in the database, username == email and ensure only one record is returned
-	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username, enums.Credentials)
+	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username, enums.AuthProviderCredentials)
 	if err != nil {
 		return nil, ErrNoAuthUser
 	}

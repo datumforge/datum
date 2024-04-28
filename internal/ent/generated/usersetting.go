@@ -41,9 +41,9 @@ type UserSetting struct {
 	SilencedAt *time.Time `json:"silenced_at,omitempty"`
 	// The time the user was suspended
 	SuspendedAt *time.Time `json:"suspended_at,omitempty"`
-	// Status holds the value of the "status" field.
+	// status of the user account
 	Status enums.UserStatus `json:"status,omitempty"`
-	// EmailConfirmed holds the value of the "email_confirmed" field.
+	// whether the user has confirmed their email address
 	EmailConfirmed bool `json:"email_confirmed,omitempty"`
 	// tags associated with the user
 	Tags []string `json:"tags,omitempty"`

@@ -55,9 +55,11 @@ func (UserSetting) Fields() []ent.Field {
 			Nillable().
 			Annotations(entoas.Annotation{ReadOnly: true}),
 		field.Enum("status").
+			Comment("status of the user account").
 			GoType(enums.UserStatus("")).
-			Default(string(enums.Active)),
+			Default(string(enums.UserStatusActive)),
 		field.Bool("email_confirmed").Default(false).
+			Comment("whether the user has confirmed their email address").
 			Annotations(entoas.Annotation{ReadOnly: true}),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the user").

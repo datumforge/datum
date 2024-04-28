@@ -5805,7 +5805,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "USER"
+                      "USER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   },
@@ -5961,7 +5962,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "USER"
+                      "USER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   }
@@ -6073,7 +6075,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "USER"
+                      "USER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   },
@@ -6235,7 +6238,8 @@
                     "enum": [
                       "ADMIN",
                       "MEMBER",
-                      "USER"
+                      "USER",
+                      "OWNER"
                     ],
                     "default": "MEMBER"
                   },
@@ -12679,7 +12683,8 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "USER"
+              "USER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },
@@ -12752,7 +12757,8 @@
             "enum": [
               "ADMIN",
               "MEMBER",
-              "USER"
+              "USER",
+              "OWNER"
             ],
             "default": "MEMBER"
           },

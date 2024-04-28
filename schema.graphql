@@ -6255,6 +6255,7 @@ enum OrgMembershipHistoryRole @goModel(model: "github.com/datumforge/datum/inter
 	ADMIN
 	MEMBER
 	USER
+	OWNER
 }
 """
 OrgMembershipHistoryWhereInput is used for filtering OrgMembershipHistory objects.
@@ -6453,6 +6454,7 @@ enum OrgMembershipRole @goModel(model: "github.com/datumforge/datum/internal/ent
 	ADMIN
 	MEMBER
 	USER
+	OWNER
 }
 """
 Return response for updateOrgMembership mutation

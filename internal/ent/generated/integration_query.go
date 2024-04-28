@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -21,13 +23,15 @@ import (
 // IntegrationQuery is the builder for querying Integration entities.
 type IntegrationQuery struct {
 	config
-	ctx        *QueryContext
-	order      []integration.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Integration
-	withOwner  *OrganizationQuery
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*Integration) error
+	ctx              *QueryContext
+	order            []integration.OrderOption
+	inters           []Interceptor
+	predicates       []predicate.Integration
+	withOwner        *OrganizationQuery
+	withSecrets      *HushQuery
+	modifiers        []func(*sql.Selector)
+	loadTotal        []func(context.Context, []*Integration) error
+	withNamedSecrets map[string]*HushQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -83,6 +87,31 @@ func (iq *IntegrationQuery) QueryOwner() *OrganizationQuery {
 		schemaConfig := iq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Integration
+		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySecrets chains the current query on the "secrets" edge.
+func (iq *IntegrationQuery) QuerySecrets() *HushQuery {
+	query := (&HushClient{config: iq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := iq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := iq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(integration.Table, integration.FieldID, selector),
+			sqlgraph.To(hush.Table, hush.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, integration.SecretsTable, integration.SecretsPrimaryKey...),
+		)
+		schemaConfig := iq.schemaConfig
+		step.To.Schema = schemaConfig.Hush
+		step.Edge.Schema = schemaConfig.IntegrationSecrets
 		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -276,12 +305,13 @@ func (iq *IntegrationQuery) Clone() *IntegrationQuery {
 		return nil
 	}
 	return &IntegrationQuery{
-		config:     iq.config,
-		ctx:        iq.ctx.Clone(),
-		order:      append([]integration.OrderOption{}, iq.order...),
-		inters:     append([]Interceptor{}, iq.inters...),
-		predicates: append([]predicate.Integration{}, iq.predicates...),
-		withOwner:  iq.withOwner.Clone(),
+		config:      iq.config,
+		ctx:         iq.ctx.Clone(),
+		order:       append([]integration.OrderOption{}, iq.order...),
+		inters:      append([]Interceptor{}, iq.inters...),
+		predicates:  append([]predicate.Integration{}, iq.predicates...),
+		withOwner:   iq.withOwner.Clone(),
+		withSecrets: iq.withSecrets.Clone(),
 		// clone intermediate query.
 		sql:  iq.sql.Clone(),
 		path: iq.path,
@@ -296,6 +326,17 @@ func (iq *IntegrationQuery) WithOwner(opts ...func(*OrganizationQuery)) *Integra
 		opt(query)
 	}
 	iq.withOwner = query
+	return iq
+}
+
+// WithSecrets tells the query-builder to eager-load the nodes that are connected to
+// the "secrets" edge. The optional arguments are used to configure the query builder of the edge.
+func (iq *IntegrationQuery) WithSecrets(opts ...func(*HushQuery)) *IntegrationQuery {
+	query := (&HushClient{config: iq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	iq.withSecrets = query
 	return iq
 }
 
@@ -383,8 +424,9 @@ func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	var (
 		nodes       = []*Integration{}
 		_spec       = iq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			iq.withOwner != nil,
+			iq.withSecrets != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -413,6 +455,20 @@ func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	if query := iq.withOwner; query != nil {
 		if err := iq.loadOwner(ctx, query, nodes, nil,
 			func(n *Integration, e *Organization) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := iq.withSecrets; query != nil {
+		if err := iq.loadSecrets(ctx, query, nodes,
+			func(n *Integration) { n.Edges.Secrets = []*Hush{} },
+			func(n *Integration, e *Hush) { n.Edges.Secrets = append(n.Edges.Secrets, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range iq.withNamedSecrets {
+		if err := iq.loadSecrets(ctx, query, nodes,
+			func(n *Integration) { n.appendNamedSecrets(name) },
+			func(n *Integration, e *Hush) { n.appendNamedSecrets(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -449,6 +505,68 @@ func (iq *IntegrationQuery) loadOwner(ctx context.Context, query *OrganizationQu
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (iq *IntegrationQuery) loadSecrets(ctx context.Context, query *HushQuery, nodes []*Integration, init func(*Integration), assign func(*Integration, *Hush)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Integration)
+	nids := make(map[string]map[*Integration]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(integration.SecretsTable)
+		joinT.Schema(iq.schemaConfig.IntegrationSecrets)
+		s.Join(joinT).On(s.C(hush.FieldID), joinT.C(integration.SecretsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(integration.SecretsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(integration.SecretsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Integration]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Hush](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "secrets" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -544,6 +662,20 @@ func (iq *IntegrationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedSecrets tells the query-builder to eager-load the nodes that are connected to the "secrets"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (iq *IntegrationQuery) WithNamedSecrets(name string, opts ...func(*HushQuery)) *IntegrationQuery {
+	query := (&HushClient{config: iq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if iq.withNamedSecrets == nil {
+		iq.withNamedSecrets = make(map[string]*HushQuery)
+	}
+	iq.withNamedSecrets[name] = query
+	return iq
 }
 
 // IntegrationGroupBy is the group-by builder for Integration entities.

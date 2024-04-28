@@ -161,6 +161,7 @@ func main() {
 		},
 	},
 		entc.Dependency(
+			entc.DependencyName("Secrets"),
 			entc.DependencyType(&secrets.Keeper{}),
 		),
 		entc.Dependency(

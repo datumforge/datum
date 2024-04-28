@@ -23,6 +23,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -117,6 +119,8 @@ func checkColumn(table, column string) error {
 			groupmembershiphistory.Table:     groupmembershiphistory.ValidColumn,
 			groupsetting.Table:               groupsetting.ValidColumn,
 			groupsettinghistory.Table:        groupsettinghistory.ValidColumn,
+			hush.Table:                       hush.ValidColumn,
+			hushhistory.Table:                hushhistory.ValidColumn,
 			integration.Table:                integration.ValidColumn,
 			integrationhistory.Table:         integrationhistory.ValidColumn,
 			invite.Table:                     invite.ValidColumn,

@@ -23,6 +23,9 @@ func (c *Client) WithHistory() {
 	for _, hook := range enthistory.HistoryHooks[*GroupSettingMutation]() {
 		c.GroupSetting.Use(hook)
 	}
+	for _, hook := range enthistory.HistoryHooks[*HushMutation]() {
+		c.Hush.Use(hook)
+	}
 	for _, hook := range enthistory.HistoryHooks[*IntegrationMutation]() {
 		c.Integration.Use(hook)
 	}

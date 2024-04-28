@@ -35,10 +35,10 @@ const (
 	FieldDescription = "description"
 	// FieldKind holds the string denoting the kind field in the database.
 	FieldKind = "kind"
-	// FieldSecretName holds the string denoting the secret_name field in the database.
-	FieldSecretName = "secret_name"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
+	// EdgeSecrets holds the string denoting the secrets edge name in mutations.
+	EdgeSecrets = "secrets"
 	// Table holds the table name of the integration in the database.
 	Table = "integrations"
 	// OwnerTable is the table that holds the owner relation/edge.
@@ -48,6 +48,11 @@ const (
 	OwnerInverseTable = "organizations"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "owner_id"
+	// SecretsTable is the table that holds the secrets relation/edge. The primary key declared below.
+	SecretsTable = "integration_secrets"
+	// SecretsInverseTable is the table name for the Hush entity.
+	// It exists in this package in order to avoid circular dependency with the "hush" package.
+	SecretsInverseTable = "hushes"
 )
 
 // Columns holds all SQL columns for integration fields.
@@ -63,8 +68,13 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldKind,
-	FieldSecretName,
 }
+
+var (
+	// SecretsPrimaryKey and SecretsColumn2 are the table columns denoting the
+	// primary key for the secrets relation (M2M).
+	SecretsPrimaryKey = []string{"integration_id", "hush_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -155,15 +165,24 @@ func ByKind(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldKind, opts...).ToFunc()
 }
 
-// BySecretName orders the results by the secret_name field.
-func BySecretName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSecretName, opts...).ToFunc()
-}
-
 // ByOwnerField orders the results by owner field.
 func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// BySecretsCount orders the results by secrets count.
+func BySecretsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSecretsStep(), opts...)
+	}
+}
+
+// BySecrets orders the results by secrets terms.
+func BySecrets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSecretsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newOwnerStep() *sqlgraph.Step {
@@ -171,5 +190,12 @@ func newOwnerStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OwnerInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
+}
+func newSecretsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SecretsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, SecretsTable, SecretsPrimaryKey...),
 	)
 }

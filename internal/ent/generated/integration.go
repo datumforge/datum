@@ -38,8 +38,6 @@ type Integration struct {
 	Description string `json:"description,omitempty"`
 	// Kind holds the value of the "kind" field.
 	Kind string `json:"kind,omitempty"`
-	// SecretName holds the value of the "secret_name" field.
-	SecretName string `json:"secret_name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the IntegrationQuery when eager-loading is set.
 	Edges        IntegrationEdges `json:"edges"`
@@ -50,11 +48,15 @@ type Integration struct {
 type IntegrationEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *Organization `json:"owner,omitempty"`
+	// the secrets associated with the integration
+	Secrets []*Hush `json:"secrets,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
+
+	namedSecrets map[string][]*Hush
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -68,12 +70,21 @@ func (e IntegrationEdges) OwnerOrErr() (*Organization, error) {
 	return nil, &NotLoadedError{edge: "owner"}
 }
 
+// SecretsOrErr returns the Secrets value or an error if the edge
+// was not loaded in eager-loading.
+func (e IntegrationEdges) SecretsOrErr() ([]*Hush, error) {
+	if e.loadedTypes[1] {
+		return e.Secrets, nil
+	}
+	return nil, &NotLoadedError{edge: "secrets"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Integration) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case integration.FieldID, integration.FieldCreatedBy, integration.FieldUpdatedBy, integration.FieldDeletedBy, integration.FieldOwnerID, integration.FieldName, integration.FieldDescription, integration.FieldKind, integration.FieldSecretName:
+		case integration.FieldID, integration.FieldCreatedBy, integration.FieldUpdatedBy, integration.FieldDeletedBy, integration.FieldOwnerID, integration.FieldName, integration.FieldDescription, integration.FieldKind:
 			values[i] = new(sql.NullString)
 		case integration.FieldCreatedAt, integration.FieldUpdatedAt, integration.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -158,12 +169,6 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				i.Kind = value.String
 			}
-		case integration.FieldSecretName:
-			if value, ok := values[j].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field secret_name", values[j])
-			} else if value.Valid {
-				i.SecretName = value.String
-			}
 		default:
 			i.selectValues.Set(columns[j], values[j])
 		}
@@ -180,6 +185,11 @@ func (i *Integration) Value(name string) (ent.Value, error) {
 // QueryOwner queries the "owner" edge of the Integration entity.
 func (i *Integration) QueryOwner() *OrganizationQuery {
 	return NewIntegrationClient(i.config).QueryOwner(i)
+}
+
+// QuerySecrets queries the "secrets" edge of the Integration entity.
+func (i *Integration) QuerySecrets() *HushQuery {
+	return NewIntegrationClient(i.config).QuerySecrets(i)
 }
 
 // Update returns a builder for updating this Integration.
@@ -234,11 +244,32 @@ func (i *Integration) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("kind=")
 	builder.WriteString(i.Kind)
-	builder.WriteString(", ")
-	builder.WriteString("secret_name=")
-	builder.WriteString(i.SecretName)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedSecrets returns the Secrets named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (i *Integration) NamedSecrets(name string) ([]*Hush, error) {
+	if i.Edges.namedSecrets == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := i.Edges.namedSecrets[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (i *Integration) appendNamedSecrets(name string, edges ...*Hush) {
+	if i.Edges.namedSecrets == nil {
+		i.Edges.namedSecrets = make(map[string][]*Hush)
+	}
+	if len(edges) == 0 {
+		i.Edges.namedSecrets[name] = []*Hush{}
+	} else {
+		i.Edges.namedSecrets[name] = append(i.Edges.namedSecrets[name], edges...)
+	}
 }
 
 // Integrations is a parsable slice of Integration.

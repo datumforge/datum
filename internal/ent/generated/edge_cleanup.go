@@ -117,6 +117,20 @@ func GroupSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func HushEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup hush edge"))
+
+	return nil
+}
+
+func HushHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup hushhistory edge"))
+
+	return nil
+}
+
 func IntegrationEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup integration edge"))

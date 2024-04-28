@@ -372,6 +372,58 @@ var (
 			},
 		},
 	}
+	// HushesColumns holds the columns for the "hushes" table.
+	HushesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
+		{Name: "secret_name", Type: field.TypeString, Nullable: true},
+		{Name: "secret_value", Type: field.TypeString, Nullable: true},
+	}
+	// HushesTable holds the schema information for the "hushes" table.
+	HushesTable = &schema.Table{
+		Name:       "hushes",
+		Columns:    HushesColumns,
+		PrimaryKey: []*schema.Column{HushesColumns[0]},
+	}
+	// HushHistoryColumns holds the columns for the "hush_history" table.
+	HushHistoryColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "history_time", Type: field.TypeTime},
+		{Name: "operation", Type: field.TypeEnum, Enums: []string{"INSERT", "UPDATE", "DELETE"}},
+		{Name: "ref", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
+		{Name: "secret_name", Type: field.TypeString, Nullable: true},
+		{Name: "secret_value", Type: field.TypeString, Nullable: true},
+	}
+	// HushHistoryTable holds the schema information for the "hush_history" table.
+	HushHistoryTable = &schema.Table{
+		Name:       "hush_history",
+		Columns:    HushHistoryColumns,
+		PrimaryKey: []*schema.Column{HushHistoryColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "hushhistory_history_time",
+				Unique:  false,
+				Columns: []*schema.Column{HushHistoryColumns[1]},
+			},
+		},
+	}
 	// IntegrationsColumns holds the columns for the "integrations" table.
 	IntegrationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -384,7 +436,6 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "kind", Type: field.TypeString, Nullable: true},
-		{Name: "secret_name", Type: field.TypeString, Nullable: true},
 		{Name: "owner_id", Type: field.TypeString},
 	}
 	// IntegrationsTable holds the schema information for the "integrations" table.
@@ -395,7 +446,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "integrations_organizations_integrations",
-				Columns:    []*schema.Column{IntegrationsColumns[11]},
+				Columns:    []*schema.Column{IntegrationsColumns[10]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -417,7 +468,6 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "kind", Type: field.TypeString, Nullable: true},
-		{Name: "secret_name", Type: field.TypeString, Nullable: true},
 	}
 	// IntegrationHistoryTable holds the schema information for the "integration_history" table.
 	IntegrationHistoryTable = &schema.Table{
@@ -1202,6 +1252,31 @@ var (
 			},
 		},
 	}
+	// IntegrationSecretsColumns holds the columns for the "integration_secrets" table.
+	IntegrationSecretsColumns = []*schema.Column{
+		{Name: "integration_id", Type: field.TypeString},
+		{Name: "hush_id", Type: field.TypeString},
+	}
+	// IntegrationSecretsTable holds the schema information for the "integration_secrets" table.
+	IntegrationSecretsTable = &schema.Table{
+		Name:       "integration_secrets",
+		Columns:    IntegrationSecretsColumns,
+		PrimaryKey: []*schema.Column{IntegrationSecretsColumns[0], IntegrationSecretsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "integration_secrets_integration_id",
+				Columns:    []*schema.Column{IntegrationSecretsColumns[0]},
+				RefColumns: []*schema.Column{IntegrationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "integration_secrets_hush_id",
+				Columns:    []*schema.Column{IntegrationSecretsColumns[1]},
+				RefColumns: []*schema.Column{HushesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// OrganizationPersonalAccessTokensColumns holds the columns for the "organization_personal_access_tokens" table.
 	OrganizationPersonalAccessTokensColumns = []*schema.Column{
 		{Name: "organization_id", Type: field.TypeString},
@@ -1240,6 +1315,8 @@ var (
 		GroupMembershipHistoryTable,
 		GroupSettingsTable,
 		GroupSettingHistoryTable,
+		HushesTable,
+		HushHistoryTable,
 		IntegrationsTable,
 		IntegrationHistoryTable,
 		InvitesTable,
@@ -1263,6 +1340,7 @@ var (
 		UserSettingsTable,
 		UserSettingHistoryTable,
 		WebauthnsTable,
+		IntegrationSecretsTable,
 		OrganizationPersonalAccessTokensTable,
 	}
 )
@@ -1289,6 +1367,9 @@ func init() {
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupSettingHistoryTable.Annotation = &entsql.Annotation{
 		Table: "group_setting_history",
+	}
+	HushHistoryTable.Annotation = &entsql.Annotation{
+		Table: "hush_history",
 	}
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	IntegrationHistoryTable.Annotation = &entsql.Annotation{
@@ -1329,6 +1410,8 @@ func init() {
 		Table: "user_setting_history",
 	}
 	WebauthnsTable.ForeignKeys[0].RefTable = UsersTable
+	IntegrationSecretsTable.ForeignKeys[0].RefTable = IntegrationsTable
+	IntegrationSecretsTable.ForeignKeys[1].RefTable = HushesTable
 	OrganizationPersonalAccessTokensTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationPersonalAccessTokensTable.ForeignKeys[1].RefTable = PersonalAccessTokensTable
 }

@@ -18,7 +18,10 @@ type SchemaConfig struct {
 	GroupMembershipHistory           string // GroupMembershipHistory table.
 	GroupSetting                     string // GroupSetting table.
 	GroupSettingHistory              string // GroupSettingHistory table.
+	Hush                             string // Hush table.
+	HushHistory                      string // HushHistory table.
 	Integration                      string // Integration table.
+	IntegrationSecrets               string // Integration-secrets->Hush table.
 	IntegrationHistory               string // IntegrationHistory table.
 	Invite                           string // Invite table.
 	OauthProvider                    string // OauthProvider table.

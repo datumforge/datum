@@ -88,10 +88,34 @@ func (gs *GroupSetting) Group(ctx context.Context) (*Group, error) {
 	return result, MaskNotFound(err)
 }
 
+func (h *Hush) Integrations(ctx context.Context) (result []*Integration, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = h.NamedIntegrations(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = h.Edges.IntegrationsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = h.QueryIntegrations().All(ctx)
+	}
+	return result, err
+}
+
 func (i *Integration) Owner(ctx context.Context) (*Organization, error) {
 	result, err := i.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = i.QueryOwner().Only(ctx)
+	}
+	return result, err
+}
+
+func (i *Integration) Secrets(ctx context.Context) (result []*Hush, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = i.NamedSecrets(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = i.Edges.SecretsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = i.QuerySecrets().All(ctx)
 	}
 	return result, err
 }

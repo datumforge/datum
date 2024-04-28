@@ -102,6 +102,24 @@ type GroupUpdatePayload struct {
 	Group *generated.Group `json:"group"`
 }
 
+// Return response for createHush mutation
+type HushCreatePayload struct {
+	// Created hush
+	Hush *generated.Hush `json:"hush"`
+}
+
+// Return response for deleteHush mutation
+type HushDeletePayload struct {
+	// Deleted hush ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateHush mutation
+type HushUpdatePayload struct {
+	// Updated hush
+	Hush *generated.Hush `json:"hush"`
+}
+
 // Return response for createIntegration mutation
 type IntegrationCreatePayload struct {
 	// Created integration

@@ -1054,6 +1054,213 @@ func (m *GroupSettingMutation) CreateHistoryFromDelete(ctx context.Context) erro
 	return nil
 }
 
+func (m *HushMutation) CreateHistoryFromCreate(ctx context.Context) error {
+	client := m.Client()
+
+	id, ok := m.ID()
+	if !ok {
+		return idNotFoundError
+	}
+
+	create := client.HushHistory.Create()
+
+	create = create.
+		SetOperation(EntOpToHistoryOp(m.Op())).
+		SetHistoryTime(time.Now()).
+		SetRef(id)
+
+	if createdAt, exists := m.CreatedAt(); exists {
+		create = create.SetCreatedAt(createdAt)
+	}
+
+	if updatedAt, exists := m.UpdatedAt(); exists {
+		create = create.SetUpdatedAt(updatedAt)
+	}
+
+	if createdBy, exists := m.CreatedBy(); exists {
+		create = create.SetCreatedBy(createdBy)
+	}
+
+	if updatedBy, exists := m.UpdatedBy(); exists {
+		create = create.SetUpdatedBy(updatedBy)
+	}
+
+	if deletedAt, exists := m.DeletedAt(); exists {
+		create = create.SetDeletedAt(deletedAt)
+	}
+
+	if deletedBy, exists := m.DeletedBy(); exists {
+		create = create.SetDeletedBy(deletedBy)
+	}
+
+	if name, exists := m.Name(); exists {
+		create = create.SetName(name)
+	}
+
+	if description, exists := m.Description(); exists {
+		create = create.SetDescription(description)
+	}
+
+	if kind, exists := m.Kind(); exists {
+		create = create.SetKind(kind)
+	}
+
+	if secretName, exists := m.SecretName(); exists {
+		create = create.SetSecretName(secretName)
+	}
+
+	if secretValue, exists := m.SecretValue(); exists {
+		create = create.SetSecretValue(secretValue)
+	}
+
+	_, err := create.Save(ctx)
+
+	return err
+}
+
+func (m *HushMutation) CreateHistoryFromUpdate(ctx context.Context) error {
+	// check for soft delete operation and delete instead
+	if entx.CheckIsSoftDelete(ctx) {
+		return m.CreateHistoryFromDelete(ctx)
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		hush, err := client.Hush.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.HushHistory.Create()
+
+		create = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id)
+
+		if createdAt, exists := m.CreatedAt(); exists {
+			create = create.SetCreatedAt(createdAt)
+		} else {
+			create = create.SetCreatedAt(hush.CreatedAt)
+		}
+
+		if updatedAt, exists := m.UpdatedAt(); exists {
+			create = create.SetUpdatedAt(updatedAt)
+		} else {
+			create = create.SetUpdatedAt(hush.UpdatedAt)
+		}
+
+		if createdBy, exists := m.CreatedBy(); exists {
+			create = create.SetCreatedBy(createdBy)
+		} else {
+			create = create.SetCreatedBy(hush.CreatedBy)
+		}
+
+		if updatedBy, exists := m.UpdatedBy(); exists {
+			create = create.SetUpdatedBy(updatedBy)
+		} else {
+			create = create.SetUpdatedBy(hush.UpdatedBy)
+		}
+
+		if deletedAt, exists := m.DeletedAt(); exists {
+			create = create.SetDeletedAt(deletedAt)
+		} else {
+			create = create.SetDeletedAt(hush.DeletedAt)
+		}
+
+		if deletedBy, exists := m.DeletedBy(); exists {
+			create = create.SetDeletedBy(deletedBy)
+		} else {
+			create = create.SetDeletedBy(hush.DeletedBy)
+		}
+
+		if name, exists := m.Name(); exists {
+			create = create.SetName(name)
+		} else {
+			create = create.SetName(hush.Name)
+		}
+
+		if description, exists := m.Description(); exists {
+			create = create.SetDescription(description)
+		} else {
+			create = create.SetDescription(hush.Description)
+		}
+
+		if kind, exists := m.Kind(); exists {
+			create = create.SetKind(kind)
+		} else {
+			create = create.SetKind(hush.Kind)
+		}
+
+		if secretName, exists := m.SecretName(); exists {
+			create = create.SetSecretName(secretName)
+		} else {
+			create = create.SetSecretName(hush.SecretName)
+		}
+
+		if secretValue, exists := m.SecretValue(); exists {
+			create = create.SetSecretValue(secretValue)
+		} else {
+			create = create.SetSecretValue(hush.SecretValue)
+		}
+
+		if _, err := create.Save(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *HushMutation) CreateHistoryFromDelete(ctx context.Context) error {
+	// check for soft delete operation and skip so it happens on update
+	if entx.CheckIsSoftDelete(ctx) {
+		return nil
+	}
+	client := m.Client()
+
+	ids, err := m.IDs(ctx)
+	if err != nil {
+		return fmt.Errorf("getting ids: %w", err)
+	}
+
+	for _, id := range ids {
+		hush, err := client.Hush.Get(ctx, id)
+		if err != nil {
+			return err
+		}
+
+		create := client.HushHistory.Create()
+
+		_, err = create.
+			SetOperation(EntOpToHistoryOp(m.Op())).
+			SetHistoryTime(time.Now()).
+			SetRef(id).
+			SetCreatedAt(hush.CreatedAt).
+			SetUpdatedAt(hush.UpdatedAt).
+			SetCreatedBy(hush.CreatedBy).
+			SetUpdatedBy(hush.UpdatedBy).
+			SetDeletedAt(hush.DeletedAt).
+			SetDeletedBy(hush.DeletedBy).
+			SetName(hush.Name).
+			SetDescription(hush.Description).
+			SetKind(hush.Kind).
+			SetSecretName(hush.SecretName).
+			SetSecretValue(hush.SecretValue).
+			Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error {
 	client := m.Client()
 
@@ -1107,10 +1314,6 @@ func (m *IntegrationMutation) CreateHistoryFromCreate(ctx context.Context) error
 
 	if kind, exists := m.Kind(); exists {
 		create = create.SetKind(kind)
-	}
-
-	if secretName, exists := m.SecretName(); exists {
-		create = create.SetSecretName(secretName)
 	}
 
 	_, err := create.Save(ctx)
@@ -1203,12 +1406,6 @@ func (m *IntegrationMutation) CreateHistoryFromUpdate(ctx context.Context) error
 			create = create.SetKind(integration.Kind)
 		}
 
-		if secretName, exists := m.SecretName(); exists {
-			create = create.SetSecretName(secretName)
-		} else {
-			create = create.SetSecretName(integration.SecretName)
-		}
-
 		if _, err := create.Save(ctx); err != nil {
 			return err
 		}
@@ -1251,7 +1448,6 @@ func (m *IntegrationMutation) CreateHistoryFromDelete(ctx context.Context) error
 			SetName(integration.Name).
 			SetDescription(integration.Description).
 			SetKind(integration.Kind).
-			SetSecretName(integration.SecretName).
 			Save(ctx)
 		if err != nil {
 			return err

@@ -6,6 +6,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	emixin "github.com/datumforge/entx/mixin"
@@ -42,15 +43,15 @@ func (Integration) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("kind"),
 			),
-		field.String("secret_name").
-			Optional().
-			Immutable(),
 	}
 }
 
 // Edges of the Integration
 func (Integration) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("secrets", Hush.Type).
+			Comment("the secrets associated with the integration"),
+	}
 }
 
 // Annotations of the Integration

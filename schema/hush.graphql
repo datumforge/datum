@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up hush by ID
+    """
+     hush(
+        """
+        ID of the hush
+        """
+        id: ID!
+    ):  Hush!
+}
+
+extend type Mutation{
+    """
+    Create a new hush
+    """
+    createHush(
+        """
+        values of the hush
+        """
+        input: CreateHushInput!
+    ): HushCreatePayload!
+    """
+    Update an existing hush
+    """
+    updateHush(
+        """
+        ID of the hush
+        """
+        id: ID!
+        """
+        New values for the hush
+        """
+        input: UpdateHushInput!
+    ): HushUpdatePayload!
+    """
+    Delete an existing hush
+    """
+    deleteHush(
+        """
+        ID of the hush
+        """
+        id: ID!
+    ): HushDeletePayload!
+}
+
+"""
+Return response for createHush mutation
+"""
+type HushCreatePayload {
+    """
+    Created hush
+    """
+    hush: Hush!
+}
+
+"""
+Return response for updateHush mutation
+"""
+type HushUpdatePayload {
+    """
+    Updated hush
+    """
+    hush: Hush!
+}
+
+"""
+Return response for deleteHush mutation
+"""
+type HushDeletePayload {
+    """
+    Deleted hush ID
+    """
+    deletedID: ID!
+}

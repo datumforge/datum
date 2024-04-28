@@ -17,6 +17,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -439,6 +441,59 @@ func init() {
 	groupsettinghistoryDescID := groupsettinghistoryFields[7].Descriptor()
 	// groupsettinghistory.DefaultID holds the default value on creation for the id field.
 	groupsettinghistory.DefaultID = groupsettinghistoryDescID.Default.(func() string)
+	hushMixin := schema.Hush{}.Mixin()
+	hushMixinHooks0 := hushMixin[0].Hooks()
+	hushMixinHooks2 := hushMixin[2].Hooks()
+	hushHooks := schema.Hush{}.Hooks()
+	hush.Hooks[0] = hushMixinHooks0[0]
+	hush.Hooks[1] = hushMixinHooks2[0]
+	hush.Hooks[2] = hushHooks[0]
+	hushMixinInters2 := hushMixin[2].Interceptors()
+	hushInters := schema.Hush{}.Interceptors()
+	hush.Interceptors[0] = hushMixinInters2[0]
+	hush.Interceptors[1] = hushInters[0]
+	hushMixinFields0 := hushMixin[0].Fields()
+	_ = hushMixinFields0
+	hushMixinFields1 := hushMixin[1].Fields()
+	_ = hushMixinFields1
+	hushFields := schema.Hush{}.Fields()
+	_ = hushFields
+	// hushDescCreatedAt is the schema descriptor for created_at field.
+	hushDescCreatedAt := hushMixinFields0[0].Descriptor()
+	// hush.DefaultCreatedAt holds the default value on creation for the created_at field.
+	hush.DefaultCreatedAt = hushDescCreatedAt.Default.(func() time.Time)
+	// hushDescUpdatedAt is the schema descriptor for updated_at field.
+	hushDescUpdatedAt := hushMixinFields0[1].Descriptor()
+	// hush.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	hush.DefaultUpdatedAt = hushDescUpdatedAt.Default.(func() time.Time)
+	// hush.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	hush.UpdateDefaultUpdatedAt = hushDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// hushDescName is the schema descriptor for name field.
+	hushDescName := hushFields[0].Descriptor()
+	// hush.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	hush.NameValidator = hushDescName.Validators[0].(func(string) error)
+	// hushDescID is the schema descriptor for id field.
+	hushDescID := hushMixinFields1[0].Descriptor()
+	// hush.DefaultID holds the default value on creation for the id field.
+	hush.DefaultID = hushDescID.Default.(func() string)
+	hushhistoryFields := schema.HushHistory{}.Fields()
+	_ = hushhistoryFields
+	// hushhistoryDescHistoryTime is the schema descriptor for history_time field.
+	hushhistoryDescHistoryTime := hushhistoryFields[0].Descriptor()
+	// hushhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	hushhistory.DefaultHistoryTime = hushhistoryDescHistoryTime.Default.(func() time.Time)
+	// hushhistoryDescCreatedAt is the schema descriptor for created_at field.
+	hushhistoryDescCreatedAt := hushhistoryFields[3].Descriptor()
+	// hushhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	hushhistory.DefaultCreatedAt = hushhistoryDescCreatedAt.Default.(func() time.Time)
+	// hushhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	hushhistoryDescUpdatedAt := hushhistoryFields[4].Descriptor()
+	// hushhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	hushhistory.DefaultUpdatedAt = hushhistoryDescUpdatedAt.Default.(func() time.Time)
+	// hushhistoryDescID is the schema descriptor for id field.
+	hushhistoryDescID := hushhistoryFields[7].Descriptor()
+	// hushhistory.DefaultID holds the default value on creation for the id field.
+	hushhistory.DefaultID = hushhistoryDescID.Default.(func() string)
 	integrationMixin := schema.Integration{}.Mixin()
 	integration.Policy = privacy.NewPolicies(schema.Integration{})
 	integration.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -39,6 +39,12 @@ type GroupSetting func(*sql.Selector)
 // GroupSettingHistory is the predicate function for groupsettinghistory builders.
 type GroupSettingHistory func(*sql.Selector)
 
+// Hush is the predicate function for hush builders.
+type Hush func(*sql.Selector)
+
+// HushHistory is the predicate function for hushhistory builders.
+type HushHistory func(*sql.Selector)
+
 // Integration is the predicate function for integration builders.
 type Integration func(*sql.Selector)
 

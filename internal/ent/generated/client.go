@@ -29,6 +29,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupmembershiphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/hush"
+	"github.com/datumforge/datum/internal/ent/generated/hushhistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
@@ -91,6 +93,10 @@ type Client struct {
 	GroupSetting *GroupSettingClient
 	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
 	GroupSettingHistory *GroupSettingHistoryClient
+	// Hush is the client for interacting with the Hush builders.
+	Hush *HushClient
+	// HushHistory is the client for interacting with the HushHistory builders.
+	HushHistory *HushHistoryClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
 	// IntegrationHistory is the client for interacting with the IntegrationHistory builders.
@@ -164,6 +170,8 @@ func (c *Client) init() {
 	c.GroupMembershipHistory = NewGroupMembershipHistoryClient(c.config)
 	c.GroupSetting = NewGroupSettingClient(c.config)
 	c.GroupSettingHistory = NewGroupSettingHistoryClient(c.config)
+	c.Hush = NewHushClient(c.config)
+	c.HushHistory = NewHushHistoryClient(c.config)
 	c.Integration = NewIntegrationClient(c.config)
 	c.IntegrationHistory = NewIntegrationHistoryClient(c.config)
 	c.Invite = NewInviteClient(c.config)
@@ -217,16 +225,16 @@ type (
 		// hooks to execute on mutations.
 		hooks *hooks
 		// interceptors to execute on queries.
-		inters        *inters
-		SecretsKeeper *secrets.Keeper
-		Authz         fgax.Client
-		Logger        zap.SugaredLogger
-		HTTPClient    *http.Client
-		Emails        *emails.EmailManager
-		Marionette    *marionette.TaskManager
-		Analytics     *analytics.EventManager
-		TOTP          *totp.Manager
-		Geodetic      *geodeticclient.Client
+		inters     *inters
+		Secrets    *secrets.Keeper
+		Authz      fgax.Client
+		Logger     zap.SugaredLogger
+		HTTPClient *http.Client
+		Emails     *emails.EmailManager
+		Marionette *marionette.TaskManager
+		Analytics  *analytics.EventManager
+		TOTP       *totp.Manager
+		Geodetic   *geodeticclient.Client
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -272,10 +280,10 @@ func Driver(driver dialect.Driver) Option {
 	}
 }
 
-// SecretsKeeper configures the SecretsKeeper.
-func SecretsKeeper(v *secrets.Keeper) Option {
+// Secrets configures the Secrets.
+func Secrets(v *secrets.Keeper) Option {
 	return func(c *config) {
-		c.SecretsKeeper = v
+		c.Secrets = v
 	}
 }
 
@@ -380,6 +388,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		GroupMembershipHistory:     NewGroupMembershipHistoryClient(cfg),
 		GroupSetting:               NewGroupSettingClient(cfg),
 		GroupSettingHistory:        NewGroupSettingHistoryClient(cfg),
+		Hush:                       NewHushClient(cfg),
+		HushHistory:                NewHushHistoryClient(cfg),
 		Integration:                NewIntegrationClient(cfg),
 		IntegrationHistory:         NewIntegrationHistoryClient(cfg),
 		Invite:                     NewInviteClient(cfg),
@@ -433,6 +443,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		GroupMembershipHistory:     NewGroupMembershipHistoryClient(cfg),
 		GroupSetting:               NewGroupSettingClient(cfg),
 		GroupSettingHistory:        NewGroupSettingHistoryClient(cfg),
+		Hush:                       NewHushClient(cfg),
+		HushHistory:                NewHushHistoryClient(cfg),
 		Integration:                NewIntegrationClient(cfg),
 		IntegrationHistory:         NewIntegrationHistoryClient(cfg),
 		Invite:                     NewInviteClient(cfg),
@@ -487,13 +499,14 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken, c.Entitlement,
 		c.EntitlementHistory, c.Group, c.GroupHistory, c.GroupMembership,
-		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Integration,
-		c.IntegrationHistory, c.Invite, c.OauthProvider, c.OauthProviderHistory,
-		c.OhAuthTooToken, c.OrgMembership, c.OrgMembershipHistory, c.Organization,
-		c.OrganizationHistory, c.OrganizationSetting, c.OrganizationSettingHistory,
-		c.PasswordResetToken, c.PersonalAccessToken, c.Subscriber, c.TFASetting,
-		c.Template, c.TemplateHistory, c.User, c.UserHistory, c.UserSetting,
-		c.UserSettingHistory, c.Webauthn,
+		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
+		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.OauthProvider,
+		c.OauthProviderHistory, c.OhAuthTooToken, c.OrgMembership,
+		c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
+		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
+		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template,
+		c.TemplateHistory, c.User, c.UserHistory, c.UserSetting, c.UserSettingHistory,
+		c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -505,13 +518,14 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken, c.Entitlement,
 		c.EntitlementHistory, c.Group, c.GroupHistory, c.GroupMembership,
-		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Integration,
-		c.IntegrationHistory, c.Invite, c.OauthProvider, c.OauthProviderHistory,
-		c.OhAuthTooToken, c.OrgMembership, c.OrgMembershipHistory, c.Organization,
-		c.OrganizationHistory, c.OrganizationSetting, c.OrganizationSettingHistory,
-		c.PasswordResetToken, c.PersonalAccessToken, c.Subscriber, c.TFASetting,
-		c.Template, c.TemplateHistory, c.User, c.UserHistory, c.UserSetting,
-		c.UserSettingHistory, c.Webauthn,
+		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
+		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.OauthProvider,
+		c.OauthProviderHistory, c.OhAuthTooToken, c.OrgMembership,
+		c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
+		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
+		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template,
+		c.TemplateHistory, c.User, c.UserHistory, c.UserSetting, c.UserSettingHistory,
+		c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -542,6 +556,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.GroupSetting.mutate(ctx, m)
 	case *GroupSettingHistoryMutation:
 		return c.GroupSettingHistory.mutate(ctx, m)
+	case *HushMutation:
+		return c.Hush.mutate(ctx, m)
+	case *HushHistoryMutation:
+		return c.HushHistory.mutate(ctx, m)
 	case *IntegrationMutation:
 		return c.Integration.mutate(ctx, m)
 	case *IntegrationHistoryMutation:
@@ -2258,6 +2276,293 @@ func (c *GroupSettingHistoryClient) mutate(ctx context.Context, m *GroupSettingH
 	}
 }
 
+// HushClient is a client for the Hush schema.
+type HushClient struct {
+	config
+}
+
+// NewHushClient returns a client for the Hush from the given config.
+func NewHushClient(c config) *HushClient {
+	return &HushClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `hush.Hooks(f(g(h())))`.
+func (c *HushClient) Use(hooks ...Hook) {
+	c.hooks.Hush = append(c.hooks.Hush, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `hush.Intercept(f(g(h())))`.
+func (c *HushClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Hush = append(c.inters.Hush, interceptors...)
+}
+
+// Create returns a builder for creating a Hush entity.
+func (c *HushClient) Create() *HushCreate {
+	mutation := newHushMutation(c.config, OpCreate)
+	return &HushCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Hush entities.
+func (c *HushClient) CreateBulk(builders ...*HushCreate) *HushCreateBulk {
+	return &HushCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *HushClient) MapCreateBulk(slice any, setFunc func(*HushCreate, int)) *HushCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &HushCreateBulk{err: fmt.Errorf("calling to HushClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*HushCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &HushCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Hush.
+func (c *HushClient) Update() *HushUpdate {
+	mutation := newHushMutation(c.config, OpUpdate)
+	return &HushUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *HushClient) UpdateOne(h *Hush) *HushUpdateOne {
+	mutation := newHushMutation(c.config, OpUpdateOne, withHush(h))
+	return &HushUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *HushClient) UpdateOneID(id string) *HushUpdateOne {
+	mutation := newHushMutation(c.config, OpUpdateOne, withHushID(id))
+	return &HushUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Hush.
+func (c *HushClient) Delete() *HushDelete {
+	mutation := newHushMutation(c.config, OpDelete)
+	return &HushDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *HushClient) DeleteOne(h *Hush) *HushDeleteOne {
+	return c.DeleteOneID(h.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *HushClient) DeleteOneID(id string) *HushDeleteOne {
+	builder := c.Delete().Where(hush.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &HushDeleteOne{builder}
+}
+
+// Query returns a query builder for Hush.
+func (c *HushClient) Query() *HushQuery {
+	return &HushQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeHush},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Hush entity by its id.
+func (c *HushClient) Get(ctx context.Context, id string) (*Hush, error) {
+	return c.Query().Where(hush.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *HushClient) GetX(ctx context.Context, id string) *Hush {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryIntegrations queries the integrations edge of a Hush.
+func (c *HushClient) QueryIntegrations(h *Hush) *IntegrationQuery {
+	query := (&IntegrationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := h.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(hush.Table, hush.FieldID, id),
+			sqlgraph.To(integration.Table, integration.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, hush.IntegrationsTable, hush.IntegrationsPrimaryKey...),
+		)
+		schemaConfig := h.schemaConfig
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.IntegrationSecrets
+		fromV = sqlgraph.Neighbors(h.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *HushClient) Hooks() []Hook {
+	hooks := c.hooks.Hush
+	return append(hooks[:len(hooks):len(hooks)], hush.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *HushClient) Interceptors() []Interceptor {
+	inters := c.inters.Hush
+	return append(inters[:len(inters):len(inters)], hush.Interceptors[:]...)
+}
+
+func (c *HushClient) mutate(ctx context.Context, m *HushMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&HushCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&HushUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&HushUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&HushDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown Hush mutation op: %q", m.Op())
+	}
+}
+
+// HushHistoryClient is a client for the HushHistory schema.
+type HushHistoryClient struct {
+	config
+}
+
+// NewHushHistoryClient returns a client for the HushHistory from the given config.
+func NewHushHistoryClient(c config) *HushHistoryClient {
+	return &HushHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `hushhistory.Hooks(f(g(h())))`.
+func (c *HushHistoryClient) Use(hooks ...Hook) {
+	c.hooks.HushHistory = append(c.hooks.HushHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `hushhistory.Intercept(f(g(h())))`.
+func (c *HushHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.HushHistory = append(c.inters.HushHistory, interceptors...)
+}
+
+// Create returns a builder for creating a HushHistory entity.
+func (c *HushHistoryClient) Create() *HushHistoryCreate {
+	mutation := newHushHistoryMutation(c.config, OpCreate)
+	return &HushHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of HushHistory entities.
+func (c *HushHistoryClient) CreateBulk(builders ...*HushHistoryCreate) *HushHistoryCreateBulk {
+	return &HushHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *HushHistoryClient) MapCreateBulk(slice any, setFunc func(*HushHistoryCreate, int)) *HushHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &HushHistoryCreateBulk{err: fmt.Errorf("calling to HushHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*HushHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &HushHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for HushHistory.
+func (c *HushHistoryClient) Update() *HushHistoryUpdate {
+	mutation := newHushHistoryMutation(c.config, OpUpdate)
+	return &HushHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *HushHistoryClient) UpdateOne(hh *HushHistory) *HushHistoryUpdateOne {
+	mutation := newHushHistoryMutation(c.config, OpUpdateOne, withHushHistory(hh))
+	return &HushHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *HushHistoryClient) UpdateOneID(id string) *HushHistoryUpdateOne {
+	mutation := newHushHistoryMutation(c.config, OpUpdateOne, withHushHistoryID(id))
+	return &HushHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for HushHistory.
+func (c *HushHistoryClient) Delete() *HushHistoryDelete {
+	mutation := newHushHistoryMutation(c.config, OpDelete)
+	return &HushHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *HushHistoryClient) DeleteOne(hh *HushHistory) *HushHistoryDeleteOne {
+	return c.DeleteOneID(hh.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *HushHistoryClient) DeleteOneID(id string) *HushHistoryDeleteOne {
+	builder := c.Delete().Where(hushhistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &HushHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for HushHistory.
+func (c *HushHistoryClient) Query() *HushHistoryQuery {
+	return &HushHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeHushHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a HushHistory entity by its id.
+func (c *HushHistoryClient) Get(ctx context.Context, id string) (*HushHistory, error) {
+	return c.Query().Where(hushhistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *HushHistoryClient) GetX(ctx context.Context, id string) *HushHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *HushHistoryClient) Hooks() []Hook {
+	return c.hooks.HushHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *HushHistoryClient) Interceptors() []Interceptor {
+	return c.inters.HushHistory
+}
+
+func (c *HushHistoryClient) mutate(ctx context.Context, m *HushHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&HushHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&HushHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&HushHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&HushHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown HushHistory mutation op: %q", m.Op())
+	}
+}
+
 // IntegrationClient is a client for the Integration schema.
 type IntegrationClient struct {
 	config
@@ -2379,6 +2684,25 @@ func (c *IntegrationClient) QueryOwner(i *Integration) *OrganizationQuery {
 		schemaConfig := i.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Integration
+		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySecrets queries the secrets edge of a Integration.
+func (c *IntegrationClient) QuerySecrets(i *Integration) *HushQuery {
+	query := (&HushClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := i.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(integration.Table, integration.FieldID, id),
+			sqlgraph.To(hush.Table, hush.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, integration.SecretsTable, integration.SecretsPrimaryKey...),
+		)
+		schemaConfig := i.schemaConfig
+		step.To.Schema = schemaConfig.Hush
+		step.Edge.Schema = schemaConfig.IntegrationSecrets
 		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -6090,8 +6414,8 @@ type (
 	hooks struct {
 		DocumentData, DocumentDataHistory, EmailVerificationToken, Entitlement,
 		EntitlementHistory, Group, GroupHistory, GroupMembership,
-		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Integration,
-		IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
+		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Hush, HushHistory,
+		Integration, IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
 		OhAuthTooToken, OrgMembership, OrgMembershipHistory, Organization,
 		OrganizationHistory, OrganizationSetting, OrganizationSettingHistory,
 		PasswordResetToken, PersonalAccessToken, Subscriber, TFASetting, Template,
@@ -6101,8 +6425,8 @@ type (
 	inters struct {
 		DocumentData, DocumentDataHistory, EmailVerificationToken, Entitlement,
 		EntitlementHistory, Group, GroupHistory, GroupMembership,
-		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Integration,
-		IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
+		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Hush, HushHistory,
+		Integration, IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
 		OhAuthTooToken, OrgMembership, OrgMembershipHistory, Organization,
 		OrganizationHistory, OrganizationSetting, OrganizationSettingHistory,
 		PasswordResetToken, PersonalAccessToken, Subscriber, TFASetting, Template,

@@ -111,6 +111,30 @@ func DenyMutationOperationRule(op generated.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The APITokenQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type APITokenQueryRuleFunc func(context.Context, *generated.APITokenQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f APITokenQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.APITokenQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.APITokenQuery", q)
+}
+
+// The APITokenMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type APITokenMutationRuleFunc func(context.Context, *generated.APITokenMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f APITokenMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.APITokenMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.APITokenMutation", m)
+}
+
 // The DocumentDataQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type DocumentDataQueryRuleFunc func(context.Context, *generated.DocumentDataQuery) error
@@ -1010,6 +1034,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q generated.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *generated.APITokenQuery:
+		return q.Filter(), nil
 	case *generated.DocumentDataQuery:
 		return q.Filter(), nil
 	case *generated.DocumentDataHistoryQuery:
@@ -1089,6 +1115,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 
 func mutationFilter(m generated.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *generated.APITokenMutation:
+		return m.Filter(), nil
 	case *generated.DocumentDataMutation:
 		return m.Filter(), nil
 	case *generated.DocumentDataHistoryMutation:

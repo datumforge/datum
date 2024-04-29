@@ -8,6 +8,14 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+func (at *APIToken) Owner(ctx context.Context) (*Organization, error) {
+	result, err := at.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = at.QueryOwner().Only(ctx)
+	}
+	return result, err
+}
+
 func (dd *DocumentData) Template(ctx context.Context) (*Template, error) {
 	result, err := dd.Edges.TemplateOrErr()
 	if IsNotLoaded(err) {
@@ -245,6 +253,18 @@ func (o *Organization) PersonalAccessTokens(ctx context.Context) (result []*Pers
 	}
 	if IsNotLoaded(err) {
 		result, err = o.QueryPersonalAccessTokens().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) APITokens(ctx context.Context) (result []*APIToken, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedAPITokens(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.APITokensOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryAPITokens().All(ctx)
 	}
 	return result, err
 }

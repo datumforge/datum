@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
@@ -128,6 +129,255 @@ func paginateLimit(first, last *int) int {
 		limit = *last + 1
 	}
 	return limit
+}
+
+// APITokenEdge is the edge representation of APIToken.
+type APITokenEdge struct {
+	Node   *APIToken `json:"node"`
+	Cursor Cursor    `json:"cursor"`
+}
+
+// APITokenConnection is the connection containing edges to APIToken.
+type APITokenConnection struct {
+	Edges      []*APITokenEdge `json:"edges"`
+	PageInfo   PageInfo        `json:"pageInfo"`
+	TotalCount int             `json:"totalCount"`
+}
+
+func (c *APITokenConnection) build(nodes []*APIToken, pager *apitokenPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *APIToken
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *APIToken {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *APIToken {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*APITokenEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &APITokenEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// APITokenPaginateOption enables pagination customization.
+type APITokenPaginateOption func(*apitokenPager) error
+
+// WithAPITokenOrder configures pagination ordering.
+func WithAPITokenOrder(order *APITokenOrder) APITokenPaginateOption {
+	if order == nil {
+		order = DefaultAPITokenOrder
+	}
+	o := *order
+	return func(pager *apitokenPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultAPITokenOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithAPITokenFilter configures pagination filter.
+func WithAPITokenFilter(filter func(*APITokenQuery) (*APITokenQuery, error)) APITokenPaginateOption {
+	return func(pager *apitokenPager) error {
+		if filter == nil {
+			return errors.New("APITokenQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type apitokenPager struct {
+	reverse bool
+	order   *APITokenOrder
+	filter  func(*APITokenQuery) (*APITokenQuery, error)
+}
+
+func newAPITokenPager(opts []APITokenPaginateOption, reverse bool) (*apitokenPager, error) {
+	pager := &apitokenPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultAPITokenOrder
+	}
+	return pager, nil
+}
+
+func (p *apitokenPager) applyFilter(query *APITokenQuery) (*APITokenQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *apitokenPager) toCursor(at *APIToken) Cursor {
+	return p.order.Field.toCursor(at)
+}
+
+func (p *apitokenPager) applyCursors(query *APITokenQuery, after, before *Cursor) (*APITokenQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultAPITokenOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *apitokenPager) applyOrder(query *APITokenQuery) *APITokenQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultAPITokenOrder.Field {
+		query = query.Order(DefaultAPITokenOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *apitokenPager) orderExpr(query *APITokenQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultAPITokenOrder.Field {
+			b.Comma().Ident(DefaultAPITokenOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to APIToken.
+func (at *APITokenQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...APITokenPaginateOption,
+) (*APITokenConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newAPITokenPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if at, err = pager.applyFilter(at); err != nil {
+		return nil, err
+	}
+	conn := &APITokenConnection{Edges: []*APITokenEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := at.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if at, err = pager.applyCursors(at, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		at.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := at.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	at = pager.applyOrder(at)
+	nodes, err := at.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// APITokenOrderField defines the ordering field of APIToken.
+type APITokenOrderField struct {
+	// Value extracts the ordering value from the given APIToken.
+	Value    func(*APIToken) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) apitoken.OrderOption
+	toCursor func(*APIToken) Cursor
+}
+
+// APITokenOrder defines the ordering of APIToken.
+type APITokenOrder struct {
+	Direction OrderDirection      `json:"direction"`
+	Field     *APITokenOrderField `json:"field"`
+}
+
+// DefaultAPITokenOrder is the default ordering of APIToken.
+var DefaultAPITokenOrder = &APITokenOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &APITokenOrderField{
+		Value: func(at *APIToken) (ent.Value, error) {
+			return at.ID, nil
+		},
+		column: apitoken.FieldID,
+		toTerm: apitoken.ByID,
+		toCursor: func(at *APIToken) Cursor {
+			return Cursor{ID: at.ID}
+		},
+	},
+}
+
+// ToEdge converts APIToken into APITokenEdge.
+func (at *APIToken) ToEdge(order *APITokenOrder) *APITokenEdge {
+	if order == nil {
+		order = DefaultAPITokenOrder
+	}
+	return &APITokenEdge{
+		Node:   at,
+		Cursor: order.Field.toCursor(at),
+	}
 }
 
 // DocumentDataEdge is the edge representation of DocumentData.

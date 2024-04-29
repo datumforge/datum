@@ -18,6 +18,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -71,6 +72,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// APIToken is the client for interacting with the APIToken builders.
+	APIToken *APITokenClient
 	// DocumentData is the client for interacting with the DocumentData builders.
 	DocumentData *DocumentDataClient
 	// DocumentDataHistory is the client for interacting with the DocumentDataHistory builders.
@@ -159,6 +162,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.APIToken = NewAPITokenClient(c.config)
 	c.DocumentData = NewDocumentDataClient(c.config)
 	c.DocumentDataHistory = NewDocumentDataHistoryClient(c.config)
 	c.EmailVerificationToken = NewEmailVerificationTokenClient(c.config)
@@ -377,6 +381,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                        ctx,
 		config:                     cfg,
+		APIToken:                   NewAPITokenClient(cfg),
 		DocumentData:               NewDocumentDataClient(cfg),
 		DocumentDataHistory:        NewDocumentDataHistoryClient(cfg),
 		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
@@ -432,6 +437,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                        ctx,
 		config:                     cfg,
+		APIToken:                   NewAPITokenClient(cfg),
 		DocumentData:               NewDocumentDataClient(cfg),
 		DocumentDataHistory:        NewDocumentDataHistoryClient(cfg),
 		EmailVerificationToken:     NewEmailVerificationTokenClient(cfg),
@@ -474,7 +480,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		DocumentData.
+//		APIToken.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -497,16 +503,16 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken, c.Entitlement,
-		c.EntitlementHistory, c.Group, c.GroupHistory, c.GroupMembership,
-		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
-		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.OauthProvider,
-		c.OauthProviderHistory, c.OhAuthTooToken, c.OrgMembership,
-		c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
-		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template,
-		c.TemplateHistory, c.User, c.UserHistory, c.UserSetting, c.UserSettingHistory,
-		c.Webauthn,
+		c.APIToken, c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken,
+		c.Entitlement, c.EntitlementHistory, c.Group, c.GroupHistory,
+		c.GroupMembership, c.GroupMembershipHistory, c.GroupSetting,
+		c.GroupSettingHistory, c.Hush, c.HushHistory, c.Integration,
+		c.IntegrationHistory, c.Invite, c.OauthProvider, c.OauthProviderHistory,
+		c.OhAuthTooToken, c.OrgMembership, c.OrgMembershipHistory, c.Organization,
+		c.OrganizationHistory, c.OrganizationSetting, c.OrganizationSettingHistory,
+		c.PasswordResetToken, c.PersonalAccessToken, c.Subscriber, c.TFASetting,
+		c.Template, c.TemplateHistory, c.User, c.UserHistory, c.UserSetting,
+		c.UserSettingHistory, c.Webauthn,
 	} {
 		n.Use(hooks...)
 	}
@@ -516,16 +522,16 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken, c.Entitlement,
-		c.EntitlementHistory, c.Group, c.GroupHistory, c.GroupMembership,
-		c.GroupMembershipHistory, c.GroupSetting, c.GroupSettingHistory, c.Hush,
-		c.HushHistory, c.Integration, c.IntegrationHistory, c.Invite, c.OauthProvider,
-		c.OauthProviderHistory, c.OhAuthTooToken, c.OrgMembership,
-		c.OrgMembershipHistory, c.Organization, c.OrganizationHistory,
-		c.OrganizationSetting, c.OrganizationSettingHistory, c.PasswordResetToken,
-		c.PersonalAccessToken, c.Subscriber, c.TFASetting, c.Template,
-		c.TemplateHistory, c.User, c.UserHistory, c.UserSetting, c.UserSettingHistory,
-		c.Webauthn,
+		c.APIToken, c.DocumentData, c.DocumentDataHistory, c.EmailVerificationToken,
+		c.Entitlement, c.EntitlementHistory, c.Group, c.GroupHistory,
+		c.GroupMembership, c.GroupMembershipHistory, c.GroupSetting,
+		c.GroupSettingHistory, c.Hush, c.HushHistory, c.Integration,
+		c.IntegrationHistory, c.Invite, c.OauthProvider, c.OauthProviderHistory,
+		c.OhAuthTooToken, c.OrgMembership, c.OrgMembershipHistory, c.Organization,
+		c.OrganizationHistory, c.OrganizationSetting, c.OrganizationSettingHistory,
+		c.PasswordResetToken, c.PersonalAccessToken, c.Subscriber, c.TFASetting,
+		c.Template, c.TemplateHistory, c.User, c.UserHistory, c.UserSetting,
+		c.UserSettingHistory, c.Webauthn,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -534,6 +540,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *APITokenMutation:
+		return c.APIToken.mutate(ctx, m)
 	case *DocumentDataMutation:
 		return c.DocumentData.mutate(ctx, m)
 	case *DocumentDataHistoryMutation:
@@ -608,6 +616,160 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Webauthn.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("generated: unknown mutation type %T", m)
+	}
+}
+
+// APITokenClient is a client for the APIToken schema.
+type APITokenClient struct {
+	config
+}
+
+// NewAPITokenClient returns a client for the APIToken from the given config.
+func NewAPITokenClient(c config) *APITokenClient {
+	return &APITokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `apitoken.Hooks(f(g(h())))`.
+func (c *APITokenClient) Use(hooks ...Hook) {
+	c.hooks.APIToken = append(c.hooks.APIToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `apitoken.Intercept(f(g(h())))`.
+func (c *APITokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.APIToken = append(c.inters.APIToken, interceptors...)
+}
+
+// Create returns a builder for creating a APIToken entity.
+func (c *APITokenClient) Create() *APITokenCreate {
+	mutation := newAPITokenMutation(c.config, OpCreate)
+	return &APITokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of APIToken entities.
+func (c *APITokenClient) CreateBulk(builders ...*APITokenCreate) *APITokenCreateBulk {
+	return &APITokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *APITokenClient) MapCreateBulk(slice any, setFunc func(*APITokenCreate, int)) *APITokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &APITokenCreateBulk{err: fmt.Errorf("calling to APITokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*APITokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &APITokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for APIToken.
+func (c *APITokenClient) Update() *APITokenUpdate {
+	mutation := newAPITokenMutation(c.config, OpUpdate)
+	return &APITokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *APITokenClient) UpdateOne(at *APIToken) *APITokenUpdateOne {
+	mutation := newAPITokenMutation(c.config, OpUpdateOne, withAPIToken(at))
+	return &APITokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *APITokenClient) UpdateOneID(id string) *APITokenUpdateOne {
+	mutation := newAPITokenMutation(c.config, OpUpdateOne, withAPITokenID(id))
+	return &APITokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for APIToken.
+func (c *APITokenClient) Delete() *APITokenDelete {
+	mutation := newAPITokenMutation(c.config, OpDelete)
+	return &APITokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *APITokenClient) DeleteOne(at *APIToken) *APITokenDeleteOne {
+	return c.DeleteOneID(at.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *APITokenClient) DeleteOneID(id string) *APITokenDeleteOne {
+	builder := c.Delete().Where(apitoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &APITokenDeleteOne{builder}
+}
+
+// Query returns a query builder for APIToken.
+func (c *APITokenClient) Query() *APITokenQuery {
+	return &APITokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAPIToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a APIToken entity by its id.
+func (c *APITokenClient) Get(ctx context.Context, id string) (*APIToken, error) {
+	return c.Query().Where(apitoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *APITokenClient) GetX(ctx context.Context, id string) *APIToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a APIToken.
+func (c *APITokenClient) QueryOwner(at *APIToken) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := at.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(apitoken.Table, apitoken.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, apitoken.OwnerTable, apitoken.OwnerColumn),
+		)
+		schemaConfig := at.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.APIToken
+		fromV = sqlgraph.Neighbors(at.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *APITokenClient) Hooks() []Hook {
+	hooks := c.hooks.APIToken
+	return append(hooks[:len(hooks):len(hooks)], apitoken.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *APITokenClient) Interceptors() []Interceptor {
+	inters := c.inters.APIToken
+	return append(inters[:len(inters):len(inters)], apitoken.Interceptors[:]...)
+}
+
+func (c *APITokenClient) mutate(ctx context.Context, m *APITokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&APITokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&APITokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&APITokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&APITokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown APIToken mutation op: %q", m.Op())
 	}
 }
 
@@ -4009,6 +4171,25 @@ func (c *OrganizationClient) QueryPersonalAccessTokens(o *Organization) *Persona
 	return query
 }
 
+// QueryAPITokens queries the api_tokens edge of a Organization.
+func (c *OrganizationClient) QueryAPITokens(o *Organization) *APITokenQuery {
+	query := (&APITokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(apitoken.Table, apitoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.APITokensTable, organization.APITokensColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.APIToken
+		step.Edge.Schema = schemaConfig.APIToken
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryOauthprovider queries the oauthprovider edge of a Organization.
 func (c *OrganizationClient) QueryOauthprovider(o *Organization) *OauthProviderQuery {
 	query := (&OauthProviderClient{config: c.config}).Query()
@@ -6412,8 +6593,8 @@ func (c *WebauthnClient) mutate(ctx context.Context, m *WebauthnMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		DocumentData, DocumentDataHistory, EmailVerificationToken, Entitlement,
-		EntitlementHistory, Group, GroupHistory, GroupMembership,
+		APIToken, DocumentData, DocumentDataHistory, EmailVerificationToken,
+		Entitlement, EntitlementHistory, Group, GroupHistory, GroupMembership,
 		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Hush, HushHistory,
 		Integration, IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
 		OhAuthTooToken, OrgMembership, OrgMembershipHistory, Organization,
@@ -6423,8 +6604,8 @@ type (
 		Webauthn []ent.Hook
 	}
 	inters struct {
-		DocumentData, DocumentDataHistory, EmailVerificationToken, Entitlement,
-		EntitlementHistory, Group, GroupHistory, GroupMembership,
+		APIToken, DocumentData, DocumentDataHistory, EmailVerificationToken,
+		Entitlement, EntitlementHistory, Group, GroupHistory, GroupMembership,
 		GroupMembershipHistory, GroupSetting, GroupSettingHistory, Hush, HushHistory,
 		Integration, IntegrationHistory, Invite, OauthProvider, OauthProviderHistory,
 		OhAuthTooToken, OrgMembership, OrgMembershipHistory, Organization,

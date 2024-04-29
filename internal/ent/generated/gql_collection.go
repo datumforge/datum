@@ -10,6 +10,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
@@ -44,6 +45,148 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 )
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (at *APITokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*APITokenQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return at, nil
+	}
+	if err := at.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return at, nil
+}
+
+func (at *APITokenQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(apitoken.Columns))
+		selectedFields = []string{apitoken.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: at.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			at.withOwner = query
+			if _, ok := fieldSeen[apitoken.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldOwnerID)
+				fieldSeen[apitoken.FieldOwnerID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[apitoken.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldCreatedAt)
+				fieldSeen[apitoken.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[apitoken.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldUpdatedAt)
+				fieldSeen[apitoken.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[apitoken.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldCreatedBy)
+				fieldSeen[apitoken.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[apitoken.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldUpdatedBy)
+				fieldSeen[apitoken.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[apitoken.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldDeletedAt)
+				fieldSeen[apitoken.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[apitoken.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldDeletedBy)
+				fieldSeen[apitoken.FieldDeletedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[apitoken.FieldName]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldName)
+				fieldSeen[apitoken.FieldName] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[apitoken.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldOrganizationID)
+				fieldSeen[apitoken.FieldOrganizationID] = struct{}{}
+			}
+		case "token":
+			if _, ok := fieldSeen[apitoken.FieldToken]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldToken)
+				fieldSeen[apitoken.FieldToken] = struct{}{}
+			}
+		case "expiresAt":
+			if _, ok := fieldSeen[apitoken.FieldExpiresAt]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldExpiresAt)
+				fieldSeen[apitoken.FieldExpiresAt] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[apitoken.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldDescription)
+				fieldSeen[apitoken.FieldDescription] = struct{}{}
+			}
+		case "scopes":
+			if _, ok := fieldSeen[apitoken.FieldScopes]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldScopes)
+				fieldSeen[apitoken.FieldScopes] = struct{}{}
+			}
+		case "lastUsedAt":
+			if _, ok := fieldSeen[apitoken.FieldLastUsedAt]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldLastUsedAt)
+				fieldSeen[apitoken.FieldLastUsedAt] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		at.Select(selectedFields...)
+	}
+	return nil
+}
+
+type apitokenPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []APITokenPaginateOption
+}
+
+func newAPITokenPaginateArgs(rv map[string]any) *apitokenPaginateArgs {
+	args := &apitokenPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*APITokenWhereInput); ok {
+		args.opts = append(args.opts, WithAPITokenFilter(v.Filter))
+	}
+	return args
+}
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (dd *DocumentDataQuery) CollectFields(ctx context.Context, satisfies ...string) (*DocumentDataQuery, error) {
@@ -3060,6 +3203,19 @@ func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			o.WithNamedPersonalAccessTokens(alias, func(wq *PersonalAccessTokenQuery) {
+				*wq = *query
+			})
+
+		case "apiTokens":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&APITokenClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, apitokenImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedAPITokens(alias, func(wq *APITokenQuery) {
 				*wq = *query
 			})
 

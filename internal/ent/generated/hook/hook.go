@@ -9,6 +9,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// The APITokenFunc type is an adapter to allow the use of ordinary
+// function as APIToken mutator.
+type APITokenFunc func(context.Context, *generated.APITokenMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f APITokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.APITokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.APITokenMutation", m)
+}
+
 // The DocumentDataFunc type is an adapter to allow the use of ordinary
 // function as DocumentData mutator.
 type DocumentDataFunc func(context.Context, *generated.DocumentDataMutation) (generated.Value, error)

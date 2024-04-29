@@ -39,7 +39,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 				entoas.Skip(true),
 			).
 			DefaultFunc(func() string {
-				token := keygen.PrefixedSecret("dtm") // datum token prefix
+				token := keygen.PrefixedSecret("dtmp") // datum token prefix
 				return token
 			}),
 		field.Time("expires_at").

@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -101,6 +102,33 @@ func (f TraverseFunc) Traverse(ctx context.Context, q generated.Query) error {
 		return err
 	}
 	return f(ctx, query)
+}
+
+// The APITokenFunc type is an adapter to allow the use of ordinary function as a Querier.
+type APITokenFunc func(context.Context, *generated.APITokenQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f APITokenFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.APITokenQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.APITokenQuery", q)
+}
+
+// The TraverseAPIToken type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAPIToken func(context.Context, *generated.APITokenQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseAPIToken) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseAPIToken) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.APITokenQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.APITokenQuery", q)
 }
 
 // The DocumentDataFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -1078,6 +1106,8 @@ func (f TraverseWebauthn) Traverse(ctx context.Context, q generated.Query) error
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
+	case *generated.APITokenQuery:
+		return &query[*generated.APITokenQuery, predicate.APIToken, apitoken.OrderOption]{typ: generated.TypeAPIToken, tq: q}, nil
 	case *generated.DocumentDataQuery:
 		return &query[*generated.DocumentDataQuery, predicate.DocumentData, documentdata.OrderOption]{typ: generated.TypeDocumentData, tq: q}, nil
 	case *generated.DocumentDataHistoryQuery:

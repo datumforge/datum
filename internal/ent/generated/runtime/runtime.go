@@ -6,6 +6,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -52,6 +53,63 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	apitokenMixin := schema.APIToken{}.Mixin()
+	apitoken.Policy = privacy.NewPolicies(schema.APIToken{})
+	apitoken.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := apitoken.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	apitokenMixinHooks0 := apitokenMixin[0].Hooks()
+	apitokenMixinHooks1 := apitokenMixin[1].Hooks()
+	apitokenHooks := schema.APIToken{}.Hooks()
+
+	apitoken.Hooks[1] = apitokenMixinHooks0[0]
+
+	apitoken.Hooks[2] = apitokenMixinHooks1[0]
+
+	apitoken.Hooks[3] = apitokenHooks[0]
+
+	apitoken.Hooks[4] = apitokenHooks[1]
+	apitokenMixinInters1 := apitokenMixin[1].Interceptors()
+	apitokenInters := schema.APIToken{}.Interceptors()
+	apitoken.Interceptors[0] = apitokenMixinInters1[0]
+	apitoken.Interceptors[1] = apitokenInters[0]
+	apitokenMixinFields0 := apitokenMixin[0].Fields()
+	_ = apitokenMixinFields0
+	apitokenMixinFields2 := apitokenMixin[2].Fields()
+	_ = apitokenMixinFields2
+	apitokenFields := schema.APIToken{}.Fields()
+	_ = apitokenFields
+	// apitokenDescCreatedAt is the schema descriptor for created_at field.
+	apitokenDescCreatedAt := apitokenMixinFields0[0].Descriptor()
+	// apitoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	apitoken.DefaultCreatedAt = apitokenDescCreatedAt.Default.(func() time.Time)
+	// apitokenDescUpdatedAt is the schema descriptor for updated_at field.
+	apitokenDescUpdatedAt := apitokenMixinFields0[1].Descriptor()
+	// apitoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	apitoken.DefaultUpdatedAt = apitokenDescUpdatedAt.Default.(func() time.Time)
+	// apitoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	apitoken.UpdateDefaultUpdatedAt = apitokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// apitokenDescName is the schema descriptor for name field.
+	apitokenDescName := apitokenFields[0].Descriptor()
+	// apitoken.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	apitoken.NameValidator = apitokenDescName.Validators[0].(func(string) error)
+	// apitokenDescOrganizationID is the schema descriptor for organization_id field.
+	apitokenDescOrganizationID := apitokenFields[1].Descriptor()
+	// apitoken.OrganizationIDValidator is a validator for the "organization_id" field. It is called by the builders before save.
+	apitoken.OrganizationIDValidator = apitokenDescOrganizationID.Validators[0].(func(string) error)
+	// apitokenDescToken is the schema descriptor for token field.
+	apitokenDescToken := apitokenFields[2].Descriptor()
+	// apitoken.DefaultToken holds the default value on creation for the token field.
+	apitoken.DefaultToken = apitokenDescToken.Default.(func() string)
+	// apitokenDescID is the schema descriptor for id field.
+	apitokenDescID := apitokenMixinFields2[0].Descriptor()
+	// apitoken.DefaultID holds the default value on creation for the id field.
+	apitoken.DefaultID = apitokenDescID.Default.(func() string)
 	documentdataMixin := schema.DocumentData{}.Mixin()
 	documentdataMixinHooks0 := documentdataMixin[0].Hooks()
 	documentdataMixinHooks2 := documentdataMixin[2].Hooks()

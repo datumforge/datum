@@ -248,7 +248,7 @@ func (suite *GraphTestSuite) TestMutationCreatePersonalAccessToken() {
 			assert.NotEqual(t, redacted, resp.CreatePersonalAccessToken.PersonalAccessToken.Token)
 
 			// ensure the token is prefixed
-			assert.Contains(t, resp.CreatePersonalAccessToken.PersonalAccessToken.Token, "dtm_")
+			assert.Contains(t, resp.CreatePersonalAccessToken.PersonalAccessToken.Token, "dtmp_")
 		})
 	}
 }

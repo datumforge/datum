@@ -26,6 +26,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
 )
 
+func APITokenEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup apitoken edge"))
+
+	return nil
+}
+
 func DocumentDataEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup documentdata edge"))

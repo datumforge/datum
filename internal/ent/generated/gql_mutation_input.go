@@ -9,6 +9,128 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 )
 
+// CreateAPITokenInput represents a mutation input for creating apitokens.
+type CreateAPITokenInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Name           string
+	OrganizationID string
+	ExpiresAt      time.Time
+	Description    *string
+	Scopes         []string
+	LastUsedAt     *time.Time
+	OwnerID        string
+}
+
+// Mutate applies the CreateAPITokenInput on the APITokenMutation builder.
+func (i *CreateAPITokenInput) Mutate(m *APITokenMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	m.SetOrganizationID(i.OrganizationID)
+	m.SetExpiresAt(i.ExpiresAt)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
+	}
+	if v := i.LastUsedAt; v != nil {
+		m.SetLastUsedAt(*v)
+	}
+	m.SetOwnerID(i.OwnerID)
+}
+
+// SetInput applies the change-set in the CreateAPITokenInput on the APITokenCreate builder.
+func (c *APITokenCreate) SetInput(i CreateAPITokenInput) *APITokenCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateAPITokenInput represents a mutation input for updating apitokens.
+type UpdateAPITokenInput struct {
+	ClearUpdatedAt   bool
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Name             *string
+	ClearDescription bool
+	Description      *string
+	ClearScopes      bool
+	Scopes           []string
+	AppendScopes     []string
+	ClearLastUsedAt  bool
+	LastUsedAt       *time.Time
+	OwnerID          *string
+}
+
+// Mutate applies the UpdateAPITokenInput on the APITokenMutation builder.
+func (i *UpdateAPITokenInput) Mutate(m *APITokenMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if i.ClearScopes {
+		m.ClearScopes()
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
+	}
+	if i.AppendScopes != nil {
+		m.AppendScopes(i.Scopes)
+	}
+	if i.ClearLastUsedAt {
+		m.ClearLastUsedAt()
+	}
+	if v := i.LastUsedAt; v != nil {
+		m.SetLastUsedAt(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateAPITokenInput on the APITokenUpdate builder.
+func (c *APITokenUpdate) SetInput(i UpdateAPITokenInput) *APITokenUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateAPITokenInput on the APITokenUpdateOne builder.
+func (c *APITokenUpdateOne) SetInput(i UpdateAPITokenInput) *APITokenUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateDocumentDataInput represents a mutation input for creating documentdataslice.
 type CreateDocumentDataInput struct {
 	CreatedAt  *time.Time
@@ -1292,6 +1414,7 @@ type CreateOrganizationInput struct {
 	SettingID              *string
 	EntitlementIDs         []string
 	PersonalAccessTokenIDs []string
+	APITokenIDs            []string
 	OauthproviderIDs       []string
 	UserIDs                []string
 	InviteIDs              []string
@@ -1349,6 +1472,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
+	if v := i.APITokenIDs; len(v) > 0 {
+		m.AddAPITokenIDs(v...)
+	}
 	if v := i.OauthproviderIDs; len(v) > 0 {
 		m.AddOauthproviderIDs(v...)
 	}
@@ -1398,6 +1524,9 @@ type UpdateOrganizationInput struct {
 	ClearPersonalAccessTokens    bool
 	AddPersonalAccessTokenIDs    []string
 	RemovePersonalAccessTokenIDs []string
+	ClearAPITokens               bool
+	AddAPITokenIDs               []string
+	RemoveAPITokenIDs            []string
 	ClearOauthprovider           bool
 	AddOauthproviderIDs          []string
 	RemoveOauthproviderIDs       []string
@@ -1494,6 +1623,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemovePersonalAccessTokenIDs; len(v) > 0 {
 		m.RemovePersonalAccessTokenIDs(v...)
+	}
+	if i.ClearAPITokens {
+		m.ClearAPITokens()
+	}
+	if v := i.AddAPITokenIDs; len(v) > 0 {
+		m.AddAPITokenIDs(v...)
+	}
+	if v := i.RemoveAPITokenIDs; len(v) > 0 {
+		m.RemoveAPITokenIDs(v...)
 	}
 	if i.ClearOauthprovider {
 		m.ClearOauthprovider()

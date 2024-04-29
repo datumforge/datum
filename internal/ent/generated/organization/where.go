@@ -1124,6 +1124,35 @@ func HasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) predica
 	})
 }
 
+// HasAPITokens applies the HasEdge predicate on the "api_tokens" edge.
+func HasAPITokens() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, APITokensTable, APITokensColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.APIToken
+		step.Edge.Schema = schemaConfig.APIToken
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAPITokensWith applies the HasEdge predicate on the "api_tokens" edge with a given conditions (other predicates).
+func HasAPITokensWith(preds ...predicate.APIToken) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newAPITokensStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.APIToken
+		step.Edge.Schema = schemaConfig.APIToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasOauthprovider applies the HasEdge predicate on the "oauthprovider" edge.
 func HasOauthprovider() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

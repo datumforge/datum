@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/documentdata"
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
@@ -108,6 +109,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			apitoken.Table:                   apitoken.ValidColumn,
 			documentdata.Table:               documentdata.ValidColumn,
 			documentdatahistory.Table:        documentdatahistory.ValidColumn,
 			emailverificationtoken.Table:     emailverificationtoken.ValidColumn,

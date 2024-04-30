@@ -76,7 +76,7 @@ func newValidClaimsOrgID(sub, orgID string) *tokens.Claims {
 		UserID:      sub,
 		Email:       "rustys@datum.net",
 		OrgID:       orgID,
-		ParentOrgID: "nano_id_of_parent_org",
+		ParentOrgID: "01HWRCWA74GJ7F4092CRNXT7MD",
 		Tier:        "premium",
 	}
 

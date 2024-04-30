@@ -7,6 +7,8 @@ import (
 
 	echo "github.com/datumforge/echox"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/pkg/auth"
@@ -15,9 +17,9 @@ import (
 )
 
 // SessionSkipperFunc is the function that determines if the session check should be skipped
-// due to the request being a PAT auth request
+// due to the request being a PAT or API Token auth request
 var SessionSkipperFunc = func(c echo.Context) bool {
-	return c.Get(auth.GetContextName(auth.ContextAuthType)) == auth.PATAuthentication
+	return c.Get(auth.GetContextName(auth.ContextAuthType)) != auth.JWTAuthentication
 }
 
 // Authenticate is a middleware function that is used to authenticate requests - it is not applied to all routes so be cognizant of that
@@ -61,17 +63,15 @@ func Authenticate(conf AuthOptions) echo.MiddlewareFunc {
 
 			claims, err := validator.Verify(accessToken)
 			if err != nil {
-				// if its not a JWT, check to see if its a PAT
+				// if its not a JWT, check to see if its a PAT or API Token
 				if conf.DBClient == nil {
 					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
 				}
 
-				claims, err = checkToken(c.Request().Context(), conf, accessToken)
+				claims, authType, err = checkToken(c.Request().Context(), conf, accessToken)
 				if err != nil {
 					return rout.HTTPErrorResponse(rout.ErrInvalidCredentials)
 				}
-
-				authType = auth.PATAuthentication
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers
@@ -126,11 +126,27 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 
 // checkToken checks the bearer authorization token against the database to see if the provided
 // token is an active personal access token. If the token is valid, the claims are returned
-func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Claims, error) {
+func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Claims, string, error) {
 	// allow check to bypass privacy rules
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
-	pat, err := conf.DBClient.PersonalAccessToken.Query().Where(personalaccesstoken.Token(token)).Only(ctx)
+	// check if the token is a personal access token
+	claims, err := isValidPersonalAccessToken(ctx, conf.DBClient, token)
+	if err == nil {
+		return claims, auth.PATAuthentication, nil
+	}
+
+	// check if the token is an API token
+	claims, err = isValidAPIToken(ctx, conf.DBClient, token)
+	if err == nil {
+		return claims, auth.APITokenAuthentication, nil
+	}
+
+	return nil, "", err
+}
+
+func isValidPersonalAccessToken(ctx context.Context, dbClient *generated.Client, token string) (*tokens.Claims, error) {
+	pat, err := dbClient.PersonalAccessToken.Query().Where(personalaccesstoken.Token(token)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -141,6 +157,23 @@ func checkToken(ctx context.Context, conf AuthOptions, token string) (*tokens.Cl
 
 	claims := &tokens.Claims{
 		UserID: pat.OwnerID,
+	}
+
+	return claims, nil
+}
+
+func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token string) (*tokens.Claims, error) {
+	t, err := dbClient.APIToken.Query().Where(apitoken.Token(token)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !t.ExpiresAt.IsZero() && t.ExpiresAt.Before(time.Now()) {
+		return nil, rout.ErrExpiredCredentials
+	}
+
+	claims := &tokens.Claims{
+		OrgID: t.OwnerID,
 	}
 
 	return claims, nil

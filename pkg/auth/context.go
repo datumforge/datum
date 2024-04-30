@@ -5,6 +5,8 @@ const (
 	JWTAuthentication = "jwt"
 	// PATAuthentication is the authentication type for personal access tokens
 	PATAuthentication = "pat"
+	// APITokenAuthentication is the authentication type for API tokens
+	APITokenAuthentication = "api_token"
 )
 
 // ContextUserClaims is the context key for the user claims

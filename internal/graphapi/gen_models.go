@@ -6,6 +6,24 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// Return response for createAPIToken mutation
+type APITokenCreatePayload struct {
+	// Created apiToken
+	APIToken *generated.APIToken `json:"apiToken"`
+}
+
+// Return response for deleteAPIToken mutation
+type APITokenDeletePayload struct {
+	// Deleted apiToken ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateAPIToken mutation
+type APITokenUpdatePayload struct {
+	// Updated apiToken
+	APIToken *generated.APIToken `json:"apiToken"`
+}
+
 // Return response for createDocumentData mutation
 type DocumentDataCreatePayload struct {
 	// Created documentData

@@ -130,6 +130,17 @@ type PersonalAccessTokenBuilder struct {
 	OrganizationID string
 }
 
+type APITokenTokenBuilder struct {
+	client *client
+
+	// Fields
+	Name        string
+	Token       string
+	Scopes      []string
+	Description string
+	OwnerID     string
+}
+
 // MustNew organization builder is used to create, without authz checks, orgs in the database
 func (o *OrganizationBuilder) MustNew(ctx context.Context, t *testing.T) *ent.Organization {
 	if !o.PersonalOrg {
@@ -420,6 +431,33 @@ func (pat *PersonalAccessTokenBuilder) MustNew(ctx context.Context, t *testing.T
 
 	// clear mocks before going to tests
 	mock_fga.ClearMocks(pat.client.fga)
+
+	return token
+}
+
+// MustNew group builder is used to create, without authz checks, api tokens in the database
+func (at *APITokenTokenBuilder) MustNew(ctx context.Context, t *testing.T) *ent.APIToken {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	// mock writes
+	mock_fga.WriteOnce(t, at.client.fga)
+
+	if at.Name == "" {
+		at.Name = gofakeit.AppName()
+	}
+
+	if at.Description == "" {
+		at.Description = gofakeit.HipsterSentence(5)
+	}
+
+	token := at.client.db.APIToken.Create().
+		SetName(at.Name).
+		SetDescription(at.Description).
+		SetScopes(at.Scopes).
+		SaveX(ctx)
+
+	// clear mocks before going to tests
+	mock_fga.ClearMocks(at.client.fga)
 
 	return token
 }

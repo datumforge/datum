@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -304,6 +305,21 @@ func (ou *OrganizationUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken)
 	return ou.AddPersonalAccessTokenIDs(ids...)
 }
 
+// AddAPITokenIDs adds the "api_tokens" edge to the APIToken entity by IDs.
+func (ou *OrganizationUpdate) AddAPITokenIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddAPITokenIDs(ids...)
+	return ou
+}
+
+// AddAPITokens adds the "api_tokens" edges to the APIToken entity.
+func (ou *OrganizationUpdate) AddAPITokens(a ...*APIToken) *OrganizationUpdate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ou.AddAPITokenIDs(ids...)
+}
+
 // AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
 func (ou *OrganizationUpdate) AddOauthproviderIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddOauthproviderIDs(ids...)
@@ -514,6 +530,27 @@ func (ou *OrganizationUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessTok
 		ids[i] = p[i].ID
 	}
 	return ou.RemovePersonalAccessTokenIDs(ids...)
+}
+
+// ClearAPITokens clears all "api_tokens" edges to the APIToken entity.
+func (ou *OrganizationUpdate) ClearAPITokens() *OrganizationUpdate {
+	ou.mutation.ClearAPITokens()
+	return ou
+}
+
+// RemoveAPITokenIDs removes the "api_tokens" edge to APIToken entities by IDs.
+func (ou *OrganizationUpdate) RemoveAPITokenIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveAPITokenIDs(ids...)
+	return ou
+}
+
+// RemoveAPITokens removes "api_tokens" edges to APIToken entities.
+func (ou *OrganizationUpdate) RemoveAPITokens(a ...*APIToken) *OrganizationUpdate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ou.RemoveAPITokenIDs(ids...)
 }
 
 // ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
@@ -1068,6 +1105,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.APITokensTable,
+			Columns: []string{organization.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.APIToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedAPITokensIDs(); len(nodes) > 0 && !ou.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.APITokensTable,
+			Columns: []string{organization.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.APIToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.APITokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.APITokensTable,
+			Columns: []string{organization.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.APIToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.OauthproviderCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1614,6 +1699,21 @@ func (ouo *OrganizationUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessTo
 	return ouo.AddPersonalAccessTokenIDs(ids...)
 }
 
+// AddAPITokenIDs adds the "api_tokens" edge to the APIToken entity by IDs.
+func (ouo *OrganizationUpdateOne) AddAPITokenIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddAPITokenIDs(ids...)
+	return ouo
+}
+
+// AddAPITokens adds the "api_tokens" edges to the APIToken entity.
+func (ouo *OrganizationUpdateOne) AddAPITokens(a ...*APIToken) *OrganizationUpdateOne {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ouo.AddAPITokenIDs(ids...)
+}
+
 // AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
 func (ouo *OrganizationUpdateOne) AddOauthproviderIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddOauthproviderIDs(ids...)
@@ -1824,6 +1924,27 @@ func (ouo *OrganizationUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAcces
 		ids[i] = p[i].ID
 	}
 	return ouo.RemovePersonalAccessTokenIDs(ids...)
+}
+
+// ClearAPITokens clears all "api_tokens" edges to the APIToken entity.
+func (ouo *OrganizationUpdateOne) ClearAPITokens() *OrganizationUpdateOne {
+	ouo.mutation.ClearAPITokens()
+	return ouo
+}
+
+// RemoveAPITokenIDs removes the "api_tokens" edge to APIToken entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveAPITokenIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveAPITokenIDs(ids...)
+	return ouo
+}
+
+// RemoveAPITokens removes "api_tokens" edges to APIToken entities.
+func (ouo *OrganizationUpdateOne) RemoveAPITokens(a ...*APIToken) *OrganizationUpdateOne {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ouo.RemoveAPITokenIDs(ids...)
 }
 
 // ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
@@ -2403,6 +2524,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.APITokensTable,
+			Columns: []string{organization.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.APIToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedAPITokensIDs(); len(nodes) > 0 && !ouo.mutation.APITokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.APITokensTable,
+			Columns: []string{organization.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.APIToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.APITokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.APITokensTable,
+			Columns: []string{organization.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.APIToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

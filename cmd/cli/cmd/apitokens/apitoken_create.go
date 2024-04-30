@@ -31,6 +31,9 @@ func init() {
 
 	apiTokenCreateCmd.Flags().DurationP("expiration", "e", 0, "duration of the api token to be valid, leave empty to never expire")
 	datum.ViperBindFlag("apitoken.create.expiration", apiTokenCreateCmd.Flags().Lookup("expiration"))
+
+	apiTokenCreateCmd.Flags().StringSlice("scopes", []string{"read", "write"}, "scopes to associate with the api token")
+	datum.ViperBindFlag("apitoken.create.scopes", apiTokenCreateCmd.Flags().Lookup("scopes"))
 }
 
 func createAPIToken(ctx context.Context) error {
@@ -51,8 +54,9 @@ func createAPIToken(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("token name")
 	}
 
-	input := datumclient.CreatePersonalAccessTokenInput{
-		Name: name,
+	input := datumclient.CreateAPITokenInput{
+		Name:   name,
+		Scopes: viper.GetStringSlice("apitoken.create.scopes"),
 	}
 
 	description := viper.GetString("apitoken.create.description")
@@ -65,7 +69,7 @@ func createAPIToken(ctx context.Context) error {
 		input.ExpiresAt = time.Now().Add(expiration)
 	}
 
-	o, err := cli.Client.CreatePersonalAccessToken(ctx, input, cli.Interceptor)
+	o, err := cli.Client.CreateAPIToken(ctx, input, cli.Interceptor)
 	if err != nil {
 		return err
 	}

@@ -11,22 +11,22 @@ import (
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
-var patGetCmd = &cobra.Command{
+var apiTokenGetCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Get or list personal access tokens",
+	Short: "Get or list api tokens",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return pats(cmd.Context())
+		return apiTokens(cmd.Context())
 	},
 }
 
 func init() {
-	apiTokenCmd.AddCommand(patGetCmd)
+	apiTokenCmd.AddCommand(apiTokenGetCmd)
 
-	patGetCmd.Flags().StringP("id", "i", "", "pat id to query")
-	datum.ViperBindFlag("pat.get.id", patGetCmd.Flags().Lookup("id"))
+	apiTokenGetCmd.Flags().StringP("id", "i", "", "api token id to query")
+	datum.ViperBindFlag("apitoken.get.id", apiTokenGetCmd.Flags().Lookup("id"))
 }
 
-func pats(ctx context.Context) error {
+func apiTokens(ctx context.Context) error {
 	// setup datum http client
 	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
@@ -38,13 +38,13 @@ func pats(ctx context.Context) error {
 	defer datum.StoreSessionCookies(client)
 
 	// filter options
-	pID := viper.GetString("pat.get.id")
+	tokenID := viper.GetString("apitoken.get.id")
 
 	var s []byte
 
-	// if an pat ID is provided, filter on that pat, otherwise get all
-	if pID == "" {
-		tokens, err := cli.Client.GetAllPersonalAccessTokens(ctx, cli.Interceptor)
+	// if an api token ID is provided, filter on that api token, otherwise get all
+	if tokenID == "" {
+		tokens, err := cli.Client.GetAllAPITokens(ctx, cli.Interceptor)
 		if err != nil {
 			return err
 		}
@@ -54,7 +54,7 @@ func pats(ctx context.Context) error {
 			return err
 		}
 	} else {
-		token, err := cli.Client.GetPersonalAccessTokenByID(ctx, pID, cli.Interceptor)
+		token, err := cli.Client.GetAPITokenByID(ctx, tokenID, cli.Interceptor)
 		if err != nil {
 			return err
 		}

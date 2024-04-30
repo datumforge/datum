@@ -11,34 +11,28 @@ import (
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
-var patUpdateCmd = &cobra.Command{
+var apiTokenUpdateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Update a new datum personal access token",
+	Short: "Update a datum api token token",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return updatePat(cmd.Context())
+		return updateAPIToken(cmd.Context())
 	},
 }
 
 func init() {
-	patCmd.AddCommand(patUpdateCmd)
+	apiTokenCmd.AddCommand(apiTokenUpdateCmd)
 
-	patUpdateCmd.Flags().StringP("id", "i", "", "pat id to update")
-	datum.ViperBindFlag("pat.update.id", patUpdateCmd.Flags().Lookup("id"))
+	apiTokenUpdateCmd.Flags().StringP("id", "i", "", "api token id to update")
+	datum.ViperBindFlag("apitoken.update.id", apiTokenUpdateCmd.Flags().Lookup("id"))
 
-	patUpdateCmd.Flags().StringP("name", "n", "", "name of the personal access token")
-	datum.ViperBindFlag("pat.update.name", patUpdateCmd.Flags().Lookup("name"))
+	apiTokenUpdateCmd.Flags().StringP("name", "n", "", "name of the api token token")
+	datum.ViperBindFlag("apitoken.update.name", apiTokenUpdateCmd.Flags().Lookup("name"))
 
-	patUpdateCmd.Flags().StringP("description", "d", "", "description of the pat")
-	datum.ViperBindFlag("pat.update.description", patUpdateCmd.Flags().Lookup("description"))
-
-	patUpdateCmd.Flags().StringSliceP("add-organizations", "o", []string{}, "add organization(s) id to associate the pat with")
-	datum.ViperBindFlag("pat.update.add-organizations", patUpdateCmd.Flags().Lookup("add-organizations"))
-
-	patUpdateCmd.Flags().StringSliceP("remove-organizations", "r", []string{}, "remove organization(s) id to associate the pat with")
-	datum.ViperBindFlag("pat.update.remove-organizations", patUpdateCmd.Flags().Lookup("remove-organizations"))
+	apiTokenUpdateCmd.Flags().StringP("description", "d", "", "description of the api token")
+	datum.ViperBindFlag("apitoken.update.description", apiTokenUpdateCmd.Flags().Lookup("description"))
 }
 
-func updatePat(ctx context.Context) error {
+func updateAPIToken(ctx context.Context) error {
 	// setup datum http client
 	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
@@ -51,35 +45,25 @@ func updatePat(ctx context.Context) error {
 
 	var s []byte
 
-	pID := viper.GetString("pat.update.id")
+	pID := viper.GetString("apitoken.update.id")
 	if pID == "" {
 		return datum.NewRequiredFieldMissingError("token id")
 	}
 
 	// Craft update input
-	input := datumclient.UpdatePersonalAccessTokenInput{}
+	input := datumclient.UpdateAPITokenInput{}
 
-	name := viper.GetString("pat.update.name")
+	name := viper.GetString("apitoken.update.name")
 	if name != "" {
 		input.Name = &name
 	}
 
-	description := viper.GetString("pat.update.description")
+	description := viper.GetString("apitoken.update.description")
 	if description != "" {
 		input.Description = &description
 	}
 
-	addOrgs := viper.GetStringSlice("pat.update.add-organizations")
-	if addOrgs != nil {
-		input.AddOrganizationIDs = addOrgs
-	}
-
-	removeOrgs := viper.GetStringSlice("pat.update.remove-organizations")
-	if removeOrgs != nil {
-		input.RemoveOrganizationIDs = removeOrgs
-	}
-
-	o, err := cli.Client.UpdatePersonalAccessToken(ctx, pID, input, cli.Interceptor)
+	o, err := cli.Client.UpdateAPIToken(ctx, pID, input, cli.Interceptor)
 	if err != nil {
 		return err
 	}

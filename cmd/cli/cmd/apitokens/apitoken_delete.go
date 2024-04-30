@@ -11,22 +11,22 @@ import (
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
-var patDeleteCmd = &cobra.Command{
+var apiTokenDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete an existing datum personal access token",
+	Short: "Delete an existing datum api token token",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return deletePat(cmd.Context())
+		return deleteAPIToken(cmd.Context())
 	},
 }
 
 func init() {
-	apiTokenCmd.AddCommand(patDeleteCmd)
+	apiTokenCmd.AddCommand(apiTokenDeleteCmd)
 
-	patDeleteCmd.Flags().StringP("id", "i", "", "pat id to delete")
-	datum.ViperBindFlag("pat.delete.id", patDeleteCmd.Flags().Lookup("id"))
+	apiTokenDeleteCmd.Flags().StringP("id", "i", "", "api token id to delete")
+	datum.ViperBindFlag("apitoken.delete.id", apiTokenDeleteCmd.Flags().Lookup("id"))
 }
 
-func deletePat(ctx context.Context) error {
+func deleteAPIToken(ctx context.Context) error {
 	// setup datum http client
 	cli, err := datum.GetGraphClient(ctx)
 	if err != nil {
@@ -39,12 +39,12 @@ func deletePat(ctx context.Context) error {
 
 	var s []byte
 
-	oID := viper.GetString("pat.delete.id")
-	if oID == "" {
+	tokenID := viper.GetString("apitoken.delete.id")
+	if tokenID == "" {
 		return datum.NewRequiredFieldMissingError("token id")
 	}
 
-	o, err := cli.Client.DeletePersonalAccessToken(ctx, oID, cli.Interceptor)
+	o, err := cli.Client.DeleteAPIToken(ctx, tokenID, cli.Interceptor)
 	if err != nil {
 		return err
 	}

@@ -13,6 +13,11 @@ import (
 )
 
 type DatumClient interface {
+	CreateAPIToken(ctx context.Context, input CreateAPITokenInput, interceptors ...clientv2.RequestInterceptor) (*CreateAPIToken, error)
+	UpdateAPIToken(ctx context.Context, updateAPITokenID string, input UpdateAPITokenInput, interceptors ...clientv2.RequestInterceptor) (*UpdateAPIToken, error)
+	GetAllAPITokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllAPITokens, error)
+	GetAPITokenByID(ctx context.Context, apiTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetAPITokenByID, error)
+	DeleteAPIToken(ctx context.Context, deleteAPITokenID string, interceptors ...clientv2.RequestInterceptor) (*DeleteAPIToken, error)
 	GetDocumentData(ctx context.Context, documentDataID string, interceptors ...clientv2.RequestInterceptor) (*GetDocumentData, error)
 	CreateDocumentData(ctx context.Context, input CreateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*CreateDocumentData, error)
 	UpdateDocumentData(ctx context.Context, updateDocumentDataID string, input UpdateDocumentDataInput, interceptors ...clientv2.RequestInterceptor) (*UpdateDocumentData, error)
@@ -81,6 +86,413 @@ type Client struct {
 
 func NewClient(cli *http.Client, baseURL string, options *clientv2.Options, interceptors ...clientv2.RequestInterceptor) DatumClient {
 	return &Client{Client: clientv2.NewClient(cli, baseURL, options, interceptors...)}
+}
+
+type CreateAPIToken_CreateAPIToken_APIToken struct {
+	ID             string     "json:\"id\" graphql:\"id\""
+	Token          string     "json:\"token\" graphql:\"token\""
+	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name           string     "json:\"name\" graphql:\"name\""
+	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+}
+
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetID() string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.ID
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetToken() string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.Token
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetScopes() []string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.Scopes
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetOrganizationID() string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.OrganizationID
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.CreatedAt
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.UpdatedAt
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.UpdatedBy
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetName() string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.Name
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetExpiresAt() *time.Time {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return &t.ExpiresAt
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetDescription() *string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.Description
+}
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetLastUsedAt() *time.Time {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken{}
+	}
+	return t.LastUsedAt
+}
+
+type CreateAPIToken_CreateAPIToken struct {
+	APIToken CreateAPIToken_CreateAPIToken_APIToken "json:\"apiToken\" graphql:\"apiToken\""
+}
+
+func (t *CreateAPIToken_CreateAPIToken) GetAPIToken() *CreateAPIToken_CreateAPIToken_APIToken {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken{}
+	}
+	return &t.APIToken
+}
+
+type UpdateAPIToken_UpdateAPIToken_APIToken struct {
+	ID             string     "json:\"id\" graphql:\"id\""
+	Token          string     "json:\"token\" graphql:\"token\""
+	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name           string     "json:\"name\" graphql:\"name\""
+	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+}
+
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetID() string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.ID
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetToken() string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.Token
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetScopes() []string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.Scopes
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetOrganizationID() string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.OrganizationID
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.CreatedAt
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.UpdatedAt
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetName() string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.Name
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetExpiresAt() *time.Time {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return &t.ExpiresAt
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetDescription() *string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.Description
+}
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetLastUsedAt() *time.Time {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
+	}
+	return t.LastUsedAt
+}
+
+type UpdateAPIToken_UpdateAPIToken struct {
+	APIToken UpdateAPIToken_UpdateAPIToken_APIToken "json:\"apiToken\" graphql:\"apiToken\""
+}
+
+func (t *UpdateAPIToken_UpdateAPIToken) GetAPIToken() *UpdateAPIToken_UpdateAPIToken_APIToken {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken{}
+	}
+	return &t.APIToken
+}
+
+type GetAllAPITokens_APITokens_Edges_Node struct {
+	ID             string     "json:\"id\" graphql:\"id\""
+	Token          string     "json:\"token\" graphql:\"token\""
+	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name           string     "json:\"name\" graphql:\"name\""
+	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+}
+
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetToken() string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.Token
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetScopes() []string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.Scopes
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetOrganizationID() string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.OrganizationID
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetExpiresAt() *time.Time {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return &t.ExpiresAt
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetLastUsedAt() *time.Time {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node{}
+	}
+	return t.LastUsedAt
+}
+
+type GetAllAPITokens_APITokens_Edges struct {
+	Node *GetAllAPITokens_APITokens_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllAPITokens_APITokens_Edges) GetNode() *GetAllAPITokens_APITokens_Edges_Node {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllAPITokens_APITokens struct {
+	Edges []*GetAllAPITokens_APITokens_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllAPITokens_APITokens) GetEdges() []*GetAllAPITokens_APITokens_Edges {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens{}
+	}
+	return t.Edges
+}
+
+type GetAPITokenByID_APIToken struct {
+	ID             string     "json:\"id\" graphql:\"id\""
+	Token          string     "json:\"token\" graphql:\"token\""
+	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
+	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
+	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name           string     "json:\"name\" graphql:\"name\""
+	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+}
+
+func (t *GetAPITokenByID_APIToken) GetID() string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.ID
+}
+func (t *GetAPITokenByID_APIToken) GetToken() string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.Token
+}
+func (t *GetAPITokenByID_APIToken) GetScopes() []string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.Scopes
+}
+func (t *GetAPITokenByID_APIToken) GetOrganizationID() string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.OrganizationID
+}
+func (t *GetAPITokenByID_APIToken) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.CreatedAt
+}
+func (t *GetAPITokenByID_APIToken) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.UpdatedAt
+}
+func (t *GetAPITokenByID_APIToken) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAPITokenByID_APIToken) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetAPITokenByID_APIToken) GetName() string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.Name
+}
+func (t *GetAPITokenByID_APIToken) GetExpiresAt() *time.Time {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return &t.ExpiresAt
+}
+func (t *GetAPITokenByID_APIToken) GetDescription() *string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.Description
+}
+func (t *GetAPITokenByID_APIToken) GetLastUsedAt() *time.Time {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken{}
+	}
+	return t.LastUsedAt
+}
+
+type DeleteAPIToken_DeleteAPIToken struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteAPIToken_DeleteAPIToken) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteAPIToken_DeleteAPIToken{}
+	}
+	return t.DeletedID
 }
 
 type GetDocumentData_DocumentData struct {
@@ -7550,6 +7962,61 @@ func (t *UpdateUserSetting_UpdateUserSetting) GetUserSetting() *UpdateUserSettin
 	return &t.UserSetting
 }
 
+type CreateAPIToken struct {
+	CreateAPIToken CreateAPIToken_CreateAPIToken "json:\"createAPIToken\" graphql:\"createAPIToken\""
+}
+
+func (t *CreateAPIToken) GetCreateAPIToken() *CreateAPIToken_CreateAPIToken {
+	if t == nil {
+		t = &CreateAPIToken{}
+	}
+	return &t.CreateAPIToken
+}
+
+type UpdateAPIToken struct {
+	UpdateAPIToken UpdateAPIToken_UpdateAPIToken "json:\"updateAPIToken\" graphql:\"updateAPIToken\""
+}
+
+func (t *UpdateAPIToken) GetUpdateAPIToken() *UpdateAPIToken_UpdateAPIToken {
+	if t == nil {
+		t = &UpdateAPIToken{}
+	}
+	return &t.UpdateAPIToken
+}
+
+type GetAllAPITokens struct {
+	APITokens GetAllAPITokens_APITokens "json:\"apiTokens\" graphql:\"apiTokens\""
+}
+
+func (t *GetAllAPITokens) GetAPITokens() *GetAllAPITokens_APITokens {
+	if t == nil {
+		t = &GetAllAPITokens{}
+	}
+	return &t.APITokens
+}
+
+type GetAPITokenByID struct {
+	APIToken GetAPITokenByID_APIToken "json:\"apiToken\" graphql:\"apiToken\""
+}
+
+func (t *GetAPITokenByID) GetAPIToken() *GetAPITokenByID_APIToken {
+	if t == nil {
+		t = &GetAPITokenByID{}
+	}
+	return &t.APIToken
+}
+
+type DeleteAPIToken struct {
+	DeleteAPIToken DeleteAPIToken_DeleteAPIToken "json:\"deleteAPIToken\" graphql:\"deleteAPIToken\""
+}
+
+func (t *DeleteAPIToken) GetDeleteAPIToken() *DeleteAPIToken_DeleteAPIToken {
+	if t == nil {
+		t = &DeleteAPIToken{}
+	}
+	return &t.DeleteAPIToken
+}
+
 type GetDocumentData struct {
 	DocumentData GetDocumentData_DocumentData "json:\"documentData\" graphql:\"documentData\""
 }
@@ -8208,6 +8675,177 @@ func (t *UpdateUserSetting) GetUpdateUserSetting() *UpdateUserSetting_UpdateUser
 		t = &UpdateUserSetting{}
 	}
 	return &t.UpdateUserSetting
+}
+
+const CreateAPITokenDocument = `mutation CreateAPIToken ($input: CreateAPITokenInput!) {
+	createAPIToken(input: $input) {
+		apiToken {
+			id
+			token
+			scopes
+			organizationID
+			createdAt
+			updatedAt
+			createdBy
+			updatedBy
+			name
+			expiresAt
+			description
+			lastUsedAt
+		}
+	}
+}
+`
+
+func (c *Client) CreateAPIToken(ctx context.Context, input CreateAPITokenInput, interceptors ...clientv2.RequestInterceptor) (*CreateAPIToken, error) {
+	vars := map[string]any{
+		"input": input,
+	}
+
+	var res CreateAPIToken
+	if err := c.Client.Post(ctx, "CreateAPIToken", CreateAPITokenDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateAPITokenDocument = `mutation UpdateAPIToken ($updateAPITokenId: ID!, $input: UpdateAPITokenInput!) {
+	updateAPIToken(id: $updateAPITokenId, input: $input) {
+		apiToken {
+			id
+			token
+			scopes
+			organizationID
+			createdAt
+			updatedAt
+			createdBy
+			updatedBy
+			name
+			expiresAt
+			description
+			lastUsedAt
+		}
+	}
+}
+`
+
+func (c *Client) UpdateAPIToken(ctx context.Context, updateAPITokenID string, input UpdateAPITokenInput, interceptors ...clientv2.RequestInterceptor) (*UpdateAPIToken, error) {
+	vars := map[string]any{
+		"updateAPITokenId": updateAPITokenID,
+		"input":            input,
+	}
+
+	var res UpdateAPIToken
+	if err := c.Client.Post(ctx, "UpdateAPIToken", UpdateAPITokenDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllAPITokensDocument = `query GetAllAPITokens {
+	apiTokens {
+		edges {
+			node {
+				id
+				token
+				scopes
+				organizationID
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				name
+				expiresAt
+				description
+				lastUsedAt
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllAPITokens(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllAPITokens, error) {
+	vars := map[string]any{}
+
+	var res GetAllAPITokens
+	if err := c.Client.Post(ctx, "GetAllAPITokens", GetAllAPITokensDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAPITokenByIDDocument = `query GetAPITokenByID ($apiTokenId: ID!) {
+	apiToken(id: $apiTokenId) {
+		id
+		token
+		scopes
+		organizationID
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		name
+		expiresAt
+		description
+		lastUsedAt
+	}
+}
+`
+
+func (c *Client) GetAPITokenByID(ctx context.Context, apiTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetAPITokenByID, error) {
+	vars := map[string]any{
+		"apiTokenId": apiTokenID,
+	}
+
+	var res GetAPITokenByID
+	if err := c.Client.Post(ctx, "GetAPITokenByID", GetAPITokenByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteAPITokenDocument = `mutation DeleteAPIToken ($deleteAPITokenId: ID!) {
+	deleteAPIToken(id: $deleteAPITokenId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteAPIToken(ctx context.Context, deleteAPITokenID string, interceptors ...clientv2.RequestInterceptor) (*DeleteAPIToken, error) {
+	vars := map[string]any{
+		"deleteAPITokenId": deleteAPITokenID,
+	}
+
+	var res DeleteAPIToken
+	if err := c.Client.Post(ctx, "DeleteAPIToken", DeleteAPITokenDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
 }
 
 const GetDocumentDataDocument = `query GetDocumentData ($documentDataId: ID!) {
@@ -10680,6 +11318,11 @@ func (c *Client) UpdateUserSetting(ctx context.Context, updateUserSettingID stri
 }
 
 var DocumentOperationNames = map[string]string{
+	CreateAPITokenDocument:              "CreateAPIToken",
+	UpdateAPITokenDocument:              "UpdateAPIToken",
+	GetAllAPITokensDocument:             "GetAllAPITokens",
+	GetAPITokenByIDDocument:             "GetAPITokenByID",
+	DeleteAPITokenDocument:              "DeleteAPIToken",
 	GetDocumentDataDocument:             "GetDocumentData",
 	CreateDocumentDataDocument:          "CreateDocumentData",
 	UpdateDocumentDataDocument:          "UpdateDocumentData",

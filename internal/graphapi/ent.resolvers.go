@@ -25,7 +25,7 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.No
 
 // APITokens is the resolver for the apiTokens field.
 func (r *queryResolver) APITokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.APITokenWhereInput) (*generated.APITokenConnection, error) {
-	panic(fmt.Errorf("not implemented: APITokens - apiTokens"))
+	return withTransactionalMutation(ctx).APIToken.Query().Paginate(ctx, after, first, before, last, generated.WithAPITokenFilter(where.Filter))
 }
 
 // DocumentDataSlice is the resolver for the documentDataSlice field.

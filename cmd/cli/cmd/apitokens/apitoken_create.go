@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -66,7 +67,7 @@ func createAPIToken(ctx context.Context) error {
 
 	expiration := viper.GetDuration("apitoken.create.expiration")
 	if expiration != 0 {
-		input.ExpiresAt = time.Now().Add(expiration)
+		input.ExpiresAt = lo.ToPtr(time.Now().Add(expiration))
 	}
 
 	o, err := cli.Client.CreateAPIToken(ctx, input, cli.Interceptor)

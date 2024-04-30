@@ -109,7 +109,7 @@ type CreateAPIToken_CreateAPIToken_APIToken struct {
 	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name        string                                       "json:\"name\" graphql:\"name\""
-	ExpiresAt   time.Time                                    "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt   *time.Time                                   "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
 	LastUsedAt  *time.Time                                   "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
@@ -172,7 +172,7 @@ func (t *CreateAPIToken_CreateAPIToken_APIToken) GetExpiresAt() *time.Time {
 	if t == nil {
 		t = &CreateAPIToken_CreateAPIToken_APIToken{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *CreateAPIToken_CreateAPIToken_APIToken) GetDescription() *string {
 	if t == nil {
@@ -219,7 +219,7 @@ type UpdateAPIToken_UpdateAPIToken_APIToken struct {
 	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name        string                                       "json:\"name\" graphql:\"name\""
-	ExpiresAt   time.Time                                    "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt   *time.Time                                   "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
 	LastUsedAt  *time.Time                                   "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
@@ -282,7 +282,7 @@ func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetExpiresAt() *time.Time {
 	if t == nil {
 		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetDescription() *string {
 	if t == nil {
@@ -329,7 +329,7 @@ type GetAllAPITokens_APITokens_Edges_Node struct {
 	CreatedBy   *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy   *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name        string                                     "json:\"name\" graphql:\"name\""
-	ExpiresAt   time.Time                                  "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt   *time.Time                                 "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	Description *string                                    "json:\"description,omitempty\" graphql:\"description\""
 	LastUsedAt  *time.Time                                 "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
@@ -392,7 +392,7 @@ func (t *GetAllAPITokens_APITokens_Edges_Node) GetExpiresAt() *time.Time {
 	if t == nil {
 		t = &GetAllAPITokens_APITokens_Edges_Node{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *GetAllAPITokens_APITokens_Edges_Node) GetDescription() *string {
 	if t == nil {
@@ -450,7 +450,7 @@ type GetAPITokenByID_APIToken struct {
 	CreatedBy   *string                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 	UpdatedBy   *string                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 	Name        string                         "json:\"name\" graphql:\"name\""
-	ExpiresAt   time.Time                      "json:\"expiresAt\" graphql:\"expiresAt\""
+	ExpiresAt   *time.Time                     "json:\"expiresAt,omitempty\" graphql:\"expiresAt\""
 	Description *string                        "json:\"description,omitempty\" graphql:\"description\""
 	LastUsedAt  *time.Time                     "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
@@ -513,7 +513,7 @@ func (t *GetAPITokenByID_APIToken) GetExpiresAt() *time.Time {
 	if t == nil {
 		t = &GetAPITokenByID_APIToken{}
 	}
-	return &t.ExpiresAt
+	return t.ExpiresAt
 }
 func (t *GetAPITokenByID_APIToken) GetDescription() *string {
 	if t == nil {

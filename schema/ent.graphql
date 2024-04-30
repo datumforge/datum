@@ -8,6 +8,7 @@ type APIToken implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  ownerID: ID!
   """
   the name associated with the token
   """
@@ -16,7 +17,7 @@ type APIToken implements Node {
   """
   when the token expires
   """
-  expiresAt: Time!
+  expiresAt: Time
   """
   a description of the token's purpose
   """
@@ -170,6 +171,22 @@ input APITokenWhereInput {
   deletedByEqualFold: String
   deletedByContainsFold: String
   """
+  owner_id field predicates
+  """
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
+  """
   name field predicates
   """
   name: String
@@ -196,6 +213,8 @@ input APITokenWhereInput {
   expiresAtGTE: Time
   expiresAtLT: Time
   expiresAtLTE: Time
+  expiresAtIsNil: Boolean
+  expiresAtNotNil: Boolean
   """
   last_used_at field predicates
   """
@@ -231,7 +250,7 @@ input CreateAPITokenInput {
   """
   when the token expires
   """
-  expiresAt: Time!
+  expiresAt: Time
   """
   a description of the token's purpose
   """

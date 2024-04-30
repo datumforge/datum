@@ -112,6 +112,11 @@ func (at *APITokenQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				selectedFields = append(selectedFields, apitoken.FieldDeletedBy)
 				fieldSeen[apitoken.FieldDeletedBy] = struct{}{}
 			}
+		case "ownerID":
+			if _, ok := fieldSeen[apitoken.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, apitoken.FieldOwnerID)
+				fieldSeen[apitoken.FieldOwnerID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[apitoken.FieldName]; !ok {
 				selectedFields = append(selectedFields, apitoken.FieldName)

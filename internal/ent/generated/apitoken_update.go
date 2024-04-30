@@ -146,6 +146,12 @@ func (atu *APITokenUpdate) SetNillableExpiresAt(t *time.Time) *APITokenUpdate {
 	return atu
 }
 
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (atu *APITokenUpdate) ClearExpiresAt() *APITokenUpdate {
+	atu.mutation.ClearExpiresAt()
+	return atu
+}
+
 // SetDescription sets the "description" field.
 func (atu *APITokenUpdate) SetDescription(s string) *APITokenUpdate {
 	atu.mutation.SetDescription(s)
@@ -322,6 +328,9 @@ func (atu *APITokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := atu.mutation.ExpiresAt(); ok {
 		_spec.SetField(apitoken.FieldExpiresAt, field.TypeTime, value)
+	}
+	if atu.mutation.ExpiresAtCleared() {
+		_spec.ClearField(apitoken.FieldExpiresAt, field.TypeTime)
 	}
 	if value, ok := atu.mutation.Description(); ok {
 		_spec.SetField(apitoken.FieldDescription, field.TypeString, value)
@@ -510,6 +519,12 @@ func (atuo *APITokenUpdateOne) SetNillableExpiresAt(t *time.Time) *APITokenUpdat
 	if t != nil {
 		atuo.SetExpiresAt(*t)
 	}
+	return atuo
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (atuo *APITokenUpdateOne) ClearExpiresAt() *APITokenUpdateOne {
+	atuo.mutation.ClearExpiresAt()
 	return atuo
 }
 
@@ -719,6 +734,9 @@ func (atuo *APITokenUpdateOne) sqlSave(ctx context.Context) (_node *APIToken, er
 	}
 	if value, ok := atuo.mutation.ExpiresAt(); ok {
 		_spec.SetField(apitoken.FieldExpiresAt, field.TypeTime, value)
+	}
+	if atuo.mutation.ExpiresAtCleared() {
+		_spec.ClearField(apitoken.FieldExpiresAt, field.TypeTime)
 	}
 	if value, ok := atuo.mutation.Description(); ok {
 		_spec.SetField(apitoken.FieldDescription, field.TypeString, value)

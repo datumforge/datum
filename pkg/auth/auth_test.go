@@ -371,7 +371,7 @@ func TestGetClaims(t *testing.T) {
 			// Make sure we are getting default claims back
 			assert.Equal(t, "foobar", c.Subject)
 			// Check a custom claim
-			assert.Equal(t, "nano_id_of_org", c.OrgID)
+			assert.Equal(t, "01HWRCWA5YAJT34XFCJMVFQQJ2", c.OrgID)
 		})
 	}
 }

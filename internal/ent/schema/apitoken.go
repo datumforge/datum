@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
@@ -10,22 +12,23 @@ import (
 
 	"github.com/datumforge/enthistory"
 	emixin "github.com/datumforge/entx/mixin"
+	"github.com/datumforge/fgax/entfga"
 
+	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/pkg/keygen"
 )
 
-// APIKey holds the schema definition for the APIKey entity.
-type APIKey struct {
+// APIToken holds the schema definition for the APIToken entity.
+type APIToken struct {
 	ent.Schema
 }
 
 // Fields of the APIToken
-func (APIKey) Fields() []ent.Field {
+func (APIToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			Comment("the name associated with the token").
@@ -46,7 +49,7 @@ func (APIKey) Fields() []ent.Field {
 			Annotations(
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
-			Nillable(),
+			Optional(),
 		field.String("description").
 			Comment("a description of the token's purpose").
 			Optional().
@@ -63,12 +66,12 @@ func (APIKey) Fields() []ent.Field {
 }
 
 // Edges of the APIToken
-func (APIKey) Edges() []ent.Edge {
+func (APIToken) Edges() []ent.Edge {
 	return []ent.Edge{}
 }
 
 // Indexes of the APIToken
-func (APIKey) Indexes() []ent.Index {
+func (APIToken) Indexes() []ent.Index {
 	return []ent.Index{
 		// non-unique index.
 		index.Fields("token"),
@@ -76,19 +79,20 @@ func (APIKey) Indexes() []ent.Index {
 }
 
 // Mixin of the APIToken
-func (APIKey) Mixin() []ent.Mixin {
+func (APIToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
 		emixin.IDMixin{},
 		OrgOwnerMixin{
-			Ref: "api_tokens",
+			Ref:        "api_tokens",
+			AllowWhere: true,
 		},
 	}
 }
 
 // Annotations of the APIToken
-func (APIKey) Annotations() []schema.Annotation {
+func (APIToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
@@ -96,11 +100,16 @@ func (APIKey) Annotations() []schema.Annotation {
 		enthistory.Annotations{
 			Exclude: true,
 		},
+		entfga.Annotations{
+			ObjectType:   "organization",
+			IncludeHooks: false,
+			IDField:      "OwnerID",
+		},
 	}
 }
 
 // Hooks of the APIToken
-func (APIKey) Hooks() []ent.Hook {
+func (APIToken) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookCreateAPIToken(),
 		hooks.HookUpdateAPIToken(),
@@ -108,22 +117,26 @@ func (APIKey) Hooks() []ent.Hook {
 }
 
 // Interceptors of the APIToken
-func (APIKey) Interceptors() []ent.Interceptor {
+func (APIToken) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		interceptors.InterceptorAPIToken(),
 	}
 }
 
 // Policy of the APIToken
-func (APIKey) Policy() ent.Policy {
+func (APIToken) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),
-			privacy.AlwaysAllowRule(),
+			privacy.APITokenMutationRuleFunc(func(ctx context.Context, am *generated.APITokenMutation) error {
+				return am.CheckAccessForEdit(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.DenyIfNoSubject(),
-			privacy.AlwaysAllowRule(),
+			privacy.APITokenQueryRuleFunc(func(ctx context.Context, q *generated.APITokenQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
 		},
 	}
 }

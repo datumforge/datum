@@ -53,8 +53,8 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	apitokenMixin := schema.APIKey{}.Mixin()
-	apitoken.Policy = privacy.NewPolicies(schema.APIKey{})
+	apitokenMixin := schema.APIToken{}.Mixin()
+	apitoken.Policy = privacy.NewPolicies(schema.APIToken{})
 	apitoken.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := apitoken.Policy.EvalMutation(ctx, m); err != nil {
@@ -65,7 +65,7 @@ func init() {
 	}
 	apitokenMixinHooks0 := apitokenMixin[0].Hooks()
 	apitokenMixinHooks1 := apitokenMixin[1].Hooks()
-	apitokenHooks := schema.APIKey{}.Hooks()
+	apitokenHooks := schema.APIToken{}.Hooks()
 
 	apitoken.Hooks[1] = apitokenMixinHooks0[0]
 
@@ -75,14 +75,14 @@ func init() {
 
 	apitoken.Hooks[4] = apitokenHooks[1]
 	apitokenMixinInters1 := apitokenMixin[1].Interceptors()
-	apitokenInters := schema.APIKey{}.Interceptors()
+	apitokenInters := schema.APIToken{}.Interceptors()
 	apitoken.Interceptors[0] = apitokenMixinInters1[0]
 	apitoken.Interceptors[1] = apitokenInters[0]
 	apitokenMixinFields0 := apitokenMixin[0].Fields()
 	_ = apitokenMixinFields0
 	apitokenMixinFields2 := apitokenMixin[2].Fields()
 	_ = apitokenMixinFields2
-	apitokenFields := schema.APIKey{}.Fields()
+	apitokenFields := schema.APIToken{}.Fields()
 	_ = apitokenFields
 	// apitokenDescCreatedAt is the schema descriptor for created_at field.
 	apitokenDescCreatedAt := apitokenMixinFields0[0].Descriptor()

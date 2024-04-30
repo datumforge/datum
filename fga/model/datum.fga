@@ -7,22 +7,22 @@ type role
     define assignee: [user]
 type organization
   relations
-    define parent: [organization]
-    define owner: [user] or owner from parent
     define admin: [user] or admin from parent
+    define can_delete: [service] or owner or can_delete from parent
+    define can_edit: [service] or admin or owner or can_edit from parent
+    define can_view: [service] or member or admin or owner or can_view from parent
     define member: [user] or owner or admin or member from parent
+    define owner: [user] or owner from parent
+    define parent: [organization]
     define user_in_context: [user]
-    define can_delete: [service] or owner
-    define can_edit: [service] or admin or owner
-    define can_view: [service] or member or admin or owner
 type group
   relations
-    define parent: [organization]
     define admin: [user] and member from parent
+    define can_delete: [service] or admin or can_delete from parent
+    define can_edit: [service] or admin or can_edit from parent
+    define can_view: [service] or member or admin or can_view from parent
     define member: [user] and member from parent
-    define can_delete: [service] or admin
-    define can_edit: [service] or admin
-    define can_view: [service] or member or admin
+    define parent: [organization]
 type subscription_tier
   relations
     define subscriber: [organization]

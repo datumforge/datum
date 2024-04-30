@@ -21,11 +21,12 @@ type APIToken struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
+	OwnerID   string     `json:"ownerID"`
 	// the name associated with the token
 	Name  string `json:"name"`
 	Token string `json:"token"`
 	// when the token expires
-	ExpiresAt time.Time `json:"expiresAt"`
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// a description of the token's purpose
 	Description *string       `json:"description,omitempty"`
 	Scopes      []string      `json:"scopes,omitempty"`
@@ -169,6 +170,20 @@ type APITokenWhereInput struct {
 	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
 	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
 	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -184,14 +199,16 @@ type APITokenWhereInput struct {
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 	// expires_at field predicates
-	ExpiresAt      *time.Time   `json:"expiresAt,omitempty"`
-	ExpiresAtNeq   *time.Time   `json:"expiresAtNEQ,omitempty"`
-	ExpiresAtIn    []*time.Time `json:"expiresAtIn,omitempty"`
-	ExpiresAtNotIn []*time.Time `json:"expiresAtNotIn,omitempty"`
-	ExpiresAtGt    *time.Time   `json:"expiresAtGT,omitempty"`
-	ExpiresAtGte   *time.Time   `json:"expiresAtGTE,omitempty"`
-	ExpiresAtLt    *time.Time   `json:"expiresAtLT,omitempty"`
-	ExpiresAtLte   *time.Time   `json:"expiresAtLTE,omitempty"`
+	ExpiresAt       *time.Time   `json:"expiresAt,omitempty"`
+	ExpiresAtNeq    *time.Time   `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn     []*time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn  []*time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGt     *time.Time   `json:"expiresAtGT,omitempty"`
+	ExpiresAtGte    *time.Time   `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLt     *time.Time   `json:"expiresAtLT,omitempty"`
+	ExpiresAtLte    *time.Time   `json:"expiresAtLTE,omitempty"`
+	ExpiresAtIsNil  *bool        `json:"expiresAtIsNil,omitempty"`
+	ExpiresAtNotNil *bool        `json:"expiresAtNotNil,omitempty"`
 	// last_used_at field predicates
 	LastUsedAt       *time.Time   `json:"lastUsedAt,omitempty"`
 	LastUsedAtNeq    *time.Time   `json:"lastUsedAtNEQ,omitempty"`
@@ -218,7 +235,7 @@ type CreateAPITokenInput struct {
 	// the name associated with the token
 	Name string `json:"name"`
 	// when the token expires
-	ExpiresAt time.Time `json:"expiresAt"`
+	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// a description of the token's purpose
 	Description *string    `json:"description,omitempty"`
 	Scopes      []string   `json:"scopes,omitempty"`

@@ -16,7 +16,7 @@ type CreateAPITokenInput struct {
 	CreatedBy   *string
 	UpdatedBy   *string
 	Name        string
-	ExpiresAt   time.Time
+	ExpiresAt   *time.Time
 	Description *string
 	Scopes      []string
 	LastUsedAt  *time.Time
@@ -38,7 +38,9 @@ func (i *CreateAPITokenInput) Mutate(m *APITokenMutation) {
 		m.SetUpdatedBy(*v)
 	}
 	m.SetName(i.Name)
-	m.SetExpiresAt(i.ExpiresAt)
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
+	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}

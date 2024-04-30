@@ -46,7 +46,6 @@ func (r *mutationResolver) UpdateAPIToken(ctx context.Context, id string, input 
 
 		if errors.Is(err, privacy.Deny) {
 			return nil, ErrPermissionDenied
-
 		}
 
 		r.logger.Errorw("failed to get api token", "error", err)
@@ -78,6 +77,10 @@ func (r *mutationResolver) DeleteAPIToken(ctx context.Context, id string) (*APIT
 	if err := withTransactionalMutation(ctx).APIToken.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
 		}
 
 		r.logger.Errorw("failed to delete api token", "error", err)

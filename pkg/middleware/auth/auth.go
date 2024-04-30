@@ -17,9 +17,9 @@ import (
 )
 
 // SessionSkipperFunc is the function that determines if the session check should be skipped
-// due to the request being a PAT auth request
+// due to the request being a PAT or API Token auth request
 var SessionSkipperFunc = func(c echo.Context) bool {
-	return c.Get(auth.GetContextName(auth.ContextAuthType)) == auth.PATAuthentication
+	return c.Get(auth.GetContextName(auth.ContextAuthType)) != auth.JWTAuthentication
 }
 
 // Authenticate is a middleware function that is used to authenticate requests - it is not applied to all routes so be cognizant of that
@@ -168,7 +168,7 @@ func isValidAPIToken(ctx context.Context, dbClient *generated.Client, token stri
 		return nil, err
 	}
 
-	if t.ExpiresAt.Before(time.Now()) {
+	if !t.ExpiresAt.IsZero() && t.ExpiresAt.Before(time.Now()) {
 		return nil, rout.ErrExpiredCredentials
 	}
 

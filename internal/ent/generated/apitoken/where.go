@@ -737,6 +737,16 @@ func ExpiresAtLTE(v time.Time) predicate.APIToken {
 	return predicate.APIToken(sql.FieldLTE(FieldExpiresAt, v))
 }
 
+// ExpiresAtIsNil applies the IsNil predicate on the "expires_at" field.
+func ExpiresAtIsNil() predicate.APIToken {
+	return predicate.APIToken(sql.FieldIsNull(FieldExpiresAt))
+}
+
+// ExpiresAtNotNil applies the NotNil predicate on the "expires_at" field.
+func ExpiresAtNotNil() predicate.APIToken {
+	return predicate.APIToken(sql.FieldNotNull(FieldExpiresAt))
+}
+
 // DescriptionEQ applies the EQ predicate on the "description" field.
 func DescriptionEQ(v string) predicate.APIToken {
 	return predicate.APIToken(sql.FieldEQ(FieldDescription, v))

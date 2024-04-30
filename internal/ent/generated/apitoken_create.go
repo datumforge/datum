@@ -137,6 +137,14 @@ func (atc *APITokenCreate) SetExpiresAt(t time.Time) *APITokenCreate {
 	return atc
 }
 
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (atc *APITokenCreate) SetNillableExpiresAt(t *time.Time) *APITokenCreate {
+	if t != nil {
+		atc.SetExpiresAt(*t)
+	}
+	return atc
+}
+
 // SetDescription sets the "description" field.
 func (atc *APITokenCreate) SetDescription(s string) *APITokenCreate {
 	atc.mutation.SetDescription(s)
@@ -274,9 +282,6 @@ func (atc *APITokenCreate) check() error {
 	if _, ok := atc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "APIToken.token"`)}
 	}
-	if _, ok := atc.mutation.ExpiresAt(); !ok {
-		return &ValidationError{Name: "expires_at", err: errors.New(`generated: missing required field "APIToken.expires_at"`)}
-	}
 	if _, ok := atc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "APIToken.owner"`)}
 	}
@@ -350,7 +355,7 @@ func (atc *APITokenCreate) createSpec() (*APIToken, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := atc.mutation.ExpiresAt(); ok {
 		_spec.SetField(apitoken.FieldExpiresAt, field.TypeTime, value)
-		_node.ExpiresAt = &value
+		_node.ExpiresAt = value
 	}
 	if value, ok := atc.mutation.Description(); ok {
 		_spec.SetField(apitoken.FieldDescription, field.TypeString, value)

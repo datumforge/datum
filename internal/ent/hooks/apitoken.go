@@ -14,7 +14,7 @@ import (
 // HookCreateAPIToken runs on api token mutations and sets expires and owner id
 func HookCreateAPIToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
-		return hook.PersonalAccessTokenFunc(func(ctx context.Context, mutation *generated.PersonalAccessTokenMutation) (generated.Value, error) {
+		return hook.APITokenFunc(func(ctx context.Context, mutation *generated.APITokenMutation) (generated.Value, error) {
 			// default the expiration to 7 days
 			expires, ok := mutation.ExpiresAt()
 			if !ok || expires.IsZero() {
@@ -37,7 +37,7 @@ func HookCreateAPIToken() ent.Hook {
 // HookUpdateAPIToken runs on api token update and redacts the token
 func HookUpdateAPIToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
-		return hook.PersonalAccessTokenFunc(func(ctx context.Context, mutation *generated.PersonalAccessTokenMutation) (generated.Value, error) {
+		return hook.APITokenFunc(func(ctx context.Context, mutation *generated.APITokenMutation) (generated.Value, error) {
 			retVal, err := next.Mutate(ctx, mutation)
 			if err != nil {
 				return nil, err

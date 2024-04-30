@@ -31,8 +31,6 @@ const (
 	FieldOwnerID = "owner_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// FieldOrganizationID holds the string denoting the organization_id field in the database.
-	FieldOrganizationID = "organization_id"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
 	// FieldExpiresAt holds the string denoting the expires_at field in the database.
@@ -67,7 +65,6 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldOwnerID,
 	FieldName,
-	FieldOrganizationID,
 	FieldToken,
 	FieldExpiresAt,
 	FieldDescription,
@@ -102,8 +99,6 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
-	// OrganizationIDValidator is a validator for the "organization_id" field. It is called by the builders before save.
-	OrganizationIDValidator func(string) error
 	// DefaultToken holds the default value on creation for the "token" field.
 	DefaultToken func() string
 	// DefaultID holds the default value on creation for the "id" field.
@@ -156,11 +151,6 @@ func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
-}
-
-// ByOrganizationID orders the results by the organization_id field.
-func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
 // ByToken orders the results by the token field.

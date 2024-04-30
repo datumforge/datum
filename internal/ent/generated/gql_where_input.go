@@ -168,21 +168,6 @@ type APITokenWhereInput struct {
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
-	// "organization_id" field predicates.
-	OrganizationID             *string  `json:"organizationID,omitempty"`
-	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
-	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
-	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
-	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
-	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
-	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
-	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
-	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
-	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
-	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
-	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
-	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
-
 	// "expires_at" field predicates.
 	ExpiresAt      *time.Time  `json:"expiresAt,omitempty"`
 	ExpiresAtNEQ   *time.Time  `json:"expiresAtNEQ,omitempty"`
@@ -574,45 +559,6 @@ func (i *APITokenWhereInput) P() (predicate.APIToken, error) {
 	}
 	if i.NameContainsFold != nil {
 		predicates = append(predicates, apitoken.NameContainsFold(*i.NameContainsFold))
-	}
-	if i.OrganizationID != nil {
-		predicates = append(predicates, apitoken.OrganizationIDEQ(*i.OrganizationID))
-	}
-	if i.OrganizationIDNEQ != nil {
-		predicates = append(predicates, apitoken.OrganizationIDNEQ(*i.OrganizationIDNEQ))
-	}
-	if len(i.OrganizationIDIn) > 0 {
-		predicates = append(predicates, apitoken.OrganizationIDIn(i.OrganizationIDIn...))
-	}
-	if len(i.OrganizationIDNotIn) > 0 {
-		predicates = append(predicates, apitoken.OrganizationIDNotIn(i.OrganizationIDNotIn...))
-	}
-	if i.OrganizationIDGT != nil {
-		predicates = append(predicates, apitoken.OrganizationIDGT(*i.OrganizationIDGT))
-	}
-	if i.OrganizationIDGTE != nil {
-		predicates = append(predicates, apitoken.OrganizationIDGTE(*i.OrganizationIDGTE))
-	}
-	if i.OrganizationIDLT != nil {
-		predicates = append(predicates, apitoken.OrganizationIDLT(*i.OrganizationIDLT))
-	}
-	if i.OrganizationIDLTE != nil {
-		predicates = append(predicates, apitoken.OrganizationIDLTE(*i.OrganizationIDLTE))
-	}
-	if i.OrganizationIDContains != nil {
-		predicates = append(predicates, apitoken.OrganizationIDContains(*i.OrganizationIDContains))
-	}
-	if i.OrganizationIDHasPrefix != nil {
-		predicates = append(predicates, apitoken.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
-	}
-	if i.OrganizationIDHasSuffix != nil {
-		predicates = append(predicates, apitoken.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
-	}
-	if i.OrganizationIDEqualFold != nil {
-		predicates = append(predicates, apitoken.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
-	}
-	if i.OrganizationIDContainsFold != nil {
-		predicates = append(predicates, apitoken.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
 	}
 	if i.ExpiresAt != nil {
 		predicates = append(predicates, apitoken.ExpiresAtEQ(*i.ExpiresAt))

@@ -130,7 +130,7 @@ func (Organization) Edges() []ent.Edge {
 			),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type),
-		edge.To("api_tokens", APIToken.Type),
+		edge.To("api_tokens", APIKey.Type),
 		edge.To("oauthprovider", OauthProvider.Type),
 		edge.From("users", User.Type).
 			Ref("organizations").

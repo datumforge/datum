@@ -22,10 +22,8 @@ type APIToken struct {
 	DeletedAt *time.Time `json:"deletedAt,omitempty"`
 	DeletedBy *string    `json:"deletedBy,omitempty"`
 	// the name associated with the token
-	Name string `json:"name"`
-	// the organization the token is associated with
-	OrganizationID string `json:"organizationID"`
-	Token          string `json:"token"`
+	Name  string `json:"name"`
+	Token string `json:"token"`
 	// when the token expires
 	ExpiresAt time.Time `json:"expiresAt"`
 	// a description of the token's purpose
@@ -185,20 +183,6 @@ type APITokenWhereInput struct {
 	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
-	// organization_id field predicates
-	OrganizationID             *string  `json:"organizationID,omitempty"`
-	OrganizationIDNeq          *string  `json:"organizationIDNEQ,omitempty"`
-	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
-	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
-	OrganizationIDGt           *string  `json:"organizationIDGT,omitempty"`
-	OrganizationIDGte          *string  `json:"organizationIDGTE,omitempty"`
-	OrganizationIDLt           *string  `json:"organizationIDLT,omitempty"`
-	OrganizationIDLte          *string  `json:"organizationIDLTE,omitempty"`
-	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
-	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
-	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
-	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
-	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 	// expires_at field predicates
 	ExpiresAt      *time.Time   `json:"expiresAt,omitempty"`
 	ExpiresAtNeq   *time.Time   `json:"expiresAtNEQ,omitempty"`
@@ -233,8 +217,6 @@ type CreateAPITokenInput struct {
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	// the name associated with the token
 	Name string `json:"name"`
-	// the organization the token is associated with
-	OrganizationID string `json:"organizationID"`
 	// when the token expires
 	ExpiresAt time.Time `json:"expiresAt"`
 	// a description of the token's purpose

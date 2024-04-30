@@ -19,20 +19,16 @@ import (
 	"github.com/datumforge/datum/pkg/keygen"
 )
 
-// APIToken holds the schema definition for the APIToken entity.
-type APIToken struct {
+// APIKey holds the schema definition for the APIKey entity.
+type APIKey struct {
 	ent.Schema
 }
 
 // Fields of the APIToken
-func (APIToken) Fields() []ent.Field {
+func (APIKey) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
 			Comment("the name associated with the token").
-			NotEmpty(),
-		field.String("organization_id").
-			Comment("the organization the token is associated with").
-			Immutable().
 			NotEmpty(),
 		field.String("token").
 			Unique().
@@ -67,12 +63,12 @@ func (APIToken) Fields() []ent.Field {
 }
 
 // Edges of the APIToken
-func (APIToken) Edges() []ent.Edge {
+func (APIKey) Edges() []ent.Edge {
 	return []ent.Edge{}
 }
 
 // Indexes of the APIToken
-func (APIToken) Indexes() []ent.Index {
+func (APIKey) Indexes() []ent.Index {
 	return []ent.Index{
 		// non-unique index.
 		index.Fields("token"),
@@ -80,7 +76,7 @@ func (APIToken) Indexes() []ent.Index {
 }
 
 // Mixin of the APIToken
-func (APIToken) Mixin() []ent.Mixin {
+func (APIKey) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		emixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
@@ -92,7 +88,7 @@ func (APIToken) Mixin() []ent.Mixin {
 }
 
 // Annotations of the APIToken
-func (APIToken) Annotations() []schema.Annotation {
+func (APIKey) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),
@@ -104,7 +100,7 @@ func (APIToken) Annotations() []schema.Annotation {
 }
 
 // Hooks of the APIToken
-func (APIToken) Hooks() []ent.Hook {
+func (APIKey) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookCreateAPIToken(),
 		hooks.HookUpdateAPIToken(),
@@ -112,23 +108,22 @@ func (APIToken) Hooks() []ent.Hook {
 }
 
 // Interceptors of the APIToken
-func (APIToken) Interceptors() []ent.Interceptor {
+func (APIKey) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		interceptors.InterceptorAPIToken(),
 	}
 }
 
 // Policy of the APIToken
-func (APIToken) Policy() ent.Policy {
+func (APIKey) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
 			rule.DenyIfNoSubject(),
-			rule.AllowMutationAfterApplyingOwnerFilter(),
 			privacy.AlwaysAllowRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.AllowIfOwnedByViewer(),
-			privacy.AlwaysDenyRule(),
+			rule.DenyIfNoSubject(),
+			privacy.AlwaysAllowRule(),
 		},
 	}
 }

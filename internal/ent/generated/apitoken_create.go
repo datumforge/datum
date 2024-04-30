@@ -117,12 +117,6 @@ func (atc *APITokenCreate) SetName(s string) *APITokenCreate {
 	return atc
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (atc *APITokenCreate) SetOrganizationID(s string) *APITokenCreate {
-	atc.mutation.SetOrganizationID(s)
-	return atc
-}
-
 // SetToken sets the "token" field.
 func (atc *APITokenCreate) SetToken(s string) *APITokenCreate {
 	atc.mutation.SetToken(s)
@@ -277,14 +271,6 @@ func (atc *APITokenCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "APIToken.name": %w`, err)}
 		}
 	}
-	if _, ok := atc.mutation.OrganizationID(); !ok {
-		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "APIToken.organization_id"`)}
-	}
-	if v, ok := atc.mutation.OrganizationID(); ok {
-		if err := apitoken.OrganizationIDValidator(v); err != nil {
-			return &ValidationError{Name: "organization_id", err: fmt.Errorf(`generated: validator failed for field "APIToken.organization_id": %w`, err)}
-		}
-	}
 	if _, ok := atc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "APIToken.token"`)}
 	}
@@ -357,10 +343,6 @@ func (atc *APITokenCreate) createSpec() (*APIToken, *sqlgraph.CreateSpec) {
 	if value, ok := atc.mutation.Name(); ok {
 		_spec.SetField(apitoken.FieldName, field.TypeString, value)
 		_node.Name = value
-	}
-	if value, ok := atc.mutation.OrganizationID(); ok {
-		_spec.SetField(apitoken.FieldOrganizationID, field.TypeString, value)
-		_node.OrganizationID = value
 	}
 	if value, ok := atc.mutation.Token(); ok {
 		_spec.SetField(apitoken.FieldToken, field.TypeString, value)

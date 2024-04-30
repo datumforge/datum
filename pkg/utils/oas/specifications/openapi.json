@@ -100,9 +100,6 @@
                   "name": {
                     "type": "string"
                   },
-                  "organization_id": {
-                    "type": "string"
-                  },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
@@ -126,7 +123,6 @@
                 },
                 "required": [
                   "name",
-                  "organization_id",
                   "expires_at",
                   "owner"
                 ]
@@ -11871,9 +11867,6 @@
           "name": {
             "type": "string"
           },
-          "organization_id": {
-            "type": "string"
-          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
@@ -11898,7 +11891,6 @@
         "required": [
           "id",
           "name",
-          "organization_id",
           "owner"
         ]
       },

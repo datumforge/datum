@@ -117,11 +117,6 @@ func (at *APITokenQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				selectedFields = append(selectedFields, apitoken.FieldName)
 				fieldSeen[apitoken.FieldName] = struct{}{}
 			}
-		case "organizationID":
-			if _, ok := fieldSeen[apitoken.FieldOrganizationID]; !ok {
-				selectedFields = append(selectedFields, apitoken.FieldOrganizationID)
-				fieldSeen[apitoken.FieldOrganizationID] = struct{}{}
-			}
 		case "token":
 			if _, ok := fieldSeen[apitoken.FieldToken]; !ok {
 				selectedFields = append(selectedFields, apitoken.FieldToken)

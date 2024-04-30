@@ -105,29 +105,28 @@ const (
 // APITokenMutation represents an operation that mutates the APIToken nodes in the graph.
 type APITokenMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *string
-	created_at      *time.Time
-	updated_at      *time.Time
-	created_by      *string
-	updated_by      *string
-	deleted_at      *time.Time
-	deleted_by      *string
-	name            *string
-	organization_id *string
-	token           *string
-	expires_at      *time.Time
-	description     *string
-	scopes          *[]string
-	appendscopes    []string
-	last_used_at    *time.Time
-	clearedFields   map[string]struct{}
-	owner           *string
-	clearedowner    bool
-	done            bool
-	oldValue        func(context.Context) (*APIToken, error)
-	predicates      []predicate.APIToken
+	op            Op
+	typ           string
+	id            *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	created_by    *string
+	updated_by    *string
+	deleted_at    *time.Time
+	deleted_by    *string
+	name          *string
+	token         *string
+	expires_at    *time.Time
+	description   *string
+	scopes        *[]string
+	appendscopes  []string
+	last_used_at  *time.Time
+	clearedFields map[string]struct{}
+	owner         *string
+	clearedowner  bool
+	done          bool
+	oldValue      func(context.Context) (*APIToken, error)
+	predicates    []predicate.APIToken
 }
 
 var _ ent.Mutation = (*APITokenMutation)(nil)
@@ -600,42 +599,6 @@ func (m *APITokenMutation) ResetName() {
 	m.name = nil
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (m *APITokenMutation) SetOrganizationID(s string) {
-	m.organization_id = &s
-}
-
-// OrganizationID returns the value of the "organization_id" field in the mutation.
-func (m *APITokenMutation) OrganizationID() (r string, exists bool) {
-	v := m.organization_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOrganizationID returns the old "organization_id" field's value of the APIToken entity.
-// If the APIToken object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *APITokenMutation) OldOrganizationID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOrganizationID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOrganizationID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOrganizationID: %w", err)
-	}
-	return oldValue.OrganizationID, nil
-}
-
-// ResetOrganizationID resets all changes to the "organization_id" field.
-func (m *APITokenMutation) ResetOrganizationID() {
-	m.organization_id = nil
-}
-
 // SetToken sets the "token" field.
 func (m *APITokenMutation) SetToken(s string) {
 	m.token = &s
@@ -932,7 +895,7 @@ func (m *APITokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *APITokenMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, apitoken.FieldCreatedAt)
 	}
@@ -956,9 +919,6 @@ func (m *APITokenMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, apitoken.FieldName)
-	}
-	if m.organization_id != nil {
-		fields = append(fields, apitoken.FieldOrganizationID)
 	}
 	if m.token != nil {
 		fields = append(fields, apitoken.FieldToken)
@@ -999,8 +959,6 @@ func (m *APITokenMutation) Field(name string) (ent.Value, bool) {
 		return m.OwnerID()
 	case apitoken.FieldName:
 		return m.Name()
-	case apitoken.FieldOrganizationID:
-		return m.OrganizationID()
 	case apitoken.FieldToken:
 		return m.Token()
 	case apitoken.FieldExpiresAt:
@@ -1036,8 +994,6 @@ func (m *APITokenMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldOwnerID(ctx)
 	case apitoken.FieldName:
 		return m.OldName(ctx)
-	case apitoken.FieldOrganizationID:
-		return m.OldOrganizationID(ctx)
 	case apitoken.FieldToken:
 		return m.OldToken(ctx)
 	case apitoken.FieldExpiresAt:
@@ -1112,13 +1068,6 @@ func (m *APITokenMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
-		return nil
-	case apitoken.FieldOrganizationID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOrganizationID(v)
 		return nil
 	case apitoken.FieldToken:
 		v, ok := value.(string)
@@ -1284,9 +1233,6 @@ func (m *APITokenMutation) ResetField(name string) error {
 		return nil
 	case apitoken.FieldName:
 		m.ResetName()
-		return nil
-	case apitoken.FieldOrganizationID:
-		m.ResetOrganizationID()
 		return nil
 	case apitoken.FieldToken:
 		m.ResetToken()

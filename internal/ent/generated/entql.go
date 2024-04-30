@@ -62,20 +62,19 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "APIToken",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			apitoken.FieldCreatedAt:      {Type: field.TypeTime, Column: apitoken.FieldCreatedAt},
-			apitoken.FieldUpdatedAt:      {Type: field.TypeTime, Column: apitoken.FieldUpdatedAt},
-			apitoken.FieldCreatedBy:      {Type: field.TypeString, Column: apitoken.FieldCreatedBy},
-			apitoken.FieldUpdatedBy:      {Type: field.TypeString, Column: apitoken.FieldUpdatedBy},
-			apitoken.FieldDeletedAt:      {Type: field.TypeTime, Column: apitoken.FieldDeletedAt},
-			apitoken.FieldDeletedBy:      {Type: field.TypeString, Column: apitoken.FieldDeletedBy},
-			apitoken.FieldOwnerID:        {Type: field.TypeString, Column: apitoken.FieldOwnerID},
-			apitoken.FieldName:           {Type: field.TypeString, Column: apitoken.FieldName},
-			apitoken.FieldOrganizationID: {Type: field.TypeString, Column: apitoken.FieldOrganizationID},
-			apitoken.FieldToken:          {Type: field.TypeString, Column: apitoken.FieldToken},
-			apitoken.FieldExpiresAt:      {Type: field.TypeTime, Column: apitoken.FieldExpiresAt},
-			apitoken.FieldDescription:    {Type: field.TypeString, Column: apitoken.FieldDescription},
-			apitoken.FieldScopes:         {Type: field.TypeJSON, Column: apitoken.FieldScopes},
-			apitoken.FieldLastUsedAt:     {Type: field.TypeTime, Column: apitoken.FieldLastUsedAt},
+			apitoken.FieldCreatedAt:   {Type: field.TypeTime, Column: apitoken.FieldCreatedAt},
+			apitoken.FieldUpdatedAt:   {Type: field.TypeTime, Column: apitoken.FieldUpdatedAt},
+			apitoken.FieldCreatedBy:   {Type: field.TypeString, Column: apitoken.FieldCreatedBy},
+			apitoken.FieldUpdatedBy:   {Type: field.TypeString, Column: apitoken.FieldUpdatedBy},
+			apitoken.FieldDeletedAt:   {Type: field.TypeTime, Column: apitoken.FieldDeletedAt},
+			apitoken.FieldDeletedBy:   {Type: field.TypeString, Column: apitoken.FieldDeletedBy},
+			apitoken.FieldOwnerID:     {Type: field.TypeString, Column: apitoken.FieldOwnerID},
+			apitoken.FieldName:        {Type: field.TypeString, Column: apitoken.FieldName},
+			apitoken.FieldToken:       {Type: field.TypeString, Column: apitoken.FieldToken},
+			apitoken.FieldExpiresAt:   {Type: field.TypeTime, Column: apitoken.FieldExpiresAt},
+			apitoken.FieldDescription: {Type: field.TypeString, Column: apitoken.FieldDescription},
+			apitoken.FieldScopes:      {Type: field.TypeJSON, Column: apitoken.FieldScopes},
+			apitoken.FieldLastUsedAt:  {Type: field.TypeTime, Column: apitoken.FieldLastUsedAt},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -1762,11 +1761,6 @@ func (f *APITokenFilter) WhereOwnerID(p entql.StringP) {
 // WhereName applies the entql string predicate on the name field.
 func (f *APITokenFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(apitoken.FieldName))
-}
-
-// WhereOrganizationID applies the entql string predicate on the organization_id field.
-func (f *APITokenFilter) WhereOrganizationID(p entql.StringP) {
-	f.Where(p.Field(apitoken.FieldOrganizationID))
 }
 
 // WhereToken applies the entql string predicate on the token field.

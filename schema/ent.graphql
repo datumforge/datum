@@ -12,10 +12,6 @@ type APIToken implements Node {
   the name associated with the token
   """
   name: String!
-  """
-  the organization the token is associated with
-  """
-  organizationID: String!
   token: String!
   """
   when the token expires
@@ -190,22 +186,6 @@ input APITokenWhereInput {
   nameEqualFold: String
   nameContainsFold: String
   """
-  organization_id field predicates
-  """
-  organizationID: String
-  organizationIDNEQ: String
-  organizationIDIn: [String!]
-  organizationIDNotIn: [String!]
-  organizationIDGT: String
-  organizationIDGTE: String
-  organizationIDLT: String
-  organizationIDLTE: String
-  organizationIDContains: String
-  organizationIDHasPrefix: String
-  organizationIDHasSuffix: String
-  organizationIDEqualFold: String
-  organizationIDContainsFold: String
-  """
   expires_at field predicates
   """
   expiresAt: Time
@@ -248,10 +228,6 @@ input CreateAPITokenInput {
   the name associated with the token
   """
   name: String!
-  """
-  the organization the token is associated with
-  """
-  organizationID: String!
   """
   when the token expires
   """

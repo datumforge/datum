@@ -88,19 +88,30 @@ func NewClient(cli *http.Client, baseURL string, options *clientv2.Options, inte
 	return &Client{Client: clientv2.NewClient(cli, baseURL, options, interceptors...)}
 }
 
+type CreateAPIToken_CreateAPIToken_APIToken_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateAPIToken_CreateAPIToken_APIToken_Owner) GetID() string {
+	if t == nil {
+		t = &CreateAPIToken_CreateAPIToken_APIToken_Owner{}
+	}
+	return t.ID
+}
+
 type CreateAPIToken_CreateAPIToken_APIToken struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	Token          string     "json:\"token\" graphql:\"token\""
-	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
-	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name           string     "json:\"name\" graphql:\"name\""
-	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
-	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	Token       string                                       "json:\"token\" graphql:\"token\""
+	Scopes      []string                                     "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       CreateAPIToken_CreateAPIToken_APIToken_Owner "json:\"owner\" graphql:\"owner\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	ExpiresAt   time.Time                                    "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                                   "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *CreateAPIToken_CreateAPIToken_APIToken) GetID() string {
@@ -121,11 +132,11 @@ func (t *CreateAPIToken_CreateAPIToken_APIToken) GetScopes() []string {
 	}
 	return t.Scopes
 }
-func (t *CreateAPIToken_CreateAPIToken_APIToken) GetOrganizationID() string {
+func (t *CreateAPIToken_CreateAPIToken_APIToken) GetOwner() *CreateAPIToken_CreateAPIToken_APIToken_Owner {
 	if t == nil {
 		t = &CreateAPIToken_CreateAPIToken_APIToken{}
 	}
-	return t.OrganizationID
+	return &t.Owner
 }
 func (t *CreateAPIToken_CreateAPIToken_APIToken) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -187,19 +198,30 @@ func (t *CreateAPIToken_CreateAPIToken) GetAPIToken() *CreateAPIToken_CreateAPIT
 	return &t.APIToken
 }
 
+type UpdateAPIToken_UpdateAPIToken_APIToken_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken_Owner) GetID() string {
+	if t == nil {
+		t = &UpdateAPIToken_UpdateAPIToken_APIToken_Owner{}
+	}
+	return t.ID
+}
+
 type UpdateAPIToken_UpdateAPIToken_APIToken struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	Token          string     "json:\"token\" graphql:\"token\""
-	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
-	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name           string     "json:\"name\" graphql:\"name\""
-	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
-	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                                       "json:\"id\" graphql:\"id\""
+	Token       string                                       "json:\"token\" graphql:\"token\""
+	Scopes      []string                                     "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       UpdateAPIToken_UpdateAPIToken_APIToken_Owner "json:\"owner\" graphql:\"owner\""
+	CreatedAt   *time.Time                                   "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                   "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                      "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                      "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                                       "json:\"name\" graphql:\"name\""
+	ExpiresAt   time.Time                                    "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description *string                                      "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                                   "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetID() string {
@@ -220,11 +242,11 @@ func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetScopes() []string {
 	}
 	return t.Scopes
 }
-func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetOrganizationID() string {
+func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetOwner() *UpdateAPIToken_UpdateAPIToken_APIToken_Owner {
 	if t == nil {
 		t = &UpdateAPIToken_UpdateAPIToken_APIToken{}
 	}
-	return t.OrganizationID
+	return &t.Owner
 }
 func (t *UpdateAPIToken_UpdateAPIToken_APIToken) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -286,19 +308,30 @@ func (t *UpdateAPIToken_UpdateAPIToken) GetAPIToken() *UpdateAPIToken_UpdateAPIT
 	return &t.APIToken
 }
 
+type GetAllAPITokens_APITokens_Edges_Node_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAllAPITokens_APITokens_Edges_Node_Owner) GetID() string {
+	if t == nil {
+		t = &GetAllAPITokens_APITokens_Edges_Node_Owner{}
+	}
+	return t.ID
+}
+
 type GetAllAPITokens_APITokens_Edges_Node struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	Token          string     "json:\"token\" graphql:\"token\""
-	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
-	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name           string     "json:\"name\" graphql:\"name\""
-	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
-	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                                     "json:\"id\" graphql:\"id\""
+	Token       string                                     "json:\"token\" graphql:\"token\""
+	Scopes      []string                                   "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       GetAllAPITokens_APITokens_Edges_Node_Owner "json:\"owner\" graphql:\"owner\""
+	CreatedAt   *time.Time                                 "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                                 "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                                     "json:\"name\" graphql:\"name\""
+	ExpiresAt   time.Time                                  "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description *string                                    "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                                 "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *GetAllAPITokens_APITokens_Edges_Node) GetID() string {
@@ -319,11 +352,11 @@ func (t *GetAllAPITokens_APITokens_Edges_Node) GetScopes() []string {
 	}
 	return t.Scopes
 }
-func (t *GetAllAPITokens_APITokens_Edges_Node) GetOrganizationID() string {
+func (t *GetAllAPITokens_APITokens_Edges_Node) GetOwner() *GetAllAPITokens_APITokens_Edges_Node_Owner {
 	if t == nil {
 		t = &GetAllAPITokens_APITokens_Edges_Node{}
 	}
-	return t.OrganizationID
+	return &t.Owner
 }
 func (t *GetAllAPITokens_APITokens_Edges_Node) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -396,19 +429,30 @@ func (t *GetAllAPITokens_APITokens) GetEdges() []*GetAllAPITokens_APITokens_Edge
 	return t.Edges
 }
 
+type GetAPITokenByID_APIToken_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetAPITokenByID_APIToken_Owner) GetID() string {
+	if t == nil {
+		t = &GetAPITokenByID_APIToken_Owner{}
+	}
+	return t.ID
+}
+
 type GetAPITokenByID_APIToken struct {
-	ID             string     "json:\"id\" graphql:\"id\""
-	Token          string     "json:\"token\" graphql:\"token\""
-	Scopes         []string   "json:\"scopes,omitempty\" graphql:\"scopes\""
-	OrganizationID string     "json:\"organizationID\" graphql:\"organizationID\""
-	CreatedAt      *time.Time "json:\"createdAt,omitempty\" graphql:\"createdAt\""
-	UpdatedAt      *time.Time "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
-	CreatedBy      *string    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedBy      *string    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	Name           string     "json:\"name\" graphql:\"name\""
-	ExpiresAt      time.Time  "json:\"expiresAt\" graphql:\"expiresAt\""
-	Description    *string    "json:\"description,omitempty\" graphql:\"description\""
-	LastUsedAt     *time.Time "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+	ID          string                         "json:\"id\" graphql:\"id\""
+	Token       string                         "json:\"token\" graphql:\"token\""
+	Scopes      []string                       "json:\"scopes,omitempty\" graphql:\"scopes\""
+	Owner       GetAPITokenByID_APIToken_Owner "json:\"owner\" graphql:\"owner\""
+	CreatedAt   *time.Time                     "json:\"createdAt,omitempty\" graphql:\"createdAt\""
+	UpdatedAt   *time.Time                     "json:\"updatedAt,omitempty\" graphql:\"updatedAt\""
+	CreatedBy   *string                        "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy   *string                        "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name        string                         "json:\"name\" graphql:\"name\""
+	ExpiresAt   time.Time                      "json:\"expiresAt\" graphql:\"expiresAt\""
+	Description *string                        "json:\"description,omitempty\" graphql:\"description\""
+	LastUsedAt  *time.Time                     "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 }
 
 func (t *GetAPITokenByID_APIToken) GetID() string {
@@ -429,11 +473,11 @@ func (t *GetAPITokenByID_APIToken) GetScopes() []string {
 	}
 	return t.Scopes
 }
-func (t *GetAPITokenByID_APIToken) GetOrganizationID() string {
+func (t *GetAPITokenByID_APIToken) GetOwner() *GetAPITokenByID_APIToken_Owner {
 	if t == nil {
 		t = &GetAPITokenByID_APIToken{}
 	}
-	return t.OrganizationID
+	return &t.Owner
 }
 func (t *GetAPITokenByID_APIToken) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -8683,7 +8727,9 @@ const CreateAPITokenDocument = `mutation CreateAPIToken ($input: CreateAPITokenI
 			id
 			token
 			scopes
-			organizationID
+			owner {
+				id
+			}
 			createdAt
 			updatedAt
 			createdBy
@@ -8720,7 +8766,9 @@ const UpdateAPITokenDocument = `mutation UpdateAPIToken ($updateAPITokenId: ID!,
 			id
 			token
 			scopes
-			organizationID
+			owner {
+				id
+			}
 			createdAt
 			updatedAt
 			createdBy
@@ -8759,7 +8807,9 @@ const GetAllAPITokensDocument = `query GetAllAPITokens {
 				id
 				token
 				scopes
-				organizationID
+				owner {
+					id
+				}
 				createdAt
 				updatedAt
 				createdBy
@@ -8794,7 +8844,9 @@ const GetAPITokenByIDDocument = `query GetAPITokenByID ($apiTokenId: ID!) {
 		id
 		token
 		scopes
-		organizationID
+		owner {
+			id
+		}
 		createdAt
 		updatedAt
 		createdBy

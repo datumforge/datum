@@ -4,7 +4,9 @@ mutation CreateAPIToken($input: CreateAPITokenInput!) {
       id
       token
       scopes
-      organizationID
+      owner {
+        id
+      }
       createdAt
       updatedAt
       createdBy
@@ -23,7 +25,9 @@ mutation UpdateAPIToken($updateAPITokenId: ID!, $input: UpdateAPITokenInput!) {
       id
       token
       scopes
-      organizationID
+      owner {
+        id
+      }
       createdAt
       updatedAt
       createdBy
@@ -43,7 +47,9 @@ query GetAllAPITokens {
         id
         token
         scopes
-        organizationID
+        owner {
+          id
+        }
         createdAt
         updatedAt
         createdBy
@@ -62,7 +68,9 @@ query GetAPITokenByID($apiTokenId: ID!) {
     id
     token
     scopes
-    organizationID
+    owner {
+      id
+    }
     createdAt
     updatedAt
     createdBy

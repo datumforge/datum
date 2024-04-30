@@ -11,17 +11,16 @@ import (
 
 // CreateAPITokenInput represents a mutation input for creating apitokens.
 type CreateAPITokenInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Name           string
-	OrganizationID string
-	ExpiresAt      time.Time
-	Description    *string
-	Scopes         []string
-	LastUsedAt     *time.Time
-	OwnerID        string
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	Name        string
+	ExpiresAt   time.Time
+	Description *string
+	Scopes      []string
+	LastUsedAt  *time.Time
+	OwnerID     string
 }
 
 // Mutate applies the CreateAPITokenInput on the APITokenMutation builder.
@@ -39,7 +38,6 @@ func (i *CreateAPITokenInput) Mutate(m *APITokenMutation) {
 		m.SetUpdatedBy(*v)
 	}
 	m.SetName(i.Name)
-	m.SetOrganizationID(i.OrganizationID)
 	m.SetExpiresAt(i.ExpiresAt)
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)

@@ -8,7 +8,7 @@ import (
 
 // apiTokenCmd represents the base apiTokenCmd command when called without any subcommands
 var apiTokenCmd = &cobra.Command{
-	Use:   "pat",
+	Use:   "token",
 	Short: "The subcommands for working with api tokens",
 }
 

@@ -30,13 +30,15 @@ type WebauthnRegistrationRequest struct {
 	Name  string `json:"name"`
 }
 
+// WebauthnRegistrationResponse is the response to begin a webauthn login
+// this includes the credential creation options and the session token
 type WebauthnBeginRegistrationResponse struct {
 	Reply rout.Reply
 	*protocol.CredentialCreation
 	Session string `json:"session,omitempty"`
 }
 
-// WebauthnRegistrationResponse is the response to begin a webauthn login
+// WebauthnRegistrationResponse is the response after a successful webauthn registration
 type WebauthnRegistrationResponse struct {
 	rout.Reply
 	Message      string `json:"message,omitempty"`
@@ -46,13 +48,15 @@ type WebauthnRegistrationResponse struct {
 	TokenType    string `json:"token_type"`
 }
 
+// WebauthnBeginLoginResponse is the response to begin a webauthn login
+// this includes the credential assertion options and the session token
 type WebauthnBeginLoginResponse struct {
 	Reply rout.Reply
 	*protocol.CredentialAssertion
 	Session string `json:"session,omitempty"`
 }
 
-// WebauthnRegistrationResponse is the response to begin a webauthn login
+// WebauthnRegistrationResponse is the response after a successful webauthn login
 type WebauthnLoginResponse struct {
 	rout.Reply
 	Message      string `json:"message,omitempty"`

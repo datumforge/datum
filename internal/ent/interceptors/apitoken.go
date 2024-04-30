@@ -6,14 +6,21 @@ import (
 	"entgo.io/ent"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/pkg/auth"
 )
 
 // InterceptorAPIToken is middleware to change the api token query
 func InterceptorAPIToken() ent.Interceptor {
 	return ent.InterceptFunc(func(next ent.Querier) ent.Querier {
 		return intercept.APITokenFunc(func(ctx context.Context, q *generated.APITokenQuery) (generated.Value, error) {
-			v, err := next.Query(ctx, q)
+			orgID, err := auth.GetOrganizationIDFromContext(ctx)
+			if err != nil {
+				return nil, err
+			}
+
+			v, err := next.Query(ctx, q.Where(apitoken.OwnerIDEQ(orgID)))
 			if err != nil {
 				return nil, err
 			}

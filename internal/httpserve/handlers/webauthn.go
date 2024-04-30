@@ -31,9 +31,39 @@ type WebauthnRegistrationRequest struct {
 }
 
 // WebauthnRegistrationResponse is the response to begin a webauthn login
+// this includes the credential creation options and the session token
+type WebauthnBeginRegistrationResponse struct {
+	Reply rout.Reply
+	*protocol.CredentialCreation
+	Session string `json:"session,omitempty"`
+}
+
+// WebauthnRegistrationResponse is the response after a successful webauthn registration
 type WebauthnRegistrationResponse struct {
 	rout.Reply
-	Message string `json:"message,omitempty"`
+	Message      string `json:"message,omitempty"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Session      string `json:"session,omitempty"`
+	TokenType    string `json:"token_type"`
+}
+
+// WebauthnBeginLoginResponse is the response to begin a webauthn login
+// this includes the credential assertion options and the session token
+type WebauthnBeginLoginResponse struct {
+	Reply rout.Reply
+	*protocol.CredentialAssertion
+	Session string `json:"session,omitempty"`
+}
+
+// WebauthnRegistrationResponse is the response after a successful webauthn login
+type WebauthnLoginResponse struct {
+	rout.Reply
+	Message      string `json:"message,omitempty"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Session      string `json:"session,omitempty"`
+	TokenType    string `json:"token_type"`
 }
 
 // BeginWebauthnRegistration is the request to begin a webauthn login
@@ -89,11 +119,26 @@ func (h *Handler) BeginWebauthnRegistration(ctx echo.Context) error {
 	setSessionMap[sessions.EmailKey] = r.Email
 	setSessionMap[sessions.UserIDKey] = user.ID
 
-	if _, err := h.SessionConfig.SaveAndStoreSession(userCtx, ctx.Response().Writer, setSessionMap, user.ID); err != nil {
+	sessionCtx, err := h.SessionConfig.SaveAndStoreSession(userCtx, ctx.Response().Writer, setSessionMap, user.ID)
+	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	return ctx.JSON(http.StatusOK, options)
+	// return the session value for the UI to use
+	// the UI will need to set the cookie because authentication is handled
+	// server side
+	s, err := sessions.SessionToken(sessionCtx)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	out := &WebauthnBeginRegistrationResponse{
+		Reply:              rout.Reply{Success: true},
+		CredentialCreation: options,
+		Session:            s,
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // FinishWebauthnRegistration is the request to finish a webauthn registration - this is where we get the credential created by the user back
@@ -177,9 +222,28 @@ func (h *Handler) FinishWebauthnRegistration(ctx echo.Context) error {
 	// set cookies for the user
 	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
 
+	// set sessions in response
+	if err := h.SessionConfig.CreateAndStoreSession(ctx, user.ID); err != nil {
+		h.Logger.Errorw("unable to save session", "error", err)
+
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	// return the session value for the UI to use
+	// the UI will need to set the cookie because authentication is handled
+	// server side
+	s, err := sessions.SessionToken(ctx.Request().Context())
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
 	out := &WebauthnRegistrationResponse{
-		Reply:   rout.Reply{Success: true},
-		Message: "passkey successfully created",
+		Reply:        rout.Reply{Success: true},
+		Message:      "passkey successfully created",
+		AccessToken:  access,
+		RefreshToken: refresh,
+		TokenType:    "access_token",
+		Session:      s,
 	}
 
 	return ctx.JSON(http.StatusOK, out)
@@ -196,11 +260,26 @@ func (h *Handler) BeginWebauthnLogin(ctx echo.Context) error {
 	setSessionMap[sessions.WebAuthnKey] = session
 	setSessionMap[sessions.UserTypeKey] = webauthnLogin
 
-	if _, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, ""); err != nil {
+	sessionCtx, err := h.SessionConfig.SaveAndStoreSession(ctx.Request().Context(), ctx.Response().Writer, setSessionMap, "")
+	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
 	}
 
-	return ctx.JSON(http.StatusOK, credential)
+	// return the session value for the UI to use
+	// the UI will need to set the cookie because authentication is handled
+	// server side
+	s, err := sessions.SessionToken(sessionCtx)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	out := &WebauthnBeginLoginResponse{
+		Reply:               rout.Reply{Success: true},
+		CredentialAssertion: credential,
+		Session:             s,
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // FinishWebauthnLogin is the request to finish a webauthn login
@@ -211,7 +290,6 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 	}
 
 	sessionData := h.SessionConfig.SessionManager.GetSessionDataFromCookie(session)
-
 	webauthnData := sessionData.(map[string]any)[sessions.WebAuthnKey]
 
 	wd, ok := webauthnData.(webauthn.SessionData)
@@ -228,7 +306,48 @@ func (h *Handler) FinishWebauthnLogin(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, rout.ErrorResponse(err))
 	}
 
-	return ctx.JSON(http.StatusOK, rout.Reply{Success: true})
+	// get user from the database
+	entUser, err := h.getUserByID(ctx.Request().Context(), string(response.Response.UserHandle), enums.AuthProvider(webauthnProvider))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	// create claims for verified user
+	claims := createClaims(entUser)
+
+	access, refresh, err := h.TM.CreateTokenPair(claims)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	// set cookies for the user
+	auth.SetAuthCookies(ctx.Response().Writer, access, refresh)
+
+	// set sessions in response
+	if err := h.SessionConfig.CreateAndStoreSession(ctx, entUser.ID); err != nil {
+		h.Logger.Errorw("unable to save session", "error", err)
+
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	// return the session value for the UI to use
+	// the UI will need to set the cookie because authentication is handled
+	// server side
+	s, err := sessions.SessionToken(ctx.Request().Context())
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, rout.ErrorResponse(err))
+	}
+
+	out := &WebauthnLoginResponse{
+		Reply:        rout.Reply{Success: true},
+		Message:      "passkey successfully created",
+		AccessToken:  access,
+		RefreshToken: refresh,
+		TokenType:    "access_token",
+		Session:      s,
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // userHandler returns a webauthn.DiscoverableUserHandler that can be used to look up a user by their userHandle

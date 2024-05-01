@@ -1967,6 +1967,31 @@ var (
 			},
 		},
 	}
+	// OrganizationFeaturesColumns holds the columns for the "organization_features" table.
+	OrganizationFeaturesColumns = []*schema.Column{
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "feature_id", Type: field.TypeString},
+	}
+	// OrganizationFeaturesTable holds the schema information for the "organization_features" table.
+	OrganizationFeaturesTable = &schema.Table{
+		Name:       "organization_features",
+		Columns:    OrganizationFeaturesColumns,
+		PrimaryKey: []*schema.Column{OrganizationFeaturesColumns[0], OrganizationFeaturesColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_features_organization_id",
+				Columns:    []*schema.Column{OrganizationFeaturesColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organization_features_feature_id",
+				Columns:    []*schema.Column{OrganizationFeaturesColumns[1]},
+				RefColumns: []*schema.Column{FeaturesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// OrganizationFilesColumns holds the columns for the "organization_files" table.
 	OrganizationFilesColumns = []*schema.Column{
 		{Name: "organization_id", Type: field.TypeString},
@@ -2181,6 +2206,7 @@ var (
 		OrganizationPersonalAccessTokensTable,
 		OrganizationEventsTable,
 		OrganizationSecretsTable,
+		OrganizationFeaturesTable,
 		OrganizationFilesTable,
 		PersonalAccessTokenEventsTable,
 		SubscriberEventsTable,
@@ -2305,6 +2331,8 @@ func init() {
 	OrganizationEventsTable.ForeignKeys[1].RefTable = EventsTable
 	OrganizationSecretsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationSecretsTable.ForeignKeys[1].RefTable = HushesTable
+	OrganizationFeaturesTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationFeaturesTable.ForeignKeys[1].RefTable = FeaturesTable
 	OrganizationFilesTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationFilesTable.ForeignKeys[1].RefTable = FilesTable
 	PersonalAccessTokenEventsTable.ForeignKeys[0].RefTable = PersonalAccessTokensTable

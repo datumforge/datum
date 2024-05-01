@@ -1192,6 +1192,19 @@ func (f *FeatureQuery) collectField(ctx context.Context, oneNode bool, opCtx *gr
 				*wq = *query
 			})
 
+		case "organizations":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: f.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, organizationImplementors)...); err != nil {
+				return err
+			}
+			f.WithNamedOrganizations(alias, func(wq *OrganizationQuery) {
+				*wq = *query
+			})
+
 		case "events":
 			var (
 				alias = field.Alias
@@ -4508,6 +4521,19 @@ func (o *OrganizationQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			o.WithNamedSecrets(alias, func(wq *HushQuery) {
+				*wq = *query
+			})
+
+		case "features":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&FeatureClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, featureImplementors)...); err != nil {
+				return err
+			}
+			o.WithNamedFeatures(alias, func(wq *FeatureQuery) {
 				*wq = *query
 			})
 

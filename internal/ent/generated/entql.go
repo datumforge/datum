@@ -1535,6 +1535,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Entitlement",
 	)
 	graph.MustAddE(
+		"organizations",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+		},
+		"Feature",
+		"Organization",
+	)
+	graph.MustAddE(
 		"events",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -2097,6 +2109,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"Organization",
 		"Hush",
+	)
+	graph.MustAddE(
+		"features",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FeaturesTable,
+			Columns: organization.FeaturesPrimaryKey,
+			Bidi:    false,
+		},
+		"Organization",
+		"Feature",
 	)
 	graph.MustAddE(
 		"files",
@@ -3648,6 +3672,20 @@ func (f *FeatureFilter) WhereHasEntitlements() {
 // WhereHasEntitlementsWith applies a predicate to check if query has an edge entitlements with a given conditions (other predicates).
 func (f *FeatureFilter) WhereHasEntitlementsWith(preds ...predicate.Entitlement) {
 	f.Where(entql.HasEdgeWith("entitlements", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasOrganizations applies a predicate to check if query has an edge organizations.
+func (f *FeatureFilter) WhereHasOrganizations() {
+	f.Where(entql.HasEdge("organizations"))
+}
+
+// WhereHasOrganizationsWith applies a predicate to check if query has an edge organizations with a given conditions (other predicates).
+func (f *FeatureFilter) WhereHasOrganizationsWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("organizations", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -6401,6 +6439,20 @@ func (f *OrganizationFilter) WhereHasSecrets() {
 // WhereHasSecretsWith applies a predicate to check if query has an edge secrets with a given conditions (other predicates).
 func (f *OrganizationFilter) WhereHasSecretsWith(preds ...predicate.Hush) {
 	f.Where(entql.HasEdgeWith("secrets", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasFeatures applies a predicate to check if query has an edge features.
+func (f *OrganizationFilter) WhereHasFeatures() {
+	f.Where(entql.HasEdge("features"))
+}
+
+// WhereHasFeaturesWith applies a predicate to check if query has an edge features with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasFeaturesWith(preds ...predicate.Feature) {
+	f.Where(entql.HasEdgeWith("features", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

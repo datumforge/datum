@@ -9977,35 +9977,38 @@ func (m *EventHistoryMutation) ResetEdge(name string) error {
 // FeatureMutation represents an operation that mutates the Feature nodes in the graph.
 type FeatureMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *string
-	created_at          *time.Time
-	updated_at          *time.Time
-	created_by          *string
-	updated_by          *string
-	deleted_at          *time.Time
-	deleted_by          *string
-	name                *string
-	global              *bool
-	enabled             *bool
-	description         *string
-	clearedFields       map[string]struct{}
-	users               map[string]struct{}
-	removedusers        map[string]struct{}
-	clearedusers        bool
-	groups              map[string]struct{}
-	removedgroups       map[string]struct{}
-	clearedgroups       bool
-	entitlements        map[string]struct{}
-	removedentitlements map[string]struct{}
-	clearedentitlements bool
-	events              map[string]struct{}
-	removedevents       map[string]struct{}
-	clearedevents       bool
-	done                bool
-	oldValue            func(context.Context) (*Feature, error)
-	predicates          []predicate.Feature
+	op                   Op
+	typ                  string
+	id                   *string
+	created_at           *time.Time
+	updated_at           *time.Time
+	created_by           *string
+	updated_by           *string
+	deleted_at           *time.Time
+	deleted_by           *string
+	name                 *string
+	global               *bool
+	enabled              *bool
+	description          *string
+	clearedFields        map[string]struct{}
+	users                map[string]struct{}
+	removedusers         map[string]struct{}
+	clearedusers         bool
+	groups               map[string]struct{}
+	removedgroups        map[string]struct{}
+	clearedgroups        bool
+	entitlements         map[string]struct{}
+	removedentitlements  map[string]struct{}
+	clearedentitlements  bool
+	organizations        map[string]struct{}
+	removedorganizations map[string]struct{}
+	clearedorganizations bool
+	events               map[string]struct{}
+	removedevents        map[string]struct{}
+	clearedevents        bool
+	done                 bool
+	oldValue             func(context.Context) (*Feature, error)
+	predicates           []predicate.Feature
 }
 
 var _ ent.Mutation = (*FeatureMutation)(nil)
@@ -10725,6 +10728,60 @@ func (m *FeatureMutation) ResetEntitlements() {
 	m.removedentitlements = nil
 }
 
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by ids.
+func (m *FeatureMutation) AddOrganizationIDs(ids ...string) {
+	if m.organizations == nil {
+		m.organizations = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.organizations[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOrganizations clears the "organizations" edge to the Organization entity.
+func (m *FeatureMutation) ClearOrganizations() {
+	m.clearedorganizations = true
+}
+
+// OrganizationsCleared reports if the "organizations" edge to the Organization entity was cleared.
+func (m *FeatureMutation) OrganizationsCleared() bool {
+	return m.clearedorganizations
+}
+
+// RemoveOrganizationIDs removes the "organizations" edge to the Organization entity by IDs.
+func (m *FeatureMutation) RemoveOrganizationIDs(ids ...string) {
+	if m.removedorganizations == nil {
+		m.removedorganizations = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.organizations, ids[i])
+		m.removedorganizations[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOrganizations returns the removed IDs of the "organizations" edge to the Organization entity.
+func (m *FeatureMutation) RemovedOrganizationsIDs() (ids []string) {
+	for id := range m.removedorganizations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OrganizationsIDs returns the "organizations" edge IDs in the mutation.
+func (m *FeatureMutation) OrganizationsIDs() (ids []string) {
+	for id := range m.organizations {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOrganizations resets all changes to the "organizations" edge.
+func (m *FeatureMutation) ResetOrganizations() {
+	m.organizations = nil
+	m.clearedorganizations = false
+	m.removedorganizations = nil
+}
+
 // AddEventIDs adds the "events" edge to the Event entity by ids.
 func (m *FeatureMutation) AddEventIDs(ids ...string) {
 	if m.events == nil {
@@ -11110,7 +11167,7 @@ func (m *FeatureMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FeatureMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.users != nil {
 		edges = append(edges, feature.EdgeUsers)
 	}
@@ -11119,6 +11176,9 @@ func (m *FeatureMutation) AddedEdges() []string {
 	}
 	if m.entitlements != nil {
 		edges = append(edges, feature.EdgeEntitlements)
+	}
+	if m.organizations != nil {
+		edges = append(edges, feature.EdgeOrganizations)
 	}
 	if m.events != nil {
 		edges = append(edges, feature.EdgeEvents)
@@ -11148,6 +11208,12 @@ func (m *FeatureMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case feature.EdgeOrganizations:
+		ids := make([]ent.Value, 0, len(m.organizations))
+		for id := range m.organizations {
+			ids = append(ids, id)
+		}
+		return ids
 	case feature.EdgeEvents:
 		ids := make([]ent.Value, 0, len(m.events))
 		for id := range m.events {
@@ -11160,7 +11226,7 @@ func (m *FeatureMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FeatureMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedusers != nil {
 		edges = append(edges, feature.EdgeUsers)
 	}
@@ -11169,6 +11235,9 @@ func (m *FeatureMutation) RemovedEdges() []string {
 	}
 	if m.removedentitlements != nil {
 		edges = append(edges, feature.EdgeEntitlements)
+	}
+	if m.removedorganizations != nil {
+		edges = append(edges, feature.EdgeOrganizations)
 	}
 	if m.removedevents != nil {
 		edges = append(edges, feature.EdgeEvents)
@@ -11198,6 +11267,12 @@ func (m *FeatureMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case feature.EdgeOrganizations:
+		ids := make([]ent.Value, 0, len(m.removedorganizations))
+		for id := range m.removedorganizations {
+			ids = append(ids, id)
+		}
+		return ids
 	case feature.EdgeEvents:
 		ids := make([]ent.Value, 0, len(m.removedevents))
 		for id := range m.removedevents {
@@ -11210,7 +11285,7 @@ func (m *FeatureMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FeatureMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedusers {
 		edges = append(edges, feature.EdgeUsers)
 	}
@@ -11219,6 +11294,9 @@ func (m *FeatureMutation) ClearedEdges() []string {
 	}
 	if m.clearedentitlements {
 		edges = append(edges, feature.EdgeEntitlements)
+	}
+	if m.clearedorganizations {
+		edges = append(edges, feature.EdgeOrganizations)
 	}
 	if m.clearedevents {
 		edges = append(edges, feature.EdgeEvents)
@@ -11236,6 +11314,8 @@ func (m *FeatureMutation) EdgeCleared(name string) bool {
 		return m.clearedgroups
 	case feature.EdgeEntitlements:
 		return m.clearedentitlements
+	case feature.EdgeOrganizations:
+		return m.clearedorganizations
 	case feature.EdgeEvents:
 		return m.clearedevents
 	}
@@ -11262,6 +11342,9 @@ func (m *FeatureMutation) ResetEdge(name string) error {
 		return nil
 	case feature.EdgeEntitlements:
 		m.ResetEntitlements()
+		return nil
+	case feature.EdgeOrganizations:
+		m.ResetOrganizations()
 		return nil
 	case feature.EdgeEvents:
 		m.ResetEvents()
@@ -35350,6 +35433,9 @@ type OrganizationMutation struct {
 	secrets                       map[string]struct{}
 	removedsecrets                map[string]struct{}
 	clearedsecrets                bool
+	features                      map[string]struct{}
+	removedfeatures               map[string]struct{}
+	clearedfeatures               bool
 	files                         map[string]struct{}
 	removedfiles                  map[string]struct{}
 	clearedfiles                  bool
@@ -36898,6 +36984,60 @@ func (m *OrganizationMutation) ResetSecrets() {
 	m.removedsecrets = nil
 }
 
+// AddFeatureIDs adds the "features" edge to the Feature entity by ids.
+func (m *OrganizationMutation) AddFeatureIDs(ids ...string) {
+	if m.features == nil {
+		m.features = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.features[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFeatures clears the "features" edge to the Feature entity.
+func (m *OrganizationMutation) ClearFeatures() {
+	m.clearedfeatures = true
+}
+
+// FeaturesCleared reports if the "features" edge to the Feature entity was cleared.
+func (m *OrganizationMutation) FeaturesCleared() bool {
+	return m.clearedfeatures
+}
+
+// RemoveFeatureIDs removes the "features" edge to the Feature entity by IDs.
+func (m *OrganizationMutation) RemoveFeatureIDs(ids ...string) {
+	if m.removedfeatures == nil {
+		m.removedfeatures = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.features, ids[i])
+		m.removedfeatures[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFeatures returns the removed IDs of the "features" edge to the Feature entity.
+func (m *OrganizationMutation) RemovedFeaturesIDs() (ids []string) {
+	for id := range m.removedfeatures {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FeaturesIDs returns the "features" edge IDs in the mutation.
+func (m *OrganizationMutation) FeaturesIDs() (ids []string) {
+	for id := range m.features {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFeatures resets all changes to the "features" edge.
+func (m *OrganizationMutation) ResetFeatures() {
+	m.features = nil
+	m.clearedfeatures = false
+	m.removedfeatures = nil
+}
+
 // AddFileIDs adds the "files" edge to the File entity by ids.
 func (m *OrganizationMutation) AddFileIDs(ids ...string) {
 	if m.files == nil {
@@ -37406,7 +37546,7 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 18)
+	edges := make([]string, 0, 19)
 	if m.parent != nil {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -37454,6 +37594,9 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	}
 	if m.secrets != nil {
 		edges = append(edges, organization.EdgeSecrets)
+	}
+	if m.features != nil {
+		edges = append(edges, organization.EdgeFeatures)
 	}
 	if m.files != nil {
 		edges = append(edges, organization.EdgeFiles)
@@ -37560,6 +37703,12 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.features))
+		for id := range m.features {
+			ids = append(ids, id)
+		}
+		return ids
 	case organization.EdgeFiles:
 		ids := make([]ent.Value, 0, len(m.files))
 		for id := range m.files {
@@ -37578,7 +37727,7 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 18)
+	edges := make([]string, 0, 19)
 	if m.removedchildren != nil {
 		edges = append(edges, organization.EdgeChildren)
 	}
@@ -37620,6 +37769,9 @@ func (m *OrganizationMutation) RemovedEdges() []string {
 	}
 	if m.removedsecrets != nil {
 		edges = append(edges, organization.EdgeSecrets)
+	}
+	if m.removedfeatures != nil {
+		edges = append(edges, organization.EdgeFeatures)
 	}
 	if m.removedfiles != nil {
 		edges = append(edges, organization.EdgeFiles)
@@ -37718,6 +37870,12 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeFeatures:
+		ids := make([]ent.Value, 0, len(m.removedfeatures))
+		for id := range m.removedfeatures {
+			ids = append(ids, id)
+		}
+		return ids
 	case organization.EdgeFiles:
 		ids := make([]ent.Value, 0, len(m.removedfiles))
 		for id := range m.removedfiles {
@@ -37736,7 +37894,7 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 18)
+	edges := make([]string, 0, 19)
 	if m.clearedparent {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -37785,6 +37943,9 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	if m.clearedsecrets {
 		edges = append(edges, organization.EdgeSecrets)
 	}
+	if m.clearedfeatures {
+		edges = append(edges, organization.EdgeFeatures)
+	}
 	if m.clearedfiles {
 		edges = append(edges, organization.EdgeFiles)
 	}
@@ -37830,6 +37991,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.clearedevents
 	case organization.EdgeSecrets:
 		return m.clearedsecrets
+	case organization.EdgeFeatures:
+		return m.clearedfeatures
 	case organization.EdgeFiles:
 		return m.clearedfiles
 	case organization.EdgeMembers:
@@ -37903,6 +38066,9 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 		return nil
 	case organization.EdgeSecrets:
 		m.ResetSecrets()
+		return nil
+	case organization.EdgeFeatures:
+		m.ResetFeatures()
 		return nil
 	case organization.EdgeFiles:
 		m.ResetFiles()

@@ -377,6 +377,7 @@ input CreateFeatureInput {
 	userIDs: [ID!]
 	groupIDs: [ID!]
 	entitlementIDs: [ID!]
+	organizationIDs: [ID!]
 	eventIDs: [ID!]
 }
 """
@@ -700,6 +701,7 @@ input CreateOrganizationInput {
 	webhookIDs: [ID!]
 	eventIDs: [ID!]
 	secretIDs: [ID!]
+	featureIDs: [ID!]
 	fileIDs: [ID!]
 	createOrgSettings: CreateOrganizationSettingInput
 }
@@ -2551,6 +2553,7 @@ type Feature implements Node {
 	users: [User!]
 	groups: [Group!]
 	entitlements: [Entitlement!]
+	organizations: [Organization!]
 	events: [Event!]
 }
 """
@@ -3032,6 +3035,11 @@ input FeatureWhereInput {
 	"""
 	hasEntitlements: Boolean
 	hasEntitlementsWith: [EntitlementWhereInput!]
+	"""
+	organizations edge predicates
+	"""
+	hasOrganizations: Boolean
+	hasOrganizationsWith: [OrganizationWhereInput!]
 	"""
 	events edge predicates
 	"""
@@ -8975,6 +8983,7 @@ type Organization implements Node {
 	webhooks: [Webhook!]
 	events: [Event!]
 	secrets: [Hush!]
+	features: [Feature!]
 	files: [File!]
 	members: [OrgMembership!]
 }
@@ -10322,6 +10331,11 @@ input OrganizationWhereInput {
 	"""
 	hasSecrets: Boolean
 	hasSecretsWith: [HushWhereInput!]
+	"""
+	features edge predicates
+	"""
+	hasFeatures: Boolean
+	hasFeaturesWith: [FeatureWhereInput!]
 	"""
 	files edge predicates
 	"""
@@ -13248,6 +13262,9 @@ input UpdateFeatureInput {
 	addEntitlementIDs: [ID!]
 	removeEntitlementIDs: [ID!]
 	clearEntitlements: Boolean
+	addOrganizationIDs: [ID!]
+	removeOrganizationIDs: [ID!]
+	clearOrganizations: Boolean
 	addEventIDs: [ID!]
 	removeEventIDs: [ID!]
 	clearEvents: Boolean
@@ -13637,6 +13654,9 @@ input UpdateOrganizationInput {
 	addSecretIDs: [ID!]
 	removeSecretIDs: [ID!]
 	clearSecrets: Boolean
+	addFeatureIDs: [ID!]
+	removeFeatureIDs: [ID!]
+	clearFeatures: Boolean
 	addFileIDs: [ID!]
 	removeFileIDs: [ID!]
 	clearFiles: Boolean

@@ -3732,6 +3732,12 @@
                       "type": "string"
                     }
                   },
+                  "organizations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "events": {
                     "type": "array",
                     "items": {
@@ -3899,6 +3905,12 @@
                     }
                   },
                   "entitlements": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "organizations": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -4114,6 +4126,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Group"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/features/{id}/organizations": {
+      "get": {
+        "tags": [
+          "Feature"
+        ],
+        "summary": "List attached Organizations",
+        "description": "List attached Organizations.",
+        "operationId": "listFeatureOrganizations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Feature",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Features list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization"
                   }
                 }
               }
@@ -11937,6 +12013,12 @@
                       "type": "string"
                     }
                   },
+                  "features": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "files": {
                     "type": "array",
                     "items": {
@@ -12188,6 +12270,12 @@
                     }
                   },
                   "secrets": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "features": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -12473,6 +12561,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Event"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/features": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Features",
+        "description": "List attached Features.",
+        "operationId": "listOrganizationFeatures",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Feature"
                   }
                 }
               }
@@ -18223,6 +18375,12 @@
               "$ref": "#/components/schemas/Entitlement"
             }
           },
+          "organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Organization"
+            }
+          },
           "events": {
             "type": "array",
             "items": {
@@ -19727,6 +19885,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Hush"
+            }
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
             }
           },
           "files": {

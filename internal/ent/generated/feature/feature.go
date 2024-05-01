@@ -41,6 +41,8 @@ const (
 	EdgeGroups = "groups"
 	// EdgeEntitlements holds the string denoting the entitlements edge name in mutations.
 	EdgeEntitlements = "entitlements"
+	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
+	EdgeOrganizations = "organizations"
 	// EdgeEvents holds the string denoting the events edge name in mutations.
 	EdgeEvents = "events"
 	// Table holds the table name of the feature in the database.
@@ -60,6 +62,11 @@ const (
 	// EntitlementsInverseTable is the table name for the Entitlement entity.
 	// It exists in this package in order to avoid circular dependency with the "entitlement" package.
 	EntitlementsInverseTable = "entitlements"
+	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
+	OrganizationsTable = "organization_features"
+	// OrganizationsInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationsInverseTable = "organizations"
 	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
 	EventsTable = "feature_events"
 	// EventsInverseTable is the table name for the Event entity.
@@ -92,6 +99,9 @@ var (
 	// EntitlementsPrimaryKey and EntitlementsColumn2 are the table columns denoting the
 	// primary key for the entitlements relation (M2M).
 	EntitlementsPrimaryKey = []string{"entitlement_id", "feature_id"}
+	// OrganizationsPrimaryKey and OrganizationsColumn2 are the table columns denoting the
+	// primary key for the organizations relation (M2M).
+	OrganizationsPrimaryKey = []string{"organization_id", "feature_id"}
 	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
 	// primary key for the events relation (M2M).
 	EventsPrimaryKey = []string{"feature_id", "event_id"}
@@ -231,6 +241,20 @@ func ByEntitlements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByOrganizationsCount orders the results by organizations count.
+func ByOrganizationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOrganizationsStep(), opts...)
+	}
+}
+
+// ByOrganizations orders the results by organizations terms.
+func ByOrganizations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOrganizationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByEventsCount orders the results by events count.
 func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -263,6 +287,13 @@ func newEntitlementsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntitlementsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, EntitlementsTable, EntitlementsPrimaryKey...),
+	)
+}
+func newOrganizationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrganizationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, OrganizationsTable, OrganizationsPrimaryKey...),
 	)
 }
 func newEventsStep() *sqlgraph.Step {

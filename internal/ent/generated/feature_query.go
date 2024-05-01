@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -24,20 +25,22 @@ import (
 // FeatureQuery is the builder for querying Feature entities.
 type FeatureQuery struct {
 	config
-	ctx                   *QueryContext
-	order                 []feature.OrderOption
-	inters                []Interceptor
-	predicates            []predicate.Feature
-	withUsers             *UserQuery
-	withGroups            *GroupQuery
-	withEntitlements      *EntitlementQuery
-	withEvents            *EventQuery
-	modifiers             []func(*sql.Selector)
-	loadTotal             []func(context.Context, []*Feature) error
-	withNamedUsers        map[string]*UserQuery
-	withNamedGroups       map[string]*GroupQuery
-	withNamedEntitlements map[string]*EntitlementQuery
-	withNamedEvents       map[string]*EventQuery
+	ctx                    *QueryContext
+	order                  []feature.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.Feature
+	withUsers              *UserQuery
+	withGroups             *GroupQuery
+	withEntitlements       *EntitlementQuery
+	withOrganizations      *OrganizationQuery
+	withEvents             *EventQuery
+	modifiers              []func(*sql.Selector)
+	loadTotal              []func(context.Context, []*Feature) error
+	withNamedUsers         map[string]*UserQuery
+	withNamedGroups        map[string]*GroupQuery
+	withNamedEntitlements  map[string]*EntitlementQuery
+	withNamedOrganizations map[string]*OrganizationQuery
+	withNamedEvents        map[string]*EventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -143,6 +146,31 @@ func (fq *FeatureQuery) QueryEntitlements() *EntitlementQuery {
 		schemaConfig := fq.schemaConfig
 		step.To.Schema = schemaConfig.Entitlement
 		step.Edge.Schema = schemaConfig.EntitlementFeatures
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOrganizations chains the current query on the "organizations" edge.
+func (fq *FeatureQuery) QueryOrganizations() *OrganizationQuery {
+	query := (&OrganizationClient{config: fq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(feature.Table, feature.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, feature.OrganizationsTable, feature.OrganizationsPrimaryKey...),
+		)
+		schemaConfig := fq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationFeatures
 		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -361,15 +389,16 @@ func (fq *FeatureQuery) Clone() *FeatureQuery {
 		return nil
 	}
 	return &FeatureQuery{
-		config:           fq.config,
-		ctx:              fq.ctx.Clone(),
-		order:            append([]feature.OrderOption{}, fq.order...),
-		inters:           append([]Interceptor{}, fq.inters...),
-		predicates:       append([]predicate.Feature{}, fq.predicates...),
-		withUsers:        fq.withUsers.Clone(),
-		withGroups:       fq.withGroups.Clone(),
-		withEntitlements: fq.withEntitlements.Clone(),
-		withEvents:       fq.withEvents.Clone(),
+		config:            fq.config,
+		ctx:               fq.ctx.Clone(),
+		order:             append([]feature.OrderOption{}, fq.order...),
+		inters:            append([]Interceptor{}, fq.inters...),
+		predicates:        append([]predicate.Feature{}, fq.predicates...),
+		withUsers:         fq.withUsers.Clone(),
+		withGroups:        fq.withGroups.Clone(),
+		withEntitlements:  fq.withEntitlements.Clone(),
+		withOrganizations: fq.withOrganizations.Clone(),
+		withEvents:        fq.withEvents.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,
@@ -406,6 +435,17 @@ func (fq *FeatureQuery) WithEntitlements(opts ...func(*EntitlementQuery)) *Featu
 		opt(query)
 	}
 	fq.withEntitlements = query
+	return fq
+}
+
+// WithOrganizations tells the query-builder to eager-load the nodes that are connected to
+// the "organizations" edge. The optional arguments are used to configure the query builder of the edge.
+func (fq *FeatureQuery) WithOrganizations(opts ...func(*OrganizationQuery)) *FeatureQuery {
+	query := (&OrganizationClient{config: fq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withOrganizations = query
 	return fq
 }
 
@@ -498,10 +538,11 @@ func (fq *FeatureQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Feat
 	var (
 		nodes       = []*Feature{}
 		_spec       = fq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			fq.withUsers != nil,
 			fq.withGroups != nil,
 			fq.withEntitlements != nil,
+			fq.withOrganizations != nil,
 			fq.withEvents != nil,
 		}
 	)
@@ -549,6 +590,13 @@ func (fq *FeatureQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Feat
 			return nil, err
 		}
 	}
+	if query := fq.withOrganizations; query != nil {
+		if err := fq.loadOrganizations(ctx, query, nodes,
+			func(n *Feature) { n.Edges.Organizations = []*Organization{} },
+			func(n *Feature, e *Organization) { n.Edges.Organizations = append(n.Edges.Organizations, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := fq.withEvents; query != nil {
 		if err := fq.loadEvents(ctx, query, nodes,
 			func(n *Feature) { n.Edges.Events = []*Event{} },
@@ -574,6 +622,13 @@ func (fq *FeatureQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Feat
 		if err := fq.loadEntitlements(ctx, query, nodes,
 			func(n *Feature) { n.appendNamedEntitlements(name) },
 			func(n *Feature, e *Entitlement) { n.appendNamedEntitlements(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range fq.withNamedOrganizations {
+		if err := fq.loadOrganizations(ctx, query, nodes,
+			func(n *Feature) { n.appendNamedOrganizations(name) },
+			func(n *Feature, e *Organization) { n.appendNamedOrganizations(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -778,6 +833,68 @@ func (fq *FeatureQuery) loadEntitlements(ctx context.Context, query *Entitlement
 	}
 	return nil
 }
+func (fq *FeatureQuery) loadOrganizations(ctx context.Context, query *OrganizationQuery, nodes []*Feature, init func(*Feature), assign func(*Feature, *Organization)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Feature)
+	nids := make(map[string]map[*Feature]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(feature.OrganizationsTable)
+		joinT.Schema(fq.schemaConfig.OrganizationFeatures)
+		s.Join(joinT).On(s.C(organization.FieldID), joinT.C(feature.OrganizationsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(feature.OrganizationsPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(feature.OrganizationsPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Feature]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Organization](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "organizations" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 func (fq *FeatureQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Feature, init func(*Feature), assign func(*Feature, *Event)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[string]*Feature)
@@ -969,6 +1086,20 @@ func (fq *FeatureQuery) WithNamedEntitlements(name string, opts ...func(*Entitle
 		fq.withNamedEntitlements = make(map[string]*EntitlementQuery)
 	}
 	fq.withNamedEntitlements[name] = query
+	return fq
+}
+
+// WithNamedOrganizations tells the query-builder to eager-load the nodes that are connected to the "organizations"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (fq *FeatureQuery) WithNamedOrganizations(name string, opts ...func(*OrganizationQuery)) *FeatureQuery {
+	query := (&OrganizationClient{config: fq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if fq.withNamedOrganizations == nil {
+		fq.withNamedOrganizations = make(map[string]*OrganizationQuery)
+	}
+	fq.withNamedOrganizations[name] = query
 	return fq
 }
 

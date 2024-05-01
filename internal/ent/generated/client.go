@@ -2303,6 +2303,25 @@ func (c *FeatureClient) QueryEntitlements(f *Feature) *EntitlementQuery {
 	return query
 }
 
+// QueryOrganizations queries the organizations edge of a Feature.
+func (c *FeatureClient) QueryOrganizations(f *Feature) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(feature.Table, feature.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, feature.OrganizationsTable, feature.OrganizationsPrimaryKey...),
+		)
+		schemaConfig := f.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationFeatures
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryEvents queries the events edge of a Feature.
 func (c *FeatureClient) QueryEvents(f *Feature) *EventQuery {
 	query := (&EventClient{config: c.config}).Query()
@@ -5870,6 +5889,25 @@ func (c *OrganizationClient) QuerySecrets(o *Organization) *HushQuery {
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.Hush
 		step.Edge.Schema = schemaConfig.OrganizationSecrets
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFeatures queries the features edge of a Organization.
+func (c *OrganizationClient) QueryFeatures(o *Organization) *FeatureQuery {
+	query := (&FeatureClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(feature.Table, feature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.FeaturesTable, organization.FeaturesPrimaryKey...),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.OrganizationFeatures
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}

@@ -51,18 +51,21 @@ type FeatureEdges struct {
 	Groups []*Group `json:"groups,omitempty"`
 	// Entitlements holds the value of the entitlements edge.
 	Entitlements []*Entitlement `json:"entitlements,omitempty"`
+	// Organizations holds the value of the organizations edge.
+	Organizations []*Organization `json:"organizations,omitempty"`
 	// Events holds the value of the events edge.
 	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [5]map[string]int
 
-	namedUsers        map[string][]*User
-	namedGroups       map[string][]*Group
-	namedEntitlements map[string][]*Entitlement
-	namedEvents       map[string][]*Event
+	namedUsers         map[string][]*User
+	namedGroups        map[string][]*Group
+	namedEntitlements  map[string][]*Entitlement
+	namedOrganizations map[string][]*Organization
+	namedEvents        map[string][]*Event
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -92,10 +95,19 @@ func (e FeatureEdges) EntitlementsOrErr() ([]*Entitlement, error) {
 	return nil, &NotLoadedError{edge: "entitlements"}
 }
 
+// OrganizationsOrErr returns the Organizations value or an error if the edge
+// was not loaded in eager-loading.
+func (e FeatureEdges) OrganizationsOrErr() ([]*Organization, error) {
+	if e.loadedTypes[3] {
+		return e.Organizations, nil
+	}
+	return nil, &NotLoadedError{edge: "organizations"}
+}
+
 // EventsOrErr returns the Events value or an error if the edge
 // was not loaded in eager-loading.
 func (e FeatureEdges) EventsOrErr() ([]*Event, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.Events, nil
 	}
 	return nil, &NotLoadedError{edge: "events"}
@@ -220,6 +232,11 @@ func (f *Feature) QueryGroups() *GroupQuery {
 // QueryEntitlements queries the "entitlements" edge of the Feature entity.
 func (f *Feature) QueryEntitlements() *EntitlementQuery {
 	return NewFeatureClient(f.config).QueryEntitlements(f)
+}
+
+// QueryOrganizations queries the "organizations" edge of the Feature entity.
+func (f *Feature) QueryOrganizations() *OrganizationQuery {
+	return NewFeatureClient(f.config).QueryOrganizations(f)
 }
 
 // QueryEvents queries the "events" edge of the Feature entity.
@@ -354,6 +371,30 @@ func (f *Feature) appendNamedEntitlements(name string, edges ...*Entitlement) {
 		f.Edges.namedEntitlements[name] = []*Entitlement{}
 	} else {
 		f.Edges.namedEntitlements[name] = append(f.Edges.namedEntitlements[name], edges...)
+	}
+}
+
+// NamedOrganizations returns the Organizations named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (f *Feature) NamedOrganizations(name string) ([]*Organization, error) {
+	if f.Edges.namedOrganizations == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := f.Edges.namedOrganizations[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (f *Feature) appendNamedOrganizations(name string, edges ...*Organization) {
+	if f.Edges.namedOrganizations == nil {
+		f.Edges.namedOrganizations = make(map[string][]*Organization)
+	}
+	if len(edges) == 0 {
+		f.Edges.namedOrganizations[name] = []*Organization{}
+	} else {
+		f.Edges.namedOrganizations[name] = append(f.Edges.namedOrganizations[name], edges...)
 	}
 }
 

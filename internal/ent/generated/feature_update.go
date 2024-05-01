@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -199,6 +200,21 @@ func (fu *FeatureUpdate) AddEntitlements(e ...*Entitlement) *FeatureUpdate {
 	return fu.AddEntitlementIDs(ids...)
 }
 
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (fu *FeatureUpdate) AddOrganizationIDs(ids ...string) *FeatureUpdate {
+	fu.mutation.AddOrganizationIDs(ids...)
+	return fu
+}
+
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (fu *FeatureUpdate) AddOrganizations(o ...*Organization) *FeatureUpdate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return fu.AddOrganizationIDs(ids...)
+}
+
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
 func (fu *FeatureUpdate) AddEventIDs(ids ...string) *FeatureUpdate {
 	fu.mutation.AddEventIDs(ids...)
@@ -280,6 +296,27 @@ func (fu *FeatureUpdate) RemoveEntitlements(e ...*Entitlement) *FeatureUpdate {
 		ids[i] = e[i].ID
 	}
 	return fu.RemoveEntitlementIDs(ids...)
+}
+
+// ClearOrganizations clears all "organizations" edges to the Organization entity.
+func (fu *FeatureUpdate) ClearOrganizations() *FeatureUpdate {
+	fu.mutation.ClearOrganizations()
+	return fu
+}
+
+// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
+func (fu *FeatureUpdate) RemoveOrganizationIDs(ids ...string) *FeatureUpdate {
+	fu.mutation.RemoveOrganizationIDs(ids...)
+	return fu
+}
+
+// RemoveOrganizations removes "organizations" edges to Organization entities.
+func (fu *FeatureUpdate) RemoveOrganizations(o ...*Organization) *FeatureUpdate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return fu.RemoveOrganizationIDs(ids...)
 }
 
 // ClearEvents clears all "events" edges to the Event entity.
@@ -540,6 +577,54 @@ func (fu *FeatureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if fu.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.OrganizationFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !fu.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.OrganizationFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fu.schemaConfig.OrganizationFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if fu.mutation.EventsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -775,6 +860,21 @@ func (fuo *FeatureUpdateOne) AddEntitlements(e ...*Entitlement) *FeatureUpdateOn
 	return fuo.AddEntitlementIDs(ids...)
 }
 
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (fuo *FeatureUpdateOne) AddOrganizationIDs(ids ...string) *FeatureUpdateOne {
+	fuo.mutation.AddOrganizationIDs(ids...)
+	return fuo
+}
+
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (fuo *FeatureUpdateOne) AddOrganizations(o ...*Organization) *FeatureUpdateOne {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return fuo.AddOrganizationIDs(ids...)
+}
+
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
 func (fuo *FeatureUpdateOne) AddEventIDs(ids ...string) *FeatureUpdateOne {
 	fuo.mutation.AddEventIDs(ids...)
@@ -856,6 +956,27 @@ func (fuo *FeatureUpdateOne) RemoveEntitlements(e ...*Entitlement) *FeatureUpdat
 		ids[i] = e[i].ID
 	}
 	return fuo.RemoveEntitlementIDs(ids...)
+}
+
+// ClearOrganizations clears all "organizations" edges to the Organization entity.
+func (fuo *FeatureUpdateOne) ClearOrganizations() *FeatureUpdateOne {
+	fuo.mutation.ClearOrganizations()
+	return fuo
+}
+
+// RemoveOrganizationIDs removes the "organizations" edge to Organization entities by IDs.
+func (fuo *FeatureUpdateOne) RemoveOrganizationIDs(ids ...string) *FeatureUpdateOne {
+	fuo.mutation.RemoveOrganizationIDs(ids...)
+	return fuo
+}
+
+// RemoveOrganizations removes "organizations" edges to Organization entities.
+func (fuo *FeatureUpdateOne) RemoveOrganizations(o ...*Organization) *FeatureUpdateOne {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return fuo.RemoveOrganizationIDs(ids...)
 }
 
 // ClearEvents clears all "events" edges to the Event entity.
@@ -1141,6 +1262,54 @@ func (fuo *FeatureUpdateOne) sqlSave(ctx context.Context) (_node *Feature, err e
 			},
 		}
 		edge.Schema = fuo.schemaConfig.EntitlementFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fuo.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.OrganizationFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.RemovedOrganizationsIDs(); len(nodes) > 0 && !fuo.mutation.OrganizationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.OrganizationFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fuo.schemaConfig.OrganizationFeatures
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

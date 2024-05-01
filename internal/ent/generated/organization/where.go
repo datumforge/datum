@@ -1356,6 +1356,35 @@ func HasSecretsWith(preds ...predicate.Hush) predicate.Organization {
 	})
 }
 
+// HasFeatures applies the HasEdge predicate on the "features" edge.
+func HasFeatures() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.OrganizationFeatures
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFeaturesWith applies the HasEdge predicate on the "features" edge with a given conditions (other predicates).
+func HasFeaturesWith(preds ...predicate.Feature) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newFeaturesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.OrganizationFeatures
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasFiles applies the HasEdge predicate on the "files" edge.
 func HasFiles() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {

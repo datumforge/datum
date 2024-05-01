@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/hush"
@@ -57,6 +58,7 @@ type OrganizationQuery struct {
 	withWebhooks                  *WebhookQuery
 	withEvents                    *EventQuery
 	withSecrets                   *HushQuery
+	withFeatures                  *FeatureQuery
 	withFiles                     *FileQuery
 	withMembers                   *OrgMembershipQuery
 	modifiers                     []func(*sql.Selector)
@@ -75,6 +77,7 @@ type OrganizationQuery struct {
 	withNamedWebhooks             map[string]*WebhookQuery
 	withNamedEvents               map[string]*EventQuery
 	withNamedSecrets              map[string]*HushQuery
+	withNamedFeatures             map[string]*FeatureQuery
 	withNamedFiles                map[string]*FileQuery
 	withNamedMembers              map[string]*OrgMembershipQuery
 	// intermediate query (i.e. traversal path).
@@ -513,6 +516,31 @@ func (oq *OrganizationQuery) QuerySecrets() *HushQuery {
 	return query
 }
 
+// QueryFeatures chains the current query on the "features" edge.
+func (oq *OrganizationQuery) QueryFeatures() *FeatureQuery {
+	query := (&FeatureClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(feature.Table, feature.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, organization.FeaturesTable, organization.FeaturesPrimaryKey...),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Feature
+		step.Edge.Schema = schemaConfig.OrganizationFeatures
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // QueryFiles chains the current query on the "files" edge.
 func (oq *OrganizationQuery) QueryFiles() *FileQuery {
 	query := (&FileClient{config: oq.config}).Query()
@@ -771,6 +799,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withWebhooks:             oq.withWebhooks.Clone(),
 		withEvents:               oq.withEvents.Clone(),
 		withSecrets:              oq.withSecrets.Clone(),
+		withFeatures:             oq.withFeatures.Clone(),
 		withFiles:                oq.withFiles.Clone(),
 		withMembers:              oq.withMembers.Clone(),
 		// clone intermediate query.
@@ -955,6 +984,17 @@ func (oq *OrganizationQuery) WithSecrets(opts ...func(*HushQuery)) *Organization
 	return oq
 }
 
+// WithFeatures tells the query-builder to eager-load the nodes that are connected to
+// the "features" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithFeatures(opts ...func(*FeatureQuery)) *OrganizationQuery {
+	query := (&FeatureClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withFeatures = query
+	return oq
+}
+
 // WithFiles tells the query-builder to eager-load the nodes that are connected to
 // the "files" edge. The optional arguments are used to configure the query builder of the edge.
 func (oq *OrganizationQuery) WithFiles(opts ...func(*FileQuery)) *OrganizationQuery {
@@ -1061,7 +1101,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [18]bool{
+		loadedTypes = [19]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
@@ -1078,6 +1118,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withWebhooks != nil,
 			oq.withEvents != nil,
 			oq.withSecrets != nil,
+			oq.withFeatures != nil,
 			oq.withFiles != nil,
 			oq.withMembers != nil,
 		}
@@ -1217,6 +1258,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withFeatures; query != nil {
+		if err := oq.loadFeatures(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Features = []*Feature{} },
+			func(n *Organization, e *Feature) { n.Edges.Features = append(n.Edges.Features, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withFiles; query != nil {
 		if err := oq.loadFiles(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Files = []*File{} },
@@ -1326,6 +1374,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadSecrets(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedSecrets(name) },
 			func(n *Organization, e *Hush) { n.appendNamedSecrets(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedFeatures {
+		if err := oq.loadFeatures(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedFeatures(name) },
+			func(n *Organization, e *Feature) { n.appendNamedFeatures(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1957,6 +2012,68 @@ func (oq *OrganizationQuery) loadSecrets(ctx context.Context, query *HushQuery, 
 	}
 	return nil
 }
+func (oq *OrganizationQuery) loadFeatures(ctx context.Context, query *FeatureQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Feature)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Organization)
+	nids := make(map[string]map[*Organization]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(organization.FeaturesTable)
+		joinT.Schema(oq.schemaConfig.OrganizationFeatures)
+		s.Join(joinT).On(s.C(feature.FieldID), joinT.C(organization.FeaturesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(organization.FeaturesPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(organization.FeaturesPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Organization]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Feature](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "features" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
 func (oq *OrganizationQuery) loadFiles(ctx context.Context, query *FileQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *File)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[string]*Organization)
@@ -2335,6 +2452,20 @@ func (oq *OrganizationQuery) WithNamedSecrets(name string, opts ...func(*HushQue
 		oq.withNamedSecrets = make(map[string]*HushQuery)
 	}
 	oq.withNamedSecrets[name] = query
+	return oq
+}
+
+// WithNamedFeatures tells the query-builder to eager-load the nodes that are connected to the "features"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedFeatures(name string, opts ...func(*FeatureQuery)) *OrganizationQuery {
+	query := (&FeatureClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedFeatures == nil {
+		oq.withNamedFeatures = make(map[string]*FeatureQuery)
+	}
+	oq.withNamedFeatures[name] = query
 	return oq
 }
 

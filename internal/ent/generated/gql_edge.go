@@ -260,6 +260,18 @@ func (f *Feature) Entitlements(ctx context.Context) (result []*Entitlement, err 
 	return result, err
 }
 
+func (f *Feature) Organizations(ctx context.Context) (result []*Organization, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = f.NamedOrganizations(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = f.Edges.OrganizationsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = f.QueryOrganizations().All(ctx)
+	}
+	return result, err
+}
+
 func (f *Feature) Events(ctx context.Context) (result []*Event, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = f.NamedEvents(graphql.GetFieldContext(ctx).Field.Alias)
@@ -777,6 +789,18 @@ func (o *Organization) Secrets(ctx context.Context) (result []*Hush, err error) 
 	}
 	if IsNotLoaded(err) {
 		result, err = o.QuerySecrets().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Features(ctx context.Context) (result []*Feature, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedFeatures(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.FeaturesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryFeatures().All(ctx)
 	}
 	return result, err
 }

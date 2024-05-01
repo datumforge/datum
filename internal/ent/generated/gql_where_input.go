@@ -4905,6 +4905,10 @@ type FeatureWhereInput struct {
 	HasEntitlements     *bool                    `json:"hasEntitlements,omitempty"`
 	HasEntitlementsWith []*EntitlementWhereInput `json:"hasEntitlementsWith,omitempty"`
 
+	// "organizations" edge predicates.
+	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
+	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
+
 	// "events" edge predicates.
 	HasEvents     *bool              `json:"hasEvents,omitempty"`
 	HasEventsWith []*EventWhereInput `json:"hasEventsWith,omitempty"`
@@ -5386,6 +5390,24 @@ func (i *FeatureWhereInput) P() (predicate.Feature, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, feature.HasEntitlementsWith(with...))
+	}
+	if i.HasOrganizations != nil {
+		p := feature.HasOrganizations()
+		if !*i.HasOrganizations {
+			p = feature.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasOrganizationsWith) > 0 {
+		with := make([]predicate.Organization, 0, len(i.HasOrganizationsWith))
+		for _, w := range i.HasOrganizationsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasOrganizationsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, feature.HasOrganizationsWith(with...))
 	}
 	if i.HasEvents != nil {
 		p := feature.HasEvents()
@@ -19654,6 +19676,10 @@ type OrganizationWhereInput struct {
 	HasSecrets     *bool             `json:"hasSecrets,omitempty"`
 	HasSecretsWith []*HushWhereInput `json:"hasSecretsWith,omitempty"`
 
+	// "features" edge predicates.
+	HasFeatures     *bool                `json:"hasFeatures,omitempty"`
+	HasFeaturesWith []*FeatureWhereInput `json:"hasFeaturesWith,omitempty"`
+
 	// "files" edge predicates.
 	HasFiles     *bool             `json:"hasFiles,omitempty"`
 	HasFilesWith []*FileWhereInput `json:"hasFilesWith,omitempty"`
@@ -20418,6 +20444,24 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, organization.HasSecretsWith(with...))
+	}
+	if i.HasFeatures != nil {
+		p := organization.HasFeatures()
+		if !*i.HasFeatures {
+			p = organization.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasFeaturesWith) > 0 {
+		with := make([]predicate.Feature, 0, len(i.HasFeaturesWith))
+		for _, w := range i.HasFeaturesWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasFeaturesWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, organization.HasFeaturesWith(with...))
 	}
 	if i.HasFiles != nil {
 		p := organization.HasFiles()

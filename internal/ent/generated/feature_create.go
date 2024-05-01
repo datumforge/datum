@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -213,6 +214,21 @@ func (fc *FeatureCreate) AddEntitlements(e ...*Entitlement) *FeatureCreate {
 		ids[i] = e[i].ID
 	}
 	return fc.AddEntitlementIDs(ids...)
+}
+
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (fc *FeatureCreate) AddOrganizationIDs(ids ...string) *FeatureCreate {
+	fc.mutation.AddOrganizationIDs(ids...)
+	return fc
+}
+
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (fc *FeatureCreate) AddOrganizations(o ...*Organization) *FeatureCreate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return fc.AddOrganizationIDs(ids...)
 }
 
 // AddEventIDs adds the "events" edge to the Event entity by IDs.
@@ -437,6 +453,23 @@ func (fc *FeatureCreate) createSpec() (*Feature, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = fc.schemaConfig.EntitlementFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.OrganizationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   feature.OrganizationsTable,
+			Columns: feature.OrganizationsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = fc.schemaConfig.OrganizationFeatures
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

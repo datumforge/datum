@@ -53,6 +53,7 @@ type SchemaConfig struct {
 	OrganizationPersonalAccessTokens string // Organization-personal_access_tokens->PersonalAccessToken table.
 	OrganizationEvents               string // Organization-events->Event table.
 	OrganizationSecrets              string // Organization-secrets->Hush table.
+	OrganizationFeatures             string // Organization-features->Feature table.
 	OrganizationFiles                string // Organization-files->File table.
 	OrganizationHistory              string // OrganizationHistory table.
 	OrganizationSetting              string // OrganizationSetting table.

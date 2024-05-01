@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
 	"github.com/datumforge/datum/internal/ent/generated/file"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/hush"
@@ -429,6 +430,21 @@ func (ou *OrganizationUpdate) AddSecrets(h ...*Hush) *OrganizationUpdate {
 	return ou.AddSecretIDs(ids...)
 }
 
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (ou *OrganizationUpdate) AddFeatureIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddFeatureIDs(ids...)
+	return ou
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (ou *OrganizationUpdate) AddFeatures(f ...*Feature) *OrganizationUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ou.AddFeatureIDs(ids...)
+}
+
 // AddFileIDs adds the "files" edge to the File entity by IDs.
 func (ou *OrganizationUpdate) AddFileIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddFileIDs(ids...)
@@ -762,6 +778,27 @@ func (ou *OrganizationUpdate) RemoveSecrets(h ...*Hush) *OrganizationUpdate {
 		ids[i] = h[i].ID
 	}
 	return ou.RemoveSecretIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the Feature entity.
+func (ou *OrganizationUpdate) ClearFeatures() *OrganizationUpdate {
+	ou.mutation.ClearFeatures()
+	return ou
+}
+
+// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
+func (ou *OrganizationUpdate) RemoveFeatureIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveFeatureIDs(ids...)
+	return ou
+}
+
+// RemoveFeatures removes "features" edges to Feature entities.
+func (ou *OrganizationUpdate) RemoveFeatures(f ...*Feature) *OrganizationUpdate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ou.RemoveFeatureIDs(ids...)
 }
 
 // ClearFiles clears all "files" edges to the File entity.
@@ -1658,6 +1695,54 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FeaturesTable,
+			Columns: organization.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !ou.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FeaturesTable,
+			Columns: organization.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FeaturesTable,
+			Columns: organization.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if ou.mutation.FilesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -2159,6 +2244,21 @@ func (ouo *OrganizationUpdateOne) AddSecrets(h ...*Hush) *OrganizationUpdateOne 
 	return ouo.AddSecretIDs(ids...)
 }
 
+// AddFeatureIDs adds the "features" edge to the Feature entity by IDs.
+func (ouo *OrganizationUpdateOne) AddFeatureIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddFeatureIDs(ids...)
+	return ouo
+}
+
+// AddFeatures adds the "features" edges to the Feature entity.
+func (ouo *OrganizationUpdateOne) AddFeatures(f ...*Feature) *OrganizationUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ouo.AddFeatureIDs(ids...)
+}
+
 // AddFileIDs adds the "files" edge to the File entity by IDs.
 func (ouo *OrganizationUpdateOne) AddFileIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddFileIDs(ids...)
@@ -2492,6 +2592,27 @@ func (ouo *OrganizationUpdateOne) RemoveSecrets(h ...*Hush) *OrganizationUpdateO
 		ids[i] = h[i].ID
 	}
 	return ouo.RemoveSecretIDs(ids...)
+}
+
+// ClearFeatures clears all "features" edges to the Feature entity.
+func (ouo *OrganizationUpdateOne) ClearFeatures() *OrganizationUpdateOne {
+	ouo.mutation.ClearFeatures()
+	return ouo
+}
+
+// RemoveFeatureIDs removes the "features" edge to Feature entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveFeatureIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveFeatureIDs(ids...)
+	return ouo
+}
+
+// RemoveFeatures removes "features" edges to Feature entities.
+func (ouo *OrganizationUpdateOne) RemoveFeatures(f ...*Feature) *OrganizationUpdateOne {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return ouo.RemoveFeatureIDs(ids...)
 }
 
 // ClearFiles clears all "files" edges to the File entity.
@@ -3413,6 +3534,54 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.OrganizationSecrets
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FeaturesTable,
+			Columns: organization.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationFeatures
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedFeaturesIDs(); len(nodes) > 0 && !ouo.mutation.FeaturesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FeaturesTable,
+			Columns: organization.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationFeatures
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.FeaturesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   organization.FeaturesTable,
+			Columns: organization.FeaturesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(feature.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationFeatures
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

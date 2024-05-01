@@ -84,15 +84,17 @@ type OrganizationEdges struct {
 	Events []*Event `json:"events,omitempty"`
 	// Secrets holds the value of the secrets edge.
 	Secrets []*Hush `json:"secrets,omitempty"`
+	// Features holds the value of the features edge.
+	Features []*Feature `json:"features,omitempty"`
 	// Files holds the value of the files edge.
 	Files []*File `json:"files,omitempty"`
 	// Members holds the value of the members edge.
 	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [18]bool
+	loadedTypes [19]bool
 	// totalCount holds the count of the edges above.
-	totalCount [18]map[string]int
+	totalCount [19]map[string]int
 
 	namedChildren             map[string][]*Organization
 	namedGroups               map[string][]*Group
@@ -108,6 +110,7 @@ type OrganizationEdges struct {
 	namedWebhooks             map[string][]*Webhook
 	namedEvents               map[string][]*Event
 	namedSecrets              map[string][]*Hush
+	namedFeatures             map[string][]*Feature
 	namedFiles                map[string][]*File
 	namedMembers              map[string][]*OrgMembership
 }
@@ -260,10 +263,19 @@ func (e OrganizationEdges) SecretsOrErr() ([]*Hush, error) {
 	return nil, &NotLoadedError{edge: "secrets"}
 }
 
+// FeaturesOrErr returns the Features value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) FeaturesOrErr() ([]*Feature, error) {
+	if e.loadedTypes[16] {
+		return e.Features, nil
+	}
+	return nil, &NotLoadedError{edge: "features"}
+}
+
 // FilesOrErr returns the Files value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) FilesOrErr() ([]*File, error) {
-	if e.loadedTypes[16] {
+	if e.loadedTypes[17] {
 		return e.Files, nil
 	}
 	return nil, &NotLoadedError{edge: "files"}
@@ -272,7 +284,7 @@ func (e OrganizationEdges) FilesOrErr() ([]*File, error) {
 // MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) MembersOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[17] {
+	if e.loadedTypes[18] {
 		return e.Members, nil
 	}
 	return nil, &NotLoadedError{edge: "members"}
@@ -480,6 +492,11 @@ func (o *Organization) QueryEvents() *EventQuery {
 // QuerySecrets queries the "secrets" edge of the Organization entity.
 func (o *Organization) QuerySecrets() *HushQuery {
 	return NewOrganizationClient(o.config).QuerySecrets(o)
+}
+
+// QueryFeatures queries the "features" edge of the Organization entity.
+func (o *Organization) QueryFeatures() *FeatureQuery {
+	return NewOrganizationClient(o.config).QueryFeatures(o)
 }
 
 // QueryFiles queries the "files" edge of the Organization entity.
@@ -892,6 +909,30 @@ func (o *Organization) appendNamedSecrets(name string, edges ...*Hush) {
 		o.Edges.namedSecrets[name] = []*Hush{}
 	} else {
 		o.Edges.namedSecrets[name] = append(o.Edges.namedSecrets[name], edges...)
+	}
+}
+
+// NamedFeatures returns the Features named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedFeatures(name string) ([]*Feature, error) {
+	if o.Edges.namedFeatures == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedFeatures[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedFeatures(name string, edges ...*Feature) {
+	if o.Edges.namedFeatures == nil {
+		o.Edges.namedFeatures = make(map[string][]*Feature)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedFeatures[name] = []*Feature{}
+	} else {
+		o.Edges.namedFeatures[name] = append(o.Edges.namedFeatures[name], edges...)
 	}
 }
 

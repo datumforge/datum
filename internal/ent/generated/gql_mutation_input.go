@@ -665,18 +665,19 @@ func (c *EventUpdateOne) SetInput(i UpdateEventInput) *EventUpdateOne {
 
 // CreateFeatureInput represents a mutation input for creating features.
 type CreateFeatureInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Name           string
-	Global         *bool
-	Enabled        *bool
-	Description    *string
-	UserIDs        []string
-	GroupIDs       []string
-	EntitlementIDs []string
-	EventIDs       []string
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	Name            string
+	Global          *bool
+	Enabled         *bool
+	Description     *string
+	UserIDs         []string
+	GroupIDs        []string
+	EntitlementIDs  []string
+	OrganizationIDs []string
+	EventIDs        []string
 }
 
 // Mutate applies the CreateFeatureInput on the FeatureMutation builder.
@@ -712,6 +713,9 @@ func (i *CreateFeatureInput) Mutate(m *FeatureMutation) {
 	if v := i.EntitlementIDs; len(v) > 0 {
 		m.AddEntitlementIDs(v...)
 	}
+	if v := i.OrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
 	if v := i.EventIDs; len(v) > 0 {
 		m.AddEventIDs(v...)
 	}
@@ -725,26 +729,29 @@ func (c *FeatureCreate) SetInput(i CreateFeatureInput) *FeatureCreate {
 
 // UpdateFeatureInput represents a mutation input for updating features.
 type UpdateFeatureInput struct {
-	ClearUpdatedAt       bool
-	UpdatedAt            *time.Time
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
-	Global               *bool
-	Enabled              *bool
-	ClearDescription     bool
-	Description          *string
-	ClearUsers           bool
-	AddUserIDs           []string
-	RemoveUserIDs        []string
-	ClearGroups          bool
-	AddGroupIDs          []string
-	RemoveGroupIDs       []string
-	ClearEntitlements    bool
-	AddEntitlementIDs    []string
-	RemoveEntitlementIDs []string
-	ClearEvents          bool
-	AddEventIDs          []string
-	RemoveEventIDs       []string
+	ClearUpdatedAt        bool
+	UpdatedAt             *time.Time
+	ClearUpdatedBy        bool
+	UpdatedBy             *string
+	Global                *bool
+	Enabled               *bool
+	ClearDescription      bool
+	Description           *string
+	ClearUsers            bool
+	AddUserIDs            []string
+	RemoveUserIDs         []string
+	ClearGroups           bool
+	AddGroupIDs           []string
+	RemoveGroupIDs        []string
+	ClearEntitlements     bool
+	AddEntitlementIDs     []string
+	RemoveEntitlementIDs  []string
+	ClearOrganizations    bool
+	AddOrganizationIDs    []string
+	RemoveOrganizationIDs []string
+	ClearEvents           bool
+	AddEventIDs           []string
+	RemoveEventIDs        []string
 }
 
 // Mutate applies the UpdateFeatureInput on the FeatureMutation builder.
@@ -799,6 +806,15 @@ func (i *UpdateFeatureInput) Mutate(m *FeatureMutation) {
 	}
 	if v := i.RemoveEntitlementIDs; len(v) > 0 {
 		m.RemoveEntitlementIDs(v...)
+	}
+	if i.ClearOrganizations {
+		m.ClearOrganizations()
+	}
+	if v := i.AddOrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
+	if v := i.RemoveOrganizationIDs; len(v) > 0 {
+		m.RemoveOrganizationIDs(v...)
 	}
 	if i.ClearEvents {
 		m.ClearEvents()
@@ -2280,6 +2296,7 @@ type CreateOrganizationInput struct {
 	WebhookIDs             []string
 	EventIDs               []string
 	SecretIDs              []string
+	FeatureIDs             []string
 	FileIDs                []string
 }
 
@@ -2358,6 +2375,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.SecretIDs; len(v) > 0 {
 		m.AddSecretIDs(v...)
 	}
+	if v := i.FeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
+	}
 	if v := i.FileIDs; len(v) > 0 {
 		m.AddFileIDs(v...)
 	}
@@ -2422,6 +2442,9 @@ type UpdateOrganizationInput struct {
 	ClearSecrets                 bool
 	AddSecretIDs                 []string
 	RemoveSecretIDs              []string
+	ClearFeatures                bool
+	AddFeatureIDs                []string
+	RemoveFeatureIDs             []string
 	ClearFiles                   bool
 	AddFileIDs                   []string
 	RemoveFileIDs                []string
@@ -2581,6 +2604,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveSecretIDs; len(v) > 0 {
 		m.RemoveSecretIDs(v...)
+	}
+	if i.ClearFeatures {
+		m.ClearFeatures()
+	}
+	if v := i.AddFeatureIDs; len(v) > 0 {
+		m.AddFeatureIDs(v...)
+	}
+	if v := i.RemoveFeatureIDs; len(v) > 0 {
+		m.RemoveFeatureIDs(v...)
 	}
 	if i.ClearFiles {
 		m.ClearFiles()

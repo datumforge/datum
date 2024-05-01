@@ -74,4 +74,76 @@ services:
       KAFKA_CLUSTERS_0_NAME: r4zt_wrqTRuT7W2NJsB_GA
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-server:10000
       KAFKA_CLUSTERS_0_METRICS_PORT: 11001
-      KAFKA_CLUSTERS_0_METRICS_TYPE: PROMETHEUS
+      KAFservices:
+
+  proxy:
+    build:
+      context: .
+      dockerfile: ../shared/envoy/Dockerfile
+      args:
+        ENVOY_VARIANT: contrib-dev
+    ports:
+      - "${PORT_PROXY:-10000}:10000"
+      - "${PORT_ADMIN:-8001}:8001"
+
+  kafka-1:
+    image: 'bitnami/kafka:3.3.1'
+    container_name: kafka-1
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9094,EXTERNAL://kafka-server:10000
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9094,2@kafka-2:9094,3@kafka-3:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092,EXTERNAL://proxy:10000
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_KRAFT_CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA
+    ports:
+      - 9192:9092
+
+  kafka-2:
+    image: 'bitnami/kafka:3.3.1'
+    container_name: kafka-2
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9094,EXTERNAL://kafka-server:10000
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_BROKER_ID=2
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9094,2@kafka-2:9094,3@kafka-3:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-2:9092,EXTERNAL://proxy:10000
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_KRAFT_CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA
+    ports:
+      - 9292:9092
+      
+  kafka-3:
+    image: 'bitnami/kafka:3.3.1'
+    container_name: kafka-3
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9094,EXTERNAL://kafka-server:10000
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_BROKER_ID=3
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9094,2@kafka-2:9094,3@kafka-3:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-3:9092,EXTERNAL://proxy:10000
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_KRAFT_CLUSTER_ID=r4zt_wrqTRuT7W2NJsB_GA
+    ports:
+      - 9392:9092
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8090:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: r4zt_wrqTRuT7W2NJsB_GA
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-server:10000
+      KAFKA_CLUSTERS_0_METRICS_PORT: 11001
+      KAF

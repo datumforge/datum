@@ -71,6 +71,7 @@ func (EmailVerificationToken) Mixin() []ent.Mixin {
 		UserOwnedMixin{
 			Ref:               "email_verification_tokens",
 			SkipOASGeneration: true,
+			BypassInterceptor: true,
 		},
 	}
 }

@@ -71,6 +71,7 @@ func (PasswordResetToken) Mixin() []ent.Mixin {
 		UserOwnedMixin{
 			Ref:               "password_reset_tokens",
 			SkipOASGeneration: true,
+			BypassInterceptor: true,
 		},
 	}
 }

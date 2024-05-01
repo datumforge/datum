@@ -89,8 +89,9 @@ func (PersonalAccessToken) Mixin() []ent.Mixin {
 		mixin.SoftDeleteMixin{},
 		emixin.IDMixin{},
 		UserOwnedMixin{
-			Ref:         "personal_access_tokens",
-			AllowUpdate: false,
+			Ref:               "personal_access_tokens",
+			AllowUpdate:       false,
+			BypassInterceptor: true,
 		},
 	}
 }

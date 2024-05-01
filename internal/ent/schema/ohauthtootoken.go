@@ -6,6 +6,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/enthistory"
@@ -47,7 +48,11 @@ func (OhAuthTooToken) Fields() []ent.Field {
 
 // Edges of the OhAuthTooToken
 func (OhAuthTooToken) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("integration", Integration.Type).
+			Ref("oauth2tokens"),
+		edge.To("events", Event.Type),
+	}
 }
 
 // Mixin of the OhAuthTooToken

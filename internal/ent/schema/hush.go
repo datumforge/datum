@@ -63,6 +63,9 @@ func (Hush) Edges() []ent.Edge {
 			Comment("the integration associated with the secret").
 			Ref("secrets").
 			Annotations(entoas.Skip(true)),
+		edge.From("organization", Organization.Type).
+			Ref("secrets"),
+		edge.To("events", Event.Type),
 	}
 }
 

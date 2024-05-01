@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
@@ -111,7 +112,7 @@ func (Invite) Indexes() []ent.Index {
 // Edges of the Invite
 func (Invite) Edges() []ent.Edge {
 	return []ent.Edge{
-		// Edges go here
+		edge.To("events", Event.Type),
 	}
 }
 

@@ -53,6 +53,7 @@ func (OrgMembership) Edges() []ent.Edge {
 			Required().
 			Unique().
 			Immutable(),
+		edge.To("events", Event.Type),
 	}
 }
 

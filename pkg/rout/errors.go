@@ -10,6 +10,9 @@ import (
 	echo "github.com/datumforge/echox"
 )
 
+// ErrorCode is returned along side error messages for better error handling
+type ErrorCode string
+
 var (
 	ErrInvalidCredentials        = errors.New("datum credentials are missing or invalid")
 	ErrExpiredCredentials        = errors.New("datum credentials have expired")
@@ -81,9 +84,10 @@ type StatusError struct {
 
 // Reply contains standard fields that are used for generic API responses and errors
 type Reply struct {
-	Success    bool   `json:"success" yaml:"success" description:"Whether or not the request was successful or not"`
-	Error      string `json:"error,omitempty" yaml:"error,omitempty" description:"The error message if the request was unsuccessful"`
-	Unverified bool   `json:"unverified,omitempty" yaml:"unverified,omitempty"`
+	Success    bool      `json:"success" yaml:"success" description:"Whether or not the request was successful or not"`
+	Error      string    `json:"error,omitempty" yaml:"error,omitempty" description:"The error message if the request was unsuccessful"`
+	ErrorCode  ErrorCode `json:"error_code,omitempty" yaml:"error_code,omitempty" description:"The error code if the request was unsuccessful"`
+	Unverified bool      `json:"unverified,omitempty" yaml:"unverified,omitempty"`
 }
 
 // BadRequest returns a JSON 400 response for the API
@@ -122,6 +126,14 @@ func Unauthorized() StatusError {
 type MissingRequiredFieldError struct {
 	// RequiredField that is missing
 	RequiredField string `json:"required_field"`
+}
+
+// ErrorResponseWithCode constructs a new response for an error the contains an error code
+func ErrorResponseWithCode(err interface{}, code ErrorCode) Reply {
+	rep := ErrorResponse(err)
+	rep.ErrorCode = code
+
+	return rep
 }
 
 // ErrorResponse constructs a new response for an error or simply returns unsuccessful

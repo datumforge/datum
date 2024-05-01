@@ -12,6 +12,21 @@ import (
 	"github.com/datumforge/fgax/entfga"
 )
 
+func (m *APITokenMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *APITokenMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *APITokenMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}
+
 func (m *GroupMutation) CreateTuplesFromCreate(ctx context.Context) error {
 
 	return nil

@@ -54,7 +54,7 @@ func Test_getTupleKey(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			res, err := getTupleKey(tc.subID, tc.subType, tc.objID, tc.objType, tc.role)
+			res, err := getTupleKeyFromRole(tc.subID, tc.subType, tc.objID, tc.objType, tc.role)
 
 			if tc.expectedErr != nil {
 				assert.Error(t, err)

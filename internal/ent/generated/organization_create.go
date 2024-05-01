@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -345,6 +346,21 @@ func (oc *OrganizationCreate) AddPersonalAccessTokens(p ...*PersonalAccessToken)
 		ids[i] = p[i].ID
 	}
 	return oc.AddPersonalAccessTokenIDs(ids...)
+}
+
+// AddAPITokenIDs adds the "api_tokens" edge to the APIToken entity by IDs.
+func (oc *OrganizationCreate) AddAPITokenIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddAPITokenIDs(ids...)
+	return oc
+}
+
+// AddAPITokens adds the "api_tokens" edges to the APIToken entity.
+func (oc *OrganizationCreate) AddAPITokens(a ...*APIToken) *OrganizationCreate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return oc.AddAPITokenIDs(ids...)
 }
 
 // AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
@@ -737,6 +753,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.OrganizationPersonalAccessTokens
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.APITokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.APITokensTable,
+			Columns: []string{organization.APITokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(apitoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.APIToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

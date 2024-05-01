@@ -101,7 +101,7 @@ func (r *queryResolver) PersonalAccessToken(ctx context.Context, id string) (*ge
 			return nil, err
 		}
 
-		r.logger.Errorw("failed to get token", "error", err)
+		r.logger.Errorw("failed to get personal access token", "error", err)
 
 		return nil, ErrInternalServerError
 	}

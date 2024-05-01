@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/apitoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -44,6 +45,7 @@ type OrganizationQuery struct {
 	withSetting                   *OrganizationSettingQuery
 	withEntitlements              *EntitlementQuery
 	withPersonalAccessTokens      *PersonalAccessTokenQuery
+	withAPITokens                 *APITokenQuery
 	withOauthprovider             *OauthProviderQuery
 	withUsers                     *UserQuery
 	withInvites                   *InviteQuery
@@ -57,6 +59,7 @@ type OrganizationQuery struct {
 	withNamedIntegrations         map[string]*IntegrationQuery
 	withNamedEntitlements         map[string]*EntitlementQuery
 	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
+	withNamedAPITokens            map[string]*APITokenQuery
 	withNamedOauthprovider        map[string]*OauthProviderQuery
 	withNamedUsers                map[string]*UserQuery
 	withNamedInvites              map[string]*InviteQuery
@@ -292,6 +295,31 @@ func (oq *OrganizationQuery) QueryPersonalAccessTokens() *PersonalAccessTokenQue
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.PersonalAccessToken
 		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAPITokens chains the current query on the "api_tokens" edge.
+func (oq *OrganizationQuery) QueryAPITokens() *APITokenQuery {
+	query := (&APITokenClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(apitoken.Table, apitoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.APITokensTable, organization.APITokensColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.APIToken
+		step.Edge.Schema = schemaConfig.APIToken
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -623,6 +651,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withSetting:              oq.withSetting.Clone(),
 		withEntitlements:         oq.withEntitlements.Clone(),
 		withPersonalAccessTokens: oq.withPersonalAccessTokens.Clone(),
+		withAPITokens:            oq.withAPITokens.Clone(),
 		withOauthprovider:        oq.withOauthprovider.Clone(),
 		withUsers:                oq.withUsers.Clone(),
 		withInvites:              oq.withInvites.Clone(),
@@ -719,6 +748,17 @@ func (oq *OrganizationQuery) WithPersonalAccessTokens(opts ...func(*PersonalAcce
 		opt(query)
 	}
 	oq.withPersonalAccessTokens = query
+	return oq
+}
+
+// WithAPITokens tells the query-builder to eager-load the nodes that are connected to
+// the "api_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithAPITokens(opts ...func(*APITokenQuery)) *OrganizationQuery {
+	query := (&APITokenClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withAPITokens = query
 	return oq
 }
 
@@ -861,7 +901,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [13]bool{
+		loadedTypes = [14]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withGroups != nil,
@@ -870,6 +910,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withSetting != nil,
 			oq.withEntitlements != nil,
 			oq.withPersonalAccessTokens != nil,
+			oq.withAPITokens != nil,
 			oq.withOauthprovider != nil,
 			oq.withUsers != nil,
 			oq.withInvites != nil,
@@ -956,6 +997,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withAPITokens; query != nil {
+		if err := oq.loadAPITokens(ctx, query, nodes,
+			func(n *Organization) { n.Edges.APITokens = []*APIToken{} },
+			func(n *Organization, e *APIToken) { n.Edges.APITokens = append(n.Edges.APITokens, e) }); err != nil {
+			return nil, err
+		}
+	}
 	if query := oq.withOauthprovider; query != nil {
 		if err := oq.loadOauthprovider(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Oauthprovider = []*OauthProvider{} },
@@ -1030,6 +1078,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadPersonalAccessTokens(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedPersonalAccessTokens(name) },
 			func(n *Organization, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedAPITokens {
+		if err := oq.loadAPITokens(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedAPITokens(name) },
+			func(n *Organization, e *APIToken) { n.appendNamedAPITokens(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -1341,6 +1396,36 @@ func (oq *OrganizationQuery) loadPersonalAccessTokens(ctx context.Context, query
 		for kn := range nodes {
 			assign(kn, n)
 		}
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadAPITokens(ctx context.Context, query *APITokenQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *APIToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(apitoken.FieldOwnerID)
+	}
+	query.Where(predicate.APIToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.APITokensColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -1701,6 +1786,20 @@ func (oq *OrganizationQuery) WithNamedPersonalAccessTokens(name string, opts ...
 		oq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
 	}
 	oq.withNamedPersonalAccessTokens[name] = query
+	return oq
+}
+
+// WithNamedAPITokens tells the query-builder to eager-load the nodes that are connected to the "api_tokens"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedAPITokens(name string, opts ...func(*APITokenQuery)) *OrganizationQuery {
+	query := (&APITokenClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedAPITokens == nil {
+		oq.withNamedAPITokens = make(map[string]*APITokenQuery)
+	}
+	oq.withNamedAPITokens[name] = query
 	return oq
 }
 

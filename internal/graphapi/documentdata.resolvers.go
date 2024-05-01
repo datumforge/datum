@@ -122,8 +122,3 @@ func (r *queryResolver) DocumentData(ctx context.Context, id string) (*generated
 
 	return data, nil
 }
-
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
-
-type mutationResolver struct{ *Resolver }

@@ -57,6 +57,8 @@ const (
 	EdgeEntitlements = "entitlements"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
+	// EdgeAPITokens holds the string denoting the api_tokens edge name in mutations.
+	EdgeAPITokens = "api_tokens"
 	// EdgeOauthprovider holds the string denoting the oauthprovider edge name in mutations.
 	EdgeOauthprovider = "oauthprovider"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -117,6 +119,13 @@ const (
 	// PersonalAccessTokensInverseTable is the table name for the PersonalAccessToken entity.
 	// It exists in this package in order to avoid circular dependency with the "personalaccesstoken" package.
 	PersonalAccessTokensInverseTable = "personal_access_tokens"
+	// APITokensTable is the table that holds the api_tokens relation/edge.
+	APITokensTable = "api_tokens"
+	// APITokensInverseTable is the table name for the APIToken entity.
+	// It exists in this package in order to avoid circular dependency with the "apitoken" package.
+	APITokensInverseTable = "api_tokens"
+	// APITokensColumn is the table column denoting the api_tokens relation/edge.
+	APITokensColumn = "owner_id"
 	// OauthproviderTable is the table that holds the oauthprovider relation/edge.
 	OauthproviderTable = "oauth_providers"
 	// OauthproviderInverseTable is the table name for the OauthProvider entity.
@@ -391,6 +400,20 @@ func ByPersonalAccessTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 	}
 }
 
+// ByAPITokensCount orders the results by api_tokens count.
+func ByAPITokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAPITokensStep(), opts...)
+	}
+}
+
+// ByAPITokens orders the results by api_tokens terms.
+func ByAPITokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAPITokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByOauthproviderCount orders the results by oauthprovider count.
 func ByOauthproviderCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -514,6 +537,13 @@ func newPersonalAccessTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PersonalAccessTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, false, PersonalAccessTokensTable, PersonalAccessTokensPrimaryKey...),
+	)
+}
+func newAPITokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(APITokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, APITokensTable, APITokensColumn),
 	)
 }
 func newOauthproviderStep() *sqlgraph.Step {

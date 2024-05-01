@@ -411,7 +411,9 @@ func (suite *GraphTestSuite) TestMutationDeleteAPIToken() {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(suite.client.fga)
 
-			mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
+			if tc.errorMsg == "" {
+				mock_fga.CheckAny(t, suite.client.fga, tc.allowed)
+			}
 
 			resp, err := suite.client.datum.DeleteAPIToken(reqCtx, tc.tokenID)
 

@@ -120,7 +120,7 @@ func (m *APITokenMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().APIToken.Query().Where(apitoken.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.OwnerID
@@ -283,7 +283,7 @@ func (m *GroupMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().Group.Query().Where(group.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.ID
@@ -456,7 +456,7 @@ func (m *GroupMembershipMutation) CheckAccessForEdit(ctx context.Context) error 
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().GroupMembership.Query().Where(groupmembership.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.GroupID
@@ -629,7 +629,7 @@ func (m *GroupSettingMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().GroupSetting.Query().Where(groupsetting.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.GroupID
@@ -802,7 +802,7 @@ func (m *IntegrationMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().Integration.Query().Where(integration.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.OwnerID
@@ -975,7 +975,7 @@ func (m *InviteMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().Invite.Query().Where(invite.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.OwnerID
@@ -1148,7 +1148,7 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().OrgMembership.Query().Where(orgmembership.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.OrganizationID
@@ -1311,7 +1311,7 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().Organization.Query().Where(organization.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.ID
@@ -1484,7 +1484,7 @@ func (m *OrganizationSettingMutation) CheckAccessForEdit(ctx context.Context) er
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().OrganizationSetting.Query().Where(organizationsetting.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.OrganizationID
@@ -1657,7 +1657,7 @@ func (m *SubscriberMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().Subscriber.Query().Where(subscriber.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
 
 			ac.ObjectID = ob.OwnerID

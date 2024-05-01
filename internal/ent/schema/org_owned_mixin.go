@@ -83,18 +83,23 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 }
 
 func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
-	return []ent.Interceptor{
-		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
-			orgID, err := auth.GetOrganizationIDFromContext(ctx)
-			if err != nil {
-				return err
-			}
+	if orgOwned.Optional {
+		// do not add interceptors if the field is optional
+		return []ent.Interceptor{}
+	} else {
+		return []ent.Interceptor{
+			intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
+				orgID, err := auth.GetOrganizationIDFromContext(ctx)
+				if err != nil {
+					return err
+				}
 
-			// sets the owner id on the query for the current organization
-			orgOwned.P(q, orgID)
+				// sets the owner id on the query for the current organization
+				orgOwned.P(q, orgID)
 
-			return nil
-		}),
+				return nil
+			}),
+		}
 	}
 }
 

@@ -22,14 +22,9 @@ func (suite *GraphTestSuite) TestQueryGroup() {
 	reqCtx, err := userContext()
 	require.NoError(t, err)
 
-	org1 := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+	group1 := (&GroupBuilder{client: suite.client}).MustNew(reqCtx, t)
 
-	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org1.ID)
-	require.NoError(t, err)
-
-	group1 := (&GroupBuilder{client: suite.client, Owner: org1.ID}).MustNew(reqCtx, t)
-
-	listOrgs := []string{fmt.Sprintf("organization:%s", org1.ID)}
+	listOrgs := []string{fmt.Sprintf("organization:%s", testPersonalOrgID)}
 	listGroups := []string{fmt.Sprintf("group:%s", group1.ID)}
 
 	testCases := []struct {
@@ -85,7 +80,6 @@ func (suite *GraphTestSuite) TestQueryGroup() {
 
 	// delete created org and group
 	(&GroupCleanup{client: suite.client, GroupID: group1.ID}).MustDelete(reqCtx, t)
-	(&OrganizationCleanup{client: suite.client, OrgID: org1.ID}).MustDelete(reqCtx, t)
 }
 
 func (suite *GraphTestSuite) TestQueryGroupsByOwner() {

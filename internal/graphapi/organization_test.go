@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
@@ -566,6 +567,9 @@ func (suite *GraphTestSuite) TestMutationOrganizationCascadeDelete() {
 	require.NoError(t, err)
 
 	org := (&OrganizationBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, org.ID)
+	require.NoError(t, err)
 
 	// add child org
 	childOrg := (&OrganizationBuilder{client: suite.client, ParentOrgID: org.ID}).MustNew(reqCtx, t)

@@ -37,7 +37,8 @@ import (
 )
 
 var (
-	testUser *ent.User
+	testUser          *ent.User
+	testPersonalOrgID string
 )
 
 // TestGraphTestSuite runs all the tests in the GraphTestSuite
@@ -137,9 +138,7 @@ func (suite *GraphTestSuite) SetupTest() {
 
 	// create database connection
 	db, err := entdb.NewTestClient(ctx, suite.tc, opts)
-	if err != nil {
-		require.NoError(t, err, "failed opening connection to database")
-	}
+	require.NoError(t, err, "failed opening connection to database")
 
 	// assign values
 	c.db = db
@@ -147,6 +146,10 @@ func (suite *GraphTestSuite) SetupTest() {
 
 	// create test user
 	testUser = (&UserBuilder{client: c}).MustNew(context.Background(), t)
+	testPersonalOrg, err := testUser.Edges.Setting.DefaultOrg(context.Background())
+	require.NoError(t, err)
+
+	testPersonalOrgID = testPersonalOrg.ID
 
 	suite.client = c
 }
@@ -210,23 +213,13 @@ func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 // userContext creates a new user in the database and returns a context with
 // the user claims attached
 func userContext() (context.Context, error) {
-	// Use that user to create the organization
-	ec, err := auth.NewTestContextWithValidUser(testUser.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
-
-	return reqCtx, nil
+	return auth.NewTestContextWithOrgID(testUser.ID, testPersonalOrgID)
 }
 
 // userContextWithID creates a new user context with the provided user ID
 func userContextWithID(userID string) (context.Context, error) {
 	// Use that user to create the organization
-	ec, err := auth.NewTestContextWithValidUser(userID)
+	ec, err := auth.NewTestEchoContextWithValidUser(userID)
 	if err != nil {
 		return nil, err
 	}

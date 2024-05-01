@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -14,7 +13,6 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
-	"github.com/datumforge/datum/pkg/middleware/echocontext"
 )
 
 func (suite *GraphTestSuite) TestQueryInvite() {
@@ -28,6 +26,9 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 
 	user := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	inviteExistingUser := (&InviteBuilder{client: suite.client, Recipient: user.Email}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite.OwnerID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name        string
@@ -46,7 +47,7 @@ func (suite *GraphTestSuite) TestQueryInvite() {
 		{
 			name:        "invite accepted, should be deleted and not found",
 			queryID:     inviteExistingUser.ID,
-			shouldCheck: true,
+			shouldCheck: false,
 			expected:    nil,
 			wantErr:     true,
 		},
@@ -88,32 +89,26 @@ func (suite *GraphTestSuite) TestMutationCreateInvite() {
 	t := suite.T()
 
 	// setup user context
-	ec := echocontext.NewTestEchoContext()
-
-	ctx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(ctx))
+	ctx, err := userContext()
+	require.NoError(t, err)
 
 	orgAdmin := (&UserBuilder{client: suite.client}).MustNew(ctx, t)
 
-	// setup valid user context
 	userCtx, err := auth.NewTestContextWithValidUser(orgAdmin.ID)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(userCtx.Request().Context(), echocontext.EchoContextKey, userCtx)
-
-	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
+	require.NoError(t, err)
 
 	// Org to invite users to
-	org := (&OrganizationBuilder{client: suite.client}).MustNew(userCtx.Request().Context(), t)
+	org := (&OrganizationBuilder{client: suite.client}).MustNew(userCtx, t)
+
+	// setup valid user context ith org
+	reqCtx, err := auth.NewTestContextWithOrgID(orgAdmin.ID, org.ID)
+	require.NoError(t, err)
 
 	// Existing user to invite to org
-	existingUser := (&UserBuilder{client: suite.client}).MustNew(userCtx.Request().Context(), t)
+	existingUser := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 
 	// Existing user already a member of org
-	existingUser2 := (&UserBuilder{client: suite.client}).MustNew(userCtx.Request().Context(), t)
+	existingUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	_ = (&OrgMemberBuilder{client: suite.client, OrgID: org.ID, UserID: existingUser2.ID}).MustNew(reqCtx, t)
 
 	testCases := []struct {
@@ -252,6 +247,9 @@ func (suite *GraphTestSuite) TestMutationDeleteInvite() {
 	require.NoError(t, err)
 
 	invite := (&InviteBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, invite.OwnerID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name     string

@@ -213,7 +213,7 @@ func TestGetRefreshToken(t *testing.T) {
 }
 
 func TestSetAuthCookies(t *testing.T) {
-	validCtx, err := auth.NewTestContextWithValidUser("funks")
+	validCtx, err := auth.NewTestEchoContextWithValidUser("funks")
 	if err != nil {
 		t.Fatal()
 	}
@@ -244,7 +244,7 @@ func TestSetAuthCookies(t *testing.T) {
 }
 
 func TestClearAuthCookies(t *testing.T) {
-	validCtx, err := auth.NewTestContextWithValidUser("funks")
+	validCtx, err := auth.NewTestEchoContextWithValidUser("funks")
 	if err != nil {
 		t.Fatal()
 	}
@@ -329,7 +329,7 @@ func TestGetClaims(t *testing.T) {
 	jBasic := jwt.New(jwt.SigningMethodHS256)
 	missingSubCtx.Set("user_claims", jBasic)
 
-	validCtx, err := auth.NewTestContextWithValidUser("foobar")
+	validCtx, err := auth.NewTestEchoContextWithValidUser("foobar")
 	if err != nil {
 		t.Fatal()
 	}

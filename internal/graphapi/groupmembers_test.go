@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/datum/pkg/datumclient"
 )
 
@@ -115,6 +116,9 @@ func (suite *GraphTestSuite) TestQueryCreateGroupMembers() {
 
 	testUser1 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
 	testUser2 := (&UserBuilder{client: suite.client}).MustNew(reqCtx, t)
+
+	reqCtx, err = auth.NewTestContextWithOrgID(testUser.ID, group1.OwnerID)
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name    string

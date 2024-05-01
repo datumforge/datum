@@ -42,6 +42,8 @@ func (Feature) Edges() []ent.Edge {
 			Ref("features"),
 		edge.From("entitlements", Entitlement.Type).
 			Ref("features"),
+		edge.From("organizations", Organization.Type).
+			Ref("features"),
 		edge.To("events", Event.Type),
 	}
 }

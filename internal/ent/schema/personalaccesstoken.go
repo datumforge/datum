@@ -132,8 +132,8 @@ func (PersonalAccessToken) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.AllowIfOwnedByViewer(),
-			privacy.AlwaysDenyRule(),
+			rule.DenyIfNoSubject(),
+			privacy.AlwaysAllowRule(),
 		},
 	}
 }

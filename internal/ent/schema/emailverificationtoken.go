@@ -114,7 +114,6 @@ func (EmailVerificationToken) Hooks() []ent.Hook {
 func (EmailVerificationToken) Policy() ent.Policy {
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{
-			rule.AllowIfOwnedByViewer(),
 			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.VerifyToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
@@ -123,7 +122,7 @@ func (EmailVerificationToken) Policy() ent.Policy {
 					tokenFilter.WhereToken(entql.StringEQ(actualToken.GetToken()))
 				},
 			),
-			privacy.AlwaysDenyRule(),
+			privacy.AlwaysAllowRule(),
 		},
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(

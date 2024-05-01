@@ -113,7 +113,6 @@ func (PasswordResetToken) Hooks() []ent.Hook {
 func (PasswordResetToken) Policy() ent.Policy {
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{
-			rule.AllowIfOwnedByViewer(),
 			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.ResetToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
@@ -122,7 +121,7 @@ func (PasswordResetToken) Policy() ent.Policy {
 					tokenFilter.WhereToken(entql.StringEQ(actualToken.GetToken()))
 				},
 			),
-			privacy.AlwaysDenyRule(),
+			privacy.AlwaysAllowRule(),
 		},
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(

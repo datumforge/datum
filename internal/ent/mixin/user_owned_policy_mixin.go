@@ -48,9 +48,8 @@ func (mixin UserOwnedMutationPolicyMixin) Policy() ent.Policy {
 func (mixin UserOwnedQueryPolicyMixin) Policy() ent.Policy {
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{
-			rule.AllowIfAdmin(),
-			rule.AllowIfOwnedByViewer(),
-			privacy.AlwaysDenyRule(),
+			rule.DenyIfNoSubject(),
+			privacy.AlwaysAllowRule(),
 		},
 	}
 }

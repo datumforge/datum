@@ -1,0 +1,101 @@
+mutation CreateFeature($input: CreateFeatureInput!) {
+  createFeature(input: $input) {
+    feature {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      name
+      global
+      enabled
+      description
+      users {
+        id
+      }
+      groups {
+        id
+      }
+      entitlements {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+query GetFeatures($where: FeatureWhereInput) {
+  features(where: $where) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        name
+        global
+        enabled
+        description
+        users {
+          id
+          email
+        }
+        groups {
+          id
+          name
+        }
+        entitlements {
+          id
+          tier
+        }
+        events {
+          id
+          eventType
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateFeature($updateFeatureId: ID!, $input: UpdateFeatureInput!) {
+  updateFeature(id: $updateFeatureId, input: $input) {
+    feature {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      name
+      global
+      enabled
+      description
+      users {
+        id
+      }
+      groups {
+        id
+      }
+      entitlements {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation DeleteFeature($deleteFeatureId: ID!) {
+  deleteFeature(id: $deleteFeatureId) {
+    deletedID
+  }
+}

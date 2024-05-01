@@ -6,27 +6,119 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
-// CreateEvent is the resolver for the createEvent field.
+// CreateEvent is the resolver for the createEvent field
 func (r *mutationResolver) CreateEvent(ctx context.Context, input generated.CreateEventInput) (*EventCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateEvent - createEvent"))
+	t, err := withTransactionalMutation(ctx).Event.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "event")
+		}
+
+		r.logger.Errorw("failed to create event", "error", err)
+
+		return nil, err
+	}
+
+	return &EventCreatePayload{Event: t}, nil
 }
 
-// UpdateEvent is the resolver for the updateEvent field.
+// UpdateEvent is the resolver for the updateEvent field
 func (r *mutationResolver) UpdateEvent(ctx context.Context, id string, input generated.UpdateEventInput) (*EventUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateEvent - updateEvent"))
+	event, err := withTransactionalMutation(ctx).Event.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to get event on update", "error", err)
+
+			return nil, newPermissionDeniedError(ActionGet, "event")
+		}
+
+		r.logger.Errorw("failed to get event", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	event, err = event.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to update event", "error", err)
+
+			return nil, newPermissionDeniedError(ActionUpdate, "event")
+		}
+
+		r.logger.Errorw("failed to update event", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &EventUpdatePayload{Event: event}, nil
 }
 
-// DeleteEvent is the resolver for the deleteEvent field.
+// DeleteEvent is the resolver for the deleteEvent field
 func (r *mutationResolver) DeleteEvent(ctx context.Context, id string) (*EventDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteEvent - deleteEvent"))
+	if err := withTransactionalMutation(ctx).Event.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "event")
+		}
+
+		r.logger.Errorw("failed to delete event", "error", err)
+		return nil, err
+	}
+
+	if err := generated.EventEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
+	return &EventDeletePayload{DeletedID: id}, nil
 }
 
-// Event is the resolver for the event field.
+// Event is the resolver for the event field
 func (r *queryResolver) Event(ctx context.Context, id string) (*generated.Event, error) {
-	panic(fmt.Errorf("not implemented: Event - event"))
+	event, err := withTransactionalMutation(ctx).Event.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get event", "error", err)
+
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "event")
+		}
+
+		return nil, ErrInternalServerError
+	}
+
+	return event, nil
 }

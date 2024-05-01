@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/subscriber"
@@ -238,6 +239,21 @@ func (su *SubscriberUpdate) SetOwner(o *Organization) *SubscriberUpdate {
 	return su.SetOwnerID(o.ID)
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (su *SubscriberUpdate) AddEventIDs(ids ...string) *SubscriberUpdate {
+	su.mutation.AddEventIDs(ids...)
+	return su
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (su *SubscriberUpdate) AddEvents(e ...*Event) *SubscriberUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.AddEventIDs(ids...)
+}
+
 // Mutation returns the SubscriberMutation object of the builder.
 func (su *SubscriberUpdate) Mutation() *SubscriberMutation {
 	return su.mutation
@@ -247,6 +263,27 @@ func (su *SubscriberUpdate) Mutation() *SubscriberMutation {
 func (su *SubscriberUpdate) ClearOwner() *SubscriberUpdate {
 	su.mutation.ClearOwner()
 	return su
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (su *SubscriberUpdate) ClearEvents() *SubscriberUpdate {
+	su.mutation.ClearEvents()
+	return su
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (su *SubscriberUpdate) RemoveEventIDs(ids ...string) *SubscriberUpdate {
+	su.mutation.RemoveEventIDs(ids...)
+	return su
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (su *SubscriberUpdate) RemoveEvents(e ...*Event) *SubscriberUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return su.RemoveEventIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -411,6 +448,54 @@ func (su *SubscriberUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = su.schemaConfig.Subscriber
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if su.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   subscriber.EventsTable,
+			Columns: subscriber.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = su.schemaConfig.SubscriberEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.RemovedEventsIDs(); len(nodes) > 0 && !su.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   subscriber.EventsTable,
+			Columns: subscriber.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = su.schemaConfig.SubscriberEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := su.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   subscriber.EventsTable,
+			Columns: subscriber.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = su.schemaConfig.SubscriberEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -645,6 +730,21 @@ func (suo *SubscriberUpdateOne) SetOwner(o *Organization) *SubscriberUpdateOne {
 	return suo.SetOwnerID(o.ID)
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (suo *SubscriberUpdateOne) AddEventIDs(ids ...string) *SubscriberUpdateOne {
+	suo.mutation.AddEventIDs(ids...)
+	return suo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (suo *SubscriberUpdateOne) AddEvents(e ...*Event) *SubscriberUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.AddEventIDs(ids...)
+}
+
 // Mutation returns the SubscriberMutation object of the builder.
 func (suo *SubscriberUpdateOne) Mutation() *SubscriberMutation {
 	return suo.mutation
@@ -654,6 +754,27 @@ func (suo *SubscriberUpdateOne) Mutation() *SubscriberMutation {
 func (suo *SubscriberUpdateOne) ClearOwner() *SubscriberUpdateOne {
 	suo.mutation.ClearOwner()
 	return suo
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (suo *SubscriberUpdateOne) ClearEvents() *SubscriberUpdateOne {
+	suo.mutation.ClearEvents()
+	return suo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (suo *SubscriberUpdateOne) RemoveEventIDs(ids ...string) *SubscriberUpdateOne {
+	suo.mutation.RemoveEventIDs(ids...)
+	return suo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (suo *SubscriberUpdateOne) RemoveEvents(e ...*Event) *SubscriberUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return suo.RemoveEventIDs(ids...)
 }
 
 // Where appends a list predicates to the SubscriberUpdate builder.
@@ -848,6 +969,54 @@ func (suo *SubscriberUpdateOne) sqlSave(ctx context.Context) (_node *Subscriber,
 			},
 		}
 		edge.Schema = suo.schemaConfig.Subscriber
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if suo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   subscriber.EventsTable,
+			Columns: subscriber.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = suo.schemaConfig.SubscriberEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !suo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   subscriber.EventsTable,
+			Columns: subscriber.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = suo.schemaConfig.SubscriberEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := suo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   subscriber.EventsTable,
+			Columns: subscriber.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = suo.schemaConfig.SubscriberEvents
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

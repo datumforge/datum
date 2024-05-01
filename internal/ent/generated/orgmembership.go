@@ -50,11 +50,15 @@ type OrgMembershipEdges struct {
 	Organization *Organization `json:"organization,omitempty"`
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
+
+	namedEvents map[string][]*Event
 }
 
 // OrganizationOrErr returns the Organization value or an error if the edge
@@ -77,6 +81,15 @@ func (e OrgMembershipEdges) UserOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrgMembershipEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[2] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -186,6 +199,11 @@ func (om *OrgMembership) QueryUser() *UserQuery {
 	return NewOrgMembershipClient(om.config).QueryUser(om)
 }
 
+// QueryEvents queries the "events" edge of the OrgMembership entity.
+func (om *OrgMembership) QueryEvents() *EventQuery {
+	return NewOrgMembershipClient(om.config).QueryEvents(om)
+}
+
 // Update returns a builder for updating this OrgMembership.
 // Note that you need to call OrgMembership.Unwrap() before calling this method if this OrgMembership
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -237,6 +255,30 @@ func (om *OrgMembership) String() string {
 	builder.WriteString(om.UserID)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (om *OrgMembership) NamedEvents(name string) ([]*Event, error) {
+	if om.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := om.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (om *OrgMembership) appendNamedEvents(name string, edges ...*Event) {
+	if om.Edges.namedEvents == nil {
+		om.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		om.Edges.namedEvents[name] = []*Event{}
+	} else {
+		om.Edges.namedEvents[name] = append(om.Edges.namedEvents[name], edges...)
+	}
 }
 
 // OrgMemberships is a parsable slice of OrgMembership.

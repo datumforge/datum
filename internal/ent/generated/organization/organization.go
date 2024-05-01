@@ -67,6 +67,16 @@ const (
 	EdgeInvites = "invites"
 	// EdgeSubscribers holds the string denoting the subscribers edge name in mutations.
 	EdgeSubscribers = "subscribers"
+	// EdgeWebhooks holds the string denoting the webhooks edge name in mutations.
+	EdgeWebhooks = "webhooks"
+	// EdgeEvents holds the string denoting the events edge name in mutations.
+	EdgeEvents = "events"
+	// EdgeSecrets holds the string denoting the secrets edge name in mutations.
+	EdgeSecrets = "secrets"
+	// EdgeFeatures holds the string denoting the features edge name in mutations.
+	EdgeFeatures = "features"
+	// EdgeFiles holds the string denoting the files edge name in mutations.
+	EdgeFiles = "files"
 	// EdgeMembers holds the string denoting the members edge name in mutations.
 	EdgeMembers = "members"
 	// Table holds the table name of the organization in the database.
@@ -152,6 +162,33 @@ const (
 	SubscribersInverseTable = "subscribers"
 	// SubscribersColumn is the table column denoting the subscribers relation/edge.
 	SubscribersColumn = "owner_id"
+	// WebhooksTable is the table that holds the webhooks relation/edge.
+	WebhooksTable = "webhooks"
+	// WebhooksInverseTable is the table name for the Webhook entity.
+	// It exists in this package in order to avoid circular dependency with the "webhook" package.
+	WebhooksInverseTable = "webhooks"
+	// WebhooksColumn is the table column denoting the webhooks relation/edge.
+	WebhooksColumn = "owner_id"
+	// EventsTable is the table that holds the events relation/edge. The primary key declared below.
+	EventsTable = "organization_events"
+	// EventsInverseTable is the table name for the Event entity.
+	// It exists in this package in order to avoid circular dependency with the "event" package.
+	EventsInverseTable = "events"
+	// SecretsTable is the table that holds the secrets relation/edge. The primary key declared below.
+	SecretsTable = "organization_secrets"
+	// SecretsInverseTable is the table name for the Hush entity.
+	// It exists in this package in order to avoid circular dependency with the "hush" package.
+	SecretsInverseTable = "hushes"
+	// FeaturesTable is the table that holds the features relation/edge. The primary key declared below.
+	FeaturesTable = "organization_features"
+	// FeaturesInverseTable is the table name for the Feature entity.
+	// It exists in this package in order to avoid circular dependency with the "feature" package.
+	FeaturesInverseTable = "features"
+	// FilesTable is the table that holds the files relation/edge. The primary key declared below.
+	FilesTable = "organization_files"
+	// FilesInverseTable is the table name for the File entity.
+	// It exists in this package in order to avoid circular dependency with the "file" package.
+	FilesInverseTable = "files"
 	// MembersTable is the table that holds the members relation/edge.
 	MembersTable = "org_memberships"
 	// MembersInverseTable is the table name for the OrgMembership entity.
@@ -186,6 +223,18 @@ var (
 	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
 	// primary key for the users relation (M2M).
 	UsersPrimaryKey = []string{"user_id", "organization_id"}
+	// EventsPrimaryKey and EventsColumn2 are the table columns denoting the
+	// primary key for the events relation (M2M).
+	EventsPrimaryKey = []string{"organization_id", "event_id"}
+	// SecretsPrimaryKey and SecretsColumn2 are the table columns denoting the
+	// primary key for the secrets relation (M2M).
+	SecretsPrimaryKey = []string{"organization_id", "hush_id"}
+	// FeaturesPrimaryKey and FeaturesColumn2 are the table columns denoting the
+	// primary key for the features relation (M2M).
+	FeaturesPrimaryKey = []string{"organization_id", "feature_id"}
+	// FilesPrimaryKey and FilesColumn2 are the table columns denoting the
+	// primary key for the files relation (M2M).
+	FilesPrimaryKey = []string{"organization_id", "file_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -470,6 +519,76 @@ func BySubscribers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByWebhooksCount orders the results by webhooks count.
+func ByWebhooksCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newWebhooksStep(), opts...)
+	}
+}
+
+// ByWebhooks orders the results by webhooks terms.
+func ByWebhooks(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWebhooksStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByEventsCount orders the results by events count.
+func ByEventsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEventsStep(), opts...)
+	}
+}
+
+// ByEvents orders the results by events terms.
+func ByEvents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEventsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// BySecretsCount orders the results by secrets count.
+func BySecretsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSecretsStep(), opts...)
+	}
+}
+
+// BySecrets orders the results by secrets terms.
+func BySecrets(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSecretsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByFeaturesCount orders the results by features count.
+func ByFeaturesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFeaturesStep(), opts...)
+	}
+}
+
+// ByFeatures orders the results by features terms.
+func ByFeatures(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFeaturesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByFilesCount orders the results by files count.
+func ByFilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFilesStep(), opts...)
+	}
+}
+
+// ByFiles orders the results by files terms.
+func ByFiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByMembersCount orders the results by members count.
 func ByMembersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -572,6 +691,41 @@ func newSubscribersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SubscribersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, SubscribersTable, SubscribersColumn),
+	)
+}
+func newWebhooksStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WebhooksInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, WebhooksTable, WebhooksColumn),
+	)
+}
+func newEventsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EventsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, EventsTable, EventsPrimaryKey...),
+	)
+}
+func newSecretsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SecretsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, SecretsTable, SecretsPrimaryKey...),
+	)
+}
+func newFeaturesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FeaturesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FeaturesTable, FeaturesPrimaryKey...),
+	)
+}
+func newFilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, FilesTable, FilesPrimaryKey...),
 	)
 }
 func newMembersStep() *sqlgraph.Step {

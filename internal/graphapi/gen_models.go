@@ -66,6 +66,60 @@ type EntitlementUpdatePayload struct {
 	Entitlement *generated.Entitlement `json:"entitlement"`
 }
 
+// Return response for createEvent mutation
+type EventCreatePayload struct {
+	// Created event
+	Event *generated.Event `json:"event"`
+}
+
+// Return response for deleteEvent mutation
+type EventDeletePayload struct {
+	// Deleted event ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateEvent mutation
+type EventUpdatePayload struct {
+	// Updated event
+	Event *generated.Event `json:"event"`
+}
+
+// Return response for createFeature mutation
+type FeatureCreatePayload struct {
+	// Created feature
+	Feature *generated.Feature `json:"feature"`
+}
+
+// Return response for deleteFeature mutation
+type FeatureDeletePayload struct {
+	// Deleted feature ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateFeature mutation
+type FeatureUpdatePayload struct {
+	// Updated feature
+	Feature *generated.Feature `json:"feature"`
+}
+
+// Return response for createFile mutation
+type FileCreatePayload struct {
+	// Created file
+	File *generated.File `json:"file"`
+}
+
+// Return response for deleteFile mutation
+type FileDeletePayload struct {
+	// Deleted file ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateFile mutation
+type FileUpdatePayload struct {
+	// Updated file
+	File *generated.File `json:"file"`
+}
+
 // Return response for createGroup mutation
 type GroupCreatePayload struct {
 	// Created group
@@ -355,4 +409,22 @@ type UserSettingUpdatePayload struct {
 type UserUpdatePayload struct {
 	// Updated user
 	User *generated.User `json:"user"`
+}
+
+// Return response for createWebhook mutation
+type WebhookCreatePayload struct {
+	// Created webhook
+	Webhook *generated.Webhook `json:"webhook"`
+}
+
+// Return response for deleteWebhook mutation
+type WebhookDeletePayload struct {
+	// Deleted webhook ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateWebhook mutation
+type WebhookUpdatePayload struct {
+	// Updated webhook
+	Webhook *generated.Webhook `json:"webhook"`
 }

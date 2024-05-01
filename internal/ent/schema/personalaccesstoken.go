@@ -70,6 +70,7 @@ func (PersonalAccessToken) Edges() []ent.Edge {
 			Ref("personal_access_tokens").
 			Annotations(entoas.Skip(true)).
 			Comment("the organization(s) the token is associated with"),
+		edge.To("events", Event.Type),
 	}
 }
 

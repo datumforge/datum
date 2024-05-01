@@ -385,3 +385,18 @@ func (m *SubscriberMutation) CreateTuplesFromDelete(ctx context.Context) error {
 
 	return nil
 }
+
+func (m *WebhookMutation) CreateTuplesFromCreate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *WebhookMutation) CreateTuplesFromUpdate(ctx context.Context) error {
+
+	return nil
+}
+
+func (m *WebhookMutation) CreateTuplesFromDelete(ctx context.Context) error {
+
+	return nil
+}

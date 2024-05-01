@@ -23,6 +23,7 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/user"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/usersetting"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/version"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/webhook"
 )
 
 func main() {

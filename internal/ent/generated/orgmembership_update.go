@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
@@ -117,9 +118,45 @@ func (omu *OrgMembershipUpdate) SetNillableRole(e *enums.Role) *OrgMembershipUpd
 	return omu
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (omu *OrgMembershipUpdate) AddEventIDs(ids ...string) *OrgMembershipUpdate {
+	omu.mutation.AddEventIDs(ids...)
+	return omu
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (omu *OrgMembershipUpdate) AddEvents(e ...*Event) *OrgMembershipUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return omu.AddEventIDs(ids...)
+}
+
 // Mutation returns the OrgMembershipMutation object of the builder.
 func (omu *OrgMembershipUpdate) Mutation() *OrgMembershipMutation {
 	return omu.mutation
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (omu *OrgMembershipUpdate) ClearEvents() *OrgMembershipUpdate {
+	omu.mutation.ClearEvents()
+	return omu
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (omu *OrgMembershipUpdate) RemoveEventIDs(ids ...string) *OrgMembershipUpdate {
+	omu.mutation.RemoveEventIDs(ids...)
+	return omu
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (omu *OrgMembershipUpdate) RemoveEvents(e ...*Event) *OrgMembershipUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return omu.RemoveEventIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -224,6 +261,54 @@ func (omu *OrgMembershipUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := omu.mutation.Role(); ok {
 		_spec.SetField(orgmembership.FieldRole, field.TypeEnum, value)
+	}
+	if omu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   orgmembership.EventsTable,
+			Columns: orgmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = omu.schemaConfig.OrgMembershipEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := omu.mutation.RemovedEventsIDs(); len(nodes) > 0 && !omu.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   orgmembership.EventsTable,
+			Columns: orgmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = omu.schemaConfig.OrgMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := omu.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   orgmembership.EventsTable,
+			Columns: orgmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = omu.schemaConfig.OrgMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = omu.schemaConfig.OrgMembership
 	ctx = internal.NewSchemaConfigContext(ctx, omu.schemaConfig)
@@ -333,9 +418,45 @@ func (omuo *OrgMembershipUpdateOne) SetNillableRole(e *enums.Role) *OrgMembershi
 	return omuo
 }
 
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (omuo *OrgMembershipUpdateOne) AddEventIDs(ids ...string) *OrgMembershipUpdateOne {
+	omuo.mutation.AddEventIDs(ids...)
+	return omuo
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (omuo *OrgMembershipUpdateOne) AddEvents(e ...*Event) *OrgMembershipUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return omuo.AddEventIDs(ids...)
+}
+
 // Mutation returns the OrgMembershipMutation object of the builder.
 func (omuo *OrgMembershipUpdateOne) Mutation() *OrgMembershipMutation {
 	return omuo.mutation
+}
+
+// ClearEvents clears all "events" edges to the Event entity.
+func (omuo *OrgMembershipUpdateOne) ClearEvents() *OrgMembershipUpdateOne {
+	omuo.mutation.ClearEvents()
+	return omuo
+}
+
+// RemoveEventIDs removes the "events" edge to Event entities by IDs.
+func (omuo *OrgMembershipUpdateOne) RemoveEventIDs(ids ...string) *OrgMembershipUpdateOne {
+	omuo.mutation.RemoveEventIDs(ids...)
+	return omuo
+}
+
+// RemoveEvents removes "events" edges to Event entities.
+func (omuo *OrgMembershipUpdateOne) RemoveEvents(e ...*Event) *OrgMembershipUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return omuo.RemoveEventIDs(ids...)
 }
 
 // Where appends a list predicates to the OrgMembershipUpdate builder.
@@ -470,6 +591,54 @@ func (omuo *OrgMembershipUpdateOne) sqlSave(ctx context.Context) (_node *OrgMemb
 	}
 	if value, ok := omuo.mutation.Role(); ok {
 		_spec.SetField(orgmembership.FieldRole, field.TypeEnum, value)
+	}
+	if omuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   orgmembership.EventsTable,
+			Columns: orgmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = omuo.schemaConfig.OrgMembershipEvents
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := omuo.mutation.RemovedEventsIDs(); len(nodes) > 0 && !omuo.mutation.EventsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   orgmembership.EventsTable,
+			Columns: orgmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = omuo.schemaConfig.OrgMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := omuo.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   orgmembership.EventsTable,
+			Columns: orgmembership.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = omuo.schemaConfig.OrgMembershipEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = omuo.schemaConfig.OrgMembership
 	ctx = internal.NewSchemaConfigContext(ctx, omuo.schemaConfig)

@@ -50,11 +50,15 @@ type GroupMembershipEdges struct {
 	Group *Group `json:"group,omitempty"`
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
+
+	namedEvents map[string][]*Event
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -77,6 +81,15 @@ func (e GroupMembershipEdges) UserOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupMembershipEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[2] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -186,6 +199,11 @@ func (gm *GroupMembership) QueryUser() *UserQuery {
 	return NewGroupMembershipClient(gm.config).QueryUser(gm)
 }
 
+// QueryEvents queries the "events" edge of the GroupMembership entity.
+func (gm *GroupMembership) QueryEvents() *EventQuery {
+	return NewGroupMembershipClient(gm.config).QueryEvents(gm)
+}
+
 // Update returns a builder for updating this GroupMembership.
 // Note that you need to call GroupMembership.Unwrap() before calling this method if this GroupMembership
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -237,6 +255,30 @@ func (gm *GroupMembership) String() string {
 	builder.WriteString(gm.UserID)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (gm *GroupMembership) NamedEvents(name string) ([]*Event, error) {
+	if gm.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := gm.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (gm *GroupMembership) appendNamedEvents(name string, edges ...*Event) {
+	if gm.Edges.namedEvents == nil {
+		gm.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		gm.Edges.namedEvents[name] = []*Event{}
+	} else {
+		gm.Edges.namedEvents[name] = append(gm.Edges.namedEvents[name], edges...)
+	}
 }
 
 // GroupMemberships is a parsable slice of GroupMembership.

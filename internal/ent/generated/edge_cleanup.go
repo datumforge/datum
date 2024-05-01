@@ -24,6 +24,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
 )
 
 func APITokenEdgeCleanup(ctx context.Context, id string) error {
@@ -64,6 +65,48 @@ func EntitlementEdgeCleanup(ctx context.Context, id string) error {
 func EntitlementHistoryEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup entitlementhistory edge"))
+
+	return nil
+}
+
+func EventEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup event edge"))
+
+	return nil
+}
+
+func EventHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup eventhistory edge"))
+
+	return nil
+}
+
+func FeatureEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup feature edge"))
+
+	return nil
+}
+
+func FeatureHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup featurehistory edge"))
+
+	return nil
+}
+
+func FileEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup file edge"))
+
+	return nil
+}
+
+func FileHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup filehistory edge"))
 
 	return nil
 }
@@ -247,6 +290,13 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 		}
 	}
 
+	if exists, err := FromContext(ctx).Webhook.Query().Where((webhook.HasOwnerWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
+		if webhookCount, err := FromContext(ctx).Webhook.Delete().Where(webhook.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting webhook", "count", webhookCount, "err", err)
+			return err
+		}
+	}
+
 	if exists, err := FromContext(ctx).OrgMembership.Query().Where((orgmembership.HasOrganizationWith(organization.ID(id)))).Exist(ctx); err == nil && exists {
 		if orgmembershipCount, err := FromContext(ctx).OrgMembership.Delete().Where(orgmembership.HasOrganizationWith(organization.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting orgmembership", "count", orgmembershipCount, "err", err)
@@ -414,6 +464,20 @@ func UserSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 func WebauthnEdgeCleanup(ctx context.Context, id string) error {
 	// If a user has access to delete the object, they have access to delete all edges
 	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup webauthn edge"))
+
+	return nil
+}
+
+func WebhookEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup webhook edge"))
+
+	return nil
+}
+
+func WebhookHistoryEdgeCleanup(ctx context.Context, id string) error {
+	// If a user has access to delete the object, they have access to delete all edges
+	ctx = privacy.DecisionContext(ctx, privacy.Allowf("cleanup webhookhistory edge"))
 
 	return nil
 }

@@ -13,6 +13,12 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/documentdatahistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
+	"github.com/datumforge/datum/internal/ent/generated/file"
+	"github.com/datumforge/datum/internal/ent/generated/filehistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -42,6 +48,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
+	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
 	"github.com/hashicorp/go-multierror"
 )
 
@@ -74,6 +82,36 @@ var entitlementhistoryImplementors = []string{"EntitlementHistory", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*EntitlementHistory) IsNode() {}
+
+var eventImplementors = []string{"Event", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Event) IsNode() {}
+
+var eventhistoryImplementors = []string{"EventHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*EventHistory) IsNode() {}
+
+var featureImplementors = []string{"Feature", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Feature) IsNode() {}
+
+var featurehistoryImplementors = []string{"FeatureHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*FeatureHistory) IsNode() {}
+
+var fileImplementors = []string{"File", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*File) IsNode() {}
+
+var filehistoryImplementors = []string{"FileHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*FileHistory) IsNode() {}
 
 var groupImplementors = []string{"Group", "Node"}
 
@@ -220,6 +258,16 @@ var usersettinghistoryImplementors = []string{"UserSettingHistory", "Node"}
 // IsNode implements the Node interface check for GQLGen.
 func (*UserSettingHistory) IsNode() {}
 
+var webhookImplementors = []string{"Webhook", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Webhook) IsNode() {}
+
+var webhookhistoryImplementors = []string{"WebhookHistory", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*WebhookHistory) IsNode() {}
+
 var errNodeInvalidID = &NotFoundError{"node"}
 
 // NodeOption allows configuring the Noder execution using functional options.
@@ -319,6 +367,60 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(entitlementhistory.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, entitlementhistoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case event.Table:
+		query := c.Event.Query().
+			Where(event.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, eventImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case eventhistory.Table:
+		query := c.EventHistory.Query().
+			Where(eventhistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, eventhistoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case feature.Table:
+		query := c.Feature.Query().
+			Where(feature.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, featureImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case featurehistory.Table:
+		query := c.FeatureHistory.Query().
+			Where(featurehistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, featurehistoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case file.Table:
+		query := c.File.Query().
+			Where(file.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, fileImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case filehistory.Table:
+		query := c.FileHistory.Query().
+			Where(filehistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, filehistoryImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -584,6 +686,24 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			}
 		}
 		return query.Only(ctx)
+	case webhook.Table:
+		query := c.Webhook.Query().
+			Where(webhook.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, webhookImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case webhookhistory.Table:
+		query := c.WebhookHistory.Query().
+			Where(webhookhistory.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, webhookhistoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
 	default:
 		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", table, errNodeInvalidID)
 	}
@@ -725,6 +845,102 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.EntitlementHistory.Query().
 			Where(entitlementhistory.IDIn(ids...))
 		query, err := query.CollectFields(ctx, entitlementhistoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case event.Table:
+		query := c.Event.Query().
+			Where(event.IDIn(ids...))
+		query, err := query.CollectFields(ctx, eventImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case eventhistory.Table:
+		query := c.EventHistory.Query().
+			Where(eventhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, eventhistoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case feature.Table:
+		query := c.Feature.Query().
+			Where(feature.IDIn(ids...))
+		query, err := query.CollectFields(ctx, featureImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case featurehistory.Table:
+		query := c.FeatureHistory.Query().
+			Where(featurehistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, featurehistoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case file.Table:
+		query := c.File.Query().
+			Where(file.IDIn(ids...))
+		query, err := query.CollectFields(ctx, fileImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case filehistory.Table:
+		query := c.FileHistory.Query().
+			Where(filehistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, filehistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -1189,6 +1405,38 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.UserSettingHistory.Query().
 			Where(usersettinghistory.IDIn(ids...))
 		query, err := query.CollectFields(ctx, usersettinghistoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case webhook.Table:
+		query := c.Webhook.Query().
+			Where(webhook.IDIn(ids...))
+		query, err := query.CollectFields(ctx, webhookImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case webhookhistory.Table:
+		query := c.WebhookHistory.Query().
+			Where(webhookhistory.IDIn(ids...))
+		query, err := query.CollectFields(ctx, webhookhistoryImplementors...)
 		if err != nil {
 			return nil, err
 		}

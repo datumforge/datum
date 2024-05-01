@@ -255,6 +255,150 @@ func (f EntitlementHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m 
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementHistoryMutation", m)
 }
 
+// The EventQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EventQueryRuleFunc func(context.Context, *generated.EventQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EventQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EventQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EventQuery", q)
+}
+
+// The EventMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EventMutationRuleFunc func(context.Context, *generated.EventMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EventMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EventMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EventMutation", m)
+}
+
+// The EventHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EventHistoryQueryRuleFunc func(context.Context, *generated.EventHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EventHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EventHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EventHistoryQuery", q)
+}
+
+// The EventHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EventHistoryMutationRuleFunc func(context.Context, *generated.EventHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EventHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EventHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EventHistoryMutation", m)
+}
+
+// The FeatureQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FeatureQueryRuleFunc func(context.Context, *generated.FeatureQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FeatureQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.FeatureQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.FeatureQuery", q)
+}
+
+// The FeatureMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FeatureMutationRuleFunc func(context.Context, *generated.FeatureMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FeatureMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.FeatureMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.FeatureMutation", m)
+}
+
+// The FeatureHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FeatureHistoryQueryRuleFunc func(context.Context, *generated.FeatureHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FeatureHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.FeatureHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.FeatureHistoryQuery", q)
+}
+
+// The FeatureHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FeatureHistoryMutationRuleFunc func(context.Context, *generated.FeatureHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FeatureHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.FeatureHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.FeatureHistoryMutation", m)
+}
+
+// The FileQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FileQueryRuleFunc func(context.Context, *generated.FileQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FileQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.FileQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.FileQuery", q)
+}
+
+// The FileMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FileMutationRuleFunc func(context.Context, *generated.FileMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FileMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.FileMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.FileMutation", m)
+}
+
+// The FileHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FileHistoryQueryRuleFunc func(context.Context, *generated.FileHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FileHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.FileHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.FileHistoryQuery", q)
+}
+
+// The FileHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FileHistoryMutationRuleFunc func(context.Context, *generated.FileHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FileHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.FileHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.FileHistoryMutation", m)
+}
+
 // The GroupQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type GroupQueryRuleFunc func(context.Context, *generated.GroupQuery) error
@@ -999,6 +1143,54 @@ func (f WebauthnMutationRuleFunc) EvalMutation(ctx context.Context, m generated.
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.WebauthnMutation", m)
 }
 
+// The WebhookQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type WebhookQueryRuleFunc func(context.Context, *generated.WebhookQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f WebhookQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.WebhookQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.WebhookQuery", q)
+}
+
+// The WebhookMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type WebhookMutationRuleFunc func(context.Context, *generated.WebhookMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f WebhookMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.WebhookMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.WebhookMutation", m)
+}
+
+// The WebhookHistoryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type WebhookHistoryQueryRuleFunc func(context.Context, *generated.WebhookHistoryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f WebhookHistoryQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.WebhookHistoryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.WebhookHistoryQuery", q)
+}
+
+// The WebhookHistoryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type WebhookHistoryMutationRuleFunc func(context.Context, *generated.WebhookHistoryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f WebhookHistoryMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.WebhookHistoryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.WebhookHistoryMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -1045,6 +1237,18 @@ func queryFilter(q generated.Query) (Filter, error) {
 	case *generated.EntitlementQuery:
 		return q.Filter(), nil
 	case *generated.EntitlementHistoryQuery:
+		return q.Filter(), nil
+	case *generated.EventQuery:
+		return q.Filter(), nil
+	case *generated.EventHistoryQuery:
+		return q.Filter(), nil
+	case *generated.FeatureQuery:
+		return q.Filter(), nil
+	case *generated.FeatureHistoryQuery:
+		return q.Filter(), nil
+	case *generated.FileQuery:
+		return q.Filter(), nil
+	case *generated.FileHistoryQuery:
 		return q.Filter(), nil
 	case *generated.GroupQuery:
 		return q.Filter(), nil
@@ -1108,6 +1312,10 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.WebauthnQuery:
 		return q.Filter(), nil
+	case *generated.WebhookQuery:
+		return q.Filter(), nil
+	case *generated.WebhookHistoryQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected query type %T for query filter", q)
 	}
@@ -1126,6 +1334,18 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.EntitlementMutation:
 		return m.Filter(), nil
 	case *generated.EntitlementHistoryMutation:
+		return m.Filter(), nil
+	case *generated.EventMutation:
+		return m.Filter(), nil
+	case *generated.EventHistoryMutation:
+		return m.Filter(), nil
+	case *generated.FeatureMutation:
+		return m.Filter(), nil
+	case *generated.FeatureHistoryMutation:
+		return m.Filter(), nil
+	case *generated.FileMutation:
+		return m.Filter(), nil
+	case *generated.FileHistoryMutation:
 		return m.Filter(), nil
 	case *generated.GroupMutation:
 		return m.Filter(), nil
@@ -1188,6 +1408,10 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.UserSettingHistoryMutation:
 		return m.Filter(), nil
 	case *generated.WebauthnMutation:
+		return m.Filter(), nil
+	case *generated.WebhookMutation:
+		return m.Filter(), nil
+	case *generated.WebhookHistoryMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected mutation type %T for mutation filter", m)

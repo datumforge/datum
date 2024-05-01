@@ -12,6 +12,12 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
+	"github.com/datumforge/datum/internal/ent/generated/event"
+	"github.com/datumforge/datum/internal/ent/generated/eventhistory"
+	"github.com/datumforge/datum/internal/ent/generated/feature"
+	"github.com/datumforge/datum/internal/ent/generated/featurehistory"
+	"github.com/datumforge/datum/internal/ent/generated/file"
+	"github.com/datumforge/datum/internal/ent/generated/filehistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
@@ -43,6 +49,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/webauthn"
+	"github.com/datumforge/datum/internal/ent/generated/webhook"
+	"github.com/datumforge/datum/internal/ent/generated/webhookhistory"
 	"github.com/datumforge/datum/internal/ent/schema"
 
 	"entgo.io/ent"
@@ -283,6 +291,161 @@ func init() {
 	entitlementhistoryDescID := entitlementhistoryFields[7].Descriptor()
 	// entitlementhistory.DefaultID holds the default value on creation for the id field.
 	entitlementhistory.DefaultID = entitlementhistoryDescID.Default.(func() string)
+	eventMixin := schema.Event{}.Mixin()
+	eventMixinHooks0 := eventMixin[0].Hooks()
+	event.Hooks[0] = eventMixinHooks0[0]
+	eventMixinFields0 := eventMixin[0].Fields()
+	_ = eventMixinFields0
+	eventMixinFields1 := eventMixin[1].Fields()
+	_ = eventMixinFields1
+	eventFields := schema.Event{}.Fields()
+	_ = eventFields
+	// eventDescCreatedAt is the schema descriptor for created_at field.
+	eventDescCreatedAt := eventMixinFields0[0].Descriptor()
+	// event.DefaultCreatedAt holds the default value on creation for the created_at field.
+	event.DefaultCreatedAt = eventDescCreatedAt.Default.(func() time.Time)
+	// eventDescUpdatedAt is the schema descriptor for updated_at field.
+	eventDescUpdatedAt := eventMixinFields0[1].Descriptor()
+	// event.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	event.DefaultUpdatedAt = eventDescUpdatedAt.Default.(func() time.Time)
+	// event.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	event.UpdateDefaultUpdatedAt = eventDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// eventDescID is the schema descriptor for id field.
+	eventDescID := eventMixinFields1[0].Descriptor()
+	// event.DefaultID holds the default value on creation for the id field.
+	event.DefaultID = eventDescID.Default.(func() string)
+	eventhistoryFields := schema.EventHistory{}.Fields()
+	_ = eventhistoryFields
+	// eventhistoryDescHistoryTime is the schema descriptor for history_time field.
+	eventhistoryDescHistoryTime := eventhistoryFields[0].Descriptor()
+	// eventhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	eventhistory.DefaultHistoryTime = eventhistoryDescHistoryTime.Default.(func() time.Time)
+	// eventhistoryDescCreatedAt is the schema descriptor for created_at field.
+	eventhistoryDescCreatedAt := eventhistoryFields[3].Descriptor()
+	// eventhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	eventhistory.DefaultCreatedAt = eventhistoryDescCreatedAt.Default.(func() time.Time)
+	// eventhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	eventhistoryDescUpdatedAt := eventhistoryFields[4].Descriptor()
+	// eventhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	eventhistory.DefaultUpdatedAt = eventhistoryDescUpdatedAt.Default.(func() time.Time)
+	// eventhistoryDescID is the schema descriptor for id field.
+	eventhistoryDescID := eventhistoryFields[7].Descriptor()
+	// eventhistory.DefaultID holds the default value on creation for the id field.
+	eventhistory.DefaultID = eventhistoryDescID.Default.(func() string)
+	featureMixin := schema.Feature{}.Mixin()
+	featureMixinHooks0 := featureMixin[0].Hooks()
+	featureMixinHooks1 := featureMixin[1].Hooks()
+	feature.Hooks[0] = featureMixinHooks0[0]
+	feature.Hooks[1] = featureMixinHooks1[0]
+	featureMixinInters1 := featureMixin[1].Interceptors()
+	feature.Interceptors[0] = featureMixinInters1[0]
+	featureMixinFields0 := featureMixin[0].Fields()
+	_ = featureMixinFields0
+	featureMixinFields2 := featureMixin[2].Fields()
+	_ = featureMixinFields2
+	featureFields := schema.Feature{}.Fields()
+	_ = featureFields
+	// featureDescCreatedAt is the schema descriptor for created_at field.
+	featureDescCreatedAt := featureMixinFields0[0].Descriptor()
+	// feature.DefaultCreatedAt holds the default value on creation for the created_at field.
+	feature.DefaultCreatedAt = featureDescCreatedAt.Default.(func() time.Time)
+	// featureDescUpdatedAt is the schema descriptor for updated_at field.
+	featureDescUpdatedAt := featureMixinFields0[1].Descriptor()
+	// feature.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	feature.DefaultUpdatedAt = featureDescUpdatedAt.Default.(func() time.Time)
+	// feature.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	feature.UpdateDefaultUpdatedAt = featureDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// featureDescName is the schema descriptor for name field.
+	featureDescName := featureFields[0].Descriptor()
+	// feature.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	feature.NameValidator = featureDescName.Validators[0].(func(string) error)
+	// featureDescGlobal is the schema descriptor for global field.
+	featureDescGlobal := featureFields[1].Descriptor()
+	// feature.DefaultGlobal holds the default value on creation for the global field.
+	feature.DefaultGlobal = featureDescGlobal.Default.(bool)
+	// featureDescEnabled is the schema descriptor for enabled field.
+	featureDescEnabled := featureFields[2].Descriptor()
+	// feature.DefaultEnabled holds the default value on creation for the enabled field.
+	feature.DefaultEnabled = featureDescEnabled.Default.(bool)
+	// featureDescID is the schema descriptor for id field.
+	featureDescID := featureMixinFields2[0].Descriptor()
+	// feature.DefaultID holds the default value on creation for the id field.
+	feature.DefaultID = featureDescID.Default.(func() string)
+	featurehistoryFields := schema.FeatureHistory{}.Fields()
+	_ = featurehistoryFields
+	// featurehistoryDescHistoryTime is the schema descriptor for history_time field.
+	featurehistoryDescHistoryTime := featurehistoryFields[0].Descriptor()
+	// featurehistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	featurehistory.DefaultHistoryTime = featurehistoryDescHistoryTime.Default.(func() time.Time)
+	// featurehistoryDescCreatedAt is the schema descriptor for created_at field.
+	featurehistoryDescCreatedAt := featurehistoryFields[3].Descriptor()
+	// featurehistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	featurehistory.DefaultCreatedAt = featurehistoryDescCreatedAt.Default.(func() time.Time)
+	// featurehistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	featurehistoryDescUpdatedAt := featurehistoryFields[4].Descriptor()
+	// featurehistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	featurehistory.DefaultUpdatedAt = featurehistoryDescUpdatedAt.Default.(func() time.Time)
+	// featurehistoryDescGlobal is the schema descriptor for global field.
+	featurehistoryDescGlobal := featurehistoryFields[11].Descriptor()
+	// featurehistory.DefaultGlobal holds the default value on creation for the global field.
+	featurehistory.DefaultGlobal = featurehistoryDescGlobal.Default.(bool)
+	// featurehistoryDescEnabled is the schema descriptor for enabled field.
+	featurehistoryDescEnabled := featurehistoryFields[12].Descriptor()
+	// featurehistory.DefaultEnabled holds the default value on creation for the enabled field.
+	featurehistory.DefaultEnabled = featurehistoryDescEnabled.Default.(bool)
+	// featurehistoryDescID is the schema descriptor for id field.
+	featurehistoryDescID := featurehistoryFields[9].Descriptor()
+	// featurehistory.DefaultID holds the default value on creation for the id field.
+	featurehistory.DefaultID = featurehistoryDescID.Default.(func() string)
+	fileMixin := schema.File{}.Mixin()
+	fileMixinHooks0 := fileMixin[0].Hooks()
+	fileMixinHooks1 := fileMixin[1].Hooks()
+	file.Hooks[0] = fileMixinHooks0[0]
+	file.Hooks[1] = fileMixinHooks1[0]
+	fileMixinInters1 := fileMixin[1].Interceptors()
+	file.Interceptors[0] = fileMixinInters1[0]
+	fileMixinFields0 := fileMixin[0].Fields()
+	_ = fileMixinFields0
+	fileMixinFields2 := fileMixin[2].Fields()
+	_ = fileMixinFields2
+	fileFields := schema.File{}.Fields()
+	_ = fileFields
+	// fileDescCreatedAt is the schema descriptor for created_at field.
+	fileDescCreatedAt := fileMixinFields0[0].Descriptor()
+	// file.DefaultCreatedAt holds the default value on creation for the created_at field.
+	file.DefaultCreatedAt = fileDescCreatedAt.Default.(func() time.Time)
+	// fileDescUpdatedAt is the schema descriptor for updated_at field.
+	fileDescUpdatedAt := fileMixinFields0[1].Descriptor()
+	// file.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	file.DefaultUpdatedAt = fileDescUpdatedAt.Default.(func() time.Time)
+	// file.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	file.UpdateDefaultUpdatedAt = fileDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// fileDescFileSize is the schema descriptor for file_size field.
+	fileDescFileSize := fileFields[2].Descriptor()
+	// file.FileSizeValidator is a validator for the "file_size" field. It is called by the builders before save.
+	file.FileSizeValidator = fileDescFileSize.Validators[0].(func(int) error)
+	// fileDescID is the schema descriptor for id field.
+	fileDescID := fileMixinFields2[0].Descriptor()
+	// file.DefaultID holds the default value on creation for the id field.
+	file.DefaultID = fileDescID.Default.(func() string)
+	filehistoryFields := schema.FileHistory{}.Fields()
+	_ = filehistoryFields
+	// filehistoryDescHistoryTime is the schema descriptor for history_time field.
+	filehistoryDescHistoryTime := filehistoryFields[0].Descriptor()
+	// filehistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	filehistory.DefaultHistoryTime = filehistoryDescHistoryTime.Default.(func() time.Time)
+	// filehistoryDescCreatedAt is the schema descriptor for created_at field.
+	filehistoryDescCreatedAt := filehistoryFields[3].Descriptor()
+	// filehistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	filehistory.DefaultCreatedAt = filehistoryDescCreatedAt.Default.(func() time.Time)
+	// filehistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	filehistoryDescUpdatedAt := filehistoryFields[4].Descriptor()
+	// filehistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	filehistory.DefaultUpdatedAt = filehistoryDescUpdatedAt.Default.(func() time.Time)
+	// filehistoryDescID is the schema descriptor for id field.
+	filehistoryDescID := filehistoryFields[9].Descriptor()
+	// filehistory.DefaultID holds the default value on creation for the id field.
+	filehistory.DefaultID = filehistoryDescID.Default.(func() string)
 	groupMixin := schema.Group{}.Mixin()
 	group.Policy = privacy.NewPolicies(schema.Group{})
 	group.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1606,6 +1769,75 @@ func init() {
 	webauthnDescID := webauthnMixinFields1[0].Descriptor()
 	// webauthn.DefaultID holds the default value on creation for the id field.
 	webauthn.DefaultID = webauthnDescID.Default.(func() string)
+	webhookMixin := schema.Webhook{}.Mixin()
+	webhookMixinHooks0 := webhookMixin[0].Hooks()
+	webhookMixinHooks2 := webhookMixin[2].Hooks()
+	webhook.Hooks[0] = webhookMixinHooks0[0]
+	webhook.Hooks[1] = webhookMixinHooks2[0]
+	webhookMixinInters2 := webhookMixin[2].Interceptors()
+	webhook.Interceptors[0] = webhookMixinInters2[0]
+	webhookMixinFields0 := webhookMixin[0].Fields()
+	_ = webhookMixinFields0
+	webhookMixinFields1 := webhookMixin[1].Fields()
+	_ = webhookMixinFields1
+	webhookFields := schema.Webhook{}.Fields()
+	_ = webhookFields
+	// webhookDescCreatedAt is the schema descriptor for created_at field.
+	webhookDescCreatedAt := webhookMixinFields0[0].Descriptor()
+	// webhook.DefaultCreatedAt holds the default value on creation for the created_at field.
+	webhook.DefaultCreatedAt = webhookDescCreatedAt.Default.(func() time.Time)
+	// webhookDescUpdatedAt is the schema descriptor for updated_at field.
+	webhookDescUpdatedAt := webhookMixinFields0[1].Descriptor()
+	// webhook.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	webhook.DefaultUpdatedAt = webhookDescUpdatedAt.Default.(func() time.Time)
+	// webhook.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	webhook.UpdateDefaultUpdatedAt = webhookDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// webhookDescName is the schema descriptor for name field.
+	webhookDescName := webhookFields[0].Descriptor()
+	// webhook.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	webhook.NameValidator = webhookDescName.Validators[0].(func(string) error)
+	// webhookDescDestinationURL is the schema descriptor for destination_url field.
+	webhookDescDestinationURL := webhookFields[2].Descriptor()
+	// webhook.DestinationURLValidator is a validator for the "destination_url" field. It is called by the builders before save.
+	webhook.DestinationURLValidator = webhookDescDestinationURL.Validators[0].(func(string) error)
+	// webhookDescEnabled is the schema descriptor for enabled field.
+	webhookDescEnabled := webhookFields[3].Descriptor()
+	// webhook.DefaultEnabled holds the default value on creation for the enabled field.
+	webhook.DefaultEnabled = webhookDescEnabled.Default.(bool)
+	// webhookDescFailures is the schema descriptor for failures field.
+	webhookDescFailures := webhookFields[7].Descriptor()
+	// webhook.DefaultFailures holds the default value on creation for the failures field.
+	webhook.DefaultFailures = webhookDescFailures.Default.(int)
+	// webhookDescID is the schema descriptor for id field.
+	webhookDescID := webhookMixinFields1[0].Descriptor()
+	// webhook.DefaultID holds the default value on creation for the id field.
+	webhook.DefaultID = webhookDescID.Default.(func() string)
+	webhookhistoryFields := schema.WebhookHistory{}.Fields()
+	_ = webhookhistoryFields
+	// webhookhistoryDescHistoryTime is the schema descriptor for history_time field.
+	webhookhistoryDescHistoryTime := webhookhistoryFields[0].Descriptor()
+	// webhookhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	webhookhistory.DefaultHistoryTime = webhookhistoryDescHistoryTime.Default.(func() time.Time)
+	// webhookhistoryDescCreatedAt is the schema descriptor for created_at field.
+	webhookhistoryDescCreatedAt := webhookhistoryFields[3].Descriptor()
+	// webhookhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	webhookhistory.DefaultCreatedAt = webhookhistoryDescCreatedAt.Default.(func() time.Time)
+	// webhookhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	webhookhistoryDescUpdatedAt := webhookhistoryFields[4].Descriptor()
+	// webhookhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	webhookhistory.DefaultUpdatedAt = webhookhistoryDescUpdatedAt.Default.(func() time.Time)
+	// webhookhistoryDescEnabled is the schema descriptor for enabled field.
+	webhookhistoryDescEnabled := webhookhistoryFields[14].Descriptor()
+	// webhookhistory.DefaultEnabled holds the default value on creation for the enabled field.
+	webhookhistory.DefaultEnabled = webhookhistoryDescEnabled.Default.(bool)
+	// webhookhistoryDescFailures is the schema descriptor for failures field.
+	webhookhistoryDescFailures := webhookhistoryFields[18].Descriptor()
+	// webhookhistory.DefaultFailures holds the default value on creation for the failures field.
+	webhookhistory.DefaultFailures = webhookhistoryDescFailures.Default.(int)
+	// webhookhistoryDescID is the schema descriptor for id field.
+	webhookhistoryDescID := webhookhistoryFields[7].Descriptor()
+	// webhookhistory.DefaultID holds the default value on creation for the id field.
+	webhookhistory.DefaultID = webhookhistoryDescID.Default.(func() string)
 }
 
 const (

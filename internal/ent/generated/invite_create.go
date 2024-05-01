@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
@@ -201,6 +202,21 @@ func (ic *InviteCreate) SetNillableID(s *string) *InviteCreate {
 // SetOwner sets the "owner" edge to the Organization entity.
 func (ic *InviteCreate) SetOwner(o *Organization) *InviteCreate {
 	return ic.SetOwnerID(o.ID)
+}
+
+// AddEventIDs adds the "events" edge to the Event entity by IDs.
+func (ic *InviteCreate) AddEventIDs(ids ...string) *InviteCreate {
+	ic.mutation.AddEventIDs(ids...)
+	return ic
+}
+
+// AddEvents adds the "events" edges to the Event entity.
+func (ic *InviteCreate) AddEvents(e ...*Event) *InviteCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ic.AddEventIDs(ids...)
 }
 
 // Mutation returns the InviteMutation object of the builder.
@@ -446,6 +462,23 @@ func (ic *InviteCreate) createSpec() (*Invite, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ic.mutation.EventsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   invite.EventsTable,
+			Columns: invite.EventsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ic.schemaConfig.InviteEvents
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

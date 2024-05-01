@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/invite"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -21,13 +23,15 @@ import (
 // InviteQuery is the builder for querying Invite entities.
 type InviteQuery struct {
 	config
-	ctx        *QueryContext
-	order      []invite.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Invite
-	withOwner  *OrganizationQuery
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*Invite) error
+	ctx             *QueryContext
+	order           []invite.OrderOption
+	inters          []Interceptor
+	predicates      []predicate.Invite
+	withOwner       *OrganizationQuery
+	withEvents      *EventQuery
+	modifiers       []func(*sql.Selector)
+	loadTotal       []func(context.Context, []*Invite) error
+	withNamedEvents map[string]*EventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -83,6 +87,31 @@ func (iq *InviteQuery) QueryOwner() *OrganizationQuery {
 		schemaConfig := iq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Invite
+		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (iq *InviteQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: iq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := iq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := iq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(invite.Table, invite.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, invite.EventsTable, invite.EventsPrimaryKey...),
+		)
+		schemaConfig := iq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.InviteEvents
 		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -282,6 +311,7 @@ func (iq *InviteQuery) Clone() *InviteQuery {
 		inters:     append([]Interceptor{}, iq.inters...),
 		predicates: append([]predicate.Invite{}, iq.predicates...),
 		withOwner:  iq.withOwner.Clone(),
+		withEvents: iq.withEvents.Clone(),
 		// clone intermediate query.
 		sql:  iq.sql.Clone(),
 		path: iq.path,
@@ -296,6 +326,17 @@ func (iq *InviteQuery) WithOwner(opts ...func(*OrganizationQuery)) *InviteQuery 
 		opt(query)
 	}
 	iq.withOwner = query
+	return iq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (iq *InviteQuery) WithEvents(opts ...func(*EventQuery)) *InviteQuery {
+	query := (&EventClient{config: iq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	iq.withEvents = query
 	return iq
 }
 
@@ -383,8 +424,9 @@ func (iq *InviteQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Invit
 	var (
 		nodes       = []*Invite{}
 		_spec       = iq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			iq.withOwner != nil,
+			iq.withEvents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -413,6 +455,20 @@ func (iq *InviteQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Invit
 	if query := iq.withOwner; query != nil {
 		if err := iq.loadOwner(ctx, query, nodes, nil,
 			func(n *Invite, e *Organization) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := iq.withEvents; query != nil {
+		if err := iq.loadEvents(ctx, query, nodes,
+			func(n *Invite) { n.Edges.Events = []*Event{} },
+			func(n *Invite, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range iq.withNamedEvents {
+		if err := iq.loadEvents(ctx, query, nodes,
+			func(n *Invite) { n.appendNamedEvents(name) },
+			func(n *Invite, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -449,6 +505,68 @@ func (iq *InviteQuery) loadOwner(ctx context.Context, query *OrganizationQuery, 
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (iq *InviteQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*Invite, init func(*Invite), assign func(*Invite, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Invite)
+	nids := make(map[string]map[*Invite]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(invite.EventsTable)
+		joinT.Schema(iq.schemaConfig.InviteEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(invite.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(invite.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(invite.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Invite]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -544,6 +662,20 @@ func (iq *InviteQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (iq *InviteQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *InviteQuery {
+	query := (&EventClient{config: iq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if iq.withNamedEvents == nil {
+		iq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	iq.withNamedEvents[name] = query
+	return iq
 }
 
 // InviteGroupBy is the group-by builder for Invite entities.

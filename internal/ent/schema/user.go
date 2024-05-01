@@ -184,6 +184,9 @@ func (User) Edges() []ent.Edge {
 			Through("org_memberships", OrgMembership.Type),
 		edge.To("webauthn", Webauthn.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("files", File.Type),
+		edge.To("events", Event.Type),
+		edge.To("features", Feature.Type),
 	}
 }
 

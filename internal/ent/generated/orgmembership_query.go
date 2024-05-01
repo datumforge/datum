@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -28,8 +30,10 @@ type OrgMembershipQuery struct {
 	predicates       []predicate.OrgMembership
 	withOrganization *OrganizationQuery
 	withUser         *UserQuery
+	withEvents       *EventQuery
 	modifiers        []func(*sql.Selector)
 	loadTotal        []func(context.Context, []*OrgMembership) error
+	withNamedEvents  map[string]*EventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -110,6 +114,31 @@ func (omq *OrgMembershipQuery) QueryUser() *UserQuery {
 		schemaConfig := omq.schemaConfig
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.OrgMembership
+		fromU = sqlgraph.SetNeighbors(omq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (omq *OrgMembershipQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: omq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := omq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := omq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(orgmembership.Table, orgmembership.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, orgmembership.EventsTable, orgmembership.EventsPrimaryKey...),
+		)
+		schemaConfig := omq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.OrgMembershipEvents
 		fromU = sqlgraph.SetNeighbors(omq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -310,6 +339,7 @@ func (omq *OrgMembershipQuery) Clone() *OrgMembershipQuery {
 		predicates:       append([]predicate.OrgMembership{}, omq.predicates...),
 		withOrganization: omq.withOrganization.Clone(),
 		withUser:         omq.withUser.Clone(),
+		withEvents:       omq.withEvents.Clone(),
 		// clone intermediate query.
 		sql:  omq.sql.Clone(),
 		path: omq.path,
@@ -335,6 +365,17 @@ func (omq *OrgMembershipQuery) WithUser(opts ...func(*UserQuery)) *OrgMembership
 		opt(query)
 	}
 	omq.withUser = query
+	return omq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (omq *OrgMembershipQuery) WithEvents(opts ...func(*EventQuery)) *OrgMembershipQuery {
+	query := (&EventClient{config: omq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	omq.withEvents = query
 	return omq
 }
 
@@ -422,9 +463,10 @@ func (omq *OrgMembershipQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	var (
 		nodes       = []*OrgMembership{}
 		_spec       = omq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			omq.withOrganization != nil,
 			omq.withUser != nil,
+			omq.withEvents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -459,6 +501,20 @@ func (omq *OrgMembershipQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if query := omq.withUser; query != nil {
 		if err := omq.loadUser(ctx, query, nodes, nil,
 			func(n *OrgMembership, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := omq.withEvents; query != nil {
+		if err := omq.loadEvents(ctx, query, nodes,
+			func(n *OrgMembership) { n.Edges.Events = []*Event{} },
+			func(n *OrgMembership, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range omq.withNamedEvents {
+		if err := omq.loadEvents(ctx, query, nodes,
+			func(n *OrgMembership) { n.appendNamedEvents(name) },
+			func(n *OrgMembership, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -524,6 +580,68 @@ func (omq *OrgMembershipQuery) loadUser(ctx context.Context, query *UserQuery, n
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (omq *OrgMembershipQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*OrgMembership, init func(*OrgMembership), assign func(*OrgMembership, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*OrgMembership)
+	nids := make(map[string]map[*OrgMembership]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(orgmembership.EventsTable)
+		joinT.Schema(omq.schemaConfig.OrgMembershipEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(orgmembership.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(orgmembership.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(orgmembership.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*OrgMembership]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -622,6 +740,20 @@ func (omq *OrgMembershipQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (omq *OrgMembershipQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *OrgMembershipQuery {
+	query := (&EventClient{config: omq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if omq.withNamedEvents == nil {
+		omq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	omq.withNamedEvents[name] = query
+	return omq
 }
 
 // OrgMembershipGroupBy is the group-by builder for OrgMembership entities.

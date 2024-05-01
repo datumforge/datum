@@ -40,8 +40,9 @@ type Integration struct {
 	Kind string `json:"kind,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the IntegrationQuery when eager-loading is set.
-	Edges        IntegrationEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges              IntegrationEdges `json:"edges"`
+	group_integrations *string
+	selectValues       sql.SelectValues
 }
 
 // IntegrationEdges holds the relations/edges for other nodes in the graph.
@@ -50,13 +51,19 @@ type IntegrationEdges struct {
 	Owner *Organization `json:"owner,omitempty"`
 	// the secrets associated with the integration
 	Secrets []*Hush `json:"secrets,omitempty"`
+	// the oauth2 tokens associated with the integration
+	Oauth2tokens []*OhAuthTooToken `json:"oauth2tokens,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [4]map[string]int
 
-	namedSecrets map[string][]*Hush
+	namedSecrets      map[string][]*Hush
+	namedOauth2tokens map[string][]*OhAuthTooToken
+	namedEvents       map[string][]*Event
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -79,6 +86,24 @@ func (e IntegrationEdges) SecretsOrErr() ([]*Hush, error) {
 	return nil, &NotLoadedError{edge: "secrets"}
 }
 
+// Oauth2tokensOrErr returns the Oauth2tokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e IntegrationEdges) Oauth2tokensOrErr() ([]*OhAuthTooToken, error) {
+	if e.loadedTypes[2] {
+		return e.Oauth2tokens, nil
+	}
+	return nil, &NotLoadedError{edge: "oauth2tokens"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e IntegrationEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[3] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Integration) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -88,6 +113,8 @@ func (*Integration) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case integration.FieldCreatedAt, integration.FieldUpdatedAt, integration.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
+		case integration.ForeignKeys[0]: // group_integrations
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -169,6 +196,13 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				i.Kind = value.String
 			}
+		case integration.ForeignKeys[0]:
+			if value, ok := values[j].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field group_integrations", values[j])
+			} else if value.Valid {
+				i.group_integrations = new(string)
+				*i.group_integrations = value.String
+			}
 		default:
 			i.selectValues.Set(columns[j], values[j])
 		}
@@ -190,6 +224,16 @@ func (i *Integration) QueryOwner() *OrganizationQuery {
 // QuerySecrets queries the "secrets" edge of the Integration entity.
 func (i *Integration) QuerySecrets() *HushQuery {
 	return NewIntegrationClient(i.config).QuerySecrets(i)
+}
+
+// QueryOauth2tokens queries the "oauth2tokens" edge of the Integration entity.
+func (i *Integration) QueryOauth2tokens() *OhAuthTooTokenQuery {
+	return NewIntegrationClient(i.config).QueryOauth2tokens(i)
+}
+
+// QueryEvents queries the "events" edge of the Integration entity.
+func (i *Integration) QueryEvents() *EventQuery {
+	return NewIntegrationClient(i.config).QueryEvents(i)
 }
 
 // Update returns a builder for updating this Integration.
@@ -269,6 +313,54 @@ func (i *Integration) appendNamedSecrets(name string, edges ...*Hush) {
 		i.Edges.namedSecrets[name] = []*Hush{}
 	} else {
 		i.Edges.namedSecrets[name] = append(i.Edges.namedSecrets[name], edges...)
+	}
+}
+
+// NamedOauth2tokens returns the Oauth2tokens named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (i *Integration) NamedOauth2tokens(name string) ([]*OhAuthTooToken, error) {
+	if i.Edges.namedOauth2tokens == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := i.Edges.namedOauth2tokens[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (i *Integration) appendNamedOauth2tokens(name string, edges ...*OhAuthTooToken) {
+	if i.Edges.namedOauth2tokens == nil {
+		i.Edges.namedOauth2tokens = make(map[string][]*OhAuthTooToken)
+	}
+	if len(edges) == 0 {
+		i.Edges.namedOauth2tokens[name] = []*OhAuthTooToken{}
+	} else {
+		i.Edges.namedOauth2tokens[name] = append(i.Edges.namedOauth2tokens[name], edges...)
+	}
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (i *Integration) NamedEvents(name string) ([]*Event, error) {
+	if i.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := i.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (i *Integration) appendNamedEvents(name string, edges ...*Event) {
+	if i.Edges.namedEvents == nil {
+		i.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		i.Edges.namedEvents[name] = []*Event{}
+	} else {
+		i.Edges.namedEvents[name] = append(i.Edges.namedEvents[name], edges...)
 	}
 }
 

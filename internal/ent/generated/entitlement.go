@@ -55,11 +55,18 @@ type Entitlement struct {
 type EntitlementEdges struct {
 	// Owner holds the value of the owner edge.
 	Owner *Organization `json:"owner,omitempty"`
+	// Features holds the value of the features edge.
+	Features []*Feature `json:"features,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [3]map[string]int
+
+	namedFeatures map[string][]*Feature
+	namedEvents   map[string][]*Event
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
@@ -71,6 +78,24 @@ func (e EntitlementEdges) OwnerOrErr() (*Organization, error) {
 		return nil, &NotFoundError{label: organization.Label}
 	}
 	return nil, &NotLoadedError{edge: "owner"}
+}
+
+// FeaturesOrErr returns the Features value or an error if the edge
+// was not loaded in eager-loading.
+func (e EntitlementEdges) FeaturesOrErr() ([]*Feature, error) {
+	if e.loadedTypes[1] {
+		return e.Features, nil
+	}
+	return nil, &NotLoadedError{edge: "features"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e EntitlementEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[2] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -202,6 +227,16 @@ func (e *Entitlement) QueryOwner() *OrganizationQuery {
 	return NewEntitlementClient(e.config).QueryOwner(e)
 }
 
+// QueryFeatures queries the "features" edge of the Entitlement entity.
+func (e *Entitlement) QueryFeatures() *FeatureQuery {
+	return NewEntitlementClient(e.config).QueryFeatures(e)
+}
+
+// QueryEvents queries the "events" edge of the Entitlement entity.
+func (e *Entitlement) QueryEvents() *EventQuery {
+	return NewEntitlementClient(e.config).QueryEvents(e)
+}
+
 // Update returns a builder for updating this Entitlement.
 // Note that you need to call Entitlement.Unwrap() before calling this method if this Entitlement
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -267,6 +302,54 @@ func (e *Entitlement) String() string {
 	builder.WriteString(fmt.Sprintf("%v", e.Cancelled))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedFeatures returns the Features named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (e *Entitlement) NamedFeatures(name string) ([]*Feature, error) {
+	if e.Edges.namedFeatures == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := e.Edges.namedFeatures[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (e *Entitlement) appendNamedFeatures(name string, edges ...*Feature) {
+	if e.Edges.namedFeatures == nil {
+		e.Edges.namedFeatures = make(map[string][]*Feature)
+	}
+	if len(edges) == 0 {
+		e.Edges.namedFeatures[name] = []*Feature{}
+	} else {
+		e.Edges.namedFeatures[name] = append(e.Edges.namedFeatures[name], edges...)
+	}
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (e *Entitlement) NamedEvents(name string) ([]*Event, error) {
+	if e.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := e.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (e *Entitlement) appendNamedEvents(name string, edges ...*Event) {
+	if e.Edges.namedEvents == nil {
+		e.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		e.Edges.namedEvents[name] = []*Event{}
+	} else {
+		e.Edges.namedEvents[name] = append(e.Edges.namedEvents[name], edges...)
+	}
 }
 
 // Entitlements is a parsable slice of Entitlement.

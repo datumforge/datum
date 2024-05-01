@@ -1,0 +1,108 @@
+query GetHushes($where: HushWhereInput) {
+  hushes(where: $where) {
+    edges {
+      node {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        deletedAt
+        deletedBy
+        name
+        description
+        kind
+        secretName
+        integrations {
+          id
+        }
+        organization {
+          id
+        }
+        events {
+          id
+        }
+      }
+    }
+  }
+}
+
+query GetHush($hushId: ID!) {
+  hush(id: $hushId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    deletedAt
+    deletedBy
+    name
+    description
+    kind
+    secretName
+    integrations {
+      id
+    }
+    organization {
+      id
+    }
+    events {
+      id
+    }
+  }
+}
+
+mutation CreateHush($input: CreateHushInput!) {
+  createHush(input: $input) {
+    hush {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      name
+      description
+      kind
+      secretName
+      integrations {
+        id
+      }
+      organization {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+
+mutation UpdateHush($updateHushId: ID!, $input: UpdateHushInput!) {
+  updateHush(id: $updateHushId, input: $input) {
+    hush {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      deletedAt
+      deletedBy
+      name
+      description
+      kind
+      secretName
+      integrations {
+        id
+      }
+      organization {
+        id
+      }
+      events {
+        id
+      }
+    }
+  }
+}
+

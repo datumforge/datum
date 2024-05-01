@@ -79,15 +79,21 @@ type UserEdges struct {
 	Organizations []*Organization `json:"organizations,omitempty"`
 	// Webauthn holds the value of the webauthn edge.
 	Webauthn []*Webauthn `json:"webauthn,omitempty"`
+	// Files holds the value of the files edge.
+	Files []*File `json:"files,omitempty"`
+	// Events holds the value of the events edge.
+	Events []*Event `json:"events,omitempty"`
+	// Features holds the value of the features edge.
+	Features []*Feature `json:"features,omitempty"`
 	// GroupMemberships holds the value of the group_memberships edge.
 	GroupMemberships []*GroupMembership `json:"group_memberships,omitempty"`
 	// OrgMemberships holds the value of the org_memberships edge.
 	OrgMemberships []*OrgMembership `json:"org_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [10]bool
+	loadedTypes [13]bool
 	// totalCount holds the count of the edges above.
-	totalCount [7]map[string]int
+	totalCount [10]map[string]int
 
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
 	namedTfaSettings             map[string][]*TFASetting
@@ -96,6 +102,9 @@ type UserEdges struct {
 	namedGroups                  map[string][]*Group
 	namedOrganizations           map[string][]*Organization
 	namedWebauthn                map[string][]*Webauthn
+	namedFiles                   map[string][]*File
+	namedEvents                  map[string][]*Event
+	namedFeatures                map[string][]*Feature
 	namedGroupMemberships        map[string][]*GroupMembership
 	namedOrgMemberships          map[string][]*OrgMembership
 }
@@ -174,10 +183,37 @@ func (e UserEdges) WebauthnOrErr() ([]*Webauthn, error) {
 	return nil, &NotLoadedError{edge: "webauthn"}
 }
 
+// FilesOrErr returns the Files value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FilesOrErr() ([]*File, error) {
+	if e.loadedTypes[8] {
+		return e.Files, nil
+	}
+	return nil, &NotLoadedError{edge: "files"}
+}
+
+// EventsOrErr returns the Events value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) EventsOrErr() ([]*Event, error) {
+	if e.loadedTypes[9] {
+		return e.Events, nil
+	}
+	return nil, &NotLoadedError{edge: "events"}
+}
+
+// FeaturesOrErr returns the Features value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FeaturesOrErr() ([]*Feature, error) {
+	if e.loadedTypes[10] {
+		return e.Features, nil
+	}
+	return nil, &NotLoadedError{edge: "features"}
+}
+
 // GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[11] {
 		return e.GroupMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "group_memberships"}
@@ -186,7 +222,7 @@ func (e UserEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
 // OrgMembershipsOrErr returns the OrgMemberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) OrgMembershipsOrErr() ([]*OrgMembership, error) {
-	if e.loadedTypes[9] {
+	if e.loadedTypes[12] {
 		return e.OrgMemberships, nil
 	}
 	return nil, &NotLoadedError{edge: "org_memberships"}
@@ -386,6 +422,21 @@ func (u *User) QueryOrganizations() *OrganizationQuery {
 // QueryWebauthn queries the "webauthn" edge of the User entity.
 func (u *User) QueryWebauthn() *WebauthnQuery {
 	return NewUserClient(u.config).QueryWebauthn(u)
+}
+
+// QueryFiles queries the "files" edge of the User entity.
+func (u *User) QueryFiles() *FileQuery {
+	return NewUserClient(u.config).QueryFiles(u)
+}
+
+// QueryEvents queries the "events" edge of the User entity.
+func (u *User) QueryEvents() *EventQuery {
+	return NewUserClient(u.config).QueryEvents(u)
+}
+
+// QueryFeatures queries the "features" edge of the User entity.
+func (u *User) QueryFeatures() *FeatureQuery {
+	return NewUserClient(u.config).QueryFeatures(u)
 }
 
 // QueryGroupMemberships queries the "group_memberships" edge of the User entity.
@@ -650,6 +701,78 @@ func (u *User) appendNamedWebauthn(name string, edges ...*Webauthn) {
 		u.Edges.namedWebauthn[name] = []*Webauthn{}
 	} else {
 		u.Edges.namedWebauthn[name] = append(u.Edges.namedWebauthn[name], edges...)
+	}
+}
+
+// NamedFiles returns the Files named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedFiles(name string) ([]*File, error) {
+	if u.Edges.namedFiles == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedFiles[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedFiles(name string, edges ...*File) {
+	if u.Edges.namedFiles == nil {
+		u.Edges.namedFiles = make(map[string][]*File)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedFiles[name] = []*File{}
+	} else {
+		u.Edges.namedFiles[name] = append(u.Edges.namedFiles[name], edges...)
+	}
+}
+
+// NamedEvents returns the Events named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedEvents(name string) ([]*Event, error) {
+	if u.Edges.namedEvents == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedEvents[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedEvents(name string, edges ...*Event) {
+	if u.Edges.namedEvents == nil {
+		u.Edges.namedEvents = make(map[string][]*Event)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedEvents[name] = []*Event{}
+	} else {
+		u.Edges.namedEvents[name] = append(u.Edges.namedEvents[name], edges...)
+	}
+}
+
+// NamedFeatures returns the Features named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedFeatures(name string) ([]*Feature, error) {
+	if u.Edges.namedFeatures == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedFeatures[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedFeatures(name string, edges ...*Feature) {
+	if u.Edges.namedFeatures == nil {
+		u.Edges.namedFeatures = make(map[string][]*Feature)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedFeatures[name] = []*Feature{}
+	} else {
+		u.Edges.namedFeatures[name] = append(u.Edges.namedFeatures[name], edges...)
 	}
 }
 

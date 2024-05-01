@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/event"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -29,9 +30,11 @@ type PersonalAccessTokenQuery struct {
 	predicates             []predicate.PersonalAccessToken
 	withOwner              *UserQuery
 	withOrganizations      *OrganizationQuery
+	withEvents             *EventQuery
 	modifiers              []func(*sql.Selector)
 	loadTotal              []func(context.Context, []*PersonalAccessToken) error
 	withNamedOrganizations map[string]*OrganizationQuery
+	withNamedEvents        map[string]*EventQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -112,6 +115,31 @@ func (patq *PersonalAccessTokenQuery) QueryOrganizations() *OrganizationQuery {
 		schemaConfig := patq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OrganizationPersonalAccessTokens
+		fromU = sqlgraph.SetNeighbors(patq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEvents chains the current query on the "events" edge.
+func (patq *PersonalAccessTokenQuery) QueryEvents() *EventQuery {
+	query := (&EventClient{config: patq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := patq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := patq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(personalaccesstoken.Table, personalaccesstoken.FieldID, selector),
+			sqlgraph.To(event.Table, event.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, personalaccesstoken.EventsTable, personalaccesstoken.EventsPrimaryKey...),
+		)
+		schemaConfig := patq.schemaConfig
+		step.To.Schema = schemaConfig.Event
+		step.Edge.Schema = schemaConfig.PersonalAccessTokenEvents
 		fromU = sqlgraph.SetNeighbors(patq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -312,6 +340,7 @@ func (patq *PersonalAccessTokenQuery) Clone() *PersonalAccessTokenQuery {
 		predicates:        append([]predicate.PersonalAccessToken{}, patq.predicates...),
 		withOwner:         patq.withOwner.Clone(),
 		withOrganizations: patq.withOrganizations.Clone(),
+		withEvents:        patq.withEvents.Clone(),
 		// clone intermediate query.
 		sql:  patq.sql.Clone(),
 		path: patq.path,
@@ -337,6 +366,17 @@ func (patq *PersonalAccessTokenQuery) WithOrganizations(opts ...func(*Organizati
 		opt(query)
 	}
 	patq.withOrganizations = query
+	return patq
+}
+
+// WithEvents tells the query-builder to eager-load the nodes that are connected to
+// the "events" edge. The optional arguments are used to configure the query builder of the edge.
+func (patq *PersonalAccessTokenQuery) WithEvents(opts ...func(*EventQuery)) *PersonalAccessTokenQuery {
+	query := (&EventClient{config: patq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	patq.withEvents = query
 	return patq
 }
 
@@ -424,9 +464,10 @@ func (patq *PersonalAccessTokenQuery) sqlAll(ctx context.Context, hooks ...query
 	var (
 		nodes       = []*PersonalAccessToken{}
 		_spec       = patq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			patq.withOwner != nil,
 			patq.withOrganizations != nil,
+			patq.withEvents != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -467,10 +508,24 @@ func (patq *PersonalAccessTokenQuery) sqlAll(ctx context.Context, hooks ...query
 			return nil, err
 		}
 	}
+	if query := patq.withEvents; query != nil {
+		if err := patq.loadEvents(ctx, query, nodes,
+			func(n *PersonalAccessToken) { n.Edges.Events = []*Event{} },
+			func(n *PersonalAccessToken, e *Event) { n.Edges.Events = append(n.Edges.Events, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range patq.withNamedOrganizations {
 		if err := patq.loadOrganizations(ctx, query, nodes,
 			func(n *PersonalAccessToken) { n.appendNamedOrganizations(name) },
 			func(n *PersonalAccessToken, e *Organization) { n.appendNamedOrganizations(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range patq.withNamedEvents {
+		if err := patq.loadEvents(ctx, query, nodes,
+			func(n *PersonalAccessToken) { n.appendNamedEvents(name) },
+			func(n *PersonalAccessToken, e *Event) { n.appendNamedEvents(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -566,6 +621,68 @@ func (patq *PersonalAccessTokenQuery) loadOrganizations(ctx context.Context, que
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "organizations" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (patq *PersonalAccessTokenQuery) loadEvents(ctx context.Context, query *EventQuery, nodes []*PersonalAccessToken, init func(*PersonalAccessToken), assign func(*PersonalAccessToken, *Event)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*PersonalAccessToken)
+	nids := make(map[string]map[*PersonalAccessToken]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(personalaccesstoken.EventsTable)
+		joinT.Schema(patq.schemaConfig.PersonalAccessTokenEvents)
+		s.Join(joinT).On(s.C(event.FieldID), joinT.C(personalaccesstoken.EventsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(personalaccesstoken.EventsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(personalaccesstoken.EventsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*PersonalAccessToken]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Event](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "events" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
@@ -677,6 +794,20 @@ func (patq *PersonalAccessTokenQuery) WithNamedOrganizations(name string, opts .
 		patq.withNamedOrganizations = make(map[string]*OrganizationQuery)
 	}
 	patq.withNamedOrganizations[name] = query
+	return patq
+}
+
+// WithNamedEvents tells the query-builder to eager-load the nodes that are connected to the "events"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (patq *PersonalAccessTokenQuery) WithNamedEvents(name string, opts ...func(*EventQuery)) *PersonalAccessTokenQuery {
+	query := (&EventClient{config: patq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if patq.withNamedEvents == nil {
+		patq.withNamedEvents = make(map[string]*EventQuery)
+	}
+	patq.withNamedEvents[name] = query
 	return patq
 }
 

@@ -139,6 +139,12 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("subscribers", Subscriber.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("webhooks", Webhook.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("events", Event.Type),
+		edge.To("secrets", Hush.Type),
+		edge.To("features", Feature.Type),
+		edge.To("files", File.Type),
 	}
 }
 

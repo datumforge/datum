@@ -30,6 +30,8 @@ type OrgOwnerMixin struct {
 	SkipOASGeneration bool
 	// AllowWhere includes the owner_id field in gql generated fields
 	AllowWhere bool
+	// BypassInterceptor skips the interceptor for the field on `Only` queries
+	BypassInterceptor bool
 }
 
 // Fields of the OrgOwnerMixin
@@ -91,6 +93,15 @@ func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
 			intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
 				orgID, err := auth.GetOrganizationIDFromContext(ctx)
 				if err != nil {
+					ctxQuery := ent.QueryFromContext(ctx)
+
+					// Skip the interceptor if the query is for a single entity
+					// and the BypassInterceptor flag is set
+					// this is useful for unauthorized queries for tokens, etc
+					if orgOwned.BypassInterceptor && ctxQuery.Op == "Only" {
+						return nil
+					}
+
 					return err
 				}
 

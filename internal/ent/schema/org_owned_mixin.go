@@ -1,14 +1,23 @@
 package schema
 
 import (
+	"context"
 	"errors"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
+
+	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/pkg/auth"
+)
+
+const (
+	ownerFieldName = "owner_id"
 )
 
 type OrgOwnerMixin struct {
@@ -25,7 +34,7 @@ type OrgOwnerMixin struct {
 
 // Fields of the OrgOwnerMixin
 func (orgOwned OrgOwnerMixin) Fields() []ent.Field {
-	ownerIDField := field.String("owner_id").Annotations(entoas.Skip(true))
+	ownerIDField := field.String(ownerFieldName).Annotations(entoas.Skip(true))
 
 	if !orgOwned.AllowWhere {
 		ownerIDField.Annotations(entgql.Skip(), entoas.Skip(true))
@@ -48,7 +57,7 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 
 	ownerEdge := edge.
 		From("owner", Organization.Type).
-		Field("owner_id").
+		Field(ownerFieldName).
 		Ref(orgOwned.Ref).
 		Annotations(entoas.Skip(true)).
 		Unique()
@@ -71,4 +80,27 @@ func (orgOwned OrgOwnerMixin) Edges() []ent.Edge {
 	return []ent.Edge{
 		ownerEdge,
 	}
+}
+
+func (orgOwned OrgOwnerMixin) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
+			orgID, err := auth.GetOrganizationIDFromContext(ctx)
+			if err != nil {
+				return err
+			}
+
+			// sets the owner id on the query for the current organization
+			orgOwned.P(q, orgID)
+
+			return nil
+		}),
+	}
+}
+
+// P adds a storage-level predicate to the queries and mutations.
+func (orgOwned OrgOwnerMixin) P(w interface{ WhereP(...func(*sql.Selector)) }, orgID string) {
+	w.WhereP(
+		sql.FieldEQ(ownerFieldName, orgID),
+	)
 }

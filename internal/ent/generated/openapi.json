@@ -1750,6 +1750,283 @@
         }
       }
     },
+    "/event-histories": {
+      "get": {
+        "tags": [
+          "EventHistory"
+        ],
+        "summary": "List EventHistories",
+        "description": "List EventHistories.",
+        "operationId": "listEventHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result EventHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventHistory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "EventHistory"
+        ],
+        "summary": "Create a new EventHistory",
+        "description": "Creates a new EventHistory and persists it to storage.",
+        "operationId": "createEventHistory",
+        "requestBody": {
+          "description": "EventHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "event_id": {
+                    "type": "string"
+                  },
+                  "correlation_id": {
+                    "type": "string"
+                  },
+                  "event_type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "event_id",
+                  "correlation_id",
+                  "event_type"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "EventHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/event-histories/{id}": {
+      "get": {
+        "tags": [
+          "EventHistory"
+        ],
+        "summary": "Find a EventHistory by ID",
+        "description": "Finds the EventHistory with the requested ID and returns it.",
+        "operationId": "readEventHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the EventHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "EventHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "EventHistory"
+        ],
+        "summary": "Deletes a EventHistory by ID",
+        "description": "Deletes the EventHistory with the requested ID.",
+        "operationId": "deleteEventHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the EventHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "EventHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "EventHistory"
+        ],
+        "summary": "Updates a EventHistory",
+        "description": "Updates a EventHistory and persists changes to storage.",
+        "operationId": "updateEventHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the EventHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "EventHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event_id": {
+                    "type": "string"
+                  },
+                  "correlation_id": {
+                    "type": "string"
+                  },
+                  "event_type": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "EventHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/events": {
       "get": {
         "tags": [
@@ -3074,6 +3351,286 @@
         }
       }
     },
+    "/feature-histories": {
+      "get": {
+        "tags": [
+          "FeatureHistory"
+        ],
+        "summary": "List FeatureHistories",
+        "description": "List FeatureHistories.",
+        "operationId": "listFeatureHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result FeatureHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FeatureHistory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FeatureHistory"
+        ],
+        "summary": "Create a new FeatureHistory",
+        "description": "Creates a new FeatureHistory and persists it to storage.",
+        "operationId": "createFeatureHistory",
+        "requestBody": {
+          "description": "FeatureHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "global": {
+                    "type": "boolean"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "name",
+                  "global",
+                  "enabled"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "FeatureHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/feature-histories/{id}": {
+      "get": {
+        "tags": [
+          "FeatureHistory"
+        ],
+        "summary": "Find a FeatureHistory by ID",
+        "description": "Finds the FeatureHistory with the requested ID and returns it.",
+        "operationId": "readFeatureHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the FeatureHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FeatureHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FeatureHistory"
+        ],
+        "summary": "Deletes a FeatureHistory by ID",
+        "description": "Deletes the FeatureHistory with the requested ID.",
+        "operationId": "deleteFeatureHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the FeatureHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "FeatureHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "FeatureHistory"
+        ],
+        "summary": "Updates a FeatureHistory",
+        "description": "Updates a FeatureHistory and persists changes to storage.",
+        "operationId": "updateFeatureHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the FeatureHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "FeatureHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "global": {
+                    "type": "boolean"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "FeatureHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/features": {
       "get": {
         "tags": [
@@ -3622,6 +4179,308 @@
                   "items": {
                     "$ref": "#/components/schemas/User"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/file-histories": {
+      "get": {
+        "tags": [
+          "FileHistory"
+        ],
+        "summary": "List FileHistories",
+        "description": "List FileHistories.",
+        "operationId": "listFileHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result FileHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FileHistory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FileHistory"
+        ],
+        "summary": "Create a new FileHistory",
+        "description": "Creates a new FileHistory and persists it to storage.",
+        "operationId": "createFileHistory",
+        "requestBody": {
+          "description": "FileHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "file_name": {
+                    "type": "string"
+                  },
+                  "file_extension": {
+                    "type": "string"
+                  },
+                  "file_size": {
+                    "type": "integer"
+                  },
+                  "content_type": {
+                    "type": "string"
+                  },
+                  "store_key": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "annotation": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "file_name",
+                  "file_extension",
+                  "content_type",
+                  "store_key"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "FileHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/file-histories/{id}": {
+      "get": {
+        "tags": [
+          "FileHistory"
+        ],
+        "summary": "Find a FileHistory by ID",
+        "description": "Finds the FileHistory with the requested ID and returns it.",
+        "operationId": "readFileHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the FileHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FileHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FileHistory"
+        ],
+        "summary": "Deletes a FileHistory by ID",
+        "description": "Deletes the FileHistory with the requested ID.",
+        "operationId": "deleteFileHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the FileHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "FileHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "FileHistory"
+        ],
+        "summary": "Updates a FileHistory",
+        "description": "Updates a FileHistory and persists changes to storage.",
+        "operationId": "updateFileHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the FileHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "FileHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file_name": {
+                    "type": "string"
+                  },
+                  "file_extension": {
+                    "type": "string"
+                  },
+                  "file_size": {
+                    "type": "integer"
+                  },
+                  "content_type": {
+                    "type": "string"
+                  },
+                  "store_key": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "annotation": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "FileHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileHistory"
                 }
               }
             }
@@ -16036,6 +16895,321 @@
         }
       }
     },
+    "/webhook-histories": {
+      "get": {
+        "tags": [
+          "WebhookHistory"
+        ],
+        "summary": "List WebhookHistories",
+        "description": "List WebhookHistories.",
+        "operationId": "listWebhookHistory",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result WebhookHistory list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WebhookHistory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "WebhookHistory"
+        ],
+        "summary": "Create a new WebhookHistory",
+        "description": "Creates a new WebhookHistory and persists it to storage.",
+        "operationId": "createWebhookHistory",
+        "requestBody": {
+          "description": "WebhookHistory to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "history_time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ref": {
+                    "type": "string"
+                  },
+                  "operation": {
+                    "type": "string",
+                    "enum": [
+                      "INSERT",
+                      "UPDATE",
+                      "DELETE"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "destination_url": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "callback": {
+                    "type": "string"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "failures": {
+                    "type": "integer"
+                  },
+                  "last_error": {
+                    "type": "string"
+                  },
+                  "last_response": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "history_time",
+                  "operation",
+                  "name",
+                  "destination_url",
+                  "enabled"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "WebhookHistory created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/webhook-histories/{id}": {
+      "get": {
+        "tags": [
+          "WebhookHistory"
+        ],
+        "summary": "Find a WebhookHistory by ID",
+        "description": "Finds the WebhookHistory with the requested ID and returns it.",
+        "operationId": "readWebhookHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the WebhookHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "WebhookHistory with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "WebhookHistory"
+        ],
+        "summary": "Deletes a WebhookHistory by ID",
+        "description": "Deletes the WebhookHistory with the requested ID.",
+        "operationId": "deleteWebhookHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the WebhookHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "WebhookHistory with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "WebhookHistory"
+        ],
+        "summary": "Updates a WebhookHistory",
+        "description": "Updates a WebhookHistory and persists changes to storage.",
+        "operationId": "updateWebhookHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the WebhookHistory",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "WebhookHistory properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "destination_url": {
+                    "type": "string"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "callback": {
+                    "type": "string"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "failures": {
+                    "type": "integer"
+                  },
+                  "last_error": {
+                    "type": "string"
+                  },
+                  "last_response": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "WebhookHistory updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/webhooks": {
       "get": {
         "tags": [
@@ -16938,6 +18112,60 @@
           "event_type"
         ]
       },
+      "EventHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "correlation_id": {
+            "type": "string"
+          },
+          "event_type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "event_id",
+          "correlation_id",
+          "event_type"
+        ]
+      },
       "Feature": {
         "type": "object",
         "properties": {
@@ -17009,6 +18237,70 @@
           "enabled"
         ]
       },
+      "FeatureHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "global": {
+            "type": "boolean"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
+          "name",
+          "global",
+          "enabled"
+        ]
+      },
       "File": {
         "type": "object",
         "properties": {
@@ -17075,6 +18367,80 @@
         },
         "required": [
           "id",
+          "file_name",
+          "file_extension",
+          "content_type",
+          "store_key"
+        ]
+      },
+      "FileHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          },
+          "file_extension": {
+            "type": "string"
+          },
+          "file_size": {
+            "type": "integer"
+          },
+          "content_type": {
+            "type": "string"
+          },
+          "store_key": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "annotation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
           "file_name",
           "file_extension",
           "content_type",
@@ -19546,6 +20912,86 @@
         },
         "required": [
           "id",
+          "name",
+          "destination_url",
+          "enabled"
+        ]
+      },
+      "WebhookHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "history_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ref": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "INSERT",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "destination_url": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "callback": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "failures": {
+            "type": "integer"
+          },
+          "last_error": {
+            "type": "string"
+          },
+          "last_response": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "history_time",
+          "operation",
           "name",
           "destination_url",
           "enabled"

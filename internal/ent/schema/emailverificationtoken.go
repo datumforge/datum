@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
@@ -71,7 +72,7 @@ func (EmailVerificationToken) Mixin() []ent.Mixin {
 		UserOwnedMixin{
 			Ref:               "email_verification_tokens",
 			SkipOASGeneration: true,
-			BypassInterceptor: true,
+			SkipInterceptor:   interceptors.SkipAll,
 		},
 	}
 }

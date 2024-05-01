@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/schema/mixin"
 
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/pkg/auth"
 )
 
@@ -32,9 +33,9 @@ type UserOwnedMixin struct {
 	SoftDeleteIndex bool
 	// AllowWhere includes the owner_id field in gql generated fields
 	AllowWhere bool
-	// BypassInterceptor skips the interceptor completely for that schema, this is useful for tokens, etc
-	// This usually corresponds to schemas that also have the entgql.Skip(entgql.SkipAll) annotation
-	BypassInterceptor bool
+	// SkipInterceptor skips the interceptor for that schema for all queries, or specific types,
+	// this is useful for tokens, etc
+	SkipInterceptor interceptors.SkipMode
 }
 
 // Fields of the UserOwnedMixin
@@ -113,12 +114,20 @@ func (userOwned UserOwnedMixin) Interceptors() []ent.Interceptor {
 			intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
 				// Skip the interceptor for all queries if BypassInterceptor flag is set
 				// This is needed for schemas that are never authorized users such as email verification tokens
-				if userOwned.BypassInterceptor {
+				if userOwned.SkipInterceptor == interceptors.SkipAll {
 					return nil
 				}
 
 				userID, err := auth.GetUserIDFromContext(ctx)
 				if err != nil {
+					ctxQuery := ent.QueryFromContext(ctx)
+
+					// Skip the interceptor if the query is for a single entity
+					// and the BypassInterceptor flag is set for Only queries
+					if userOwned.SkipInterceptor == interceptors.SkipOnlyQuery && ctxQuery.Op == "Only" {
+						return nil
+					}
+
 					return err
 				}
 
